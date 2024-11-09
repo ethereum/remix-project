@@ -185,9 +185,6 @@ export class CircomPluginClient extends PluginClient {
           this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
           this.logCompilerReport(parseErrors)
           return
-        } else if (parseErrors[0].type === 'Warning') {
-          this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
-          this.logCompilerReport(parseErrors)
         }
       } else {
         this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
@@ -225,6 +222,12 @@ export class CircomPluginClient extends PluginClient {
           this.internalEvents.emit('circuit_compiling_done', signals)
         } else {
           this.internalEvents.emit('circuit_compiling_done', [])
+        }
+        if (parseErrors && (parseErrors.length > 0)) {
+          if (parseErrors[0].type === 'Warning') {
+            this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
+            this.logCompilerReport(parseErrors)
+          }
         }
         this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
         circuitApi.log().map(log => {
