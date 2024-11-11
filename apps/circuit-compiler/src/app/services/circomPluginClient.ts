@@ -147,32 +147,7 @@ export class CircomPluginClient extends PluginClient {
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     if (isElectron()) {
-      this.internalEvents.emit('circuit_compiling_start')
-      this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-      const { version, prime } = this._compilationConfig
-      const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
-      try {
-        // @ts-ignore
-        const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
-        const fileName = extractNameFromKey(path)
-
-        this.lastCompiledCircuitPath = pathModule.normalize(extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm'))
-        if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
-        if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
-      } catch (error) {
-        this.call('terminal', 'log', { type: 'error', value: error.message })
-        this.internalEvents.emit('circuit_compiling_errored', error)
-        this.emit('statusChanged', { key: 'errored', title: 'Compilation failed', type: 'error' })
-        return
-      }
-      // @ts-ignore
-      const signals = await this.call('circom', 'getInputs')
-
-      this.internalEvents.emit('circuit_compiling_done', signals)
-      this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
-      // }
+      await this.compileElectron(path)
     } else {
       this.internalEvents.emit('circuit_compiling_start')
       this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
@@ -186,9 +161,6 @@ export class CircomPluginClient extends PluginClient {
           this.logCompilerReport(parseErrors)
           return
         }
-      } else {
-        this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
-        this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
       }
       if (compilationConfig) {
         const { prime, version } = compilationConfig
@@ -228,6 +200,9 @@ export class CircomPluginClient extends PluginClient {
             this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
             this.logCompilerReport(parseErrors)
           }
+        } else {
+          this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
+          this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
         }
         this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
         circuitApi.log().map(log => {
@@ -239,21 +214,54 @@ export class CircomPluginClient extends PluginClient {
     }
   }
 
+  async compileElectron (path: string): Promise<void> {
+    this.internalEvents.emit('circuit_compiling_start')
+    this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
+    // @ts-ignore
+    this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+    const [parseErrors, filePathToId] = await this.parse(path)
+
+    if (parseErrors && (parseErrors.length > 0)) {
+      if (parseErrors[0].type === 'Error') {
+        this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
+        this.logCompilerReport(parseErrors)
+        return
+      }
+    }
+    const { version, prime } = this._compilationConfig
+    const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
+    try {
+      // @ts-ignore
+      const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
+      const fileName = extractNameFromKey(path)
+
+      this.lastCompiledCircuitPath = pathModule.normalize(extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm'))
+      if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
+      if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
+    } catch (error) {
+      this.call('terminal', 'log', { type: 'error', value: error.message })
+      this.internalEvents.emit('circuit_compiling_errored', error)
+      this.emit('statusChanged', { key: 'errored', title: 'Compilation failed', type: 'error' })
+      return
+    }
+    // @ts-ignore
+    const signals = await this.call('circom', 'getInputs')
+
+    this.internalEvents.emit('circuit_compiling_done', signals)
+    if (parseErrors && (parseErrors.length > 0)) {
+      if (parseErrors[0].type === 'Warning') {
+        this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
+        this.logCompilerReport(parseErrors)
+      }
+    } else {
+      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
+      this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
+    }
+  }
+
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     if (isElectron()) {
-      this.internalEvents.emit('circuit_generating_r1cs_start')
-      this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
-      const { version, prime } = this._compilationConfig
-      const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
-      // @ts-ignore
-      await this.call('circom', 'run', path, versionToInstall, {
-        prime: prime,
-        r1cs: ""
-      })
-      this.internalEvents.emit('circuit_generating_r1cs_done')
-      this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
+      await this.generateR1csElectron(path)
     } else {
       const [parseErrors, filePathToId] = await this.parse(path)
 
@@ -294,6 +302,32 @@ export class CircomPluginClient extends PluginClient {
         this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
       }
     }
+  }
+
+  async generateR1csElectron (path: string): Promise<void> {
+    this.internalEvents.emit('circuit_generating_r1cs_start')
+    this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
+    // @ts-ignore
+    this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
+    const [parseErrors, filePathToId] = await this.parse(path)
+
+    if (parseErrors && (parseErrors.length > 0)) {
+      if (parseErrors[0].type === 'Error') {
+        this.logCompilerReport(parseErrors)
+        return
+      } else if (parseErrors[0].type === 'Warning') {
+        this.logCompilerReport(parseErrors)
+      }
+    }
+    const { version, prime } = this._compilationConfig
+    const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
+    // @ts-ignore
+    await this.call('circom', 'run', path, versionToInstall, {
+      prime: prime,
+      r1cs: ""
+    })
+    this.internalEvents.emit('circuit_generating_r1cs_done')
+    this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
   }
 
   async computeWitness (input: string): Promise<Uint8Array> {
