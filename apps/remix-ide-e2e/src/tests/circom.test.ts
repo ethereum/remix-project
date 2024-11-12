@@ -55,8 +55,8 @@ module.exports = {
       .click('[data-id="compute_witness_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wtn"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wtn"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
   },
   'Should compile a simple circuit using compile button in circom plugin #group2': function (browser: NightwatchBrowser) {
     browser
