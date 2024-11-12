@@ -29,7 +29,7 @@ export const computeWitness = async (plugin: CircomPluginClient, appState: AppSt
         const wtns = await snarkjs.wtns.exportJson(witness)
         const wtnsJson = wtns.map(wtn => wtn.toString())
         const fileName = extractNameFromKey(appState.filePath)
-        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.wtn.json')}`
+        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '_js')}/${fileName.replace('.circom', '.wtn.json')}`
 
         await plugin.call('fileManager', 'writeFile', writePath, JSON.stringify(wtnsJson, null, 2))
         plugin._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'wtns.exportJson', writePath])
