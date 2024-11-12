@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { getInstallationPath, circomCli, extractParentFromKey, getInstallationUrl, getLogInputSignalsPath } from "../tools/circom"
+import { getInstallationPath, circomCli, extractParentFromKey, getInstallationUrl, getLogInputSignalsPath, extractNameFromKey } from "../tools/circom"
 import path from "path"
 import { existsSync, readFileSync } from "fs"
 
@@ -57,7 +57,7 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
       // @ts-ignore
       if (process.platform === 'win32' && 'wasm' in options) {
         // @ts-ignore
-        await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', 'simple_js'))
+        await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', extractNameFromKey(filePath).replace('.circom', '_js')))
       }
     }
     filePath = path.join(wd, filePath)
