@@ -181,7 +181,7 @@ export class CircomPluginClient extends PluginClient {
         this.lastCompiledFile = path
         const fileName = extractNameFromKey(path)
 
-        this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
+        this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + '/' + fileName.replace('circom', 'wasm')
         // @ts-ignore
         await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, { encoding: null })
         const fileContent = this.lastParsedFiles[path]
