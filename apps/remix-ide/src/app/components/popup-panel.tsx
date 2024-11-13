@@ -89,10 +89,10 @@ export class PopupPanel extends AbstractPanel {
       <div
         className={`px-0 bg-light border-info ${appState?.showPopupPanel ? 'd-flex' : 'd-none'}`}
         style={{
-          maxHeight: '40rem',
+          maxHeight: '60%',
           maxWidth: '25rem',
           width: 'max-content',
-          height: '40rem',
+          height: '60%',
           position: 'fixed',
           bottom: '2rem',
           right: '1.5rem',
