@@ -118,11 +118,6 @@ jobs:
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
-        - run:
-            name: Install GLib
-            command: |
-              sudo apt-get update
-              sudo apt-get install -y libglib2.33-dev
         - run: 
             command: |
                 nvm install 20.2
