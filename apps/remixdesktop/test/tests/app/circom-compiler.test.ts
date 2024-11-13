@@ -36,8 +36,9 @@ const tests = {
     'Should compile a simple circuit using editor play button': function (browser: NightwatchBrowser) {
         browser
             .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
-            .pause(2000)
+            .waitForElementVisible('[data-id="play-editor"]')
             .click('[data-id="play-editor"]')
+            .pause()
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
@@ -45,6 +46,23 @@ const tests = {
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
     },
+    'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
+        browser
+          .clickLaunchIcon('circuit-compiler')
+          .frame(0)
+          .waitForElementVisible('[data-id="witness_toggler"]')
+          .click('[data-id="witness_toggler"]')
+          .waitForElementVisible('[data-id="compute_witness_btn"]')
+          .waitForElementVisible('[data-id="circuit_input_a"]')
+          .waitForElementVisible('[data-id="circuit_input_b"]')
+          .setValue('[data-id="circuit_input_a"]', '1')
+          .setValue('[data-id="circuit_input_b"]', '2')
+          .click('[data-id="compute_witness_btn"]')
+          .frameParent()
+          .clickLaunchIcon('filePanel')
+          .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
+          .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
+      },
 }
 
 module.exports = tests

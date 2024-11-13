@@ -55,6 +55,11 @@ const tests = {
             .click('[data-id="treeViewLitreeViewItemscripts/plonk/plonk_zkproof.ts"]')
             .pause(2000)
             .click('[data-id="play-editor"]')
+            .waitForElementVisible({
+                locateStrategy: 'xpath',
+                selector: "//span[@class='text-log' and contains(., 'proof done')]",
+                timeout: 60000
+            })
     }
 
 }
