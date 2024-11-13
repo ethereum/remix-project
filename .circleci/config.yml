@@ -122,7 +122,7 @@ jobs:
             name: Install GLib
             command: |
               sudo apt-get update
-              sudo apt-get install -y libglib2.0-dev
+              sudo apt-get install -y libglib2.33-dev
         - run: 
             command: |
                 nvm install 20.2
