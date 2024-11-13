@@ -120,6 +120,7 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
+                apt-get install libglib2.0-dev
                 nvm install 20.2
                 nvm use 20.2
                 node -v
