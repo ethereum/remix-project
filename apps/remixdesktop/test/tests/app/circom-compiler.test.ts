@@ -38,7 +38,6 @@ const tests = {
             .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
             .waitForElementVisible('[data-id="play-editor"]')
             .click('[data-id="play-editor"]')
-            .pause()
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
