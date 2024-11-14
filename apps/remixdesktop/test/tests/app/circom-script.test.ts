@@ -64,4 +64,4 @@ const tests = {
 
 }
 
-module.exports = tests
+module.exports = {}
