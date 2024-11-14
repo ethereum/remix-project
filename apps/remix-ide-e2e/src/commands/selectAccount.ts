@@ -5,7 +5,7 @@ class SelectAccount extends EventEmitter {
   command (this: NightwatchBrowser, account?: string): NightwatchBrowser {
     if (account) {
       this.api
-        .click(`select[data-id="runTabSelectAccount"] [value="${account}"]`)
+        .click(`*[data-id="runTabSelectAccount"] *[id="txorigin"]`)
         .perform(() => {
           this.emit('complete')
         })
