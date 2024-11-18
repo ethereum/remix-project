@@ -58,7 +58,7 @@ import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
 
-export type CheckStatus = 'Passed' | 'Failed'
+export type CheckStatus = 'Passed' | 'Failed' | 'Not Found'
 
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
@@ -138,9 +138,7 @@ export function RunTabUI(props: RunTabProps) {
       const IsCompatible = isChainCompatible(ideDefault, targetChainId)
       const chain = await returnCompatibleChain(ideDefault, targetChainId)
       if (chain === undefined) {
-        //show modal
-        plugin.call('terminal', 'log', { type: 'log', value: 'No compatible chain found for the selected EVM version.' })
-        return 'Failed'
+        return 'Not Found'
       } else {
         if (!IsCompatible) {
         //show modal
@@ -161,9 +159,11 @@ export function RunTabUI(props: RunTabProps) {
             okFn: () => checkEvmChainCompatibilityOkFunction(chain),
             cancelFn: () => {}
           })
+          return 'Failed'
+        } else {
+          return 'Passed'
         }
       }
-      return 'Passed'
     }
   }
 
@@ -418,6 +418,7 @@ export function RunTabUI(props: RunTabProps) {
           <InstanceContainerUI
             plugin={plugin}
             getCompilerDetails={getCompilerDetails}
+            evmCheckComplete={evmCheckComplete}
             runTabState={runTab}
             instances={runTab.instances}
             clearInstances={removeInstances}

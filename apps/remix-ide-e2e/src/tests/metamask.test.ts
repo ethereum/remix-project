@@ -222,7 +222,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
   // debug transaction
-  'Should deploy Ballot to Sepolia using metamask #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
       .click('[data-testid="network-display"]')

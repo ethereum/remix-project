@@ -303,6 +303,7 @@ export interface RecorderProps {
 
 export interface InstanceContainerProps {
   getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean
   runTabState: RunTabState
   instances: {
     instanceList: {
@@ -430,6 +431,7 @@ export interface MainnetProps {
 
 export interface UdappProps {
   getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean,
   runTabState: RunTabState
   instance: {
     contractData?: ContractData,
