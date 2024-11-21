@@ -47,7 +47,7 @@ debugger.event.register('newTraceLoaded', () => {
 })
 
 debugger.callTree.register('callTreeReady', () => {
-  // start doing more complex stuff like resolvng local variables
+  // start doing more complex stuff like resolving local variables
   breakPointManager.jumpNextBreakpoint(true)
   
   var storageView = debugger.storageViewAt(38, <contract address>, 
