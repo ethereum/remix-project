@@ -1,0 +1,193 @@
+parameters:
+  - name: testProjects
+    type: object
+    default:
+      - OmniSharp.DotNetTest.Tests
+      - OmniSharp.MSBuild.Tests,OmniSharp.Roslyn.CSharp.Tests,OmniSharp.Cake.Tests,OmniSharp.Script.Tests,OmniSharp.Stdio.Tests,OmniSharp.Http.Tests,OmniSharp.Tests,OmniSharp.Lsp.Tests
+
+trigger:
+  batch: "true"
+  branches:
+    include:
+      - master
+      - refs/tags/*
+
+pr:
+  autoCancel: "true"
+  branches:
+    include:
+      - master
+      - feature/*
+  paths:
+    exclude:
+      - 'CHANGELOG.md'
+
+resources:
+  repositories:
+    - repository: rsg
+      type: github
+      name: RocketSurgeonsGuild/AzureDevopsTemplates
+      ref: refs/tags/v0.4.5
+      endpoint: github
+
+variables:
+  Verbosity: Diagnostic
+  DotNetVersion: "8.0.201"
+  CakeVersion: "3.0.0"
+  NuGetVersion: "6.5.0"
+  GitVersionVersion: "5.0.1"
+  MonoVersion: "6.12.0"
+  Coverage: "$(Agent.BuildDirectory)/c"
+  VstsCoverage: "$(Coverage)"
+  Artifacts: $(Build.SourcesDirectory)/artifacts/
+  VstsArtifacts: "$(Artifacts)"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+
+jobs:
+  - job: GitVersion
+    pool:
+      vmImage: "windows-2019"
+    steps:
+      - template: gitversion/store.yml@rsg
+        parameters:
+          NuGetVersion: $(NuGetVersion)
+          version: $(GitVersionVersion)
+
+  - job: macOS
+    pool:
+      vmImage: "macOS-11"
+    dependsOn: GitVersion
+    steps:
+      - template: ./.pipelines/init.yml
+        parameters:
+          Verbosity: $(Verbosity)
+          CakeVersion: $(CakeVersion)
+          DotNetVersion: $(DotNetVersion)
+          NuGetVersion: $(NuGetVersion)
+          MonoVersion: $(MonoVersion)
+      - script: |
+          echo $PATH
+          chmod 755 ./build.sh
+          ./build.sh --configuration Release --verbosity Verbose --target CI --publish-all --archive
+        displayName: "Build"
+      - template: ./.pipelines/artifacts.yml
+        parameters:
+          Artifacts: $(Artifacts)
+
+  - job: Linux
+    pool:
+      vmImage: "ubuntu-20.04"
+    dependsOn: GitVersion
+    steps:
+      - template: ./.pipelines/init.yml
+        parameters:
+          Verbosity: $(Verbosity)
+          CakeVersion: $(CakeVersion)
+          DotNetVersion: $(DotNetVersion)
+          NuGetVersion: $(NuGetVersion)
+          MonoVersion: $(MonoVersion)
+      - script: |
+          chmod 755 ./build.sh
+          ./build.sh --configuration Release --verbosity Verbose --target CI --publish-all --archive
+        displayName: "Build"
+      - template: ./.pipelines/artifacts.yml
+        parameters:
+          Artifacts: $(Artifacts)
+
+  - job: Windows
+    pool:
+      vmImage: "windows-2022"
+    dependsOn: GitVersion
+    steps:
+      - template: ./.pipelines/init.yml
+        parameters:
+          Verbosity: $(Verbosity)
+          CakeVersion: $(CakeVersion)
+          DotNetVersion: $(DotNetVersion)
+          NuGetVersion: $(NuGetVersion)
+      - powershell: .\build.ps1 -configuration Release -verbosity Verbose -target CI --publish-all --archive
+        displayName: "Build"
+      - template: ./.pipelines/artifacts.yml
+        parameters:
+          Artifacts: $(Artifacts)
+
+  - job: Release
+    pool:
+      vmImage: "Ubuntu-latest"
+    dependsOn:
+      - macOS
+      - Linux
+      - Windows
+    steps:
+      - task: NuGetToolInstaller@1
+        displayName: "Install NuGet"
+        inputs:
+          versionSpec: $(NuGetVersion)
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Packages
+        inputs:
+          downloadType: "single"
+          artifactName: "packages"
+          buildType: "current"
+          downloadPath: "$(System.ArtifactsDirectory)"
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Deployment
+        inputs:
+          downloadType: "single"
+          artifactName: "deployment"
+          buildType: "current"
+          downloadPath: "$(System.ArtifactsDirectory)"
+      - task: DownloadBuildArtifacts@0
+        displayName: Download NuGet
+        inputs:
+          downloadType: "single"
+          artifactName: "nuget"
+          buildType: "current"
+          downloadPath: "$(System.ArtifactsDirectory)"
+      - task: NuGetCommand@2
+        displayName: "Push NuGet packages to Azure Artifacts"
+        inputs:
+          command: push
+          nuGetFeedType: internal
+          packagesToPush: "$(System.ArtifactsDirectory)/nuget/**/*.nupkg"
+          publishVstsFeed: Builds/omnisharp
+          allowPackageConflicts: true
+        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
+      # Temporarily disable publishing to nuget.org while we attempt to renew authentication.
+      # - task: NuGetCommand@2
+      #   displayName: "Push NuGet packages to nuget.org"
+      #   inputs:
+      #     command: push
+      #     nuGetFeedType: external
+      #     packagesToPush: "$(System.ArtifactsDirectory)/nuget/**/*.nupkg"
+      #     publishFeedCredentials: nuget.org
+      #     allowPackageConflicts: true
+      #   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+      - script: |
+          AZ_REPO=$(lsb_release -cs)
+          echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
+            sudo tee /etc/apt/sources.list.d/azure-cli.list
+          curl -L https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          sudo apt-get install apt-transport-https
+          sudo apt-get update && sudo apt-get install azure-cli
+          az storage blob upload-batch --destination "releases" --source "$(System.ArtifactsDirectory)/deployment/" --overwrite --account-name roslynomnisharp --account-key $BLOB_KEY
+        displayName: Upload to Azure Storage
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        env:
+          BLOB_KEY: $(BLOB_KEY)
+      - task: GitHubRelease@0
+        displayName: "GitHub release (edit)"
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+        inputs:
+          gitHubConnection: github
+          repositoryName: OmniSharp/omnisharp-roslyn
+          action: edit
+          tag: "$(Build.SourceBranchName)"
+          title: "$(Build.SourceBranchName)"
+          assets: "$(System.ArtifactsDirectory)/packages/**/*"
+          assetUploadMode: replace
+          # releaseNotesSource: input
+          # releaseNotes: asdfasdf12
+          # isDraft: true
+          # isPreRelease: true
+          # addChangeLog: false

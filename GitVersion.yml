@@ -1,0 +1,19 @@
+assembly-versioning-scheme: MajorMinor
+mode: ContinuousDeployment
+branches:
+  master:
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+ignore:
+  sha:
+    - 4ffabfa8d8279cd5afa17912143cec9612f77020
+    - d1a145118779213e4733da18ff4ec1d199d807e8
+    - 793228fa65a9af2651c17cb6b27502411e128a6e
+    - 7cd49db551a13b831d68b5c7a17e11287aa344cf
+    - 2757c23cab04f3aa8fca810954c9b044d8b3bb5a
+    - f2248467e93b482d39c60b534e74a3dd7796b3e2
+    - 057c77dcbaffabac3c718fedbf151bff002440c2
+    - 49ba7fdb573fcf5f0d26e242267ec97c31176519
+    - 801dae11a8c6f45b23254d0623b9505f894eca91
+continuous-delivery-fallback-tag: beta
+commit-message-incrementing: Disabled

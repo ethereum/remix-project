@@ -1,0 +1,56 @@
+{
+	"folders": [
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240202"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240228"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240305"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240306"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240309"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240310"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240311"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240506"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240523"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240608"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240620"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240621"
+		},
+		{
+			"path": "../../../home/hadmars/Videos/2024/20240729"
+		}
+	],
+	"launch": {
+		"configurations": [
+            {
+                "name": "Setup Velocity",
+                "type": "velocity",
+                "request": "launch",
+                "version": 2
+            }
+        ]
+	},
+	"settings": {
+		"workbench.experimental.cloudChanges.partialMatches.enabled": true
+	}
+}

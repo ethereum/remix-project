@@ -1,71 +1,61 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+[Oo]bj/
+[Bb]in/
+TestResults/
+.nuget/
+*.sln.ide/
+_ReSharper.*/
+artifacts/
+PublishProfiles/
+*.user
+*.suo
+*.cache
+*.docstates
+_ReSharper.*
+nuget.exe
+*net45.csproj
+*net451.csproj
+*k10.csproj
+*.psess
+*.vsp
+*.pidb
+*.userprefs
+*DS_Store
+*.ncrunchsolution
+*.*sdf
+*.ipch
+*.sln.ide
+debugSettings.json
+buildlog
+/.vs
+*.lock.json
+/omnisharp*.tar.gz
+scripts/Omnisharp*
+.msbuild-*/
+.msbuild/
 
-build
-dist
-node_modules
-lint.xml
-reports/*
-babelify-src
-docs/_build
-.DS_Store
-.tern-port
-TODO
-soljson.js
-*~
-*_group*.*.ts
-*_group*.ts
-stats.json
-release
+# NuGet
+*.nuget.targets
 
+# Build folder
+.dotnet/
+.dotnet-legacy/
+.dotnet-future/
+.mono/
+tools/*
+!tools/packages.config
 
-# compiled output
-/dist
-/tmp
-/out-tsc
+# Test assets
+test-assets/**/tools/*
+!test-assets/**/tools/packages.config
 
-# dependencies
-/node_modules
+# VS Code
+/.vscode/settings.json
+/.vscode/launch.json
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-.vscode/
+# VS
+launchSettings.json
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-lerna-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
-.DS_Store
-.vscode/settings.json
-.vscode/launch.json
-
-apps/remixdesktop/.webpack
-apps/remixdesktop/out
-apps/remixdesktop/release/
-apps/remixdesktop/build*/
-apps/remix-ide/src/assets/list.json
-apps/remix-ide/src/assets/esbuild.wasm
-apps/remixdesktop/build*
-apps/remixdesktop/reports
-apps/remixdesktop/logs/
-logs
+# Rider
+.idea/
+test-assets/**/nugets
+*.binlog
