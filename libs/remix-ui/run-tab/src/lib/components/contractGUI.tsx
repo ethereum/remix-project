@@ -240,6 +240,9 @@ export function ContractGUI(props: ContractGUIProps) {
       const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'cancun', parseInt(tabState.chainId))
       if (status === 'Passed' && IsCompatible) {
         await handleDeploy()
+      } else {
+        // Show log in browser console in case of failure due to unknown reasons
+        console.log('Failed to run because of EVM version incomaptibility or some other compiler issue')
       }
     }
   }
