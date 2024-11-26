@@ -5,7 +5,7 @@ Everyone is very welcome to contribute on the codebase of Remix. Please join our
 ## Development
 Remix libraries work closely with [Remix IDE](https://remix.ethereum.org). Each library has a readme to explain its application.
 
-When you add a code in any library, please ensure you add related unit tests.
+When you add code in any library, please ensure you add related unit tests.
 
 ## Coding style
 
@@ -27,7 +27,7 @@ Then you can replace the string with a intl component. The `id` prop will be the
 +  <FormattedMessage id="home.learn" />
 </label>
 ```
-In some cases, jsx maybe not be acceptable, you can use `intl.formatMessage` .
+In some cases, jsx may not be acceptable, you can use `intl.formatMessage` .
 ```jsx
 <input
    ref={searchInputRef}
