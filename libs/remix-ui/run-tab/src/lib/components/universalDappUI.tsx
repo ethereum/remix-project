@@ -57,7 +57,6 @@ export function UniversalDappUI(props: UdappProps) {
   }, [props.instance.balance])
 
   const sendData = () => {
-    console.log("sending it")
     setLlIError('')
     const fallback = txHelper.getFallbackInterface(contractABI)
     const receive = txHelper.getReceiveInterface(contractABI)
