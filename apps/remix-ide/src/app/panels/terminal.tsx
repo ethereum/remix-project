@@ -117,10 +117,10 @@ class Terminal extends Plugin {
   }
 
   onDeactivation() {
-    this.off('scriptRunner', 'log')
-    this.off('scriptRunner', 'info')
-    this.off('scriptRunner', 'warn')
-    this.off('scriptRunner', 'error')
+    this.off('scriptRunnerBridge', 'log')
+    this.off('scriptRunnerBridge', 'info')
+    this.off('scriptRunnerBridge', 'warn')
+    this.off('scriptRunnerBridge', 'error')
   }
 
   logHtml(html) {

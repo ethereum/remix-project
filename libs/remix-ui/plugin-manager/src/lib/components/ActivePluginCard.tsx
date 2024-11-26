@@ -3,6 +3,8 @@ import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
+
 interface PluginCardProps {
   profile: any
   buttonText: string
@@ -85,6 +87,7 @@ function ActivePluginCard({ profile, buttonText, deactivatePlugin }: PluginCardP
               >
                 <button
                   onClick={() => {
+                    _paq.push(['trackEvent', 'pluginManager', 'deactivateBtn', 'deactivate btn ' + profile.name])
                     deactivatePlugin(profile.name)
                   }}
                   className="btn btn-secondary btn-sm"

@@ -51,6 +51,8 @@ function DeployPanel(): JSX.Element {
     <div className="col-3 d-inline-block">
       <h3 className="mb-3" data-id="quick-dapp-admin">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
       <Button
+        size="sm"
+        style={{ height: 32 }}
         data-id="resetFunctions"
         onClick={() => {
           resetInstance();
@@ -59,6 +61,8 @@ function DeployPanel(): JSX.Element {
         <FormattedMessage id="quickDapp.resetFunctions" />
       </Button>
       <Button
+        size="sm"
+        style={{ height: 32, width: 100 }}
         data-id="deleteDapp"
         className="ml-3"
         onClick={() => {

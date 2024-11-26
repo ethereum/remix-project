@@ -15,7 +15,7 @@ Executables are stored in the ./release directory. Without that executable you c
 
 This is done by running ./rundist.bash
 
-Normally when you would do a 'real' release you would package remix IDE into the distributable but for local e2e this not necessary because it will use the remix IDE that is being served.
+Normally when you would do a 'real' release you would package remix IDE into the distributable but for local e2e this is not  necessary because it will use the remix IDE that is being served.
 
 
 ```
@@ -39,7 +39,7 @@ In order to facilitate local testing nightwatch will boot the executable with th
 
 So to start testing locally 
 - run the IDE with 'yarn serve' as you would normally do.
-- build your release. You will always need to this when the Desktop app itself changes its code. 
+- build your release. You will always need to do this when the Desktop app itself changes its code. 
     - ./rundist.bash
 - in apps/remixdesktop: 
     - yarn build:e2e

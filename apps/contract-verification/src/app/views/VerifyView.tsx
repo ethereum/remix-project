@@ -41,14 +41,13 @@ export const VerifyView = () => {
     setEnabledVerifiers({ ...enabledVerifiers, [verifierId]: checked })
   }
 
-
   const sendToMatomo = async (eventAction: string, eventName: string) => {
     await clientInstance.call("matomo" as any, 'track', ['trackEvent', 'ContractVerification', eventAction, eventName]);
   }
 
   const handleVerify = async (e) => {
     e.preventDefault()
-    
+
     const { triggerFilePath, filePath, contractName } = selectedContract
     const compilerAbstract = compilationOutput[triggerFilePath]
     if (!compilerAbstract) {
@@ -68,9 +67,7 @@ export const VerifyView = () => {
         name: verifierId as VerifierIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
-      if (enabledVerifiers.Blockscout) await sendToMatomo('verify', "verifyWith: Blockscout On: " + selectedChain + " IsProxy: " + (hasProxy && !proxyAddress))
-      if (enabledVerifiers.Etherscan) await sendToMatomo('verify', "verifyWithEtherscan On: " + selectedChain + " IsProxy: " + (hasProxy && !proxyAddress))
-      if (enabledVerifiers.Sourcify) await sendToMatomo('verify', "verifyWithSourcify On: " + selectedChain + " IsProxy: " + (hasProxy && !proxyAddress))
+      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${hasProxy && proxyAddress}`)
     }
 
     const newSubmittedContract: SubmittedContract = {
@@ -256,7 +253,7 @@ export const VerifyView = () => {
                     </span>
                   </CustomTooltip>
                 ) : (
-                  <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
+                  <span className="text-secondary d-inline-block text-truncate mw-100">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 )}
               </div>
             </div>
@@ -269,7 +266,7 @@ export const VerifyView = () => {
             !selectedContract ? "Please select the contract (compile if needed)." :
               ((hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)) ? "Please provide a valid proxy contract address." :
                 "Please provide all necessary data to verify") // Is not expected to be a case
-         : "Verify with selected tools"}>
+        : "Verify with selected tools"}>
         <button type="submit" className="w-100 btn btn-primary mt-3" disabled={submitDisabled}>
           Verify
         </button>

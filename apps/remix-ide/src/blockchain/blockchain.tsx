@@ -247,7 +247,7 @@ export class Blockchain extends Plugin {
       args,
       (error, data) => {
         if (error) {
-          return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+          return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error.error ? error.error : error}`)
         }
 
         statusCb(`creation of ${selectedContract.name} pending...`)
@@ -272,7 +272,7 @@ export class Blockchain extends Plugin {
       selectedContract.bytecodeLinkReferences,
       (error, data) => {
         if (error) {
-          return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+          return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error.error ? error.error : error}`)
         }
 
         statusCb(`creation of ${selectedContract.name} pending...`)
@@ -485,7 +485,7 @@ export class Blockchain extends Plugin {
 
     this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb, (error, txResult, address) => {
       if (error) {
-        return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+        return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error.error ? error.error : error}`)
       }
       if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
         return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
@@ -614,7 +614,7 @@ export class Blockchain extends Plugin {
       callType,
       (error, data) => {
         if (error) {
-          return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
+          return logCallback(`${logMsg} errored: ${error.message ? error.message : error.error ? error.error : error}`)
         }
         if (!lookupOnly) {
           logCallback(`${logMsg} pending ... `)
@@ -631,7 +631,7 @@ export class Blockchain extends Plugin {
         const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
         this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
           if (error) {
-            return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
+            return logCallback(`${logMsg} errored: ${error.message ? error.message : error.error ? error.error : error}`)
           }
           if (lookupOnly) {
             outputCb(returnValue)

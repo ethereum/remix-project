@@ -10,7 +10,7 @@ import './styles/preload.css'
 import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
-_paq.push(['trackEvent', 'Preload', 'start'])
+_paq.push(['trackEvent', 'App', 'Preload', 'start'])
 
 export const Preload = (props: any) => {
   const [tip, setTip] = useState<string>('')
@@ -40,7 +40,7 @@ export const Preload = (props: any) => {
         })
       })
       .catch((err) => {
-        _paq.push(['trackEvent', 'Preload', 'error', err && err.message])
+        _paq.push(['trackEvent', 'App', 'PreloadError', err && err.message])
         console.error('Error loading Remix:', err)
         setError(true)
       })

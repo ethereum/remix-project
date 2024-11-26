@@ -74,9 +74,10 @@ export class EtherscanVerifier extends AbstractVerifier {
     }
 
     const verificationResponse: EtherscanRpcResponse = await response.json()
+    const lookupUrl = this.getContractCodeUrl(submittedContract.address, submittedContract.chainId)
 
     if (verificationResponse.result.includes('already verified')) {
-      return { status: 'already verified', receiptId: null, lookupUrl: this.getContractCodeUrl(submittedContract.address) }
+      return { status: 'already verified', receiptId: null, lookupUrl }
     }
 
     if (verificationResponse.status !== '1' || verificationResponse.message !== 'OK') {
@@ -84,7 +85,6 @@ export class EtherscanVerifier extends AbstractVerifier {
       throw new Error(verificationResponse.result)
     }
 
-    const lookupUrl = this.getContractCodeUrl(submittedContract.address)
     return { status: 'pending', receiptId: verificationResponse.result, lookupUrl }
   }
 
@@ -117,6 +117,10 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const verificationResponse: EtherscanRpcResponse = await response.json()
 
+    if (verificationResponse.message === 'Smart-contract not found or is not verified') {
+      return { status: 'failed', receiptId: null, message: verificationResponse.message }
+    }
+
     if (verificationResponse.status !== '1' || verificationResponse.message !== 'OK') {
       console.error('Error on Etherscan API proxy verification at ' + this.apiUrl + '\nStatus: ' + verificationResponse.status + '\nMessage: ' + verificationResponse.message + '\nResult: ' + verificationResponse.result)
       throw new Error(verificationResponse.result)
@@ -144,7 +148,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const checkStatusResponse: EtherscanCheckStatusResponse = await response.json()
 
-    if (checkStatusResponse.result.startsWith('Fail - Unable to verify')) {
+    if (checkStatusResponse.result.startsWith('Fail - Unable to verify') || (checkStatusResponse.result as string) === 'Error: contract does not exist') {
       return { status: 'failed', receiptId, message: checkStatusResponse.result }
     }
     if (checkStatusResponse.result === 'Pending in queue') {
@@ -229,23 +233,23 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const lookupResponse: EtherscanGetSourceCodeResponse = await response.json()
 
+    if (lookupResponse.result[0].ABI === 'Contract source code not verified' || !lookupResponse.result[0].SourceCode || (lookupResponse.result as unknown as string) === 'Contract source code not verified') {
+      return { status: 'not verified' }
+    }
+
     if (lookupResponse.status !== '1' || !lookupResponse.message.startsWith('OK')) {
       const errorResponse = lookupResponse as unknown as EtherscanRpcResponse
       console.error('Error on Etherscan API lookup at ' + this.apiUrl + '\nStatus: ' + errorResponse.status + '\nMessage: ' + errorResponse.message + '\nResult: ' + errorResponse.result)
       throw new Error(errorResponse.result)
     }
 
-    if (lookupResponse.result[0].ABI === 'Contract source code not verified' || !lookupResponse.result[0].SourceCode) {
-      return { status: 'not verified' }
-    }
-
-    const lookupUrl = this.getContractCodeUrl(contractAddress)
+    const lookupUrl = this.getContractCodeUrl(contractAddress, chainId)
     const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.result[0], contractAddress, chainId)
 
     return { status: 'verified', lookupUrl, sourceFiles, targetFilePath }
   }
 
-  getContractCodeUrl(address: string): string {
+  getContractCodeUrl(address: string, chainId: string): string {
     const url = new URL(this.explorerUrl + `/address/${address}#code`)
     return url.href
   }

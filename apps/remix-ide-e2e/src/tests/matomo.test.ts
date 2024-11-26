@@ -433,13 +433,13 @@ module.exports = {
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'verify Matomo events are tracked on app start #group4 #lfaky': function (browser: NightwatchBrowser) {
+    'verify Matomo events are tracked on app start #group4': function (browser: NightwatchBrowser) {
         browser
             .execute(function () {
                 return (window as any)._paq
             }, [], (res) => {
                 const expectedEvents = [
-                    ["trackEvent", "Preload", "start"],
+                    ["trackEvent", "App", "Preload", "start"],
                     ["trackEvent", "Storage", "activate", "indexedDB"],
                     ["trackEvent", "App", "load"],
                 ];

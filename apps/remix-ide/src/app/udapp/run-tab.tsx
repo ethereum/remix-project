@@ -35,7 +35,8 @@ const profile = {
     'setEnvironmentMode',
     'clearAllInstances',
     'addInstance',
-    'resolveContractAndAddInstance'
+    'resolveContractAndAddInstance',
+    'showPluginDetails'
   ]
 }
 
@@ -85,6 +86,10 @@ export class RunTab extends ViewPlugin {
         networkEnvironment: this.REACT_API.networkName
       })
     })
+  }
+
+  showPluginDetails() {
+    return profile
   }
 
   async setEnvironmentMode(env) {
@@ -194,22 +199,7 @@ export class RunTab extends ViewPlugin {
             if (options['fork']) this.fork = options['fork']
           }
         },
-        provider: {
-          sendAsync (payload) {
-            return udapp.call(name, 'sendAsync', payload)
-          },
-          async request (payload) {
-            try {
-              const requestResult = await udapp.call(name, 'sendAsync', payload)
-              if (requestResult.error) {
-                throw new Error(requestResult.error.message)
-              }
-              return requestResult.result
-            } catch (err) {
-              throw new Error(err.message)
-            }
-          }
-        }
+        provider: new Provider(udapp, name)
       })
     }
 
@@ -300,5 +290,45 @@ export class RunTab extends ViewPlugin {
 
     this.compilersArtefacts.addResolvedContract(addressToString(address), data)
     this.addInstance(address, contractObject.abi, contractObject.name)
+  }
+}
+
+class Provider {
+  udapp: RunTab
+  name: string
+  constructor(udapp, name) {
+    this.udapp = udapp
+    this.name = name
+  }
+  sendAsync (payload) {
+    return this.udapp.call(this.name, 'sendAsync', payload)
+  }
+  request (payload): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.udapp.call(this.name, 'sendAsync', payload).then((response) => {
+        if (response.error) {
+          reject(response.error.message)
+        } else {
+          resolve(response.result? response.result : response)
+        }
+      }).catch((err) => {
+        if (typeof err === 'string') {
+          reject(err)
+        } else if (err.error && err.error.message) {
+          reject(err.error.message)
+        } else if (err.error && typeof err.error === 'string') {
+          reject(err.error)
+        } else {
+          let e
+          try {
+            e = JSON.stringify(err)
+          } catch (e) {
+            reject('unknown error')
+            return
+          }
+          reject(e)
+        }
+      })
+    })
   }
 }

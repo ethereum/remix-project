@@ -17,8 +17,8 @@ export interface Chain {
   infoURL?: string
 }
 
-export type VerifierIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
-export const VERIFIERS: VerifierIdentifier[] = ['Sourcify', 'Etherscan', 'Blockscout']
+export type VerifierIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout' | 'Routescan'
+export const VERIFIERS: VerifierIdentifier[] = ['Sourcify', 'Etherscan', 'Blockscout', 'Routescan']
 
 export interface VerifierInfo {
   name: VerifierIdentifier

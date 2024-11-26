@@ -287,12 +287,12 @@ export function UniversalDappUI(props: UdappProps) {
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </span>
             <div></div>
-            <div className="d-flex align-self-center">
+            <div className="btn d-flex p-0 align-self-center">
               {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
                 <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
                   <i
                     data-id="instanceEditIcon"
-                    className="fas fa-edit pr-3"
+                    className="fas fa-sparkles"
                     onClick={() => {
                       props.editInstance(props.instance)
                     }}
@@ -326,6 +326,10 @@ export function UniversalDappUI(props: UdappProps) {
                 <div key={index}>
                   <ContractGUI
                     getVersion={props.getVersion}
+                    getCompilerDetails={props.getCompilerDetails}
+                    evmCheckComplete={props.evmCheckComplete}
+                    plugin={props.plugin}
+                    runTabState={props.runTabState}
                     funcABI={funcABI}
                     clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)

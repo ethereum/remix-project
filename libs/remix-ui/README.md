@@ -2,7 +2,7 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Pre-requisite
+## Prerequisite
 -	Install **NxConsole** vscode extension
 ## Steps To Generate React App
 -	Open **NxConsole** extension
@@ -22,7 +22,7 @@ This library was generated with [Nx](https://nx.dev).
 - Set **importPath** to **@remix-ui/{library-name}**
 - Set **unitTestRunner** to **none**.
 - Click the run button in the top right corner of the generate page.
-- Your react library should be created on **{root}/libs/remix-ui** directory.
+- Your react library should be created in **{root}/libs/remix-ui** directory.
 
 ## Steps To Generate React Component
 -	Open **NxConsole** extension

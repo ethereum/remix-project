@@ -37,7 +37,6 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
 
   const [searchTerm, setSearchTerm] = useState(selectedChain ? getChainDescriptor(selectedChain) : '')
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredOptions, setFilteredOptions] = useState<Chain[]>(dropdownChains)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const fuse = new Fuse(dropdownChains, {
@@ -45,14 +44,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
     threshold: 0.3,
   })
 
-  useEffect(() => {
-    if (searchTerm === '') {
-      setFilteredOptions(dropdownChains)
-    } else {
-      const result = fuse.search(searchTerm)
-      setFilteredOptions(result.map(({ item }) => item))
-    }
-  }, [searchTerm, dropdownChains])
+  const filteredOptions = searchTerm ? fuse.search(searchTerm).map(({ item }) => item) : dropdownChains
 
   // Close dropdown when user clicks outside
   useEffect(() => {
@@ -98,16 +90,14 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
       {' '}
       {/* Add ref here */}
       <label htmlFor={id}>{label}</label>
-      <input type="text" value={searchTerm} onChange={handleInputChange} onClick={openDropdown} placeholder="Select a chain" className="form-control" />
-      {isOpen && (
-        <ul className="dropdown-menu show w-100 bg-light" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          {filteredOptions.map((chain) => (
-            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item text-dark ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
-              {getChainDescriptor(chain)}
-            </li>
-          ))}
-        </ul>
-      )}
+      <input type="text" value={searchTerm} onChange={handleInputChange} onClick={openDropdown} data-id="chainDropdownbox" placeholder="Select a chain" className="form-control" />
+      <ul className="dropdown-menu show w-100 bg-light" style={{ maxHeight: '400px', overflowY: 'auto', display: isOpen ? 'initial' : 'none' }}>
+        {filteredOptions.map((chain) => (
+          <li key={chain.chainId} onClick={() => handleOptionClick(chain)} data-id={chain.chainId} className={`dropdown-item text-dark ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
+            {getChainDescriptor(chain)}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

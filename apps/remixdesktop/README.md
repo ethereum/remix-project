@@ -124,7 +124,7 @@ engine.register(compilerLoaderPlugin)
 const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater']
 ```
 
-If you don't this, it won't work.
+If you don't do this, it won't work.
 
 12. In Remix IDE create a plugin in src/app/plugins/electron. If everything works correctly the methods will be loaded from the electron side, no need to specify them here.
 This plugin is only a passthrough. 
@@ -156,5 +156,5 @@ export class compilerLoaderPluginDesktop extends ElectronPlugin {
 
 ## CI
 
-CI will only run the builds is the branch is master or contains the word: desktop
+CI will only run the builds if the branch is master or contains the word: desktop
 

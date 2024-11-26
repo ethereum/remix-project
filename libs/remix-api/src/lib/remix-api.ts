@@ -15,10 +15,14 @@ import { ILayoutApi } from "./plugins/layout-api"
 import { IMatomoApi } from "./plugins/matomo-api"
 import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
-
+import { IMenuIconsApi } from "./plugins/menuicons-api"
+import { IDgitPlugin } from "./plugins/dgitplugin-api"
+import { IPopupPanelAPI } from "./plugins/popuppanel-api"
 
 export interface ICustomRemixApi extends IRemixApi {
+  popupPanel: IPopupPanelAPI
   dgitApi: IGitApi
+  dgit: IDgitPlugin
   config: IConfigApi
   notification: INotificationApi
   settings: ISettings
@@ -32,8 +36,10 @@ export interface ICustomRemixApi extends IRemixApi {
   pinnedPanel: IPinnedPanelApi
   layout: ILayoutApi
   matomo: IMatomoApi
+  menuicons: IMenuIconsApi
   remixAI: IRemixAI,
   remixAID: IRemixAID
 }
+
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>

@@ -88,7 +88,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
   return (
     <ul className="list-group">
       {receipts.map((receipt) => (
-        <li className="list-group-item">
+        <li key={`${receipt.contractId}-${receipt.verifierInfo.name}${receipt.isProxyReceipt ? '-proxy' : ''}-${receipt.receiptId}`} className="list-group-item">
           <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
             <span className="font-weight-bold medium">{receipt.verifierInfo.name}</span>
           </CustomTooltip>

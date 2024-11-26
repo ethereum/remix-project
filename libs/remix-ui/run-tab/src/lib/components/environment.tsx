@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
@@ -66,7 +66,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             { (props.providers.providerList.filter((provider) => { return provider.isInjected })).map(({ name, displayName }) => (
               <Dropdown.Item
                 key={name}
-                onClick={() => {
+                onClick={async () => {
                   handleChangeExEnv(name)
                 }}
                 data-id={`dropdown-item-${name}`}

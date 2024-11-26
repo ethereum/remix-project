@@ -72,7 +72,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       return !(el.key === '' && el.type === 'folder')
     })
 
-    if (focus[0].key === 'contextMenu') {
+    if (focus?.length && focus[0].key === 'contextMenu') {
       return true
     }
 

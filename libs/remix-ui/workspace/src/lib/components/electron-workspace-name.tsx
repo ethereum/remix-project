@@ -23,14 +23,21 @@ export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
 
   return (
     (dir === undefined || dir === '') ? <></> :
-      <div className="d-flex align-items-baseline">
+      <div className="d-flex align-items-baseline mt-2">
         <CustomTooltip
           placement="bottom"
           tooltipId="workspace-name"
           tooltipClasses="text-nowrap"
           tooltipText={dir}
         >
-          <div>{parsePath()}</div>
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              flexGrow: 1,
+            }}
+
+          >{parsePath()}</div>
         </CustomTooltip>
         <CustomTooltip
           placement="top"

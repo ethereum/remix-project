@@ -10,4 +10,5 @@ export type CustomTooltipType = {
   tooltipTextClasses?: string
   delay?: OverlayDelay
   hide?: boolean
+  show?: boolean
 }

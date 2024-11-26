@@ -246,7 +246,7 @@ remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWork
 2. `compilerConfig` - Custom compiler configuration
 * `currentCompilerUrl: URL to load compiler from`
 * `evmVersion: EVM name`
-* `optimize: set true to enable optimizartion`
+* `optimize: set true to enable optimization`
 * `usingWorker?: set true to load compiler using worker`
 * `runs: number of contract runs`
 3. `testCallback(object)` - Called each time there is a test event. 3 possible type of objects:
@@ -269,7 +269,7 @@ For more details, see parameters' type definitions [here](src/types.ts).
 
 Please feel free to open an issue or a pull request. 
 
-In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
+In case you want to add a code, do have a look to our contribution guidelines [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
 
 ### License
 MIT © 2018-21 Remix Team

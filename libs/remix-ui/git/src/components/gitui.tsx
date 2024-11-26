@@ -31,7 +31,7 @@ import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
 import { Disabled } from './disabled'
-import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
+import { appActionTypes, AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { Version } from './panels/version'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
@@ -113,13 +113,19 @@ export const GitUI = (props: IGitUi) => {
     })
 
     let needsInit = false
-    if (!(gitState.currentBranch && gitState.currentBranch.name !== '') && gitState.currentHead === '') {
+    if (!(gitState.currentBranch && gitState.currentBranch.name !== '') && (!gitState.currentHead || gitState.currentHead === '')) {
       needsInit = true
     }
 
     setNeedsInit(needsInit)
+    appContext.appStateDispatch({ type: appActionTypes.setNeedsGitInit, payload: needsInit })
+    appContext.appStateDispatch({ type: appActionTypes.setCurrentBranch, payload: gitState.currentBranch || null })
 
   }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken, gitState.currentHead])
+
+  useEffect(() => {
+    appContext.appStateDispatch({ type: appActionTypes.setCanUseGit, payload: gitState.canUseApp })
+  },[gitState.canUseApp])
 
   useEffect(() => {
     const panelName = Object.keys(gitUIPanels)

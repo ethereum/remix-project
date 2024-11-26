@@ -61,9 +61,9 @@ export const LookupView = () => {
   }
 
   const sendToMatomo = async (eventAction: string, eventName: string) => {
-    await clientInstance.call('matomo' as any, 'track', ['trackEvent', 'ContractVerification', eventAction, eventName]);
+    await clientInstance.call('matomo' as any, 'track', ['trackEvent', 'ContractVerification', eventAction, eventName])
   }
-  
+
   const handleOpenInRemix = async (lookupResponse: LookupResponse) => {
     for (const source of lookupResponse.sourceFiles ?? []) {
       try {
@@ -74,7 +74,7 @@ export const LookupView = () => {
     }
     try {
       await clientInstance.call('fileManager', 'open', lookupResponse.targetFilePath)
-      await sendToMatomo('lookup', "openInRemix On: " + selectedChain)
+      await sendToMatomo('lookup', 'openInRemix On: ' + selectedChain)
     } catch (err) {
       console.error(`Error focusing file ${lookupResponse.targetFilePath}: ${err.message}`)
     }
@@ -84,20 +84,13 @@ export const LookupView = () => {
     <>
       <form onSubmit={handleLookup}>
         <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
-        <ContractAddressInput
-          label="Contract Address"
-          id="contract-address"
-          contractAddress={contractAddress}
-          setContractAddress={setContractAddress}
-          contractAddressError={contractAddressError}
-          setContractAddressError={setContractAddressError}
-        />
+        <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
         <button type="submit" className="btn w-100 btn-primary" disabled={submitDisabled}>
           Lookup
         </button>
       </form>
       <div className="pt-3">
-        { chainSettings &&
+        {chainSettings &&
           VERIFIERS.map((verifierId) => {
             if (!validConfiguration(chainSettings, verifierId)) {
               return (
@@ -131,8 +124,9 @@ export const LookupView = () => {
 
             return (
               <div key={verifierId} className="pt-4">
-                <div>
-                  <span className="font-weight-bold">{verifierId}</span> <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
+                <div className="d-flex align-items-center">
+                  <span className="font-weight-bold">{verifierId}&nbsp;</span>
+                  <span className="text-secondary d-inline-block text-truncate mw-100">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 </div>
                 {!!loadingVerifiers[verifierId] && (
                   <div className="pt-2 d-flex justify-content-center">
@@ -159,8 +153,7 @@ export const LookupView = () => {
                 )}
               </div>
             )
-          })
-        }
+          })}
       </div>
     </>
   )

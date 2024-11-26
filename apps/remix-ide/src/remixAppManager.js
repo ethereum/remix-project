@@ -25,6 +25,7 @@ let requiredModules = [
   'blockchain',
   'web3Provider',
   'scriptRunner',
+  'scriptRunnerBridge',
   'fetchAndCompile',
   'mainPanel',
   'hiddenPanel',
@@ -78,7 +79,6 @@ let requiredModules = [
   // 'doc-gen',
   'remix-templates',
   'remixAID',
-  'remixAI',
   'solhint',
   'dgit',
   'pinnedPanel',
@@ -108,6 +108,10 @@ const isInjectedProvider = (name) => {
 
 const isVM = (name) => {
   return name.startsWith('vm')
+}
+
+const isScriptRunner = (name) => {
+  return name.startsWith('scriptRunner')
 }
 
 export function isNative(name) {
@@ -141,9 +145,10 @@ export function isNative(name) {
     'environmentExplorer',
     'templateSelection',
     'walletconnect',
-    'contract-verification'
+    'contract-verification',
+    'popupPanel'
   ]
-  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
 
 /**
@@ -196,6 +201,8 @@ export class RemixAppManager extends PluginManager {
         }
       }
       await this.toggleActive(name)
+    }else{
+      console.log('cannot deactivate', name)
     }
   }
 
@@ -254,7 +261,7 @@ export class RemixAppManager extends PluginManager {
 
   isRequired(name) {
     // excluding internal use plugins
-    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
+    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
   }
 
   async registeredPlugins() {
@@ -303,6 +310,7 @@ export class RemixAppManager extends PluginManager {
     return plugins.map(plugin => {
       if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
+      //console.log('plugin', plugin)
       return new IframePlugin(plugin)
     })
   }

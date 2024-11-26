@@ -50,26 +50,24 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
-    .pause(5000)
-    .isVisible({
-      selector: 'button[data-testid="popover-close"]',
-      locateStrategy: 'css selector',
-      suppressNotFoundErrors: true,
-      timeout: 3000
-    }, (okVisible) => {
-      console.log('okVisible', okVisible)
-      if (!okVisible.value) {
-        console.log('popover not found')
-      } else {
-        console.log('popover found... closing')
-        browser.click('button[data-testid="popover-close"]')
-      }
+    .perform((done) => {
+      browser.execute(function () {
+        function addStyle(styleString) {
+          const style = document.createElement('style')
+          style.textContent = styleString
+          document.head.append(style)
+        }
+        addStyle(`
+          #popover-content {
+            display:none !important
+          } 
+          .popover-container {
+            display:none !important;
+          }
+        `)
+      }, [], done())
     })
-    .waitForElementNotPresent({
-      selector: 'button[data-testid="popover-close"]',
-      locateStrategy: 'css selector',
-      timeout: 3000
-    })
+
     .saveScreenshot('./reports/screenshots/metamask.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks

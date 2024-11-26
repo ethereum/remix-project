@@ -62,6 +62,9 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 editInstance={props.editInstance}
                 solcVersion={props.solcVersion}
                 getVersion={props.getVersion}
+                getCompilerDetails={props.getCompilerDetails}
+                runTabState={props.runTabState}
+                evmCheckComplete={props.evmCheckComplete}
               />
             )
           })}

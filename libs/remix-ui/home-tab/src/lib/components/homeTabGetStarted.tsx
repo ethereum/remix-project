@@ -171,7 +171,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                   <button
                     key={index}
                     className={index === 0 ?
-                      'btn btn-primary border p-2 text-nowrap mr-3 mb-2' :
+                      'btn btn-primary border p-2 text-nowrap mr-3 mb-3' :
                       index === workspaceTemplates.length - 1 ?
                         'btn border p-2 text-nowrap mr-2 mb-3' :
                         'btn border p-2 text-nowrap mr-3 mb-3'
