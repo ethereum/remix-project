@@ -145,7 +145,8 @@ export function isNative(name) {
     'environmentExplorer',
     'templateSelection',
     'walletconnect',
-    'contract-verification'
+    'contract-verification',
+    'popupPanel'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
