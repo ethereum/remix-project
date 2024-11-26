@@ -177,12 +177,12 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         disabled: true,
         title:
         ['sol', 'vyper', 'lexon', 'contract'].includes(loadType) ? (
-            <FormattedMessage id="udapp.contractOptionsTitle3" />
-          ) : (
-            <span className="text-start">
-              <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
-            </span>
-          ),
+          <FormattedMessage id="udapp.contractOptionsTitle3" />
+        ) : (
+          <span className="text-start">
+            <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
+          </span>
+        ),
       })
     }
   }
