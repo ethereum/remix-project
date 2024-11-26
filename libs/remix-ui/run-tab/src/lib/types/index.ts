@@ -82,7 +82,7 @@ export interface RunTabState {
       }[]
     },
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    loadType: 'abi' | 'sol' | 'other'
+    loadType: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other'
     currentFile: string,
     compilationSource: string,
     currentContract: string,
@@ -243,7 +243,7 @@ export interface ContractDropdownProps {
   contracts: {
     contractList: ContractList,
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    loadType: 'abi' | 'sol' | 'other',
+    loadType: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other',
     currentFile: string,
     compilationSource: string
     currentContract: string,
