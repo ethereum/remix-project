@@ -156,7 +156,7 @@ export const setupEvents = (plugin: RunTab) => {
     if (/.(.abi)$/.exec(currentFile)) dispatch(setLoadType('abi'))
     else if (/.(.sol)$/.exec(currentFile)) dispatch(setLoadType('sol'))
     else if (/.(.vy)$/.exec(currentFile)) dispatch(setLoadType('vyper'))
-    else if (/.(.lex)$/.exec(currentFile)) dispatch(setLoadType('lexon')) 
+    else if (/.(.lex)$/.exec(currentFile)) dispatch(setLoadType('lexon'))
     else if (/.(.contract)$/.exec(currentFile)) dispatch(setLoadType('contract'))
     else dispatch(setLoadType('other'))
     dispatch(setCurrentFile(currentFile))
