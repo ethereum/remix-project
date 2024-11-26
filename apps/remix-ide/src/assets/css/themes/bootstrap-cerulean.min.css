@@ -3132,7 +3132,8 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 .custom-control-label {
     position:relative;
     margin-bottom:0;
-    vertical-align:top
+    vertical-align:top;
+    padding-top: 0.15rem;
 }
 .custom-control-label::before {
     position:absolute;

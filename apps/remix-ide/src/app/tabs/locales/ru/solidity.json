@@ -16,7 +16,7 @@
   "solidity.compilationDetails": "Подробности компиляции",
   "solidity.language": "Язык",
   "solidity.evmVersion": "Версия EVM",
-  "solidity.enableOptimization": "Включить оптимизацию",
+  "solidity.enableOptimization": "Оптимизация",
   "solidity.useConfigurationFile": "Использовать файл настроек",
   "solidity.change": "Изменить",
   "solidity.compile": "Скомпилировать",

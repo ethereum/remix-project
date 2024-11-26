@@ -156,6 +156,9 @@ html, body, #root, main {
   margin-left: 2%;
   cursor: pointer;
 }
+.remixui_resultsBtn :hover {
+  filter: brightness(0.8);
+}
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

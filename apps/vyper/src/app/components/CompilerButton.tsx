@@ -28,16 +28,16 @@ function CompilerButton({ contract, setOutput, compilerUrl, resetCompilerState, 
   return (
     <Fragment>
       <CustomTooltip
-      placement="auto"
-      tooltipId="overlay-tooltip-compile"
-      tooltipText={contract}
-    >
+        placement="auto"
+        tooltipId="overlay-tooltip-compile"
+        tooltipText={contract}
+      >
         <button data-id="compile"
           onClick={async () => {
             setLoadingSpinnerState(true)
             await compileContract(contract, compilerUrl, setOutput, setLoadingSpinnerState)
           }}
-          className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled mb-1 mt-3"
+          className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled"
         >
           <div className="d-flex align-items-center justify-content-center fa-1x">
             <span className={ loadingSpinner ? 'fas fa-sync fa-pulse mr-1' : 'fas fa-sync mr-1'} />
