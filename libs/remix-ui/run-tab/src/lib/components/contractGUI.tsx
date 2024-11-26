@@ -227,7 +227,7 @@ export function ContractGUI(props: ContractGUIProps) {
 
   const handleActionClick = async () => {
     props.getVersion()
-    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')  || props.runTabState.contracts.loadType !== 'sol') {
+    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider') || props.runTabState.contracts.loadType !== 'sol') {
       await handleDeploy()
     } else {
       const status = await props.getCompilerDetails()
