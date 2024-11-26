@@ -39,7 +39,7 @@ async function tryTillReceiptAvailable(txhash: Bytes) {
       if (!receipt.to && !receipt.contractAddress) {
         // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
         console.log(
-          'this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...'
+          'this is a contract creation and the receipt does not contain a contract address. we have to keep polling...'
         );
         return receipt;
       } else return receipt;
