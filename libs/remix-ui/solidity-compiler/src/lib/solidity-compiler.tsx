@@ -280,8 +280,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           setConfigFilePath={setConfigFilePath}
           solJsonBinData={state.solJsonBinData}
         />
-
-        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && (
+        {/* "compileErrors[currentFile]['contracts']" field will not be there in case of compilation errors */}
+        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && compileErrors[currentFile]['contracts'] && (
           <ContractSelection
             api={api}
             compiledFileName={currentFile}
