@@ -26,7 +26,7 @@ export const RemixUiTerminal = (props: any) => {
   const messagesEndRef = useRef<any>(null);
   const typeWriterIndexes = useRef<any>([]);
 
-  // terminal dragable
+  // terminal draggable
   const panelRef = useRef(null);
   const terminalMenu = useRef(null);
 

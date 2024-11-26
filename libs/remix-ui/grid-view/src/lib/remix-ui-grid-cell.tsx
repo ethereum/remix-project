@@ -59,7 +59,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     console.log('expand ----> ', key)
   }
 
-  // The expanded widged should go to the grid-segment and be updated based on the expandedItem state variable of the plugin.
+  // The expanded widget should go to the grid-segment and be updated based on the expandedItem state variable of the plugin.
   // The state var will work like theme dispattching is working.
 
   useEffect(() => {
