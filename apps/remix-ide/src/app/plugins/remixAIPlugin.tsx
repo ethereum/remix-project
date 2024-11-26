@@ -235,8 +235,6 @@ export class RemixAIPlugin extends ViewPlugin {
       data-id='aichat-view'
       style={{
         minHeight: 'max-content',
-        maxWidth: '25rem',
-        width: '24rem',
       }}
     >
       <PluginViewWrapper plugin={this} />
