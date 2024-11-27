@@ -11,7 +11,7 @@ When you add code in any library, please ensure you add related unit tests.
 
 Please conform to [standard](https://standardjs.com/) for code styles.
 
-## Submitting Pull Request
+## Submitting Pull Requests
 Please follow GitHub's standard model of making changes & submitting pull request which is very well explained [here](https://guides.github.com/activities/forking/). Make sure your code works fine locally before submitting a pull request.
 
 ## Internationalization
