@@ -9,6 +9,7 @@ import { getVerifier } from '../Verifiers'
 import { useNavigate } from 'react-router-dom'
 import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 export const LookupView = () => {
   const { settings, clientInstance } = useContext(AppContext)
@@ -140,7 +141,7 @@ export const LookupView = () => {
                       <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
                         {lookupResults[verifierId].status}
                       </span>{' '}
-                      {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
+                      {!!lookupResults[verifierId].lookupUrl && verifierId === 'Blockscout' ? <CopyToClipboard tip="Copy code URL" content={lookupResults[verifierId].lookupUrl} direction="top" /> : !!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
                     </div>
                     {!!lookupResults[verifierId].sourceFiles && lookupResults[verifierId].sourceFiles.length > 0 && (
                       <div className="pt-2 d-flex flex-row justify-content-center">
