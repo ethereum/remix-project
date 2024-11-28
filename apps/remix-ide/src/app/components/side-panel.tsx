@@ -12,7 +12,7 @@ const sidePanel = {
   displayName: 'Side Panel',
   description: 'Remix IDE side panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView', 'focus']
+  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView', 'focus', 'showContent']
 }
 
 export class SidePanel extends AbstractPanel {
