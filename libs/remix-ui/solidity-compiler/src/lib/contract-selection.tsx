@@ -280,6 +280,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
       ws.addEventListener('message', async (event) => {
         const data = JSON.parse(event.data)
+        console.log('data-msg from sscan-->', data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
           // Message on Bearer token successful registration
           const reqToInitScan = {
@@ -306,12 +307,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             okLabel: 'Close'
           }
           await plugin.call('notification', 'modal', modal)
+          ws.close()
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          console.log('data-scan result after download-->', scanData)
           const scanReport: ScanReport = scanData.scan_report
           if (scanReport?.multi_file_scan_details?.length) {
             for (const template of scanReport.multi_file_scan_details) {
@@ -336,7 +339,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             }
             await plugin.call('notification', 'modal', modal)
           }
-
+          ws.close()
         }
       })
     }
