@@ -112,7 +112,7 @@
   "udapp.llIError4": "The calldata should be a valid hexadecimal value.",
   "udapp.llIError5": "'Fallback' function is not defined",
   "udapp.llIError6": "Both 'receive' and 'fallback' functions are not defined",
-  "udapp.llIError7": "Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers",
+  "udapp.llIError7": "Please define a 'Fallback' function to send calldata and an either 'Receive' or payable 'Fallback' to send ethers",
   "udapp.copy": "Copy",
 
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
