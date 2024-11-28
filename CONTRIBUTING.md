@@ -20,7 +20,7 @@ Remix now supports Internationalization. Everyone is welcome to contribute to th
 ### How to make a string support intl?
 First, put the string in the locale file located under `apps/remix-ide/src/app/tabs/locales/en`.
 Each json file corresponds to a module. If the module does not exist, then create a new json and import it in the `index.js`.
-Then you can replace the string with a intl component. The `id` prop will be the key of this string.
+Then you can replace the string with an intl component. The `id` prop will be the key of this string.
 ```jsx
 <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>
 -  Learn
