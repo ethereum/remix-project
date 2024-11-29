@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ThemeModule } from '../../types/theme-module'
+import './remix-ui-theme-module.module.css'
 
 /* eslint-disable-next-line */
 export interface RemixUiThemeModuleProps {
