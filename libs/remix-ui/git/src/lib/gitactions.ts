@@ -41,7 +41,7 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 
 export const init = async () => {
   await sendToMatomo(gitMatomoEventTypes.INIT)
-  await plugin.call('dgitApi', "init");
+  await plugin.call('dgitApi', 'init');
   dispatch(setTimestamp(Date.now()))
   await getBranches();
 }
@@ -201,7 +201,7 @@ export const commit = async (message: string = "") => {
 
     sendToGitLog({
       type: 'success',
-      message: `Commited: ${sha}`
+      message: `Committed: ${sha}`
     })
 
   } catch (err) {
@@ -577,7 +577,7 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
         await plugin.call('notification', 'alert', {
           title: 'Error',
           id: 'github-credentials-error',
-          message: `Could not retreive the user from GitHub. You can continue to use the app, but you will not be able to push or pull.`
+          message: `Could not retrieve the user from GitHub. You can continue to use the app, but you will not be able to push or pull.`
         })
       }
       dispatch(setGitHubUser({

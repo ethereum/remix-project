@@ -45,11 +45,12 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async onActivation(): Promise<void> {
     this.onload(() => {
+      this.emit('activated')
     })
   }
 
   async enable (){
-    console.log('Remix AI desktop plugin enabled')
+    console.log('RemixAI desktop plugin enabled')
     this.emit('enabled')
   }
 
@@ -81,9 +82,9 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     return true
   }
 
-  async code_completion(context: any) {
+  async code_completion(prompt: string, promptAfter: string) {
     // use general purpose model
-    return this.desktopInferencer.code_completion(context)
+    return this.desktopInferencer.code_completion(prompt, promptAfter)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string) {

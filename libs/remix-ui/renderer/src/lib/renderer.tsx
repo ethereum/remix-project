@@ -90,7 +90,11 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
       const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
-      await plugin.call('remixAI', 'error_explaining', message)
+
+      await plugin.call('popupPanel', 'showPopupPanel', true)
+      setTimeout(async () => {
+        await plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
+      }, 500)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'error_explaining_SolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
@@ -122,7 +126,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
             >
             </span>
             <span
-              className="button border text-ai btn-sm"
+              className="button border ask-remix-ai-button text-ai btn-sm"
               onClick={(event) => { event.preventDefault(); askGtp() }}
               style={{ borderColor: "var(--ai)" }}
             >
