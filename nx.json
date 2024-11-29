@@ -58,5 +58,6 @@
       }
     }
   },
-  "$schema": "./node_modules/nx/schemas/nx-schema.json"
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "nxCloudAccessToken": "NDI1MzkwYmYtN2E5Yy00ZjkxLWExOGUtOGE5YjRkZGUxNmQyfHJlYWQtd3JpdGU="
 }
