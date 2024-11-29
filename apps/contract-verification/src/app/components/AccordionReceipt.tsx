@@ -88,7 +88,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
   return (
     <ul className="list-group">
       {receipts.map((receipt) => (
-        <li key={`${receipt.contractId}-${receipt.verifierInfo.name}${receipt.isProxyReceipt ? '-proxy' : ''}-${receipt.receiptId}`} className="list-group-item">
+        <li key={`${receipt.contractId}-${receipt.verifierInfo.name}${receipt.isProxyReceipt ? '-proxy' : ''}-${receipt.receiptId}`} className="list-group-item d-flex flex-row align-items-center">
           <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
             <span className="font-weight-bold medium">{receipt.verifierInfo.name}</span>
           </CustomTooltip>
@@ -97,7 +97,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             <span className="ml-2">{['verified', 'partially verified', 'already verified'].includes(receipt.status) ? <i className="fas fa-check"></i> : receipt.status === 'fully verified' ? <i className="fas fa-check-double"></i> : receipt.status === 'failed' ? <i className="fas fa-xmark"></i> : ['pending', 'awaiting implementation verification'].includes(receipt.status) ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-question"></i>}</span>
           </CustomTooltip>
 
-          <span className="ml-2">{!!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}</span>
+          <div className="ml-2">{!!receipt.lookupUrl && receipt.verifierInfo.name === 'Blockscout' ? <CopyToClipboard tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> : !!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}</div>
         </li>
       ))}
     </ul>
