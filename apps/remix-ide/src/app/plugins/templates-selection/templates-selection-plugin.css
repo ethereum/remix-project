@@ -8,5 +8,5 @@
 .badgeForCell {
   max-width: fit-content;
   padding-right: 0.5rem;
-  font-size: smaller;
+  font-size: small;
 }
