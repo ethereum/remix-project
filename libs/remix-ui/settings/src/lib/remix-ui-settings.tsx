@@ -244,7 +244,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               checked={isMetadataChecked}
             />
             <label
-              className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`}
               data-id="settingsTabGenerateContractMetadataLabel"
               htmlFor="generatecontractmetadata"
             >
@@ -260,14 +260,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
-            <label className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
               <FormattedMessage id="settings.wordWrapText" />
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
             <label
-              className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/auto-completion')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`}
               data-id="settingsAutoCompleteLabel"
               htmlFor="settingsUseAutoComplete"
             >
@@ -279,7 +279,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
             <label
-              className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/show-gas')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`}
               data-id="settingsShowGasLabel"
               htmlFor="settingsUseShowGas"
             >
@@ -291,7 +291,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
             <label
-              className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/display-errors')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}
               data-id="displayErrorsLabel"
               htmlFor="settingsDisplayErrors"
             >
@@ -302,7 +302,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
-            <label className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <FormattedMessage id="settings.enablePersonalModeText" />
               <CustomTooltip
                 placement="auto"
@@ -315,7 +315,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
-            <label data-id="label-matomo-settings" className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
+            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
               <span>
                 <FormattedMessage id="settings.matomoAnalytics" />
               </span>
@@ -339,7 +339,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" data-id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEvmStateChecked} />
             <label
-              className={`form-check-label checkbox-text-align custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
               data-id="settingsEnableSaveEnvStateLabel"
               htmlFor="settingsEnableSaveEnvState"
             >
@@ -488,7 +488,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="text-secondary mb-0 h6">
             <div>
               <div className="mb-1">
-                <label className={`form-check-label checkbox-text-align align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
+                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
                 </label>
                 <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />
@@ -501,7 +501,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="text-secondary mb-0 h6">
             <div>
               <div className="mb-1">
-                <label className={`form-check-label checkbox-text-align align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
+                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
                 </label>
                 <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />
