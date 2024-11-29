@@ -6,7 +6,6 @@ const _paq = (window._paq = window._paq || [])
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { labels, textDark, textSecondary } from './constants'
 
-import './remix-ui-settings.css'
 import {
   generateContractMetadat,
   personal,
