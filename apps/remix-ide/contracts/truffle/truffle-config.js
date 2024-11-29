@@ -1,1 +1,0 @@
-// simulate a hardhat project
