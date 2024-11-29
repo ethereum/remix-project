@@ -3,11 +3,13 @@ import { AbstractVerifier } from './AbstractVerifier'
 import { BlockscoutVerifier } from './BlockscoutVerifier'
 import { EtherscanVerifier } from './EtherscanVerifier'
 import { SourcifyVerifier } from './SourcifyVerifier'
+import { RoutescanVerifier } from './RoutescanVerifier'
 
 export { AbstractVerifier } from './AbstractVerifier'
 export { BlockscoutVerifier } from './BlockscoutVerifier'
 export { SourcifyVerifier } from './SourcifyVerifier'
 export { EtherscanVerifier } from './EtherscanVerifier'
+export { RoutescanVerifier } from './RoutescanVerifier'
 
 export function getVerifier(identifier: VerifierIdentifier, settings: VerifierSettings): AbstractVerifier {
   switch (identifier) {
@@ -26,5 +28,7 @@ export function getVerifier(identifier: VerifierIdentifier, settings: VerifierSe
     return new EtherscanVerifier(settings.apiUrl, settings.explorerUrl, settings.apiKey)
   case 'Blockscout':
     return new BlockscoutVerifier(settings.apiUrl)
+  case 'Routescan':
+    return new RoutescanVerifier(settings.apiUrl, settings.explorerUrl, settings.apiKey)
   }
 }

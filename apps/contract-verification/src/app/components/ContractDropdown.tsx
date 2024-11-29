@@ -43,7 +43,12 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
-      <select value={selectedContract ? JSON.stringify(selectedContract) : ''} className={`form-control custom-select pr-4 ${!hasContracts ? 'disabled-cursor' : ''} ${!hasContracts ? 'text-muted' : ''}`} id={id} disabled={!hasContracts} onChange={handleSelectContract}>
+      <select value={selectedContract ? JSON.stringify(selectedContract) : ''}
+        className={`form-control custom-select pr-4 ${!hasContracts ? 'disabled-cursor text-warning' : ''}`}
+        id={id}
+        disabled={!hasContracts}
+        onChange={handleSelectContract}
+      >
         {hasContracts ? (
           Object.keys(compilationOutput).map((compilationTriggerFileName) => (
             <optgroup key={compilationTriggerFileName} label={`Compilation trigger: ${compilationTriggerFileName}`}>

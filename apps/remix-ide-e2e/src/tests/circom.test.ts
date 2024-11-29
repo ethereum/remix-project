@@ -5,6 +5,7 @@ import init from '../helpers/init'
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.globals.asyncHookTimeout = 30000000; 
     init(browser, done)
   },
 
@@ -195,7 +196,7 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(7000)
+      .pause(10000)
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')

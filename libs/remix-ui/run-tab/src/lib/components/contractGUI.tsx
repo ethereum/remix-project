@@ -6,6 +6,7 @@ import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
+import { getCompatibleChains, isChainCompatible, isChainCompatibleWithAnyFork } from '../actions/evmmap'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -31,6 +32,7 @@ export function ContractGUI(props: ContractGUIProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
+
   const intl = useIntl()
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
@@ -171,8 +173,7 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }
 
-  const handleActionClick = async () => {
-    props.getVersion()
+  const handleDeploy = async () => {
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
@@ -221,6 +222,28 @@ export function ContractGUI(props: ContractGUIProps) {
       }
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
+    }
+  }
+
+  const handleActionClick = async () => {
+    props.getVersion()
+    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider') || props.runTabState.contracts.loadType !== 'sol') {
+      await handleDeploy()
+    } else {
+      const status = await props.getCompilerDetails()
+      if (status === 'Not Found') {
+        await handleDeploy()
+        return
+      }
+      const tabState = props.runTabState
+      const compilerState = await props.plugin.call('solidity', 'getCompilerState')
+      const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'cancun', parseInt(tabState.chainId))
+      if (status === 'Passed' && IsCompatible) {
+        await handleDeploy()
+      } else {
+        // Show log in browser console in case of failure due to unknown reasons
+        console.log('Failed to run because of EVM version incomaptibility or some other compiler issue')
+      }
     }
   }
 

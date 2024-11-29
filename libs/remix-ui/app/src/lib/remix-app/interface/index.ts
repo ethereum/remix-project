@@ -1,4 +1,4 @@
-import { GitHubUser } from '@remix-api'
+import { branch, GitHubUser } from '@remix-api'
 import { AppModalCancelTypes, ModalTypes } from '../types'
 
 export type ValidationResult = {
@@ -49,5 +49,9 @@ export interface forceChoiceModal {
 
 export interface AppState {
     gitHubUser: GitHubUser
+    currentBranch: branch
+    needsGitInit: boolean
+    canUseGit: boolean
+    showPopupPanel: boolean
 }
 

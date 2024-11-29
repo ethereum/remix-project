@@ -1,1 +1,0 @@
-export { DefaultLayout } from "./Default"

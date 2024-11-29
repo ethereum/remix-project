@@ -13,7 +13,7 @@ import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
 
 export const VerifyView = () => {
-  const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
+  const { compilationOutput, setSubmittedContracts, settings, clientInstance } = useContext(AppContext)
   const { selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError } = useContext(VerifyFormContext)
   const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
   const [hasProxy, setHasProxy] = useState(!!proxyAddress)
@@ -41,6 +41,10 @@ export const VerifyView = () => {
     setEnabledVerifiers({ ...enabledVerifiers, [verifierId]: checked })
   }
 
+  const sendToMatomo = async (eventAction: string, eventName: string) => {
+    await clientInstance.call("matomo" as any, 'track', ['trackEvent', 'ContractVerification', eventAction, eventName]);
+  }
+
   const handleVerify = async (e) => {
     e.preventDefault()
 
@@ -63,6 +67,7 @@ export const VerifyView = () => {
         name: verifierId as VerifierIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
+      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${hasProxy && proxyAddress}`)
     }
 
     const newSubmittedContract: SubmittedContract = {
@@ -173,13 +178,24 @@ export const VerifyView = () => {
   return (
     <form onSubmit={handleVerify}>
       <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
-
-      <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
-
-      <ContractDropdown label="Contract Name" id="contract-dropdown-1" selectedContract={selectedContract} setSelectedContract={setSelectedContract} />
-
-      {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} abiEncodingError={abiEncodingError} setAbiEncodingError={setAbiEncodingError} />}
-
+      <ContractAddressInput
+        label="Contract Address"
+        id="contract-address"
+        contractAddress={contractAddress}
+        setContractAddress={setContractAddress}
+        contractAddressError={contractAddressError}
+        setContractAddressError={setContractAddressError}
+      />
+      <CustomTooltip tooltipText="Please compile and select the solidity contract you need to verify.">
+        <ContractDropdown label="Contract Name" id="contract-dropdown-1" selectedContract={selectedContract} setSelectedContract={setSelectedContract} />
+      </CustomTooltip>
+      {selectedContract && <ConstructorArguments
+        abiEncodedConstructorArgs={abiEncodedConstructorArgs}
+        setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs}
+        selectedContract={selectedContract}
+        abiEncodingError={abiEncodingError}
+        setAbiEncodingError={setAbiEncodingError}
+      />}
       <div className="pt-3">
         <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
           <input id="has-proxy" className="form-check-input custom-control-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
@@ -187,7 +203,14 @@ export const VerifyView = () => {
             The deployed contract is behind a proxy
           </label>
         </div>
-        {hasProxy && <ContractAddressInput label="Proxy Address" id="proxy-address" contractAddress={proxyAddress} setContractAddress={setProxyAddress} contractAddressError={proxyAddressError} setContractAddressError={setProxyAddressError} />}
+        {hasProxy && <ContractAddressInput
+          label="Proxy Address"
+          id="proxy-address"
+          contractAddress={proxyAddress}
+          setContractAddress={setProxyAddress}
+          contractAddressError={proxyAddressError}
+          setContractAddressError={setProxyAddressError}
+        />}
       </div>
 
       <div className="pt-3">
@@ -198,9 +221,19 @@ export const VerifyView = () => {
           return (
             <div key={verifierId} className="pt-2">
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                <input className="form-check-input custom-control-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={disabledVerifier} />
-
-                <label htmlFor={`verifier-${verifierId}`} className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }}>
+                <input
+                  className="form-check-input custom-control-input"
+                  type="checkbox"
+                  id={`verifier-${verifierId}`}
+                  checked={!!enabledVerifiers[verifierId]}
+                  onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)}
+                  disabled={disabledVerifier}
+                />
+                <label
+                  htmlFor={`verifier-${verifierId}`}
+                  className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}
+                  style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }}
+                >
                   {verifierId}
                 </label>
               </div>
@@ -220,17 +253,24 @@ export const VerifyView = () => {
                     </span>
                   </CustomTooltip>
                 ) : (
-                  <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
+                  <span className="text-secondary d-inline-block text-truncate mw-100">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 )}
               </div>
             </div>
           )
         })}
       </div>
-
-      <button type="submit" className="btn btn-primary mt-3" disabled={submitDisabled}>
-        Verify
-      </button>
+      <CustomTooltip tooltipText={submitDisabled ? (
+        (!!contractAddressError || !contractAddress) ? "Please provide a valid contract address." :
+          !selectedChain ? "Please select the chain." :
+            !selectedContract ? "Please select the contract (compile if needed)." :
+              ((hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)) ? "Please provide a valid proxy contract address." :
+                "Please provide all necessary data to verify") // Is not expected to be a case
+        : "Verify with selected tools"}>
+        <button type="submit" className="w-100 btn btn-primary mt-3" disabled={submitDisabled}>
+          Verify
+        </button>
+      </CustomTooltip>
     </form>
   )
 }
