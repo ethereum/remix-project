@@ -5,6 +5,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { onLineContext } from '@remix-ui/app'
+const _paq = (window._paq = window._paq || [])
+
 interface PluginCardProps {
   profile: any
   buttonText: string
@@ -37,20 +39,29 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
               {profile?.maintainedBy?.toLowerCase() == 'remix' ? (
                 <CustomTooltip
                   placement="right"
-                  tooltipId="pluginManagerInactiveTitleByRemix"
+                  tooltipId="pluginManagerActiveTitleByRemix"
                   tooltipClasses="text-nowrap"
                   tooltipText={<FormattedMessage id="pluginManager.maintainedByRemix" />}
                 >
                   <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
                 </CustomTooltip>)
-                : (<CustomTooltip
-                  placement="right"
-                  tooltipId="pluginManagerInactiveTitleExternally"
-                  tooltipClasses="text-nowrap"
-                  tooltipText={<FormattedMessage id="pluginManager.maintainedExternally" />}
-                >
-                  <i aria-hidden="true" className="px-1 text-warning far fa-exclamation-circle"></i>
-                </CustomTooltip>)
+                : profile?.maintainedBy ? (
+                  <CustomTooltip
+                    placement="right"
+                    tooltipId="pluginManagerActiveTitleByRemix"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={"Maintained by " + profile?.maintainedBy}
+                  >
+                    <i aria-hidden="true" className="px-1 text-secondary far fa-exclamation-circle"></i>
+                  </CustomTooltip>)
+                  : (<CustomTooltip
+                    placement="right"
+                    tooltipId="pluginManagerActiveTitleExternally"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={<FormattedMessage id="pluginManager.maintainedExternally" />}
+                  >
+                    <i aria-hidden="true" className="px-1 text-secondary far fa-exclamation-circle"></i>
+                  </CustomTooltip>)
               }
               {profile.documentation && (
                 <CustomTooltip
@@ -94,6 +105,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                 {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({ id: 'pluginManager.UnavailableOffline' })}</button> : (
                   <button
                     onClick={() => {
+                      _paq.push(['trackEvent', 'pluginManager', 'activateBtn', 'activate btn' + profile.name])
                       activatePlugin(profile.name)
                     }}
                     className="btn btn-success btn-sm"

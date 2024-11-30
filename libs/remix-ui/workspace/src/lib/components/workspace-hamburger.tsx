@@ -100,6 +100,17 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       ></HamburgerMenuItem>
       <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
       <HamburgerMenuItem
+        kind="localFileSystem"
+        fa="far fa-desktop"
+        hideOption={hideWorkspaceOptions}
+        actionOnClick={() => {
+          props.handleRemixdWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
+      <HamburgerMenuItem
         kind={selectedWorkspace.isGist ? "updateGist" : "publishToGist"}
         fa="fab fa-github"
         hideOption={hideWorkspaceOptions || hideLocalhostOptions}
@@ -136,17 +147,6 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.restoreBackup()
-          props.hideIconsMenu(!showIconsMenu)
-        }}
-        platforms={[appPlatformTypes.web]}
-      ></HamburgerMenuItem>
-      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-      <HamburgerMenuItem
-        kind="localFileSystem"
-        fa="far fa-desktop"
-        hideOption={hideWorkspaceOptions}
-        actionOnClick={() => {
-          props.handleRemixdWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web]}

@@ -1,13 +1,11 @@
 {
-    "version": "v0.54.0",
+    "version": "v0.57.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Login to GitHub from 'File Explorer'",
-    "highlight2": "Added Cookbook workspace templates",
-    "highlight3": "Added 'sendRawTransaction' API to remix-simulator",
+    "highlight1": "RemixAI, the new Web3 AI Assistant",
+    "highlight2": "New Script Configuration plugin",
+    "highlight3": "Routescan added to the Contract Verification plugin",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-54-0-021575d54849?source=friends_link&sk=e3960ba90994b63993987b007ee3ac63"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-57-0-3c550f26f2d0?source=friends_link&sk=d713cd9ea5840454d8e8c03dbfb86f93"
   }
-  
-
   

@@ -1,0 +1,69 @@
+{
+  "name": "contract-verification",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/contract-verification/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/contract-verification",
+        "index": "apps/contract-verification/src/index.html",
+        "baseHref": "./",
+        "main": "apps/contract-verification/src/main.tsx",
+        "polyfills": "apps/contract-verification/src/polyfills.ts",
+        "tsConfig": "apps/contract-verification/tsconfig.app.json",
+        "assets": [
+          "apps/contract-verification/src/favicon.ico",
+          "apps/contract-verification/src/assets",
+          "apps/contract-verification/src/profile.json"
+        ],
+        "styles": ["apps/contract-verification/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "apps/contract-verification/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/contract-verification/src/environments/environment.ts",
+              "with": "apps/contract-verification/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/contract-verification/**/*.ts"],
+        "eslintConfig": "apps/contract-verification/.eslintrc"
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "contract-verification:build",
+        "hmr": true,
+        "baseHref": "/"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "contract-verification:build:development",
+          "port": 5003
+        },
+        "production": {
+          "buildTarget": "contract-verification:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

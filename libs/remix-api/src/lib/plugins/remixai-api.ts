@@ -5,9 +5,11 @@ export interface IRemixAI {
   events: {
     onStreamResult(streamText: string): Promise<void>,
     activated(): Promise<void>,
+    onInference():void,
+    onInferenceDone():void,
   } & StatusEvents,
   methods: {
-    code_completion(context: string): Promise<string> 
+    code_completion(context: string): Promise<string>
     code_insertion(msg_pfx: string, msg_sfx: string): Promise<string>,
     code_generation(prompt: string): Promise<string | null>,
     code_explaining(code: string, context?: string): Promise<string | null>,

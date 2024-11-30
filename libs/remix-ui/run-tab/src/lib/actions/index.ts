@@ -2,7 +2,7 @@
 import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents, setEventsDispatch } from './events'
-import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
+import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress, addFileInternal } from './account'
 import { clearInstances, clearPopUp, removeInstance, pinInstance, unpinInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit,
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
@@ -32,6 +32,7 @@ export const initRunTab = (udapp: RunTab, resetEventsAndAccounts: boolean) => as
   }
 }
 
+export const addFile = (path: string, content: string) => addFileInternal(plugin, path, content)
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
 export const setUnitValue = (unit: 'ether' | 'finney' | 'gwei' | 'wei') => setUnit(dispatch, unit)
 export const setGasFeeAmount = (value: number) => setGasFee(dispatch, value)

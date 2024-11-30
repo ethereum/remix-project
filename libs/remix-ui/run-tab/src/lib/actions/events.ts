@@ -46,7 +46,7 @@ export const setupEvents = (plugin: RunTab) => {
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
     // 'contextChanged' & 'networkStatus' both are triggered on workspace & network change
-    // There is chance that pinned contracts state is overrided by othe event
+    // There is chance that pinned contracts state is overridden by other event
     // We load pinned contracts for VM environment in this event
     // and for other environments in 'networkStatus' event
     if (context.startsWith('vm')) await loadPinnedContracts(plugin, dispatch, context)
@@ -153,16 +153,12 @@ export const setupEvents = (plugin: RunTab) => {
   })
 
   plugin.on('fileManager', 'currentFileChanged', (currentFile: string) => {
-    if (/.(.abi)$/.exec(currentFile)) {
-      dispatch(setLoadType('abi'))
-    } else if (/.(.sol)$/.exec(currentFile) ||
-        /.(.vy)$/.exec(currentFile) || // vyper
-        /.(.lex)$/.exec(currentFile) || // lexon
-        /.(.contract)$/.exec(currentFile)) {
-      dispatch(setLoadType('sol'))
-    } else {
-      dispatch(setLoadType('other'))
-    }
+    if (/.(.abi)$/.exec(currentFile)) dispatch(setLoadType('abi'))
+    else if (/.(.sol)$/.exec(currentFile)) dispatch(setLoadType('sol'))
+    else if (/.(.vy)$/.exec(currentFile)) dispatch(setLoadType('vyper'))
+    else if (/.(.lex)$/.exec(currentFile)) dispatch(setLoadType('lexon'))
+    else if (/.(.contract)$/.exec(currentFile)) dispatch(setLoadType('contract'))
+    else dispatch(setLoadType('other'))
     dispatch(setCurrentFile(currentFile))
   })
 

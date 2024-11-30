@@ -1,12 +1,13 @@
-import { Ref } from 'react'
+import { Dispatch, Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
+import { CheckStatus } from '../run-tab'
 export interface RunTabProps {
   plugin: RunTab,
-  initialState: RunTabState
+  initialState?: RunTabState
 }
 
 export interface Contract {
@@ -81,7 +82,7 @@ export interface RunTabState {
       }[]
     },
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    loadType: 'abi' | 'sol' | 'other'
+    loadType: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other'
     currentFile: string,
     compilationSource: string,
     currentContract: string,
@@ -123,7 +124,9 @@ export interface RunTabState {
 }
 
 export interface SettingsProps {
+  runTabPlugin: RunTab,
   selectExEnv: string,
+  EvaluateEnvironmentSelection: any
   accounts: {
     loadedAccounts: Record<string, any>,
     selectedAccount: string,
@@ -145,6 +148,7 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
+  addFile: (path: string, content: string) => void,
   setExecutionContext: (executionContext: { context: string, fork: string }) => void,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
@@ -157,6 +161,8 @@ export interface SettingsProps {
 }
 
 export interface EnvironmentProps {
+  checkSelectionCorrectness: any
+  runTabPlugin: RunTab,
   selectedEnv: string,
   providers: {
     providerList: Provider[],
@@ -180,6 +186,7 @@ export interface AccountProps {
     isSuccessful: boolean,
     error: string
   },
+  addFile: (path: string, content: string) => void,
   setAccount: (account: string) => void,
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
@@ -226,12 +233,17 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
+  getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean,
+  setEvmCheckComplete?: Dispatch<React.SetStateAction<boolean>>,
+  plugin: RunTab,
+  runTabState: RunTabState
   selectedAccount: string,
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    loadType: 'abi' | 'sol' | 'other',
+    loadType: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other',
     currentFile: string,
     compilationSource: string
     currentContract: string,
@@ -290,6 +302,9 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
+  getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean
+  runTabState: RunTabState
   instances: {
     instanceList: {
       contractData?: ContractData,
@@ -371,6 +386,11 @@ export interface DeployOptions {
 }
 
 export interface ContractGUIProps {
+  getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean,
+  setEvmCheckComplete?: React.Dispatch<React.SetStateAction<boolean>>,
+  plugin: RunTab,
+  runTabState: RunTabState
   title?: string,
   funcABI: FuncABI,
   inputs: string,
@@ -410,6 +430,9 @@ export interface MainnetProps {
 }
 
 export interface UdappProps {
+  getCompilerDetails: () => Promise<CheckStatus>
+  evmCheckComplete?: boolean,
+  runTabState: RunTabState
   instance: {
     contractData?: ContractData,
     address: string,

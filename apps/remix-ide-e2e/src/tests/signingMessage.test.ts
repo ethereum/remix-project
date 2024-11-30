@@ -51,7 +51,24 @@ module.exports = {
             })
         })
       })
-      .end()
+  },
+
+  'Test EIP 712 Signature': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('i[id="remixRunSignMsg"]')
+      .click('i[id="remixRunSignMsg"]')
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .click('*[data-id="sign-eip-712"]')
+      .waitForElementVisible('*[data-id="udappNotify-modal-footer-ok-react"]')
+      .modalFooterOKClick('udappNotify')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('"primaryType": "AuthRequest",') !== -1, 'EIP 712 data file must be opened')
+      })
+      .clickLaunchIcon('filePanel')
+      .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
+      .click('*[data-id="contextMenuItemsignTypedData"]')
+      .pause(1000)
+      .journalChildIncludes('0x8be3a81e17b7e4a40006864a4ff6bfa3fb1e18b292b6f47edec95cd8feaa53275b90f56ca02669d461a297e6bf94ab0ee4b7c89aede3228ed5aedb59c7e007501c')
   }
 }
 
