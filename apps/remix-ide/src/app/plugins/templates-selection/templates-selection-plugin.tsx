@@ -176,7 +176,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                       <div>
                         {item.description && <span className='text-dark'>{item.description}</span>}
                       </div>
-                      <div className='d-flex flex-wrap mb-2'>
+                      <div className='d-flex flex-wrap mb-2 pt-2'>
                         {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-primary'>Upgradeable-UUPS</span>}
                         {(item.opts && item.opts.mintable) && <span className='badgeForCell text-success'>mintable</span>}
                         {(item.opts && item.opts.burnable) && <span className='badgeForCell text-danger'>burnable</span>}
