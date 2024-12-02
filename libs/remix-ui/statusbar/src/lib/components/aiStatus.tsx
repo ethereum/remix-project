@@ -24,6 +24,17 @@ export default function AIStatus(props: AIStatusProps) {
 
   }, [])
 
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    // Set a timeout to make UI message disappear after 3 seconds
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const run = async () => {
       props.plugin.on('settings', 'copilotChoiceUpdated', async (isChecked) => {
@@ -66,14 +77,16 @@ export default function AIStatus(props: AIStatusProps) {
           color: 'var(--ai)',
           alignItems: 'self-end',
         }}>
-          <span className='p-1 text-info alert alert-secondary' style={{
-            boxShadow: "0 1px 7px var(--secondary)",
-            zIndex: '200',
-            marginRight: '1.8rem',
-            marginBottom: '-7px'
-          }}>
-              👋 I'm here to help you!
-          </span>
+          { visible &&
+            <span className='p-1 text-info alert alert-secondary' style={{
+              boxShadow: "0 1px 7px var(--secondary)",
+              zIndex: '200',
+              marginRight: '1.8rem',
+              marginBottom: '-7px'
+            }}>
+                👋 I'm here to help you!
+            </span>
+          }
           <button
             style={{
               backgroundColor: 'var(--brand-dark-blue)',
