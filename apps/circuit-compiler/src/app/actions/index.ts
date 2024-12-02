@@ -3,6 +3,7 @@ import type { CircomPluginClient } from "../services/circomPluginClient"
 import { ActionPayloadTypes, AppState, ICircuitAppContext } from "../types"
 import { GROTH16_VERIFIER, PLONK_VERIFIER } from './constant'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
+import isElectron from 'is-electron'
 
 export const compileCircuit = async (plugin: CircomPluginClient, appState: AppState) => {
   try {
@@ -28,7 +29,7 @@ export const computeWitness = async (plugin: CircomPluginClient, appState: AppSt
         const wtns = await snarkjs.wtns.exportJson(witness)
         const wtnsJson = wtns.map(wtn => wtn.toString())
         const fileName = extractNameFromKey(appState.filePath)
-        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.wtn.json')}`
+        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '_js')}/${fileName.replace('.circom', '.wtn.json')}`
 
         await plugin.call('fileManager', 'writeFile', writePath, JSON.stringify(wtnsJson, null, 2))
         plugin._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'wtns.exportJson', writePath])
@@ -116,7 +117,7 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
     const r1csBuffer = await plugin.call('fileManager', 'readFile', r1csPath, { encoding: null })
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer)
-    const wtnsPath = r1csPath.replace('.r1cs', '.wtn')
+    const wtnsPath = isElectron() ? extractParentFromKey(appState.filePath) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn') : r1csPath.replace('.r1cs', '.wtn')
     // @ts-ignore
     const wtnsBuffer = await plugin.call('fileManager', 'readFile', wtnsPath, { encoding: null })
     // @ts-ignore
