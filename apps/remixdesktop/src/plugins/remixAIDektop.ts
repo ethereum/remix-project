@@ -14,7 +14,7 @@ const profile = {
   maintainedBy: 'Remix',
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
 }
 
 export class RemixAIDesktopPlugin extends ElectronBasePlugin {
@@ -31,7 +31,7 @@ const clientProfile: Profile = {
   maintainedBy: 'Remix',
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer']
 }
 

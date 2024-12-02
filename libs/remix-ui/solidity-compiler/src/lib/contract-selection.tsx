@@ -306,6 +306,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             okLabel: 'Close'
           }
           await plugin.call('notification', 'modal', modal)
+          ws.close()
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
@@ -336,7 +337,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             }
             await plugin.call('notification', 'modal', modal)
           }
-
+          ws.close()
         }
       })
     }
