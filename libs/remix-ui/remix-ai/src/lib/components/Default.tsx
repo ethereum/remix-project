@@ -73,7 +73,8 @@ export const Default = (props) => {
         submitShortcut: 'Enter',
         hideStopButton: false,
       }}
-      messageOptions={{ showCodeBlockCopyButton: true,
+      messageOptions={{ showCodeBlockCopyButton: false,
+        editableUserMessages: true,
         streamingAnimationSpeed: 2,
         waitTimeBeforeStreamCompletion: 1000,
         syntaxHighlighter: highlighter
