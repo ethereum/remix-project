@@ -232,7 +232,7 @@ export const VerifyView = () => {
                 <label
                   htmlFor={`verifier-${verifierId}`}
                   className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}
-                  style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }}
+                  style={{ fontSize: '1rem', color: 'var(--text)' }}
                 >
                   {verifierId}
                 </label>
