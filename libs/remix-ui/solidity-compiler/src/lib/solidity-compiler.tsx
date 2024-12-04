@@ -281,7 +281,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           solJsonBinData={state.solJsonBinData}
         />
         {/* "compileErrors[currentFile]['contracts']" field will not be there in case of compilation errors */}
-        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && compileErrors[currentFile]['contracts'] && (
+        {contractsFile && contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && compileErrors[currentFile]['contracts'] && (
           <ContractSelection
             api={api}
             compiledFileName={currentFile}
