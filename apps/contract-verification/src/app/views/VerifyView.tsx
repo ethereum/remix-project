@@ -67,7 +67,7 @@ export const VerifyView = () => {
         name: verifierId as VerifierIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
-      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${hasProxy && proxyAddress}`)
+      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${!!(hasProxy && proxyAddress)}`)
     }
 
     const newSubmittedContract: SubmittedContract = {
