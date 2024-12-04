@@ -225,6 +225,7 @@ module.exports = {
       .saveScreenshot('./reports/screenshots/t2.png')
       .createContract('42, 24')
       .saveScreenshot('./reports/screenshots/t3.png')
+      .pause(2000)
       .openFile('Storage.sol')
       .saveScreenshot('./reports/screenshots/t4.png')
       .clickLaunchIcon('udapp')
