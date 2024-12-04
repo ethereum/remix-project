@@ -227,6 +227,7 @@ module.exports = {
       .saveScreenshot('./reports/screenshots/t3.png')
       .pause(2000)
       .openFile('Storage.sol')
+      .getBrowserLogs()
       .saveScreenshot('./reports/screenshots/t4.png')
       .clickLaunchIcon('udapp')
       .saveScreenshot('./reports/screenshots/t5.png')
