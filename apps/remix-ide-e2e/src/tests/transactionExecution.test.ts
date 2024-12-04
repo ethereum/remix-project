@@ -216,7 +216,7 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param3 from library"')
   },
 
-  'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4': function (browser: NightwatchBrowser) {
+  'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #flaky #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('Storage.sol', sources[6]['Storage.sol'])
       .addFile('Owner.sol', sources[6]['Owner.sol'])
@@ -236,7 +236,7 @@ module.exports = {
         })
   },
 
-  'Should switch to the mainnet VM fork and execute a tx to query ENS #flaky #group5': function (browser: NightwatchBrowser) {
+  'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
