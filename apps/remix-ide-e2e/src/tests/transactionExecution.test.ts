@@ -220,10 +220,15 @@ module.exports = {
     browser
       .addFile('Storage.sol', sources[6]['Storage.sol'])
       .addFile('Owner.sol', sources[6]['Owner.sol'])
+      .saveScreenshot('./reports/screenshots/t1.png')
       .clickLaunchIcon('udapp')
+      .saveScreenshot('./reports/screenshots/t2.png')
       .createContract('42, 24')
+      .saveScreenshot('./reports/screenshots/t3.png')
       .openFile('Storage.sol')
+      .saveScreenshot('./reports/screenshots/t4.png')
       .clickLaunchIcon('udapp')
+      .saveScreenshot('./reports/screenshots/t5.png')
       .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
