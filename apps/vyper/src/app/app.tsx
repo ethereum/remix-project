@@ -122,7 +122,7 @@ const App = () => {
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip placement="bottom" tooltipText="Clone a repo of Vyper examples. Switch to the File Explorer to see the examples.">
-            <button data-id="add-repository" className="w-100 btn border" onClick={() => {
+            <button data-id="add-repository" className="w-100 text-dark btn border" onClick={() => {
               {cloneCount === 0 ? remixClient.cloneVyperRepo() : remixClient.cloneVyperRepo(cloneCount)}
               setCloneCount((prev) => {
                 return ++prev
@@ -137,7 +137,7 @@ const App = () => {
           <div className="border-0">
             <div className="">
               <CustomAccordionToggle eventKey="0">
-                <label className="h6">Configurations</label>
+                <label style={{fontSize: "1REM"}}>Configurations</label>
               </CustomAccordionToggle>
             </div>
             <Accordion.Collapse eventKey="0">
