@@ -23,7 +23,7 @@ export const Default = (props) => {
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
     } else {
-      response = await props.plugin.call('remixAI', 'solidity_answer', prompt + "write all codes in this format ```(markdown language)```", GenerationParams);
+      response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }
 
     if (GenerationParams.return_stream_response) HandleStreamResponse(response,
