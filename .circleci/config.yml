@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
   win: circleci/windows@5.0
@@ -784,7 +784,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [5]
+              parallelism: [1]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
