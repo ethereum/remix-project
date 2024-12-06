@@ -281,7 +281,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           solJsonBinData={state.solJsonBinData}
         />
         {/* "compileErrors[currentFile]['contracts']" field will not be there in case of compilation errors */}
-        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && compileErrors[currentFile]['contracts'] && (
+        {contractsFile && contractsFile[currentFile] && contractsFile[currentFile].contractsDetails
+          && compileErrors
+          && compileErrors[currentFile]
+          && compileErrors[currentFile]['contracts'] && (
           <ContractSelection
             api={api}
             compiledFileName={currentFile}
@@ -291,7 +294,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
             modal={modal}
           />
         )}
-        {compileErrors[currentFile] && (
+        {compileErrors && compileErrors[currentFile] && (
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
             <>
               <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
