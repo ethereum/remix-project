@@ -52,7 +52,7 @@ Example to understand the use of special methods can be found [here in tests](te
 
 #### Use a different sender `msg.sender`
 
-It is quite common that a contract need to be tested in different situation.
+It is quite common that a contract needs to be tested in different situation.
 Especially being able to set before hand the sender account (`msg.sender`) used for a specific tests suite enable quite a lot a new test use cases.
 please checkout this [test contract](tests/various_sender/sender_and_value_test.sol) for an example.
 Note that `TestsAccounts` is filled with all the accounts available in `web3.eth.accounts()`.
@@ -208,7 +208,7 @@ Loading remote solc version v0.7.4+commit.3f05b770 ...
 	 returned: 1
 ```
 
-:point_right: remix-test can also be used for continuous integration testing. See example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
+:point_right: remix-test can also be used for continuous integration testing. See an example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
 
 #### As a Library for development 
 
