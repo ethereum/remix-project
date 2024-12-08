@@ -33,6 +33,4 @@ This script:
 
 - generate a witness and a proof of execution with `messageId`equal to 0.
 
-- generate a witness and a proof of execution with `messageId`equal to 0.
-
 - generating 2 proofs (two different messages) with the same `messageId` reveal the two points of the polynomial necessary to deduct the `identitySecret` (using `shamirRecovery`).
