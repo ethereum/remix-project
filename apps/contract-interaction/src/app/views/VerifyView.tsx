@@ -8,7 +8,7 @@ import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
 import { CustomTooltip } from '@remix-ui/helper'
-import { AbstractVerifier, getVerifier } from '../Verifiers'
+import { AbstractAbiProvider, getVerifier } from '../abiProviders'
 import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
 
@@ -91,7 +91,7 @@ export const VerifyView = () => {
           name: verifierId as VerifierIdentifier,
         }
 
-        let verifier: AbstractVerifier
+        let verifier: AbstractAbiProvider
         try {
           verifier = getVerifier(verifierId as VerifierIdentifier, verifierSettings)
         } catch (e) {

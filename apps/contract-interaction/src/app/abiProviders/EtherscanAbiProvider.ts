@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { AbstractVerifier } from './AbstractVerifier'
-import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
+import { AbstractAbiProvider } from './AbstractAbiProvider'
+import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse } from '../types'
 
 interface EtherscanRpcResponse {
   status: '0' | '1'
@@ -36,7 +36,7 @@ interface EtherscanGetSourceCodeResponse {
   result: EtherscanSource[]
 }
 
-export class EtherscanVerifier extends AbstractVerifier {
+export class EtherscanAbiProvider extends AbstractAbiProvider{
   LOOKUP_STORE_DIR = 'etherscan-verified'
 
   constructor(apiUrl: string, explorerUrl: string, protected apiKey?: string) {

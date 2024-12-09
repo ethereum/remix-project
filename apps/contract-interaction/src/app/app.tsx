@@ -11,7 +11,7 @@ import { mergeChainSettingsWithDefaults } from './utils'
 import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { getVerifier } from './Verifiers'
+import { getVerifier } from './abiProviders'
 import { ContractDropdownSelection } from './components/ContractDropdown'
 
 const plugin = new ContractVerificationPluginClient()

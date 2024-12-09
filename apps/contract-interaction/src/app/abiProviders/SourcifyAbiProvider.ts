@@ -1,5 +1,5 @@
-import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
-import { AbstractVerifier } from './AbstractVerifier'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { AbstractAbiProvider } from './AbstractAbiProvider'
 import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
 import { ethers } from 'ethers'
 
@@ -42,7 +42,7 @@ interface SourcifyLookupResponse {
   files: SourcifyFile[]
 }
 
-export class SourcifyVerifier extends AbstractVerifier {
+export class SourcifyAbiProvider extends AbstractAbiProvider {
   LOOKUP_STORE_DIR = 'sourcify-verified'
 
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {

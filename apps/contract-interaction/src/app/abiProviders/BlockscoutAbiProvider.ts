@@ -1,5 +1,5 @@
 import { SourceFile } from '../types'
-import { EtherscanVerifier } from './EtherscanVerifier'
+import { EtherscanAbiProvider } from './EtherscanAbiProvider'
 
 // Etherscan and Blockscout return different objects from the getsourcecode method
 interface BlockscoutSource {
@@ -18,7 +18,7 @@ interface BlockscoutSource {
   Address: string
 }
 
-export class BlockscoutVerifier extends EtherscanVerifier {
+export class BlockscoutAbiProvider extends EtherscanAbiProvider {
   LOOKUP_STORE_DIR = 'blockscout-verified'
 
   constructor(apiUrl: string) {
