@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
@@ -23,6 +23,38 @@ export function EnvironmentUI(props: EnvironmentProps) {
     'L2 - Arbitrum': 'https://bridge.arbitrum.io/'
   }
 
+  const intl = useIntl()
+
+  const saveVmStatePrompt = (defaultName: string) => {
+    return (
+      <div>
+        <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
+        <FormattedMessage id="udapp.saveVmStateLabel" />
+      </label>
+        <input
+          type="text"
+          data-id="modalDialogCustomPromptTextCreate"
+          defaultValue={defaultName}
+          className="form-control"
+        />
+      </div>
+    )
+  }
+
+  const saveVmState = () => {
+    const defaultName: string = `${currentProvider.name}_${Date.now()}`
+    props.modal(
+      intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
+      saveVmStatePrompt(defaultName),
+      intl.formatMessage({ id: 'udapp.save' }),
+      () => {
+        console.log('Saved')
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      null
+    )
+  }
+
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
     <div className="udapp_crow">
@@ -39,7 +71,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-save"></i>
+            <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
