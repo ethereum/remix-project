@@ -5,6 +5,7 @@ import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
@@ -12,7 +13,7 @@ type chatRequestBufferT<T> = {
 
 const profile = {
   name: 'remixAI',
-  displayName: 'Remix AI',
+  displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining", "vulnerability_check",
@@ -21,8 +22,8 @@ const profile = {
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+  location: 'popupPanel',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
@@ -37,6 +38,7 @@ export class RemixAIPlugin extends ViewPlugin {
   chatRequestBuffer: chatRequestBufferT<any> = null
   agent: CodeExplainAgent
   useRemoteInferencer:boolean = false
+  dispatch: any
 
   constructor(inDesktop:boolean) {
     super(profile)
@@ -46,6 +48,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   onActivation(): void {
+
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
       // this.on(this.remixDesktopPluginName, 'activated', () => {
@@ -117,6 +120,11 @@ export class RemixAIPlugin extends ViewPlugin {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
+    if (prompt.trimStart().startsWith('gpt') || prompt.trimStart().startsWith('sol-gpt')) {
+      params.terminal_output = true
+      params.stream_result = false
+      params.return_stream_response = false
+    }
 
     const newPrompt = await this.agent.chatCommand(prompt)
     let result
@@ -126,6 +134,8 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.solidity_answer(newPrompt)
     }
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+
+    if (prompt.trimStart().startsWith('gpt') || prompt.trimStart().startsWith('sol-gpt')) params.terminal_output = false
     return result
   }
 
@@ -219,13 +229,38 @@ export class RemixAIPlugin extends ViewPlugin {
       return ""
     }
   }
+
   isChatRequestPending(){
     return this.chatRequestBuffer != null
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
+  renderComponent () {
+    this.dispatch({
+      plugin: this,
+    })
+  }
+
   render() {
+    return <div
+      id='ai-view'
+      className='h-100 d-flex'
+      data-id='aichat-view'
+      style={{
+        minHeight: 'max-content',
+      }}
+    >
+      <PluginViewWrapper plugin={this} />
+    </div>
+  }
+
+  updateComponent(state) {
     return (
-      <RemixAITab plugin={this}></RemixAITab>
+      <RemixAITab plugin={state.plugin}></RemixAITab>
     )
   }
 }

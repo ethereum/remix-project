@@ -160,7 +160,7 @@ export const fetchContractListFailed = (error: string) => {
   }
 }
 
-export const setLoadType = (type: 'abi' | 'sol' | 'other') => {
+export const setLoadType = (type: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other') => {
   return {
     type: SET_LOAD_TYPE,
     payload: type

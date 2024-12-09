@@ -39,7 +39,7 @@ async function tryTillReceiptAvailable(txhash: Bytes) {
       if (!receipt.to && !receipt.contractAddress) {
         // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
         console.log(
-          'this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...'
+          'this is a contract creation and the receipt does not contain a contract address. we have to keep polling...'
         );
         return receipt;
       } else return receipt;
@@ -267,7 +267,7 @@ export class TxRunner {
       };
     } catch (error: any) {
       console.log(
-        `Send transaction failed: ${error.message} . if you use an injected provider, please check it is properly unlocked. `
+        `Send transaction failed: ${error.message || error.error} . if you use an injected provider, please check it is properly unlocked. `
       );
       return { error };
     }

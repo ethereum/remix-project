@@ -31,15 +31,6 @@
   display: block;
   margin: 3% 0;
 }
-.remixui_nightlyBuilds {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.remixui_autocompileContainer {
-  display: flex;
-  align-items: center;
-}
 .remixui_runs {
   width: 40%;
 }
@@ -47,7 +38,6 @@
   display: flex;
   align-items: center;
 }
-.remixui_autocompile {}
 .remixui_autocompileTitle {
   font-weight: bold;
   margin: 1% 0;
@@ -61,16 +51,6 @@
 }
 .remixui_warnCompilationSlow {
   margin-left: 1%;
-}
-.remixui_compilerConfig {
-  display: flex;
-  align-items: center;
-}
-.remixui_compilerConfig label {
-  margin: 0;
-}
-.remixui_compilerSection {
-  padding: 12px 24px 16px;
 }
 .remixui_compilerConfigSection:hover {
   cursor: pointer;
@@ -93,12 +73,6 @@
   font-size: 11px;
   line-height: 15px;
 }
-.remixui_name {
-  display: flex;
-}
-.remixui_size {
-  display: flex;
-}
 .remixui_checkboxes {
   display: flex;
   width: 100%;
@@ -109,12 +83,6 @@
   width: 100%;
   margin: 15px 0 10px 0;
   font-size: 12px;
-}
-.remixui_container {
-  margin: 0;
-}
-.remixui_optimizeContainer {
-  display: flex;
 }
 .remixui_noContractAlert {
   display: flex;
@@ -154,8 +122,6 @@
   margin-left: 2%;
   cursor: pointer;
 }
-.remixui_questionMark:hover {
-}
 .remixui_detailsJSON {
   padding: 8px 0;
   border: none;
@@ -179,10 +145,6 @@
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
   -webkit-animation: spin 2s infinite linear;
-}
-
-.remixui_solidityCompileAndRunButton {
-  width: 94%;
 }
 
 @keyframes spin {
@@ -216,34 +178,34 @@
 }
 
 @-webkit-keyframes bounce {
-    0% { top: 0; }
-    50% { top: -0.2em; }
-    70% { top: -0.3em; }
-    100% { top: 0; }
+  0% { top: 0; }
+  50% { top: -0.2em; }
+  70% { top: -0.3em; }
+  100% { top: 0; }
 }
 @-moz-keyframes bounce {
-    0% { top: 0; }
-    50% { top: -0.2em; }
-    70% { top: -0.3em; }
-    100% { top: 0; }
+  0% { top: 0; }
+  50% { top: -0.2em; }
+  70% { top: -0.3em; }
+  100% { top: 0; }
 }
 @-o-keyframes bounce {
-    0% { top: 0; }
-    50% { top: -0.2em; }
-    70% { top: -0.3em; }
-    100% { top: 0; }
+  0% { top: 0; }
+  50% { top: -0.2em; }
+  70% { top: -0.3em; }
+  100% { top: 0; }
 }
 @-ms-keyframes bounce {
-    0% { top: 0; }
-    50% { top: -0.2em; }
-    70% { top: -0.3em; }
-    100% { top: 0; }
+  0% { top: 0; }
+  50% { top: -0.2em; }
+  70% { top: -0.3em; }
+  100% { top: 0; }
 }
 @keyframes bounce {
-    0% { top: 0; }
-    50% { top: -0.2em; }
-    70% { top: -0.3em; }
-    100% { top: 0; }
+  0% { top: 0; }
+  50% { top: -0.2em; }
+  70% { top: -0.3em; }
+  100% { top: 0; }
 }
 
 #compileDetails {

@@ -29,7 +29,7 @@ export class AbstractPanel extends HostPlugin {
       view: view,
       active: false,
       pinned: false,
-      class: 'plugItIn active'
+      class: 'plugItIn active ' + (profile.location === "sidePanel" ? 'pb-2' : ''),
     }
   }
 

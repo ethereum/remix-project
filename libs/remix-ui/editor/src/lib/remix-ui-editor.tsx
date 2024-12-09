@@ -831,15 +831,14 @@ export const EditorUI = (props: EditorUIProps) => {
       label: intl.formatMessage({ id: 'editor.explainFunction' }),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
-      keybindings: [
-        // Keybinding for Ctrl + Shift + E
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KeyE
-      ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const context = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content:context, currentFunction: currentFunction.current })
-        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -860,7 +859,10 @@ export const EditorUI = (props: EditorUIProps) => {
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
         const pipeMessage = intl.formatMessage({ id: 'editor.ExplainPipeMessage' }, { content:selectedCode })
 
-        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -1001,6 +1003,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
     // Allow JSON schema requests
     monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
+
+    // hide the module resolution error. We have to remove this when we know how to properly resolve imports.
+    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ diagnosticCodesToIgnore: [2792]})
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)

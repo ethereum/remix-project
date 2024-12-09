@@ -42,14 +42,14 @@ export const Default = (props) => {
   };
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
-    { prompt: 'Explain briefly the current file in Editor', icon: <span>⭐️</span> },
-    { prompt: 'Explain what is a solidity contract!' }]
+    { prompt: 'Explain what is a solidity contract!' },
+    { prompt: 'Explain briefly the current file in Editor' }]
 
   // Define initial messages
   const initialMessages: ChatItem[] = [
     {
       role: 'assistant',
-      message: 'Welcome to Remix AI! How can I assist you today?'
+      message: 'Welcome to RemixAI! How can I assist you today?'
     }
   ];
   const adapter = useAsStreamAdapter(send, []);
@@ -60,7 +60,7 @@ export const Default = (props) => {
       adapter={ adapter }
       personaOptions={{
         assistant: {
-          name: "Remix AI",
+          name: "RemixAI",
           tagline: "Your Web3 AI Assistant",
           avatar: assistantAvatar
         },
@@ -73,7 +73,8 @@ export const Default = (props) => {
         submitShortcut: 'Enter',
         hideStopButton: false,
       }}
-      messageOptions={{ showCodeBlockCopyButton: true,
+      messageOptions={{ showCodeBlockCopyButton: false,
+        editableUserMessages: true,
         streamingAnimationSpeed: 2,
         waitTimeBeforeStreamCompletion: 1000,
         syntaxHighlighter: highlighter

@@ -14,6 +14,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
     .switchBrowserTab(0)
+    .hidePopupPanel()
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -37,6 +38,9 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
 
         addStyle(`
           .popover {
+            display:none !important;
+          }
+          #scamDetails {
             display:none !important;
           }
           `);

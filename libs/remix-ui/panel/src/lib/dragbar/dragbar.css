@@ -7,7 +7,7 @@
   left: 0px;
   top: 0px;
   height: 0.3em;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .overlay {

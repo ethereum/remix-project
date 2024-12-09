@@ -47,6 +47,12 @@ export const SettingsView = () => {
             <span className="font-weight-bold">Blockscout - {selectedChain.name}</span>
             <ConfigInput label="Instance URL" id="blockscout-api-url" secret={false} initialValue={chainSettings.verifiers['Blockscout']?.apiUrl ?? ''} saveResult={(result) => handleChange('Blockscout', 'apiUrl', result)} />
           </div>
+          <div className="p-2 my-2 border">
+            <span className="font-weight-bold">Routescan - {selectedChain.name}</span>
+            <ConfigInput label="API Key (optional)" id="routescan-api-key" secret={true} initialValue={chainSettings.verifiers['Routescan']?.apiKey ?? ''} saveResult={(result) => handleChange('Routescan', 'apiKey', result)} />
+            <ConfigInput label="API URL" id="routescan-api-url" secret={false} initialValue={chainSettings.verifiers['Routescan']?.apiUrl ?? ''} saveResult={(result) => handleChange('Routescan', 'apiUrl', result)} />
+            <ConfigInput label="Explorer URL" id="routescan-explorer-url" secret={false} initialValue={chainSettings.verifiers['Routescan']?.explorerUrl ?? ''} saveResult={(result) => handleChange('Routescan', 'explorerUrl', result)} />
+          </div>
         </div>
       )}
     </>

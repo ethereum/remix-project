@@ -119,9 +119,18 @@ const getConfirmationCb = (plugin: RunTab, dispatch: React.Dispatch<any>, confir
 
 export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, error, continueTxExecution, cancelCb) => {
   if (error) {
-    let msg = typeof error !== 'string' ? error.message : error
+    let msg = ''
+    if (typeof error === 'string') {
+      msg = error
+    }
     if (error && error.innerError) {
       msg += '\n' + error.innerError
+    }
+    if (error && error.message) {
+      msg += '\n' + error.message
+    }
+    if (error && error.error) {
+      msg += '\n' + error.error
     }
 
     if (msg.includes('invalid opcode')) msg += '\nThe EVM version used by the selected environment is not compatible with the compiler EVM version.'
