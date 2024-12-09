@@ -107,7 +107,9 @@ jobs:
 
   test-remixdesktop-linux:
     machine:
-      image: cimg/base:2022.12
+      image: ubuntu-2004:2022.07.1
+    resource_class:
+      xlarge
     working_directory: ~/remix-project
     parallelism: 15
     steps:
@@ -150,7 +152,7 @@ jobs:
 
   build-remixdesktop-linux:
       machine:
-        image: ubuntu-2404:2024.11.1
+        image: ubuntu-2004:current
       resource_class:
         xlarge
       working_directory: ~/remix-project
