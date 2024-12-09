@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 
 export function EnvironmentUI(props: EnvironmentProps) {
+  const vmStateName = useRef('')
 
   Object.entries(props.providers.providerList.filter((provider) => { return provider.isVM }))
   Object.entries(props.providers.providerList.filter((provider) => { return provider.isInjected }))
@@ -24,6 +25,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   }
 
   const intl = useIntl()
+  const isSaveEvmStateChecked = props.config.get('settings/save-evm-state')
 
   const saveVmStatePrompt = (defaultName: string) => {
     return (
@@ -33,22 +35,28 @@ export function EnvironmentUI(props: EnvironmentProps) {
       </label>
         <input
           type="text"
-          data-id="modalDialogCustomPromptTextCreate"
+          data-id="modalDialogSaveVmState"
           defaultValue={defaultName}
           className="form-control"
+          onChange={(e) => vmStateName.current = e.target.value}
         />
       </div>
     )
   }
 
   const saveVmState = () => {
-    const defaultName: string = `${currentProvider.name}_${Date.now()}`
+    const context = currentProvider.name
+    vmStateName.current = `${context}_${Date.now()}`
     props.modal(
       intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
-      saveVmStatePrompt(defaultName),
+      saveVmStatePrompt(vmStateName.current),
       intl.formatMessage({ id: 'udapp.save' }),
-      () => {
-        console.log('Saved')
+      async () => {
+        const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+        if (contextExists) {
+          const currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, currentStateDb)
+        }
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       null
@@ -70,7 +78,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
           </a>
         </CustomTooltip>
-        { currentProvider && currentProvider.isVM && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
             <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
         </CustomTooltip> }
       </label>
