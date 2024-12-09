@@ -19,6 +19,7 @@ export function SettingsUI(props: SettingsProps) {
         setExecutionContext={props.setExecutionContext}
         checkSelectionCorrectness={props.EvaluateEnvironmentSelection} 
         modal={props.modal}
+        config={props.runTabPlugin.config}
       />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
