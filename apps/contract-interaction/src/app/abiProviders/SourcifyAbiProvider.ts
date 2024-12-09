@@ -99,6 +99,12 @@ export class SourcifyAbiProvider extends AbstractAbiProvider {
     return { status, receiptId: null, lookupUrl }
   }
 
+  // TODO
+  async lookupABI(contractAddress: string, chainId: string): Promise<undefined> {
+
+    return undefined
+  }
+
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
     const url = new URL(this.apiUrl + `/files/any/${chainId}/${contractAddress}`)
 

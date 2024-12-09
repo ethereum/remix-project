@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractAbiProvider } from './AbstractAbiProvider'
-import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse } from '../types'
+import { LookupResponse, ABICategories, SourceFile, SubmittedContract, VerificationResponse } from '../types'
 
 interface EtherscanRpcResponse {
   status: '0' | '1'
@@ -36,7 +36,7 @@ interface EtherscanGetSourceCodeResponse {
   result: EtherscanSource[]
 }
 
-export class EtherscanAbiProvider extends AbstractAbiProvider{
+export class EtherscanAbiProvider extends AbstractAbiProvider {
   LOOKUP_STORE_DIR = 'etherscan-verified'
 
   constructor(apiUrl: string, explorerUrl: string, protected apiKey?: string) {
@@ -210,6 +210,28 @@ export class EtherscanAbiProvider extends AbstractAbiProvider{
     return { status: 'unknown', receiptId }
   }
 
+  /**
+   * Get the blockexplorer specific URL for fetching the smart contract ABI.
+   *
+   * @param ABICategory - The sub type of the ABI (one of the values: 'read' | 'write' | 'readProxy' | 'writeProxy').
+   * @returns The url to fetch the ABI data.
+   */
+  getAbiURL(contractAddress: string, ABICategory: ABICategories): string {
+    const url = new URL(this.explorerUrl + `/api/v2/smart-contracts/${contractAddress}/${ABICategory}`)
+    return url.href
+  }
+
+  async lookupABI(contractAddress: string, chainId: string): Promise<undefined> {
+
+    const parsedReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.Read))
+    const parsedWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.Write))
+    const parsedProxyReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.ReadProxy))
+    const parsedProxyWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.WriteProxy))
+
+    // TODO try-catch
+  }
+
+
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
@@ -263,7 +285,7 @@ export class EtherscanAbiProvider extends AbstractAbiProvider{
       try {
         // Etherscan wraps the Object in one additional bracket
         parsedFiles = JSON.parse(source.SourceCode.substring(1, source.SourceCode.length - 1)).sources
-      } catch (e) {}
+      } catch (e) { }
     }
 
     if (parsedFiles) {

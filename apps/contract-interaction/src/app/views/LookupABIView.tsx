@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
-import type { LookupResponse, VerifierIdentifier } from '../types'
+import type { LookupResponse, AbiProviderIdentifier } from '../types'
 import { VERIFIERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -15,8 +15,8 @@ export const LookupABIView = () => {
   const { selectedChain, setSelectedChain } = useContext(VerifyFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
-  const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
-  const [lookupResults, setLookupResult] = useState<Partial<Record<VerifierIdentifier, LookupResponse>>>({})
+  const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
+  const [lookupResults, setLookupResult] = useState<Partial<Record<AbiProviderIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
 
   const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
@@ -48,8 +48,9 @@ export const LookupABIView = () => {
       setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: true }))
       const verifier = getVerifier(verifierId, chainSettings.verifiers[verifierId])
       verifier
-        .lookup(contractAddress, selectedChain.chainId.toString())
-        .then((result) => setLookupResult((prev) => ({ ...prev, [verifierId]: result })))
+        .lookupABI(contractAddress, selectedChain.chainId.toString())
+        // TODO
+        // .then((result) => setLookupResult((prev) => ({ ...prev, [verifierId]: result })))
         .catch((err) =>
           setLookupResult((prev) => {
             console.error(err)

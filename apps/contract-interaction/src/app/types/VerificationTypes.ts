@@ -17,11 +17,27 @@ export interface Chain {
   infoURL?: string
 }
 
-export type VerifierIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
-export const VERIFIERS: VerifierIdentifier[] = ['Sourcify', 'Etherscan', 'Blockscout']
+export enum ABICategories {
+  Read = 'methods-read',
+  Write = 'methods-write',
+  ReadProxy = 'methods-read-proxy',
+  WriteProxy = 'methods-write-proxy',
+}
+
+export interface FuncABI {
+  name: string,
+  type: string,
+  inputs: { name: string, type: string }[],
+  stateMutability: string,
+  payable?: boolean,
+  constant?: any
+}
+
+export type AbiProviderIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
+export const VERIFIERS: AbiProviderIdentifier[] = ['Sourcify', 'Etherscan', 'Blockscout']
 
 export interface VerifierInfo {
-  name: VerifierIdentifier
+  name: AbiProviderIdentifier
   apiUrl: string
 }
 

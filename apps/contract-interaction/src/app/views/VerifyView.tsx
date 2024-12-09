@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import type { VerifierIdentifier, SubmittedContract, VerificationReceipt, VerifierInfo, VerificationResponse } from '../types'
+import type { AbiProviderIdentifier, SubmittedContract, VerificationReceipt, VerifierInfo, VerificationResponse } from '../types'
 import { VERIFIERS } from '../types'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import { useNavigate } from 'react-router-dom'
@@ -15,7 +15,7 @@ import { useSourcifySupported } from '../hooks/useSourcifySupported'
 export const VerifyView = () => {
   const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
   const { selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError } = useContext(VerifyFormContext)
-  const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
+  const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
   const [hasProxy, setHasProxy] = useState(!!proxyAddress)
   const navigate = useNavigate()
 
@@ -37,7 +37,7 @@ export const VerifyView = () => {
     setEnabledVerifiers(changedEnabledVerifiers)
   }, [selectedChain, sourcifySupported])
 
-  const handleVerifierCheckboxClick = (verifierId: VerifierIdentifier, checked: boolean) => {
+  const handleVerifierCheckboxClick = (verifierId: AbiProviderIdentifier, checked: boolean) => {
     setEnabledVerifiers({ ...enabledVerifiers, [verifierId]: checked })
   }
 
@@ -60,7 +60,7 @@ export const VerifyView = () => {
 
       const verifierInfo: VerifierInfo = {
         apiUrl: chainSettings.verifiers[verifierId].apiUrl,
-        name: verifierId as VerifierIdentifier,
+        name: verifierId as AbiProviderIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
     }
@@ -88,12 +88,12 @@ export const VerifyView = () => {
         const verifierSettings = chainSettings.verifiers[verifierId]
         const verifierInfo: VerifierInfo = {
           apiUrl: verifierSettings.apiUrl,
-          name: verifierId as VerifierIdentifier,
+          name: verifierId as AbiProviderIdentifier,
         }
 
         let verifier: AbstractAbiProvider
         try {
-          verifier = getVerifier(verifierId as VerifierIdentifier, verifierSettings)
+          verifier = getVerifier(verifierId as AbiProviderIdentifier, verifierSettings)
         } catch (e) {
           // User settings might be invalid
           proxyReceipts.push({ verifierInfo, status: 'failed', contractId, isProxyReceipt: true, message: e.message, failedChecks: 0 })

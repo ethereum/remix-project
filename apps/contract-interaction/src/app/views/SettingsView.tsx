@@ -1,6 +1,6 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useMemo } from 'react'
 import { SearchableChainDropdown, ConfigInput } from '../components'
-import type { VerifierIdentifier, VerifierSettings, ContractVerificationSettings } from '../types'
+import type { AbiProviderIdentifier, VerifierSettings, ContractVerificationSettings } from '../types'
 import { mergeChainSettingsWithDefaults } from '../utils'
 import { AppContext } from '../AppContext'
 import { VerifyFormContext } from '../VerifyFormContext'
@@ -11,7 +11,7 @@ export const SettingsView = () => {
 
   const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
 
-  const handleChange = (verifier: VerifierIdentifier, key: keyof VerifierSettings, value: string) => {
+  const handleChange = (verifier: AbiProviderIdentifier, key: keyof VerifierSettings, value: string) => {
     const chainId = selectedChain.chainId.toString()
     const changedSettings: ContractVerificationSettings = JSON.parse(JSON.stringify(settings))
 

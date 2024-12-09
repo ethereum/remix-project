@@ -1,5 +1,5 @@
 import type { ChainSettings, ContractVerificationSettings, SettingsForVerifier, VerifierSettings } from '../types/SettingsTypes'
-import { VerifierIdentifier, VERIFIERS } from '../types/VerificationTypes'
+import { AbiProviderIdentifier, VERIFIERS } from '../types/VerificationTypes'
 import DEFAULT_APIS from './default-apis.json'
 
 export function mergeChainSettingsWithDefaults(chainId: string, userSettings: ContractVerificationSettings): ChainSettings {
@@ -23,6 +23,6 @@ export function mergeChainSettingsWithDefaults(chainId: string, userSettings: Co
   return { verifiers }
 }
 
-export function validConfiguration(chainSettings: ChainSettings | undefined, verifierId: VerifierIdentifier) {
+export function validConfiguration(chainSettings: ChainSettings | undefined, verifierId: AbiProviderIdentifier) {
   return !!chainSettings && !!chainSettings.verifiers[verifierId]?.apiUrl && (verifierId !== 'Etherscan' || !!chainSettings.verifiers[verifierId]?.apiKey)
 }

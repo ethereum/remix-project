@@ -1,4 +1,4 @@
-import { VerifierIdentifier } from './VerificationTypes'
+import { AbiProviderIdentifier } from './VerificationTypes'
 
 export interface VerifierSettings {
   apiUrl?: string
@@ -6,7 +6,7 @@ export interface VerifierSettings {
   apiKey?: string
 }
 
-export type SettingsForVerifier = Partial<Record<VerifierIdentifier, VerifierSettings>>
+export type SettingsForVerifier = Partial<Record<AbiProviderIdentifier, VerifierSettings>>
 
 export interface ChainSettings {
   verifiers: SettingsForVerifier
