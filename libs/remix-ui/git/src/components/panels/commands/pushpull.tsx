@@ -204,7 +204,7 @@ export const PushPull = () => {
       />
 
       <div className="pt-3 d-flex align-items-center remixui_compilerConfig custom-control custom-checkbox">
-        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile form-check-input custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+        <input checked={force} onChange={e => onForceChange(e)} className="form-check-input custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
         <label className="form-check-label custom-control-label " htmlFor="forcepush">Force push</label>
       </div>
 

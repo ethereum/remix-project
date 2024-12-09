@@ -174,6 +174,12 @@ export class RemixURLResolver {
               version = deps[pkg]
             }
             if (version) {
+              // If the entry is pointing to a github repo, redirect to correct handler instead of continuing
+              if (version.startsWith("github:")) {
+                const [, repo, tag] = version.match(/github:([^#]+)#(.+)/);
+                const filePath = url.replace(/^[^/]+\//, '');
+                return this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
+              }
               const versionSemver = semver.minVersion(version)
               fetchUrl = url.replace(pkg, `${pkg}@${versionSemver.version}`)
             }

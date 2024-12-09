@@ -36,6 +36,7 @@
 	--body-bg: #fff;
 	--text-bg-mark: #fcf8e3;
 	--custom-select: #fff;
+  --brand-dark-blue: #222496;
 	--breakpoint-xs:0;
 	--breakpoint-sm:576px;
 	--breakpoint-md:768px;
@@ -2892,7 +2893,7 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 	background-color:#ecf0f1
 }
 .custom-control-label {
-	position:relative;	margin-bottom:0;	vertical-align:top
+	position:relative;	margin-bottom:0;	vertical-align:top; padding-top: 0.15rem;
 }
 .custom-control-label::before {
 	position:absolute;	top:0px;	left:-1.5rem;	display:block;	width:1rem;	height:1rem;	pointer-events:none;	content:"";	background-color:#fff;	border:#b4bcc2 solid 1px

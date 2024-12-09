@@ -1,4 +1,6 @@
-
+.remixui_statusbar {
+  white-space: nowrap;
+}
 .remixui_statusbar_gitstatus
 .remixui_statusbar_gitstatus:hover {
   cursor: pointer;

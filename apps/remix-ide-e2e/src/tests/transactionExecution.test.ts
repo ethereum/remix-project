@@ -224,6 +224,7 @@ module.exports = {
       .createContract('42, 24')
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
+      .waitForElementVisible('*[data-title="uint256 p"]', 10000)
       .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })

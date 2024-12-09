@@ -2,13 +2,17 @@ import React, { useContext } from 'react'
 import '../remix-ai.css'
 import { Default, ChatApi } from './Default'
 
-export const RemixAITab = (props) => {
+interface IRemixAITab {
+  plugin: any,
+}
+export const RemixAITab = (props: IRemixAITab) => {
 
-  const plugin = props.plugin
   return (
     <>
-      <div id="remixAITab" className="px-2 pb-4">
-        <Default plugin={plugin}></Default>
+      <div id="remixAITab" className="mx-2 h-100 w-100 px-0">
+        <div className='h-100'>
+          <Default plugin={props.plugin}></Default>
+        </div>
       </div>
     </>
   )

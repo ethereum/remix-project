@@ -72,7 +72,7 @@ Each step is a directory containing:
 
 - a readme describing the step, what to do.
 - sol files:
-  - these can be sol files and test sol files. The test files should be name yoursolname_test.sol
+  - these can be sol files and test sol files. The test files should be named yoursolname_test.sol
   - ANSWER files: these are named yoursolname_answer.sol and can be used to show the solution or the correct answer. The plugin will load the
     file in the IDE when a user clicks on 'Show Answer'
 - js files

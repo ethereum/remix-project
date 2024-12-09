@@ -120,7 +120,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
  - A milestone should **only** contain items we are sure to finish.
  - The end of a milestone triggers a new release.
- - Milestone items and duration should take in account time spent in bugs fixing and support.
+ - Milestone items and duration should take into account time spent in bugs fixing and support.
  - The team should commit to the milestone duration.
  - If a dev finish early he/she can help others to push remaining tasks.
  - If a dev finish early he/she can work on specifying / integrating the next milestone.

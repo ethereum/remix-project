@@ -27,5 +27,12 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       canUseGit: action.payload
     }
   }
+
+  case appActionTypes.setShowPopupPanel: {
+    return {
+      ...state,
+      showPopupPanel: action.payload
+    }
+  }
   }
 }

@@ -54,6 +54,7 @@ export const HandleStreamResponse = async (streamResponse,
   }
   catch (error) {
     console.error('Error parsing JSON:', error);
+    return { 'generateText': '', 'isGenerating': false }
   }
 }
 

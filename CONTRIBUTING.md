@@ -5,13 +5,13 @@ Everyone is very welcome to contribute on the codebase of Remix. Please join our
 ## Development
 Remix libraries work closely with [Remix IDE](https://remix.ethereum.org). Each library has a readme to explain its application.
 
-When you add a code in any library, please ensure you add related unit tests.
+When you add code in any library, please ensure you add related unit tests.
 
 ## Coding style
 
 Please conform to [standard](https://standardjs.com/) for code styles.
 
-## Submitting Pull Request
+## Submitting Pull Requests
 Please follow GitHub's standard model of making changes & submitting pull request which is very well explained [here](https://guides.github.com/activities/forking/). Make sure your code works fine locally before submitting a pull request.
 
 ## Internationalization
@@ -20,14 +20,14 @@ Remix now supports Internationalization. Everyone is welcome to contribute to th
 ### How to make a string support intl?
 First, put the string in the locale file located under `apps/remix-ide/src/app/tabs/locales/en`.
 Each json file corresponds to a module. If the module does not exist, then create a new json and import it in the `index.js`.
-Then you can replace the string with a intl component. The `id` prop will be the key of this string.
+Then you can replace the string with an intl component. The `id` prop will be the key of this string.
 ```jsx
 <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>
 -  Learn
 +  <FormattedMessage id="home.learn" />
 </label>
 ```
-In some cases, jsx maybe not be acceptable, you can use `intl.formatMessage` .
+In some cases, jsx may not be acceptable, you can use `intl.formatMessage` .
 ```jsx
 <input
    ref={searchInputRef}

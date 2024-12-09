@@ -19,7 +19,7 @@
   "solidity.compilationDetails": "Compilation Details",
   "solidity.language": "Language",
   "solidity.evmVersion": "EVM Version",
-  "solidity.enableOptimization": "Enable optimization",
+  "solidity.enableOptimization": "Optimization",
   "solidity.useConfigurationFile": "Use configuration file",
   "solidity.change": "Change",
   "solidity.compile": "Compile",

@@ -9,12 +9,11 @@ import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { appProviderContextType, onLineContext, platformContext } from './context/context'
-import { FormattedMessage, IntlProvider } from 'react-intl'
-import { CustomTooltip } from '@remix-ui/helper'
+import { IntlProvider } from 'react-intl'
 import { UsageTypes } from './types'
-import { AppState } from './interface'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
+import isElectron from 'is-electron'
 
 declare global {
   interface Window {
@@ -45,7 +44,10 @@ const RemixApp = (props: IRemixAppUi) => {
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
 
-  const [appState, appStateDispatch] = useReducer(appReducer, appInitialState)
+  const [appState, appStateDispatch] = useReducer(appReducer, {
+    ...appInitialState,
+    showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron()
+  })
 
   useEffect(() => {
     async function activateApp() {
@@ -76,6 +78,12 @@ const RemixApp = (props: IRemixAppUi) => {
       _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
     }
   }, [])
+
+  useEffect(() => {
+    if (!appState.showPopupPanel) {
+      window.localStorage.setItem('did_show_popup_panel', 'true')
+    }
+  },[appState.showPopupPanel])
 
   function setListeners() {
     props.app.sidePanel.events.on('toggle', () => {
@@ -244,6 +252,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 }
                 <div>{props.app.hiddenPanel.render()}</div>
               </div>
+              <div>{props.app.popupPanel.render()}</div>
               <div className="statusBar fixed-bottom">
                 {props.app.statusBar.render()}
               </div>
