@@ -35,6 +35,8 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
   }
 
   async install(version = 'latest') {
+    this.call('terminal' as any, 'logHtml', `Checking if circom compiler (${version}) is installed in ${getInstallationPath(version)}`)
+   
     this.isCircomInstalled = await circomCli.isCircomInstalled(version)
     if (!this.isCircomInstalled) {
       this.call('terminal' as any, 'logHtml', 'Downloading circom compiler from ' + getInstallationUrl(version))
