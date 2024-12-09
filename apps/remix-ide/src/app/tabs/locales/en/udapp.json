@@ -49,6 +49,8 @@
   "udapp.enterAMessageToSign": "Enter a message to sign and click `Sign`",
   "udapp.hash": "hash",
   "udapp.signature": "signature",
+  "udapp.saveVmStateTitle": "Save VM state",
+  "udapp.saveVmStateLabel": "State Name",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
   "udapp.createNewAccount": "Create new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
