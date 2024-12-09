@@ -107,9 +107,9 @@ jobs:
 
   test-remixdesktop-linux:
     machine:
-      image: ubuntu-2004:current
+      image: ubuntu-2404:2024.11.1
     resource_class:
-      xlarge
+      arm.xlarge
     working_directory: ~/remix-project
     parallelism: 15
     steps:
