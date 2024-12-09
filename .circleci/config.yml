@@ -107,7 +107,7 @@ jobs:
 
   test-remixdesktop-linux:
     machine:
-      image: ubuntu-2404:2024.11.1
+      image: cimg/base:2022.12
     resource_class:
       xlarge
     working_directory: ~/remix-project
