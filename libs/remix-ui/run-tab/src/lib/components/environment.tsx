@@ -38,9 +38,9 @@ export function EnvironmentUI(props: EnvironmentProps) {
             <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
           </a>
         </CustomTooltip>
-        <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
+        { currentProvider && currentProvider.isVM && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
             <i className="udapp_infoDeployAction ml-2 fas fa-save"></i>
-        </CustomTooltip>
+        </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
