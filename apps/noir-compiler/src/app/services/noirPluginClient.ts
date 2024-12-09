@@ -2,12 +2,12 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 
-export class CircomPluginClient extends PluginClient {
+export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
 
   constructor() {
     super()
-    this.methods = ['init', 'parse']
+    this.methods = ['init']
     createClient(this)
     this.internalEvents = new EventManager()
     this.onload()
@@ -19,9 +19,5 @@ export class CircomPluginClient extends PluginClient {
 
   onActivation(): void {
     this.internalEvents.emit('noir_activated')
-  }
-
-  async parse(path: string, fileContent?: string) {
-
   }
 }
