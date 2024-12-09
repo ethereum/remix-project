@@ -18,8 +18,8 @@ const plugin = new ContractVerificationPluginClient()
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
-  const [settings, setSettings] = useLocalStorage<ContractVerificationSettings>('contract-verification2:settings', { chains: {} })
-  const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-verification2:submitted-contracts', {})
+  const [settings, setSettings] = useLocalStorage<ContractVerificationSettings>('contract-interaction:settings', { chains: {} })
+  const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-interaction:submitted-contracts', {})
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
 

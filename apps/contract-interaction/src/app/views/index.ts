@@ -1,4 +1,5 @@
 export { VerifyView } from './VerifyView'
 export { SettingsView } from './SettingsView'
 export { LookupView } from './LookupView'
+export { LookupABIView } from './LookupABIView'
 export { ReceiptsView } from './ReceiptsView'

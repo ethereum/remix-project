@@ -1,6 +1,6 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-import { VerifyView, ReceiptsView, LookupView, SettingsView } from './views'
+import { VerifyView, ReceiptsView, LookupView, LookupABIView, SettingsView } from './views'
 import { DefaultLayout } from './layouts'
 
 const DisplayRoutes = () => (
@@ -29,6 +29,15 @@ const DisplayRoutes = () => (
         element={
           <DefaultLayout from="/" title="Lookup" description="Search for verified contracts and download them to Remix">
             <LookupView />
+          </DefaultLayout>
+        }
+      />
+
+      <Route
+        path="/lookupABI"
+        element={
+          <DefaultLayout from="/" title="LookupABI" description="Search for verified contracts and download the ABI to Remix">
+            <LookupABIView />
           </DefaultLayout>
         }
       />
