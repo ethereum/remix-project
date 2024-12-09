@@ -1,0 +1,17 @@
+{
+  "name": "noir-compiler",
+  "kind": "provider",
+  "displayName": "Noir Compiler",
+  "events": [],
+  "version": "2.0.0",
+  "methods": ["init", "parse"],
+  "canActivate": [],
+  "url": "",
+  "description": "Enables support for noir circuit compilation",
+  "icon": "assets/img/circom-icon-bw-800b.webp",
+  "location": "sidePanel",
+  "documentation": "",
+  "repo": "https://github.com/ethereum/remix-project/tree/master/apps/noir-compiler",
+  "maintainedBy": "Remix",
+  "authorContact": ""
+}
