@@ -121,10 +121,9 @@ jobs:
             command: |
                 node -v
                 sudo npm install --global node-gyp
-                curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-                python3 get-pip.py
-                python -m pip install --upgrade pip
-                pip install setuptools
+                sudo apt install python3
+                sudo apt install python3-pip
+                pip3 install setuptools
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
