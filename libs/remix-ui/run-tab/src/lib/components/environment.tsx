@@ -54,8 +54,11 @@ export function EnvironmentUI(props: EnvironmentProps) {
       async () => {
         const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
         if (contextExists) {
-          const currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
-          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, currentStateDb)
+          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+          currentStateDb = JSON.parse(currentStateDb)
+          currentStateDb.savingTimestamp = Date.now()
+          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+          props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
         }
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
