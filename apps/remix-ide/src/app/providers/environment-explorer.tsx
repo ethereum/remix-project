@@ -30,6 +30,7 @@ type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked V
 export class EnvironmentExplorer extends ViewPlugin {
   providers: { [key in ProvidersSection]: Provider[] }
   providersFlat: { [key: string]: Provider }
+  savedStates
   pinnedProviders: string[]
   dispatch: React.Dispatch<any> = () => {}
 
@@ -42,11 +43,27 @@ export class EnvironmentExplorer extends ViewPlugin {
       'Remix forked VMs': [],
       'Externals': []
     }
+    this.savedStates = []
   }
 
   async onActivation(): Promise<void> {
     this.providersFlat = await this.call('blockchain', 'getAllProviders')
     this.pinnedProviders = await this.call('blockchain', 'getPinnedProviders')
+    const ssExists = await this.call('fileManager', 'exists', '.states/saved_states')
+    if (ssExists) {
+      const savedStatesDetails = await this.call('fileManager', 'readdir', '.states/saved_states')
+      const savedStatesFiles = Object.keys(savedStatesDetails)
+      if (savedStatesFiles.length) this.savedStates = []
+      for (const filePath of savedStatesFiles) {
+        let stateDetail = await this.call('fileManager', 'readFile', filePath)
+        stateDetail = JSON.parse(stateDetail)
+        this.savedStates.push({
+          name: stateDetail.stateName,
+          latestBlock: stateDetail.latestBlockNumber,
+          timestamp: stateDetail.savingTimestamp
+        })
+      }
+    } else this.savedStates = []
     this.renderComponent()
   }
 
@@ -171,6 +188,31 @@ export class EnvironmentExplorer extends ViewPlugin {
               <div>{provider.description}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
+        {this.savedStates && this.savedStates.length > 0 && (<RemixUIGridSection
+          plugin={this}
+          title='Deploy to an In-browser Saved VM State.'
+          hScrollable={false}
+        >{this.savedStates.map(state => {
+            return <RemixUIGridCell
+              plugin={this}
+              title={state.name}
+              classList='EECellStyle'
+              searchKeywords={['Saved VMs', state.name]}
+              pinned={this.pinnedProviders.includes(state.name)}
+              key={state.name}
+              id={state.name}
+              pinStateCallback={async (pinned: boolean) => {
+                console.log('pinned')
+              }
+            }
+            >
+              <div><b>Latest Block: </b>{state.latestBlock}</div>
+              <div><b>Saved at: </b>{(new Date(state.timestamp)).toDateString()}</div>
+            </RemixUIGridCell>
+        })}
+
+        </RemixUIGridSection>)
+        }
         <RemixUIGridSection
           plugin={this}
           title='Deploy to an In-browser forked Virtual Machine.'
