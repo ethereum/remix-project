@@ -516,6 +516,7 @@ jobs:
             ls -la dist/apps/remix-ide
             nvm install 20.2
             nvm use 20.2
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
