@@ -107,7 +107,7 @@ jobs:
 
   test-remixdesktop-linux:
     docker:
-      - image: cimg/base:2024.12
+      - image: cimg/node:20.0.0-browsers
     working_directory: ~/remix-project
     parallelism: 15
     steps:
