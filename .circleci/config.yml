@@ -120,7 +120,7 @@ jobs:
         - run: 
             command: |
                 node -v
-                sudo npm install --global yarn node-gyp
+                sudo npm install --global node-gyp
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
