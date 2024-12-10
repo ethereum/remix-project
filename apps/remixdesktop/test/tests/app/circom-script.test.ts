@@ -64,4 +64,7 @@ const tests = {
 
 }
 
-module.exports = {}
+// only run on windows and macos
+if (process.platform === 'win32' || process.platform === 'darwin') {
+    module.exports = tests
+}
