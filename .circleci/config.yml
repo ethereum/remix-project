@@ -106,26 +106,26 @@ jobs:
               - "persist"
 
   test-remixdesktop-linux:
-    docker:
-      - image: cimg/node:20.2-browsers
+    machine:
+      image: ubuntu-2004:current
+    resource_class:
+      xlarge
     working_directory: ~/remix-project
     parallelism: 15
     steps:
         - run: ldd --version
-
         - checkout
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
+                nvm install 20.2
+                nvm use 20.2
                 node -v
-                sudo npm install --global node-gyp
-                sudo add-apt-repository universe
-                sudo apt update
-                sudo apt install python3
-                sudo apt install python3-pip
-                pip3 install setuptools
+                npm install --global yarn node-gyp
+                python -m pip install --upgrade pip
+                pip install setuptools
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
