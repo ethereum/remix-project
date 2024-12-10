@@ -84,11 +84,18 @@ export const circomCli = {
       return false
     }
   },
+  
 
   async run (filePath: string, version: string, options?: Record<string, string>) {
     const installationPath = getInstallationPath(version)
     const cmd = `${installationPath} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
     console.log(cmd)
+    if(process.platform === 'darwin') {
+      const rosettaInstalled = await checkRosettaInstalled();
+      if(rosettaInstalled === 'Rosetta is not installed') {
+        throw new Error('Rosetta is not installed. Please install Rosetta to run this command.');
+      }
+    }
     return new Promise((resolve, reject) => {
       exec(cmd, { cwd: os.tmpdir() }, (error, stdout, stderr) => {
         if (error) {
@@ -115,4 +122,16 @@ export const extractNameFromKey = (key: string): string => {
   const keyPath = key.split('/')
 
   return keyPath[keyPath.length - 1]
+}
+
+async function checkRosettaInstalled(): Promise<string> {
+  return new Promise((resolve, reject) => {
+      exec("/usr/bin/pgrep oahd > /dev/null && echo 'Rosetta is installed' || echo 'Rosetta is not installed'", (error, stdout, stderr) => {
+          if (error) {
+              reject(`Error: ${stderr}`);
+          } else {
+              resolve(stdout.trim());
+          }
+      });
+  });
 }
