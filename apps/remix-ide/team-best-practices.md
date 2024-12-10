@@ -58,7 +58,7 @@ Related links:
 
 # Prerequisites:
 
-Before starting coding, we should ensure all devs / contributors are aware of: 
+Before starting to coding, we should ensure all devs / contributors are aware of: 
 - Where the codebase is.
 - How to setup and get started (always up to date).
 - How to run tests.
@@ -143,7 +143,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - We release an `m.x.0` whenever there is a new feature.
  - We release an `x.0.0` after each milestone we consider being an important progress.
  - We release an `x.0.0` if there's an API breaking change in one of our libraries.
- - After a new release we should stay in alert for possible regression and better not release Friday at 5pm :)
+ - After a new release we should stay in alert for possible regression and better not release on Friday at 5pm :)
 
  ### 2) Community:
  - Before the official release, we should select a group of power users and invite them to test and give feedbacks.
@@ -197,7 +197,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - We release an `x.0.0` if there's a fundamental change in our UX design, which means users will need to readapt the way they use the app
  - after a week finishes, we publish/release a new version as **remix-beta.ethereum.org** and inform users so early adopters can test. after another week, when the next finished work is released as **remix-beta.ethereum.org**, the previous one becomes **remix.ethereum.org** and all users can start using it
  - a bot to automatically notify users about upcoming features on all channels whenever **remix-beta.ethereum.org** is updated
- - in case it's a major version increase - this announcement should be specially marked so ppl can check early instead of being confronted with drastic changes when **remix.ethereum.org** updates
+ - in case it's a major version increase - this announcement should be specially marked so people can check early instead of being confronted with drastic changes when **remix.ethereum.org** updates
 ### maintenance:
  - Setting up a "bug" time where we each take a bug for which:
      - We feel comfortable to deal with
