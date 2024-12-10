@@ -2,7 +2,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-module.exports = {
+const test = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     browser.globals.asyncHookTimeout = 30000000; 
@@ -254,6 +254,11 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/zk_verifier.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/input.json"]')
   }
+}
+
+// only run on windows and macos
+if(process.platform === 'win32' || process.platform === 'darwin') {
+  module.exports = test
 }
 
 const warningCircuit = `
