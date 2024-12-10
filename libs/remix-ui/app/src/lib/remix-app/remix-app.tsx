@@ -214,7 +214,7 @@ const RemixApp = (props: IRemixAppUi) => {
     default: throw new Error()
     }
     // enterDialog tracks first time users
-    // userEntry tracks returning users
+    // userEntry tracks both first time and returning users
     _paq.push(['trackEvent', 'enterDialog', 'usageType', type])
     _paq.push(['trackEvent', 'userEntry', 'usageType', type])
   }
