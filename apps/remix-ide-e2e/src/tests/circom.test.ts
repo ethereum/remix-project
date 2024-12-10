@@ -2,7 +2,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const test = {
+module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     browser.globals.asyncHookTimeout = 30000000; 
@@ -38,8 +38,8 @@ const test = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
@@ -55,8 +55,8 @@ const test = {
       .click('[data-id="compute_witness_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wtn"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wtn"]')
   },
   'Should compile a simple circuit using compile button in circom plugin #group2': function (browser: NightwatchBrowser) {
     browser
@@ -70,8 +70,8 @@ const test = {
       .click('button[data-id="compile_circuit_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
   'Should run Groth16 setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
@@ -116,8 +116,8 @@ const test = {
 
         return actions.keyDown(this.Keys.CONTROL).sendKeys('s')
       })
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
   'Should display warnings for compiled circuit without pragma version #group4': function (browser: NightwatchBrowser) {
     browser
@@ -164,7 +164,7 @@ const test = {
       .waitForElementNotPresent('[data-id="circuit_feedback"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
   'Should create a new workspace using hash checker template #group5 #group6': function (browser: NightwatchBrowser) {
     browser
@@ -254,11 +254,6 @@ const test = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/zk_verifier.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/input.json"]')
   }
-}
-
-// only run on windows and macos
-if(process.platform === 'win32' || process.platform === 'darwin') {
-  module.exports = test
 }
 
 const warningCircuit = `
