@@ -87,7 +87,7 @@ Before starting to coding, we should ensure all devs / contributors are aware of
  - Mark unfinished pull requests with the `Work in Progress` label
  - Large pull requests (above 200-400 lines of code changed) cannot be effectively reviewed and should be split into smaller pieces.
  - Code should comply to the `JavaScript standard style` - https://www.npmjs.com/package/standard
- - You should not expect complete review on a pull request which is not passing CI.
+ - You should not expect a complete review on a pull request which is not passing CI.
  - You can obviously ask for feedback on your approach.
  - You should assign a reviewer(s).
  - Pull requests should be used as a reference to update coding best practices whenever it is needed.
@@ -109,7 +109,7 @@ Before starting to coding, we should ensure all devs / contributors are aware of
  - You should take the responsibility of the PR you are reviewing.
  - You should make sure the app is viable after the PR is being merged.
  - You should make sure the PR is correctly tested (e2e tests, unit tests)
- - Ideally You should have enough knowledge to be able to fix related bugs.
+ - Ideally you should have enough knowledge to be able to fix related bugs.
       
  ### 3) Merge:
 
