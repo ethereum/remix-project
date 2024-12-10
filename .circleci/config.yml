@@ -121,6 +121,8 @@ jobs:
             command: |
                 node -v
                 sudo npm install --global node-gyp
+                sudo add-apt-repository universe
+                sudo apt update
                 sudo apt install python3
                 sudo apt install python3-pip
                 pip3 install setuptools
