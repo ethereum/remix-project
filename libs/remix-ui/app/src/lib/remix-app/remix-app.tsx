@@ -61,7 +61,8 @@ const RemixApp = (props: IRemixAppUi) => {
     if (props.app) {
       activateApp()
     }
-    const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
+    let hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
+    
     if (props.app.showMatomo) {
       // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
       // if the user approves matomo tracking.
@@ -75,6 +76,23 @@ const RemixApp = (props: IRemixAppUi) => {
       }
     }
     if (hadUsageTypeAsked) {
+      // rewriting the data in user's local storage for consistency
+      switch (hadUsageTypeAsked) {
+        case '1': {
+          hadUsageTypeAsked ='beginner'
+        }
+        case '2': {
+          hadUsageTypeAsked ='prototyper'
+        }
+        case '3': {
+          hadUsageTypeAsked = 'advanced'
+        }
+        case '4': {
+          hadUsageTypeAsked = 'production'
+        }
+        default: {}
+      }
+      localStorage.setItem('hadUsageTypeAsked', hadUsageTypeAsked)
       _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
     }
   }, [])
@@ -195,6 +213,8 @@ const RemixApp = (props: IRemixAppUi) => {
     }
     default: throw new Error()
     }
+    // enterDialog tracks first time users
+    // userEntry tracks returning users
     _paq.push(['trackEvent', 'enterDialog', 'usageType', type])
     _paq.push(['trackEvent', 'userEntry', 'usageType', type])
   }
