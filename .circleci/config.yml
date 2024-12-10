@@ -107,19 +107,18 @@ jobs:
 
   test-remixdesktop-linux:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:20.2-browsers
     working_directory: ~/remix-project
     parallelism: 15
     steps:
         - run: ldd --version
+
         - checkout
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
-                nvm install 20.2
-                nvm use 20.2
                 node -v
                 npm install --global yarn node-gyp
                 python -m pip install --upgrade pip
@@ -134,13 +133,11 @@ jobs:
         - run:  
             name: "Run tests"
             command: |
-              nvm use 20.2
               cd apps/remixdesktop/
               ./run_ci_test.sh
         - run:  
             name: "Run isogit tests"
             command: |
-              nvm use 20.2
               cd apps/remixdesktop/
               ./run_git_ui_isogit_tests.sh
         - store_test_results:
