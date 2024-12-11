@@ -1,4 +1,4 @@
-# How run and write tests for Remix Desktop
+# How to run and write tests for Remix Desktop
 
 
 ### Basic procedure of local testing
@@ -107,7 +107,7 @@ module.exports = {
 
 Always use this, it avoids trouble: 
 ```
-rowser.hideToolTips()
+browser.hideToolTips()
 ```
 
 
