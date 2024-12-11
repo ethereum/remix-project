@@ -55,6 +55,7 @@ export type Provider = {
   description?: string
   isInjected: boolean
   isVM: boolean
+  isSavedState: boolean
   isForkedVM: boolean
   title: string
   init: () => Promise<void>

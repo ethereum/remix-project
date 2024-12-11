@@ -25,11 +25,12 @@ const profile = {
   methods: []
 }
 
-type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs'
+type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Saved VM States'
 
 export class EnvironmentExplorer extends ViewPlugin {
   providers: { [key in ProvidersSection]: Provider[] }
   providersFlat: { [key: string]: Provider }
+  savedStates
   pinnedProviders: string[]
   dispatch: React.Dispatch<any> = () => {}
 
@@ -39,9 +40,11 @@ export class EnvironmentExplorer extends ViewPlugin {
     this.providers = {
       'Injected': [],
       'Remix VMs': [],
+      'Saved VM States': [],
       'Remix forked VMs': [],
       'Externals': []
     }
+    this.savedStates = []
   }
 
   async onActivation(): Promise<void> {
@@ -57,6 +60,8 @@ export class EnvironmentExplorer extends ViewPlugin {
       this.providers['Remix forked VMs'].push(provider)
     } else if (provider.isVM) {
       this.providers['Remix VMs'].push(provider)
+    } else if (provider.isSavedState) {
+      this.providers['Saved VM States'].push(provider)
     } else {
       this.providers['Externals'].push(provider)
     }
@@ -84,6 +89,7 @@ export class EnvironmentExplorer extends ViewPlugin {
     this.providers = {
       'Injected': [],
       'Remix VMs': [],
+      'Saved VM States': [],
       'Externals': [],
       'Remix forked VMs': []
     }
@@ -169,6 +175,42 @@ export class EnvironmentExplorer extends ViewPlugin {
               }}
             >
               <div>{provider.description}</div>
+            </RemixUIGridCell>
+          })}</RemixUIGridSection>
+        <RemixUIGridSection
+          plugin={this}
+          title='Deploy to an In-browser Saved VM State.'
+          hScrollable={false}
+        >{this.providers['Saved VM States'].map(provider => {
+            const {latestBlock, timestamp} = JSON.parse(provider.description)
+            return <RemixUIGridCell
+              plugin={this}
+              title={provider.displayName}
+              logos={provider.logos}
+              classList='EECellStyle'
+              searchKeywords={['Saved VM States', provider.name, provider.displayName, provider.title, provider.description]}
+              pinned={this.pinnedProviders.includes(provider.name)}
+              key={provider.name}
+              id={provider.name}
+              pinStateCallback={async (pinned: boolean) => {
+                if (pinned) {
+                  this.emit('providerPinned', provider.name, provider)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Environment list of the Deploy & Run Transactions plugin.`)
+                  return true
+                }
+                const providerName = await this.call('blockchain', 'getProvider')
+                if (providerName !== provider.name) {
+                  this.emit('providerUnpinned', provider.name, provider)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Environment list of the Deploy & Run Transactions plugin.`)
+                  return true
+                } else {
+                  this.call('notification', 'toast', 'Cannot unpin the current selected provider')
+                  return false
+                }
+              }}
+            >
+              <div><b>Latest Block: </b>{latestBlock}</div>
+              <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
         <RemixUIGridSection
