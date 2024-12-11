@@ -3,7 +3,7 @@ import type { Chain } from './types'
 import { ContractDropdownSelection } from './components/ContractDropdown'
 
 // Define the type for the context
-type VerifyFormContextType = {
+type InteractionFormContextType = {
   selectedChain: Chain | undefined
   setSelectedChain: React.Dispatch<React.SetStateAction<Chain>>
   contractAddress: string
@@ -23,24 +23,24 @@ type VerifyFormContextType = {
 }
 
 // Provide a default value with the appropriate types
-const defaultContextValue: VerifyFormContextType = {
+const defaultContextValue: InteractionFormContextType = {
   selectedChain: undefined,
-  setSelectedChain: (selectedChain: Chain) => {},
+  setSelectedChain: (selectedChain: Chain) => { },
   contractAddress: '',
-  setContractAddress: (contractAddress: string) => {},
+  setContractAddress: (contractAddress: string) => { },
   contractAddressError: '',
-  setContractAddressError: (contractAddressError: string) => {},
+  setContractAddressError: (contractAddressError: string) => { },
   selectedContract: undefined,
-  setSelectedContract: (selectedContract: ContractDropdownSelection) => {},
+  setSelectedContract: (selectedContract: ContractDropdownSelection) => { },
   proxyAddress: '',
-  setProxyAddress: (proxyAddress: string) => {},
+  setProxyAddress: (proxyAddress: string) => { },
   proxyAddressError: '',
-  setProxyAddressError: (contractAddressError: string) => {},
+  setProxyAddressError: (contractAddressError: string) => { },
   abiEncodedConstructorArgs: '',
-  setAbiEncodedConstructorArgs: (contractAddproxyAddressress: string) => {},
+  setAbiEncodedConstructorArgs: (contractAddproxyAddressress: string) => { },
   abiEncodingError: '',
-  setAbiEncodingError: (contractAddressError: string) => {},
+  setAbiEncodingError: (contractAddressError: string) => { },
 }
 
 // Create the context with the type
-export const VerifyFormContext = React.createContext<VerifyFormContextType>(defaultContextValue)
+export const InteractionFormContext = React.createContext<InteractionFormContextType>(defaultContextValue)

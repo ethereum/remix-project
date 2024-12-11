@@ -1,11 +1,11 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-import { VerifyView, ReceiptsView, LookupView, LookupABIView, SettingsView } from './views'
+import { LookupABIView, SettingsView } from './views'
 import { DefaultLayout } from './layouts'
-import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
+import { ContractInteractionPluginClient } from './ContractInteractionPluginClient'
 
 export interface DisplayRoutesProps {
-  plugin: ContractVerificationPluginClient
+  plugin: ContractInteractionPluginClient
 }
 
 const DisplayRoutes = (props: DisplayRoutesProps) => (
@@ -15,7 +15,7 @@ const DisplayRoutes = (props: DisplayRoutesProps) => (
       <Route
         path="/"
         element={
-          <DefaultLayout from="/" title="LookupABI" description="Search for verified contracts and download the ABI to Remix">
+          <DefaultLayout from="/" title="LookupABI" description="cSearch for verified contracts and download the ABI to Remix">
             <LookupABIView plugin={props.plugin} />
           </DefaultLayout>
         }
@@ -24,7 +24,7 @@ const DisplayRoutes = (props: DisplayRoutesProps) => (
       <Route
         path="/settings"
         element={
-          <DefaultLayout from="/" title="Settings" description="Customize settings for each verification service and chain">
+          <DefaultLayout from="/" title="Settings" description="Customize settings for each ABI provider service and chain">
             <SettingsView />
           </DefaultLayout>
         }

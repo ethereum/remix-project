@@ -1,19 +1,19 @@
-import { AbiProviderIdentifier } from './VerificationTypes'
+import { AbiProviderIdentifier } from './AbiProviderTypes'
 
-export interface VerifierSettings {
+export interface AbiProviderSettings {
   apiUrl?: string
   explorerUrl?: string
   apiKey?: string
 }
 
-export type SettingsForVerifier = Partial<Record<AbiProviderIdentifier, VerifierSettings>>
+export type SettingsForAbiProviders = Partial<Record<AbiProviderIdentifier, AbiProviderSettings>>
 
 export interface ChainSettings {
-  verifiers: SettingsForVerifier
+  abiProviders: SettingsForAbiProviders
 }
 
 export type SettingsForChains = Record<string, ChainSettings>
 
-export interface ContractVerificationSettings {
+export interface ContractInteractionSettings {
   chains: SettingsForChains
 }

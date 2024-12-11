@@ -1,28 +1,26 @@
 import { useState, useEffect, useRef, useReducer } from 'react'
 
-import ContractVerificationPluginClient from './ContractVerificationPluginClient'
+import ContractInteractionPluginClient from './ContractInteractionPluginClient'
 
 import { AppContext } from './AppContext'
-import { VerifyFormContext } from './VerifyFormContext'
+import { InteractionFormContext } from './InteractionFormContext'
 import DisplayRoutes from './routes'
-import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, VerificationResponse } from './types'
+import type { ContractInteractionSettings, ThemeType, Chain } from './types'
 import { mergeChainSettingsWithDefaults } from './utils'
 import { IntlProvider } from 'react-intl'
 
 import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { getVerifier } from './abiProviders'
 import { ContractDropdownSelection } from './components/ContractDropdown'
 import { connectRemix, initDispatch, updateState } from './actions'
 import { appReducer, appInitialState } from './reducers/state'
 
-let plugin = ContractVerificationPluginClient;
+let plugin = ContractInteractionPluginClient;
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
-  const [settings, setSettings] = useLocalStorage<ContractVerificationSettings>('contract-interaction:settings', { chains: {} })
-  const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-interaction:submitted-contracts', {})
+  const [settings, setSettings] = useLocalStorage<ContractInteractionSettings>('contract-interaction:settings', { chains: {} })
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
 
@@ -39,7 +37,7 @@ const App = () => {
   const timer = useRef(null)
 
   useEffect(() => {
-    plugin.internalEvents.on('verification_activated', () => {
+    plugin.internalEvents.on('interaction_activated', () => {
       // Fetch compiler artefacts initially
       plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
         setCompilationOutput(obj)
@@ -62,88 +60,6 @@ const App = () => {
       plugin.off('compilerArtefacts' as any, 'compilationSaved')
     }
   }, [])
-
-  // Poll status of pending receipts frequently
-  useEffect(() => {
-    const getPendingReceipts = (submissions: SubmittedContracts) => {
-      const pendingReceipts: VerificationReceipt[] = []
-      // Check statuses of receipts
-      for (const submission of Object.values(submissions)) {
-        for (const receipt of submission.receipts) {
-          if (receipt.status === 'pending') {
-            pendingReceipts.push(receipt)
-          }
-        }
-        for (const proxyReceipt of submission.proxyReceipts ?? []) {
-          if (proxyReceipt.status === 'pending') {
-            pendingReceipts.push(proxyReceipt)
-          }
-        }
-      }
-      return pendingReceipts
-    }
-
-    let pendingReceipts = getPendingReceipts(submittedContracts)
-
-    if (pendingReceipts.length > 0) {
-      if (timer.current) {
-        clearInterval(timer.current)
-        timer.current = null
-      }
-
-      const pollStatus = async () => {
-        const changedSubmittedContracts = { ...submittedContracts }
-
-        for (const receipt of pendingReceipts) {
-          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceed.
-
-          const { verifierInfo, receiptId } = receipt
-          if (receiptId) {
-            const contract = changedSubmittedContracts[receipt.contractId]
-            const chainSettings = mergeChainSettingsWithDefaults(contract.chainId, settings)
-            const verifierSettings = chainSettings.verifiers[verifierInfo.name]
-
-            // In case the user overwrites the API later, prefer the one stored in localStorage
-            const verifier = getVerifier(verifierInfo.name, { ...verifierSettings, apiUrl: verifierInfo.apiUrl })
-            if (!verifier.checkVerificationStatus) {
-              continue
-            }
-
-            try {
-              let response: VerificationResponse
-              if (receipt.isProxyReceipt) {
-                response = await verifier.checkProxyVerificationStatus(receiptId)
-              } else {
-                response = await verifier.checkVerificationStatus(receiptId)
-              }
-              const { status, message, lookupUrl } = response
-              receipt.status = status
-              receipt.message = message
-              if (lookupUrl) {
-                receipt.lookupUrl = lookupUrl
-              }
-            } catch (e) {
-              receipt.failedChecks++
-              // Only retry 5 times
-              if (receipt.failedChecks >= 5) {
-                receipt.status = 'failed'
-                receipt.message = e.message
-              }
-            }
-          }
-        }
-
-        pendingReceipts = getPendingReceipts(changedSubmittedContracts)
-        if (timer.current && pendingReceipts.length === 0) {
-          clearInterval(timer.current)
-          timer.current = null
-        }
-        setSubmittedContracts((prev) => Object.assign({}, prev, changedSubmittedContracts))
-      }
-
-      timer.current = setInterval(pollStatus, 1000)
-    }
-  }, [submittedContracts])
 
   // TODO: check if localisation works
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
@@ -171,12 +87,12 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
+    <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput }}>
 
       <IntlProvider locale={locale.code} messages={locale.messages}>
-        <VerifyFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
+        <InteractionFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
           <DisplayRoutes plugin={plugin} />
-        </VerifyFormContext.Provider>
+        </InteractionFormContext.Provider>
       </IntlProvider>
 
     </AppContext.Provider>

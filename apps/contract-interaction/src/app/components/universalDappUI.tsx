@@ -6,7 +6,7 @@ import * as ethJSUtil from '@ethereumjs/util'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, shortenAddress } from '@remix-ui/helper'
-import { ContractVerificationPluginClient } from '../ContractVerificationPluginClient'
+import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 import { ReadWriteFunctions } from './ReadWriteFunctions'
 import { ABICategory, Chain } from '../types'
 const _paq = (window._paq = window._paq || [])
@@ -59,7 +59,7 @@ export interface UdappProps {
   getFuncABIInputs: (funcABI: FuncABI) => string,
   exEnvironment: string,
   editInstance: (instance) => void,
-  plugin: ContractVerificationPluginClient,
+  plugin: ContractInteractionPluginClient,
   solcVersion: { version: string, canReceive: boolean }
 }
 

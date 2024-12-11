@@ -1,28 +1,28 @@
-import type { ChainSettings, ContractVerificationSettings, SettingsForVerifier, VerifierSettings } from '../types/SettingsTypes'
-import { AbiProviderIdentifier, VERIFIERS } from '../types/VerificationTypes'
+import type { ChainSettings, ContractInteractionSettings, SettingsForAbiProviders, AbiProviderSettings } from '../types/SettingsTypes'
+import { AbiProviderIdentifier, ABI_PROVIDERS } from '../types/AbiProviderTypes'
 import DEFAULT_APIS from './default-apis.json'
 
-export function mergeChainSettingsWithDefaults(chainId: string, userSettings: ContractVerificationSettings): ChainSettings {
-  const verifiers: SettingsForVerifier = {}
+export function mergeChainSettingsWithDefaults(chainId: string, userSettings: ContractInteractionSettings): ChainSettings {
+  const abiProviders: SettingsForAbiProviders = {}
 
-  for (const verifierId of VERIFIERS) {
-    const userSetting: VerifierSettings = userSettings.chains[chainId]?.verifiers[verifierId] ?? {}
+  for (const abiProviderIndex of ABI_PROVIDERS) {
+    const userSetting: AbiProviderSettings = userSettings.chains[chainId]?.abiProviders[abiProviderIndex] ?? {}
 
-    verifiers[verifierId] = { ...userSetting }
+    abiProviders[abiProviderIndex] = { ...userSetting }
 
-    let defaultsForVerifier: VerifierSettings
-    if (verifierId === 'Sourcify') {
+    let defaultsForVerifier: AbiProviderSettings
+    if (abiProviderIndex === 'Sourcify') {
       defaultsForVerifier = DEFAULT_APIS['Sourcify']
     } else {
-      defaultsForVerifier = DEFAULT_APIS[verifierId][chainId] ?? {}
+      defaultsForVerifier = DEFAULT_APIS[abiProviderIndex][chainId] ?? {}
     }
 
     // Prefer user settings over defaults
-    verifiers[verifierId] = Object.assign({}, defaultsForVerifier, userSetting)
+    abiProviders[abiProviderIndex] = Object.assign({}, defaultsForVerifier, userSetting)
   }
-  return { verifiers }
+  return { abiProviders }
 }
 
-export function validConfiguration(chainSettings: ChainSettings | undefined, verifierId: AbiProviderIdentifier) {
-  return !!chainSettings && !!chainSettings.verifiers[verifierId]?.apiUrl && (verifierId !== 'Etherscan' || !!chainSettings.verifiers[verifierId]?.apiKey)
+export function validConfiguration(chainSettings: ChainSettings | undefined, abiProviderIndex: AbiProviderIdentifier) {
+  return !!chainSettings && !!chainSettings.abiProviders[abiProviderIndex]?.apiUrl && (abiProviderIndex !== 'Etherscan' || !!chainSettings.abiProviders[abiProviderIndex]?.apiKey)
 }

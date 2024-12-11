@@ -2,7 +2,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import { UniversalDappUI } from './universalDappUI'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractVerificationPluginClient } from '../ContractVerificationPluginClient'
+import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 import { Chain } from '../types'
 const _paq = (window._paq = window._paq || [])
 
@@ -63,7 +63,7 @@ export interface InstanceContainerUIProps {
   chain: Chain,
   editInstance: (instance) => void,
   exEnvironment: string
-  plugin: ContractVerificationPluginClient
+  plugin: ContractInteractionPluginClient
   solcVersion: { version: string, canReceive: boolean }
 }
 

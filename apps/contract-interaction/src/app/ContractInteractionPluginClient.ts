@@ -2,7 +2,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 
-export class ContractVerificationPluginClient extends PluginClient {
+export class ContractInteractionPluginClient extends PluginClient {
   public internalEvents: EventManager
 
   constructor() {
@@ -13,8 +13,8 @@ export class ContractVerificationPluginClient extends PluginClient {
   }
 
   onActivation(): void {
-    this.internalEvents.emit('verification_activated')
+    this.internalEvents.emit('interaction_activated')
   }
 }
 
-export default new ContractVerificationPluginClient()
+export default new ContractInteractionPluginClient()

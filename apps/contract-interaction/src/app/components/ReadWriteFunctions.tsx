@@ -8,7 +8,7 @@ import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { is0XPrefixed, isHexadecimal } from '@remix-ui/helper'
-import { ContractVerificationPluginClient } from '../ContractVerificationPluginClient'
+import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 import { ABICategory } from '../types'
 
 const txHelper = remixLib.execution.txHelper
@@ -52,7 +52,7 @@ export interface ReadWriteFunctionsProps {
   getFuncABIInputs: (funcABI: FuncABI) => string,
   exEnvironment: string,
   editInstance: (instance) => void,
-  plugin: ContractVerificationPluginClient,
+  plugin: ContractInteractionPluginClient,
   solcVersion: { version: string, canReceive: boolean }
   contractABI: { category: ABICategory, abi: FuncABI[] }
 }

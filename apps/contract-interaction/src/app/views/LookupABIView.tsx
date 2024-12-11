@@ -2,27 +2,27 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import type { LookupResponse, AbiProviderIdentifier, ContractInstance } from '../types'
-import { VERIFIERS } from '../types'
+import { ABI_PROVIDERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
-import { getVerifier } from '../abiProviders'
+import { getAbiProvider } from '../abiProviders'
 import { useNavigate } from 'react-router-dom'
-import { VerifyFormContext } from '../VerifyFormContext'
+import { InteractionFormContext } from '../InteractionFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
 import { InstanceContainerUI } from '../components/instanceContainerUI'
-import { ContractVerificationPluginClient } from '../ContractVerificationPluginClient'
+import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 
 export interface LookupABIViewProps {
-  plugin: ContractVerificationPluginClient
+  plugin: ContractInteractionPluginClient
 }
 
 export const LookupABIView = (props: LookupABIViewProps) => {
   const { settings, clientInstance } = useContext(AppContext)
-  const { selectedChain, setSelectedChain } = useContext(VerifyFormContext)
+  const { selectedChain, setSelectedChain } = useContext(InteractionFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [contractInstances, setContractInstances] = useState<ContractInstance[]>([])
-  const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
+  const [loadingAbiProviders, setLoadingAbiProviders] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
   const [lookupResults, setLookupResult] = useState<Partial<Record<AbiProviderIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
 
@@ -30,13 +30,13 @@ export const LookupABIView = (props: LookupABIViewProps) => {
 
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
-  const noVerifierEnabled = VERIFIERS.every((verifierId) => !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported))
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noVerifierEnabled
+  const noAbiProviderEnabled = ABI_PROVIDERS.every((abiProviderIndex) => !validConfiguration(chainSettings, abiProviderIndex) || (abiProviderIndex === 'Sourcify' && !sourcifySupported))
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noAbiProviderEnabled
 
   // Reset results when chain or contract changes
   useEffect(() => {
     setLookupResult({})
-    setLoadingVerifiers({})
+    setLoadingAbiProviders({})
   }, [selectedChain, contractAddress])
 
   const handleSelectedChain = async (newSelectedChain) => {
@@ -49,22 +49,22 @@ export const LookupABIView = (props: LookupABIViewProps) => {
   }
 
   const handleLookup = (e) => {
-    if (Object.values(loadingVerifiers).some((loading) => loading)) {
+    if (Object.values(loadingAbiProviders).some((loading) => loading)) {
       console.error('Lookup request already running')
       return
     }
 
     e.preventDefault()
 
-    for (const verifierId of VERIFIERS) {
-      if (!validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)) {
+    for (const abiProviderIndex of ABI_PROVIDERS) {
+      if (!validConfiguration(chainSettings, abiProviderIndex) || (abiProviderIndex === 'Sourcify' && !sourcifySupported)) {
         continue
       }
 
       // TODO: only fetch ABI if it's not already available.
-      setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: true }))
-      const verifier = getVerifier(verifierId, chainSettings.verifiers[verifierId])
-      verifier
+      setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: true }))
+      const abiProvider = getAbiProvider(abiProviderIndex, chainSettings.abiProviders[abiProviderIndex])
+      abiProvider
         .lookupABI(contractAddress)
         .then((contractABI) => {
           if (contractABI) {
@@ -83,10 +83,10 @@ export const LookupABIView = (props: LookupABIViewProps) => {
         .catch((err) =>
           setLookupResult((prev) => {
             console.error(err)
-            return { ...prev, [verifierId]: { status: 'lookup failed' } }
+            return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
           })
         )
-        .finally(() => setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: false })))
+        .finally(() => setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: false })))
     }
   }
 
@@ -103,12 +103,12 @@ export const LookupABIView = (props: LookupABIViewProps) => {
       </form>
       <div className="pt-3">
         {chainSettings &&
-          VERIFIERS.map((verifierId) => {
-            if (!validConfiguration(chainSettings, verifierId)) {
+          ABI_PROVIDERS.map((abiProviderIndex) => {
+            if (!validConfiguration(chainSettings, abiProviderIndex)) {
               return (
-                <div key={verifierId} className="pt-4">
+                <div key={abiProviderIndex} className="pt-4">
                   <div>
-                    <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
+                    <span className="font-weight-bold text-secondary">{abiProviderIndex}</span>{' '}
                     <CustomTooltip tooltipText="Configure the API in the settings">
                       <span className="text-secondary" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Enable?
@@ -119,12 +119,12 @@ export const LookupABIView = (props: LookupABIViewProps) => {
               )
             }
 
-            if (verifierId === 'Sourcify' && !sourcifySupported) {
+            if (abiProviderIndex === 'Sourcify' && !sourcifySupported) {
               return (
-                <div key={verifierId} className="pt-4">
+                <div key={abiProviderIndex} className="pt-4">
                   <div>
-                    <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
-                    <CustomTooltip tooltipText={`The configured Sourcify server (${chainSettings.verifiers['Sourcify'].apiUrl}) does not support chain ${selectedChain?.chainId}`}>
+                    <span className="font-weight-bold text-secondary">{abiProviderIndex}</span>{' '}
+                    <CustomTooltip tooltipText={`The configured Sourcify server (${chainSettings.abiProviders['Sourcify'].apiUrl}) does not support chain ${selectedChain?.chainId}`}>
                       <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Unsupported
                       </span>
@@ -135,26 +135,26 @@ export const LookupABIView = (props: LookupABIViewProps) => {
             }
 
             return (
-              <div key={verifierId} className="pt-4">
+              <div key={abiProviderIndex} className="pt-4">
                 <div>
-                  <span className="font-weight-bold">{verifierId}</span> <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
+                  <span className="font-weight-bold">{abiProviderIndex}</span> <span className="text-secondary">{chainSettings.abiProviders[abiProviderIndex].apiUrl}</span>
                 </div>
-                {!!loadingVerifiers[verifierId] && (
+                {/* {!!loadingAbiProviders[abiProviderIndex] && (
                   <div className="pt-2 d-flex justify-content-center">
                     <i className="fas fa-spinner fa-spin fa-2x"></i>
                   </div>
                 )}
-                {!loadingVerifiers[verifierId] && !!lookupResults[verifierId] && (
+                {!loadingAbiProviders[abiProviderIndex] && !!lookupResults[abiProviderIndex] && (
                   <div>
                     <div className="pt-2">
                       Status:{' '}
                       <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
-                        {lookupResults[verifierId].status}
+                        {lookupResults[abiProviderIndex].status}
                       </span>{' '}
-                      {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
+                      {!!lookupResults[abiProviderIndex].lookupUrl && <a href={lookupResults[abiProviderIndex].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             )
           })}

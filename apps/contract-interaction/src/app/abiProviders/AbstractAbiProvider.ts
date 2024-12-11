@@ -1,19 +1,9 @@
-import { CompilerAbstract } from '@remix-project/remix-solidity'
-import type { ContractABI, LookupResponse, SubmittedContract, VerificationResponse } from '../types'
+import type { ContractABI } from '../types'
 import { FuncABI } from '@remix-project/core-plugin'
-
-// Optional function definitions
-export interface AbstractAbiProvider {
-  verifyProxy(submittedContract: SubmittedContract): Promise<VerificationResponse>
-  checkVerificationStatus?(receiptId: string): Promise<VerificationResponse>
-  checkProxyVerificationStatus?(receiptId: string): Promise<VerificationResponse>
-}
 
 export abstract class AbstractAbiProvider {
   constructor(public apiUrl: string, public explorerUrl: string) { }
 
-  abstract verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse>
-  abstract lookup(contractAddress: string, chainId: string): Promise<LookupResponse>
   abstract lookupABI(contractAddress: string): Promise<ContractABI>
 
   /**

@@ -8,7 +8,7 @@ export function useSourcifySupported(selectedChain: Chain, chainSettings: ChainS
     // Unsupported until fetch returns
     setSourcifySupported(false)
 
-    const sourcifyApi = chainSettings?.verifiers['Sourcify']?.apiUrl
+    const sourcifyApi = chainSettings?.abiProviders['Sourcify']?.apiUrl
     if (!sourcifyApi) {
       return
     }

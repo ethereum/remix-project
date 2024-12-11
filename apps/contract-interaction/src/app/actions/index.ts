@@ -1,4 +1,4 @@
-import ContractVerificationPluginClient from '../ContractVerificationPluginClient';
+import ContractInteractionPluginClient from '../ContractInteractionPluginClient';
 
 let dispatch: any, state: any;
 
@@ -18,7 +18,7 @@ export const connectRemix = async () => {
     },
   });
 
-  await ContractVerificationPluginClient.onload();
+  await ContractInteractionPluginClient.onload();
 
   //  await ContractVerificationPluginClient.call('layout', 'minimize', 'terminal', true);
 
