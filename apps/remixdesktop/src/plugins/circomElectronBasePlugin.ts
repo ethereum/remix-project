@@ -58,8 +58,11 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     else {
       // @ts-ignore
       if (process.platform === 'win32' && 'wasm' in options) {
-        // @ts-ignore
-        await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', extractNameFromKey(filePath).replace('.circom', '_js')))
+        try{
+          // @ts-ignore
+          await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', extractNameFromKey(filePath).replace('.circom', '_js')))
+        } catch (e) {
+        }
       }
     }
     filePath = path.join(wd, filePath)
