@@ -100,8 +100,8 @@ export class SourcifyAbiProvider extends AbstractAbiProvider {
   }
 
   // TODO
-  async lookupABI(contractAddress: string, chainId: string): Promise<undefined> {
-
+  async lookupABI(contractAddress: string): Promise<undefined> {
+    console.error("Not yet implemented")
     return undefined
   }
 

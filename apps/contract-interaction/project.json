@@ -6,8 +6,13 @@
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "development",
+      "dependsOn": [
+        "install"
+      ],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/contract-interaction",
@@ -21,13 +26,14 @@
           "apps/contract-interaction/src/assets",
           "apps/contract-interaction/src/profile.json"
         ],
-        "styles": ["apps/contract-interaction/src/styles.css"],
+        "styles": [
+          "apps/contract-interaction/src/styles.css"
+        ],
         "scripts": [],
         "webpackConfig": "apps/contract-interaction/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -40,10 +46,23 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/contract-interaction/**/*.ts"],
+        "lintFilePatterns": [
+          "apps/contract-interaction/**/*.ts"
+        ],
         "eslintConfig": "apps/contract-interaction/.eslintrc"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd apps/contract-interaction && yarn"
+        ],
+        "parallel": false
       }
     },
     "serve": {

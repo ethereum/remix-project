@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
-import type { LookupResponse, AbiProviderIdentifier } from '../types'
+import type { LookupResponse, AbiProviderIdentifier, ContractInstance } from '../types'
 import { VERIFIERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -9,12 +9,19 @@ import { getVerifier } from '../abiProviders'
 import { useNavigate } from 'react-router-dom'
 import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
+import { InstanceContainerUI } from '../components/instanceContainerUI'
+import { ContractVerificationPluginClient } from '../ContractVerificationPluginClient'
 
-export const LookupABIView = () => {
+export interface LookupABIViewProps {
+  plugin: ContractVerificationPluginClient
+}
+
+export const LookupABIView = (props: LookupABIViewProps) => {
   const { settings, clientInstance } = useContext(AppContext)
   const { selectedChain, setSelectedChain } = useContext(VerifyFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
+  const [contractInstances, setContractInstances] = useState<ContractInstance[]>([])
   const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
   const [lookupResults, setLookupResult] = useState<Partial<Record<AbiProviderIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
@@ -32,6 +39,15 @@ export const LookupABIView = () => {
     setLoadingVerifiers({})
   }, [selectedChain, contractAddress])
 
+  const handleSelectedChain = async (newSelectedChain) => {
+    setSelectedChain(newSelectedChain)
+    // const isPinnedAvailable = await props.plugin.call('fileManager', 'getFolder', `.lookedUpContracts/pinned-contracts/${newSelectedChain.chainId}`)
+    // if (isPinnedAvailable) {
+    //   await props.plugin.call('fileManager', 'remove', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}`)
+    //   _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
+    // }    // props.clearInstances()
+  }
+
   const handleLookup = (e) => {
     if (Object.values(loadingVerifiers).some((loading) => loading)) {
       console.error('Lookup request already running')
@@ -45,12 +61,25 @@ export const LookupABIView = () => {
         continue
       }
 
+      // TODO: only fetch ABI if it's not already available.
       setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: true }))
       const verifier = getVerifier(verifierId, chainSettings.verifiers[verifierId])
       verifier
-        .lookupABI(contractAddress, selectedChain.chainId.toString())
-        // TODO
-        // .then((result) => setLookupResult((prev) => ({ ...prev, [verifierId]: result })))
+        .lookupABI(contractAddress)
+        .then((contractABI) => {
+          if (contractABI) {
+            setContractInstances([...contractInstances, {
+              address: contractAddress,
+              name: `${(contractInstances.length + 1).toString()}`,
+              abiRead: contractABI.abiRead,
+              abiWrite: contractABI.abiWrite,
+              abiProxyRead: contractABI.abiProxyRead,
+              abiProxyWrite: contractABI.abiProxyWrite,
+              isPinned: false,
+            } as ContractInstance,
+            ])
+          }
+        })
         .catch((err) =>
           setLookupResult((prev) => {
             console.error(err)
@@ -61,25 +90,10 @@ export const LookupABIView = () => {
     }
   }
 
-  const handleOpenInRemix = async (lookupResponse: LookupResponse) => {
-    for (const source of lookupResponse.sourceFiles ?? []) {
-      try {
-        await clientInstance.call('fileManager', 'setFile', source.path, source.content)
-      } catch (err) {
-        console.error(`Error while creating file ${source.path}: ${err.message}`)
-      }
-    }
-    try {
-      await clientInstance.call('fileManager', 'open', lookupResponse.targetFilePath)
-    } catch (err) {
-      console.error(`Error focusing file ${lookupResponse.targetFilePath}: ${err.message}`)
-    }
-  }
-
   return (
     <>
       <form onSubmit={handleLookup}>
-        <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
+        <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={handleSelectedChain} />
 
         <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
 
@@ -139,19 +153,58 @@ export const LookupABIView = () => {
                       </span>{' '}
                       {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
                     </div>
-                    {!!lookupResults[verifierId].sourceFiles && lookupResults[verifierId].sourceFiles.length > 0 && (
-                      <div className="pt-2 d-flex flex-row justify-content-center">
-                        <button className="btn btn-secondary bg-transparent text-body" onClick={() => handleOpenInRemix(lookupResults[verifierId])}>
-                          <i className="fas fa-download"></i> Open in Remix
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
             )
           })}
       </div>
+
+      {contractInstances.length > 0 && (
+        <InstanceContainerUI
+          // TODO
+          // clearInstances={() => { }}
+          // unpinInstance={(index) => { }}
+          // pinInstance={(index, pinnedAt) => { }}
+          // removeInstance={(index) => { }}
+
+          // "TODO: runTransactions + sendValue"
+          // runTransactions={executeTransactions}
+          // sendValue={runTab.sendValue}
+          // gasEstimationPrompt={gasEstimationPrompt}
+          // passphrasePrompt={passphrasePrompt}
+          // mainnetPrompt={mainnetPrompt}
+
+          // solcVersion={solcVersion}
+          // getVersion={getVersion}
+          // getFuncABIInputs={getFuncABIValues}
+          // TODO
+          solcVersion={{
+            version: '',
+            canReceive: false
+          }}
+          evmCheckComplete={true}
+          instances={{
+            instanceList: contractInstances, error: ""
+          }}
+          exEnvironment={"TODO: environment"}
+          plugin={props.plugin}
+          chain={selectedChain}
+          editInstance={(instance) => {
+            // TODO
+            // const {metadata, abi, object} = instance.contractData
+            // plugin.call('quick-dapp', 'edit', {
+            //   address: instance.address,
+            //   abi: abi,
+            //   name: instance.name,
+            //   network: runTab.networkName,
+            //   devdoc: object.devdoc,
+            //   methodIdentifiers: object.evm.methodIdentifiers,
+            //   solcVersion: JSON.parse(metadata).compiler.version,
+            // })
+          }}
+        />
+      )}
     </>
   )
 }

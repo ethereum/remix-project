@@ -16,3 +16,5 @@ export class ContractVerificationPluginClient extends PluginClient {
     this.internalEvents.emit('verification_activated')
   }
 }
+
+export default new ContractVerificationPluginClient()

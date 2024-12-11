@@ -1,4 +1,4 @@
-import { ABICategories, SourceFile } from '../types'
+import { ABICategoryBlockScout, SourceFile } from '../types'
 import { EtherscanAbiProvider } from './EtherscanAbiProvider'
 
 // Etherscan and Blockscout return different objects from the getsourcecode method
@@ -38,7 +38,7 @@ export class BlockscoutAbiProvider extends EtherscanAbiProvider {
    * @param ABICategory - The sub type of the ABI (one of the values: 'read' | 'write' | 'readProxy' | 'writeProxy').
    * @returns The url to fetch the ABI data.
    */
-  getAbiURL(contractAddress: string, ABICategory: ABICategories): string {
+  getAbiURL(contractAddress: string, ABICategory: ABICategoryBlockScout): string {
     const url = new URL(this.explorerUrl + `/api/v2/smart-contracts/${contractAddress}/${ABICategory}`)
     return url.href
   }

@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractAbiProvider } from './AbstractAbiProvider'
-import { LookupResponse, ABICategories, SourceFile, SubmittedContract, VerificationResponse } from '../types'
+import { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, ContractABI, ABICategoryBlockScout } from '../types'
 
 interface EtherscanRpcResponse {
   status: '0' | '1'
@@ -216,21 +216,26 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
    * @param ABICategory - The sub type of the ABI (one of the values: 'read' | 'write' | 'readProxy' | 'writeProxy').
    * @returns The url to fetch the ABI data.
    */
-  getAbiURL(contractAddress: string, ABICategory: ABICategories): string {
+  getAbiURL(contractAddress: string, ABICategory: ABICategoryBlockScout): string {
     const url = new URL(this.explorerUrl + `/api/v2/smart-contracts/${contractAddress}/${ABICategory}`)
     return url.href
   }
 
-  async lookupABI(contractAddress: string, chainId: string): Promise<undefined> {
-
-    const parsedReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.Read))
-    const parsedWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.Write))
-    const parsedProxyReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.ReadProxy))
-    const parsedProxyWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategories.WriteProxy))
+  async lookupABI(contractAddress: string): Promise<ContractABI> {
 
     // TODO try-catch
-  }
+    const parsedReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.Read))
+    const parsedWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.Write))
+    const parsedProxyReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyRead))
+    const parsedProxyWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyWrite))
 
+    return {
+      abiRead: parsedReadABI,
+      abiWrite: parsedWriteABI,
+      abiProxyRead: parsedProxyReadABI,
+      abiProxyWrite: parsedProxyWriteABI
+    }
+  }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
     const url = new URL(this.apiUrl + '/api')

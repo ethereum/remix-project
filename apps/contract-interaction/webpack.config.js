@@ -7,11 +7,11 @@ const versionData = {
   timestamp: Date.now(),
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
 }
+
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
   // Update the webpack config as needed here.
   // e.g. `config.plugins.push(new MyPlugin())`
-
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
@@ -41,11 +41,7 @@ module.exports = composePlugins(withNx(), (config) => {
   }
 
   // add public path
-  config.output.publicPath = '/'
-
-  // set filename
-  config.output.filename = `[name].plugin-contract-interaction.${versionData.timestamp}.js`
-  config.output.chunkFilename = `[name].plugin-contract-interaction.${versionData.timestamp}.js`
+  config.output.publicPath = './'
 
   // add copy & provide plugin
   config.plugins.push(

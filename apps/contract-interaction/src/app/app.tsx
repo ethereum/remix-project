@@ -1,20 +1,23 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useReducer } from 'react'
 
-import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
+import ContractVerificationPluginClient from './ContractVerificationPluginClient'
 
 import { AppContext } from './AppContext'
 import { VerifyFormContext } from './VerifyFormContext'
 import DisplayRoutes from './routes'
 import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, VerificationResponse } from './types'
 import { mergeChainSettingsWithDefaults } from './utils'
+import { IntlProvider } from 'react-intl'
 
 import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { getVerifier } from './abiProviders'
 import { ContractDropdownSelection } from './components/ContractDropdown'
+import { connectRemix, initDispatch, updateState } from './actions'
+import { appReducer, appInitialState } from './reducers/state'
 
-const plugin = new ContractVerificationPluginClient()
+let plugin = ContractVerificationPluginClient;
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
@@ -142,11 +145,40 @@ const App = () => {
     }
   }, [submittedContracts])
 
+  // TODO: check if localisation works
+  const [locale, setLocale] = useState<{ code: string; messages: any }>({
+    code: 'en',
+    messages: null,
+  })
+  const [appState, dispatch] = useReducer(appReducer, appInitialState);
+  useEffect(() => {
+    updateState(appState);
+  }, [appState]);
+  useEffect(() => {
+    initDispatch(dispatch);
+    updateState(appState);
+    connectRemix().then(() => {
+
+      // @ts-ignore
+      plugin.call('locale', 'currentLocale').then((locale: any) => {
+        setLocale(locale)
+      })
+      // @ts-ignore
+      plugin.on('locale', 'localeChanged', (locale: any) => {
+        setLocale(locale)
+      })
+    });
+  }, []);
+
   return (
     <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
-      <VerifyFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
-        <DisplayRoutes />
-      </VerifyFormContext.Provider>
+
+      <IntlProvider locale={locale.code} messages={locale.messages}>
+        <VerifyFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
+          <DisplayRoutes plugin={plugin} />
+        </VerifyFormContext.Provider>
+      </IntlProvider>
+
     </AppContext.Provider>
   )
 }

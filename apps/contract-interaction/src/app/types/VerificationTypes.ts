@@ -1,3 +1,5 @@
+import { FuncABI } from "@remix-project/core-plugin"
+
 interface Currency {
   name: string
   symbol: string
@@ -17,20 +19,39 @@ export interface Chain {
   infoURL?: string
 }
 
-export enum ABICategories {
+export enum ABICategoryBlockScout {
   Read = 'methods-read',
   Write = 'methods-write',
-  ReadProxy = 'methods-read-proxy',
-  WriteProxy = 'methods-write-proxy',
+  ProxyRead = 'methods-read-proxy',
+  ProxyWrite = 'methods-write-proxy',
 }
 
-export interface FuncABI {
+export enum ABICategory {
+  Read = "Read",
+  Write = "Write",
+  ProxyRead = "ProxyRead",
+  ProxyWrite = "ProxyWrite",
+}
+
+export interface ContractABI {
+  abiRead?: FuncABI[],
+  abiWrite?: FuncABI[],
+  abiProxyRead?: FuncABI[],
+  abiProxyWrite?: FuncABI[],
+}
+
+export interface ContractInstance {
+  // contractData?: ContractData,
+  address: string,
+  balance?: number,
   name: string,
-  type: string,
-  inputs: { name: string, type: string }[],
-  stateMutability: string,
-  payable?: boolean,
-  constant?: any
+  decodedResponse?: Record<number, any>,
+  abiRead?: any,
+  abiWrite?: any,
+  abiProxyRead?: any,
+  abiProxyWrite?: any,
+  isPinned?: boolean,
+  pinnedTimestamp?: number
 }
 
 export type AbiProviderIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
