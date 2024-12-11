@@ -57,6 +57,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
           currentStateDb = JSON.parse(currentStateDb)
           currentStateDb.stateName = vmStateName.current
+          currentStateDb.forkName = currentProvider.fork
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
