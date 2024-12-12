@@ -267,21 +267,22 @@ export class RunTab extends ViewPlugin {
         for (const filePath of savedStatesFiles) {
           let stateDetail = await this.call('fileManager', 'readFile', filePath)
           stateDetail = JSON.parse(stateDetail)
-          descriptions[stateDetail.stateName] = JSON.stringify({
-              name: stateDetail.stateName,
+          const providerName = 'svs-' + stateDetail.stateName
+          descriptions[providerName] = JSON.stringify({
+              name: providerName,
               latestBlock: stateDetail.latestBlockNumber,
               timestamp: stateDetail.savingTimestamp
             })
           const svsProvider = new SavedVMStateProvider({
-              name: stateDetail.stateName,
+              name: providerName,
               displayName: stateDetail.stateName,
               kind: 'provider',
-              description: descriptions[stateDetail.stateName],
+              description: descriptions[providerName],
               methods: ['sendAsync', 'init'],
               version: packageJson.version
           }, this.blockchain, stateDetail.forkName)
           this.engine.register(svsProvider)
-          await addProvider(pos + 1, stateDetail.stateName, stateDetail.stateName, false, false, true, stateDetail.forkName)
+          await addProvider(pos + 1, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
         }
       }
     })
