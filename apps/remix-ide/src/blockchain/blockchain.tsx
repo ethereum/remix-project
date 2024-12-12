@@ -7,6 +7,7 @@ import { format } from 'util'
 import { ExecutionContext } from './execution-context'
 import Config from '../config'
 import { VMProvider } from './providers/vm'
+import { SVSProvider } from './providers/saved-vm-state'
 import { InjectedProvider } from './providers/injected'
 import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
@@ -79,7 +80,7 @@ export class Blockchain extends Plugin {
     }
     error?: string
   }
-  providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider}
+  providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider | SVSProvider}
   transactionContextAPI: TransactionContextAPI
   registeredPluginEvents: string[]
   defaultPinnedProviders: string[]
@@ -205,9 +206,9 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders() {
-    const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
-    this.providers['vm'] = vmProvider
+    this.providers['vm'] = new VMProvider(this.executionContext)
+    this.providers['svs'] = new SVSProvider(this.executionContext)
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
@@ -215,6 +216,7 @@ export class Blockchain extends Plugin {
   getCurrentProvider() {
     const provider = this.getProvider()
     if (provider && provider.startsWith('vm')) return this.providers['vm']
+    if (provider && provider.startsWith('svs')) return this.providers['svs']
     if (provider && provider.startsWith('injected')) return this.providers['injected']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
@@ -693,13 +695,16 @@ export class Blockchain extends Plugin {
 
     if (saveEvmState) {
       const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
-
       if (contextExists) {
         const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
-
         await this.getCurrentProvider().resetEnvironment(stateDb)
       } else {
-        await this.getCurrentProvider().resetEnvironment()
+        // check if saved VM state is used as provider
+        const contextExists = await this.call('fileManager', 'exists', `.states/saved_states/${context.replace('svs-', '')}.json`)
+        if (contextExists) {
+          const stateDb = await this.call('fileManager', 'readFile', `.states/saved_states/${context.replace('svs-', '')}.json`)
+          await this.getCurrentProvider().resetEnvironment(stateDb)
+        } else await this.getCurrentProvider().resetEnvironment()
       }
     } else {
       await this.getCurrentProvider().resetEnvironment()
