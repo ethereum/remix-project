@@ -35,6 +35,8 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
   }
 
   async install(version = 'latest') {
+    this.call('terminal' as any, 'logHtml', `Checking if circom compiler (${version}) is installed in ${getInstallationPath(version)}`)
+   
     this.isCircomInstalled = await circomCli.isCircomInstalled(version)
     if (!this.isCircomInstalled) {
       this.call('terminal' as any, 'logHtml', 'Downloading circom compiler from ' + getInstallationUrl(version))
@@ -56,8 +58,11 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     else {
       // @ts-ignore
       if (process.platform === 'win32' && 'wasm' in options) {
-        // @ts-ignore
-        await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', extractNameFromKey(filePath).replace('.circom', '_js')))
+        try{
+          // @ts-ignore
+          await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', extractNameFromKey(filePath).replace('.circom', '_js')))
+        } catch (e) {
+        }
       }
     }
     filePath = path.join(wd, filePath)
