@@ -379,7 +379,7 @@ export function ContractGUI(props: ContractGUIProps) {
               <button className="btn remixui_copyButton">
                 <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                 <label htmlFor="copyParameters">
-                  <FormattedMessage id="udapp.parameters" />
+                  <FormattedMessage id="contractInteraction.parameters" />
                 </label>
               </button>
             </CopyToClipboard>

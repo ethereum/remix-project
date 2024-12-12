@@ -82,7 +82,7 @@ export function InstanceContainerUI(props: InstanceContainerUIProps) {
   return (
     <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
       <div className="d-flex justify-content-between align-items-center p-2">
-        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="userInterfacesForContractsTooltip" tooltipText={<FormattedMessage id="contractInteraction.userInterfacesForContracts" />}>
           <label className="udapp_deployedContracts text-nowrap" data-id="deployedContracts">
             <FormattedMessage id="contractInteraction.lookedupContracts" />
           </label>
@@ -95,10 +95,10 @@ export function InstanceContainerUI(props: InstanceContainerUIProps) {
           <CustomTooltip
             placement={'auto-end'}
             tooltipClasses="text-nowrap"
-            tooltipId="deployAndRunClearInstancesTooltip"
-            tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
+            tooltipId="clearContractInstancesTooltip"
+            tooltipText={<FormattedMessage id="contractInteraction.clearContractInstances" />}
           >
-            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="clearContractInstances" onClick={clearInstance} aria-hidden="true"></i>
           </CustomTooltip>
         )}
       </div>

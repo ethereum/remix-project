@@ -61,7 +61,6 @@ const App = () => {
     }
   }, [])
 
-  // TODO: check if localisation works
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
     code: 'en',
     messages: null,
