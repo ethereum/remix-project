@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import os from 'os'
 import { exec } from 'child_process'
 import path from 'path'
 import fs, { existsSync } from 'fs'
@@ -33,16 +34,13 @@ async function downloadFile(url: string, dest: string) {
 }
 
 export function getInstallationPath(version) {
-  switch (process.platform) {
-  case 'win32':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-windows-amd64.exe') : path.join(app.getAppPath(), 'circom-download', version, 'circom-windows-amd64.exe')
-
-  case 'darwin':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-macos-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
-
-  case 'linux':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-linux-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-linux-amd64')
-  }
+  const fileNames = {
+    win32: 'circom-windows-amd64.exe',
+    darwin: 'circom-macos-amd64',
+    linux: 'circom-linux-amd64'
+  };
+  
+  return path.join(os.tmpdir(), 'circom-download', version, fileNames[process.platform]);
 }
 
 export function getInstallationUrl(version) {
@@ -59,25 +57,9 @@ export function getInstallationUrl(version) {
 }
 
 export function getLogInputSignalsPath() {
-  console.log('home: ', app.getPath('home'))
-  console.log('appData: ', app.getPath('appData'))
-  console.log('userData: ', app.getPath('userData'))
-  console.log('temp: ', app.getPath('temp'))
-  console.log('exe: ', app.getPath('exe'))
-  console.log('getAppPath: ', app.getAppPath())
-  switch (process.platform) {
-  case 'win32':
-    // eslint-disable-next-line no-case-declarations
-    const programDir = app.getPath('exe').split('\\').slice(0, -1).join('\\')
 
-    return process.env.NODE_ENV === 'production' ? path.join(programDir, 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
-
-  case 'darwin':
-    return path.join(app.getAppPath(), 'log_input_signals.txt')
-
-  case 'linux':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
-  }
+  const tempFilePath = path.join(os.tmpdir(), 'log_input_signals.txt');
+  return tempFilePath;
 }
 
 export const circomCli = {
@@ -106,9 +88,15 @@ export const circomCli = {
   async run (filePath: string, version: string, options?: Record<string, string>) {
     const installationPath = getInstallationPath(version)
     const cmd = `${installationPath} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
-
+    console.log(cmd)
+    if(process.platform === 'darwin') {
+      const rosettaInstalled = await checkRosettaInstalled();
+      if(rosettaInstalled === 'Rosetta is not installed') {
+        throw new Error('Rosetta is not installed. Please install Rosetta to run this command.');
+      }
+    }
     return new Promise((resolve, reject) => {
-      exec(cmd, (error, stdout, stderr) => {
+      exec(cmd, { cwd: os.tmpdir() }, (error, stdout, stderr) => {
         if (error) {
           reject(`${error.message} with error code ${error.code}`)
         } else {
@@ -133,4 +121,16 @@ export const extractNameFromKey = (key: string): string => {
   const keyPath = key.split('/')
 
   return keyPath[keyPath.length - 1]
+}
+
+async function checkRosettaInstalled(): Promise<string> {
+  return new Promise((resolve, reject) => {
+      exec("/usr/bin/pgrep oahd > /dev/null && echo 'Rosetta is installed' || echo 'Rosetta is not installed'", (error, stdout, stderr) => {
+          if (error) {
+              reject(`Error: ${stderr}`);
+          } else {
+              resolve(stdout.trim());
+          }
+      });
+  });
 }
