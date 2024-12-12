@@ -9,8 +9,7 @@ import * as packageJson from '../../../../../package.json'
 import { EventManager } from '@remix-project/remix-lib'
 import type { Blockchain } from '../../blockchain/blockchain'
 import type { CompilerArtefacts } from '@remix-project/core-plugin'
-// import type { NetworkModule } from '../tabs/network-module'
-// import type FileProvider from '../files/fileProvider'
+import { SavedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
 
@@ -273,6 +272,15 @@ export class RunTab extends ViewPlugin {
               latestBlock: stateDetail.latestBlockNumber,
               timestamp: stateDetail.savingTimestamp
             })
+          const svsProvider = new SavedVMStateProvider({
+              name: stateDetail.stateName,
+              displayName: stateDetail.stateName,
+              kind: 'provider',
+              description: descriptions[stateDetail.stateName],
+              methods: ['sendAsync', 'init'],
+              version: packageJson.version
+          }, this.blockchain, stateDetail.forkName)
+          this.engine.register(svsProvider)
           await addProvider(pos + 1, stateDetail.stateName, stateDetail.stateName, false, false, true, stateDetail.forkName)
         }
       }
