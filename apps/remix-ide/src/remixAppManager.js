@@ -86,7 +86,10 @@ let requiredModules = [
   'environmentExplorer',
   'templateSelection',
   'matomo',
-  'walletconnect'
+  'walletconnect',
+  'popupPanel',
+  'remixAI',
+  'remixAID'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -145,7 +148,8 @@ export function isNative(name) {
     'environmentExplorer',
     'templateSelection',
     'walletconnect',
-    'contract-verification'
+    'contract-verification',
+    'popupPanel'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
@@ -414,10 +418,12 @@ class PluginLoader {
       'environmentExplorer',
       'templateSelection',
       'compilationDetails',
+      'vyperCompilationDetails',
       'walletconnect',
       'dapp-draft',
       'solidityumlgen',
-      'remixGuide'
+      'remixGuide',
+      'doc-viewer'
     ]
     this.loaders = {}
     this.loaders.localStorage = {

@@ -67,7 +67,7 @@ export const VerifyView = () => {
         name: verifierId as VerifierIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
-      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${hasProxy && proxyAddress}`)
+      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${!!(hasProxy && proxyAddress)}`)
     }
 
     const newSubmittedContract: SubmittedContract = {
@@ -232,7 +232,7 @@ export const VerifyView = () => {
                 <label
                   htmlFor={`verifier-${verifierId}`}
                   className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}
-                  style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }}
+                  style={{ fontSize: '1rem', color: 'var(--text)' }}
                 >
                   {verifierId}
                 </label>

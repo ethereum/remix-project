@@ -106,8 +106,10 @@ jobs:
               - "persist"
 
   test-remixdesktop-linux:
-    docker:
-      - image: cimg/node:20.5-browsers
+    machine:
+      image: ubuntu-2204:current
+    resource_class:
+      xlarge
     working_directory: ~/remix-project
     parallelism: 15
     steps:
@@ -134,11 +136,13 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
+              nvm use 20.2
               ./run_ci_test.sh
         - run:  
             name: "Run isogit tests"
             command: |
               cd apps/remixdesktop/
+              nvm use 20.2
               ./run_git_ui_isogit_tests.sh
         - store_test_results:
             path: ./apps/remixdesktop/reports/tests
@@ -516,6 +520,7 @@ jobs:
             ls -la dist/apps/remix-ide
             nvm install 20.2
             nvm use 20.2
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}

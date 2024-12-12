@@ -227,9 +227,7 @@ export function ContractGUI(props: ContractGUIProps) {
 
   const handleActionClick = async () => {
     props.getVersion()
-    const compilerState = await props.plugin.call('solidity', 'getCompilerState')
-
-    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
+    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider') || props.runTabState.contracts.loadType !== 'sol') {
       await handleDeploy()
     } else {
       const status = await props.getCompilerDetails()
@@ -238,9 +236,13 @@ export function ContractGUI(props: ContractGUIProps) {
         return
       }
       const tabState = props.runTabState
+      const compilerState = await props.plugin.call('solidity', 'getCompilerState')
       const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'cancun', parseInt(tabState.chainId))
       if (status === 'Passed' && IsCompatible) {
         await handleDeploy()
+      } else {
+        // Show log in browser console in case of failure due to unknown reasons
+        console.log('Failed to run because of EVM version incomaptibility or some other compiler issue')
       }
     }
   }

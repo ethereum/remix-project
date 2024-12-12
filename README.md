@@ -178,7 +178,7 @@ You need to have
 
 ### Splitting tests with groups
 
-Groups can be used to group tests in a test file together. The advantage is you can avoid running long test files when you want to focus on a specific set of tests within a test file.x
+Groups can be used to group tests in a test file together. The advantage is you can avoid running long test files when you want to focus on a specific set of tests within a test file.
 
 These groups only apply to the test file, not across all test files. So for example group1 in the ballot is not related to a group1 in another test file.
 
