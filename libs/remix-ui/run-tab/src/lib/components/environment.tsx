@@ -31,8 +31,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
     return (
       <div>
         <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-        <FormattedMessage id="udapp.saveVmStateLabel" />
-      </label>
+          <FormattedMessage id="udapp.saveVmStateLabel" />
+        </label>
         <input
           type="text"
           data-id="modalDialogSaveVmState"
@@ -84,7 +84,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
