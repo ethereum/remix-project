@@ -12,12 +12,12 @@ export function SettingsUI(props: SettingsProps) {
 
   return (
     <div className="udapp_settings">
-      <EnvironmentUI 
+      <EnvironmentUI
         runTabPlugin={props.runTabPlugin}
         selectedEnv={props.selectExEnv}
         providers={props.providers}
         setExecutionContext={props.setExecutionContext}
-        checkSelectionCorrectness={props.EvaluateEnvironmentSelection} 
+        checkSelectionCorrectness={props.EvaluateEnvironmentSelection}
         modal={props.modal}
         config={props.runTabPlugin.config}
       />
