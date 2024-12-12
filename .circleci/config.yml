@@ -106,8 +106,8 @@ jobs:
               - "persist"
 
   test-remixdesktop-linux:
-    docker:
-      - image: cimg/node:22.4.0
+    machine:
+      image: ubuntu-2204:current
     resource_class:
       xlarge
     working_directory: ~/remix-project
