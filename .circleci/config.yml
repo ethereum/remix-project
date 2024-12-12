@@ -7,6 +7,7 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
   win: circleci/windows@5.0
+  node: circleci/node@7.0.0
 jobs:
   build:
     docker:
@@ -119,11 +120,13 @@ jobs:
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
+        - node/install:
+            install-yarn: true
+            node-version: '20.2'
         - run: 
             command: |
                 node -v
-                sudo apt install -y npm
-                sudo npm install --global yarn node-gyp
+                sudo npm install --global node-gyp
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
