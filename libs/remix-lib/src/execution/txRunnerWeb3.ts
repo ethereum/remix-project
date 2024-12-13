@@ -66,7 +66,7 @@ export class TxRunnerWeb3 {
             const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
             cb(null, res.transactionHash)
           } catch (e) {
-            console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+            console.log(`Send transaction failed: ${e.message || e.error} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
             if (e.receipt) cb(null, e.receipt.transactionHash)
@@ -82,6 +82,10 @@ export class TxRunnerWeb3 {
         const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
         cb(null, res.transactionHash)
       } catch (e) {
+        if (!e.message) e.message = ''
+        if (e.error) {
+          e.message = e.message + ' ' + e.error
+        }
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
@@ -160,9 +164,10 @@ export class TxRunnerWeb3 {
           }, callback)
         })
         .catch(err => {
-          if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
+          if (err && err.error && err.error.indexOf('Invalid JSON RPC response') !== -1) {
             // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
+            return
           }
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
           gasEstimationForceSend(err, () => {

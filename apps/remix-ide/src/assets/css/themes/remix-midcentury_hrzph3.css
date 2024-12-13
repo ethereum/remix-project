@@ -25,6 +25,7 @@
   --body-bg: #DBE2E0;
   --text-bg-mark: #fcf8e3;
   --custom-select: #eeede9;
+  --brand-dark-blue: #222496;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -3555,6 +3556,7 @@ input[type="button"].btn-block {
   position: relative;
   margin-bottom: 0;
   vertical-align: top;
+  padding-top: 0.15rem;
 }
 .custom-control-label::before {
   position: absolute;

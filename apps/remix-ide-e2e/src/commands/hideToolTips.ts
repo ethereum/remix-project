@@ -1,4 +1,4 @@
-import {NightwatchBrowser} from 'nightwatch'
+import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class HideToolTips extends EventEmitter {
@@ -14,6 +14,9 @@ class HideToolTips extends EventEmitter {
           }
           addStyle(`
             .popover {
+              display:none !important;
+            }
+            #scamDetails {
               display:none !important;
             }
           `)

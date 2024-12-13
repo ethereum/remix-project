@@ -98,6 +98,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
+      _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
       this.emit('createWorkspaceReducerEvent', workspaceName, item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
@@ -115,6 +116,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
 
     const addToCurrentWorkspace = async (item) => {
+      _paq.push(['trackEvent', 'template-selection', 'addToCurrentWorkspace', item.value])
       this.emit('addTemplateToWorkspaceReducerEvent', item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {

@@ -14,7 +14,7 @@ const profile = {
   maintainedBy: 'Remix',
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
 }
 
 export class RemixAIDesktopPlugin extends ElectronBasePlugin {
@@ -31,7 +31,7 @@ const clientProfile: Profile = {
   maintainedBy: 'Remix',
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer']
 }
 
@@ -45,11 +45,12 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async onActivation(): Promise<void> {
     this.onload(() => {
+      this.emit('activated')
     })
   }
 
   async enable (){
-    console.log('Remix AI desktop plugin enabled')
+    console.log('RemixAI desktop plugin enabled')
     this.emit('enabled')
   }
 
@@ -81,9 +82,9 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     return true
   }
 
-  async code_completion(context: any) {
+  async code_completion(prompt: string, promptAfter: string) {
     // use general purpose model
-    return this.desktopInferencer.code_completion(context)
+    return this.desktopInferencer.code_completion(prompt, promptAfter)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string) {

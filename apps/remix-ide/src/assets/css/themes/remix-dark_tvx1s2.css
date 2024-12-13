@@ -25,6 +25,7 @@
   --text-background: #222336;
   --text-bg-mark: #8388b2;
   --custom-select: #35384c;
+  --brand-dark-blue: #222496;
   --runtab: #8A93B0;
   --body-bg: #222336;
   --breakpoint-xs: 0;
@@ -3238,6 +3239,7 @@ input[type="submit"].btn-block {
   position: relative;
   margin-bottom: 0;
   vertical-align: top;
+  padding-top: 0.15rem;
 }
 .custom-control-label::before {
   position: absolute;

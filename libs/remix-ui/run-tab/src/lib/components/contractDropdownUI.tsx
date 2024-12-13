@@ -176,13 +176,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       setContractOptions({
         disabled: true,
         title:
-          loadType === 'sol' ? (
-            <FormattedMessage id="udapp.contractOptionsTitle3" />
-          ) : (
-            <span className="text-start">
-              <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
-            </span>
-          ),
+        ['sol', 'vyper', 'lexon', 'contract'].includes(loadType) ? (
+          <FormattedMessage id="udapp.contractOptionsTitle3" />
+        ) : (
+          <span className="text-start">
+            <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
+          </span>
+        ),
       })
     }
   }
@@ -249,7 +249,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if (loadType === 'sol' || loadType === 'abi') {
+      if (['sol', 'vyper', 'lexon', 'contract', 'abi'].includes(loadType)) {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)
@@ -462,6 +462,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             <div>
               <ContractGUI
                 title={intl.formatMessage({ id: 'udapp.deploy' })}
+                getCompilerDetails={props.getCompilerDetails}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={
@@ -481,6 +482,10 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 solcVersion={props.solCompilerVersion}
                 setSolcVersion={props.setCompilerVersion}
                 getVersion={props.getCompilerVersion}
+                evmCheckComplete={props.evmCheckComplete}
+                setEvmCheckComplete={props.setEvmCheckComplete}
+                plugin={props.plugin}
+                runTabState={props.runTabState}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input

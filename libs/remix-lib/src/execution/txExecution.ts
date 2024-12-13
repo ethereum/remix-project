@@ -172,6 +172,6 @@ export function checkError (execResult, compiledContracts) {
     msg = '\tState changes is not allowed in Static Call context\n'
     ret.error = true
   }
-  ret.message = `${error}\n${exceptionError}\n${msg}\nYou may want to cautiously increase the gas limit if the transaction went out of gas.`
+  ret.message = `${error}\n${exceptionError}\n${msg}\nIf the transaction failed for not having enough gas, try increasing the gas limit gently.`
   return ret
 }

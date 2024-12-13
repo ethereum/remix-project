@@ -14,7 +14,6 @@ export class ExecutionContext {
   txs: any;
   customWeb3: any;
   init(config: any): void;
-  askPermission(): void;
   getProvider(): any;
   getCurrentFork(): string;
   isVM(): boolean;

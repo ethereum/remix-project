@@ -15,6 +15,7 @@ const Model: ModelType = {
     success: false,
     errorLoadingFile: false,
     // theme: '',
+    localeCode: 'en'
   },
   reducers: {
     save(state, { payload }) {

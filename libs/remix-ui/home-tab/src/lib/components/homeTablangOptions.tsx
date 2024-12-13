@@ -3,6 +3,7 @@ import { Dropdown, DropdownButton } from 'react-bootstrap'
 import DropdownItem from 'react-bootstrap/DropdownItem'
 import { localeLang } from './types/carouselTypes'
 import { FormattedMessage } from 'react-intl'
+const _paq = (window._paq = window._paq || [])
 
 export function LanguageOptions({ plugin }: { plugin: any }) {
   const [langOptions, setLangOptions] = useState<string>()
@@ -39,6 +40,7 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
               {
                 changeLanguage(lang.toLowerCase())
                 setLangOptions(lang)
+                _paq.push(['trackEvent', 'hometab', 'switchTo', lang])
               }}
               style={{ color: 'var(--text)', cursor: 'pointer' }}
               key={index}

@@ -22,6 +22,7 @@ import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
+import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 import { providers } from 'ethers'
@@ -248,6 +249,7 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.selfdestruct', foreground: blueColor },
         { token: 'keyword.type ', foreground: blueColor },
         { token: 'keyword.gasleft', foreground: blueColor },
+        { token: 'function', foreground: blueColor, fontStyle: 'bold' },
 
         // specials
         { token: 'keyword.super', foreground: infoColor },
@@ -365,6 +367,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
     } else if (file.language === 'toml') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
+    } else if (file.language === 'noir') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-noir')
     }
   }, [props.currentFile, props.isDiff])
 
@@ -776,7 +780,11 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
+
+        // do not stream this response
+        const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
+        // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
+        const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
 
         const natSpecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
@@ -821,15 +829,14 @@ export const EditorUI = (props: EditorUIProps) => {
       label: intl.formatMessage({ id: 'editor.explainFunction' }),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
-      keybindings: [
-        // Keybinding for Ctrl + Shift + E
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KeyE
-      ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
-        const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content, currentFunction: currentFunction.current })
-        await props.plugin.call('remixAI', 'code_explaining', message, content)
+        const context = await props.plugin.call('fileManager', 'readFile', file)
+        const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content:context, currentFunction: currentFunction.current })
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -848,8 +855,12 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
+        const pipeMessage = intl.formatMessage({ id: 'editor.ExplainPipeMessage' }, { content:selectedCode })
 
-        await props.plugin.call('remixAI', 'code_explaining', selectedCode, content)
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -987,9 +998,13 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-move' })
     monacoRef.current.languages.register({ id: 'remix-circom' })
     monacoRef.current.languages.register({ id: 'remix-toml' })
+    monacoRef.current.languages.register({ id: 'remix-noir' })
 
     // Allow JSON schema requests
     monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
+
+    // hide the module resolution error. We have to remove this when we know how to properly resolve imports.
+    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ diagnosticCodesToIgnore: [2792]})
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -1009,6 +1024,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-toml', tomlTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-toml', tomlLanguageConfig as any)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-noir', noirTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-noir', noirLanguageConfig as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

@@ -58,7 +58,7 @@ export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
   repetition_penalty?: number;
-  repeatPenalty?:any
+  repeat_penalty?:any
   no_repeat_ngram_size?: number;
   num_beams?: number;
   num_return_sequences?: number;
@@ -71,6 +71,8 @@ export interface IParams {
   topK?: number;
   topP?: number;
   temp?: number;
+  return_stream_response?: boolean;
+  terminal_output?: boolean;
 }
 
 export enum AIRequestType {
@@ -84,4 +86,49 @@ export enum RemoteBackendOPModel{
   DEEPSEEK,
   CODELLAMA,
   MISTRAL
+}
+
+interface GeneratedTextObject {
+  generatedText: string;
+  isGenerating: boolean;
+}
+export class JsonStreamParser {
+  buffer: string
+  constructor() {
+    this.buffer = '';
+  }
+
+  safeJsonParse<T>(chunk: string): T[] | null {
+    this.buffer += chunk;
+    const results = [];
+    let startIndex = 0;
+    let endIndex: number;
+    while ((endIndex = this.buffer.indexOf('}', startIndex)) !== -1) {
+      // check if next character is a opening curly bracket
+      let modifiedEndIndex = endIndex;
+      if ((modifiedEndIndex = this.buffer.indexOf('{', endIndex)) !== -1 ) {
+        endIndex = modifiedEndIndex - 1;
+      }
+
+      if (((modifiedEndIndex = this.buffer.indexOf('{', endIndex)) === -1) &&
+          (this.buffer.indexOf('}', endIndex) < this.buffer.length)) {
+        endIndex = this.buffer.indexOf('}', endIndex+1) <0 ? this.buffer.length - 1 : this.buffer.indexOf('}', endIndex+1);
+      }
+
+      const jsonStr = this.buffer.slice(startIndex, endIndex + 1);
+      try {
+        const obj: GeneratedTextObject = JSON.parse(jsonStr);
+        results.push(obj);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+      startIndex = endIndex + 1;
+    }
+    this.buffer = this.buffer.slice(startIndex);
+    return results;
+  }
+
+  safeJsonParseSingle<T>(chunk: string): T[] | null {
+    return JSON.parse(this.buffer);
+  }
 }

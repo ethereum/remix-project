@@ -1,24 +1,37 @@
 // interactive code explaining and highlight security vunerabilities
 import * as fs from 'fs';
 
-class CodeExplainAgent {
+export class CodeExplainAgent {
   private codebase: string[]; // list of code base file
   public currentFile: string;
+  plugin
 
-  constructor(codebasePath: string) {
+  constructor(props) {
+    this.plugin = props
     // git or fs
-    this.codebase = this.loadCodebase(codebasePath);
+    const codebase = this.loadCodebase("codebasePath");
   }
 
   private loadCodebase(path: string): string[] {
-    const files = fs.readdirSync(path);
-    return files
-      .filter(file => file.endsWith('.ts'))
-      .flatMap(file => fs.readFileSync(`${path}/${file}`, 'utf-8').split('\n'));
+    return []
   }
 
   public update(currentFile, lineNumber){
 
+  }
+
+  async chatCommand(prompt:string){
+    // change this function with indexer or related
+    try {
+      if (prompt.includes('Explain briefly the current file')){
+        const file = await this.plugin.call('fileManager', 'getCurrentFile')
+        const content = `Explain this code:\n ${await this.plugin.call('fileManager', 'readFile', file)}`
+        return content
+      } else return prompt
+    } catch {
+      console.log('There is No file selected')
+      return 'There is No file selected'
+    }
   }
 
   public getExplanations(currentLine: string, numSuggestions: number = 3): string[] {
@@ -27,3 +40,5 @@ class CodeExplainAgent {
     return suggestions;
   }
 }
+
+// Handle file changed (significantly)

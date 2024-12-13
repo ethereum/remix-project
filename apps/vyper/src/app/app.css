@@ -73,7 +73,6 @@ html, body, #root, main {
   justify-content: space-evenly;
 }
 
-
 #result nav a {
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
@@ -84,6 +83,7 @@ html, body, #root, main {
   width: 100%;
   padding: 15px;
   overflow: auto;
+  height: 100%;
 }
 
 #result .tab-pane.active {
@@ -91,6 +91,7 @@ html, body, #root, main {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  background-color: var(--body-bg);
 }
 
 #result .copy {
@@ -113,8 +114,6 @@ html, body, #root, main {
   height: 100%;
   width: 100%;
 }
-
-
 
 .remixui_copyButton {
   padding: 6px;
@@ -155,6 +154,9 @@ html, body, #root, main {
 .remixui_questionMark {
   margin-left: 2%;
   cursor: pointer;
+}
+.remixui_resultsBtn :hover {
+  filter: brightness(0.8);
 }
 
 @keyframes spin {
@@ -219,8 +221,6 @@ html, body, #root, main {
 }
 
 #compileDetails {
-  margin: 15px;
-  padding: 15px;
 }
 
 .cursor-status {

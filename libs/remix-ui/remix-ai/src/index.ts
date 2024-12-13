@@ -1,1 +1,1 @@
-export { RemixAITab } from './lib/components/RemixAI'
+export { RemixAITab, ChatApi } from './lib/components/RemixAI'
