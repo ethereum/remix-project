@@ -176,13 +176,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       setContractOptions({
         disabled: true,
         title:
-          loadType === 'sol' ? (
-            <FormattedMessage id="udapp.contractOptionsTitle3" />
-          ) : (
-            <span className="text-start">
-              <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
-            </span>
-          ),
+        ['sol', 'vyper', 'lexon', 'contract'].includes(loadType) ? (
+          <FormattedMessage id="udapp.contractOptionsTitle3" />
+        ) : (
+          <span className="text-start">
+            <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
+          </span>
+        ),
       })
     }
   }
@@ -249,7 +249,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if (loadType === 'sol' || loadType === 'abi') {
+      if (['sol', 'vyper', 'lexon', 'contract', 'abi'].includes(loadType)) {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)

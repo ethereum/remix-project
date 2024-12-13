@@ -306,6 +306,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             okLabel: 'Close'
           }
           await plugin.call('notification', 'modal', modal)
+          ws.close()
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
@@ -336,7 +337,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             }
             await plugin.call('notification', 'modal', modal)
           }
-
+          ws.close()
         }
       })
     }
@@ -370,7 +371,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     // define swarm logo
     <>
       {contractList.length ? (
-        <section className="remixui_compilerSection pt-3">
+        <section className="px-4 pt-3">
           {/* Select Compiler Version */}
           <div className="mb-3">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">
@@ -522,7 +523,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           </article>
         </section>
       ) : (
-        <section className="remixui_container clearfix">
+        <section className="m-0 clearfix">
           <article className="px-2 mt-2 pb-0 d-flex w-100">
             <span className="mt-2 mx-3 w-100 alert alert-warning" role="alert">
               <FormattedMessage id="solidity.noContractCompiled" />

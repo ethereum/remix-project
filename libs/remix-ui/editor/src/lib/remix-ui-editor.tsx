@@ -22,6 +22,7 @@ import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
+import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 import { providers } from 'ethers'
@@ -248,6 +249,7 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.selfdestruct', foreground: blueColor },
         { token: 'keyword.type ', foreground: blueColor },
         { token: 'keyword.gasleft', foreground: blueColor },
+        { token: 'function', foreground: blueColor, fontStyle: 'bold' },
 
         // specials
         { token: 'keyword.super', foreground: infoColor },
@@ -365,6 +367,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
     } else if (file.language === 'toml') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
+    } else if (file.language === 'noir') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-noir')
     }
   }, [props.currentFile, props.isDiff])
 
@@ -829,7 +833,10 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const context = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content:context, currentFunction: currentFunction.current })
-        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -850,7 +857,10 @@ export const EditorUI = (props: EditorUIProps) => {
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
         const pipeMessage = intl.formatMessage({ id: 'editor.ExplainPipeMessage' }, { content:selectedCode })
 
-        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
+          await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        }, 500)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -988,6 +998,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-move' })
     monacoRef.current.languages.register({ id: 'remix-circom' })
     monacoRef.current.languages.register({ id: 'remix-toml' })
+    monacoRef.current.languages.register({ id: 'remix-noir' })
 
     // Allow JSON schema requests
     monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
@@ -1013,6 +1024,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-toml', tomlTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-toml', tomlLanguageConfig as any)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-noir', noirTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-noir', noirLanguageConfig as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

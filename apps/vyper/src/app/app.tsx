@@ -122,35 +122,61 @@ const App = () => {
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip placement="bottom" tooltipText="Clone a repo of Vyper examples. Switch to the File Explorer to see the examples.">
-            <Button data-id="add-repository" className="w-100 btn btn-secondary" onClick={() => {
+            <button data-id="add-repository" className="w-100 text-dark btn border" onClick={() => {
               {cloneCount === 0 ? remixClient.cloneVyperRepo() : remixClient.cloneVyperRepo(cloneCount)}
               setCloneCount((prev) => {
                 return ++prev
               })
             }}>
               Clone a repo of Vyper examples
-            </Button>
+            </button>
           </CustomTooltip>
         </div>
 
-        <Accordion className="border-0 w-100 mb-3 accordion-background">
+        <Accordion className="border-0 w-100 accordion-background">
           <div className="border-0">
             <div className="">
               <CustomAccordionToggle eventKey="0">
-                <span className="">Advanced Compiler Settings</span>
+                <label style={{fontSize: "1REM"}}>Configurations</label>
               </CustomAccordionToggle>
             </div>
             <Accordion.Collapse eventKey="0">
-              <div className="pt-2">
+              <div className="pb-2 border-bottom">
                 <Form>
                   <div className="d-flex flex-row justify-content-around mb-1 mt-2">
                     <div className={`custom-control custom-radio ${state.environment === 'remote' ? 'd-flex' : 'd-flex cursor-status'}`}>
-                      <input type="radio" id="remote-compiler" data-id="remote-compiler" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} className={`custom-control-input  ${state.environment === 'remote' ? 'd-flex mr-1' : 'd-flex mr-1 cursor-status'}`} />
-                      <label htmlFor="remote-compiler" className="form-check-label custom-control-label">Remote Compiler</label>
+                      <input
+                        type="radio"
+                        id="remote-compiler"
+                        data-id="remote-compiler"
+                        name="remote"
+                        value={state.environment}
+                        checked={state.environment === 'remote'}
+                        onChange={() => setEnvironment('remote')}
+                        className={`custom-control-input ${state.environment === 'remote' ? 'd-flex mr-1' : 'd-flex mr-1 cursor-status'}`}
+                      />
+                      <label
+                        htmlFor="remote-compiler"
+                        className="form-check-label custom-control-label"
+                        style={{ paddingTop: '0.19rem' }}
+                      >Remote Compiler</label>
                     </div>
                     <div className={`custom-control custom-radio ${state.environment === 'local' ? 'mr-2' : `cursor-status`}`}>
-                      <input id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} className={`custom-control-input  ${state.environment === 'local' ? '' : `cursor-status`}`} />
-                      <label htmlFor="local-compiler" className="form-check-label custom-control-label">Local Compiler</label>
+                      <input
+                        id="local-compiler"
+                        data-id="local-compiler"
+                        checked={state.environment === 'local'}
+                        type="radio"
+                        name="local"
+                        value={state.environment}
+                        onChange={() => setEnvironment('local')}
+                        className={`custom-control-input  ${state.environment === 'local' ? '' : `cursor-status`}`}
+                      />
+                      <label
+                        htmlFor="local-compiler"
+                        className="form-check-label custom-control-label"
+                        style={{ paddingTop: '0.19rem' }}
+                      >Local Compiler</label>
                     </div>
                   </div>
                 </Form>
@@ -159,7 +185,7 @@ const App = () => {
             </Accordion.Collapse>
           </div>
         </Accordion>
-        <span className="px-3 mt-3 mb-3 small text-warning">
+        <span className="w-100 px-3 mt-3 mb-1 small text-warning">
           Specify the{' '}
           <a className="text-warning" target="_blank" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#specify-vyper-version">
             compiler version
@@ -173,7 +199,7 @@ const App = () => {
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
-        <article id="result" className="px-3 p-2 mx-3 border-top mt-2 vyper-errorBlobs">
+        <article id="result" className="px-3 p-2 w-100 border-top mt-2 vyper-errorBlobs">
           {output && output.status === 'success' && 
             <>
               <VyperResult output={output} plugin={remixClient} />

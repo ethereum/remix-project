@@ -89,10 +89,10 @@ export class PopupPanel extends AbstractPanel {
       <div
         className={`px-0 bg-light border-info ${appState?.showPopupPanel ? 'd-flex' : 'd-none'}`}
         style={{
-          maxHeight: '40rem',
-          maxWidth: '25rem',
-          width: 'max-content',
-          height: '40rem',
+          maxHeight: '100rem',
+          minWidth: '22rem',
+          width: '30%',
+          height: '80%',
           position: 'fixed',
           bottom: '2rem',
           right: '1.5rem',
@@ -101,7 +101,7 @@ export class PopupPanel extends AbstractPanel {
         }}
         data-id="popupPanelPluginsContainer"
       >
-        <div className='d-flex flex-column'>
+        <div className='d-flex w-100 flex-column'>
           <RemixPluginPanel
             header={
               <span id='popupPanelToggle' className='d-flex flex-row'>

@@ -3244,6 +3244,7 @@ input[type="submit"].btn-block {
   position: relative;
   margin-bottom: 0;
   vertical-align: top;
+  padding-top: 0.15rem;
 }
 .custom-control-label::before {
   position: absolute;

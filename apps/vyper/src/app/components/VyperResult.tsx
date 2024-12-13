@@ -58,14 +58,17 @@ function VyperResult({ output, plugin }: VyperResultProps) {
 
   return (
     <>
-      <div className="d-flex justify-content-center mx-3 mb-3 mt-1 vyper-panel-width flex-column">
-        <button data-id="compilation-details" className="btn btn-secondary d-block btn-block" onClick={async () => {
+      <div className="d-flex justify-content-center w-100 mb-3 mt-1 vyper-panel-width flex-column">
+        <button data-id="compilation-details" className="remixui_resultsBtn text-dark border btn d-block btn-block" onClick={async () => {
           await plugin?.call('vyperCompilationDetails', 'showDetails', output)
         }}>
-          <span>Compilation Details</span>
+          <span>
+            <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
+            <span>Compilation Details</span>
+          </span>
         </button>
         <div className="mt-1">
-          <div className="input-group input-group mt-3 d-flex flex-row-reverse">
+          <div className="input-group input-group d-flex flex-row-reverse">
             <div className="btn-group align-self-start" role="group" aria-label="Copy to Clipboard">
               <CopyToClipboard tip={'Copy ABI to clipboard'} getContent={() => (Object.values(output)[1] as OutputType)?.abi} direction="bottom" icon="far fa-copy">
                 <span className="btn remixui_copyButton">

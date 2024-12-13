@@ -5,10 +5,10 @@ import type { LookupResponse, VerifierIdentifier } from '../types'
 import { VERIFIERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
-import { getVerifier } from '../Verifiers'
 import { useNavigate } from 'react-router-dom'
 import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 export const LookupView = () => {
   const { settings, clientInstance } = useContext(AppContext)
@@ -24,7 +24,7 @@ export const LookupView = () => {
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
   const noVerifierEnabled = VERIFIERS.every((verifierId) => !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported))
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noVerifierEnabled
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noVerifierEnabled || Object.values(loadingVerifiers).some((loading) => loading)
 
   // Reset results when chain or contract changes
   useEffect(() => {
@@ -46,9 +46,7 @@ export const LookupView = () => {
       }
 
       setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: true }))
-      const verifier = getVerifier(verifierId, chainSettings.verifiers[verifierId])
-      verifier
-        .lookup(contractAddress, selectedChain.chainId.toString())
+      clientInstance.lookup(verifierId, chainSettings, selectedChain.chainId.toString(), contractAddress)
         .then((result) => setLookupResult((prev) => ({ ...prev, [verifierId]: result })))
         .catch((err) =>
           setLookupResult((prev) => {
@@ -65,18 +63,11 @@ export const LookupView = () => {
   }
 
   const handleOpenInRemix = async (lookupResponse: LookupResponse) => {
-    for (const source of lookupResponse.sourceFiles ?? []) {
-      try {
-        await clientInstance.call('fileManager', 'setFile', source.path, source.content)
-      } catch (err) {
-        console.error(`Error while creating file ${source.path}: ${err.message}`)
-      }
-    }
     try {
-      await clientInstance.call('fileManager', 'open', lookupResponse.targetFilePath)
+      await clientInstance.saveToRemix(lookupResponse)
       await sendToMatomo('lookup', 'openInRemix On: ' + selectedChain)
     } catch (err) {
-      console.error(`Error focusing file ${lookupResponse.targetFilePath}: ${err.message}`)
+      console.error(`Error while trying to open in Remix: ${err.message}`)
     }
   }
 
@@ -140,7 +131,7 @@ export const LookupView = () => {
                       <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
                         {lookupResults[verifierId].status}
                       </span>{' '}
-                      {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
+                      {!!lookupResults[verifierId].lookupUrl && verifierId === 'Blockscout' ? <CopyToClipboard tip="Copy code URL" content={lookupResults[verifierId].lookupUrl} direction="top" /> : !!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
                     </div>
                     {!!lookupResults[verifierId].sourceFiles && lookupResults[verifierId].sourceFiles.length > 0 && (
                       <div className="pt-2 d-flex flex-row justify-content-center">
