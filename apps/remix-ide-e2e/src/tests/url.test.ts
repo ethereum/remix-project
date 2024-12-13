@@ -340,5 +340,17 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Lock {') !== -1, 'content does contain "contract Lock {"')
       })      
-  }
+  },
+
+  'Load remix with an iframe plugin #group4': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080?activate=contract-verification')
+      .refreshPage()
+      .waitForElementVisible(
+        {
+          selector: '//*[contains(@data-id, "sidePanelSwapitTitle") and text()="Contract Verification"]',
+          locateStrategy: 'xpath'
+        }
+      )
+    }
 }
