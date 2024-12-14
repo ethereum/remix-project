@@ -144,7 +144,7 @@ function App() {
 
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     } catch (e) {
-      if (process.platform === 'win32' && err.message.includes('3221225781')) return dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'The compiler failed to start because of some missing dependecies. Please install or repair the Microsoft Visual C++ Redistributable package to resolve this issue.' })
+      if (process.platform === 'win32' && err.message.includes('3221225781')) return dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'The compiler failed to start because of some missing dependencies. Please install or repair the Microsoft Visual C++ Redistributable package to resolve this issue.' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
     }
   }
