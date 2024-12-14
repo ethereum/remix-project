@@ -1,0 +1,15 @@
+{
+  "circuit.compiler": "کامپایلر",
+  "circuit.autoCompile": "کامپایل خودکار",
+  "circuit.hideWarnings": "پنهان کردن هشدارها",
+  "circuit.advancedConfigurations": "پیکربندی‌های پیشرفته",
+  "circuit.compilerConfiguration": "پیکربندی کامپایلر",
+  "circuit.prime": "پرایم",
+  "circuit.useConfigurationFile": "استفاده از فایل پیکربندی",
+  "circuit.compile": "کامپایل کردن",
+  "circuit.noFileSelected": "هیچ فایلی انتخاب نشده است",
+  "circuit.generateR1cs": "تولید R1CS",
+  "circuit.computeWitness": "محاسبه شاهد",
+  "circuit.signalInput": "ورودی سیگنال",
+  "circuit.compute": "محاسبه"
+}
