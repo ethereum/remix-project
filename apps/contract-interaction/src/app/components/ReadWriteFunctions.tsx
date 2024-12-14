@@ -4,12 +4,13 @@ import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import { ContractGUI } from './contractGUI'
+import { ContractGUI } from './ContractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { is0XPrefixed, isHexadecimal } from '@remix-ui/helper'
-import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
-import { ABICategory } from '../types'
+import { ABICategory, ContractInstance } from '../types'
+
+// TODO: pooling to update contract balance.
 
 const txHelper = remixLib.execution.txHelper
 
@@ -35,24 +36,11 @@ export interface ReadWriteFunctionsProps {
   // mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   // getCompilerDetails: () => Promise<CheckStatus>
   evmCheckComplete?: boolean,
-  instance: {
-    // contractData?: ContractData,
-    address: string,
-    balance?: number,
-    name: string,
-    decodedResponse?: Record<number, any>,
-    abiRead?: any,
-    abiWrite?: any,
-    abiProxyRead?: any,
-    abiProxyWrite?: any,
-    isPinned?: boolean
-    pinnedAt?: number
-  },
+  instance: ContractInstance,
   index: number,
   getFuncABIInputs: (funcABI: FuncABI) => string,
   exEnvironment: string,
   editInstance: (instance) => void,
-  plugin: ContractInteractionPluginClient,
   solcVersion: { version: string, canReceive: boolean }
   contractABI: { category: ABICategory, abi: FuncABI[] }
 }
@@ -66,7 +54,6 @@ export function ReadWriteFunctions(props: ReadWriteFunctionsProps) {
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
-  const [instanceBalance, setInstanceBalance] = useState(0)
 
   useEffect(() => {
     // if (!props.instance.abi) {
@@ -93,12 +80,6 @@ export function ReadWriteFunctions(props: ReadWriteFunctionsProps) {
   //     setEvmBC(props.instance.contractData.bytecodeObject)
   //   }
   // }, [props.instance.contractData])
-
-  useEffect(() => {
-    if (props.instance.balance) {
-      setInstanceBalance(props.instance.balance)
-    }
-  }, [props.instance.balance])
 
   const sendData = () => {
     setLlIError('')
@@ -266,7 +247,6 @@ export function ReadWriteFunctions(props: ReadWriteFunctionsProps) {
                 // TODO
                 // getVersion={props.getVersion}
                 // getCompilerDetails={props.getCompilerDetails}
-                // plugin={props.plugin}
                 // runTabState={props.runTabState}
                 // clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                 //   runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)

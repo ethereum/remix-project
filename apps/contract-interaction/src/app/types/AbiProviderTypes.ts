@@ -34,22 +34,19 @@ export enum ABICategory {
 }
 
 export interface ContractABI {
-  abiRead?: FuncABI[],
-  abiWrite?: FuncABI[],
-  abiProxyRead?: FuncABI[],
-  abiProxyWrite?: FuncABI[],
+  Read?: FuncABI[],
+  Write?: FuncABI[],
+  ProxyRead?: FuncABI[],
+  ProxyWrite?: FuncABI[],
 }
 
 export interface ContractInstance {
   // contractData?: ContractData,
   address: string,
-  balance?: number,
+  balance?: bigint,
   name: string,
   decodedResponse?: Record<number, any>,
-  abiRead?: any,
-  abiWrite?: any,
-  abiProxyRead?: any,
-  abiProxyWrite?: any,
+  abi?: ContractABI,
   isPinned?: boolean,
   pinnedTimestamp?: number
 }

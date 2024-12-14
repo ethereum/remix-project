@@ -285,6 +285,8 @@ export function ContractGUI(props: ContractGUIProps) {
   const handleExpandMultiClick = () => {
     const valsString = getMultiValsString(multiFields.current)
 
+    console.error("not implemented")
+
     // if (valsString) {
     //   props.clickCallBack(props.funcABI.inputs, valsString)
     // } else {

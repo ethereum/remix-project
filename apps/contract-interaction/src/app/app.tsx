@@ -13,13 +13,16 @@ import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { ContractDropdownSelection } from './components/ContractDropdown'
-import { connectRemix, initDispatch, updateState } from './actions'
 import { appReducer, appInitialState } from './reducers/state'
+import { initDispatch } from './actions'
 
 let plugin = ContractInteractionPluginClient;
 
 const App = () => {
-  const [themeType, setThemeType] = useState<ThemeType>('dark')
+  const [appState, dispatch] = useReducer(appReducer, appInitialState);
+
+  // TODO: theme
+  // const [themeType, setThemeType] = useState<ThemeType>('dark')
   const [settings, setSettings] = useLocalStorage<ContractInteractionSettings>('contract-interaction:settings', { chains: {} })
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
@@ -33,8 +36,10 @@ const App = () => {
   const [proxyAddressError, setProxyAddressError] = useState('')
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
   const [abiEncodingError, setAbiEncodingError] = useState<string>('')
-
-  const timer = useRef(null)
+  const [locale, setLocale] = useState<{ code: string; messages: any }>({
+    code: 'en',
+    messages: null,
+  })
 
   useEffect(() => {
     plugin.internalEvents.on('interaction_activated', () => {
@@ -61,18 +66,10 @@ const App = () => {
     }
   }, [])
 
-  const [locale, setLocale] = useState<{ code: string; messages: any }>({
-    code: 'en',
-    messages: null,
-  })
-  const [appState, dispatch] = useReducer(appReducer, appInitialState);
-  useEffect(() => {
-    updateState(appState);
-  }, [appState]);
   useEffect(() => {
     initDispatch(dispatch);
-    updateState(appState);
-    connectRemix().then(() => {
+
+    plugin.loadPlugin().then(() => {
 
       // @ts-ignore
       plugin.call('locale', 'currentLocale').then((locale: any) => {
@@ -86,11 +83,11 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput }}>
+    <AppContext.Provider value={{ plugin, appState, settings, setSettings, chains }}>
 
       <IntlProvider locale={locale.code} messages={locale.messages}>
         <InteractionFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
-          <DisplayRoutes plugin={plugin} />
+          <DisplayRoutes />
         </InteractionFormContext.Provider>
       </IntlProvider>
 

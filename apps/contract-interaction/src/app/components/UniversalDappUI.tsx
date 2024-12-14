@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
@@ -6,12 +6,13 @@ import * as ethJSUtil from '@ethereumjs/util'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, shortenAddress } from '@remix-ui/helper'
-import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 import { ReadWriteFunctions } from './ReadWriteFunctions'
-import { ABICategory, Chain } from '../types'
+import { ABICategory, Chain, ContractInstance } from '../types'
+import { AppContext } from '../AppContext'
+import { removeInstanceAction } from '../actions'
 const _paq = (window._paq = window._paq || [])
 
-let CONTEXT = 'blockchain';
+const CONTEXT = 'blockchain';
 
 export interface UdappProps {
   // TODO
@@ -41,29 +42,18 @@ export interface UdappProps {
   // mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
 
   evmCheckComplete?: boolean,
-  instance: {
-    // contractData?: ContractData,
-    address: string,
-    balance?: number,
-    name: string,
-    decodedResponse?: Record<number, any>,
-    abiRead?: any,
-    abiWrite?: any,
-    abiProxyRead?: any,
-    abiProxyWrite?: any,
-    isPinned?: boolean
-    pinnedTimestamp?: number
-  },
+  instance: ContractInstance,
   index: number,
   chain: Chain,
   getFuncABIInputs: (funcABI: FuncABI) => string,
   exEnvironment: string,
   editInstance: (instance) => void,
-  plugin: ContractInteractionPluginClient,
   solcVersion: { version: string, canReceive: boolean }
 }
 
 export function UniversalDappUI(props: UdappProps) {
+  const { plugin } = useContext(AppContext);
+
   const intl = useIntl()
   const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [address, setAddress] = useState<string>('')
@@ -71,7 +61,7 @@ export function UniversalDappUI(props: UdappProps) {
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
-  const [instanceBalance, setInstanceBalance] = useState(0)
+  const [instanceBalance, setInstanceBalance] = useState(0n)
 
   useEffect(() => {
     if (props.instance.address) {
@@ -152,35 +142,36 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const unsavePinnedContract = async () => {
-    await props.plugin.call('fileManager', 'remove', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`)
+    await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`)
   }
 
-  const remove = async () => {
+  const removeContract = async () => {
     if (props.instance.isPinned) {
       await unsavePinnedContract()
       _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'removePin'])
     }
-    // props.removeInstance(props.index)
+    await removeInstanceAction(props.index)
   }
 
+  //  TODO:
   const unpinContract = async () => {
     await unsavePinnedContract()
     _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'addPin'])
-    // props.unpinInstance(props.index)
   }
 
+  // TODO:
   const pinContract = async () => {
     const objToSave = {
       name: props.instance.name,
       address: props.instance.address,
       // TODO:  "abi: props.instance.abi || props.instance.contractData.abi"
-      abiRead: props.instance.abiRead,
-      abiWrite: props.instance.abiWrite,
-      abiProxyRead: props.instance.abiProxyRead,
-      abiProxyWrite: props.instance.abiProxyWrite,
+      abiRead: props.instance.abi.Read,
+      abiWrite: props.instance.abi.Write,
+      abiProxyRead: props.instance.abi.ProxyRead,
+      abiProxyWrite: props.instance.abi.ProxyWrite,
       pinnedTimestamp: Date.now()
     }
-    await props.plugin.call('fileManager', 'writeFile', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
+    await plugin.call('fileManager', 'writeFile', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
     _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', `pinned at ${props.chain.chainId}`])
     //  props.pinInstance(props.index, objToSave.pinnedAt, objToSave.filePath)
   }
@@ -190,6 +181,7 @@ export function UniversalDappUI(props: UdappProps) {
     const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
     const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
+    console.log('not implemented yet')
     // props.runTransactions(
     //   props.index,
     //   lookupOnly,
@@ -319,7 +311,7 @@ export function UniversalDappUI(props: UdappProps) {
         </div>
         <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="contractInteraction.removeContract" />}>
-            <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+            <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={removeContract}></i>
           </CustomTooltip>
         </div>
       </div>
@@ -327,7 +319,7 @@ export function UniversalDappUI(props: UdappProps) {
         <div className="udapp_contractActionsContainer">
           <div className="d-flex flex-row justify-content-between align-items-center pb-2" data-id="instanceContractBal">
             <span className="remixui_runtabBalancelabel run-tab">
-              <b><FormattedMessage id="contractInteraction.balance" />:</b> {instanceBalance} ETH
+              <b><FormattedMessage id="contractInteraction.balance" />:</b> {instanceBalance.toString()} ETH
             </span>
           </div>
           {props.instance.isPinned && props.instance.pinnedTimestamp && (
@@ -350,47 +342,42 @@ export function UniversalDappUI(props: UdappProps) {
             // mainnetPrompt={props.mainnetPrompt}
             // getVersion={props.getVersion}
             // getCompilerDetails={props.getCompilerDetails}
-            // plugin={props.plugin}
             // runTabState={props.runTabState}
             // funcABI={funcABI}
             instance={props.instance}
             getFuncABIInputs={props.getFuncABIInputs}
-            plugin={props.plugin}
             exEnvironment={props.exEnvironment}
             editInstance={props.editInstance}
             solcVersion={props.solcVersion}
             evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.Read, abi: props.instance.abiRead }} index={0}
+            contractABI={{ category: ABICategory.Read, abi: props.instance.abi.Read }} index={0}
           />
           <ReadWriteFunctions
             instance={props.instance}
             getFuncABIInputs={props.getFuncABIInputs}
-            plugin={props.plugin}
             exEnvironment={props.exEnvironment}
             editInstance={props.editInstance}
             solcVersion={props.solcVersion}
             evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.Write, abi: props.instance.abiWrite }} index={1}
+            contractABI={{ category: ABICategory.Write, abi: props.instance.abi.Write }} index={1}
           />
           <ReadWriteFunctions
             instance={props.instance}
             getFuncABIInputs={props.getFuncABIInputs}
-            plugin={props.plugin}
             exEnvironment={props.exEnvironment}
             editInstance={props.editInstance}
             solcVersion={props.solcVersion}
             evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.ProxyRead, abi: props.instance.abiProxyRead }} index={2}
+            contractABI={{ category: ABICategory.ProxyRead, abi: props.instance.abi.ProxyRead }} index={2}
           />
           <ReadWriteFunctions
             instance={props.instance}
             getFuncABIInputs={props.getFuncABIInputs}
-            plugin={props.plugin}
             exEnvironment={props.exEnvironment}
             editInstance={props.editInstance}
             solcVersion={props.solcVersion}
             evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.ProxyWrite, abi: props.instance.abiProxyWrite }} index={3}
+            contractABI={{ category: ABICategory.ProxyWrite, abi: props.instance.abi.ProxyWrite }} index={3}
           />
         </div>
         <div className="d-flex flex-column">

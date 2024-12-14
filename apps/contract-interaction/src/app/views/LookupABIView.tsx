@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
-import type { LookupResponse, AbiProviderIdentifier, ContractInstance } from '../types'
+import type { LookupResponse, AbiProviderIdentifier } from '../types'
 import { ABI_PROVIDERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -9,19 +9,16 @@ import { getAbiProvider } from '../abiProviders'
 import { useNavigate } from 'react-router-dom'
 import { InteractionFormContext } from '../InteractionFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
-import { InstanceContainerUI } from '../components/instanceContainerUI'
-import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
+import { InstanceContainerUI } from '../components/InstanceContainerUI'
+import { setInstanceAction } from '../actions'
 
-export interface LookupABIViewProps {
-  plugin: ContractInteractionPluginClient
-}
+export const LookupABIView = () => {
+  const { appState, settings } = useContext(AppContext);
+  const contractInstances = appState.contractInstances;
 
-export const LookupABIView = (props: LookupABIViewProps) => {
-  const { settings, clientInstance } = useContext(AppContext)
   const { selectedChain, setSelectedChain } = useContext(InteractionFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
-  const [contractInstances, setContractInstances] = useState<ContractInstance[]>([])
   const [loadingAbiProviders, setLoadingAbiProviders] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
   const [lookupResults, setLookupResult] = useState<Partial<Record<AbiProviderIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
@@ -41,9 +38,9 @@ export const LookupABIView = (props: LookupABIViewProps) => {
 
   const handleSelectedChain = async (newSelectedChain) => {
     setSelectedChain(newSelectedChain)
-    // const isPinnedAvailable = await props.plugin.call('fileManager', 'getFolder', `.lookedUpContracts/pinned-contracts/${newSelectedChain.chainId}`)
+    // const isPinnedAvailable = await props.plugin.call('fileManager', 'getFolder', `.looked-up-contracts/pinned-contracts/${newSelectedChain.chainId}`)
     // if (isPinnedAvailable) {
-    //   await props.plugin.call('fileManager', 'remove', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}`)
+    //   await props.plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
     //   _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
     // }    // props.clearInstances()
   }
@@ -68,16 +65,14 @@ export const LookupABIView = (props: LookupABIViewProps) => {
         .lookupABI(contractAddress)
         .then((contractABI) => {
           if (contractABI) {
-            setContractInstances([...contractInstances, {
+
+            setInstanceAction({
               address: contractAddress,
+              // TODO: have to give a different name since removing contracts might leave gaps in the list
               name: `${(contractInstances.length + 1).toString()}`,
-              abiRead: contractABI.abiRead,
-              abiWrite: contractABI.abiWrite,
-              abiProxyRead: contractABI.abiProxyRead,
-              abiProxyWrite: contractABI.abiProxyWrite,
-              isPinned: false,
-            } as ContractInstance,
-            ])
+              abi: contractABI,
+              isPinned: false
+            })
           }
         })
         .catch((err) =>
@@ -139,12 +134,12 @@ export const LookupABIView = (props: LookupABIViewProps) => {
                 <div>
                   <span className="font-weight-bold">{abiProviderIndex}</span> <span className="text-secondary">{chainSettings.abiProviders[abiProviderIndex].apiUrl}</span>
                 </div>
-                {/* {!!loadingAbiProviders[abiProviderIndex] && (
+                {!!loadingAbiProviders[abiProviderIndex] && (
                   <div className="pt-2 d-flex justify-content-center">
                     <i className="fas fa-spinner fa-spin fa-2x"></i>
                   </div>
                 )}
-                {!loadingAbiProviders[abiProviderIndex] && !!lookupResults[abiProviderIndex] && (
+                {/* {!loadingAbiProviders[abiProviderIndex] && !!lookupResults[abiProviderIndex] && (
                   <div>
                     <div className="pt-2">
                       Status:{' '}
@@ -184,11 +179,7 @@ export const LookupABIView = (props: LookupABIViewProps) => {
             canReceive: false
           }}
           evmCheckComplete={true}
-          instances={{
-            instanceList: contractInstances, error: ""
-          }}
           exEnvironment={"TODO: environment"}
-          plugin={props.plugin}
           chain={selectedChain}
           editInstance={(instance) => {
             // TODO

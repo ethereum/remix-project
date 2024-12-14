@@ -2,13 +2,8 @@ import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { LookupABIView, SettingsView } from './views'
 import { DefaultLayout } from './layouts'
-import { ContractInteractionPluginClient } from './ContractInteractionPluginClient'
 
-export interface DisplayRoutesProps {
-  plugin: ContractInteractionPluginClient
-}
-
-const DisplayRoutes = (props: DisplayRoutesProps) => (
+const DisplayRoutes = () => (
   <Router>
     <Routes>
 
@@ -16,7 +11,7 @@ const DisplayRoutes = (props: DisplayRoutesProps) => (
         path="/"
         element={
           <DefaultLayout from="/" title="LookupABI" description="cSearch for verified contracts and download the ABI to Remix">
-            <LookupABIView plugin={props.plugin} />
+            <LookupABIView />
           </DefaultLayout>
         }
       />

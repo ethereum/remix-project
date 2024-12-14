@@ -1,9 +1,11 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
-import { UniversalDappUI } from './universalDappUI'
+import { UniversalDappUI } from './UniversalDappUI'
 import * as remixLib from '@remix-project/remix-lib'
-import { ContractInteractionPluginClient } from '../ContractInteractionPluginClient'
 import { Chain } from '../types'
+import { AppContext } from '../AppContext'
+import { useContext } from 'react'
+import { clearInstancesAction } from '../actions'
 const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
@@ -47,36 +49,39 @@ export interface InstanceContainerUIProps {
   // unpinInstance: (index: number) => void,
 
   evmCheckComplete?: boolean
-  instances: {
-    instanceList: {
-      // contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
-      abi?: any,
-      isPinned?: boolean,
-      pinnedTimeStamp?: number
-    }[],
-    error: string
-  },
+  // instances: {
+  //   instanceList: {
+  //     // contractData?: ContractData,
+  //     address: string,
+  //     balance?: number,
+  //     name: string,
+  //     decodedResponse?: Record<number, any>,
+  //     abi?: any,
+  //     isPinned?: boolean,
+  //     pinnedTimeStamp?: number
+  //   }[],
+  //   error: string
+  // },
   chain: Chain,
   editInstance: (instance) => void,
   exEnvironment: string
-  plugin: ContractInteractionPluginClient
+  // plugin: ContractInteractionPluginClient
   solcVersion: { version: string, canReceive: boolean }
 }
 
 
 export function InstanceContainerUI(props: InstanceContainerUIProps) {
-  const { instanceList } = props.instances
+  const { appState, plugin } = useContext(AppContext);
+  const contractInstances = appState.contractInstances;
 
-  const clearInstance = async () => {
-    const isPinnedAvailable = await props.plugin.call('fileManager', 'getFile', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}`)
-    if (isPinnedAvailable) {
-      await props.plugin.call('fileManager', 'remove', `.lookedUpContracts/pinned-contracts/${props.chain.chainId}`)
-      _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
-    }    // props.clearInstances()
+  const clearInstances = async () => {
+
+    // const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
+    // if (isPinnedAvailable) {
+    //   await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
+    //   _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
+    // }
+    await clearInstancesAction()
   }
 
   return (
@@ -88,25 +93,25 @@ export function InstanceContainerUI(props: InstanceContainerUIProps) {
           </label>
         </CustomTooltip>
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="numOfDeployedInstancesTooltip" tooltipText="Number of looked up contracts">
-          <div className="badge badge-pill badge-primary text-center ml-2 mb-1" data-id="deployedContractsBadge">{instanceList.length}</div>
+          <div className="badge badge-pill badge-primary text-center ml-2 mb-1" data-id="deployedContractsBadge">{contractInstances.length}</div>
         </CustomTooltip>
         <div className="w-100"></div>
-        {instanceList.length > 0 && (
+        {contractInstances.length > 0 && (
           <CustomTooltip
             placement={'auto-end'}
             tooltipClasses="text-nowrap"
             tooltipId="clearContractInstancesTooltip"
             tooltipText={<FormattedMessage id="contractInteraction.clearContractInstances" />}
           >
-            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="clearContractInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="clearContractInstances" onClick={clearInstances} aria-hidden="true"></i>
           </CustomTooltip>
         )}
       </div>
 
-      {instanceList.length > 0 && (
+      {contractInstances.length > 0 && (
         <div>
           {' '}
-          {props.instances.instanceList.map((instance, index) => {
+          {contractInstances.map((instance, index) => {
             return (
               <UniversalDappUI
                 key={index}
@@ -127,7 +132,6 @@ export function InstanceContainerUI(props: InstanceContainerUIProps) {
                 index={index}
                 chain={props.chain}
                 getFuncABIInputs={getFuncABIInputs}
-                plugin={props.plugin}
                 exEnvironment={props.exEnvironment}
                 editInstance={props.editInstance}
                 solcVersion={props.solcVersion}

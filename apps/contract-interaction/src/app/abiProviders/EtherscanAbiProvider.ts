@@ -29,10 +29,10 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
     const parsedProxyWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyWrite))
 
     return {
-      abiRead: parsedReadABI,
-      abiWrite: parsedWriteABI,
-      abiProxyRead: parsedProxyReadABI,
-      abiProxyWrite: parsedProxyWriteABI
+      Read: parsedReadABI,
+      Write: parsedWriteABI,
+      ProxyRead: parsedProxyReadABI,
+      ProxyWrite: parsedProxyWriteABI
     }
   }
 
