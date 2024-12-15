@@ -151,6 +151,7 @@ export class RunTab extends ViewPlugin {
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
       'basic-http-provider': 'Deploy to a Custom local network.',
+      'remix-web-provider': 'Deploy through the Remix MetaMask browser extension.',
       'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
       'ganache-provider': 'Deploy to the local Ganache dev chain.',
       'foundry-provider': 'Deploy to the local Foundry dev chain.',
@@ -262,6 +263,7 @@ export class RunTab extends ViewPlugin {
 
     // external provider
     await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', false, false)
+    await addProvider(11, 'remix-web-provider', 'Remix web ( Metamask )', false, false)
     await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', false, false)
     await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', false, false)
     await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false)

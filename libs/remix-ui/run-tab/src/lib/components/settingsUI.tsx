@@ -1,14 +1,16 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { SettingsProps } from '../types'
 import { EnvironmentUI } from './environment'
 import { NetworkUI } from './network'
 import { AccountUI } from './account'
 import { GasLimitUI } from './gasLimit'
 import { ValueUI } from './value'
+import { AppContext } from '@remix-ui/app'
 
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
+  const appContext = useContext(AppContext)
 
   return (
     <div className="udapp_settings">
@@ -28,8 +30,8 @@ export function SettingsUI(props: SettingsProps) {
         signMessageWithAddress={props.signMessageWithAddress}
         passphrase={props.passphrase}
       />
-      <GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
-      <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} />
+      {appContext.appState.connectedToDesktop === false ?
+        <><GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} /><ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} /></> : null}
     </div>
   )
 }

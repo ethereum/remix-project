@@ -6,5 +6,6 @@ export const appInitialState: AppState = {
   currentBranch: null,
   needsGitInit: true,
   canUseGit: false,
-  showPopupPanel: false
+  showPopupPanel: false,
+  connectedToDesktop: false
 }

@@ -53,5 +53,6 @@ export interface AppState {
     needsGitInit: boolean
     canUseGit: boolean
     showPopupPanel: boolean
+    connectedToDesktop: boolean
 }
 

@@ -18,6 +18,7 @@ export const enum appActionTypes {
   setNeedsGitInit = 'SET_NEEDS_GIT_INIT',
   setCanUseGit = 'SET_CAN_USE_GIT',
   setShowPopupPanel = 'SET_SHOW_POPUP_PANEL',
+  setConnectedToDesktop = 'SET_CONNECTED_TO_DESKTOP',
 }
 
 type AppPayload = {
@@ -26,6 +27,7 @@ type AppPayload = {
   [appActionTypes.setNeedsGitInit]: boolean,
   [appActionTypes.setCanUseGit]: boolean,
   [appActionTypes.setShowPopupPanel]: boolean,
+  [appActionTypes.setConnectedToDesktop]: boolean,
 }
 
 export type AppAction = ActionMap<AppPayload>[keyof ActionMap<

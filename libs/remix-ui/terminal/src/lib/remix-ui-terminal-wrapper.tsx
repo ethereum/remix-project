@@ -1,4 +1,4 @@
-import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { RemixUiXterminals, xTerminInitialState, xtermReducer } from '@remix-ui/xterm'
 import React, { useContext, useReducer } from 'react' // eslint-disable-line
 import { RemixUITerminalBar } from './components/remix-ui-terminal-bar'
@@ -11,11 +11,16 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
   const [terminalState, dispatch] = useReducer(registerCommandReducer, initialState)
   const [xtermState, dispatchXterm] = useReducer(xtermReducer, xTerminInitialState)
   const platform = useContext(platformContext)
+  const appContext = useContext(AppContext)
   const providerState = {
     terminalState,
     dispatch,
     xtermState,
     dispatchXterm
+  }
+
+  if(appContext.appState.connectedToDesktop === true) {
+    return <></>
   }
 
   return (<>
