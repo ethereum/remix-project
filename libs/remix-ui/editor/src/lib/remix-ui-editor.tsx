@@ -716,7 +716,6 @@ export const EditorUI = (props: EditorUIProps) => {
             </div>
           )
         }
-        
         props.plugin.call('notification', 'modal', modalContent)
         // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
