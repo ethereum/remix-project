@@ -267,6 +267,7 @@ export class RunTab extends ViewPlugin {
             latestBlock: stateDetail.latestBlockNumber,
             timestamp: stateDetail.savingTimestamp
           })
+          // Create and register provider plugin for saved states
           const svsProvider = new SavedVMStateProvider({
             name: providerName,
             displayName: stateDetail.stateName,
