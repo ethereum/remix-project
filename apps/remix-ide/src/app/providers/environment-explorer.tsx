@@ -1,6 +1,6 @@
 import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import { CustomTooltip, PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
@@ -30,7 +30,6 @@ type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked V
 export class EnvironmentExplorer extends ViewPlugin {
   providers: { [key in ProvidersSection]: Provider[] }
   providersFlat: { [key: string]: Provider }
-  savedStates
   pinnedProviders: string[]
   dispatch: React.Dispatch<any> = () => {}
 
@@ -44,7 +43,6 @@ export class EnvironmentExplorer extends ViewPlugin {
       'Remix forked VMs': [],
       'Externals': []
     }
-    this.savedStates = []
   }
 
   async onActivation(): Promise<void> {
@@ -209,8 +207,14 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-              <div><b>Latest Block: </b>{latestBlock}</div>
-              <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
+              <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
+              <CustomTooltip
+                placement="auto"
+                tooltipId="overlay-tooltip-compile"
+                tooltipText={`Saved at: ${(new Date(timestamp)).toLocaleString()}`}
+              >
+                <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
+              </CustomTooltip>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
         <RemixUIGridSection
