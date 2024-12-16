@@ -666,6 +666,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
     editor.onDidPaste(async (e) => {
       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+        // get the file name
+        const pastedCode = editor.getModel().getValueInRange(e.range)
+        const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
+
         const modalContent: AlertModal = {
           id: 'newCodePasted',
           title: intl.formatMessage({ id: 'editor.title1' }),
@@ -697,14 +701,23 @@ export const EditorUI = (props: EditorUIProps) => {
                     }}
                   />
                 </div>
+                <div className="mt-2">
+                <button className="btn btn-primary" onClick={async () => {
+                    await props.plugin.call('popupPanel', 'showPopupPanel', true)
+                    setTimeout(async () => {
+                      props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+                    }, 500)
+                    return
+                  }
+                 }>
+                  Ask RemixAI
+                </button>
+              </div>
               </div>
             </div>
           ),
         }
-        // get the file name
-        const pastedCode = editor.getModel().getValueInRange(e.range)
-        const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
-        props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+        
         props.plugin.call('notification', 'alert', modalContent)
         // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
