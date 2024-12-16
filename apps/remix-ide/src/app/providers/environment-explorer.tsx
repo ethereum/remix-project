@@ -182,7 +182,7 @@ export class EnvironmentExplorer extends ViewPlugin {
           title='Deploy to an In-browser Saved VM State.'
           hScrollable={false}
         >{this.providers['Saved VM States'].map(provider => {
-            const {latestBlock, timestamp} = JSON.parse(provider.description)
+            const { latestBlock, timestamp } = JSON.parse(provider.description)
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
