@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
 import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
-import { AlertModal } from '@remix-ui/app'
+import { AppModal } from '@remix-ui/app'
 import { ConsoleLogs, QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
@@ -670,9 +670,18 @@ export const EditorUI = (props: EditorUIProps) => {
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
 
-        const modalContent: AlertModal = {
+        const modalContent: AppModal = {
           id: 'newCodePasted',
-          title: intl.formatMessage({ id: 'editor.title1' }),
+          title: "New code pasted",
+          okLabel: 'Ask RemixAI',
+          cancelLabel: 'Close',
+          cancelFn: () => {},
+          okFn: async () => {
+            await props.plugin.call('popupPanel', 'showPopupPanel', true)
+            setTimeout(async () => {
+              props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+            }, 500)
+          },
           message: (
             <div>
               {' '}
@@ -701,24 +710,12 @@ export const EditorUI = (props: EditorUIProps) => {
                     }}
                   />
                 </div>
-                <div className="mt-2">
-                <button className="btn btn-primary" onClick={async () => {
-                    await props.plugin.call('popupPanel', 'showPopupPanel', true)
-                    setTimeout(async () => {
-                      props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
-                    }, 500)
-                    return
-                  }
-                 }>
-                  Ask RemixAI
-                </button>
-              </div>
               </div>
             </div>
-          ),
+          )
         }
         
-        props.plugin.call('notification', 'alert', modalContent)
+        props.plugin.call('notification', 'modal', modalContent)
         // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
         // const result = await props.plugin.call('remixAI', 'vulnerability_check', pastedCodePrompt)

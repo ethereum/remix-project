@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent} from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
@@ -37,7 +37,7 @@ export class RemixAIPlugin extends ViewPlugin {
   isInferencing: boolean = false
   chatRequestBuffer: chatRequestBufferT<any> = null
   codeExpAgent: CodeExplainAgent
-  securityAgent: SecurityAgent 
+  securityAgent: SecurityAgent
   useRemoteInferencer:boolean = false
   dispatch: any
 
