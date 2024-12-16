@@ -93,7 +93,6 @@ export class SVSProvider {
         try {
           const blockchainState = JSON.parse(stringifiedState)
           const blockNumber = parseInt(blockchainState.latestBlockNumber, 16)
-          console.log('blockNumber-in resetEnvironment-->', blockNumber)
           const stateDb = blockchainState.db
 
           this.worker.postMessage({
