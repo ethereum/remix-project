@@ -106,11 +106,11 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                   <button
                     onClick={() => {
                       _paq.push(['trackEvent', 'pluginManager', 'activateBtn', 'activate btn' + profile.name])
-                      if(profile.name === 'LearnEth'){
+                      if (profile.name === 'LearnEth'){
                         activatePlugin(profile.name)
                         activatePlugin('solidityUnitTesting')
                       }
-                      else{
+                      else {
                         activatePlugin(profile.name)
                       }
                     }}
