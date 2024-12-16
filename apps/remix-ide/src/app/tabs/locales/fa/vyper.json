@@ -1,3 +1,3 @@
 {
-  "vyper.openaigptMessage": "vyper code: {content}\n error message: {messageText}\n explain why the error occurred and how to fix it."
+  "vyper.openaigptMessage": "کد vyper: {content}\n پیام خطا: {messageText}\n توضیح بده چرا این خطا رخ داده و چطور می‌شه درستش کرد."
 }

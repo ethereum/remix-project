@@ -10,6 +10,7 @@ import frJson from './locales/fr'
 import itJson from './locales/it'
 import koJson from './locales/ko'
 import ruJson from './locales/ru'
+import faJson from './locales/fa'
 const _paq = window._paq = window._paq || []
 
 const locales = [
@@ -19,7 +20,8 @@ const locales = [
   { code: 'it', name: 'Italian', localeName: 'Italiano', messages: itJson },
   { code: 'ko', name: 'Korean', localeName: '한국인', messages: koJson },
   { code: 'ru', name: 'Russian', localeName: 'Русский', messages: ruJson },
-  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson }
+  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson },
+  { code: 'fa', name: 'Farsi', localeName: 'فارسی', messages: faJson }
 ]
 
 const profile = {

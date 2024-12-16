@@ -1,13 +1,13 @@
 {
-  "permissionHandler.allPermissionsReset": "All permissions have been reset.",
-  "permissionHandler.rememberText": "has changed and",
-  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} would like to access to \"{method}\" of \"{to}\"`",
-  "permissionHandler.description": "Description",
-  "permissionHandler.noDescriptionProvided": "No description Provided",
-  "permissionHandler.makeSureYouTrustThisPlugin": "Make sure you trust this plugin before processing this call. If you choose to remember the choice for this specific call, the value will be kept only for the current session.",
-  "permissionHandler.rememberThisChoice": "Remember this choice",
-  "permissionHandler.resetAllPermissions": "Reset all Permissions",
-  "permissionHandler.permissionNeededFor": "Permission needed for {to}",
-  "permissionHandler.accept": "Accept",
-  "permissionHandler.decline": "Decline"
+  "permissionHandler.allPermissionsReset": "همه مجوزها ریست شدن.",
+  "permissionHandler.rememberText": "تغییر کرده و",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} میخواد به \"{method}\" از \"{to}\" دسترسی داشته باشه",
+  "permissionHandler.description": "توضیحات",
+  "permissionHandler.noDescriptionProvided": "توضیحی نداده",
+  "permissionHandler.makeSureYouTrustThisPlugin": "قبل از اینکه اجازه بدی، مطمئن شو که به این پلاگین اعتماد داری. اگه بخوای این انتخاب رو به خاطر بسپاری، فقط تا وقتی برنامه بازه یادش میمونه.",
+  "permissionHandler.rememberThisChoice": "این انتخاب یادت بمونه",
+  "permissionHandler.resetAllPermissions": "ریست کردن همه مجوزها",
+  "permissionHandler.permissionNeededFor": "{to} اجازه میخواد",
+  "permissionHandler.accept": "قبوله",
+  "permissionHandler.decline": "نه"
 }
