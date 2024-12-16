@@ -590,10 +590,8 @@ export class Blockchain extends Plugin {
   }
 
   web3() {
-    const isVM = this.executionContext.isVM()
-    if (isVM) {
-      return (this.providers.vm as VMProvider).web3
-    }
+    if (this.executionContext.executionContext.startsWith('vm-')) return (this.providers.vm as VMProvider).web3
+    else if (this.executionContext.executionContext.startsWith('svs-')) return (this.providers.svs as SVSProvider).web3
     return this.executionContext.web3()
   }
 
