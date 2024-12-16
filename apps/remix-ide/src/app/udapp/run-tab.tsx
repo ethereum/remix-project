@@ -258,14 +258,8 @@ export class RunTab extends ViewPlugin {
     await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, false, '', 'settingsVMCustomMode', titleVM, true)
 
     // Saved VM States
-    this.on('filePanel', 'workspaceInitializationCompleted', async () => {
-      const ssExists = await this.call('fileManager', 'exists', '.states/saved_states')
-      if (ssExists) {
-        const savedStatesDetails = await this.call('fileManager', 'readdir', '.states/saved_states')
-        const savedStatesFiles = Object.keys(savedStatesDetails)
-        const pos = 10
-        for (const filePath of savedStatesFiles) {
-          let stateDetail = await this.call('fileManager', 'readFile', filePath)
+    const addSVSProvider = async(stateFilePath, pos) => {
+      let stateDetail = await this.call('fileManager', 'readFile', stateFilePath)
           stateDetail = JSON.parse(stateDetail)
           const providerName = 'svs-' + stateDetail.stateName
           descriptions[providerName] = JSON.stringify({
@@ -282,9 +276,24 @@ export class RunTab extends ViewPlugin {
             version: packageJson.version
           }, this.blockchain, stateDetail.forkName)
           this.engine.register(svsProvider)
-          await addProvider(pos + 1, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
+          await addProvider(pos, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
+    }
+
+    this.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      const ssExists = await this.call('fileManager', 'exists', '.states/saved_states')
+      if (ssExists) {
+        const savedStatesDetails = await this.call('fileManager', 'readdir', '.states/saved_states')
+        const savedStatesFiles = Object.keys(savedStatesDetails)
+        let pos = 10
+        for (const filePath of savedStatesFiles) {
+          pos += 1
+          await addSVSProvider(filePath, pos)
         }
       }
+    })
+
+    this.on('udapp', 'vmStateSaved', async (stateName) => {
+      await addSVSProvider(`.states/saved_states/${stateName}.json`, 20)
     })
 
     // wallet connect
