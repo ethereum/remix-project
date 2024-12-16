@@ -681,6 +681,8 @@ export const EditorUI = (props: EditorUIProps) => {
             setTimeout(async () => {
               props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
             }, 500)
+            // add matamo event
+            _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
           },
           message: (
             <div>
@@ -718,8 +720,6 @@ export const EditorUI = (props: EditorUIProps) => {
         props.plugin.call('notification', 'modal', modalContent)
         // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
-        // const result = await props.plugin.call('remixAI', 'vulnerability_check', pastedCodePrompt)
-        // console.log(JSON.parse(result))
       }
     })
 
