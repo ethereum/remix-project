@@ -958,8 +958,23 @@ export class Blockchain extends Plugin {
       if (isVM) {
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
-            const state = await this.executionContext.getStateDetails()
-            this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
+            let state = await this.executionContext.getStateDetails()
+            const provider = this.executionContext.getProvider()
+            if (provider.startsWith('svs')) {
+              const stateName = provider.replace('svs-', '')
+              const stateFileExists = this.call('fileManager', 'exists', `.states/saved_states/${stateName}.json`)
+              if (stateFileExists) {
+                let stateDetails = await this.call('fileManager', 'readFile', `.states/saved_states/${stateName}.json`)
+                stateDetails = JSON.parse(stateDetails)
+                state = JSON.parse(state)
+                state['stateName'] = stateDetails.stateName
+                state['forkName'] = stateDetails.forkName
+                state['savingTimestamp'] = stateDetails.savingTimestamp
+                state = JSON.stringify(state, null, 2)
+              }
+              this.call('fileManager', 'writeFile', `.states/saved_states/${stateName}.json`, state)
+            }
+            else this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
           } catch (e) {
             console.error(e)
           }
@@ -991,7 +1006,6 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml', finalLogs)
         }
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
-
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult
