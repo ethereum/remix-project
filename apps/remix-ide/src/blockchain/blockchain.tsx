@@ -7,7 +7,6 @@ import { format } from 'util'
 import { ExecutionContext } from './execution-context'
 import Config from '../config'
 import { VMProvider } from './providers/vm'
-import { SVSProvider } from './providers/saved-vm-state'
 import { InjectedProvider } from './providers/injected'
 import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
@@ -80,7 +79,7 @@ export class Blockchain extends Plugin {
     }
     error?: string
   }
-  providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider | SVSProvider}
+  providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider }
   transactionContextAPI: TransactionContextAPI
   registeredPluginEvents: string[]
   defaultPinnedProviders: string[]
@@ -208,7 +207,7 @@ export class Blockchain extends Plugin {
   setupProviders() {
     this.providers = {}
     this.providers['vm'] = new VMProvider(this.executionContext)
-    this.providers['svs'] = new SVSProvider(this.executionContext)
+    this.providers['svs'] = new VMProvider(this.executionContext)
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
@@ -591,7 +590,7 @@ export class Blockchain extends Plugin {
 
   web3() {
     if (this.executionContext.executionContext.startsWith('vm-')) return (this.providers.vm as VMProvider).web3
-    else if (this.executionContext.executionContext.startsWith('svs-')) return (this.providers.svs as SVSProvider).web3
+    else if (this.executionContext.executionContext.startsWith('svs-')) return (this.providers.svs as VMProvider).web3
     return this.executionContext.web3()
   }
 
