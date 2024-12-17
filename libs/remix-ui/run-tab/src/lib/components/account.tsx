@@ -248,9 +248,9 @@ export function AccountUI(props: AccountProps) {
                 onSelect={(e) => {
                   props.setAccount(value)
                 }}
-                data-id="txOriginSelectAccountItem"
+                data-id={`txOriginSelectAccountItem-${value}`}
               >
-                <span className="">
+                <span data-id={`${value}`}>
                   {loadedAccounts[value]}
                 </span>
               </Dropdown.Item>
