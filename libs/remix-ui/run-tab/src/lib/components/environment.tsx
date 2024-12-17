@@ -40,6 +40,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
           className="form-control"
           onChange={(e) => vmStateName.current = e.target.value}
         />
+        <br/>
+        <div className='text-secondary'>
+          <b>Tip: </b><FormattedMessage id="udapp.saveVmStateTip" />
+        </div>
       </div>
     )
   }
