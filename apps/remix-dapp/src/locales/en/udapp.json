@@ -51,6 +51,7 @@
   "udapp.signature": "signature",
   "udapp.saveVmStateTitle": "Save VM state",
   "udapp.saveVmStateLabel": "State Name",
+  "udapp.saveVmStateTip": "Saved VM states can be pinned as environment using Environment Explorer",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
   "udapp.createNewAccount": "Create a new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
