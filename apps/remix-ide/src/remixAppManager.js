@@ -110,7 +110,7 @@ const isInjectedProvider = (name) => {
 }
 
 const isVM = (name) => {
-  return name.startsWith('vm') || name.startsWith('svs')
+  return name.startsWith('vm')
 }
 
 const isScriptRunner = (name) => {
