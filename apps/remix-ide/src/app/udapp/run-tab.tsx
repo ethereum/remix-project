@@ -260,24 +260,24 @@ export class RunTab extends ViewPlugin {
     // Saved VM States
     const addSVSProvider = async(stateFilePath, pos) => {
       let stateDetail = await this.call('fileManager', 'readFile', stateFilePath)
-          stateDetail = JSON.parse(stateDetail)
-          const providerName = 'vm-svs-' + stateDetail.stateName
-          descriptions[providerName] = JSON.stringify({
-            name: providerName,
-            latestBlock: stateDetail.latestBlockNumber,
-            timestamp: stateDetail.savingTimestamp
-          })
-          // Create and register provider plugin for saved states
-          const svsProvider = new SavedVMStateProvider({
-            name: providerName,
-            displayName: stateDetail.stateName,
-            kind: 'provider',
-            description: descriptions[providerName],
-            methods: ['sendAsync', 'init'],
-            version: packageJson.version
-          }, this.blockchain, stateDetail.forkName)
-          this.engine.register(svsProvider)
-          await addProvider(pos, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
+      stateDetail = JSON.parse(stateDetail)
+      const providerName = 'vm-svs-' + stateDetail.stateName
+      descriptions[providerName] = JSON.stringify({
+        name: providerName,
+        latestBlock: stateDetail.latestBlockNumber,
+        timestamp: stateDetail.savingTimestamp
+      })
+      // Create and register provider plugin for saved states
+      const svsProvider = new SavedVMStateProvider({
+        name: providerName,
+        displayName: stateDetail.stateName,
+        kind: 'provider',
+        description: descriptions[providerName],
+        methods: ['sendAsync', 'init'],
+        version: packageJson.version
+      }, this.blockchain, stateDetail.forkName)
+      this.engine.register(svsProvider)
+      await addProvider(pos, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
     }
 
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
