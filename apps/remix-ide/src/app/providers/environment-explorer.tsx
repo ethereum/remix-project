@@ -61,7 +61,6 @@ export class EnvironmentExplorer extends ViewPlugin {
     )
   }
 
-
   async pinStateCallback(provider: Provider, pinned: boolean) {
     if (pinned) {
       this.emit('providerPinned', provider.name, provider)
