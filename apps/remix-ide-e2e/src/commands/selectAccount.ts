@@ -6,7 +6,7 @@ class SelectAccount extends EventEmitter {
     if (account) {
       this.api
         .click(`*[data-id="runTabSelectAccount"]`) //open the dropdown
-        .waitForElementVisible(`*[data-id="custom-dropdown-items"]`)
+        // .waitForElementVisible(`*[data-id="custom-dropdown-items"]`)
         .waitForElementVisible(`*[data-id="${account}"]`)
         .click(`*[data-id="${account}"]`) //close the dropdown
         .perform(() => {

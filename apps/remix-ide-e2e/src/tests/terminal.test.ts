@@ -300,9 +300,10 @@ module.exports = {
       browser
         .clickLaunchIcon('udapp')
         .switchEnvironment('vm-mainnet-fork')
+        .click('*[data-id="runTabSelectAccount"]')
         .waitForElementPresent({
           locateStrategy: 'css selector',
-          selector: `*[data-id="runTabSelectAccount"] *[data-id="dropdown-content"]:contains('0xdD870fA1b7C4700F2BD7f44238821C26f7392148')`,
+          selector: '*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
           timeout: 240000
         })
         .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
@@ -332,7 +333,7 @@ module.exports = {
         .modalFooterOKClick('vm-custom-fork')
         .waitForElementPresent({
           locateStrategy: 'css selector',
-          selector: `*[data-id="runTabSelectAccount"] *[data-id="dropdown-content"]:contains('0xdD870fA1b7C4700F2BD7f44238821C26f7392148')`,
+          selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
           timeout: 240000
         })
         .pause(5000)

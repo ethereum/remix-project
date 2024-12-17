@@ -245,9 +245,10 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.17+commit.8df45f5f.js')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
+      .click('*[data-id="runTabSelectAccount"]')
       .waitForElementPresent({
         locateStrategy: 'css selector',
-        selector: `*[data-id="runTabSelectAccount"] *[data-id="dropdown-content"]:contains('0xdD870fA1b7C4700F2BD7f44238821C26f7392148')`,
+        selector: `*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]`,
         timeout: 250000
       }) // wait for the udapp to load the list of accounts
       .selectContract('MyResolver')
