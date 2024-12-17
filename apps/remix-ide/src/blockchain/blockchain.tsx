@@ -207,7 +207,6 @@ export class Blockchain extends Plugin {
   setupProviders() {
     this.providers = {}
     this.providers['vm'] = new VMProvider(this.executionContext)
-    this.providers['vm-svs'] = new VMProvider(this.executionContext)
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
@@ -215,7 +214,6 @@ export class Blockchain extends Plugin {
   getCurrentProvider() {
     const provider = this.getProvider()
     if (provider && provider.startsWith('vm')) return this.providers['vm']
-    if (provider && provider.startsWith('vm-svs')) return this.providers['vm-svs']
     if (provider && provider.startsWith('injected')) return this.providers['injected']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
@@ -589,8 +587,10 @@ export class Blockchain extends Plugin {
   }
 
   web3() {
-    if (this.executionContext.executionContext.startsWith('vm-')) return (this.providers.vm as VMProvider).web3
-    else if (this.executionContext.executionContext.startsWith('vm-svs-')) return (this.providers['vm-svs'] as VMProvider).web3
+    const isVM = this.executionContext.isVM()
+    if (isVM) {
+      return (this.providers.vm as VMProvider).web3
+    }
     return this.executionContext.web3()
   }
 
