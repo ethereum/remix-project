@@ -64,7 +64,7 @@ export class BreakpointManager {
   }
 
   hitLine (currentStep, sourceLocation, previousSourceLocation, trace) {
-    // isJumpDestInstruction -> returning from a internal function call
+    // isJumpDestInstruction -> returning from an internal function call
     // depthChange -> returning from an external call
     // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
     if ((isJumpDestInstruction(trace[currentStep]) && previousSourceLocation.jump === 'o') ||
