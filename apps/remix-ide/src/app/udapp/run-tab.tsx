@@ -261,7 +261,7 @@ export class RunTab extends ViewPlugin {
     const addSVSProvider = async(stateFilePath, pos) => {
       let stateDetail = await this.call('fileManager', 'readFile', stateFilePath)
           stateDetail = JSON.parse(stateDetail)
-          const providerName = 'svs-' + stateDetail.stateName
+          const providerName = 'vm-svs-' + stateDetail.stateName
           descriptions[providerName] = JSON.stringify({
             name: providerName,
             latestBlock: stateDetail.latestBlockNumber,

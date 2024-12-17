@@ -207,7 +207,7 @@ export class Blockchain extends Plugin {
   setupProviders() {
     this.providers = {}
     this.providers['vm'] = new VMProvider(this.executionContext)
-    this.providers['svs'] = new VMProvider(this.executionContext)
+    this.providers['vm-svs'] = new VMProvider(this.executionContext)
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
@@ -215,7 +215,7 @@ export class Blockchain extends Plugin {
   getCurrentProvider() {
     const provider = this.getProvider()
     if (provider && provider.startsWith('vm')) return this.providers['vm']
-    if (provider && provider.startsWith('svs')) return this.providers['svs']
+    if (provider && provider.startsWith('vm-svs')) return this.providers['vm-svs']
     if (provider && provider.startsWith('injected')) return this.providers['injected']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
@@ -590,7 +590,7 @@ export class Blockchain extends Plugin {
 
   web3() {
     if (this.executionContext.executionContext.startsWith('vm-')) return (this.providers.vm as VMProvider).web3
-    else if (this.executionContext.executionContext.startsWith('svs-')) return (this.providers.svs as VMProvider).web3
+    else if (this.executionContext.executionContext.startsWith('vm-svs-')) return (this.providers['vm-svs'] as VMProvider).web3
     return this.executionContext.web3()
   }
 
@@ -697,9 +697,10 @@ export class Blockchain extends Plugin {
         await this.getCurrentProvider().resetEnvironment(stateDb)
       } else {
         // check if saved VM state is used as provider
-        const contextExists = await this.call('fileManager', 'exists', `.states/saved_states/${context.replace('svs-', '')}.json`)
+        const stateName = context.replace('vm-svs-', '')
+        const contextExists = await this.call('fileManager', 'exists', `.states/saved_states/${stateName}.json`)
         if (contextExists) {
-          const stateDb = await this.call('fileManager', 'readFile', `.states/saved_states/${context.replace('svs-', '')}.json`)
+          const stateDb = await this.call('fileManager', 'readFile', `.states/saved_states/${stateName}.json`)
           await this.getCurrentProvider().resetEnvironment(stateDb)
         } else await this.getCurrentProvider().resetEnvironment()
       }
@@ -957,8 +958,8 @@ export class Blockchain extends Plugin {
           try {
             let state = await this.executionContext.getStateDetails()
             const provider = this.executionContext.getProvider()
-            if (provider.startsWith('svs')) {
-              const stateName = provider.replace('svs-', '')
+            if (provider.startsWith('vm-svs-')) {
+              const stateName = provider.replace('vm-svs-', '')
               const stateFileExists = this.call('fileManager', 'exists', `.states/saved_states/${stateName}.json`)
               if (stateFileExists) {
                 let stateDetails = await this.call('fileManager', 'readFile', `.states/saved_states/${stateName}.json`)

@@ -58,7 +58,7 @@ export class ExecutionContext {
   }
 
   isVM () {
-    return this.executionContext.startsWith('vm') || this.executionContext.startsWith('svs')
+    return this.executionContext.startsWith('vm')
   }
 
   setWeb3 (context, web3) {
