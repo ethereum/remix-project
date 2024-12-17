@@ -236,7 +236,7 @@ export function AccountUI(props: AccountProps) {
         {props.accounts.isRequesting && <i className="fa fa-spinner fa-pulse ml-2" aria-hidden="true"></i>}
       </label>
       <div className="udapp_account">
-        <Dropdown className="udapp_selectExEnvOptions">
+        <Dropdown className="udapp_selectExEnvOptions" data-id="runTabSelectAccount">
           <Dropdown.Toggle as={CustomToggle} icon={null} id="txorigin" data-id="runTabSelectAccount" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control">
             {selectedAccount ? loadedAccounts[selectedAccount] : ''}
           </Dropdown.Toggle>
@@ -248,6 +248,7 @@ export function AccountUI(props: AccountProps) {
                 onSelect={(e) => {
                   props.setAccount(value)
                 }}
+                data-id="txOriginSelectAccountItem"
               >
                 <span className="">
                   {loadedAccounts[value]}
