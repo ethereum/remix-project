@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
@@ -94,7 +94,15 @@ export function EnvironmentUI(props: EnvironmentProps) {
         resetVmStatePrompt(context),
         intl.formatMessage({ id: 'udapp.reset' }),
         async () => {
-            // let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+            const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
+            // Reset environment blocks and account data
+            currentProvider.resetEnvironment()
+            // Remove deployed and pinned contracts from UI
+            props.runTabPlugin.REACT_API.instances.instanceList = {}
+            // Delete environment state file
+            await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
+            // Delete pinned contracts folder
+            await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
             props.runTabPlugin.call('notification', 'toast', `VM state reset successfully`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
