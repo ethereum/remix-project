@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslnt/no-var-requires
 const snarkjs = require('snarkjs');
 
 const logger = {
