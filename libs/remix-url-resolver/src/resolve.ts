@@ -101,17 +101,17 @@ export class RemixURLResolver {
     }
   }
 
-  async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
+ async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
-      const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
-      const url = bzz.getDownloadURL(cleanUrl, { mode: 'raw' })
-      const response: AxiosResponse = await axios.get(url, { transformResponse: []})
-      return { content: response.data, cleanUrl }
+        const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
+        const swarmUrl = bzz.getDownloadURL(cleanUrl, { mode: 'raw' }) // изменено название переменной
+        const response: AxiosResponse = await axios.get(swarmUrl, { transformResponse: []})
+        return { content: response.data, cleanUrl }
     } catch (e) {
-      throw e
+        throw e
     }
-  }
+ }
 
   /**
   * Handle an import statement based on IPFS
