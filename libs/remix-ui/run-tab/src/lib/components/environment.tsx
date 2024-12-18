@@ -66,7 +66,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
           props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
-        }
+        } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       null
