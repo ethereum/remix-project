@@ -54,6 +54,12 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     setAnyEnabled(enabled)
   }, [filterCon, props.tagList])
 
+  useEffect(() => {
+    if (props.pinned!== pinned) {
+      setPinned(props.pinned)
+    }
+  },[props.pinned])
+
   /*const listenOnExpand = (key) => {
     if (key === props.key) setExpand(props.toggleExpandView)
     console.log('expand ----> ', key)
@@ -86,7 +92,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                   <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> :
                   <></>
                 }
-                { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
+                { props.logos && props.logos.map((logo, index) => <img key={index} className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title &&
                   <CustomTooltip
                     placement="top"
