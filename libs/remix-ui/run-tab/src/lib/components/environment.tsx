@@ -30,7 +30,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const saveVmStatePrompt = (defaultName: string) => {
     return (
       <div>
-        <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
+        <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="udapp.saveVmStateLabel" />
         </label>
         <input
@@ -43,6 +43,18 @@ export function EnvironmentUI(props: EnvironmentProps) {
         <br/>
         <div className='text-secondary'>
           <b>Tip: </b><FormattedMessage id="udapp.saveVmStateTip" />
+        </div>
+      </div>
+    )
+  }
+
+  const resetVmStatePrompt = (context: string) => {
+    return (
+      <div>
+        <div>
+          <FormattedMessage id="udapp.resetVmStateDesc1"/><br/>
+          <FormattedMessage id="udapp.resetVmStateDesc2"/><br/><br/>
+          <FormattedMessage id="udapp.resetVmStateDesc3"/>
         </div>
       </div>
     )
@@ -73,9 +85,24 @@ export function EnvironmentUI(props: EnvironmentProps) {
     } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
   }
 
-  const resetVmState = () => {
-    console.log('reset')
+  const resetVmState = async() => {
+    const context = currentProvider.name
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+    if (contextExists) {
+      props.modal(
+        intl.formatMessage({ id: 'udapp.resetVmStateTitle' }),
+        resetVmStatePrompt(context),
+        intl.formatMessage({ id: 'udapp.reset' }),
+        async () => {
+            // let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+            props.runTabPlugin.call('notification', 'toast', `VM state reset successfully`)
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        null
+      )
+    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
   }
+  
 
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
