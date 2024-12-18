@@ -73,6 +73,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
+  const resetVmState = () => {
+    console.log('reset')
+  }
+
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
     <div className="udapp_crow">
@@ -89,7 +93,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-save" style={{cursor: 'pointer'}} onClick={saveVmState}></i>
+        </CustomTooltip> }
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="resetVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTooltip" />}>
+          <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{cursor: 'pointer'}}  onClick={resetVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>

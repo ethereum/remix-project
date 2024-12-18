@@ -67,6 +67,7 @@
   "udapp.environment": "Environment",
   "udapp.environmentDocs": "Click for docs about Environment",
   "udapp.saveVmState": "Save VM state",
+  "udapp.resetVmStateTooltip": "Reset VM state",
   "udapp.tooltipText2": "Open chainlist.org and get the connection specs of the chain you want to interact with.",
   "udapp.tooltipText3": "Click to open a bridge for converting L1 mainnet ETH to the selected network currency.",
 
