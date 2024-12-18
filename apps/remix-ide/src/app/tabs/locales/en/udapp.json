@@ -52,6 +52,10 @@
   "udapp.saveVmStateTitle": "Save VM state",
   "udapp.saveVmStateLabel": "State Name",
   "udapp.saveVmStateTip": "Saved VM states can be pinned as environment using Environment Explorer",
+  "udapp.resetVmStateTitle": "Reset VM state",
+  "udapp.resetVmStateDesc1": "Resetting state of selected environment will delete all your previously saved transaction details for selected workspace.",
+  "udapp.resetVmStateDesc2": "It will also delete data for deployed and pinned contracts.",
+  "udapp.resetVmStateDesc3": "Do you want to continue?",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
   "udapp.createNewAccount": "Create new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
@@ -68,6 +72,7 @@
   "udapp.environmentDocs": "Click for docs about Environment",
   "udapp.saveVmState": "Save VM state",
   "udapp.resetVmStateTooltip": "Reset VM state",
+  "udapp.reset": "Reset",
   "udapp.tooltipText2": "Open chainlist.org and get the connection specs of the chain you want to interact with.",
   "udapp.tooltipText3": "Click to open a bridge for converting L1 mainnet ETH to the selected network currency.",
 
