@@ -55,7 +55,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   }, [filterCon, props.tagList])
 
   useEffect(() => {
-    if(props.pinned!== pinned) {
+    if (props.pinned!== pinned) {
       setPinned(props.pinned)
     }
   },[props.pinned])

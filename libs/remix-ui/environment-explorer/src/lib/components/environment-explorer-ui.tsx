@@ -78,7 +78,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
         title={profile.description}
         description="Select the providers and chains to include them in the ENVIRONMENT select box of the Deploy & Run Transactions plugin."
       >{
-        Object.values(sections).length && Object.values(sections).map((section) => (
+          Object.values(sections).length && Object.values(sections).map((section) => (
             <RemixUIGridSection
               plugin={this}
               title={section.title}
