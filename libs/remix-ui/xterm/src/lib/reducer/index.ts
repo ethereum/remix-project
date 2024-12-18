@@ -5,7 +5,8 @@ export const xTerminInitialState: xTerminalUiState = {
   terminals: [],
   shells: [],
   showOutput: true,
-  workingDir: ''
+  workingDir: '',
+  selectedTerminalTab: 'output'
 }
 
 export const xtermReducer = (state = xTerminInitialState, action: Actions) => {
@@ -59,6 +60,13 @@ export const xtermReducer = (state = xTerminInitialState, action: Actions) => {
       ...state,
       showOutput: action.payload
     }
+
+  case 'SET_TERMINAL_TAB':
+    return {
+      ...state,
+      selectedTerminalTab: action.payload
+    }
+    
   case 'SET_WORKING_DIR':
     return {
       ...state,

@@ -31,7 +31,7 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
         {platform === appPlatformTypes.desktop ?
           <div className='d-flex flex-row w-100 justify-content-between '>
             <RemixUITerminalMenuButtons {...props} />
-            {xtermState.showOutput? <RemixUITerminalMenu {...props} />: <RemixUIXtermMenu {...props} />}
+            {xtermState.selectedTerminalTab === 'output' ? <RemixUITerminalMenu {...props} />: <RemixUIXtermMenu {...props} />}
           </div> :
           <RemixUITerminalMenu {...props} />
         }
