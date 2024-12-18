@@ -257,22 +257,6 @@ export function AccountUI(props: AccountProps) {
             )) : <Dropdown.Item></Dropdown.Item>}
           </Dropdown.Menu>
         </Dropdown>
-        {/* <select
-          id="txorigin"
-          data-id="runTabSelectAccount"
-          name="txorigin"
-          className="form-control udapp_select custom-select pr-4"
-          value={selectedAccount || ''}
-          onChange={(e) => {
-            props.setAccount(e.target.value)
-          }}
-        >
-          {accounts.map((value, index) => (
-            <option value={value} key={index}>
-              {loadedAccounts[value]}
-            </option>
-          ))}
-        </select> */}
       </div>
     </div>
   )
