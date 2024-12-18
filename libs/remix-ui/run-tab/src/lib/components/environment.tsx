@@ -48,14 +48,14 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
-  const resetVmStatePrompt = (context: string) => {
+  const resetVmStatePrompt = () => {
     return (
       <div>
-        <div>
-          <FormattedMessage id="udapp.resetVmStateDesc1"/><br/>
-          <FormattedMessage id="udapp.resetVmStateDesc2"/><br/><br/>
-          <FormattedMessage id="udapp.resetVmStateDesc3"/>
-        </div>
+        <ul className='ml-3'>
+          <li><FormattedMessage id="udapp.resetVmStateDesc1"/></li>
+          <li><FormattedMessage id="udapp.resetVmStateDesc2"/></li>
+        </ul>
+        <FormattedMessage id="udapp.resetVmStateDesc3"/>
       </div>
     )
   }
@@ -91,19 +91,20 @@ export function EnvironmentUI(props: EnvironmentProps) {
     if (contextExists) {
       props.modal(
         intl.formatMessage({ id: 'udapp.resetVmStateTitle' }),
-        resetVmStatePrompt(context),
+        resetVmStatePrompt(),
         intl.formatMessage({ id: 'udapp.reset' }),
         async () => {
             const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
             // Reset environment blocks and account data
-            currentProvider.resetEnvironment()
+            await currentProvider.resetEnvironment()
             // Remove deployed and pinned contracts from UI
             props.runTabPlugin.REACT_API.instances.instanceList = {}
             // Delete environment state file
             await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
-            // Delete pinned contracts folder
-            await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
-            props.runTabPlugin.call('notification', 'toast', `VM state reset successfully`)
+            // If there are pinned contracts, delete pinned contracts folder
+            const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
+            if(isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
+            props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
