@@ -48,29 +48,29 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
-  const saveVmState = () => {
+  const saveVmState = async () => {
     const context = currentProvider.name
     vmStateName.current = `${context}_${Date.now()}`
-    props.modal(
-      intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
-      saveVmStatePrompt(vmStateName.current),
-      intl.formatMessage({ id: 'udapp.save' }),
-      async () => {
-        const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
-        if (contextExists) {
-          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
-          currentStateDb = JSON.parse(currentStateDb)
-          currentStateDb.stateName = vmStateName.current
-          currentStateDb.forkName = currentProvider.fork
-          currentStateDb.savingTimestamp = Date.now()
-          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-          props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
-          props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
-        } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
-      },
-      intl.formatMessage({ id: 'udapp.cancel' }),
-      null
-    )
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+    if (contextExists) {
+      props.modal(
+        intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
+        saveVmStatePrompt(vmStateName.current),
+        intl.formatMessage({ id: 'udapp.save' }),
+        async () => {
+            let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+            currentStateDb = JSON.parse(currentStateDb)
+            currentStateDb.stateName = vmStateName.current
+            currentStateDb.forkName = currentProvider.fork
+            currentStateDb.savingTimestamp = Date.now()
+            await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+            props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
+            props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        null
+      )
+    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
   }
 
   const resetVmState = () => {
