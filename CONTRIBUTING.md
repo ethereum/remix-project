@@ -58,7 +58,7 @@ Then, create a `index.js` file like this,
 import panelJson from './panel.json';
 import enJson from '../en';
 
-// There may have some un-translated content. Always fill in the gaps with EN JSON.
+// There may have some untranslated content. Always fill in the gaps with EN JSON.
 // No need for a defaultMessage prop when render a FormattedMessage component.
 export default Object.assign({}, enJson, {
   ...panelJson,
@@ -84,7 +84,7 @@ If you search `FormattedMessage` or `intl.formatMessage` in this project, you wi
 
 **Why?**
 
-Each non-english language will be filled in the gaps with english. Even though there may be some un-translated content, it will always use english as defaultMessage. That's why we don't need to provide a `defaultMessage` prop each time we render a `FormattedMessage` component.
+Each non-english language will be filled in the gaps with english. Even though there may be some untranslated content, it will always use english as defaultMessage. That's why we don't need to provide a `defaultMessage` prop each time we render a `FormattedMessage` component.
 
 But in some cases, the `id` prop may not be static. For example,
 ```jsx
