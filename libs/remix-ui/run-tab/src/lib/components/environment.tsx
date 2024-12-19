@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
@@ -30,7 +30,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const saveVmStatePrompt = (defaultName: string) => {
     return (
       <div>
-        <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
+        <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="udapp.saveVmStateLabel" />
         </label>
         <input
@@ -48,30 +48,70 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
-  const saveVmState = () => {
-    const context = currentProvider.name
-    vmStateName.current = `${context}_${Date.now()}`
-    props.modal(
-      intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
-      saveVmStatePrompt(vmStateName.current),
-      intl.formatMessage({ id: 'udapp.save' }),
-      async () => {
-        const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
-        if (contextExists) {
-          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
-          currentStateDb = JSON.parse(currentStateDb)
-          currentStateDb.stateName = vmStateName.current
-          currentStateDb.forkName = currentProvider.fork
-          currentStateDb.savingTimestamp = Date.now()
-          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-          props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
-          props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
-        }
-      },
-      intl.formatMessage({ id: 'udapp.cancel' }),
-      null
+  const resetVmStatePrompt = () => {
+    return (
+      <div>
+        <ul className='ml-3'>
+          <li><FormattedMessage id="udapp.resetVmStateDesc1"/></li>
+          <li><FormattedMessage id="udapp.resetVmStateDesc2"/></li>
+        </ul>
+        <FormattedMessage id="udapp.resetVmStateDesc3"/>
+      </div>
     )
   }
+
+  const saveVmState = async () => {
+    const context = currentProvider.name
+    vmStateName.current = `${context}_${Date.now()}`
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+    if (contextExists) {
+      props.modal(
+        intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
+        saveVmStatePrompt(vmStateName.current),
+        intl.formatMessage({ id: 'udapp.save' }),
+        async () => {
+            let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+            currentStateDb = JSON.parse(currentStateDb)
+            currentStateDb.stateName = vmStateName.current
+            currentStateDb.forkName = currentProvider.fork
+            currentStateDb.savingTimestamp = Date.now()
+            await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+            props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
+            props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        null
+      )
+    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
+  }
+
+  const resetVmState = async() => {
+    const context = currentProvider.name
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+    if (contextExists) {
+      props.modal(
+        intl.formatMessage({ id: 'udapp.resetVmStateTitle' }),
+        resetVmStatePrompt(),
+        intl.formatMessage({ id: 'udapp.reset' }),
+        async () => {
+            const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
+            // Reset environment blocks and account data
+            await currentProvider.resetEnvironment()
+            // Remove deployed and pinned contracts from UI
+            props.runTabPlugin.REACT_API.instances.instanceList = {}
+            // Delete environment state file
+            await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
+            // If there are pinned contracts, delete pinned contracts folder
+            const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
+            if(isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
+            props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        null
+      )
+    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
+  }
+  
 
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
@@ -89,7 +129,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-save" onClick={saveVmState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-save" style={{cursor: 'pointer'}} onClick={saveVmState}></i>
+        </CustomTooltip> }
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="resetVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTooltip" />}>
+          <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{cursor: 'pointer'}}  onClick={resetVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
