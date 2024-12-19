@@ -1,6 +1,6 @@
 # Contributing
 
-Everyone is welcome to contribute Remix's codebase. Please join our [Discord](https://discord.gg/mh9hFCKkEq) in case of any queries.
+Everyone is welcome to contribute to Remix's codebase and please join our [Discord](https://discord.gg/mh9hFCKkEq).
 
 ## Development
 Remix libraries work closely with [Remix IDE](https://remix.ethereum.org). Each library has a README to explain its application.
@@ -9,10 +9,10 @@ When you add code to a library, please add related unit tests.
 
 ## Coding style
 
-Please conforms to the [standard](https://standardjs.com/) for code styles.
+Use [JavaScript Standard Style](https://standardjs.com/) for the coding style.
 
 ## Submitting Pull Requests
-Please follow GitHub's standard model of making changes & submitting pull request which is explained [here](https://guides.github.com/activities/forking/). Make sure your code works locally before submitting a pull request.
+Follow GitHub's standard model of making changes & submitting pull requests - explained [here](https://guides.github.com/activities/forking/). Please make sure your code works locally before submitting a pull request.
 
 ## Internationalization
 Remix supports Internationalization.
@@ -105,9 +105,10 @@ But in some cases, the `id` prop may not be static. For example,
  <FormattedMessage id={plugin?.profile.name + '.displayName'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
 </h6>
 ```
-You can't be sure whether there is a match key in locale file or not. So its better to provide a `defaultMessage` prop.
+
+Because you can't be sure if there is a matched key in the locale file, its better to provide a `defaultMessage` prop.
 
 ### Should I update the non-English locale json files?
 When you are updating an existing English locale json file, then you don't need to add any other languages, because CrowdIn will do it for you.
 
-But if you add a new json file, only English is needed.
+But if you add a new json file, only then English is needed.
