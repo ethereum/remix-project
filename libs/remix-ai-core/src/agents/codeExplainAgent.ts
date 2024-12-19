@@ -1,4 +1,4 @@
-// interactive code explaining and highlight security vunerabilities
+// interactive code explaining and highlight security vulnerabilities
 import * as fs from 'fs';
 
 export class CodeExplainAgent {
