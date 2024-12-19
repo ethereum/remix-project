@@ -1,4 +1,4 @@
-import { COMPLETION_SYSTEM_PROMPT } from "../types/constants";
+import ${ COMPLETION_SYSTEM_PROMPT } from "../types/constants";
 import { IModel } from "../types/types";
 
 export const getInsertionPrompt = (model:IModel, msg_pfx, msg_sfx) => {
@@ -13,6 +13,6 @@ export const getInsertionPrompt = (model:IModel, msg_pfx, msg_sfx) => {
 
 export const getCompletionPrompt = (model:IModel, context) => {
   if ((model.modelType === 'code_completion') && (model.modelName.toLocaleLowerCase().includes('deepseek'))){
-    return `{COMPLETION_SYSTEM_PROMPT} \n### Instruction:\n{context}\n ### Response: `
+    return `{COMPLETION_SYSTEM_PROMPT} \n### Instruction:\n${context}\n ### Response: `
   }
 }
