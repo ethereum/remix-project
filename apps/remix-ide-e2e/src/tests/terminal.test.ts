@@ -300,9 +300,10 @@ module.exports = {
       browser
         .clickLaunchIcon('udapp')
         .switchEnvironment('vm-mainnet-fork')
+        .click('*[data-id="runTabSelectAccount"]')
         .waitForElementPresent({
           locateStrategy: 'css selector',
-          selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+          selector: '*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
           timeout: 240000
         })
         .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
@@ -361,10 +362,10 @@ module.exports = {
         Resolver resolver = ens.resolver(node);
         console.log(resolver.addr(node));
     }
-    `    
+    `
     if (runMasterTests) {
       const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
-      
+
       browser
         // .clickLaunchIcon('udapp')
         .switchEnvironment('vm-mainnet-fork')
@@ -401,8 +402,8 @@ module.exports = {
       .waitForElementVisible('#editorView')
       .pause(10000) // the parser need to parse the code
       .useXpath()
-      .scrollToLine(3)      
-      .click(path)      
+      .scrollToLine(3)
+      .click(path)
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
