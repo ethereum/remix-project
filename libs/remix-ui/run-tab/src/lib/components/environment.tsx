@@ -82,7 +82,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
       )
-    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
+    } else props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
   }
 
   const deleteVmState = async() => {
@@ -109,7 +109,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
       )
-    } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
+    } else props.runTabPlugin.call('notification', 'toast', `State not available to delete, as no transactions have been made for selected environment & selected workspace.`)
   }
 
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
