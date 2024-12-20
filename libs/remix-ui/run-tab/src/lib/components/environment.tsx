@@ -70,14 +70,14 @@ export function EnvironmentUI(props: EnvironmentProps) {
         forkStatePrompt(vmStateName.current),
         intl.formatMessage({ id: 'udapp.fork' }),
         async () => {
-            let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
-            currentStateDb = JSON.parse(currentStateDb)
-            currentStateDb.stateName = vmStateName.current
-            currentStateDb.forkName = currentProvider.fork
-            currentStateDb.savingTimestamp = Date.now()
-            await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-            props.runTabPlugin.emit('vmStateForked', vmStateName.current)
-            props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} forked successfully.`)
+          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+          currentStateDb = JSON.parse(currentStateDb)
+          currentStateDb.stateName = vmStateName.current
+          currentStateDb.forkName = currentProvider.fork
+          currentStateDb.savingTimestamp = Date.now()
+          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+          props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+          props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} forked successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
@@ -94,24 +94,23 @@ export function EnvironmentUI(props: EnvironmentProps) {
         resetVmStatePrompt(),
         intl.formatMessage({ id: 'udapp.reset' }),
         async () => {
-            const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
-            // Reset environment blocks and account data
-            await currentProvider.resetEnvironment()
-            // Remove deployed and pinned contracts from UI
-            props.runTabPlugin.REACT_API.instances.instanceList = []
-            // Delete environment state file
-            await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
-            // If there are pinned contracts, delete pinned contracts folder
-            const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
-            if(isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
-            props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
+          const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
+          // Reset environment blocks and account data
+          await currentProvider.resetEnvironment()
+          // Remove deployed and pinned contracts from UI
+          props.runTabPlugin.REACT_API.instances.instanceList = []
+          // Delete environment state file
+          await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
+          // If there are pinned contracts, delete pinned contracts folder
+          const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
+          if (isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
+          props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
       )
     } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
   }
-  
 
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
@@ -129,10 +128,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{cursor: 'pointer'}} onClick={forkState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState}></i>
         </CustomTooltip> }
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="resetVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTooltip" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{cursor: 'pointer'}}  onClick={resetVmState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{ cursor: 'pointer' }} onClick={resetVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
