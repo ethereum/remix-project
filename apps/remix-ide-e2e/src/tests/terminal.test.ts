@@ -331,9 +331,10 @@ module.exports = {
         .click('*[data-id="CustomForkEvmType"] [value="cancun"]')
         .pause(5000)
         .modalFooterOKClick('vm-custom-fork')
+        .click('*[data-id="runTabSelectAccount"]')
         .waitForElementPresent({
           locateStrategy: 'css selector',
-          selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+          selector: '*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
           timeout: 240000
         })
         .pause(5000)
