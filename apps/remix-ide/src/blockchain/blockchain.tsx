@@ -148,6 +148,15 @@ export class Blockchain extends Plugin {
       _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
       this.emit('providersChanged')
     })
+    // used to pin the provider created from forked state
+    this.on('udapp', 'providerPinned', (providerName) => {
+      const name = `vm-fs-${providerName}`
+      this.emit('shouldAddProvidertoUdapp', name, this.getProviderObjByName(name))
+      this.pinnedProviders.push(name)
+      this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
+      _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
+      this.emit('providersChanged')
+    })
 
     this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
       this.emit('shouldRemoveProviderFromUdapp', name, provider)
@@ -566,6 +575,13 @@ export class Blockchain extends Plugin {
 
   getProvider() {
     return this.executionContext.getProvider()
+  }
+
+  getProviderObjByName(name) {
+    const allProviders = this.getAllProviders()
+    console.log('allProviders--->', allProviders)
+    console.log('allProviders--name->', name)
+    return allProviders[name]
   }
 
   getInjectedWeb3Address() {
