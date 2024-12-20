@@ -163,7 +163,7 @@ export class SecurityAgent {
 
       if (!report.reportTimestamp || report.fileModifiedSinceLastReport) {
         const content = await this.basePlugin.call('fileManager', 'getFile', file);
-        const prompt = "```\n" + content + "\n```\n\nReply in a short manner: Does this code contain major security vulenerabilities leading to a scam or loss of funds?"
+        const prompt = "```\n" + content + "\n```\n\nReply in a short manner: Does this code contain major security vulnerabilities leading to a scam or loss of funds?"
 
         let result = await this.basePlugin.call('remixAI', 'vulnerability_check', prompt)
         result = JSON.parse(result);
@@ -183,7 +183,6 @@ export class SecurityAgent {
   }
 
   public getRecommendations(currentLine: string, numSuggestions: number = 3): string[] {
-    // process the code base highlighting security vulnerabilities and deliver recommendations
     const suggestions: string[] = [];
     return suggestions;
   }
