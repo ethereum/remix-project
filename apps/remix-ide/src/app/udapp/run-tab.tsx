@@ -295,6 +295,7 @@ export class RunTab extends ViewPlugin {
 
     this.on('udapp', 'vmStateForked', async (stateName) => {
       await addFVSProvider(`.states/forked_states/${stateName}.json`, 20)
+      this.emit('providerPinned', stateName)
     })
 
     // wallet connect
