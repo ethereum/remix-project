@@ -40,10 +40,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
           className="form-control"
           onChange={(e) => vmStateName.current = e.target.value}
         />
-        <br/>
-        <div className='text-secondary'>
-          <b>Tip: </b><FormattedMessage id="udapp.forkStateTip" />
-        </div>
       </div>
     )
   }
@@ -77,7 +73,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateForked', vmStateName.current)
-          props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} forked successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null

@@ -148,14 +148,16 @@ export class Blockchain extends Plugin {
       _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
       this.emit('providersChanged')
     })
-    // used to pin the provider created from forked state
-    this.on('udapp', 'providerPinned', (providerName) => {
+    // used to pin and select newly created forked state provider
+    this.on('udapp', 'forkStateProviderAdded', (providerName) => {
       const name = `vm-fs-${providerName}`
       this.emit('shouldAddProvidertoUdapp', name, this.getProviderObjByName(name))
       this.pinnedProviders.push(name)
       this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
       _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
       this.emit('providersChanged')
+      this.changeExecutionContext({context: name}, null, null, null)
+      this.call('notification', 'toast', `VM state ${providerName} forked and selected as current envionment.`)
     })
 
     this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
@@ -579,8 +581,6 @@ export class Blockchain extends Plugin {
 
   getProviderObjByName(name) {
     const allProviders = this.getAllProviders()
-    console.log('allProviders--->', allProviders)
-    console.log('allProviders--name->', name)
     return allProviders[name]
   }
 
