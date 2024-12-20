@@ -29,7 +29,7 @@ interface RemixUIGridCellProps {
   expandViewEl?: any
   handleExpand?: any
   id: string
-  searchKeywords?: string[],
+  searchKeywords?: string[]
 }
 
 export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
