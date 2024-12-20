@@ -98,7 +98,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             // Reset environment blocks and account data
             await currentProvider.resetEnvironment()
             // Remove deployed and pinned contracts from UI
-            props.runTabPlugin.REACT_API.instances.instanceList = {}
+            props.runTabPlugin.REACT_API.instances.instanceList = []
             // Delete environment state file
             await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
             // If there are pinned contracts, delete pinned contracts folder
