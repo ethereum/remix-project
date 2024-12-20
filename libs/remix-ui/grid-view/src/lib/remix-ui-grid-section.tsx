@@ -27,7 +27,7 @@ interface RemixUIGridSectionProps {
   hScrollable: boolean
   classList?: string
   styleList?: any
-  children?: ReactNode,
+  children?: ReactNode
   expandedCell?: any
 }
 
