@@ -51,7 +51,6 @@
   "udapp.signature": "signature",
   "udapp.forkStateTitle": "Fork VM state",
   "udapp.forkStateLabel": "State Name",
-  "udapp.forkStateTip": "VM State, forked for current workspace, can be pinned as an environment using Environment Explorer",
   "udapp.fork": "Fork",
   "udapp.deleteVmStateTitle": "Delete VM state",
   "udapp.deleteVmStateDesc1": "Deleting state of the selected environment will delete all your previously saved transaction details for current workspace.",
