@@ -48,14 +48,14 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
-  const resetVmStatePrompt = () => {
+  const deleteVmStatePrompt = () => {
     return (
       <div>
         <ul className='ml-3'>
-          <li><FormattedMessage id="udapp.resetVmStateDesc1"/></li>
-          <li><FormattedMessage id="udapp.resetVmStateDesc2"/></li>
+          <li><FormattedMessage id="udapp.deleteVmStateDesc1"/></li>
+          <li><FormattedMessage id="udapp.deleteVmStateDesc2"/></li>
         </ul>
-        <FormattedMessage id="udapp.resetVmStateDesc3"/>
+        <FormattedMessage id="udapp.deleteVmStateDesc3"/>
       </div>
     )
   }
@@ -85,26 +85,26 @@ export function EnvironmentUI(props: EnvironmentProps) {
     } else props.runTabPlugin.call('notification', 'toast', `VM state doesn't exist for selected environment.`)
   }
 
-  const resetVmState = async() => {
+  const deleteVmState = async() => {
     const context = currentProvider.name
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
     if (contextExists) {
       props.modal(
-        intl.formatMessage({ id: 'udapp.resetVmStateTitle' }),
-        resetVmStatePrompt(),
-        intl.formatMessage({ id: 'udapp.reset' }),
+        intl.formatMessage({ id: 'udapp.deleteVmStateTitle' }),
+        deleteVmStatePrompt(),
+        intl.formatMessage({ id: 'udapp.delete' }),
         async () => {
           const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
           // Reset environment blocks and account data
           await currentProvider.resetEnvironment()
           // Remove deployed and pinned contracts from UI
-          props.runTabPlugin.REACT_API.instances.instanceList = []
+          await props.runTabPlugin.call('udapp', 'clearAllInstances')
           // Delete environment state file
           await props.runTabPlugin.call('fileManager', 'remove', `.states/${context}/state.json`)
           // If there are pinned contracts, delete pinned contracts folder
           const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
           if (isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
-          props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
+          props.runTabPlugin.call('notification', 'toast', `VM state deleted successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
@@ -130,8 +130,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
           <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState}></i>
         </CustomTooltip> }
-        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="resetVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTooltip" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{ cursor: 'pointer' }} onClick={resetVmState}></i>
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.deleteVmStateTitle" />}>
+          <i className="udapp_infoDeployAction ml-2 fas fa-trash" style={{ cursor: 'pointer' }} onClick={deleteVmState}></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
