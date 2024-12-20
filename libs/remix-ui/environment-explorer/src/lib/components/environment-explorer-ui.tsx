@@ -77,16 +77,17 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
         showPin={true}
         title={profile.description}
         description="Select the providers and chains to include them in the ENVIRONMENT select box of the Deploy & Run Transactions plugin."
-      >{
-          Object.values(sections).length && Object.values(sections).map((section) => (
+      >
+        {Object.values(sections).map((section) => (
+          section.providers.length > 0 && (
             <RemixUIGridSection
               plugin={this}
               title={section.title}
               hScrollable={false}
               key={section.title}
             >
-              {section.providers.map(provider => {
-                return <RemixUIGridCell
+              {section.providers.map(provider => (
+                <RemixUIGridCell
                   plugin={this}
                   title={provider.displayName}
                   logos={provider.logos}
@@ -101,10 +102,10 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                 >
                   <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                 </RemixUIGridCell>
-              })}
+              ))}
             </RemixUIGridSection>
-          ))
-        }
+          )
+        ))}
       </RemixUIGridView>
     </>
   )
