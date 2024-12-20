@@ -1,15 +1,24 @@
-import React, {useState, useEffect, useContext, useRef, ReactNode} from 'react' // eslint-disable-line
-import { CustomTooltip } from "@remix-ui/helper";
-
+import React, {createContext, ReactNode, useEffect, useState} from 'react' // eslint-disable-line
 import './remix-ui-grid-section.css'
-import FiltersContext from "./filtersContext"
-
 declare global {
   interface Window {
     _paq: any
   }
 }
 const _paq = window._paq = window._paq || []
+
+// Define the type for the context value
+interface ChildCallbackContextType {
+  onChildCallback: (id: string, enabled: boolean) => void;
+}
+
+// Create the context with a default value of `null`
+export const ChildCallbackContext = createContext<ChildCallbackContextType | null>(null);
+
+interface ChildState {
+  id: string;
+  enabled: boolean;
+}
 
 interface RemixUIGridSectionProps {
   plugin: any
@@ -18,55 +27,48 @@ interface RemixUIGridSectionProps {
   hScrollable: boolean
   classList?: string
   styleList?: any
-  children?: ReactNode
+  children?: ReactNode,
   expandedCell?: any
 }
 
-const hasChildCell = (children: ReactNode): boolean => {
-  return true
-  let found = false
-
-  const isElement = (child: ReactNode): child is React.ReactElement => {
-    return React.isValidElement(child)
-  }
-
-  const traverse = (child: ReactNode) => {
-    if (found) return
-
-    if (isElement(child)) {
-      if (child.props.classList === 'remixui_grid_cell_container') {
-        found = true
-        return
-      }
-
-      if (child.props.children) {
-        React.Children.forEach(child.props.children, traverse)
-      }
-    }
-  }
-
-  React.Children.forEach(children, traverse)
-  return found
-}
-
 export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
-  const [children, setChildren] = useState(props.children)
-  const filterCon = useContext(FiltersContext)
+
+  const [hide, setHide] = useState(false);
+  const [childrenStates, setChildrenStates] = useState<ChildState[]>([]);
+
+  // Callback to update the state of a child
+  const onChildCallback = (id: string, enabled: boolean) => {
+    setChildrenStates((prev) => {
+      const existingChild = prev.find((child) => child.id === id);
+
+      if (existingChild) {
+        // Update existing child
+        return prev.map((child) =>
+          child.id === id ? { ...child, enabled } : child
+        );
+      } else {
+        // Add new child
+        return [...prev, { id, enabled }];
+      }
+    });
+  };
 
   useEffect(() => {
-    setChildren(props.children)
-  }, [props.children])
+    // Check if all children are disabled
+    const allDisabled = childrenStates.every((child) => !child.enabled);
+    setHide(allDisabled);
+  }, [childrenStates]);
 
   return (
+    <ChildCallbackContext.Provider value={{ onChildCallback }}>
     <div
-      className={`d-flex px-4 py-2 flex-column w-100 remixui_grid_section_container ${props.classList}`}
+      className={`${hide? 'd-none': `d-flex px-4 py-2 flex-column w-100 remixui_grid_section_container ${props.classList}`}`}
       data-id={"remixUIGS" + props.title}
       style={{ overflowX: 'auto' }}
     >
-      <div className="w-100 remixui_grid_section">
-        { props.title && <h6 className='mt-1 mb-0 align-items-left '>{ props.title }</h6> }
+      <div className={`w-100 remixui_grid_section`}>
+        { props.title && <h6 className={`mt-1 mb-0 align-items-left`}>{ props.title }</h6> }
         <div className={(props.hScrollable) ? `d-flex flex-row pb-2  overflow-auto` : `d-flex flex-wrap`}>
-          { !hasChildCell(children) && <span> No items found </span>}
           { props.children }
         </div>
         { props.expandedCell && <div>
@@ -75,6 +77,7 @@ export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
         }
       </div>
     </div>
+    </ChildCallbackContext.Provider>
   )
 }
 

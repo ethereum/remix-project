@@ -61,6 +61,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
       const newSections = { ...prevSections }
       Object.keys(newSections).forEach((section) => {
         newSections[section].providers = Object.values(state.providersFlat).filter(newSections[section].filterFn)
+        newSections[section].id = section
       })
       return newSections
     })
