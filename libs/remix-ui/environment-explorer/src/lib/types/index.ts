@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 
-export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Saved VM States'
+export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Forked States'
 
 export type environmentExplorerUIProps = {
   state: {
@@ -36,7 +36,7 @@ export type Provider = {
   description?: string
   isInjected: boolean
   isVM: boolean
-  isSavedState: boolean
+  isForkedState: boolean
   isForkedVM: boolean
   title: string
   init: () => Promise<void>

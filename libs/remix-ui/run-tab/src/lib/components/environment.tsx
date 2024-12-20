@@ -27,22 +27,22 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const intl = useIntl()
   const isSaveEvmStateChecked = props.config.get('settings/save-evm-state')
 
-  const saveVmStatePrompt = (defaultName: string) => {
+  const forkStatePrompt = (defaultName: string) => {
     return (
       <div>
         <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-          <FormattedMessage id="udapp.saveVmStateLabel" />
+          <FormattedMessage id="udapp.forkStateLabel" />
         </label>
         <input
           type="text"
-          data-id="modalDialogSaveVmState"
+          data-id="modalDialogForkState"
           defaultValue={defaultName}
           className="form-control"
           onChange={(e) => vmStateName.current = e.target.value}
         />
         <br/>
         <div className='text-secondary'>
-          <b>Tip: </b><FormattedMessage id="udapp.saveVmStateTip" />
+          <b>Tip: </b><FormattedMessage id="udapp.forkStateTip" />
         </div>
       </div>
     )
@@ -60,24 +60,24 @@ export function EnvironmentUI(props: EnvironmentProps) {
     )
   }
 
-  const saveVmState = async () => {
+  const forkState = async () => {
     const context = currentProvider.name
     vmStateName.current = `${context}_${Date.now()}`
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
     if (contextExists) {
       props.modal(
-        intl.formatMessage({ id: 'udapp.saveVmStateTitle' }),
-        saveVmStatePrompt(vmStateName.current),
-        intl.formatMessage({ id: 'udapp.save' }),
+        intl.formatMessage({ id: 'udapp.forkStateTitle' }),
+        forkStatePrompt(vmStateName.current),
+        intl.formatMessage({ id: 'udapp.fork' }),
         async () => {
             let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
             currentStateDb = JSON.parse(currentStateDb)
             currentStateDb.stateName = vmStateName.current
             currentStateDb.forkName = currentProvider.fork
             currentStateDb.savingTimestamp = Date.now()
-            await props.runTabPlugin.call('fileManager', 'writeFile', `.states/saved_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-            props.runTabPlugin.emit('vmStateSaved', vmStateName.current)
-            props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} saved.`)
+            await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+            props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+            props.runTabPlugin.call('notification', 'toast', `VM state ${vmStateName.current} forked successfully.`)
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
@@ -128,8 +128,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
             <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
           </a>
         </CustomTooltip>
-        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="saveVMStatetooltip" tooltipText={<FormattedMessage id="udapp.saveVmState" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-save" style={{cursor: 'pointer'}} onClick={saveVmState}></i>
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
+          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{cursor: 'pointer'}} onClick={forkState}></i>
         </CustomTooltip> }
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="resetVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTooltip" />}>
           <i className="udapp_infoDeployAction ml-2 fas fa-refresh" style={{cursor: 'pointer'}}  onClick={resetVmState}></i>

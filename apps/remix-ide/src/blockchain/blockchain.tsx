@@ -55,7 +55,7 @@ export type Provider = {
   description?: string
   isInjected: boolean
   isVM: boolean
-  isSavedState: boolean
+  isForkedState: boolean
   isForkedVM: boolean
   title: string
   init: () => Promise<void>
@@ -700,11 +700,11 @@ export class Blockchain extends Plugin {
         const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
         await this.getCurrentProvider().resetEnvironment(stateDb)
       } else {
-        // check if saved VM state is used as provider
-        const stateName = context.replace('vm-svs-', '')
-        const contextExists = await this.call('fileManager', 'exists', `.states/saved_states/${stateName}.json`)
+        // check if forked VM state is used as provider
+        const stateName = context.replace('vm-fs-', '')
+        const contextExists = await this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
         if (contextExists) {
-          const stateDb = await this.call('fileManager', 'readFile', `.states/saved_states/${stateName}.json`)
+          const stateDb = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
           await this.getCurrentProvider().resetEnvironment(stateDb)
         } else await this.getCurrentProvider().resetEnvironment()
       }
@@ -962,11 +962,12 @@ export class Blockchain extends Plugin {
           try {
             let state = await this.executionContext.getStateDetails()
             const provider = this.executionContext.getProvider()
-            if (provider.startsWith('vm-svs-')) {
-              const stateName = provider.replace('vm-svs-', '')
-              const stateFileExists = this.call('fileManager', 'exists', `.states/saved_states/${stateName}.json`)
+            // Check if provider is forked VM state
+            if (provider.startsWith('vm-fs-')) {
+              const stateName = provider.replace('vm-fs-', '')
+              const stateFileExists = this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
               if (stateFileExists) {
-                let stateDetails = await this.call('fileManager', 'readFile', `.states/saved_states/${stateName}.json`)
+                let stateDetails = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
                 stateDetails = JSON.parse(stateDetails)
                 state = JSON.parse(state)
                 state['stateName'] = stateDetails.stateName
@@ -974,7 +975,7 @@ export class Blockchain extends Plugin {
                 state['savingTimestamp'] = stateDetails.savingTimestamp
                 state = JSON.stringify(state, null, 2)
               }
-              this.call('fileManager', 'writeFile', `.states/saved_states/${stateName}.json`, state)
+              this.call('fileManager', 'writeFile', `.states/forked_states/${stateName}.json`, state)
             }
             else this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
           } catch (e) {
