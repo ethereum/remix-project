@@ -54,7 +54,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
         props.searchKeywords?.map(keyword => keyword?.toLowerCase()).some(searchKeyword => searchKeyword?.toLowerCase().includes(filterCon.filter?.toLocaleLowerCase())))
 
     setAnyEnabled(enabled)
-    if(callbackContext.onChildCallback && (props.id || props.title)) callbackContext.onChildCallback((props.id || props.title), enabled)
+    if (callbackContext.onChildCallback && (props.id || props.title)) callbackContext.onChildCallback((props.id || props.title), enabled)
   }, [filterCon, props.tagList])
 
   useEffect(() => {
