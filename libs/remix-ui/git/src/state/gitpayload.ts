@@ -103,7 +103,7 @@ export const setCurrentBranch = (currentBranch: branch) => {
   }
 }
 
-export const setCurrenHead = (currentHead: string) => {
+export const setCurrentHead = (currentHead: string) => {
   return {
     type: 'SET_CURRENT_HEAD',
     payload: currentHead
