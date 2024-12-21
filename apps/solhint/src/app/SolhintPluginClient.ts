@@ -10,16 +10,6 @@ import order from 'solhint/lib/rules/order'
 import security from 'solhint/lib/rules/security'
 import deprecations from 'solhint/lib/rules/deprecations'
 import miscellaneous from 'solhint/lib/rules/miscellaneous'
-import { customAction } from '@remixproject/plugin-api'
-
-type Report = {
-  line: number,
-  column: number,
-  severity: string,
-  message: string,
-  ruleId: string,
-  fix: string
-}
 
 const Config = `{
   "extends": "solhint:recommended",
@@ -31,7 +21,8 @@ const Config = `{
 }`
 
 export class SolHint extends PluginClient {
-  triggerLinter: boolean
+  triggerLinter = false
+
   constructor() {
     super()
     this.methods = ['lintContract', 'lintOnCompilation', 'lintContractCustomAction', 'lint']
@@ -40,6 +31,7 @@ export class SolHint extends PluginClient {
       await this.lintOnCompilation()
     })
   }
+
   async createConfigFile () {
     await this.call('fileManager', 'writeFile', '.solhint.json', Config)
   }
@@ -53,41 +45,42 @@ export class SolHint extends PluginClient {
     })
     this.triggerLinter = false
   }
-  /**
-   * method to handle context menu action in file explorer for
-   * solhint plugin
-   * @param action interface CustomAction
-   */
-  async lintContractCustomAction(action: customAction) {
+
+  async lintContractCustomAction(action) {
     this.triggerLinter = true
     await this.call('solidity', 'compile', action.path[0])
     await this.lintContract(action.path[0])
   }
 
-  async lintContract(file: string) {
+  async lintContract(file) {
     const hints = await this.lint(file)
     this.emit('lintingFinished', hints)
   }
 
-  public async lint(fileName: string) {
+  public async lint(fileName) {
     const content = await this.call('fileManager', 'readFile', fileName)
     let configContent = Config
-    if (await this.call('fileManager' as any, 'exists', '.solhint.json')) {
+    if (await this.call('fileManager', 'exists', '.solhint.json')) {
       configContent = await this.call('fileManager', 'readFile', '.solhint.json')
     }
     const configContentObj = JSON.parse(configContent)
-    // apply the extend property
-    const rulesObj = applyExtends(configContentObj, (path) => this.rules[path]())
+    // Apply the extend property
+    const rulesObj = applyExtends(configContentObj, (path) => {
+      if (this.rules[path]) {
+        return this.rules[path]()
+      }
+      throw new Error(`Unknown ruleset: ${path}`)
+    })
     configContentObj.rules = { ...rulesObj, ...configContentObj.rules }
     configContentObj.extends = []
 
     const reporters = processStr(content, configContentObj)
 
-    const reports: Array<Report> = reporters.reports
-    const hints = reports.map((report: Report) => {
+    const reports = reporters.reports
+    const hints = reports.map((report) => {
       return {
         formattedMessage: `${report.message}\n ${report.fix ? report.fix : ''}`,
-        type: this.severity[report.severity] || 'error',
+        type: this.severity[String(report.severity)] || 'error',
         column: report.column,
         line: report.line - 1,
         message: report.message,
@@ -102,8 +95,8 @@ export class SolHint extends PluginClient {
   }
 
   severity = {
-    2: 'error',
-    3: 'warning'
+    '2': 'error',
+    '3': 'warning'
   }
 
   rules = {
@@ -146,6 +139,4 @@ export class SolHint extends PluginClient {
       ...security()
     ]
   }
-
 }
-
