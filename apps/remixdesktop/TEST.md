@@ -11,7 +11,7 @@
 
 Testing runs through nightwatch that treats an electron application as a special version of chrome, which it is. It basically calls the executable which is built by the ./rundist.bash script which creates executables based on the current channel configuration package.json, ie "version": "1.0.8-insiders"
 
-Executables are stored in the ./release directory. Without that executable you cannot run tests. You cannot call tests on local development instance that is launched by yarn start:dev. You need to create an exec first. 
+Executables are stored in the ./release directory. Without that executable you cannot run tests. You cannot call tests on local development instance that is launched by yarn start:dev. You need to create an executable file first. 
 
 This is done by running ./rundist.bash
 
