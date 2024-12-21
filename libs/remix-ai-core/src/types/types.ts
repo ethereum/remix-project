@@ -1,6 +1,6 @@
 // model implementation for the model selection component
 
-import exp from 'constants';
+import constants from 'constants';
 import { ModelType } from './constants';
 
 export interface IModelRequirements{
