@@ -71,7 +71,7 @@ Then, create a `index.js` file like this,
 import panelJson from './panel.json';
 import enJson from '../en';
 
-// There may have some un-translated content. Always fill in the gaps with EN JSON.
+// There may have some untranslated content. Always fill in the gaps with EN JSON.
 // No need for a defaultMessage prop when render a FormattedMessage component.
 export default Object.assign({}, enJson, {
   ...panelJson,
