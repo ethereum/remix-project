@@ -1,3 +1,4 @@
+import { AppContext } from '@remix-ui/app'
 import React, { useContext, useEffect } from 'react' // eslint-disable-line
 import { TerminalContext } from '../context'
 import { RemixUiTerminalProps, SET_OPEN } from '../types/terminalTypes'
@@ -5,6 +6,7 @@ import './remix-ui-terminal-menu-buttons.css'
 
 export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
   const { xtermState, dispatchXterm, terminalState, dispatch } = useContext(TerminalContext)
+  const appContext = useContext(AppContext)
 
   function selectOutput(event: any): void {
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
@@ -32,6 +34,20 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
     dispatchXterm({ type: 'SET_TERMINAL_TAB', payload: 'transactions' })
   }
 
+  if (appContext.appState.connectedToDesktop) {
+
+    return (
+      <div className='d-flex flex-row align-items-center'>
+
+        <button data-id="tab" id="tabTransactionsDebugger" className={`xtermButton w-100 btn btn-sm border-secondary btn-secondary'}`}
+          onClick={async (e) => await showTransactions(e)}
+        >
+          pending transactions
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className='d-flex flex-row align-items-center'>
       <button id="tabOutput" data-id="tabOutput" className={`xtermButton btn btn-sm border-secondary mr-2 border ${!(xtermState.selectedTerminalTab === 'output') ? '' : 'd-flex btn-secondary'}`} onClick={selectOutput}>
@@ -44,7 +60,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
       <button data-id="tab" id="tabTransactionsDebugger" className={`xtermButton w-100 btn btn-sm border-secondary btn-secondary'}`}
         onClick={async (e) => await showTransactions(e)}
       >
-        transactions
+        pending transactions
       </button>
     </div>
   )

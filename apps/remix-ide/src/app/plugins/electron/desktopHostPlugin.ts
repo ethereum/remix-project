@@ -9,7 +9,7 @@ const profile = {
     name: 'desktopHost',
     displayName: '',
     description: '',
-    methods: ['getIsConnected'],
+    methods: [],
     events: ['connected'],
     maintainedBy: 'Remix'
 }

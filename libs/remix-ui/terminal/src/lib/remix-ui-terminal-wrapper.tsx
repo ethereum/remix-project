@@ -1,6 +1,7 @@
 import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { RemixUiXterminals, xTerminInitialState, xtermReducer } from '@remix-ui/xterm'
-import React, { useContext, useReducer } from 'react' // eslint-disable-line
+import { TerminalTransactions } from 'libs/remix-ui/terminal-transactions/src'
+import React, { useContext, useEffect, useReducer } from 'react' // eslint-disable-line
 import { RemixUITerminalBar } from './components/remix-ui-terminal-bar'
 import { TerminalContext } from './context'
 import { initialState, registerCommandReducer } from './reducers/terminalReducer'
@@ -19,8 +20,19 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
     dispatchXterm
   }
 
-  if(appContext.appState.connectedToDesktop === true) {
-    return <></>
+  useEffect(() => {
+    if (appContext.appState.connectedToDesktop === true) {
+      dispatchXterm({ type: 'SET_TERMINAL_TAB', payload: 'transactions' })
+    }
+  },[appContext.appState.connectedToDesktop])
+
+  if (appContext.appState.connectedToDesktop === true) {
+    return <>
+      <TerminalContext.Provider value={providerState}>
+        <RemixUITerminalBar {...props} />
+        <TerminalTransactions plugin={props.plugin} />
+      </TerminalContext.Provider>
+    </>
   }
 
   return (<>
@@ -31,6 +43,7 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
         <>
           <RemixUiTerminal visible={xtermState.selectedTerminalTab === 'output'} plugin={props.plugin} onReady={props.onReady} />
           <RemixUiXterminals {...props} />
+          <TerminalTransactions plugin={props.plugin} />
         </>
       }
     </TerminalContext.Provider>

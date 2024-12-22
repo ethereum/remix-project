@@ -1,4 +1,4 @@
-import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -13,6 +13,7 @@ import { RemixUITerminalMenuButtons } from './remix-ui-terminal-menu-buttons'
 export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
   const { terminalState, xtermState } = useContext(TerminalContext)
   const platform = useContext(platformContext)
+  const appContext = useContext(AppContext)
   const intl = useIntl()
   const terminalMenu = useRef(null)
 
@@ -28,6 +29,13 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
         data-id="terminalToggleMenu"
       >
         <RemixUITerminalMenuToggle {...props} />
+        {appContext.appState.connectedToDesktop ?
+          <div className='d-flex flex-row w-100 justify-content-between '>
+            <RemixUITerminalMenuButtons {...props} />
+            
+          </div> : null
+
+        } 
         {platform === appPlatformTypes.desktop ?
           <div className='d-flex flex-row w-100 justify-content-between '>
             <RemixUITerminalMenuButtons {...props} />

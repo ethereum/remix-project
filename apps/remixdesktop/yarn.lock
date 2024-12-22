@@ -982,46 +982,46 @@
     ethers "^5.4.2"
     web3 "^1.5.1"
 
-"@remixproject/engine-electron@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine-electron/-/engine-electron-0.3.43.tgz#37fe98c6ef2deb6de80db60882608714d6e25274"
-  integrity sha512-k1Lcg67tlPiBFJwKhBRT9bDMyZuYWDdUXZOHKX8BGPZ0lS1ZQDrH4uN2QE2EFGIiCxeArcNzQ7MZ5iEo763eUA==
+"@remixproject/engine-electron@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-electron/-/engine-electron-0.3.44.tgz#fd01d74b8ce1f637db4096168382bd4f34917b09"
+  integrity sha512-dqLh1Cg1Sx4hfrHShfAHVyAainL4iHzskOd29+gmvPGtX5J5uf5WyIuEkpj14FH40P8szxECYNIXH1XRQPJRrQ==
   dependencies:
-    "@remixproject/engine" "0.3.43"
-    "@remixproject/plugin-api" "0.3.43"
-    "@remixproject/plugin-utils" "0.3.43"
+    "@remixproject/engine" "0.3.44"
+    "@remixproject/plugin-api" "0.3.44"
+    "@remixproject/plugin-utils" "0.3.44"
 
-"@remixproject/engine@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.43.tgz#deceb8398a034d33f741f9de38b233ab616720a4"
-  integrity sha512-BKmLVdtkPUQ56yZuRsU7CxS0TgJe4b7P9RoqdBW0Udy1w8oUJsWmlmKchCLXD+/t+12jPyk4sulRN8N9YOFBAw==
+"@remixproject/engine@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.44.tgz#fafe15bae1f02feed731f406ece131547b07c4f9"
+  integrity sha512-mwq4wBN+wE5Bdjm0nXOpIm/810dSPYEPlQEn6K2buV5DfzPaRewSgxCuAlLTeoITk5Vg1O/NX+VAesLixv79/g==
   dependencies:
-    "@remixproject/plugin-api" "0.3.43"
-    "@remixproject/plugin-utils" "0.3.43"
+    "@remixproject/plugin-api" "0.3.44"
+    "@remixproject/plugin-utils" "0.3.44"
 
-"@remixproject/plugin-api@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.43.tgz#68ce6799a8e6e22961b82f46a7a52b1d7a4a765c"
-  integrity sha512-qgwq3UQAW9JKsFv47m0E7plNNEWL4CFbqoLGbfsfwuZTd/V7HhaMc1my5dxOObW+RKExyvFNFSEvEp7HoHFsWg==
+"@remixproject/plugin-api@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.44.tgz#fcc2dcae5140c781e0b916b563d650968c7cb78d"
+  integrity sha512-Sx/8AhwlfSl/JA2DTIF1SPDkEz+iwDqfTLNBT6zUVSSkCwqM7SbO7UZZZA8YJK1mP8+t6M0ZDDCwDQmCtGOPnw==
   dependencies:
-    "@remixproject/plugin-utils" "0.3.43"
+    "@remixproject/plugin-utils" "0.3.44"
 
-"@remixproject/plugin-api@^0.3.43":
+"@remixproject/plugin-api@^0.3.44":
   version "0.3.208"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.208.tgz#28505b84ec06c84e04ca1bf7cfa51109c178c06b"
   integrity sha512-11hFxABBrEzE4fgcDblWqxLAh5ARH2tBADgh9KNk+y7LUV7aQ7OZf4KiZ2US+uKiSC6497iu/uLHbWBTeRqlVA==
   dependencies:
     "@remixproject/plugin-utils" "0.3.208"
 
-"@remixproject/plugin-electron@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-electron/-/plugin-electron-0.3.43.tgz#6c621c413745ce785f9973baea109debe3def00a"
-  integrity sha512-uv44xjmkTsC/o4xnMEBml6NxrMeq95aOR3FFY8MnZkKvnWOKC94SE5AYuHOAvt+FBrnar2f58+IYpBJAIkYyaQ==
+"@remixproject/plugin-electron@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-electron/-/plugin-electron-0.3.44.tgz#050378779aa2a8979c0e77497633ec0922b29703"
+  integrity sha512-3ofuttt7xsPKe3royKuEaN0PgKIS8zMY5vHQTx3+8PqAx3DCcCRn9Xd7qQl/mFNEDxjjOgLrRw2Q2P8NQs7DEQ==
   dependencies:
-    "@remixproject/engine" "0.3.43"
-    "@remixproject/plugin" "0.3.43"
-    "@remixproject/plugin-api" "0.3.43"
-    "@remixproject/plugin-utils" "0.3.43"
+    "@remixproject/engine" "0.3.44"
+    "@remixproject/plugin" "0.3.44"
+    "@remixproject/plugin-api" "0.3.44"
+    "@remixproject/plugin-utils" "0.3.44"
 
 "@remixproject/plugin-utils@0.3.208":
   version "0.3.208"
@@ -1030,20 +1030,20 @@
   dependencies:
     tslib "2.0.1"
 
-"@remixproject/plugin-utils@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.43.tgz#53206666135a360c88bfde11568c31341c9d961f"
-  integrity sha512-FB2Dz0/+TQ+D9AdINfsu38qHEsUVIDpaDCaXY76suDkSUudoHcGrC5TbpaV/xMUbMMma2dcLp629vBNnA5Cd0w==
+"@remixproject/plugin-utils@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.44.tgz#fdaa978f1c10331b68e67bef9e636c7d19069c27"
+  integrity sha512-DX4vcbEplMFLE6SZ10wBMBQ6ntT9rEsPfajlhSnmZYyMpmuP0RHQLopNHsL+DxuHpOJM+hXFNEdORhWrgIQ3Kw==
   dependencies:
     tslib "2.0.1"
 
-"@remixproject/plugin@0.3.43":
-  version "0.3.43"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.43.tgz#c7397b8e44ab6627a290c3716985439482eb4f4a"
-  integrity sha512-uO0wQ9kP982QTJIlGUXXeOjLG1qG64UN5kDopTcMbplzT5vXlMRV64FY8zEqSXtl+sdqKBFLXrwmb+AUNU0MTA==
+"@remixproject/plugin@0.3.44":
+  version "0.3.44"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.44.tgz#9a82e93641c7627b2f9d0ee23754d78870adc91d"
+  integrity sha512-pkGCLfvcZwItHD4xA1ZnQtKsgffiYymqx0cSDcPAHm4i5x7S80vJ3BVjJm/CT/gyBXP8qF5SFGP6RjveFm7haQ==
   dependencies:
-    "@remixproject/plugin-api" "0.3.43"
-    "@remixproject/plugin-utils" "0.3.43"
+    "@remixproject/plugin-api" "0.3.44"
+    "@remixproject/plugin-utils" "0.3.44"
     events "3.2.0"
 
 "@scure/base@~1.1.0":

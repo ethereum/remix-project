@@ -149,6 +149,7 @@ export class RunTab extends ViewPlugin {
       'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet in the in-browser virtual machine.',
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
+      'desktopHost': 'Deploy using web metamask.',
       'basic-http-provider': 'Deploy to a Custom local network.',
       'remix-web-provider': 'Deploy through the Remix MetaMask browser extension.',
       'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
@@ -300,6 +301,9 @@ export class RunTab extends ViewPlugin {
 
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false, false)
+
+    // desktop host
+    await addProvider(12, 'desktopHost', 'Remix on the web', false, false, false)
 
     // external provider
     await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', false, false, false)

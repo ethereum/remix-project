@@ -2,6 +2,8 @@ import * as http from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import cors from 'cors';
 import EventEmitter from 'events';
+import { RequestArguments } from '../types';
+import { json } from 'stream/consumers';
 
 // Forwarding WebSocket client
 let connectedWebSocket: WebSocket | null = null;
@@ -13,22 +15,12 @@ const sendResponse = (response: http.ServerResponse, data: any, statusCode = 200
 };
 
 // Handle incoming JSON-RPC requests and forward to WebSocket client
-const handleRequest = async (
-    method: string,
-    params: any[],
-    id: any
+export const handleRequest = async (
+    jsonRpcPayload: RequestArguments
 ): Promise<any> => {
     if (!connectedWebSocket || connectedWebSocket.readyState !== WebSocket.OPEN) {
         throw new Error('No active WebSocket connection to forward request');
     }
-
-    // Create the JSON-RPC payload
-    const jsonRpcPayload = {
-        jsonrpc: '2.0',
-        method,
-        params,
-        id,
-    };
 
     // Send the payload to the WebSocket client and wait for response
     return new Promise((resolve, reject) => {
@@ -43,7 +35,7 @@ const handleRequest = async (
             clearTimeout(timeout);
             try {
                 const response = JSON.parse(data);
-                if (response.id === id) {
+                if (response.id === jsonRpcPayload.id) {
                     //console.log('response from WebSocket client:', response);
                     resolve(response.result);
                 } else {
@@ -91,11 +83,12 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
                             throw new Error('Invalid JSON-RPC request');
                         }
 
-                        const result = await handleRequest(
-                            jsonRpcRequest.method,
-                            jsonRpcRequest.params || [],
-                            jsonRpcRequest.id
-                        );
+                        const result = await handleRequest({
+                            method: jsonRpcRequest.method,
+                            jsonrpc: '2.0',
+                            params: jsonRpcRequest.params || [],
+                            id: jsonRpcRequest.id
+                        });
 
                         const jsonResponse = {
                             jsonrpc: '2.0',
@@ -131,7 +124,7 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
             connectedWebSocket.removeAllListeners()
             connectedWebSocket.close()
         }
-        
+
         connectedWebSocket = ws;
         eventEmitter.emit('connected', true);
 

@@ -1,7 +1,9 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { startRPCServer } from "../lib/server"
+import { handleRequest, startRPCServer } from "../lib/server"
 import EventEmitter from "events"
+import { shell } from "electron"
+import { RequestArguments } from "../types"
 
 const profile = {
     displayName: 'desktopHost',
@@ -34,7 +36,8 @@ const clientProfile: Profile = {
     name: 'desktopHost',
     displayName: 'desktopHost',
     description: 'desktopHost',
-    methods: ['getIsConnected'],
+    methods: ['getIsConnected', 'sendAsync', 'init'],
+    kind: 'provider',
 }
 
 export class DesktopHostPluginClient extends ElectronBasePluginClient {
@@ -45,5 +48,20 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     getIsConnected() {
         console.log('getIsConnected', isConnected)
         return isConnected
+    }
+
+    async init() {
+        console.log('initializing destkophost plugin...')
+        if(!isConnected)
+            await shell.openExternal('http://localhost:8080/?activate=udapp,desktopClient')
+        // wait for the connection
+        while (!isConnected) {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+    }
+
+    async sendAsync(data: RequestArguments) {
+        console.log('SEND ASYNC', data)
+        return handleRequest(data)
     }
 }

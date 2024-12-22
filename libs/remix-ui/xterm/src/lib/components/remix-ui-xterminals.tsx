@@ -139,9 +139,9 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }
 
   return (<>
-    {<div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.selectedTerminalTab === 'output' ? 'h-0 d-none' : 'h-100 d-flex'}`}>
+    {<div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.selectedTerminalTab ===  'xterm' ? 'h-100 d-flex': 'h-0 d-none'}`}>
       <>
-        {<div className={`flex-row w-100 h-100 ${xtermState.selectedTerminalTab === 'output' ? 'h-0 d-none' : 'h-100 d-flex'}`}>
+        {<div className={`flex-row w-100 h-100 ${xtermState.selectedTerminalTab ===  'xterm' ? 'h-100 d-flex': 'h-0 d-none'}`}>
           {terminals.map((xtermState) => {
             return (
               <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} data-active={`${xtermState.hidden ? '0' : '1'}`} key={xtermState.pid} data-type="remixUIXT" data-id={`remixUIXT${xtermState.pid}`}>
