@@ -160,7 +160,7 @@ export class BreakpointManager {
   /**
     * return true if current manager has breakpoint
     *
-    * @return {Bool} true if breapoint registered
+    * @return {Bool} true if breakpoint registered
     */
   hasBreakpoint () {
     for (const k in this.breakpoints) {
