@@ -30,7 +30,7 @@ There are many languages, for each project.  But if you do not see your desired 
 
 In addition to writing translations, you can also review other's work. 
 
-### How to make your plugin suport string internationalization?
+### How to make your plugin support string internationalization?
 First, put the string in the locale file located under `apps/remix-ide/src/app/tabs/locales/en`.
 Each json file corresponds to a module. If the module does not exist, then create a new json and import it in the `index.js`.
 Then you can replace the string with an intl component. The `id` prop will be the key of this string.
