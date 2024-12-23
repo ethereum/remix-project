@@ -35,7 +35,7 @@ Normally when you would do a 'real' release you would package remix IDE into the
 
 ### Local testing
 
-In order to facilitate local testing nightwatch will boot the executable with the --e2e-local flag when running locally ( so outside of CIRCLE CI ). This means the electron app with load the local running Remix IDE.
+In order to facilitate local testing nightwatch will boot the executable with the --e2e-local flag when running locally ( so outside of CIRCLE CI ). This means the electron app will load the local running Remix IDE.
 
 So to start testing locally 
 - run the IDE with 'yarn serve' as you would normally do.
