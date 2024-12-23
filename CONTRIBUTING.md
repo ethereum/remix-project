@@ -30,7 +30,7 @@ There are many languages, for each project.  But if you do not see your desired 
 
 In addition to writing translations, you can also review other's work. 
 
-### How to make your plugin suport string internationalization?
+### How to make your plugin support string internationalization?
 First, put the string in the locale file located under `apps/remix-ide/src/app/tabs/locales/en`.
 Each json file corresponds to a module. If the module does not exist, then create a new json and import it in the `index.js`.
 Then you can replace the string with an intl component. The `id` prop will be the key of this string.
@@ -106,7 +106,7 @@ But in some cases, the `id` prop may not be static. For example,
 </h6>
 ```
 
-Because you can't be sure if there is a matched key in the locale file, its better to provide a `defaultMessage` prop.
+Because you can't be sure if there is a matched key in the locale file, it's better to provide a `defaultMessage` prop.
 
 ### Should I update the non-English locale json files?
 When you are updating an existing English locale json file, then you don't need to add any other languages, because CrowdIn will do it for you.
