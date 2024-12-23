@@ -265,7 +265,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
-      .assert.containsText('#compilierLanguageSelector option[data-id="selected"]', 'Yul')
+      .assert.containsText('#compilerLanguageSelector option[data-id="selected"]', 'Yul')
       .verify.elementPresent('#optimize:checked')
       .verify.elementPresent('#autoCompile:checked')
       .verify.attributeEquals('#runs', 'value', '300')
