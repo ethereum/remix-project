@@ -1,6 +1,6 @@
 import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
-import { buildSolgptPromt } from "../../prompts/promptBuilder";
+import { buildSolgptPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
