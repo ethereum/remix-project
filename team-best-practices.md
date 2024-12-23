@@ -6,7 +6,7 @@ This document aims to address contributors best practices of the following repos
  - Remix Libraries: https://github.com/ethereum/remix-project/tree/master/libs
 
 This document is not in its final version, **a team meeting which aims to address new/old best practices, feedback, workflows, all kind of issues related to how the team works together occurs every 2 weeks.**
-This document link to other specialized best practices (like coding best practices).
+This document links to other specialized best practices (like coding best practices).
 
 Related links:
  - Public Website: https://remix-project.org
