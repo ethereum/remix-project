@@ -22,7 +22,7 @@ class SecurityAgent {
   }
 
   public getRecommendations(currentLine: string, numSuggestions: number = 3): string[] {
-    // process the code base highlighting security vunerabilities and deliver recommendations
+    // process the code base highlighting security vulnerabilities and deliver recommendations
     const suggestions: string[] = [];
     return suggestions;
   }
