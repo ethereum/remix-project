@@ -517,7 +517,7 @@ export class InferenceManager implements ICompletions {
         modelOP = model.modelOP
       }
     }
-    const prompt = buildSolgptPromt(userPrompt, modelOP)
+    const prompt = buildSolgptPrompt(userPrompt, modelOP)
 
     if (params.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
