@@ -27,10 +27,13 @@ export const handleRequest = async (
         const timeout = setTimeout(() => reject(new Error('Timeout waiting for WebSocket response')), 240000); // 10 seconds timeout
 
         connectedWebSocket && connectedWebSocket.once('message', (data: string) => {
-
+            
+           
             if (Buffer.isBuffer(data)) {
                 data = data.toString('utf-8');
             }
+
+            console.log('received message from WebSocket ONCE client:', data);
 
             clearTimeout(timeout);
             try {
@@ -127,6 +130,15 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
 
         connectedWebSocket = ws;
         eventEmitter.emit('connected', true);
+
+        ws.on('message', (data: string) => {
+            if (Buffer.isBuffer(data)) {
+                data = data.toString('utf-8');
+            }
+            const response = JSON.parse(data);
+            if(response && response.type)
+                console.log('received message from WebSocket client:', response);
+        })
 
         ws.on('close', () => {
             console.log('WebSocket client disconnected');

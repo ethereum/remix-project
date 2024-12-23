@@ -434,7 +434,7 @@ class AppComponent {
       this.engine.register([remixWebProvider])
     } else{
       //---- desktop client
-      const desktopClient = new DesktopClient()
+      const desktopClient = new DesktopClient(blockchain)
       this.engine.register([desktopClient])
     }
 

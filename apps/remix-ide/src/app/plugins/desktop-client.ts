@@ -2,6 +2,7 @@
 import React from 'react'
 import { Plugin } from '@remixproject/engine'
 import { CustomRemixApi } from '@remix-api'
+import { Blockchain } from '../../blockchain/blockchain'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -15,13 +16,16 @@ const profile = {
 }
 
 export class DesktopClient extends Plugin<any, CustomRemixApi> {
-  constructor() {
+  blockchain: Blockchain
+  constructor(blockchain: Blockchain) {
     super(profile)
+    this.blockchain = blockchain
   }
 
   onActivation() {
     console.log('DesktopClient activated')
     _paq.push(['trackEvent', 'plugin', 'activated', 'DesktopClient'])
+
     this.connectToWebSocket()
   }
 
@@ -35,6 +39,10 @@ export class DesktopClient extends Plugin<any, CustomRemixApi> {
       this.emit('connected', true)
       this.call('menuicons', 'select', 'udapp')
       this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
+      this.blockchain.event.register('contextChanged', async (context) => {
+        console.log('Context changed:', context)
+        ws.send(JSON.stringify({ type: 'contextChanged', payload: context }))
+      })
     };
 
     ws.onmessage = async (event) => {
