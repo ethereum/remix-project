@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 
 class SecurityAgent {
-  private codebase: string[]; // list of code base file
+  private codebase: string[]; // list of code base files
   public currentFile: string;
 
   constructor(codebasePath: string) {
