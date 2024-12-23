@@ -106,7 +106,7 @@ But in some cases, the `id` prop may not be static. For example,
 </h6>
 ```
 
-Because you can't be sure if there is a matched key in the locale file, its better to provide a `defaultMessage` prop.
+Because you can't be sure if there is a matched key in the locale file, it's better to provide a `defaultMessage` prop.
 
 ### Should I update the non-English locale json files?
 When you are updating an existing English locale json file, then you don't need to add any other languages, because CrowdIn will do it for you.
