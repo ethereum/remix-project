@@ -53,7 +53,7 @@
   "udapp.forkStateLabel": "State Name",
   "udapp.fork": "Fork",
   "udapp.deleteVmStateTitle": "Delete VM state",
-  "udapp.deleteVmStateDesc1": "Deleting the state of this VM will also delete the associated transaction details in this Workspace.",
+  "udapp.deleteVmStateDesc1": "Deleting the state of this VM will delete the associated transaction details in this Workspace.",
   "udapp.deleteVmStateDesc2": "It will also delete the data of contracts deployed and pinned in this Workspace.",
   "udapp.deleteVmStateDesc3": "Do you want to continue?",
   "udapp.delete": "Delete",
