@@ -36,7 +36,7 @@ class AsyncDebouncedQueue {
   }
 }
 
-export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>, loaderDispatcher: React.Dispatch<any>, setAtivePanel: React.Dispatch<React.SetStateAction<string>>, platform: appPlatformTypes) => {
+export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>, loaderDispatcher: React.Dispatch<any>, setActivePanel: React.Dispatch<React.SetStateAction<string>>, platform: appPlatformTypes) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
