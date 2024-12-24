@@ -4,6 +4,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const vmStateName = useRef('')
@@ -57,6 +58,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   }
 
   const forkState = async () => {
+    _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
     const context = currentProvider.name
     vmStateName.current = `${context}_${Date.now()}`
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
@@ -73,6 +75,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+          _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
@@ -81,6 +84,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   }
 
   const deleteVmState = async() => {
+    _paq.push(['trackEvent', 'udapp', 'deleteState', `deleteState clicked`])
     const context = currentProvider.name
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
     if (contextExists) {
@@ -100,6 +104,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
           if (isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
           props.runTabPlugin.call('notification', 'toast', `VM state deleted successfully.`)
+          _paq.push(['trackEvent', 'udapp', 'deleteState', `VM state deleted`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
