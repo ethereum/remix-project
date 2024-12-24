@@ -379,7 +379,7 @@ export type CompileFormat = {
     abi?: ABI[]
     ast?: AST
     contractName?: string
-    depolymentBytecode?: BytecodeObject
+    deploymentBytecode?: BytecodeObject
     devMessages?: { [key: string]: string }
     devdoc?: Devdoc
     methodIdentifiers?: { [key: string]: string }
@@ -426,7 +426,7 @@ export type ETHPM3Format = {
   contractTypes: {
     contractName: string
     sourceId?: string
-    depolymentBytecode: {
+    deploymentBytecode: {
       bytecode: string
       linkReferences: {
         offset: any
