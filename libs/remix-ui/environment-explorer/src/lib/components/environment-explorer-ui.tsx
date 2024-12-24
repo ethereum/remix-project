@@ -29,10 +29,10 @@ const defaultSections: environmentExplorerUIGridSections = {
           <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
           <CustomTooltip
             placement="auto"
-            tooltipId="overlay-tooltip-compile"
+            tooltipId="overlay-tooltip-forkedAt"
             tooltipText={`Forked at: ${(new Date(timestamp)).toLocaleString()}`}
           >
-            <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
+            <div><b>Forked at: </b>{(new Date(timestamp)).toDateString()}</div>
           </CustomTooltip>
         </>)
     }
