@@ -60,7 +60,7 @@ export class InferenceManager implements ICompletions {
 
   static getInstance(modelDir:string){
     if (!InferenceManager.instance) {
-      // check if ther is a process already running
+      // check if there is a process already running
       if (!modelDir) {
         console.error('model directory is required to create InferenceManager instance')
         return null
@@ -156,7 +156,7 @@ export class InferenceManager implements ICompletions {
   }
 
   async _handleResources(logger:boolean=false) {
-    // check resrource usage
+    // check resource usage
     const options = { headers: { 'Content-Type': 'application/json', } }
     const res = await axios.get(this.inferenceURL+"/sys", options)
 

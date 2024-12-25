@@ -178,7 +178,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
     } catch (e: any) {
       const errorGettingContract: VyperCompilationError = {
         status: 'failed',
-        message: e.mesaage,
+        message: e.message,
         error_type: 'fetch_contract'
       }
 
@@ -230,7 +230,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
 
     const errorGettingContract: VyperCompilationError = {
       status: 'failed',
-      message: err.mesaage,
+      message: err.message,
       error_type: 'unknown_error'
     }
 
