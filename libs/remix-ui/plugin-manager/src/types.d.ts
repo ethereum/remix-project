@@ -143,12 +143,12 @@ export interface RemixUiPluginManagerProps {
   pluginManagerSettings: PluginManagerSettings
 }
 /** @class Reference loaders.
- *  A loader is a get,set based object which load a workspace from a defined sources.
+ *  A loader is a get, set based object which load a workspace from a defined sources.
  *  (localStorage, queryParams)
  **/
 declare class PluginLoader {
   get currentLoader(): any
-  donotAutoReload: string[]
+  doNotAutoReload: string[]
   loaders: Record<any, any>
   current: string
   set(plugin: any, actives: any): void
