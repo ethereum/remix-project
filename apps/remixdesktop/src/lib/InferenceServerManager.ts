@@ -149,8 +149,8 @@ export class InferenceManager implements ICompletions {
     } else {
       // Server is running with successful request
       // console.log('Inference server is running')
-      // console.log('completion is runnig', state.data?.completion)
-      // console.log('general is runnig', state.data?.general)
+      // console.log('completion is running', state.data?.completion)
+      // console.log('general is running', state.data?.general)
     }
     // this._handleResources()
   }
