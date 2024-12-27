@@ -111,7 +111,7 @@ module.exports = {
         browser.assert.equal(metadata.test, 'data')
       })
   },
-  'Should have a empty workspace #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
+  'Should have an empty workspace #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .switchWorkspace('emptyspace')
   },
