@@ -72,7 +72,7 @@ import panelJson from './panel.json';
 import enJson from '../en';
 
 // There may have some untranslated content. Always fill in the gaps with EN JSON.
-// No need for a defaultMessage prop when render a FormattedMessage component.
+// No need for a defaultMessage prop when rendering a FormattedMessage component.
 export default Object.assign({}, enJson, {
   ...panelJson,
 })
