@@ -23,7 +23,7 @@ export const TerminalTransactions = (props: TerminalTransactionsProps) => {
    
     pluginsToWatch.forEach(pluginName => {
       props.plugin.on(pluginName, 'queue', (data: any) => {
-        console.log('plugin', pluginName, 'queue', data);
+        //console.log('plugin', pluginName, 'queue', data);
         setQueues(queues => [...queues.filter(queue => queue.pluginName !== pluginName), { pluginName, queue: data }]);
       });
     });

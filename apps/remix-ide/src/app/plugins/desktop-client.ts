@@ -46,9 +46,14 @@ export class DesktopClient extends Plugin<any, CustomRemixApi> {
     };
 
     ws.onmessage = async (event) => {
-      console.log('Message from server:', event.data);
+      const parsed = JSON.parse(event.data)
+      
       const result = await this.call('web3Provider', 'sendAsync', JSON.parse(event.data))
-      console.log('Result:', result)
+      if(parsed.method === 'eth_sendTransaction') {
+        console.log('Message from server:', parsed);
+        console.log('Result:', result)
+        ws.send(JSON.stringify({ type: 'focus' }))
+      }
       ws.send(JSON.stringify(result))
       return result
     };

@@ -175,5 +175,18 @@ ipcMain.handle('matomo:trackEvent', async (event, data) => {
   }
 })
 
+ipcMain.on('focus-window', (event, windowId) => {
+  console.log('focus-window', windowId)
+  windowSet.forEach((win: BrowserWindow) => {
+    //if (win.id === windowId) {
+      if(win.isMinimized()) {
+        win.restore()
+      }
+      win.show()
+      win.focus()
+   // }
+  })
+})
+
 
 

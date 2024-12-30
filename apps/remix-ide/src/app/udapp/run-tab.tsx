@@ -303,11 +303,11 @@ export class RunTab extends ViewPlugin {
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false, false)
 
     // desktop host
-    await addProvider(12, 'desktopHost', 'Remix on the web', false, false, false)
+    await addProvider(12, 'desktopHost', 'Remix on the web ( via plugin )', false, false, false)
 
     // external provider
     await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', false, false, false)
-    await addProvider(11, 'remix-web-provider', 'Remix web ( Metamask )', false, false, false)
+    await addProvider(11, 'remix-web-provider', 'Remix web RPC', false, false, false)
     await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', false, false, false)
     await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', false, false, false)
     await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false, false)

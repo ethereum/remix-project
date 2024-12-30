@@ -13,7 +13,7 @@ export default function DesktopStatus({ plugin }: DesktopStatusProps) {
   const appContext = useContext(AppContext)
 
   useEffect(() => {
-    console.log('DesktopStatus', appContext.appState)
+    //console.log('DesktopStatus', appContext.appState)
   }, [appContext.appState])
 
   return (

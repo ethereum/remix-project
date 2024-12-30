@@ -33,7 +33,7 @@ export const handleRequest = async (
                 data = data.toString('utf-8');
             }
 
-            console.log('received message from WebSocket ONCE client:', data);
+            //console.log('received message from WebSocket ONCE client:', data);
 
             clearTimeout(timeout);
             try {
@@ -123,7 +123,7 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
     wsServer.on('connection', (ws) => {
         console.log('WebSocket client connected');
         if (connectedWebSocket?.OPEN) {
-            console.log(connectedWebSocket.url)
+            //console.log(connectedWebSocket.url)
             connectedWebSocket.removeAllListeners()
             connectedWebSocket.close()
         }
@@ -131,23 +131,27 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
         connectedWebSocket = ws;
         eventEmitter.emit('connected', true);
 
+        
+
         ws.on('message', (data: string) => {
             if (Buffer.isBuffer(data)) {
                 data = data.toString('utf-8');
             }
             const response = JSON.parse(data);
-            if(response && response.type)
+            if(response && response.type) {
                 console.log('received message from WebSocket client:', response);
+                eventEmitter.emit(response.type, response.payload);
+            }
         })
 
         ws.on('close', () => {
-            console.log('WebSocket client disconnected');
+            //console.log('WebSocket client disconnected');
             connectedWebSocket = null;
             eventEmitter.emit('connected', false);
         });
 
         ws.on('error', (error) => {
-            console.error('WebSocket error:', error.message);
+            //console.error('WebSocket error:', error.message);
             connectedWebSocket = null;
             eventEmitter.emit('connected', false);
         });

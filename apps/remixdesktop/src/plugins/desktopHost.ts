@@ -2,7 +2,7 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plug
 import { Profile } from "@remixproject/plugin-utils"
 import { handleRequest, startRPCServer } from "../lib/server"
 import EventEmitter from "events"
-import { shell } from "electron"
+import { ipcMain, shell } from "electron"
 import { RequestArguments } from "../types"
 
 const profile = {
@@ -23,6 +23,11 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         eventEmitter.on('connected', (payload) => {
             console.log('connected', payload)
             isConnected = payload
+        })
+        eventEmitter.on('focus', () => {
+            console.log('focus')
+            ipcMain.emit('focus-window', 0)
+
         })
     }
 
@@ -61,7 +66,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     }
 
     async sendAsync(data: RequestArguments) {
-        console.log('SEND ASYNC', data)
+        //console.log('SEND ASYNC', data)
         return handleRequest(data)
     }
 }
