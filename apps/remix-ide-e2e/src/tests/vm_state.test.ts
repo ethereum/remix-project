@@ -66,6 +66,49 @@ const tests = {
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
       })
   },
+  'Should show fork states provider in environment explorer & make txs using forked state #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('udapp')
+      .waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
+      .click('[data-id="settingsSelectEnvOptions"] button')
+      .waitForElementVisible(`[data-id="dropdown-item-another-chain"]`)
+      .click(`[data-id="dropdown-item-another-chain"]`)
+      .assert.visible('[data-id="remixUIGSDeploy to an In-browser Forked State."]')
+      .assert.elementPresent('[data-id="remixUIGSforkedState_1"]')
+      .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
+      .assert.containsText('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
+      .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
+      .switchEnvironment('vm-cancun')
+      .openFile('contracts/1_Storage.sol')
+      .verifyContracts(['Storage'])
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="fork-state-icon"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
+      .click('input[data-id="modalDialogForkState"]')
+      .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
+      .modalFooterOKClick('udappNotify')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      .assert.containsText('*[data-shared="tooltipPopup"]', `VM state 'forkedState_2' forked and selected as current envionment.`)
+      // check if 'forkedState_2' is selected as current envionment 
+      .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
+      // check if 'forkedState_2' is present in envionment explorer
+      .assert.elementPresent('[data-id="remixUIGSforkedState_2"]')
+      // check if 'forkedState_2' is pinned in envionment explorer
+      .assert.elementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
+      // 'forkedState_2' should have 3 blocks
+      .assert.containsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .clickInstance(0)
+      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
+      // block number should be 5 after 2 txs
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'block number': '5',
+          'decoded input': { 'uint256 num': '555' }
+        })
+  }
 }
 
 module.exports = {

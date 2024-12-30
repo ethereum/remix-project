@@ -101,7 +101,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     await pinStateCallback(provider, pinned)
                   }}
                 >
-                  <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  <div data-id={provider.name + 'desc'}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                 </RemixUIGridCell>
               ))}
             </RemixUIGridSection>
