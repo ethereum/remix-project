@@ -24,7 +24,7 @@ const tests = {
   //     .assert.elementPresent('*[data-id="fork-state-icon"]')
   //     .click('*[data-id="fork-state-icon"]')
   //     .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-  //     .assert.containsText('*[data-shared="tooltipPopup"]', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
+  //     .assert.textContains('*[data-shared="tooltipPopup"]', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
   // },
   'Should fork state successfully #group1': function (browser: NightwatchBrowser) {
     browser
@@ -52,7 +52,7 @@ const tests = {
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
       // check if toaster is shown
-      .assert.containsText('*[data-shared="tooltipPopup"]', `VM state 'forkedState_1' forked and selected as current envionment.`)
+      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state 'forkedState_1' forked and selected as current envionment.`)
       // check if forked state is selected as current envionment
       .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_1"]')
       // check if forked state file is created with expected details
@@ -76,7 +76,7 @@ const tests = {
       .assert.visible('[data-id="remixUIGSDeploy to an In-browser Forked State."]')
       .assert.elementPresent('[data-id="remixUIGSforkedState_1"]')
       .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
-      .assert.containsText('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
+      .assert.textContains('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
       .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
       .switchEnvironment('vm-cancun')
       .openFile('contracts/1_Storage.sol')
@@ -89,7 +89,7 @@ const tests = {
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', `VM state 'forkedState_2' forked and selected as current envionment.`)
+      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state 'forkedState_2' forked and selected as current envionment.`)
       // check if 'forkedState_2' is selected as current envionment 
       .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in envionment explorer
@@ -97,7 +97,7 @@ const tests = {
       // check if 'forkedState_2' is pinned in envionment explorer
       .assert.elementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
       // 'forkedState_2' should have 3 blocks
-      .assert.containsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
+      .assert.textContains('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
@@ -108,6 +108,29 @@ const tests = {
           'block number': '5',
           'decoded input': { 'uint256 num': '555' }
         })
+  },
+  'Should delete state successfully #group1': function (browser: NightwatchBrowser) {
+    browser
+      .switchEnvironment('vm-cancun')
+      .openFile('contracts/1_Storage.sol')
+      .verifyContracts(['Storage'])
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .pause(10000)
+      .assert.textContains('*[data-id="deployedContractsBadge"]', '1')
+      .click(('*[data-id="delete-state-icon"]'))
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
+      .waitForElementVisible('*[data-id="deleteVmStateModal"]')
+      .modalFooterOKClick('udappNotify')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      // check if toaster is shown
+      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state deleted successfully.`)
+      // check that there are no instances
+      .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
+      // check if state file is deleted
+      .openFile('.states/vm-cancun')
+      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-cancun/state.json"]')
+      
   }
 }
 

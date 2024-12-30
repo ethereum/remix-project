@@ -30,7 +30,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const forkStatePrompt = (defaultName: string) => {
     return (
-      <div>
+      <div data-id="forkVmStateModal">
         <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="udapp.forkStateLabel" />
         </label>
@@ -47,7 +47,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const deleteVmStatePrompt = () => {
     return (
-      <div>
+      <div data-id="deleteVmStateModal">
         <ul className='ml-3'>
           <li><FormattedMessage id="udapp.deleteVmStateDesc1"/></li>
           <li><FormattedMessage id="udapp.deleteVmStateDesc2"/></li>
