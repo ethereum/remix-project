@@ -15,24 +15,29 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .assert.elementPresent('*[data-id="selected-provider-vm-cancun"]')
-      .assert.elementPresent('*[data-id="fork-state-icon"]')
-      .assert.elementPresent('*[data-id="delete-state-icon"]')
+      .waitForElementVisible('*[data-id="selected-provider-vm-cancun"]')
+      .waitForElementVisible('*[data-id="fork-state-icon"]')
+      .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
-  // 'Should show toaster while trying fork and delete VM state without state #group1': function (browser: NightwatchBrowser) {
-  //   browser
-  //     .assert.elementPresent('*[data-id="fork-state-icon"]')
-  //     .click('*[data-id="fork-state-icon"]')
-  //     .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-  //     .assert.containsText('*[data-shared="tooltipPopup"]', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
-  // },
+  'Should show toaster while trying fork and delete VM state without state #group1': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="fork-state-icon"]')
+      .click('*[data-id="fork-state-icon"]')
+      .waitForElementVisible(
+        {
+          selector: "//*[@data-shared='tooltipPopup' and contains(.,'State not available to fork')]",
+          locateStrategy: 'xpath'
+        }
+      )
+  }
+  ,
   'Should fork state successfully #group1': function (browser: NightwatchBrowser) {
     browser
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
-      .click('*[data-id="Deploy - transact (not payable)"]')
+      .click('[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"55"' })
       .testFunction('last',
@@ -50,11 +55,14 @@ const tests = {
       .click('input[data-id="modalDialogForkState"]')
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_1')
       .modalFooterOKClick('udappNotify')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-      // check if toaster is shown
-      .assert.containsText('*[data-shared="tooltipPopup"]', `VM state 'forkedState_1' forked and selected as current envionment.`)
-      // check if forked state is selected as current envionment
-      .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_1"]')
+      // check tooltip for forked state
+      .waitForElementVisible(
+        {
+          selector: '//*[@data-shared="tooltipPopup" and contains(.,"VM state \'forkedState_1\' forked")]',
+          locateStrategy: 'xpath'
+        }
+      )  // check if forked state is selected as current envionment
+      .waitForElementVisible('*[data-id="selected-provider-vm-fs-forkedState_1"]')
       // check if forked state file is created with expected details
       .openFile('.states/forked_states/forkedState_1.json')
       .getEditorValue((content) => {
