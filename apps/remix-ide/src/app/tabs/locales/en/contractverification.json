@@ -2,5 +2,6 @@
   "contractverification.verifyNavTitle": "Verify",
   "contractverification.receiptsNavTitle": "Receipts",
   "contractverification.lookupNavTitle": "Lookup",
-  "contractverification.settingsNavTitle": "Settings"
+  "contractverification.settingsNavTitle": "Settings",
+  "contractverification.contractAddressInput": "Contract Address"
 }
