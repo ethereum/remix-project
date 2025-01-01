@@ -7,6 +7,7 @@ import { TerminalContext } from './context'
 import { initialState, registerCommandReducer } from './reducers/terminalReducer'
 import RemixUiTerminal from './remix-ui-terminal'
 import { RemixUiTerminalProps } from './types/terminalTypes'
+import { desktopConnextionType } from '@remix-api'
 
 export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
   const [terminalState, dispatch] = useReducer(registerCommandReducer, initialState)
@@ -21,12 +22,16 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    if (appContext.appState.connectedToDesktop === true) {
+    if (appContext.appState.connectedToDesktop === desktopConnextionType.connected) {
       dispatchXterm({ type: 'SET_TERMINAL_TAB', payload: 'transactions' })
     }
   },[appContext.appState.connectedToDesktop])
 
-  if (appContext.appState.connectedToDesktop === true) {
+  if (appContext.appState.connectedToDesktop === desktopConnextionType.disconnected) {
+    return <></>
+  }
+
+  if (appContext.appState.connectedToDesktop === desktopConnextionType.connected) {
     return <>
       <TerminalContext.Provider value={providerState}>
         <RemixUITerminalBar {...props} />

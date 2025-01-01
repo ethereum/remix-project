@@ -27,7 +27,12 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         eventEmitter.on('focus', () => {
             console.log('focus')
             ipcMain.emit('focus-window', 0)
-
+        })
+        eventEmitter.on('contextChanged', (context) => {
+            console.log('contextChanged', context)
+            for(const client of this.clients) {
+                client.emit('chainChanged', context)
+            }
         })
     }
 
@@ -67,6 +72,8 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
 
     async sendAsync(data: RequestArguments) {
         //console.log('SEND ASYNC', data)
-        return handleRequest(data)
+        const result = await handleRequest(data)
+        //console.log('RESULT', result)
+        return result
     }
 }

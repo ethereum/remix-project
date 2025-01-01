@@ -34,6 +34,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
+      console.log('loadedAccounts', loadedAccounts)
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     } catch (e) {
       dispatch(fetchAccountsListFailed(e.message))

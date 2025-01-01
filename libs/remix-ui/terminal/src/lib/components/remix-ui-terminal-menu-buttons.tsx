@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from 'react' // eslint-disable-line
 import { TerminalContext } from '../context'
 import { RemixUiTerminalProps, SET_OPEN } from '../types/terminalTypes'
 import './remix-ui-terminal-menu-buttons.css'
+import { desktopConnextionType } from '@remix-api';
 
 export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
   const { xtermState, dispatchXterm, terminalState, dispatch } = useContext(TerminalContext)
@@ -34,7 +35,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
     dispatchXterm({ type: 'SET_TERMINAL_TAB', payload: 'transactions' })
   }
 
-  if (appContext.appState.connectedToDesktop) {
+  if (appContext.appState.connectedToDesktop === desktopConnextionType.connected) {
 
     return (
       <div className='d-flex flex-row align-items-center'>

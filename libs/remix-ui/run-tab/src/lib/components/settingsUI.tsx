@@ -7,6 +7,7 @@ import { AccountUI } from './account'
 import { GasLimitUI } from './gasLimit'
 import { ValueUI } from './value'
 import { AppContext } from '@remix-ui/app'
+import { desktopConnextionType } from '@remix-api'
 
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
@@ -38,7 +39,7 @@ export function SettingsUI(props: SettingsProps) {
         signMessageWithAddress={props.signMessageWithAddress}
         passphrase={props.passphrase}
       />
-      {appContext.appState.connectedToDesktop === false ?
+      {appContext.appState.connectedToDesktop === desktopConnextionType.disabled ?
         <><GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} /><ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} /></> : null}
     </div>
   )

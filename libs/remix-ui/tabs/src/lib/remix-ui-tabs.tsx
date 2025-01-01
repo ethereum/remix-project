@@ -7,6 +7,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
+import { desktopConnextionType } from '@remix-api'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -186,7 +187,7 @@ export const TabsUI = (props: TabsUIProps) => {
   return (
     <div
       className={`remix-ui-tabs justify-content-between border-0 header nav-tabs ${
-        appContext.appState.connectedToDesktop ? 'd-none' : 'd-flex'
+        appContext.appState.connectedToDesktop === desktopConnextionType.disabled ? 'd-flex' : 'd-none'
       }`}
       data-id="tabs-component"
     >

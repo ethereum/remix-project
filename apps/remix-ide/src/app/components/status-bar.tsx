@@ -8,7 +8,7 @@ import { RemixUIStatusBar } from '@remix-ui/statusbar'
 import { FilePanelType } from '@remix-ui/workspace'
 import { VerticalIcons } from './vertical-icons'
 import { CustomRemixApi } from '@remix-api'
-import { AppAction, appActionTypes } from '@remix-ui/app'
+import { AppAction } from '@remix-ui/app'
 
 const statusBarProfile: PluginProfile = {
   name: 'statusBar',
@@ -80,22 +80,6 @@ export class StatusBar extends Plugin<any, CustomRemixApi> implements StatusBarI
     })
     this.on('settings', 'copilotChoiceChanged', (isAiActive: boolean) => {
       this.isAiActive = isAiActive
-    })
-    this.on('desktopClient', 'connected', (isConnected: boolean) => {
-
-      console.log('Connected to desktop client?', isConnected)
-
-      this.appStateDispatch({
-        type: appActionTypes.setConnectedToDesktop,
-        payload: isConnected
-      })
-      if (isConnected) {
-        this.appStateDispatch({
-          type: appActionTypes.setShowPopupPanel,
-          payload: false
-        })
-      }
-
     })
     this.renderComponent()
   }

@@ -124,7 +124,7 @@ export const setupEvents = (plugin: RunTab) => {
     if (activatedPlugin.name === 'remixd') {
       dispatch(setRemixDActivated(true))
     } else {
-      if (activatedPlugin && activatedPlugin.name.startsWith('injected')) {
+      if (activatedPlugin && (activatedPlugin.name.startsWith('injected') || activatedPlugin.name === 'desktopHost')) {
         plugin.on(activatedPlugin.name, 'accountsChanged', (accounts: Array<string>) => {
           const accountsMap = {}
           accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})

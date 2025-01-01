@@ -58,6 +58,7 @@ import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
 import { AppContext } from '@remix-ui/app'
+import { desktopConnextionType } from '@remix-api'
 
 export type CheckStatus = 'Passed' | 'Failed' | 'Not Found'
 
@@ -372,7 +373,7 @@ export function RunTabUI(props: RunTabProps) {
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
           />
-          {!appContext.appState.connectedToDesktop && (
+          {appContext.appState.connectedToDesktop === desktopConnextionType.disabled && (
             <>
               <ContractDropdownUI
                 selectedAccount={runTab.accounts.selectedAccount}

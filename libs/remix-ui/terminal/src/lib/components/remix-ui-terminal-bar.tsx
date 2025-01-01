@@ -9,6 +9,7 @@ import { RemixUITerminalMenu } from './remix-ui-terminal-menu'
 import { RemixUITerminalMenuToggle } from './remix-ui-terminal-menu-toggle'
 import { RemixUIXtermMenu } from '../../../../xterm/src/lib/components/remix-ui-terminal-menu-xterm'
 import { RemixUITerminalMenuButtons } from './remix-ui-terminal-menu-buttons'
+import { desktopConnextionType } from '@remix-api'
 
 export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
   const { terminalState, xtermState } = useContext(TerminalContext)
@@ -29,7 +30,7 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
         data-id="terminalToggleMenu"
       >
         <RemixUITerminalMenuToggle {...props} />
-        {appContext.appState.connectedToDesktop ?
+        {appContext.appState.connectedToDesktop !== desktopConnextionType.disabled ?
           <div className='d-flex flex-row w-100 justify-content-between '>
             <RemixUITerminalMenuButtons {...props} />
             

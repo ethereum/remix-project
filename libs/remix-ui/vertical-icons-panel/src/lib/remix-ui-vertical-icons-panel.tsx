@@ -9,6 +9,7 @@ import { IconRecord } from './types'
 import { AppContext, onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
 import { Registry } from '@remix-project/remix-lib'
+import { desktopConnextionType } from '@remix-api'
 
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
@@ -83,7 +84,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
         >
           <IconList
             theme={theme}
-            icons={icons.filter((p) => p.profile.name==='udapp' ||  (!appContext.appState.connectedToDesktop && p.isRequired && p.profile.name !== 'pluginManager'))}
+            icons={icons.filter((p) => p.profile.name==='udapp' ||  (appContext.appState.connectedToDesktop === desktopConnextionType.disabled && p.isRequired && p.profile.name !== 'pluginManager'))}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
           />
@@ -105,7 +106,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
           <IconList
             theme={theme}
             icons={icons.filter((p) => {
-              return !appContext.appState.connectedToDesktop && !p.isRequired && p.profile.name !== 'settings'
+              return appContext.appState.connectedToDesktop === desktopConnextionType.disabled && !p.isRequired && p.profile.name !== 'settings'
             })}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
@@ -117,7 +118,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
           ) : null }
           <IconList
             theme={theme}
-            icons={icons.filter((p) => !appContext.appState.connectedToDesktop && ( p.profile.name === 'settings' || p.profile.name === 'pluginManager'))}
+            icons={icons.filter((p) => appContext.appState.connectedToDesktop === desktopConnextionType.disabled && ( p.profile.name === 'settings' || p.profile.name === 'pluginManager'))}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
           />

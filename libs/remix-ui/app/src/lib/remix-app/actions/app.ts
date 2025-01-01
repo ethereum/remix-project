@@ -1,5 +1,4 @@
-import { branch, GitHubUser } from '@remix-api';
-import { AppModal } from '../interface'
+import { branch, desktopConnection, GitHubUser } from '@remix-api';
 
 type ActionMap<M extends { [index: string]: any }> = {
     [Key in keyof M]: M[Key] extends undefined
@@ -27,7 +26,7 @@ type AppPayload = {
   [appActionTypes.setNeedsGitInit]: boolean,
   [appActionTypes.setCanUseGit]: boolean,
   [appActionTypes.setShowPopupPanel]: boolean,
-  [appActionTypes.setConnectedToDesktop]: boolean,
+  [appActionTypes.setConnectedToDesktop]: desktopConnection
 }
 
 export type AppAction = ActionMap<AppPayload>[keyof ActionMap<
