@@ -1,7 +1,8 @@
 export const desktopConnextionType = {
     connected: 'connected',
     disconnected: 'disconnected',
-    disabled: 'disabled'
+    disabled: 'disabled',
+    alreadyConnected: 'alreadyConnected',
 }
 
 export type desktopConnection  = typeof desktopConnextionType[keyof typeof desktopConnextionType]

@@ -32,7 +32,7 @@ interface DesktopClientState {
 }
 
 const DesktopClientUI = (props: DesktopClientState) => {
-   const appContext = useContext(AppContext)
+  const appContext = useContext(AppContext)
   useEffect(() => {
     console.log('connected', props.connected)
     appContext.appStateDispatch({
@@ -65,7 +65,6 @@ export class DesktopClient extends ViewPlugin {
     this.state = {
       connected: desktopConnextionType.disconnected,
     }
-    
   }
 
   onActivation() {
@@ -73,7 +72,6 @@ export class DesktopClient extends ViewPlugin {
     _paq.push(['trackEvent', 'plugin', 'activated', 'DesktopClient'])
 
     this.connectToWebSocket()
-
   }
 
   onDeactivation() {}
@@ -135,10 +133,9 @@ export class DesktopClient extends ViewPlugin {
     this.call('menuicons', 'select', 'udapp')
     this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
     console.log('Connecting to server')
-    try{
+    try {
       this.ws = new WebSocket('ws://localhost:8546')
-
-    }catch(e){
+    } catch (e) {
       console.error('CATCH WebSocket error:', e)
       return
     }
@@ -152,7 +149,23 @@ export class DesktopClient extends ViewPlugin {
 
     this.ws.onmessage = async (event) => {
       const parsed = JSON.parse(event.data)
-
+      console.log('Message from server:', parsed)
+      if (parsed && parsed.type === 'error') {
+        if (parsed.payload === 'ALREADY_CONNECTED') {
+          console.log('ALREADY_CONNECTED')
+          this.setConnectionState(desktopConnextionType.alreadyConnected)
+          const modalContent: AppModal = {
+            id: this.profile.name,
+            title: 'Another tab or window is already connected.',
+            message: 'Another tab or window is already connected to the desktop application. Please close this tab or window.',	
+            modalType: ModalTypes.fixed,
+            okLabel: null
+          }
+          
+          this.call('notification', 'modal' as any, modalContent)
+          return
+        }
+      }
       const result = await this.call('web3Provider', 'sendAsync', JSON.parse(event.data))
       if (parsed.method === 'eth_sendTransaction') {
         console.log('Message from server:', parsed)
@@ -189,18 +202,19 @@ export class DesktopClient extends ViewPlugin {
       
       this.call('notification', 'modal' as any, modalContent)
       */
-     
+
       this.emit('connected', false)
-      this.setConnectionState(desktopConnextionType.disconnected)
+      if (this.state.connected !== desktopConnextionType.alreadyConnected) {
+        this.setConnectionState(desktopConnextionType.disconnected)
 
-      setTimeout(() => {
-        this.connectToWebSocket()
-      }, 5000)
-
+        setTimeout(() => {
+          this.connectToWebSocket()
+        }, 5000)
+      }
     }
 
     //this.ws.onerror = (error) => {
-     // console.error('WebSocket error:', error)
+    // console.error('WebSocket error:', error)
     //}
   }
 

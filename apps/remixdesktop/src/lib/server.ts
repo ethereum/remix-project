@@ -123,9 +123,12 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
     wsServer.on('connection', (ws) => {
         console.log('WebSocket client connected');
         if (connectedWebSocket?.OPEN) {
+            ws.send(JSON.stringify({ type: 'error', payload: 'ALREADY_CONNECTED' }));
+            ws.close(1000, 'Another client connected');
+            return
             //console.log(connectedWebSocket.url)
-            connectedWebSocket.removeAllListeners()
-            connectedWebSocket.close()
+            //connectedWebSocket.removeAllListeners()
+            //connectedWebSocket.close()
         }
 
         connectedWebSocket = ws;
@@ -133,7 +136,7 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
 
         
 
-        ws.on('message', (data: string) => {
+        connectedWebSocket.on('message', (data: string) => {
             if (Buffer.isBuffer(data)) {
                 data = data.toString('utf-8');
             }
@@ -144,13 +147,13 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
             }
         })
 
-        ws.on('close', () => {
+        connectedWebSocket.on('close', () => {
             //console.log('WebSocket client disconnected');
             connectedWebSocket = null;
             eventEmitter.emit('connected', false);
         });
 
-        ws.on('error', (error) => {
+        connectedWebSocket.on('error', (error) => {
             //console.error('WebSocket error:', error.message);
             connectedWebSocket = null;
             eventEmitter.emit('connected', false);
