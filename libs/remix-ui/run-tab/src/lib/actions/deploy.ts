@@ -26,6 +26,8 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
     confirmCb(() => {
       let abi
       try {
+        const fileContent = plugin.editor.currentContent()
+        if (!Array.isArray(fileContent)) return cb('ABI should be an array object.')
         abi = JSON.parse(plugin.editor.currentContent())
       } catch (e) {
         return cb('Failed to parse the current file as JSON ABI.')
