@@ -23,6 +23,11 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         eventEmitter.on('connected', (payload) => {
             console.log('connected', payload)
             isConnected = payload
+            if (!isConnected) {
+                for (const client of this.clients) {
+                    client.disconnect()
+                }
+            }
         })
         eventEmitter.on('focus', () => {
             console.log('focus')
@@ -30,7 +35,7 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         })
         eventEmitter.on('contextChanged', (context) => {
             console.log('contextChanged', context)
-            for(const client of this.clients) {
+            for (const client of this.clients) {
                 client.emit('chainChanged', context)
             }
         })
@@ -62,12 +67,19 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
 
     async init() {
         console.log('initializing destkophost plugin...')
-        if(!isConnected)
+        if (!isConnected)
             await shell.openExternal('http://localhost:8080/?activate=udapp,desktopClient')
         // wait for the connection
         while (!isConnected) {
             await new Promise(resolve => setTimeout(resolve, 1000))
         }
+    }
+
+    async disconnect() {
+        this.call('notification' as any, 'alert', {
+            id: 'Connection lost',
+            message: 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
+        })
     }
 
     async sendAsync(data: RequestArguments) {
