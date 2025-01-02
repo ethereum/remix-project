@@ -4,6 +4,11 @@ import cors from 'cors';
 import EventEmitter from 'events';
 import { RequestArguments } from '../types';
 import { json } from 'stream/consumers';
+import path from 'path';
+import express from 'express'
+import { findAvailablePort } from '../utils/portFinder'
+import { isPackaged } from '../main';
+import { isE2ELocal } from '../main';
 
 // Forwarding WebSocket client
 let connectedWebSocket: WebSocket | null = null;
@@ -89,11 +94,42 @@ export const handleRequest = async (
     });
 };
 
-export const startRPCServer = (eventEmitter: EventEmitter) => {
+export const startHostServer = async (eventEmitter: EventEmitter) => {
 
- 
+    let http_port = await findAvailablePort([49589])
+    const websocket_port = await findAvailablePort([49588])
+    // Create an Express server
+    const startServer = () => {
+        const server = express()
+
+        // Serve static files from the 'remix-ide' directory
+        const remixPath = path.join(__dirname, 'remix-ide');
+        server.use(express.static(remixPath));
+
+        console.log('remixPath', remixPath)
+
+        // Serve 'index.html' at the root route
+        server.get('/', (req, res) => {
+            res.sendFile(path.join(remixPath, 'index.html'));
+        });
+
+        // Start the server
+        const httpServer = http.createServer(server);
+        httpServer.listen(http_port, () => {
+            const address = httpServer.address();
+            if (typeof address === 'string') {
+                console.log(`Server started at ${address}`);
+            } else if (address && address.port) {
+                console.log(`Server started at http://localhost:${address.port}`);       
+            } else {
+
+            }
+        });
+
+        return httpServer;
+    };
     // Create the WebSocket server
-    const wsServer = new WebSocketServer({ port: 8546 }); // WebSocket server on port 8546
+    const wsServer = new WebSocketServer({ port: websocket_port }); 
 
     wsServer.on('connection', (ws) => {
         console.log('WebSocket client connected');
@@ -135,11 +171,16 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
         });
     });
 
-    // Start the HTTP server
-    const HTTP_PORT = 8545; // Default Ethereum JSON-RPC port
-    //const webserver = httpServer.listen(HTTP_PORT, () => {
-    //    console.log(`Ethereum RPC server running on http://localhost:` + JSON.stringify((webserver.address() as any).port));
-    console.log(`WebSocket server running on ws://localhost:` + JSON.stringify((wsServer.address() as any).port));
-    //});
 
+    console.log(`WebSocket server running on ws://localhost:` + JSON.stringify((wsServer.address() as any).port));
+    if((process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal){
+        startServer()
+    }else{
+        http_port = 8080
+    }
+
+    return {
+        http_port,
+        websocket_port
+    }
 }

@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { handleRequest, startRPCServer } from "../lib/server"
+import { handleRequest, startHostServer } from "../lib/server"
 import EventEmitter from "events"
 import { ipcMain, shell } from "electron"
 import { RequestArguments } from "../types"
@@ -13,6 +13,11 @@ const profile = {
 
 const eventEmitter = new EventEmitter()
 let isConnected = false
+
+let ports: {
+    http_port: number
+    websocket_port: number
+}
 
 export class DesktopHostPlugin extends ElectronBasePlugin {
     clients: DesktopHostPluginClient[] = []
@@ -43,7 +48,8 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
 
     async startServer(): Promise<void> {
         console.log('desktopHost activated')
-        startRPCServer(eventEmitter)
+        ports = await startHostServer(eventEmitter)
+        console.log('desktopHost server started', ports)
     }
 }
 
@@ -68,7 +74,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     async init() {
         console.log('initializing destkophost plugin...')
         if (!isConnected)
-            await shell.openExternal('http://localhost:8080/?activate=udapp,desktopClient')
+            await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`)
         // wait for the connection
         while (!isConnected) {
             await new Promise(resolve => setTimeout(resolve, 1000))

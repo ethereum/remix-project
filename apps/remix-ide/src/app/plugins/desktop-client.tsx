@@ -6,6 +6,7 @@ import { Blockchain } from '../../blockchain/blockchain'
 import { AppAction, appActionTypes, AppContext, AppModal, ModalTypes } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { QueryParams } from '@remix-project/remix-lib'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -58,6 +59,8 @@ export class DesktopClient extends ViewPlugin {
   dispatch: React.Dispatch<any> = () => {}
   state: DesktopClientState
   appStateDispatch: React.Dispatch<AppAction>
+  queryParams: QueryParams
+  params: any
 
   constructor(blockchain: Blockchain) {
     super(profile)
@@ -65,6 +68,11 @@ export class DesktopClient extends ViewPlugin {
     this.state = {
       connected: desktopConnextionType.disconnected,
     }
+    this.queryParams = new QueryParams()
+   
+    this.params = this.queryParams.get()
+    console.log('DesktopClient params', this.params)
+    
   }
 
   onActivation() {
@@ -148,7 +156,7 @@ export class DesktopClient extends ViewPlugin {
     this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
     console.log('Connecting to server')
     try {
-      this.ws = new WebSocket('ws://localhost:8546')
+      this.ws = new WebSocket(`ws://localhost:${this.params.desktopClientPort}`)
     } catch (e) {
       console.error('CATCH WebSocket error:', e)
       return
