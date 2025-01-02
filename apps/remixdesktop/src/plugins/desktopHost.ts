@@ -84,7 +84,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
 
     async sendAsync(data: RequestArguments) {
         //console.log('SEND ASYNC', data)
-        const result = await handleRequest(data)
+        const result = await handleRequest(data, eventEmitter)
         //console.log('RESULT', result)
         return result
     }

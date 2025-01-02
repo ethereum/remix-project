@@ -72,6 +72,20 @@ export class DesktopClient extends ViewPlugin {
     _paq.push(['trackEvent', 'plugin', 'activated', 'DesktopClient'])
 
     this.connectToWebSocket()
+
+    const modalContent: AppModal = {
+      id: this.profile.name,
+      title: 'Instructions for Metamask for Remix Desktop.',
+      message: `
+      1. Select the "Injected Provider - Metamask" in the environment and log in to your account.
+      \n2. Return to the desktop application.
+      \n3. You can now use the Metamask extension to sign transactions and interact with the blockchain.
+      \n\nPlease note that the Metamask extension must be installed in your browser.`,	
+      modalType: ModalTypes.default,
+      okLabel: 'OK',
+    }
+    
+    this.call('notification', 'modal' as any, modalContent)
   }
 
   onDeactivation() {}
