@@ -27,8 +27,8 @@ export const handleRequest = async (
         const timeout = setTimeout(() => reject(new Error('Timeout waiting for WebSocket response')), 240000); // 10 seconds timeout
 
         connectedWebSocket && connectedWebSocket.once('message', (data: string) => {
-            
-           
+
+
             if (Buffer.isBuffer(data)) {
                 data = data.toString('utf-8');
             }
@@ -39,10 +39,33 @@ export const handleRequest = async (
             try {
                 const response = JSON.parse(data);
                 if (response.id === jsonRpcPayload.id) {
-                    if(jsonRpcPayload.method === 'eth_sendTransaction') {
+                    if (jsonRpcPayload.method === 'eth_sendTransaction') {
                         console.log('response from WebSocket client:', response);
                     }
-                    resolve(response.result);
+                    if (response.error) {
+                        const error = { data: response.error };
+                        if (error.data && error.data.originalError && error.data.originalError.data) {
+                            resolve({
+                                jsonrpc: '2.0',
+                                error: error.data.originalError,
+                                id: response.id
+                            })
+                        } else if (error.data && error.data.message) {
+                            resolve({
+                                jsonrpc: '2.0',
+                                error: error.data && error.data,
+                                id: response.id
+                            })
+                        } else {
+                            resolve({
+                                jsonrpc: '2.0',
+                                error,
+                                id: response.id
+                            })
+                        }
+                    } else {
+                        resolve(response.result);
+                    }
                 } else {
                     console.log('ignore response from WebSocket client:', data);
                     //reject(new Error('Invalid response ID'));
@@ -53,7 +76,7 @@ export const handleRequest = async (
         });
 
         connectedWebSocket && connectedWebSocket.send(JSON.stringify(jsonRpcPayload), (err) => {
-            if(jsonRpcPayload.method === 'eth_sendTransaction') {
+            if (jsonRpcPayload.method === 'eth_sendTransaction') {
                 console.log('sent message to WebSocket client:', jsonRpcPayload);
             }
             if (err) {
@@ -139,14 +162,14 @@ export const startRPCServer = (eventEmitter: EventEmitter) => {
         connectedWebSocket = ws;
         eventEmitter.emit('connected', true);
 
-        
+
 
         connectedWebSocket.on('message', (data: string) => {
             if (Buffer.isBuffer(data)) {
                 data = data.toString('utf-8');
             }
             const response = JSON.parse(data);
-            if(response && response.type) {
+            if (response && response.type) {
                 console.log('received message from WebSocket client:', response);
                 eventEmitter.emit(response.type, response.payload);
             }
