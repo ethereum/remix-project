@@ -39,7 +39,9 @@ export const handleRequest = async (
             try {
                 const response = JSON.parse(data);
                 if (response.id === jsonRpcPayload.id) {
-                    //console.log('response from WebSocket client:', response);
+                    if(jsonRpcPayload.method === 'eth_sendTransaction') {
+                        console.log('response from WebSocket client:', response);
+                    }
                     resolve(response.result);
                 } else {
                     console.log('ignore response from WebSocket client:', data);
@@ -51,6 +53,9 @@ export const handleRequest = async (
         });
 
         connectedWebSocket && connectedWebSocket.send(JSON.stringify(jsonRpcPayload), (err) => {
+            if(jsonRpcPayload.method === 'eth_sendTransaction') {
+                console.log('sent message to WebSocket client:', jsonRpcPayload);
+            }
             if (err) {
                 clearTimeout(timeout);
                 reject(err);

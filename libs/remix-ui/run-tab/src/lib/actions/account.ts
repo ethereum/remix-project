@@ -16,6 +16,7 @@ export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Disp
 }
 
 export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  console.log('fillAccountsList')
   try {
     dispatch(fetchAccountsListRequest())
     try {

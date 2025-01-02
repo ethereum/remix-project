@@ -149,7 +149,7 @@ export class DesktopClient extends ViewPlugin {
 
     this.ws.onmessage = async (event) => {
       const parsed = JSON.parse(event.data)
-      console.log('Message from server:', parsed)
+      //console.log('Message from server:', parsed)
       if (parsed && parsed.type === 'error') {
         if (parsed.payload === 'ALREADY_CONNECTED') {
           console.log('ALREADY_CONNECTED')
@@ -167,12 +167,13 @@ export class DesktopClient extends ViewPlugin {
         }
       }
       const result = await this.call('web3Provider', 'sendAsync', JSON.parse(event.data))
+
+      this.ws.send(JSON.stringify(result))
       if (parsed.method === 'eth_sendTransaction') {
         console.log('Message from server:', parsed)
         console.log('Result:', result)
-        this.ws.send(JSON.stringify({ type: 'focus' }))
+        //this.ws.send(JSON.stringify({ type: 'focus' }))
       }
-      this.ws.send(JSON.stringify(result))
       return result
     }
 
