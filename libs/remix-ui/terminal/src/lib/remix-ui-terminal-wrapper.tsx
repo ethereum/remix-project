@@ -25,7 +25,7 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
     if (appContext.appState.connectedToDesktop === desktopConnextionType.connected) {
       dispatchXterm({ type: 'SET_TERMINAL_TAB', payload: 'transactions' })
     }
-  },[appContext.appState.connectedToDesktop])
+  }, [appContext.appState.connectedToDesktop])
 
   if (appContext.appState.connectedToDesktop === desktopConnextionType.disconnected) {
     return <></>
@@ -35,7 +35,7 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
     return <>
       <TerminalContext.Provider value={providerState}>
         <RemixUITerminalBar {...props} />
-        <TerminalTransactions plugin={props.plugin} />
+        {platform !== appPlatformTypes.desktop && <RemixUiTerminal {...props} />}
       </TerminalContext.Provider>
     </>
   }
@@ -48,7 +48,7 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
         <>
           <RemixUiTerminal visible={xtermState.selectedTerminalTab === 'output'} plugin={props.plugin} onReady={props.onReady} />
           <RemixUiXterminals {...props} />
-          <TerminalTransactions plugin={props.plugin} />
+          {/* <TerminalTransactions plugin={props.plugin} /> */}
         </>
       }
     </TerminalContext.Provider>

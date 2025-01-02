@@ -37,6 +37,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
 
   if (appContext.appState.connectedToDesktop === desktopConnextionType.connected) {
 
+    return null
     return (
       <div className='d-flex flex-row align-items-center'>
 
@@ -58,11 +59,11 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
         onClick={async (e) => await showTerminal(e)}>
         <span className="far fa-terminal border-0 ml-1"></span>
       </button>
-      <button data-id="tab" id="tabTransactionsDebugger" className={`xtermButton w-100 btn btn-sm border-secondary btn-secondary'}`}
+{/*       <button data-id="tab" id="tabTransactionsDebugger" className={`xtermButton w-100 btn btn-sm border-secondary btn-secondary'}`}
         onClick={async (e) => await showTransactions(e)}
       >
         pending transactions
-      </button>
+      </button> */}
     </div>
   )
 }

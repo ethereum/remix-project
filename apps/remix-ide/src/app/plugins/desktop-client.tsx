@@ -56,7 +56,7 @@ const DesktopClientUI = (props: DesktopClientState) => {
 export class DesktopClient extends ViewPlugin {
   blockchain: Blockchain
   ws: WebSocket
-  dispatch: React.Dispatch<any> = () => {}
+  dispatch: React.Dispatch<any> = () => { }
   state: DesktopClientState
   appStateDispatch: React.Dispatch<AppAction>
   queryParams: QueryParams
@@ -69,10 +69,10 @@ export class DesktopClient extends ViewPlugin {
       connected: desktopConnextionType.disconnected,
     }
     this.queryParams = new QueryParams()
-   
+
     this.params = this.queryParams.get()
     console.log('DesktopClient params', this.params)
-    
+
   }
 
   onActivation() {
@@ -88,15 +88,15 @@ export class DesktopClient extends ViewPlugin {
       1. Select the "Injected Provider - Metamask" in the environment and log in to your account.
       \n2. Return to the desktop application.
       \n3. You can now use the Metamask extension to sign transactions and interact with the blockchain.
-      \n\nPlease note that the Metamask extension must be installed in your browser.`,	
+      \n\nPlease note that the Metamask extension must be installed in your browser.`,
       modalType: ModalTypes.default,
       okLabel: 'OK',
     }
-    
+
     this.call('notification', 'modal' as any, modalContent)
   }
 
-  onDeactivation() {}
+  onDeactivation() { }
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
@@ -165,7 +165,10 @@ export class DesktopClient extends ViewPlugin {
       console.log('Connected to server')
       this.emit('connected', true)
       this.setConnectionState(desktopConnextionType.connected)
-
+      this.call('terminal', 'log', {
+        value: 'Connected to the desktop application.',
+        type: 'info',
+      })
       this.blockchain.event.register('networkStatus', this.handleNetworkStatus.bind(this))
     }
 
@@ -179,22 +182,32 @@ export class DesktopClient extends ViewPlugin {
           const modalContent: AppModal = {
             id: this.profile.name,
             title: 'Another tab or window is already connected.',
-            message: 'Another tab or window is already connected to the desktop application. Please close this tab or window.',	
+            message: 'Another tab or window is already connected to the desktop application. Please close this tab or window.',
             modalType: ModalTypes.fixed,
             okLabel: null
           }
-          
+
           this.call('notification', 'modal' as any, modalContent)
           return
         }
       }
-      const result = await this.call('web3Provider', 'sendAsync', JSON.parse(event.data))
+      if (parsed.method === 'eth_sendTransaction') {
+        this.call('terminal', 'log', {
+          value: 'Transaction from desktop client: ' + event.data,
+          type: 'info',
+        })
+      }
+
+      const result = await this.call('web3Provider', 'sendAsync', parsed)
 
       this.ws.send(JSON.stringify(result))
       if (parsed.method === 'eth_sendTransaction') {
         console.log('Message from server:', parsed)
         console.log('Result:', result)
-        //this.ws.send(JSON.stringify({ type: 'focus' }))
+        this.call('terminal', 'log', {
+          value: 'Result: ' + JSON.stringify(result),
+          type: 'info',
+        })
       }
       return result
     }
@@ -241,7 +254,7 @@ export class DesktopClient extends ViewPlugin {
     //}
   }
 
-  async init() {}
+  async init() { }
 
-  async sendAsync(payload: any) {}
+  async sendAsync(payload: any) { }
 }
