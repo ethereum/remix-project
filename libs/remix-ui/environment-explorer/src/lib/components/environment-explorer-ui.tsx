@@ -67,6 +67,10 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
     })
   }, [state])
 
+  const deleteForkedState = async (provider) => {
+    console.log(provider)
+  }
+
   return (
     <>
       <RemixUIGridView
@@ -102,6 +106,19 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                   }}
                 >
                   <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  { provider.isForkedState && <CustomTooltip
+                        placement="auto"
+                        tooltipId={`overlay-tooltip-${provider.name}`}
+                        tooltipText="Delete forked state"
+                      >
+                        <span
+                          onClick={async () => deleteForkedState(provider)}
+                          className="btn btn-sm mt-1 border border-danger"
+                        >
+                          Delete
+                        </span>
+                      </CustomTooltip>
+                  }
                 </RemixUIGridCell>
               ))}
             </RemixUIGridSection>
