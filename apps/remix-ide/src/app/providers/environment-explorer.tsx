@@ -95,11 +95,11 @@ export class EnvironmentExplorer extends ViewPlugin {
 
   updateComponent(state: EnvironmentExplorerState) {
     return (<>
-      <EnvironmentExplorerUI 
-        pinStateCallback={this.pinStateCallback.bind(this)} 
-        deleteForkedState={this.deleteForkedState.bind(this)} 
-        profile={profile} 
-        state={state} 
+      <EnvironmentExplorerUI
+        pinStateCallback={this.pinStateCallback.bind(this)}
+        deleteForkedState={this.deleteForkedState.bind(this)}
+        profile={profile}
+        state={state}
       />
     </>)
   }
