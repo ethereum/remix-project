@@ -11,6 +11,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { AbstractVerifier, getVerifier } from '../Verifiers'
 import { VerifyFormContext } from '../VerifyFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
+import { FormattedMessage } from 'react-intl'
 
 export const VerifyView = () => {
   const { compilationOutput, setSubmittedContracts, settings, clientInstance } = useContext(AppContext)
@@ -179,7 +180,7 @@ export const VerifyView = () => {
     <form onSubmit={handleVerify}>
       <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
       <ContractAddressInput
-        label="Contract Address"
+        label={<FormattedMessage id="contract-verification.contractAddressInput" />}
         id="contract-address"
         contractAddress={contractAddress}
         setContractAddress={setContractAddress}
@@ -200,11 +201,11 @@ export const VerifyView = () => {
         <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
           <input id="has-proxy" className="form-check-input custom-control-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
           <label htmlFor="has-proxy" className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }}>
-            The deployed contract is behind a proxy
+            <FormattedMessage id="contract-verification.proxyInputLabel" />
           </label>
         </div>
         {hasProxy && <ContractAddressInput
-          label="Proxy Address"
+          label={<FormattedMessage id="contract-verification.proxyContractAddressInput" />}
           id="proxy-address"
           contractAddress={proxyAddress}
           setContractAddress={setProxyAddress}
