@@ -15,7 +15,7 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM
+    filterFn: (provider) => provider.isVM && !provider.isForkedVM
   },
   'Forked States': {
     title: 'Deploy to an In-browser Forked State.',
