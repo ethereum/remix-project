@@ -1,7 +1,11 @@
 {
-  "contractverification.verifyNavTitle": "Verify",
-  "contractverification.receiptsNavTitle": "Receipts",
-  "contractverification.lookupNavTitle": "Lookup",
-  "contractverification.settingsNavTitle": "Settings",
-  "contractverification.contractAddressInput": "Contract Address"
+  "contract-verification.verifyNavTitle": "Verify",
+  "contract-verification.receiptsNavTitle": "Receipts",
+  "contract-verification.lookupNavTitle": "Lookup",
+  "contract-verification.settingsNavTitle": "Settings",
+  "contract-verification.contractAddressInput": "Contract Address",
+  "contract-verification.proxyContractAddressInput": "Proxy Address",
+  "contract-verification.proxyInputLabel": "The deployed contract is behind a proxy"
 }
+
+

@@ -27,10 +27,10 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
 export const NavMenu = () => {
   return (
     <nav className="d-flex medium flex-row w-100" style={{ backgroundColor: 'var(--body-bg)!important' }}>
-      <NavItem to="/" icon={<i className="fas fa-home"></i>} title={ <FormattedMessage id="contractverification.verifyNavTitle" /> } />
-      <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title={ <FormattedMessage id="contractverification.receiptsNavTitle" /> } />
-      <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title={ <FormattedMessage id="contractverification.lookupNavTitle" /> } />
-      <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title={ <FormattedMessage id="contractverification.settingsNavTitle" /> } />
+      <NavItem to="/" icon={<i className="fas fa-home"></i>} title={ <FormattedMessage id="contract-verification.verifyNavTitle" /> } />
+      <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title={ <FormattedMessage id="contract-verification.receiptsNavTitle" /> } />
+      <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title={ <FormattedMessage id="contract-verification.lookupNavTitle" /> } />
+      <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title={ <FormattedMessage id="contract-verification.settingsNavTitle" /> } />
     </nav>
   )
 }
