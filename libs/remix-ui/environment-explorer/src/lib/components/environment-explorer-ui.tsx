@@ -103,17 +103,17 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                 >
                   <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                   { provider.isForkedState && <CustomTooltip
-                        placement="auto"
-                        tooltipId={`overlay-tooltip-${provider.name}`}
-                        tooltipText="Delete Environment Immediately"
-                      >
-                        <span
-                          onClick={async () => props.deleteForkedState(provider)}
-                          className="btn btn-sm mt-1 border border-danger"
-                        >
+                    placement="auto"
+                    tooltipId={`overlay-tooltip-${provider.name}`}
+                    tooltipText="Delete Environment Immediately"
+                  >
+                    <span
+                      onClick={async () => props.deleteForkedState(provider)}
+                      className="btn btn-sm mt-1 border border-danger"
+                    >
                           Delete Environment
-                        </span>
-                      </CustomTooltip>
+                    </span>
+                  </CustomTooltip>
                   }
                 </RemixUIGridCell>
               ))}
