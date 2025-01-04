@@ -10,7 +10,7 @@ const DisplayRoutes = () => (
       <Route
         path="/"
         element={
-          <DefaultLayout from="/" title="LookupABI" description="cSearch for verified contracts and download the ABI to Remix">
+          <DefaultLayout from="/" title="LookupABI" description="Search for verified contracts and download the ABI to Remix">
             <LookupABIView />
           </DefaultLayout>
         }

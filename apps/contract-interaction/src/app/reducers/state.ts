@@ -70,6 +70,29 @@ export const appReducer = (state = appInitialState, action: Action): State => {
       }
     }
 
+    case PIN_INSTANCE: {
+      const payload: { index: number, pinnedTimestamp: number } = action.payload
+      state.contractInstances[payload.index].isPinned = true
+      state.contractInstances[payload.index].pinnedTimestamp = payload.pinnedTimestamp
+      return {
+        ...state,
+        contractInstances: [
+          ...state.contractInstances,
+        ]
+      }
+    }
+
+    case UNPIN_INSTANCE: {
+      const payload: { index: number } = action.payload
+      state.contractInstances[payload.index].isPinned = false
+      return {
+        ...state,
+        contractInstances: [
+          ...state.contractInstances,
+        ]
+      }
+    }
+
     // case UPDATE_INSTANCES_BALANCE: {
     //   const payload: Array<{ contractData: ContractData, address: string, balance: number, name: string, abi?: any, decodedResponse?: Record<number, any> }> = action.payload
 
@@ -82,29 +105,7 @@ export const appReducer = (state = appInitialState, action: Action): State => {
     //   }
     // }
 
-    // case PIN_INSTANCE: {
-    //   const payload: { index: number, pinnedAt: number, filePath: string } = action.payload
-    //   state.instances.instanceList[payload.index].isPinned = true
-    //   state.instances.instanceList[payload.index].pinnedAt = payload.pinnedAt
-    //   state.instances.instanceList[payload.index].filePath = payload.filePath
-    //   return {
-    //     ...state,
-    //     instances: {
-    //       ...state.instances,
-    //     }
-    //   }
-    // }
 
-    // case UNPIN_INSTANCE: {
-    //   const payload: { index: number } = action.payload
-    //   state.instances.instanceList[payload.index].isPinned = false
-    //   return {
-    //     ...state,
-    //     instances: {
-    //       ...state.instances,
-    //     }
-    //   }
-    // }
 
     // case 'SET_SETTINGS':
     //   return {

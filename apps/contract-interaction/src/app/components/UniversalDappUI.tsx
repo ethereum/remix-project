@@ -9,20 +9,14 @@ import { CustomTooltip, is0XPrefixed, isHexadecimal, shortenAddress } from '@rem
 import { ReadWriteFunctions } from './ReadWriteFunctions'
 import { ABICategory, Chain, ContractInstance } from '../types'
 import { AppContext } from '../AppContext'
-import { removeInstanceAction } from '../actions'
+import { pinInstanceAction, unpinInstanceAction, removeInstanceAction } from '../actions'
 const _paq = (window._paq = window._paq || [])
 
 const CONTEXT = 'blockchain';
 
 export interface UdappProps {
-  // TODO
-  // removeInstance: (index: number) => void,
-  // pinInstance: (index: number, pinnedAt: number) => void,
-  // unpinInstance: (index: number) => void,
-  // getCompilerDetails: () => Promise<CheckStatus>
-  // runTabState: RunTabState
-
   // TODO:
+  // runTabState: RunTabState
   // runTransactions: (
   //   instanceIndex: number,
   //   lookupOnly: boolean,
@@ -38,7 +32,7 @@ export interface UdappProps {
   //   funcIndex?: number) => void,
   // sendValue: string,
   // passphrasePrompt: (message: string) => JSX.Element,
-  //  gasEstimationPrompt: (msg: string) => JSX.Element,
+  // gasEstimationPrompt: (msg: string) => JSX.Element,
   // mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
 
   evmCheckComplete?: boolean,
@@ -141,39 +135,33 @@ export function UniversalDappUI(props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
-  const unsavePinnedContract = async () => {
-    await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`)
-  }
-
   const removeContract = async () => {
     if (props.instance.isPinned) {
-      await unsavePinnedContract()
+      await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}/${props.instance.pinnedTimestamp}.json`)
+
       _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'removePin'])
     }
     await removeInstanceAction(props.index)
   }
 
-  //  TODO:
   const unpinContract = async () => {
-    await unsavePinnedContract()
-    _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'addPin'])
+    await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}/${props.instance.pinnedTimestamp}.json`)
+    _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'unPin'])
+    unpinInstanceAction(props.index)
   }
 
-  // TODO:
   const pinContract = async () => {
-    const objToSave = {
+    const pinnedTimestamp = Date.now()
+    const objToSave: ContractInstance = {
       name: props.instance.name,
       address: props.instance.address,
       // TODO:  "abi: props.instance.abi || props.instance.contractData.abi"
-      abiRead: props.instance.abi.Read,
-      abiWrite: props.instance.abi.Write,
-      abiProxyRead: props.instance.abi.ProxyRead,
-      abiProxyWrite: props.instance.abi.ProxyWrite,
-      pinnedTimestamp: Date.now()
+      abi: props.instance.abi,
+      pinnedTimestamp,
     }
-    await plugin.call('fileManager', 'writeFile', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
+    await plugin.call('fileManager', 'writeFile', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}/${props.instance.address}/${pinnedTimestamp}.json`, JSON.stringify(objToSave, null, 2))
     _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', `pinned at ${props.chain.chainId}`])
-    //  props.pinInstance(props.index, objToSave.pinnedAt, objToSave.filePath)
+    pinInstanceAction(props.index, pinnedTimestamp)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -287,7 +275,7 @@ export function UniversalDappUI(props: UdappProps) {
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
-            {props.instance.isPinned ? (<CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.instance.isPinned ? `Pinned for network ${props.chain.chainId}: XYZ, at:  ${new Date(props.instance.pinnedTimestamp).toLocaleString()}` : ''}>
+            {props.instance.isPinned ? (<CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.instance.isPinned ? `Pinned for network: ${props.chain.chainId}, timestamp:  ${new Date(props.instance.pinnedTimestamp).toLocaleString()}` : ''}>
               <span className="input-group-text udapp_spanTitleText">
                 {props.instance.name} at {shortenAddress(address)}
               </span>
@@ -330,55 +318,66 @@ export function UniversalDappUI(props: UdappProps) {
             </div>
           )}
 
-          <ReadWriteFunctions
-            // TODO
-            // runTransactions={props.runTransactions}
-            // sendValue={props.sendValue}
-            // gasEstimationPrompt={props.gasEstimationPrompt}
-            // passphrasePrompt={props.passphrasePrompt}
-            //  key={index}
-            // removeInstance={props.removeInstance}
-            //  index={index}
-            // mainnetPrompt={props.mainnetPrompt}
-            // getVersion={props.getVersion}
-            // getCompilerDetails={props.getCompilerDetails}
-            // runTabState={props.runTabState}
-            // funcABI={funcABI}
-            instance={props.instance}
-            getFuncABIInputs={props.getFuncABIInputs}
-            exEnvironment={props.exEnvironment}
-            editInstance={props.editInstance}
-            solcVersion={props.solcVersion}
-            evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.Read, abi: props.instance.abi.Read }} index={0}
-          />
-          <ReadWriteFunctions
-            instance={props.instance}
-            getFuncABIInputs={props.getFuncABIInputs}
-            exEnvironment={props.exEnvironment}
-            editInstance={props.editInstance}
-            solcVersion={props.solcVersion}
-            evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.Write, abi: props.instance.abi.Write }} index={1}
-          />
-          <ReadWriteFunctions
-            instance={props.instance}
-            getFuncABIInputs={props.getFuncABIInputs}
-            exEnvironment={props.exEnvironment}
-            editInstance={props.editInstance}
-            solcVersion={props.solcVersion}
-            evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.ProxyRead, abi: props.instance.abi.ProxyRead }} index={2}
-          />
-          <ReadWriteFunctions
-            instance={props.instance}
-            getFuncABIInputs={props.getFuncABIInputs}
-            exEnvironment={props.exEnvironment}
-            editInstance={props.editInstance}
-            solcVersion={props.solcVersion}
-            evmCheckComplete={props.evmCheckComplete}
-            contractABI={{ category: ABICategory.ProxyWrite, abi: props.instance.abi.ProxyWrite }} index={3}
-          />
+          {/* READ tab */}
+          {props.instance.abi.Read && props.instance.abi.Read.length > 0 && (
+            <ReadWriteFunctions
+              // TODO
+              // runTransactions={props.runTransactions}
+              // sendValue={props.sendValue}
+              // gasEstimationPrompt={props.gasEstimationPrompt}
+              // passphrasePrompt={props.passphrasePrompt}
+              // key={index}
+              // removeInstance={props.removeInstance}
+              // index={index}
+              // mainnetPrompt={props.mainnetPrompt}
+              // getVersion={props.getVersion}
+              // runTabState={props.runTabState}
+              // funcABI={funcABI}
+              instance={props.instance}
+              getFuncABIInputs={props.getFuncABIInputs}
+              exEnvironment={props.exEnvironment}
+              editInstance={props.editInstance}
+              solcVersion={props.solcVersion}
+              evmCheckComplete={props.evmCheckComplete}
+              contractABI={{ category: ABICategory.Read, abi: props.instance.abi.Read }} index={0}
+            />
+          )}
+          {/* WRITE tab */}
+          {props.instance.abi.Write && props.instance.abi.Write.length > 0 && (
+            <ReadWriteFunctions
+              instance={props.instance}
+              getFuncABIInputs={props.getFuncABIInputs}
+              exEnvironment={props.exEnvironment}
+              editInstance={props.editInstance}
+              solcVersion={props.solcVersion}
+              evmCheckComplete={props.evmCheckComplete}
+              contractABI={{ category: ABICategory.Write, abi: props.instance.abi.Write }} index={1}
+            />
+          )}
+          {/* PROXY_READ tab*/}
+          {props.instance.abi.ProxyRead && props.instance.abi.ProxyRead.length > 0 && (
+            <ReadWriteFunctions
+              instance={props.instance}
+              getFuncABIInputs={props.getFuncABIInputs}
+              exEnvironment={props.exEnvironment}
+              editInstance={props.editInstance}
+              solcVersion={props.solcVersion}
+              evmCheckComplete={props.evmCheckComplete}
+              contractABI={{ category: ABICategory.ProxyRead, abi: props.instance.abi.ProxyRead }} index={2}
+            />
+          )}
+          {/* PROXY_WRITE tab*/}
+          {props.instance.abi.ProxyWrite && props.instance.abi.ProxyWrite.length > 0 && (
+            <ReadWriteFunctions
+              instance={props.instance}
+              getFuncABIInputs={props.getFuncABIInputs}
+              exEnvironment={props.exEnvironment}
+              editInstance={props.editInstance}
+              solcVersion={props.solcVersion}
+              evmCheckComplete={props.evmCheckComplete}
+              contractABI={{ category: ABICategory.ProxyWrite, abi: props.instance.abi.ProxyWrite }} index={3}
+            />
+          )}
         </div>
         <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">

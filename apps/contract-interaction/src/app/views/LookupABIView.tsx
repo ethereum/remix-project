@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
-import type { LookupResponse, AbiProviderIdentifier } from '../types'
+import type { LookupResponse, AbiProviderIdentifier, Chain } from '../types'
 import { ABI_PROVIDERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -10,10 +10,10 @@ import { useNavigate } from 'react-router-dom'
 import { InteractionFormContext } from '../InteractionFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
 import { InstanceContainerUI } from '../components/InstanceContainerUI'
-import { setInstanceAction } from '../actions'
+import { clearInstancesAction, loadPinnedContractsAction, setInstanceAction } from '../actions'
 
 export const LookupABIView = () => {
-  const { appState, settings } = useContext(AppContext);
+  const { appState, settings, plugin } = useContext(AppContext);
   const contractInstances = appState.contractInstances;
 
   const { selectedChain, setSelectedChain } = useContext(InteractionFormContext)
@@ -36,13 +36,14 @@ export const LookupABIView = () => {
     setLoadingAbiProviders({})
   }, [selectedChain, contractAddress])
 
-  const handleSelectedChain = async (newSelectedChain) => {
+  const handleSelectedChain = async (newSelectedChain: Chain) => {
     setSelectedChain(newSelectedChain)
-    // const isPinnedAvailable = await props.plugin.call('fileManager', 'getFolder', `.looked-up-contracts/pinned-contracts/${newSelectedChain.chainId}`)
-    // if (isPinnedAvailable) {
-    //   await props.plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
-    //   _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
-    // }    // props.clearInstances()
+
+    // Clear all contract interfaces for the old chain.
+    await clearInstancesAction();
+
+    // Load pinned contracts for the new chain.
+    await loadPinnedContractsAction(plugin, newSelectedChain);
   }
 
   const handleLookup = (e) => {

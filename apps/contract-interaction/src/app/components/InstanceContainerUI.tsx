@@ -6,11 +6,8 @@ import { Chain } from '../types'
 import { AppContext } from '../AppContext'
 import { useContext } from 'react'
 import { clearInstancesAction } from '../actions'
-const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
-
-// TODO: fill initial state with the pinned contracts.
 
 const getFuncABIInputs = (funABI: any) => {
   if (!funABI.inputs) {
@@ -41,47 +38,27 @@ export interface InstanceContainerUIProps {
   // mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   // getFuncABIInputs: (funcABI: FuncABI) => string
 
-  // getCompilerDetails: () => Promise<CheckStatus>
   // runTabState: RunTabState
-  // clearInstances: () => void,
-  // removeInstance: (index: number) => void,
-  // pinInstance: (index: number, pinnedAt: number) => void,
-  // unpinInstance: (index: number) => void,
 
   evmCheckComplete?: boolean
-  // instances: {
-  //   instanceList: {
-  //     // contractData?: ContractData,
-  //     address: string,
-  //     balance?: number,
-  //     name: string,
-  //     decodedResponse?: Record<number, any>,
-  //     abi?: any,
-  //     isPinned?: boolean,
-  //     pinnedTimeStamp?: number
-  //   }[],
-  //   error: string
-  // },
   chain: Chain,
   editInstance: (instance) => void,
   exEnvironment: string
-  // plugin: ContractInteractionPluginClient
   solcVersion: { version: string, canReceive: boolean }
 }
-
 
 export function InstanceContainerUI(props: InstanceContainerUIProps) {
   const { appState, plugin } = useContext(AppContext);
   const contractInstances = appState.contractInstances;
 
   const clearInstances = async () => {
-
-    // const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
-    // if (isPinnedAvailable) {
-    //   await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
-    //   _paq.push(['trackEvent', 'contractInteraction', 'pinnedContracts', 'clearInstance'])
-    // }
     await clearInstancesAction()
+
+    const pinnedContracts = appState.contractInstances.filter((instance, _) => instance.isPinned == true);
+
+    if (pinnedContracts.length > 0) {
+      await plugin.call('fileManager', 'remove', `.looked-up-contracts/pinned-contracts/${props.chain.chainId}`)
+    }
   }
 
   return (
@@ -123,9 +100,6 @@ export function InstanceContainerUI(props: InstanceContainerUIProps) {
                 // gasEstimationPrompt={props.gasEstimationPrompt}
                 // passphrasePrompt={props.passphrasePrompt}
                 // context={getContext()}
-                // pinInstance={props.pinInstance}
-                // unpinInstance={props.unpinInstance}
-                // removeInstance={props.removeInstance}
                 // getVersion={props.getVersion}
                 // getCompilerDetails={props.getCompilerDetails}
                 // runTabState={props.runTabState}
