@@ -15,7 +15,7 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM
+    filterFn: (provider) => provider.isVM && !provider.isForkedVM
   },
   'Forked States': {
     title: 'Deploy to an In-browser Forked State.',
@@ -101,7 +101,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     await pinStateCallback(provider, pinned)
                   }}
                 >
-                  <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                 </RemixUIGridCell>
               ))}
             </RemixUIGridSection>

@@ -30,7 +30,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const forkStatePrompt = (defaultName: string) => {
     return (
-      <div>
+      <div data-id="forkVmStateModal">
         <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="udapp.forkStateLabel" />
         </label>
@@ -47,7 +47,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const deleteVmStatePrompt = () => {
     return (
-      <div>
+      <div data-id="deleteVmStateModal">
         <ul className='ml-3'>
           <li><FormattedMessage id="udapp.deleteVmStateDesc1"/></li>
           <li><FormattedMessage id="udapp.deleteVmStateDesc2"/></li>
@@ -128,10 +128,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
         </CustomTooltip> }
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.deleteVmStateTitle" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-trash" style={{ cursor: 'pointer' }} onClick={deleteVmState}></i>
+          <i className="udapp_infoDeployAction ml-2 fas fa-trash" style={{ cursor: 'pointer' }} onClick={deleteVmState} data-id="delete-state-icon"></i>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
