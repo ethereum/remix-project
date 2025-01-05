@@ -1,7 +1,7 @@
 import { PluginClient } from '@remixproject/plugin';
 import ContractInteractionPluginClient from '../ContractInteractionPluginClient';
 
-import { CLEAR_INSTANCES, PIN_INSTANCE, REMOVE_INSTANCE, SET_INSTANCE, UNPIN_INSTANCE } from "../reducers/state"
+import { CLEAR_INSTANCES, PIN_INSTANCE, REMOVE_INSTANCE, SET_GAS_LIMIT, SET_INSTANCE, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, UNPIN_INSTANCE } from "../reducers/state"
 import { Chain, ContractInstance } from '../types/AbiProviderTypes';
 
 let dispatch: React.Dispatch<any>
@@ -96,3 +96,32 @@ export const clearInstancesAction = () => {
         type: CLEAR_INSTANCES
     })
 }
+
+export const setSelectedAccountAction = (selectedAccount: string) => {
+    dispatch({
+        type: SET_SELECTED_ACCOUNT,
+        payload: selectedAccount
+    })
+}
+
+export const setSendValue = (sendValue: string) => {
+    dispatch({
+        type: SET_SEND_VALUE,
+        payload: sendValue
+    })
+}
+
+export const setSendUnit = (sendUnit: string) => {
+    dispatch({
+        type: SET_SEND_UNIT,
+        payload: sendUnit
+    })
+}
+
+export const setGasLimit = (gasLimit: number) => {
+    dispatch({
+        type: SET_GAS_LIMIT,
+        payload: gasLimit
+    })
+}
+

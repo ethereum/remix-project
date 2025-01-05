@@ -1,7 +1,7 @@
 import React from 'react'
 import type { ThemeType, Chain, ContractInteractionSettings } from './types'
 import { ContractInteractionPluginClient } from './ContractInteractionPluginClient'
-import { State } from './reducers/state'
+import { appInitialState, State } from './reducers/state'
 
 // Define the type for the context
 type AppContextType = {
@@ -20,7 +20,7 @@ const defaultContextValue: AppContextType = {
   // setThemeType: (themeType: ThemeType) => { },
   plugin: {} as ContractInteractionPluginClient,
   settings: { chains: {} },
-  appState: { loading: { screen: true }, contractInstances: [] },
+  appState: appInitialState,
   setSettings: () => { },
   chains: [],
 }

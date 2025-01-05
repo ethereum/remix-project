@@ -1,6 +1,6 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-import { LookupABIView, SettingsView } from './views'
+import { GetABIView, InteractView, SettingsView } from './views'
 import { DefaultLayout } from './layouts'
 
 const DisplayRoutes = () => (
@@ -10,8 +10,17 @@ const DisplayRoutes = () => (
       <Route
         path="/"
         element={
-          <DefaultLayout from="/" title="LookupABI" description="Search for verified contracts and download the ABI to Remix">
-            <LookupABIView />
+          <DefaultLayout from="/" title="GetABI" description="Lookup or decode the smart contract ABI">
+            <GetABIView />
+          </DefaultLayout>
+        }
+      />
+
+      <Route
+        path="/interact"
+        element={
+          <DefaultLayout from="/" title="Interact" description="Interact with smart contracts on-chain">
+            <InteractView />
           </DefaultLayout>
         }
       />

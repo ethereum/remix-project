@@ -13,7 +13,7 @@ import { InstanceContainerUI } from '../components/InstanceContainerUI'
 import { clearInstancesAction, loadPinnedContractsAction, setInstanceAction } from '../actions'
 import { FormattedMessage } from 'react-intl'
 
-export const LookupABIView = () => {
+export const GetABIView = () => {
   const { appState, settings, plugin } = useContext(AppContext);
   const contractInstances = appState.contractInstances;
 
@@ -27,7 +27,6 @@ export const LookupABIView = () => {
   const navigate = useNavigate()
 
   const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
-  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [deriveFromContractAddress, setDeriveFromContractAddress] = useState<boolean>(true)
 
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
@@ -223,10 +222,6 @@ export const LookupABIView = () => {
     }
   }
 
-  const toggleConfigurations = () => {
-    setToggleExpander(!toggleExpander)
-  }
-
   return (
     <>
       <form>
@@ -393,19 +388,6 @@ export const LookupABIView = () => {
               </div>
             )
           })}
-      </div>
-
-      <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
-        <div className="d-flex">
-          <label className="mt-1 remixui_compilerConfigSection">
-            <FormattedMessage id="contractInteraction.environment" defaultMessage="Environment" />
-          </label>
-        </div>
-        <div>
-          <span data-id="scConfigExpander" onClick={toggleConfigurations}>
-            <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
-          </span>
-        </div>
       </div>
 
       {contractInstances.length > 0 && (
