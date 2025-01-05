@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React from 'react'
 import { ethers } from 'ethers/'
 
 interface ContractAddressInputProps {
-  label: string
-  id: string
   contractAddress: string
   setContractAddress: (address: string) => void
   contractAddressError: string
@@ -11,7 +9,7 @@ interface ContractAddressInputProps {
 }
 
 // Chooses one contract from the compilation output.
-export const ContractAddressInput: React.FC<ContractAddressInputProps> = ({ label, id, contractAddress, setContractAddress, contractAddressError, setContractAddressError }) => {
+export const ContractAddressInput: React.FC<ContractAddressInputProps> = ({ contractAddress, setContractAddress, contractAddressError, setContractAddressError }) => {
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isValidAddress = ethers.utils.isAddress(event.target.value)
     setContractAddress(event.target.value)
@@ -25,9 +23,8 @@ export const ContractAddressInput: React.FC<ContractAddressInputProps> = ({ labe
 
   return (
     <div className="form-group">
-      <label htmlFor={id}>{label}</label>
       <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
-      <input type="text" className="form-control" id={id} placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
+      <input type="text" className="form-control" id="contractAddressInput" placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
     </div>
   )
 }

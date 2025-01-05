@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { SearchableChainDropdown, ContractAddressInput } from '../components'
+import { SearchableChainDropdown, ContractAddressInput, RawBytecodeInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import type { LookupResponse, AbiProviderIdentifier, Chain } from '../types'
 import { ABI_PROVIDERS } from '../types'
@@ -11,6 +11,7 @@ import { InteractionFormContext } from '../InteractionFormContext'
 import { useSourcifySupported } from '../hooks/useSourcifySupported'
 import { InstanceContainerUI } from '../components/InstanceContainerUI'
 import { clearInstancesAction, loadPinnedContractsAction, setInstanceAction } from '../actions'
+import { FormattedMessage } from 'react-intl'
 
 export const LookupABIView = () => {
   const { appState, settings, plugin } = useContext(AppContext);
@@ -19,16 +20,25 @@ export const LookupABIView = () => {
   const { selectedChain, setSelectedChain } = useContext(InteractionFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
+  const [rawBytecode, setRawBytecode] = useState('')
+  const [rawBytecodeError, setRawBytecodeError] = useState('')
   const [loadingAbiProviders, setLoadingAbiProviders] = useState<Partial<Record<AbiProviderIdentifier, boolean>>>({})
   const [lookupResults, setLookupResult] = useState<Partial<Record<AbiProviderIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
 
   const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
+  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
+  const [deriveFromContractAddress, setDeriveFromContractAddress] = useState<boolean>(true)
 
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
   const noAbiProviderEnabled = ABI_PROVIDERS.every((abiProviderIndex) => !validConfiguration(chainSettings, abiProviderIndex) || (abiProviderIndex === 'Sourcify' && !sourcifySupported))
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noAbiProviderEnabled
+
+  const canDecodeFromContractAddress = deriveFromContractAddress && !contractAddressError && contractAddress && selectedChain && !noAbiProviderEnabled
+  const canDecodeFromByteCode = !deriveFromContractAddress && !rawBytecodeError && rawBytecode
+
+  const decodeDisabled = (!canDecodeFromContractAddress && !canDecodeFromByteCode)
+  const lookUpDisabled = !!contractAddressError || !contractAddress || !selectedChain || noAbiProviderEnabled || !deriveFromContractAddress
 
   // Reset results when chain or contract changes
   useEffect(() => {
@@ -48,7 +58,7 @@ export const LookupABIView = () => {
 
   const handleLookup = (e) => {
     if (Object.values(loadingAbiProviders).some((loading) => loading)) {
-      console.error('Lookup request already running')
+      console.error('Lookup or Decoding request already running')
       return
     }
 
@@ -66,7 +76,6 @@ export const LookupABIView = () => {
         .lookupABI(contractAddress)
         .then((contractABI) => {
           if (contractABI) {
-
             setInstanceAction({
               address: contractAddress,
               // TODO: have to give a different name since removing contracts might leave gaps in the list
@@ -74,6 +83,8 @@ export const LookupABIView = () => {
               abi: contractABI,
               isPinned: false
             })
+          } else {
+            throw new Error(`Couldn't fetch 'ABI' from provider: ${abiProviderIndex}.`)
           }
         })
         .catch((err) =>
@@ -86,16 +97,194 @@ export const LookupABIView = () => {
     }
   }
 
+  async function getBytecode(contractAddress): Promise<String | undefined> {
+    // If the user has opted for manual input, return the inputted bytecode.
+    if (!deriveFromContractAddress) {
+      return rawBytecode;
+    }
+
+    // Filter the providers to only those with valid configurations.
+    const validProviders = ABI_PROVIDERS.filter(
+      (abiProviderIndex) =>
+        validConfiguration(chainSettings, abiProviderIndex) &&
+        (abiProviderIndex !== 'Sourcify' || sourcifySupported)
+    );
+
+    if (validProviders.length === 0) {
+      throw new Error("No valid providers are configured.");
+    }
+
+    // Set all providers state to loading.
+    validProviders.map(abiProviderIndex => setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: true })))
+
+    // Create an array of promises for fetching bytecode from the differnt providers.
+    const fetchPromises = validProviders.map(async (abiProviderIndex) => {
+
+      try {
+        const abiProvider = getAbiProvider(
+          abiProviderIndex,
+          chainSettings.abiProviders[abiProviderIndex]
+        );
+
+        const byteCode = await abiProvider.lookupBytecode(contractAddress);
+        setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: false }))
+
+        if (byteCode) {
+          console.log(`Fetched bytecode from provider '${abiProviderIndex}'`);
+          return byteCode;
+        } else {
+          console.warn(`Provider '${abiProviderIndex}' returned no bytecode.`);
+          return undefined;
+        }
+      } catch (err) {
+        console.warn(`Error fetching bytecode from provider '${abiProviderIndex}':`, err);
+        return undefined;
+      }
+    });
+
+    // Resolve all promises and filter out undefined results.
+    const results = (await Promise.all(fetchPromises)).filter(Boolean);
+
+    // Check if there is at least one successful result.
+    if (results.length > 0) {
+      // Return the first successfully fetched bytecode.
+      return results[0];
+    } else {
+      console.error("All providers failed to fetch bytecode.");
+      throw new Error("Failed to fetch bytecode from all providers.");
+    }
+  }
+
+  const handleDecode = async (e) => {
+
+    if (Object.values(loadingAbiProviders).some((loading) => loading)) {
+      console.error('Lookup or Decoding request already running')
+      return
+    }
+
+    e.preventDefault()
+
+    let bytecodeToDecode = await getBytecode(contractAddress);
+
+    if (bytecodeToDecode) {
+      console.error(`TODO: decode the bytecode: ${bytecodeToDecode}`)
+    } else {
+      // No contract address because no bytecode at address or failed to load data from API provider 
+    }
+  }
+
+  const toggleConfigurations = () => {
+    setToggleExpander(!toggleExpander)
+  }
+
   return (
     <>
-      <form onSubmit={handleLookup}>
+      <form>
         <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={handleSelectedChain} />
 
-        <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
+        <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+          <input
+            className="custom-control-input"
+            type="radio"
+            name="configradio"
+            value="manual"
+            onChange={() => setDeriveFromContractAddress(true)}
+            checked={deriveFromContractAddress}
+            id="scManualConfig"
+          />
+          <label className="form-check-label custom-control-label" htmlFor="scManualConfig" data-id="scManualConfiguration">
+            <FormattedMessage id="contractInteraction.contractAddress" defaultMessage="Contract Address" />
+          </label>
+        </div>
 
-        <button type="submit" className="btn btn-primary" disabled={submitDisabled}>
-          Lookup
-        </button>
+
+        <div className={`flex-column 'd-flex'}`}>
+          <div className="mb-2 ml-4">
+            <CustomTooltip
+              placement="right"
+              tooltipId="compilerLabelTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={
+                <span>
+                  <FormattedMessage id="solidity.tooltipText6" />
+                </span>
+              }
+            >
+              <ContractAddressInput contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
+            </CustomTooltip>
+          </div>
+        </div>
+        <div className="d-flex pb-1 remixui_compilerConfig custom-control custom-radio">
+          <input
+            className="custom-control-input"
+            type="radio"
+            name="configradio"
+            value="manual"
+            onChange={() => setDeriveFromContractAddress(false)}
+            checked={!deriveFromContractAddress}
+            id="scManualConfig2"
+          />
+          <label className="form-check-label custom-control-label" htmlFor="scManualConfig2" data-id="scManualConfiguration2">
+            <FormattedMessage id="contractInteraction.deployedByteCode" defaultMessage="Deployed Bytecode" />
+          </label>
+        </div>
+        <div className={`flex-column 'd-flex'}`}>
+          <div className="mb-2 ml-4">
+            <CustomTooltip
+              placement="right"
+              tooltipId="compilerLabelTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={
+                <span>
+                  <FormattedMessage id="solidity.tooltipText6" />
+                </span>
+              }
+            >
+              <RawBytecodeInput rawBytecode={rawBytecode} setRawBytecode={setRawBytecode} rawBytecodeError={rawBytecodeError} setRawBytecodeError={setRawBytecodeError} />
+            </CustomTooltip>
+          </div>
+        </div>
+
+        <div className="d-flex justify-content-between align-items-center">
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="compilerLabelTooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText={
+              <span>
+                <FormattedMessage id="contractInteraction.lookupABI" />
+              </span>
+            }
+          >
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={lookUpDisabled}
+              onClick={handleLookup}
+            >
+              Lookup ABI
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="compilerLabelTooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText={
+              <span>
+                <FormattedMessage id="contractInteraction.decodeABI" />
+              </span>
+            }
+          >
+            <button
+              type="button"
+              className="btn btn-primary ml-auto"
+              disabled={decodeDisabled}
+              onClick={handleDecode}
+            >
+              Decode ABI
+            </button>
+          </CustomTooltip>
+        </div>
       </form>
       <div className="pt-3">
         {chainSettings &&
@@ -154,6 +343,19 @@ export const LookupABIView = () => {
               </div>
             )
           })}
+      </div>
+
+      <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
+        <div className="d-flex">
+          <label className="mt-1 remixui_compilerConfigSection">
+            <FormattedMessage id="contractInteraction.environment" defaultMessage="Environment" />
+          </label>
+        </div>
+        <div>
+          <span data-id="scConfigExpander" onClick={toggleConfigurations}>
+            <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>
+          </span>
+        </div>
       </div>
 
       {contractInstances.length > 0 && (

@@ -8,6 +8,12 @@ export class SourcifyAbiProvider extends AbstractAbiProvider {
     console.error("Not yet implemented")
     return undefined
   }
+
+  // TODO
+  async lookupBytecode(contractAddress: string): Promise<undefined> {
+    console.error("Not yet implemented")
+    return undefined
+  }
 }
 
 

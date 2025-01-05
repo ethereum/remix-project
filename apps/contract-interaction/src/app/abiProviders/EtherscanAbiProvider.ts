@@ -1,5 +1,6 @@
 import { AbstractAbiProvider } from './AbstractAbiProvider'
 import { ContractABI, ABICategoryBlockScout } from '../types'
+import { FuncABI } from '@remix-project/core-plugin'
 
 export class EtherscanAbiProvider extends AbstractAbiProvider {
   LOOKUP_STORE_DIR = 'etherscan-verified'
@@ -12,6 +13,7 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
   /**
    * Get the blockexplorer specific URL for fetching the smart contract ABI.
    *
+   * @param contractAddress - The contract address.
    * @param ABICategory - The sub type of the ABI (one of the values: 'read' | 'write' | 'readProxy' | 'writeProxy').
    * @returns The url to fetch the ABI data.
    */
@@ -23,10 +25,10 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
   async lookupABI(contractAddress: string): Promise<ContractABI> {
 
     // TODO try-catch
-    const parsedReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.Read))
-    const parsedWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.Write))
-    const parsedProxyReadABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyRead))
-    const parsedProxyWriteABI = await AbstractAbiProvider.fetchABI(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyWrite))
+    const parsedReadABI = await AbstractAbiProvider.fetch<FuncABI[]>(this.getAbiURL(contractAddress, ABICategoryBlockScout.Read))
+    const parsedWriteABI = await AbstractAbiProvider.fetch<FuncABI[]>(this.getAbiURL(contractAddress, ABICategoryBlockScout.Write))
+    const parsedProxyReadABI = await AbstractAbiProvider.fetch<FuncABI[]>(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyRead))
+    const parsedProxyWriteABI = await AbstractAbiProvider.fetch<FuncABI[]>(this.getAbiURL(contractAddress, ABICategoryBlockScout.ProxyWrite))
 
     return {
       Read: parsedReadABI,
@@ -36,6 +38,21 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
     }
   }
 
+  /**
+   * Get the blockexplorer specific URL for fetching the raw bytecode of a smart contract.
+   *
+   * @param contractAddress - The contract address.
+   * @returns The url to fetch the raw bytecode data.
+   */
+  getBytecodeURL(contractAddress: string): string {
+    const url = new URL(this.explorerUrl + `/api?module=contract&action=getsourcecode&address=${contractAddress}`)
+    return url.href
+  }
+
+  async lookupBytecode(contractAddress: string): Promise<String> {
+    // TODO try-catch
+    return await AbstractAbiProvider.fetch<String>(this.getBytecodeURL(contractAddress))
+  }
 }
 
 // interface EtherscanRpcResponse {

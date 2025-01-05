@@ -1,21 +1,9 @@
 import { ABICategoryBlockScout } from '../types'
+import { AbstractAbiProvider } from './AbstractAbiProvider';
 import { EtherscanAbiProvider } from './EtherscanAbiProvider'
 
-// Etherscan and Blockscout return different objects from the getsourcecode method
-interface BlockscoutSource {
-  AdditionalSources: Array<{ SourceCode: string; Filename: string }>
-  ConstructorArguments: string
-  OptimizationRuns: number
-  IsProxy: string
-  SourceCode: string
-  ABI: string
-  ContractName: string
-  CompilerVersion: string
-  OptimizationUsed: string
-  Runs: string
-  EVMVersion: string
-  FileName: string
-  Address: string
+interface BlockscoutSmartContract {
+  deployed_bytecode: string
 }
 
 export class BlockscoutAbiProvider extends EtherscanAbiProvider {
@@ -26,10 +14,10 @@ export class BlockscoutAbiProvider extends EtherscanAbiProvider {
     super(apiUrl, apiUrl, undefined)
   }
 
-
   /**
    * Get the blockexplorer specific URL for fetching the smart contract ABI.
-   *
+   * 
+   * @param contractAddress - The contract address.
    * @param ABICategory - The sub type of the ABI (one of the values: 'read' | 'write' | 'readProxy' | 'writeProxy').
    * @returns The url to fetch the ABI data.
    */
@@ -38,7 +26,25 @@ export class BlockscoutAbiProvider extends EtherscanAbiProvider {
     return url.href
   }
 
-  // getContractCodeUrl(address: string): string {
+  /**
+   * Get the blockexplorer specific URL for fetching the raw bytecode of a smart contract.
+   *
+   * @param contractAddress - The contract address.
+   * @returns The url to fetch the raw bytecode data.
+   */
+  getBytecodeURL(contractAddress: string): string {
+    const url = new URL(this.explorerUrl + `/api/v2/smart-contracts/${contractAddress}`)
+    return url.href
+  }
+
+  async lookupBytecode(contractAddress: string): Promise<String> {
+
+    // TODO try-catch
+    let response = await AbstractAbiProvider.fetch<BlockscoutSmartContract>(this.getBytecodeURL(contractAddress))
+    return response.deployed_bytecode
+  }
+
+  // getContractCodeUrl(address: string): string {i
   //   const url = new URL(this.explorerUrl + `/address/${address}`)
   //   url.searchParams.append('tab', 'contract')
   //   return url.href
