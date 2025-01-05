@@ -1,4 +1,3 @@
-
 'use strict'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
@@ -9,6 +8,8 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 import { commitChange } from '@remix-ui/git'
+import AES from 'crypto-js/aes'
+import CryptoJS from 'crypto-js'
 
 /*
   attach to files event (removed renamed)
@@ -209,6 +210,15 @@ class FileManager extends Plugin {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
+      
+      // Add file path validation
+      if (!this.validatePath(path)) {
+        throw createError({ 
+          code: 'EINVAL', 
+          message: `Invalid file path: ${path}` 
+        })
+      }
+
       if (await this.exists(path)) {
         await this._handleIsFile(path, `Cannot write file ${path}`)
         return await this.setFileContent(path, data, options)
@@ -1094,6 +1104,45 @@ class FileManager extends Plugin {
       return await provider.copyFolderToJson(folder)
     }
     throw new Error('copyFolderToJson not available')
+  }
+
+  private encryptData(data: string): string {
+    const key = process.env.STORAGE_KEY || 'default-key'
+    return AES.encrypt(data, key).toString()
+  }
+
+  private decryptData(encryptedData: string): string {
+    const key = process.env.STORAGE_KEY || 'default-key'
+    const bytes = AES.decrypt(encryptedData, key)
+    return bytes.toString(CryptoJS.enc.Utf8)
+  }
+
+  public saveFile(path: string, content: string) {
+    const encryptedContent = this.encryptData(content)
+    localStorage.setItem(path, encryptedContent)
+  }
+
+  public getFile(path: string): string {
+    const encryptedContent = localStorage.getItem(path)
+    return encryptedContent ? this.decryptData(encryptedContent) : null
+  }
+
+  // Adding a new method for file path validation
+  private validatePath(path: string): boolean {
+    // Check for null/undefined
+    if (!path) return false
+    
+    // Check for path traversal attack attempt
+    if (path.includes('..')) return false
+    
+    // Check for special characters
+    const invalidChars = /[<>:"|?*]/
+    if (invalidChars.test(path)) return false
+    
+    // Check for the maximum path length
+    if (path.length > 255) return false
+    
+    return true
   }
 }
 
