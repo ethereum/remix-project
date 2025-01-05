@@ -56,7 +56,7 @@ export const LookupABIView = () => {
     await loadPinnedContractsAction(plugin, newSelectedChain);
   }
 
-  const handleLookup = (e) => {
+  const handleLookup = async (e) => {
     if (Object.values(loadingAbiProviders).some((loading) => loading)) {
       console.error('Lookup or Decoding request already running')
       return
@@ -64,36 +64,73 @@ export const LookupABIView = () => {
 
     e.preventDefault()
 
-    for (const abiProviderIndex of ABI_PROVIDERS) {
-      if (!validConfiguration(chainSettings, abiProviderIndex) || (abiProviderIndex === 'Sourcify' && !sourcifySupported)) {
-        continue
-      }
+    // Filter the providers to only those with valid configurations.
+    const validProviders = ABI_PROVIDERS.filter(
+      (abiProviderIndex) =>
+        validConfiguration(chainSettings, abiProviderIndex) &&
+        (abiProviderIndex !== 'Sourcify' || sourcifySupported)
+    );
 
-      // TODO: only fetch ABI if it's not already available.
-      setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: true }))
-      const abiProvider = getAbiProvider(abiProviderIndex, chainSettings.abiProviders[abiProviderIndex])
-      abiProvider
-        .lookupABI(contractAddress)
-        .then((contractABI) => {
-          if (contractABI) {
-            setInstanceAction({
-              address: contractAddress,
-              // TODO: have to give a different name since removing contracts might leave gaps in the list
-              name: `${(contractInstances.length + 1).toString()}`,
-              abi: contractABI,
-              isPinned: false
-            })
-          } else {
-            throw new Error(`Couldn't fetch 'ABI' from provider: ${abiProviderIndex}.`)
-          }
-        })
-        .catch((err) =>
-          setLookupResult((prev) => {
-            console.error(err)
-            return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
-          })
-        )
-        .finally(() => setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: false })))
+    if (validProviders.length === 0) {
+      throw new Error("No valid providers are configured.");
+    }
+
+    // Set all providers state to loading.
+    validProviders.map(abiProviderIndex => setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: true })))
+
+    // Create an array of promises for fetching the ABI from the differnt providers.
+    const fetchPromises = validProviders.map(async (abiProviderIndex) => {
+
+      try {
+        const abiProvider = getAbiProvider(
+          abiProviderIndex,
+          chainSettings.abiProviders[abiProviderIndex]
+        );
+
+        const contractABI = await abiProvider.lookupABI(contractAddress);
+        setLoadingAbiProviders((prev) => ({ ...prev, [abiProviderIndex]: false }))
+
+        if (contractABI) {
+          console.log(`Fetched ABI from provider '${abiProviderIndex}'`);
+          return { abiProviderIndex, contractABI };
+        } else {
+          //     .catch((err) =>
+          //       setLookupResult((prev) => {
+          //         console.error(err)
+          //         return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
+          //       })
+          //     )
+          console.warn(`Provider '${abiProviderIndex}' returned no ABI.`);
+          return undefined;
+        }
+      } catch (err) {
+        //     .catch((err) =>
+        //       setLookupResult((prev) => {
+        //         console.error(err)
+        //         return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
+        //       })
+        //     )
+        console.warn(`Error fetching ABI from provider '${abiProviderIndex}':`, err);
+        return undefined;
+      }
+    });
+
+    // Resolve all promises and filter out undefined results.
+    const results = (await Promise.all(fetchPromises)).filter(Boolean);
+
+    // Check if there is at least one successful result.
+    if (results.length > 0) {
+      // Use the first successfully fetched ABI.
+      console.log(`Using fetched ABI from provider '${results[0].abiProviderIndex}'`);
+      setInstanceAction({
+        address: contractAddress,
+        name: '',
+        abi: results[0].contractABI,
+        isPinned: false
+      })
+    } else {
+      console.error("All providers failed to fetch ABI.");
+      throw new Error("Failed to fetch ABI from all providers.");
     }
   }
 
@@ -131,12 +168,24 @@ export const LookupABIView = () => {
 
         if (byteCode) {
           console.log(`Fetched bytecode from provider '${abiProviderIndex}'`);
-          return byteCode;
+          return { abiProviderIndex, byteCode };
         } else {
+          //     .catch((err) =>
+          //       setLookupResult((prev) => {
+          //         console.error(err)
+          //         return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
+          //       })
+          //     )
           console.warn(`Provider '${abiProviderIndex}' returned no bytecode.`);
           return undefined;
         }
       } catch (err) {
+        //     .catch((err) =>
+        //       setLookupResult((prev) => {
+        //         console.error(err)
+        //         return { ...prev, [abiProviderIndex]: { status: 'lookup failed' } }
+        //       })
+        //     )
         console.warn(`Error fetching bytecode from provider '${abiProviderIndex}':`, err);
         return undefined;
       }
@@ -148,7 +197,8 @@ export const LookupABIView = () => {
     // Check if there is at least one successful result.
     if (results.length > 0) {
       // Return the first successfully fetched bytecode.
-      return results[0];
+      console.log(`Using fetched byteCode from provider '${results[0].abiProviderIndex}'`);
+      return results[0].byteCode;
     } else {
       console.error("All providers failed to fetch bytecode.");
       throw new Error("Failed to fetch bytecode from all providers.");

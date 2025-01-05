@@ -45,6 +45,7 @@ export class EtherscanAbiProvider extends AbstractAbiProvider {
    * @returns The url to fetch the raw bytecode data.
    */
   getBytecodeURL(contractAddress: string): string {
+    // TODO: get correct URL
     const url = new URL(this.explorerUrl + `/api?module=contract&action=getsourcecode&address=${contractAddress}`)
     return url.href
   }
