@@ -309,7 +309,7 @@ export const runTransactions = (
   funcIndex?: number) => {
   let callinfo = ''
   if (lookupOnly) callinfo = 'call'
-  else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
+  else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelinteractions'
   else callinfo = 'transact'
   _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
 
