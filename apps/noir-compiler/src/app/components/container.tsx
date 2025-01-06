@@ -8,7 +8,7 @@ export function Container () {
 
   const showCompilerLicense = async (message = 'License not available') => {
     try {
-      const response = await fetch('https://raw.githubusercontent.com/iden3/circom/master/COPYING')
+      const response = await fetch('https://raw.githubusercontent.com/noir-lang/noir/master/LICENSE-APACHE')
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       const content = await response.text()
       // @ts-ignore
