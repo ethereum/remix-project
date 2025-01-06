@@ -9,7 +9,7 @@ function getChainDescriptor(chain: Chain): string {
 }
 
 interface DropdownProps {
-  label: string
+  label: string | any
   id: string
   setSelectedChain: (chain: Chain) => void
   selectedChain: Chain
