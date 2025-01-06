@@ -33,15 +33,13 @@ export const Default = (props) => {
         observer.complete()
         const codeBlocks = document.getElementsByClassName('code-block')
 
-        // override copy button functionality
         Array.from(codeBlocks).forEach((block) => {
-          // only 1 copy button per code block
-          const copyButton = document.getElementsByClassName('nlux-comp-copyButton')
-          copyButton[0].addEventListener('click', async () => {
-            console.log('nlux copy button clicked');
-            const text = block.textContent; //|| block.innerText;
-            await navigator.clipboard.writeText(block.textContent);
-          });
+          const copyButtons = block.getElementsByClassName('nlux-comp-copyButton');
+          Array.from(copyButtons).forEach((cp_btn) => {
+            cp_btn.addEventListener('click', async () => {
+              await navigator.clipboard.writeText(block.textContent);
+            });
+          })
         })
       }
     )
