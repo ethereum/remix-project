@@ -167,4 +167,7 @@ export class NoirPluginClient extends PluginClient {
   debugFn(log) {
     this.call('terminal', 'log', { type: 'log', value: log })
   }
+
+  async parse(path: string): Promise<void> {
+  }
 }
