@@ -99,7 +99,7 @@ export class TxRunnerVM {
         this.blocks.push(block.serialize())
       }
       callback(err, result)
-    })    
+    })
   }
 
   async runInVm (tx: InternalTransaction, callback: VMExecutionCallBack) {
