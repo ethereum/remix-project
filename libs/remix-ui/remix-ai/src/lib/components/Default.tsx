@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
@@ -7,28 +7,40 @@ import { user, assistantAvatar } from './personas';
 import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
+import copy from 'copy-to-clipboard'
 
 export let ChatApi = null
 
 export const Default = (props) => {
+  const [is_streaming, setIS_streaming] = useState<boolean>(false)
 
   const HandleCopyToClipboard = () => {
-    const codeBlocks = document.getElementsByClassName('code-block')
+    const markdown = document.getElementsByClassName('nlux-chatSegments-container')
+    if (markdown.length < 1) return
+
+    const codeBlocks = markdown[0].getElementsByClassName('code-block')
     Array.from(codeBlocks).forEach((block) => {
       const copyButtons = block.getElementsByClassName('nlux-comp-copyButton')
       Array.from(copyButtons).forEach((cp_btn) => {
-        cp_btn.removeEventListener('click', () => {})
-        cp_btn.addEventListener('click', async () => {
-          await navigator.clipboard.writeText(block.textContent)
-        })
+        const hdlr = async () => {
+          copy(block.textContent)
+        }
+        cp_btn.removeEventListener('click', async() => { hdlr() })
+        cp_btn.addEventListener('click', async () => { hdlr() })
       })
     })
   }
+
+  useEffect(() => {
+    HandleCopyToClipboard();
+  }, [is_streaming]);
+
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
     GenerationParams.stream_result = true
+    setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
 
     let response = null
@@ -44,15 +56,15 @@ export const Default = (props) => {
         observer.next(' ') // Add a space to flush the last message
         ChatHistory.pushHistory(prompt, result)
         observer.complete()
-        HandleCopyToClipboard()
+        setTimeout(() => { setIS_streaming(false) }, 1000)
       }
     )
     else {
       observer.next(response)
       observer.complete()
-      HandleCopyToClipboard()
-    }
 
+      setTimeout(() => { setIS_streaming(false) }, 1000)
+    }
   };
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
@@ -89,7 +101,7 @@ export const Default = (props) => {
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
-        streamingAnimationSpeed: 2,
+        streamingAnimationSpeed: 1,
         waitTimeBeforeStreamCompletion: 1000,
         syntaxHighlighter: highlighter
       }}
