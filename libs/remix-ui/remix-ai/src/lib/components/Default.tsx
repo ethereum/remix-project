@@ -11,6 +11,19 @@ import '@nlux/themes/unstyled.css';
 export let ChatApi = null
 
 export const Default = (props) => {
+
+  const HandleCopyToClipboard = () => {
+    const codeBlocks = document.getElementsByClassName('code-block')
+    Array.from(codeBlocks).forEach((block) => {
+      const copyButtons = block.getElementsByClassName('nlux-comp-copyButton')
+      Array.from(copyButtons).forEach((cp_btn) => {
+        cp_btn.removeEventListener('click', () => {})
+        cp_btn.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(block.textContent)
+        })
+      })
+    })
+  }
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
@@ -31,24 +44,13 @@ export const Default = (props) => {
         observer.next(' ') // Add a space to flush the last message
         ChatHistory.pushHistory(prompt, result)
         observer.complete()
-        const codeBlocks = document.getElementsByClassName('code-block')
-
-        Array.from(codeBlocks).forEach((block) => {
-          const copyButtons = block.getElementsByClassName('nlux-comp-copyButton');
-          Array.from(copyButtons).forEach((cp_btn) => {
-            // remove click event listener if existing 
-            cp_btn.removeEventListener('click', () => {});
-
-            cp_btn.addEventListener('click', async () => {
-              await navigator.clipboard.writeText(block.textContent);
-            });
-          })
-        })
+        HandleCopyToClipboard()
       }
     )
     else {
       observer.next(response)
       observer.complete()
+      HandleCopyToClipboard()
     }
 
   };
