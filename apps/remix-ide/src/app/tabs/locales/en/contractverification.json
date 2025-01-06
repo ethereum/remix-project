@@ -5,7 +5,8 @@
   "contract-verification.settingsNavTitle": "Settings",
   "contract-verification.contractAddressInput": "Contract Address",
   "contract-verification.proxyContractAddressInput": "Proxy Address",
-  "contract-verification.proxyInputLabel": "The deployed contract is behind a proxy"
+  "contract-verification.proxyInputLabel": "The deployed contract is behind a proxy",
+  "contract-verification.panelDisplayName": "Contract Verification"
 }
 
 

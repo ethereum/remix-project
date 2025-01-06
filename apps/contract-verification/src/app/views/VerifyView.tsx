@@ -180,7 +180,7 @@ export const VerifyView = () => {
     <form onSubmit={handleVerify}>
       <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
       <ContractAddressInput
-        label={<FormattedMessage id="contract-verification.contractAddressInput" />}
+        label={<FormattedMessage id="contract-verification.contractAddressInput" defaultMessage={"Contract Address"}/>}
         id="contract-address"
         contractAddress={contractAddress}
         setContractAddress={setContractAddress}
