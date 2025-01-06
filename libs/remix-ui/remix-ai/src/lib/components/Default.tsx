@@ -36,6 +36,9 @@ export const Default = (props) => {
         Array.from(codeBlocks).forEach((block) => {
           const copyButtons = block.getElementsByClassName('nlux-comp-copyButton');
           Array.from(copyButtons).forEach((cp_btn) => {
+            // remove click event listener if existing 
+            cp_btn.removeEventListener('click', () => {});
+
             cp_btn.addEventListener('click', async () => {
               await navigator.clipboard.writeText(block.textContent);
             });
