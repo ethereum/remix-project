@@ -200,7 +200,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('dgit' as any, 'openPanel', async (panel: string) => {
-    setAtivePanel(panel)
+    setActivePanel(panel)
   })
 
   plugin.on('dgit' as any, 'init', async () => {
