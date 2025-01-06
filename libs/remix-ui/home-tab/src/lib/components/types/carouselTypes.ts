@@ -48,7 +48,6 @@ export interface CarouselProps {
   // Show next/previous item partially
   // partialVisible has to be used in conjunction with the responsive props, details are in documentation.
   // it shows the next set of items partially, different from centerMode as it shows both.
-  partialVisible?: boolean;
   partialVisible?: boolean; // old typo - deprecated (will be remove in 3.0)
   customTransition?: string;
   transitionDuration?: number;
