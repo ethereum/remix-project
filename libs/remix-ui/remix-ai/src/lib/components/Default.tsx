@@ -1,9 +1,8 @@
 import React from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, HandleSimpleResponse } from '@remix/remix-ai-core';
+import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
-import { JsonStreamParser } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
 import { highlighter } from '@nlux/highlighter'
 import './color.css'
@@ -32,6 +31,18 @@ export const Default = (props) => {
         observer.next(' ') // Add a space to flush the last message
         ChatHistory.pushHistory(prompt, result)
         observer.complete()
+        const codeBlocks = document.getElementsByClassName('code-block')
+
+        // override copy button functionality
+        Array.from(codeBlocks).forEach((block) => {
+          // only 1 copy button per code block
+          const copyButton = document.getElementsByClassName('nlux-comp-copyButton')
+          copyButton[0].addEventListener('click', async () => {
+            console.log('nlux copy button clicked');
+            const text = block.textContent; //|| block.innerText;
+            await navigator.clipboard.writeText(block.textContent);
+          });
+        })
       }
     )
     else {
@@ -73,7 +84,7 @@ export const Default = (props) => {
         submitShortcut: 'Enter',
         hideStopButton: false,
       }}
-      messageOptions={{ showCodeBlockCopyButton: false,
+      messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
         streamingAnimationSpeed: 2,
         waitTimeBeforeStreamCompletion: 1000,
