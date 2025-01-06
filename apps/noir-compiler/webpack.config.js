@@ -35,7 +35,7 @@ module.exports = composePlugins(withNx(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
-  
+
 
   // add externals
   config.externals = {
