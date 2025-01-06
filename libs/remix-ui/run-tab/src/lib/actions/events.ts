@@ -128,8 +128,8 @@ export const setupEvents = (plugin: RunTab) => {
         plugin.on(activatedPlugin.name, 'accountsChanged', (accounts: Array<string>) => {
           const accountsMap = {}
           if (accounts.length > 0) {
-          accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
-          dispatch(fetchAccountsListSuccess(accountsMap))
+            accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+            dispatch(fetchAccountsListSuccess(accountsMap))
           } else {
             setExecutionContext(plugin, dispatch, { context: plugin.blockchain.defaultPinnedProviders[0] })
           }
