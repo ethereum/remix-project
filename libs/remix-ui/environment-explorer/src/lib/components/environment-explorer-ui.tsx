@@ -15,13 +15,13 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM
+    filterFn: (provider) => provider.isVM && !provider.isForkedVM
   },
-  'Saved VM States': {
-    title: 'Deploy to an In-browser Saved VM State.',
-    keywords: ['Saved VM States'],
+  'Forked States': {
+    title: 'Deploy to an In-browser Forked State.',
+    keywords: ['Forked State'],
     providers: [],
-    filterFn: (provider) => provider.isSavedState,
+    filterFn: (provider) => provider.isForkedState,
     descriptionFn: (provider) => {
       const { latestBlock, timestamp } = JSON.parse(provider.description)
       return (
@@ -29,10 +29,10 @@ const defaultSections: environmentExplorerUIGridSections = {
           <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
           <CustomTooltip
             placement="auto"
-            tooltipId="overlay-tooltip-compile"
-            tooltipText={`Saved at: ${(new Date(timestamp)).toLocaleString()}`}
+            tooltipId="overlay-tooltip-forkedAt"
+            tooltipText={`Forked at: ${(new Date(timestamp)).toLocaleString()}`}
           >
-            <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
+            <div><b>Forked at: </b>{(new Date(timestamp)).toDateString()}</div>
           </CustomTooltip>
         </>)
     }
@@ -47,7 +47,7 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an external Provider.',
     keywords: ['Externals'],
     providers: [],
-    filterFn: (provider) => (!provider.isInjected && !provider.isVM && !provider.isSavedState && !provider.isForkedVM)
+    filterFn: (provider) => (!provider.isInjected && !provider.isVM && !provider.isForkedState && !provider.isForkedVM)
   },
 }
 export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
@@ -101,7 +101,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     await pinStateCallback(provider, pinned)
                   }}
                 >
-                  <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                 </RemixUIGridCell>
               ))}
             </RemixUIGridSection>

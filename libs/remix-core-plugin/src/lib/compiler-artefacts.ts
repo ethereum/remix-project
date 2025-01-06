@@ -68,7 +68,7 @@ export class CompilerArtefacts extends Plugin {
 
   /**
    * Get compilation output for contracts compiled during a session of Remix IDE
-   * @returns compilatin output
+   * @returns compilation output
    */
   getAllContractDatas() {
     return this.filterAllContractDatas(() => true)
@@ -76,7 +76,7 @@ export class CompilerArtefacts extends Plugin {
 
   /**
    * filter compilation output for contracts compiled during a session of Remix IDE
-   * @returns compilatin output
+   * @returns compilation output
    */
   filterAllContractDatas(filter) {
     const contractsData = {}
@@ -101,7 +101,7 @@ export class CompilerArtefacts extends Plugin {
    * Get a particular contract output/artefacts from a compiler output of a Solidity file compilation
    * @param compilerOutput compiler output
    * @param contractName contract name
-   * @returns arefacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
+   * @returns artefacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
    */
   _getAllContractArtefactsfromOutput(compilerOutput, contractName) {
     const contractArtefacts = {}
