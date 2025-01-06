@@ -2,7 +2,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 // @ts-ignore
-import { compile_program, compile_contract, createFileManager } from '@noir-lang/noir_wasm/default'
+import { compile_program, createFileManager } from '@noir-lang/noir_wasm/default'
 import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
 
 const DEFAULT_TOML_CONFIG = `[package]
@@ -37,11 +37,7 @@ export class NoirPluginClient extends PluginClient {
     this.internalEvents.emit('noir_activated')
   }
 
-  compile(path: string): void {
-    this.parse(path)
-  }
-
-  async parse(path: string): Promise<void> {
+  async compile(path: string): Promise<void> {
     // @ts-ignore
     const fileContent = await this.call('fileManager', 'readFile', path)
     const fileBytes = new TextEncoder().encode(fileContent)
@@ -50,5 +46,8 @@ export class NoirPluginClient extends PluginClient {
     const program = await compile_program(this.fm)
 
     console.log('program: ', program)
+  }
+
+  async parse(path: string): Promise<void> {
   }
 }
