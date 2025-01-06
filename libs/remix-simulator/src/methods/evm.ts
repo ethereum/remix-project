@@ -68,12 +68,12 @@ export class EVM {
       })
     }
 
-    let blocks = payload.params[0].blocks
+    const blocks = payload.params[0].blocks
 
-    for (let b = 0; b < Number(blocks); b++) {  
+    for (let b = 0; b < Number(blocks); b++) {
       await runEmptyBlock()
       console.log('mining...', b, this.vmContext.latestBlockNumber)
-    }    
+    }
     cb()
-  }  
+  }
 }

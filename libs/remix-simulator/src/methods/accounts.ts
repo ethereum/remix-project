@@ -125,7 +125,7 @@ export class Web3Accounts {
   eth_chainId (_payload, cb) {
     if (!this.options.chainId) return cb(null, '0x539') // 0x539 is hex of 1337
     const id = (typeof this.options.chainId === 'number') ? toHex(this.options.chainId) : this.options.chainId
-    return cb(null, id) 
+    return cb(null, id)
   }
 
   eth_signTypedData_v4 (payload, cb) {
