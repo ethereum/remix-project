@@ -75,6 +75,7 @@
     "add": "^2.0.6",
     "axios": "^1.7.4",
     "byline": "^5.0.0",
+    "cbor": "^10.0.3",
     "chokidar": "^3.5.3",
     "cors": "^2.8.5",
     "electron-updater": "^6.1.8",

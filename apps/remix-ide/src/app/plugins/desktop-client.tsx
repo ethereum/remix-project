@@ -7,6 +7,7 @@ import { AppAction, appActionTypes, AppContext, AppModal, ModalTypes } from '@re
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { QueryParams } from '@remix-project/remix-lib'
+import cbor from 'cbor'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -138,7 +139,7 @@ export class DesktopClient extends ViewPlugin {
 
   async handleNetworkStatus(context: any) {
     console.log('networkStatus', context)
-    this.ws.send(JSON.stringify({ type: 'contextChanged', payload: null }))
+    this.ws.send(stringifyWithBigInt({ type: 'contextChanged', payload: null }))
   }
 
   async checkConnection() {
@@ -157,6 +158,7 @@ export class DesktopClient extends ViewPlugin {
     console.log('Connecting to server')
     try {
       this.ws = new WebSocket(`ws://localhost:${this.params.desktopClientPort}`)
+      this.ws.binaryType = 'arraybuffer'
     } catch (e) {
       console.error('CATCH WebSocket error:', e)
       return
@@ -174,7 +176,7 @@ export class DesktopClient extends ViewPlugin {
 
     this.ws.onmessage = async (event) => {
       const parsed = JSON.parse(event.data)
-      //console.log('Message from server:', parsed)
+      console.log('Message from server:', parsed.method)
       if (parsed && parsed.type === 'error') {
         if (parsed.payload === 'ALREADY_CONNECTED') {
           console.log('ALREADY_CONNECTED')
@@ -191,17 +193,42 @@ export class DesktopClient extends ViewPlugin {
           return
         }
       }
-      if (parsed.method === 'eth_sendTransaction') {
+      if (parsed.method === 'eth_sendTransaction' || parsed.method === 'eth_getTransactionReceipt') {
         this.call('terminal', 'log', {
           value: 'Transaction from desktop client: ' + event.data,
           type: 'info',
         })
       }
+      if (parsed.method === 'eth_sendTransaction' || parsed.method === 'eth_getTransactionReceipt') {
+        console.log('Sending message to web3:', parsed)
+      }
 
-      const result = await this.call('web3Provider', 'sendAsync', parsed)
+      let receipt
+      //const result = await this.call('web3Provider', 'sendAsync', parsed)
+      if (parsed.method === 'eth_getTransactionReceipt') {
+        let receipt = await this.tryTillReceiptAvailable(parsed.params[0])
+        console.log('Receipt:', receipt)
+        console.log('Sending receipt back to server', parsed.params[0], receipt)
+        this.ws.send(stringifyWithBigInt({
+          jsonrpc: '2.0',
+          result: receipt,
+          id: parsed.id,
+        }))
+      }else{
+        const provider = this.blockchain.web3().currentProvider
+        //console.log('provider', provider)
+        let result = await provider.sendAsync(parsed)
+        if (parsed.method === 'eth_sendTransaction') {
+        //console.log('Result:', result)
+          console.log('Sending result back to server', result)
+        }
+        this.ws.send(stringifyWithBigInt(result))
+      }
 
-      this.ws.send(JSON.stringify(result))
-      if (parsed.method === 'eth_sendTransaction') {
+
+
+      /*
+      if (parsed.method === 'eth_sendTransaction' || parsed.method === 'eth_getTransactionReceipt') {
         console.log('Message from server:', parsed)
         console.log('Result:', result)
         this.call('terminal', 'log', {
@@ -210,6 +237,7 @@ export class DesktopClient extends ViewPlugin {
         })
       }
       return result
+      */
     }
 
     this.ws.onclose = () => {
@@ -257,4 +285,33 @@ export class DesktopClient extends ViewPlugin {
   async init() { }
 
   async sendAsync(payload: any) { }
+
+  async tryTillReceiptAvailable(txhash) {
+    try {
+      //console.log('tryTillReceiptAvailable', txhash)
+      const receipt = await this.call('blockchain', 'getTransactionReceipt', txhash)
+      if (receipt) return receipt
+    } catch (e) {
+      // do nothing
+    }
+    await this.pause()
+    return await this.tryTillReceiptAvailable(txhash)
+  }
+  async pause() {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, 500)
+    })
+  }
+}
+
+
+function stringifyWithBigInt(obj) {
+
+ return cbor.encode(obj)
+  console.log('stringifyWithBigInt', obj)
+  const r = JSON.stringify(obj, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value
+  );
+  console.log('stringifyWithBigInt', r)
+  return r
 }

@@ -3,12 +3,12 @@ import { WebSocketServer, WebSocket } from 'ws';
 import cors from 'cors';
 import EventEmitter from 'events';
 import { RequestArguments } from '../types';
-import { json } from 'stream/consumers';
 import path from 'path';
 import express from 'express'
 import { findAvailablePort } from '../utils/portFinder'
 import { isPackaged } from '../main';
 import { isE2ELocal } from '../main';
+import cbor from 'cbor';
 
 // Forwarding WebSocket client
 let connectedWebSocket: WebSocket | null = null;
@@ -32,20 +32,22 @@ export const handleRequest = async (
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error('Timeout waiting for WebSocket response')), 240000); // 10 seconds timeout
 
-        connectedWebSocket && connectedWebSocket.once('message', (data: string) => {
+        connectedWebSocket && connectedWebSocket.once('message', async (data: any) => {
 
 
-            if (Buffer.isBuffer(data)) {
-                data = data.toString('utf-8');
-            }
+            //if (Buffer.isBuffer(data)) {
+            //    data = data.toString('utf-8');
+            //}
 
             //console.log('received message from WebSocket ONCE client:', data);
 
             clearTimeout(timeout);
             try {
-                const response = JSON.parse(data);
+                console.log('received message from WebSocket ONCE client:', data);
+                const response = parseWithBigInt(new Uint8Array(data));
+                console.log('received message from WebSocket ONCE client:', response);
                 if (response.id === jsonRpcPayload.id) {
-                    if (jsonRpcPayload.method === 'eth_sendTransaction') {
+                    if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt') {
                         console.log('response from WebSocket client:', response);
                         eventEmitter.emit('focus')
                     }
@@ -71,19 +73,27 @@ export const handleRequest = async (
                             })
                         }
                     } else {
+                        if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt') {
+                            console.log('resolve response from WebSocket client:', jsonRpcPayload.method, response);
+                       //     if(jsonRpcPayload.method === 'eth_getTransactionReceipt'){
+                       //         response.result = JSON.parse(response.result)
+                       //     }
+                        }
                         resolve(response.result);
                     }
                 } else {
+
                     console.log('ignore response from WebSocket client:', data);
                     //reject(new Error('Invalid response ID'));
                 }
             } catch (error) {
+                console.log('REJECT error response from WebSocket client:', error);
                 reject(error);
             }
         });
 
         connectedWebSocket && connectedWebSocket.send(JSON.stringify(jsonRpcPayload), (err) => {
-            if (jsonRpcPayload.method === 'eth_sendTransaction') {
+            if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt') {
                 console.log('sent message to WebSocket client:', jsonRpcPayload);
             }
             if (err) {
@@ -147,11 +157,11 @@ export const startHostServer = async (eventEmitter: EventEmitter) => {
 
 
 
-        connectedWebSocket.on('message', (data: string) => {
-            if (Buffer.isBuffer(data)) {
-                data = data.toString('utf-8');
-            }
-            const response = JSON.parse(data);
+        connectedWebSocket.on('message', (data: any) => {
+           //if (Buffer.isBuffer(data)) {
+           //     data = data.toString('utf-8');
+           // }
+            const response = parseWithBigInt(new Uint8Array(data));
             if (response && response.type) {
                 console.log('received message from WebSocket client:', response);
                 eventEmitter.emit(response.type, response.payload);
@@ -184,3 +194,13 @@ export const startHostServer = async (eventEmitter: EventEmitter) => {
         websocket_port
     }
 }
+
+
+function parseWithBigInt(json) {
+    return cbor.decode(json)
+    console.log('parseWithBigInt', json)
+    return JSON.parse(json, (key, value) =>
+      typeof value === 'string' && /^\d+n?$/.test(value) ? BigInt(value) : value
+    );
+  }
+  

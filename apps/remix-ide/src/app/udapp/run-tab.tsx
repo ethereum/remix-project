@@ -302,8 +302,10 @@ export class RunTab extends ViewPlugin {
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false, false)
 
-    // desktop host
-    await addProvider(12, 'desktopHost', 'Metamask for Remix Desktop', false, false, false)
+    if(isElectron()) {
+      // desktop host
+      await addProvider(12, 'desktopHost', 'Metamask for Remix Desktop', false, false, false)
+    }
 
     // external provider
     await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', false, false, false)
