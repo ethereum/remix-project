@@ -46,14 +46,13 @@ const tests = {
   'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
-      .useCss().switchBrowserTab(0)
+      .useCss()
+      .switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
-      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
       .pause(5000)
       .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
         browser
@@ -65,6 +64,8 @@ const tests = {
           .click('*[data-testid="page-container-footer-next"]')
       })
       .switchBrowserTab(0) // back to remix
+      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
   },
 
   'Should add a contract file #group1': function (browser: NightwatchBrowser) {
@@ -76,7 +77,7 @@ const tests = {
   },
 
   'Should deploy contract on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 45000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -168,7 +169,7 @@ const tests = {
       })
   },
   'Should deploy contract on Sepolia Test Network using MetaMask again #group1': function (browser: NightwatchBrowser) {
-    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 45000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -209,7 +210,7 @@ const tests = {
   },
 
   'Should deploy contract on Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
@@ -407,11 +408,11 @@ const sources = [
       pragma solidity ^0.8.0;
       contract HelloWorld {
           string public message;
-          
+
           fallback () external {
               message = 'Hello World!';
           }
-          
+
           function greet(string memory _message) public {
               message = _message;
           }

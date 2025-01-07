@@ -5,7 +5,7 @@ This document aims to address contributors best practices of the following repos
  - remix-ide https://github.com/ethereum/remix-project
  - remix-plugin https://github.com/ethereum/remix-plugin
 
-This document is not in its final version, **a team meeting which aims to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
+This document is not in its final version, **a team meeting which aims to address new/old best practices, feedback, workflows, all kind of issues related to how the team works together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
 
 Related links:
@@ -58,7 +58,7 @@ Related links:
 
 # Prerequisites:
 
-Before starting coding, we should ensure all devs / contributors are aware of: 
+Before starting to coding, we should ensure all devs / contributors are aware of: 
 - Where the codebase is.
 - How to setup and get started (always up to date).
 - How to run tests.
@@ -87,7 +87,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - Mark unfinished pull requests with the `Work in Progress` label
  - Large pull requests (above 200-400 lines of code changed) cannot be effectively reviewed and should be split into smaller pieces.
  - Code should comply to the `JavaScript standard style` - https://www.npmjs.com/package/standard
- - You should not expect complete review on a pull request which is not passing CI.
+ - You should not expect a complete review on a pull request which is not passing CI.
  - You can obviously ask for feedback on your approach.
  - You should assign a reviewer(s).
  - Pull requests should be used as a reference to update coding best practices whenever it is needed.
@@ -109,7 +109,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - You should take the responsibility of the PR you are reviewing.
  - You should make sure the app is viable after the PR is being merged.
  - You should make sure the PR is correctly tested (e2e tests, unit tests)
- - Ideally You should have enough knowledge to be able to fix related bugs.
+ - Ideally you should have enough knowledge to be able to fix related bugs.
       
  ### 3) Merge:
 
@@ -122,9 +122,9 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
  - A milestone should **only** contain items we are sure to finish.
  - The end of a milestone trigger a new release.
- - Milestone items and duration should take in account time spent in bugs fixing and support.
+ - Milestone items and duration should take into account time spent in bugs fixing and support.
  - The team should commit to the milestone duration.
- - If a dev finish early he/she can help other to push remaining tasks.
+ - If a dev finish early he/she can help others to push remaining tasks.
  - If a dev finish early he/she can work on specifying / integrating the next milestone.
  - A milestone duration is fixed at the start of the milestone (but should better not exceed 1 month).
  - Progress and issues regarding a milestone are discussed on regular standups.
@@ -143,10 +143,10 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - We release an `m.x.0` whenever there is a new feature.
  - We release an `x.0.0` after each milestone we consider being an important progress.
  - We release an `x.0.0` if there's an API breaking change in one of our libraries.
- - After a new release we should stay in alert for possible regression and better not release Friday at 5pm :)
+ - After a new release we should stay in alert for possible regression and better not release on Friday at 5pm :)
 
  ### 2) Community:
- - Before the official release, we should select a group of power users and invite them to test and give feedbacks.
+ - Before the official release, we should select a group of power users and invite them to test and give feedback.
  - Users need to know upfront a new release is coming and we should prepare them for it by showcasing some new features they can expect and when it will happen (fixed date, published at least 1 week in advance).
  - Whenever we have a new release we have to communicate this efficiently (twitter, reddit, ...).
 
@@ -197,7 +197,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - We release an `x.0.0` if there's a fundamental change in our UX design, which means users will need to readapt the way they use the app
  - after a week finishes, we publish/release a new version as **remix-beta.ethereum.org** and inform users so early adopters can test. after another week, when the next finished work is released as **remix-beta.ethereum.org**, the previous one becomes **remix.ethereum.org** and all users can start using it
  - a bot to automatically notify users about upcoming features on all channels whenever **remix-beta.ethereum.org** is updated
- - in case it's a major version increase - this announcement should be specially marked so ppl can check early instead of being confronted with drastic changes when **remix.ethereum.org** updates
+ - in case it's a major version increase - this announcement should be specially marked so people can check early instead of being confronted with drastic changes when **remix.ethereum.org** updates
 ### maintenance:
  - Setting up a "bug" time where we each take a bug for which:
      - We feel comfortable to deal with

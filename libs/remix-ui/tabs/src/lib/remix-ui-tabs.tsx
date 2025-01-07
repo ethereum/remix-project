@@ -252,7 +252,7 @@ export const TabsUI = (props: TabsUIProps) => {
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
-              tooltipId="overlay-tooltip-explaination"
+              tooltipId="overlay-tooltip-explanation"
               tooltipText={
                 <span>
                   {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (

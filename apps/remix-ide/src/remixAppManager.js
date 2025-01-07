@@ -156,7 +156,7 @@ export function isNative(name) {
 
 /**
  * Checks if plugin caller 'from' is allowed to activate plugin 'to'
- * The caller can have 'canActivate' as a optional property in the plugin profile.
+ * The caller can have 'canActivate' as an optional property in the plugin profile.
  * This is an array containing the 'name' property of the plugin it wants to call.
  * canActivate = ['plugin1-to-call','plugin2-to-call',....]
  * or the plugin is allowed by default because it is native
@@ -175,7 +175,7 @@ export class RemixAppManager extends PluginManager {
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
     if (Registry.getInstance().get('platform').api.isDesktop()) {
-      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'slither', 'remixAID']
+      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'slither', 'remixAID', 'circom']
     }
   }
 
