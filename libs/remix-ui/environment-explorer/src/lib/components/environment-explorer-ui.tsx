@@ -15,13 +15,13 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM
+    filterFn: (provider) => provider.isVM && !provider.isForkedVM
   },
-  'Saved VM States': {
-    title: 'Deploy to an In-browser Saved VM State.',
-    keywords: ['Saved VM States'],
+  'Forked States': {
+    title: 'Deploy to an In-browser Forked State.',
+    keywords: ['Forked State'],
     providers: [],
-    filterFn: (provider) => provider.isSavedState,
+    filterFn: (provider) => provider.isForkedState,
     descriptionFn: (provider) => {
       const { latestBlock, timestamp } = JSON.parse(provider.description)
       return (
@@ -29,10 +29,10 @@ const defaultSections: environmentExplorerUIGridSections = {
           <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
           <CustomTooltip
             placement="auto"
-            tooltipId="overlay-tooltip-compile"
-            tooltipText={`Saved at: ${(new Date(timestamp)).toLocaleString()}`}
+            tooltipId="overlay-tooltip-forkedAt"
+            tooltipText={`Forked at: ${(new Date(timestamp)).toLocaleString()}`}
           >
-            <div><b>Saved at: </b>{(new Date(timestamp)).toDateString()}</div>
+            <div><b>Forked at: </b>{(new Date(timestamp)).toDateString()}</div>
           </CustomTooltip>
         </>)
     }
@@ -47,7 +47,7 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an external Provider.',
     keywords: ['Externals'],
     providers: [],
-    filterFn: (provider) => (!provider.isInjected && !provider.isVM && !provider.isSavedState && !provider.isForkedVM)
+    filterFn: (provider) => (!provider.isInjected && !provider.isVM && !provider.isForkedState && !provider.isForkedVM)
   },
 }
 export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
@@ -61,6 +61,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
       const newSections = { ...prevSections }
       Object.keys(newSections).forEach((section) => {
         newSections[section].providers = Object.values(state.providersFlat).filter(newSections[section].filterFn)
+        newSections[section].id = section
       })
       return newSections
     })
@@ -77,16 +78,17 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
         showPin={true}
         title={profile.description}
         description="Select the providers and chains to include them in the ENVIRONMENT select box of the Deploy & Run Transactions plugin."
-      >{
-          Object.values(sections).length && Object.values(sections).map((section) => (
+      >
+        {Object.values(sections).map((section) => (
+          section.providers.length > 0 && (
             <RemixUIGridSection
               plugin={this}
               title={section.title}
               hScrollable={false}
               key={section.title}
             >
-              {section.providers.map(provider => {
-                return <RemixUIGridCell
+              {section.providers.map(provider => (
+                <RemixUIGridCell
                   plugin={this}
                   title={provider.displayName}
                   logos={provider.logos}
@@ -99,12 +101,12 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     await pinStateCallback(provider, pinned)
                   }}
                 >
-                  <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
                 </RemixUIGridCell>
-              })}
+              ))}
             </RemixUIGridSection>
-          ))
-        }
+          )
+        ))}
       </RemixUIGridView>
     </>
   )

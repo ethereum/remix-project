@@ -9,7 +9,7 @@ import * as packageJson from '../../../../../package.json'
 import { EventManager } from '@remix-project/remix-lib'
 import type { Blockchain } from '../../blockchain/blockchain'
 import type { CompilerArtefacts } from '@remix-project/core-plugin'
-import { SavedVMStateProvider } from '../providers/vm-provider'
+import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
 
@@ -162,13 +162,15 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-gnosis': 'Deploy to Gnosis through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
       'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
-      'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
+      'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.',
+      'injected-metamask-linea': 'Deploy to Linea through the Metamask browser extension.'
     }
 
     const logos = {
       'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
       'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
       'injected-metamask-gnosis': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
+      'injected-metamask-linea': ['assets/img/linea_chain.png', 'assets/img/metamask.png'],
       'injected-metamask-sepolia': ['assets/img/metamask.png'],
       'injected-metamask-ephemery': ['assets/img/metamask.png'],
       'injected-MetaMask': ['assets/img/metamask.png'],
@@ -179,7 +181,7 @@ export class RunTab extends ViewPlugin {
       'foundry-provider': ['assets/img/foundry.png']
     }
 
-    const addProvider = async (position, name, displayName, isInjected, isVM, isSavedState, fork = '', dataId = '', title = '', forkedVM = false) => {
+    const addProvider = async (position, name, displayName, isInjected, isVM, isForkedState, fork = '', dataId = '', title = '', forkedVM = false) => {
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},
@@ -192,7 +194,7 @@ export class RunTab extends ViewPlugin {
         isInjected,
         isForkedVM: forkedVM,
         isVM,
-        isSavedState,
+        isForkedState,
         title,
         init: async function () {
           const options = await udapp.call(name, 'init')
@@ -245,6 +247,7 @@ export class RunTab extends ViewPlugin {
             "decimals": 18
           })
         */
+        await addCustomInjectedProvider(11, event, 'injected-metamask-linea', 'L2 - Linea', '0xe708', ['https://rpc.linea.build'])
       }
     }
 
@@ -259,18 +262,18 @@ export class RunTab extends ViewPlugin {
     await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, false, 'cancun', 'settingsVMSepoliaMode', titleVM, true)
     await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, false, '', 'settingsVMCustomMode', titleVM, true)
 
-    // Saved VM States
-    const addSVSProvider = async(stateFilePath, pos) => {
+    // Forked VM States
+    const addFVSProvider = async(stateFilePath, pos) => {
       let stateDetail = await this.call('fileManager', 'readFile', stateFilePath)
       stateDetail = JSON.parse(stateDetail)
-      const providerName = 'vm-svs-' + stateDetail.stateName
+      const providerName = 'vm-fs-' + stateDetail.stateName
       descriptions[providerName] = JSON.stringify({
         name: providerName,
         latestBlock: stateDetail.latestBlockNumber,
         timestamp: stateDetail.savingTimestamp
       })
       // Create and register provider plugin for saved states
-      const svsProvider = new SavedVMStateProvider({
+      const fvsProvider = new ForkedVMStateProvider({
         name: providerName,
         displayName: stateDetail.stateName,
         kind: 'provider',
@@ -278,25 +281,26 @@ export class RunTab extends ViewPlugin {
         methods: ['sendAsync', 'init'],
         version: packageJson.version
       }, this.blockchain, stateDetail.forkName)
-      this.engine.register(svsProvider)
+      this.engine.register(fvsProvider)
       await addProvider(pos, providerName, stateDetail.stateName, false, false, true, stateDetail.forkName)
     }
 
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
-      const ssExists = await this.call('fileManager', 'exists', '.states/saved_states')
+      const ssExists = await this.call('fileManager', 'exists', '.states/forked_states')
       if (ssExists) {
-        const savedStatesDetails = await this.call('fileManager', 'readdir', '.states/saved_states')
+        const savedStatesDetails = await this.call('fileManager', 'readdir', '.states/forked_states')
         const savedStatesFiles = Object.keys(savedStatesDetails)
         let pos = 10
         for (const filePath of savedStatesFiles) {
           pos += 1
-          await addSVSProvider(filePath, pos)
+          await addFVSProvider(filePath, pos)
         }
       }
     })
 
-    this.on('udapp', 'vmStateSaved', async (stateName) => {
-      await addSVSProvider(`.states/saved_states/${stateName}.json`, 20)
+    this.on('udapp', 'vmStateForked', async (stateName) => {
+      await addFVSProvider(`.states/forked_states/${stateName}.json`, 20)
+      this.emit('forkStateProviderAdded', stateName)
     })
 
     // wallet connect

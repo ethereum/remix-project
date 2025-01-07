@@ -179,7 +179,7 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
 }
 
 /**
- * Get the variable name written to by a effect node, except for inline assembly because there is no information to find out where we write to. Trows if not a effect node or is inlineassmbly.
+ * Get the variable name written to by a effect node, except for inline assembly because there is no information to find out where we write to. Throws if not a effect node or is inline assembly.
  * Example: x = 10; => x
  * @effectNode {ASTNode} Assignment node
  * @return {string} variable name written to
@@ -409,7 +409,7 @@ function getLibraryCallContractName (node: FunctionCallAstNode): string | undefi
  *  library set{...}
  *  contract foo {
  *    ...
- *    function () { set.union() => uinion}
+ *    function () { set.union() => union}
  * @func {ASTNode} function call node
  * @return {string} name of function called on the library
  */
@@ -1040,7 +1040,7 @@ function matches (...fnArgs: any[]): string {
 
 /**
  * Finds first node of a certain type under a specific node.
- * @node {AstNode} node to start form
+ * @node {AstNode} node to start from
  * @type {String} Type the ast node should have
  * @return {AstNode} null or node found
  * Note: developed keeping identifier node search in mind to get first identifier node from left in subscope
