@@ -9,6 +9,7 @@ interface EnvironmentDropdownProps {
   isL2: (provider: string) => boolean;
   bridges: Record<string, string>;
   handleChangeExEnv: (name: string) => void;
+  filters?: (provider: Provider) => boolean; // Add filters prop
   props: {
     providers: {
       providerList: Provider[];
@@ -17,7 +18,11 @@ interface EnvironmentDropdownProps {
   };
 }
 
-const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvider, isL2, bridges, handleChangeExEnv, props }) => {
+const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvider, isL2, bridges, handleChangeExEnv, filters, props }) => {
+  const applyFilters = (provider: Provider) => {
+    return filters ? filters(provider) : true;
+  };
+
   return (
     <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
@@ -42,7 +47,7 @@ const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvid
             No provider pinned
           </span>
         </Dropdown.Item>}
-        { (props.providers.providerList.filter((provider) => { return provider.isInjected })).map(({ name, displayName }) => (
+        { (props.providers.providerList.filter((provider) => provider.isInjected && applyFilters(provider))).map(({ name, displayName }) => (
           <Dropdown.Item
             key={name}
             onClick={async () => {
@@ -55,8 +60,8 @@ const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvid
             </span>
           </Dropdown.Item>
         ))}
-        { props.providers.providerList.filter((provider) => { return provider.isInjected }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
-        { (props.providers.providerList.filter((provider) => { return provider.isVM })).map(({ displayName, name }) => (
+        { props.providers.providerList.filter((provider) => provider.isInjected && applyFilters(provider)).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+        { (props.providers.providerList.filter((provider) => provider.isVM && applyFilters(provider))).map(({ displayName, name }) => (
           <Dropdown.Item
             key={name}
             onClick={() => {
@@ -69,8 +74,8 @@ const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvid
             </span>
           </Dropdown.Item>
         ))}
-        { props.providers.providerList.filter((provider) => { return provider.isVM }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
-        { (props.providers.providerList.filter((provider) => { return !(provider.isVM || provider.isInjected) })).map(({ displayName, name }) => (
+        { props.providers.providerList.filter((provider) => provider.isVM && applyFilters(provider)).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+        { (props.providers.providerList.filter((provider) => !(provider.isVM || provider.isInjected) && applyFilters(provider))).map(({ displayName, name }) => (
           <Dropdown.Item
             key={name}
             onClick={() => {
