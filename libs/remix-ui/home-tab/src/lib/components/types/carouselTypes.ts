@@ -56,7 +56,7 @@ export interface CarouselProps {
   // for example, customTransition="all .5"  then put transitionDuration as 500.
   // this is needed for the resizing to work.
   focusOnSelect?: boolean;
-  additionalTransfrom?: number; // this is only used if you want to add additional transform to the current transform
+  additionalTransform?: number; // this is only used if you want to add additional transform to the current transform
   pauseOnHover?: boolean;
   shouldResetAutoplay?: boolean;
   rewind?: boolean;
