@@ -18,7 +18,8 @@ export type environmentExplorerUIGridSection = {
   providers: Provider[]
   filterFn: (provider: Provider) => boolean
   descriptionFn?: (provider: Provider) => string | JSX.Element | null
-  id?: string
+  id?: string,
+  hide?: boolean
 }
 
 export type environmentExplorerUIGridSections = {

@@ -71,7 +71,6 @@ import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 import { DesktopClient } from './app/plugins/desktop-client'
 import { DesktopHost } from './app/plugins/electron/desktopHostPlugin'
-import { RemixWebProvider } from './app/providers/remix-web-provider'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -430,8 +429,6 @@ class AppComponent {
       this.engine.register([remixAIDesktop])
       const desktopHost = new DesktopHost()
       this.engine.register([desktopHost])
-      const remixWebProvider = new RemixWebProvider(blockchain)
-      this.engine.register([remixWebProvider])
     } else{
       //---- desktop client
       const desktopClient = new DesktopClient(blockchain)

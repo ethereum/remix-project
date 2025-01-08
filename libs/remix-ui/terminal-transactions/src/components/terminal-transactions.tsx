@@ -7,7 +7,7 @@ export interface TerminalTransactionsProps {
   plugin: Plugin
 }
 
-const pluginsToWatch = ['injected-metamask', 'remix-web-provider', 'web3Provider'];
+const pluginsToWatch = ['injected-metamask', 'web3Provider'];
 
 interface queue {
   pluginName: string,

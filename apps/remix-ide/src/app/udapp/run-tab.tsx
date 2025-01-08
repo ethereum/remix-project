@@ -151,7 +151,6 @@ export class RunTab extends ViewPlugin {
       'walletconnect': 'Deploy using WalletConnect.',
       'desktopHost': 'Deploy using web metamask.',
       'basic-http-provider': 'Deploy to a Custom local network.',
-      'remix-web-provider': 'Deploy through the Remix MetaMask browser extension.',
       'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
       'ganache-provider': 'Deploy to the local Ganache dev chain.',
       'foundry-provider': 'Deploy to the local Foundry dev chain.',
