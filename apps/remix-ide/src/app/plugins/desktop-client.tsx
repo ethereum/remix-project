@@ -36,10 +36,10 @@ interface DesktopClientState {
   connected: desktopConnection
   providers: Provider[]
   disableconnect: boolean,
-  currentContext: string
+  currentContext: string,
 }
 
-const DesktopClientUI = (props: DesktopClientState & { onConnect: (providerName: Provider) => void }) => {
+const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => {}} & { onConnect: (providerName: Provider) => void }) => {
   const appContext = useContext(AppContext)
   const { connected, providers, onConnect, disableconnect, currentContext } = props
 
@@ -59,28 +59,58 @@ const DesktopClientUI = (props: DesktopClientState & { onConnect: (providerName:
     <div>
       <div className="d-flex p-4 bg-light flex-column">
         <h3>MetaMask for Desktop</h3>
+        {connected === desktopConnextionType.connected && (
+            <div className="d-flex align-items-center mt-3">
+            <button className="btn btn-primary" onClick={props.openDesktopApp}>
+              Switch to Desktop App
+            </button>
+            </div>
+        )}
       </div>
-      <DesktopStatus/>
+      
       <div>
         <div className="row">
-          {providers &&
-            providers.length > 0 &&
+            {providers && providers.length > 0 ? (
             providers
               .filter((provider) => provider.isInjected)
               .map((provider, index) => (
-                <div key={index} className="col-md-4 mb-4">
-                  <div className="provider-item card h-100">
-                    <div className="card-body d-flex flex-column align-items-center">
-                      <div className="d-flex mb-2">{providerLogos[provider.name] && providerLogos[provider.name].map((logo, index) => <img key={index} src={logo} style={{ width: '2rem', height: '2rem', marginRight: '0.5rem' }} />)}</div>
-                      <h5 className="card-title">{provider.displayName}</h5>
-                      <p className="card-text">{provider.description}</p>
-                      <button disabled={disableconnect || currentContext === provider.name} className="btn btn-primary mt-auto" onClick={() => onConnect(provider)}>
-                        Connect
-                      </button>
-                    </div>
+              <div key={index} className="col-md-4 mb-4">
+                <div className="provider-item card h-100">
+                <div className="card-body d-flex flex-column align-items-center">
+                  <div className="d-flex mb-2">
+                  {providerLogos[provider.name] &&
+                    providerLogos[provider.name].map((logo, index) => (
+                    <img
+                      key={index}
+                      src={logo}
+                      style={{ width: '2rem', height: '2rem', marginRight: '0.5rem' }}
+                    />
+                    ))}
                   </div>
+                  <h5 className="card-title">{provider.displayName}</h5>
+                  <p className="card-text">{provider.description}</p>
+                  <button
+                  disabled={disableconnect || currentContext === provider.name}
+                  className="btn btn-primary mt-auto"
+                  onClick={() => onConnect(provider)}
+                  >
+                  {disableconnect
+                    ? 'please wait  ...'
+                    : currentContext === provider.name
+                    ? 'Connected'
+                    : 'Connect'}
+                  </button>
                 </div>
-              ))}
+                </div>
+              </div>
+              ))
+            ) : (
+            <div className="col-12">
+              <div className="alert alert-warning" role="alert">
+              No injected providers found. Please install MetaMask or another browser wallet.
+              </div>
+            </div>
+            )}
         </div>
       </div>
     </div>
@@ -128,6 +158,7 @@ export class DesktopClient extends ViewPlugin {
     this.on('udapp', 'providerAdded', updateProviders)
     window.addEventListener('eip6963:announceProvider', (event: CustomEvent) => updateProviders())
     if (!isElectron()) window.dispatchEvent(new Event('eip6963:requestProvider'))
+    this.call('layout', 'minimizeSidePanel')
   }
 
   onDeactivation() {}
@@ -182,10 +213,15 @@ export class DesktopClient extends ViewPlugin {
     }
   }
 
+  async openDesktopApp() {
+    console.log('openDesktopApp')
+    this.ws.send(stringifyWithBigInt({ type: 'focus', payload: null }))
+  }
+
   updateComponent(state: DesktopClientState) {
     return (
       <>
-        <DesktopClientUI currentContext={state.currentContext} providers={state.providers} disableconnect={state.disableconnect} connected={state.connected} onConnect={this.handleProviderConnect.bind(this)} />
+        <DesktopClientUI openDesktopApp={this.openDesktopApp.bind(this)} currentContext={state.currentContext} providers={state.providers} disableconnect={state.disableconnect} connected={state.connected} onConnect={this.handleProviderConnect.bind(this)} />
       </>
     )
   }
@@ -199,7 +235,7 @@ export class DesktopClient extends ViewPlugin {
   }
 
   async connectToWebSocket() {
-    this.call('menuicons', 'select', 'udapp')
+    //this.call('menuicons', 'select', 'udapp')
     //this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
     console.log('Connecting to server')
     try {
@@ -290,28 +326,6 @@ export class DesktopClient extends ViewPlugin {
       console.log('Disconnected from server')
       this.blockchain.event.unregister('networkStatus', this.handleNetworkStatus.bind(this), null)
       this.ws = null
-      /*
-      const modalContent: AppModal = {
-        id: this.profile.name,
-        title: this.profile.displayName,
-        message: 'Connection to the desktop client has been lost. Please restart the desktop client.',	
-        modalType: ModalTypes.confirm,
-        okLabel: 'Reconnect now',
-        cancelLabel: 'Cancel',
-       
-        okFn: () => {
-          this.connectToWebSocket()
-        },
-        cancelFn: () => {
-         
-        },
-        hideFn: () => {
-          
-        },
-      }
-      
-      this.call('notification', 'modal' as any, modalContent)
-      */
 
       this.emit('connected', false)
       if (this.state.connected !== desktopConnextionType.alreadyConnected) {

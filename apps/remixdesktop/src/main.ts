@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain, protocol } from 'electron';
 import path from 'path';
 
 

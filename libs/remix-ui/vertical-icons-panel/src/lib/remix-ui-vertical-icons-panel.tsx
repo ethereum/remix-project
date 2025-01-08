@@ -84,7 +84,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
         >
           <IconList
             theme={theme}
-            icons={icons.filter((p) => p.profile.name==='udapp' ||  (appContext.appState.connectedToDesktop === desktopConnextionType.disabled && p.isRequired && p.profile.name !== 'pluginManager'))}
+            icons={icons.filter((p) => (appContext.appState.connectedToDesktop === desktopConnextionType.disabled && p.isRequired && p.profile.name !== 'pluginManager'))}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
           />
