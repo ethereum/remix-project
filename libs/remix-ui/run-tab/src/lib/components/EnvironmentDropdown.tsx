@@ -2,14 +2,14 @@ import { CustomToggle, CustomTooltip, CustomMenu } from '@remix-ui/helper';
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { FormattedMessage } from 'react-intl';
-import { Provider } from '../types'; // Adjust the import path as needed
+import { Provider } from '../types'; 
 
 interface EnvironmentDropdownProps {
   currentProvider: Provider;
   isL2: (provider: string) => boolean;
   bridges: Record<string, string>;
   handleChangeExEnv: (name: string) => void;
-  filters?: (provider: Provider) => boolean; // Add filters prop
+  filters?: (provider: Provider) => boolean; 
   props: {
     providers: {
       providerList: Provider[];
@@ -18,7 +18,7 @@ interface EnvironmentDropdownProps {
   };
 }
 
-const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvider, isL2, bridges, handleChangeExEnv, filters, props }) => {
+const EnvironmentDropdown = ({ currentProvider, isL2, bridges, handleChangeExEnv, filters, props }: EnvironmentDropdownProps) => {
   const applyFilters = (provider: Provider) => {
     return filters ? filters(provider) : true;
   };
