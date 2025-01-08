@@ -42,7 +42,7 @@ export class GitClient extends PluginClient {
 }
 
 /**
- * Validate that command can be run by service
+ * Validate that the command can be run by the service
  * @param cmd
  */
 function assertCommand (cmd) {
