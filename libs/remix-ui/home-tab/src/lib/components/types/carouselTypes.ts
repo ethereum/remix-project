@@ -4,7 +4,6 @@ export interface ResponsiveType {
     breakpoint: { max: number; min: number };
     items: number;
     partialVisibilityGutter?: number; // back-ward compatible, because previously there has been a typo
-    partialVisibilityGutter?: number;
     slidesToSlide?: number;
   };
 }
@@ -49,7 +48,6 @@ export interface CarouselProps {
   // partialVisible has to be used in conjunction with the responsive props, details are in documentation.
   // it shows the next set of items partially, different from centerMode as it shows both.
   partialVisible?: boolean;
-  partialVisible?: boolean; // old typo - deprecated (will be remove in 3.0)
   customTransition?: string;
   transitionDuration?: number;
   // if you are using customTransition, make sure to put the duration here.
