@@ -20,7 +20,10 @@
   "contract-verification.settingsDefaultLayout.description": "Customize settings for each verification service and chain",
   "contract-verification.configInputPlaceholderText": "Add {label}",
   "contract-verification.configInputSaveButton": "Save",
-  "contract-verification.configInputCancelButton": "Cancel"
+  "contract-verification.configInputCancelButton": "Cancel",
+  "contract-verification.constructorArgumentsToggleRawInput": "Enter raw ABI-encoded constructor arguments",
+  "contract-verification.constructorArgumentsRawAbiEncodingResult": "ABI-encoded constructor arguments",
+  "contract-verification.contractDropdownLabel": "{label}"
 }
 
 

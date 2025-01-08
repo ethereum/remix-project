@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { CustomTooltip } from '@remix-ui/helper'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 interface ConfigInputProps {
   label: string
@@ -14,6 +14,7 @@ interface ConfigInputProps {
 export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, initialValue, saveResult }) => {
   const [value, setValue] = useState(initialValue)
   const [enabled, setEnabled] = useState(false)
+  const intl = useIntl()
 
   // Reset state when initialValue changes
   useEffect(() => {
@@ -43,10 +44,7 @@ export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, ini
           type={secret ? 'password' : 'text'}
           className={`form-control small w-100 ${!enabled ? 'bg-transparent pl-0 border-0' : ''}`}
           id={id}
-          placeholder={`${<FormattedMessage id="contract-verification.configInputPlaceholder" defaultMessage="Enter API Key"
-            values={{
-              label: label
-            }} />}`}
+          placeholder={intl.formatMessage({ id: "contract-verification.configInputPlaceholder", defaultMessage: "Enter API Key" }, { label })}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           disabled={!enabled}
