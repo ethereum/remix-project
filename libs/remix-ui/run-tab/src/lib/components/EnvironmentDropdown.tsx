@@ -9,7 +9,7 @@ interface EnvironmentDropdownProps {
   isL2: (provider: string) => boolean;
   bridges: Record<string, string>;
   handleChangeExEnv: (name: string) => void;
-  filters?: (provider: Provider) => boolean; 
+  filters?: ((provider: Provider) => boolean)[]; 
   props: {
     providers: {
       providerList: Provider[];
@@ -20,7 +20,8 @@ interface EnvironmentDropdownProps {
 
 const EnvironmentDropdown = ({ currentProvider, isL2, bridges, handleChangeExEnv, filters, props }: EnvironmentDropdownProps) => {
   const applyFilters = (provider: Provider) => {
-    return filters ? filters(provider) : true;
+    if (!filters) return true;
+    return filters.every(filter => filter(provider));
   };
 
   return (

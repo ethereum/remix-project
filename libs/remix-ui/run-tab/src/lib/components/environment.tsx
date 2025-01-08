@@ -1,14 +1,25 @@
-// eslint-disable-next-line no-use-before-define
-import React, { useRef } from 'react'
+import React, { useRef, useState, useContext, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import EnvironmentDropdown from './EnvironmentDropdown'
+import { AppContext } from '@remix-ui/app'
+import { desktopConnextionType } from '@remix-api'
+
 const _paq = (window._paq = window._paq || [])
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const vmStateName = useRef('')
+  const [filters, setFilters] = useState<((provider: Provider) => boolean)[]>([])
+  const context = useContext(AppContext) // Use the AppContext
+
+  useEffect(() => {
+    const filterFunction = (provider: Provider) => {
+      return context.appState.connectedToDesktop != desktopConnextionType.disabled ? provider.isInjected : true
+    }
+    setFilters((prevFilters) => [...prevFilters, filterFunction])
+  }, [context.appState.connectedToDesktop])
 
   Object.entries(props.providers.providerList.filter((provider) => { return provider.isVM }))
   Object.entries(props.providers.providerList.filter((provider) => { return provider.isInjected }))
@@ -136,7 +147,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
-        <EnvironmentDropdown currentProvider={currentProvider} isL2={isL2} bridges={bridges} handleChangeExEnv={handleChangeExEnv} props={props} />
+        <EnvironmentDropdown currentProvider={currentProvider} isL2={isL2} bridges={bridges} handleChangeExEnv={handleChangeExEnv} filters={filters} props={props} />
       </div>
     </div>
   )
