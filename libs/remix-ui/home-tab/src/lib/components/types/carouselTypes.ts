@@ -4,7 +4,7 @@ export interface ResponsiveType {
     breakpoint: { max: number; min: number };
     items: number;
     partialVisibilityGutter?: number; // back-ward compatible, because previously there has been a typo
-    paritialVisibilityGutter?: number;
+    partialVisibilityGutter?: number;
     slidesToSlide?: number;
   };
 }
