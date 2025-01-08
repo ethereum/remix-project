@@ -2,8 +2,22 @@ import { CustomToggle, CustomTooltip, CustomMenu } from '@remix-ui/helper';
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { FormattedMessage } from 'react-intl';
+import { Provider } from '../types'; // Adjust the import path as needed
 
-const EnvironmentDropdown = ({ currentProvider, isL2, bridges, handleChangeExEnv, props }) => {
+interface EnvironmentDropdownProps {
+  currentProvider: Provider;
+  isL2: (provider: string) => boolean;
+  bridges: Record<string, string>;
+  handleChangeExEnv: (name: string) => void;
+  props: {
+    providers: {
+      providerList: Provider[];
+    };
+    setExecutionContext: (executionContext: { context: string }) => void;
+  };
+}
+
+const EnvironmentDropdown: React.FC<EnvironmentDropdownProps> = ({ currentProvider, isL2, bridges, handleChangeExEnv, props }) => {
   return (
     <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
