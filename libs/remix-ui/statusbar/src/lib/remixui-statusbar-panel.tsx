@@ -10,7 +10,7 @@ import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { StatusBarContextProvider } from '../contexts/statusbarcontext'
 import DidYouKnow from './components/didYouKnow'
 import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
-import DesktopStatus from './components/desktopStatus'
+import { DesktopStatus } from './components/desktopStatus'
 import { desktopConnextionType } from '@remix-api'
 
 export interface RemixUIStatusBarProps {
@@ -72,7 +72,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
 
   if(platform !== appPlatformTypes.desktop && appContext.appState.connectedToDesktop !== desktopConnextionType.disabled) {
     return (<><div className="d-flex remixui_statusbar_height flex-row bg-warning justify-content-between align-items-center">
-      <DesktopStatus plugin={statusBarPlugin} /></div></>)
+      <DesktopStatus/></div></>)
   }
 
   return (

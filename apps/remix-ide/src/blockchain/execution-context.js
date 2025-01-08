@@ -145,11 +145,13 @@ export class ExecutionContext {
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
+    console.log(this.customNetWorks)
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       await network.init()
       this.currentFork = network.fork
       this.executionContext = context
+      console.log(`context set to ${context}`)
       // injected
       web3.setProvider(network.provider)
       await this._updateChainContext()

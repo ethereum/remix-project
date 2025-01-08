@@ -6,16 +6,8 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnextionType } from '@remix-api'
 
-export interface DesktopStatusProps {
-  plugin: StatusBar
-}
-
-export default function DesktopStatus({ plugin }: DesktopStatusProps) {
+export const DesktopStatus= () => {
   const appContext = useContext(AppContext)
-
-  useEffect(() => {
-    //console.log('DesktopStatus', appContext.appState)
-  }, [appContext.appState])
 
   return (
     <div className={`d-flex flex-row pl-3 small text-white justify-content-center align-items-center 

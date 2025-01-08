@@ -2,12 +2,15 @@
 import React, { useContext, useEffect } from 'react'
 import { Plugin } from '@remixproject/engine'
 import { CustomRemixApi, desktopConnection, desktopConnextionType } from '@remix-api'
-import { Blockchain } from '../../blockchain/blockchain'
+import { Blockchain, Provider } from '../../blockchain/blockchain'
 import { AppAction, appActionTypes, AppContext, AppModal, ModalTypes } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { QueryParams } from '@remix-project/remix-lib'
 import cbor from 'cbor'
+import isElectron from 'is-electron'
+import { providerLogos } from '../udapp/run-tab'
+import { DesktopStatus } from '@remix-ui/statusbar'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -26,15 +29,20 @@ const profile = {
   methods: ['init', 'sendAsync'],
   events: ['connected'],
   maintainedBy: 'Remix',
-  location: 'hiddenPanel',
+  location: 'mainPanel',
 }
 
 interface DesktopClientState {
   connected: desktopConnection
+  providers: Provider[]
+  disableconnect: boolean,
+  currentContext: string
 }
 
-const DesktopClientUI = (props: DesktopClientState) => {
+const DesktopClientUI = (props: DesktopClientState & { onConnect: (providerName: Provider) => void }) => {
   const appContext = useContext(AppContext)
+  const { connected, providers, onConnect, disableconnect, currentContext } = props
+
   useEffect(() => {
     console.log('connected', props.connected)
     appContext.appStateDispatch({
@@ -46,10 +54,35 @@ const DesktopClientUI = (props: DesktopClientState) => {
       payload: false,
     })
   }, [props.connected])
+
   return (
     <div>
-      <h1>Desktop Client</h1>
-      <p>{props.connected}</p>
+      <div className="d-flex p-4 bg-light flex-column">
+        <h3>MetaMask for Desktop</h3>
+      </div>
+      <DesktopStatus/>
+      <div>
+        <div className="row">
+          {providers &&
+            providers.length > 0 &&
+            providers
+              .filter((provider) => provider.isInjected)
+              .map((provider, index) => (
+                <div key={index} className="col-md-4 mb-4">
+                  <div className="provider-item card h-100">
+                    <div className="card-body d-flex flex-column align-items-center">
+                      <div className="d-flex mb-2">{providerLogos[provider.name] && providerLogos[provider.name].map((logo, index) => <img key={index} src={logo} style={{ width: '2rem', height: '2rem', marginRight: '0.5rem' }} />)}</div>
+                      <h5 className="card-title">{provider.displayName}</h5>
+                      <p className="card-text">{provider.description}</p>
+                      <button disabled={disableconnect || currentContext === provider.name} className="btn btn-primary mt-auto" onClick={() => onConnect(provider)}>
+                        Connect
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -57,7 +90,7 @@ const DesktopClientUI = (props: DesktopClientState) => {
 export class DesktopClient extends ViewPlugin {
   blockchain: Blockchain
   ws: WebSocket
-  dispatch: React.Dispatch<any> = () => { }
+  dispatch: React.Dispatch<any> = () => {}
   state: DesktopClientState
   appStateDispatch: React.Dispatch<AppAction>
   queryParams: QueryParams
@@ -68,12 +101,14 @@ export class DesktopClient extends ViewPlugin {
     this.blockchain = blockchain
     this.state = {
       connected: desktopConnextionType.disconnected,
+      providers: [],
+      disableconnect: false,
+      currentContext: '',
     }
     this.queryParams = new QueryParams()
 
     this.params = this.queryParams.get()
     console.log('DesktopClient params', this.params)
-
   }
 
   onActivation() {
@@ -82,22 +117,20 @@ export class DesktopClient extends ViewPlugin {
 
     this.connectToWebSocket()
 
-    const modalContent: AppModal = {
-      id: this.profile.name,
-      title: 'Instructions for Metamask for Remix Desktop.',
-      message: `
-      1. Select the "Injected Provider - Metamask" in the environment and log in to your account.
-      \n2. Return to the desktop application.
-      \n3. You can now use the Metamask extension to sign transactions and interact with the blockchain.
-      \n\nPlease note that the Metamask extension must be installed in your browser.`,
-      modalType: ModalTypes.default,
-      okLabel: 'OK',
+    const updateProviders = async () => {
+      const providersObj: { [key: string]: Provider } = await this.call('blockchain', 'getAllProviders')
+      const providers: Provider[] = Object.values(providersObj)
+      this.state.providers = providers
+      this.renderComponent()
+      console.log('providers', providers)
     }
 
-    this.call('notification', 'modal' as any, modalContent)
+    this.on('udapp', 'providerAdded', updateProviders)
+    window.addEventListener('eip6963:announceProvider', (event: CustomEvent) => updateProviders())
+    if (!isElectron()) window.dispatchEvent(new Event('eip6963:requestProvider'))
   }
 
-  onDeactivation() { }
+  onDeactivation() {}
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
@@ -115,20 +148,15 @@ export class DesktopClient extends ViewPlugin {
     })
   }
 
-  updateComponent(state: DesktopClientState) {
-    return (
-      <>
-        <DesktopClientUI connected={state.connected} />
-      </>
-    )
-  }
-
-  render() {
-    return (
-      <div className="bg-dark" id="desktopClient">
-        <PluginViewWrapper useAppContext={true} plugin={this} />
-      </div>
-    )
+  async handleProviderConnect(provider: Provider) {
+    console.log('handleProviderConnect', provider)
+    this.state.disableconnect = true
+    this.renderComponent()
+    this.blockchain.changeExecutionContext({ context: provider.name, fork: '' }, null, null, () => {
+      console.log('setFinalContext')
+      this.state.disableconnect = false
+      this.renderComponent()
+    })
   }
 
   setConnectionState = (state: desktopConnection) => {
@@ -139,6 +167,8 @@ export class DesktopClient extends ViewPlugin {
 
   async handleNetworkStatus(context: any) {
     console.log('networkStatus', context)
+    this.state.currentContext = context
+    this.renderComponent()
     this.ws.send(stringifyWithBigInt({ type: 'contextChanged', payload: null }))
   }
 
@@ -152,9 +182,25 @@ export class DesktopClient extends ViewPlugin {
     }
   }
 
+  updateComponent(state: DesktopClientState) {
+    return (
+      <>
+        <DesktopClientUI currentContext={state.currentContext} providers={state.providers} disableconnect={state.disableconnect} connected={state.connected} onConnect={this.handleProviderConnect.bind(this)} />
+      </>
+    )
+  }
+
+  render() {
+    return (
+      <div className="bg-dark" id="desktopClient">
+        <PluginViewWrapper useAppContext={true} plugin={this} />
+      </div>
+    )
+  }
+
   async connectToWebSocket() {
     this.call('menuicons', 'select', 'udapp')
-    this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
+    //this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs' as any, 'focus', 'environmentExplorer'))
     console.log('Connecting to server')
     try {
       this.ws = new WebSocket(`ws://localhost:${this.params.desktopClientPort}`)
@@ -171,7 +217,7 @@ export class DesktopClient extends ViewPlugin {
         value: 'Connected to the desktop application.',
         type: 'info',
       })
-      this.blockchain.event.register('networkStatus', this.handleNetworkStatus.bind(this))
+      this.blockchain.event.register('contextChanged', this.handleNetworkStatus.bind(this))
     }
 
     this.ws.onmessage = async (event) => {
@@ -186,7 +232,7 @@ export class DesktopClient extends ViewPlugin {
             title: 'Another tab or window is already connected.',
             message: 'Another tab or window is already connected to the desktop application. Please close this tab or window.',
             modalType: ModalTypes.fixed,
-            okLabel: null
+            okLabel: null,
           }
 
           this.call('notification', 'modal' as any, modalContent)
@@ -209,23 +255,23 @@ export class DesktopClient extends ViewPlugin {
         let receipt = await this.tryTillReceiptAvailable(parsed.params[0])
         console.log('Receipt:', receipt)
         console.log('Sending receipt back to server', parsed.params[0], receipt)
-        this.ws.send(stringifyWithBigInt({
-          jsonrpc: '2.0',
-          result: receipt,
-          id: parsed.id,
-        }))
-      }else{
+        this.ws.send(
+          stringifyWithBigInt({
+            jsonrpc: '2.0',
+            result: receipt,
+            id: parsed.id,
+          })
+        )
+      } else {
         const provider = this.blockchain.web3().currentProvider
         //console.log('provider', provider)
         let result = await provider.sendAsync(parsed)
         if (parsed.method === 'eth_sendTransaction') {
-        //console.log('Result:', result)
+          //console.log('Result:', result)
           console.log('Sending result back to server', result)
         }
         this.ws.send(stringifyWithBigInt(result))
       }
-
-
 
       /*
       if (parsed.method === 'eth_sendTransaction' || parsed.method === 'eth_getTransactionReceipt') {
@@ -282,9 +328,9 @@ export class DesktopClient extends ViewPlugin {
     //}
   }
 
-  async init() { }
+  async init() {}
 
-  async sendAsync(payload: any) { }
+  async sendAsync(payload: any) {}
 
   async tryTillReceiptAvailable(txhash) {
     try {
@@ -304,14 +350,10 @@ export class DesktopClient extends ViewPlugin {
   }
 }
 
-
 function stringifyWithBigInt(obj) {
-
- return cbor.encode(obj)
+  return cbor.encode(obj)
   console.log('stringifyWithBigInt', obj)
-  const r = JSON.stringify(obj, (key, value) =>
-    typeof value === 'bigint' ? value.toString() : value
-  );
+  const r = JSON.stringify(obj, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
   console.log('stringifyWithBigInt', r)
   return r
 }
