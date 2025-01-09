@@ -8,7 +8,7 @@ import { PluginViewWrapper } from '@remix-ui/helper';
 import { QueryParams } from '@remix-project/remix-lib';
 import cbor from 'cbor';
 import isElectron from 'is-electron';
-import DesktopClientUI from './DesktopClientUI'; // Import the UI component
+import DesktopClientUI from '../components/DesktopClientUI'; // Import the UI component
 
 const _paq = (window._paq = window._paq || []);
 
