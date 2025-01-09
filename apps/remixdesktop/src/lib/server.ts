@@ -193,6 +193,7 @@ function parseWithBigInt(json) {
   try {
     return cbor.decode(json)
   } catch (e) {
+    console.log('parseWithBigInt error', e, json)
     console.log('parseWithBigInt error', e)
     return {}
   }

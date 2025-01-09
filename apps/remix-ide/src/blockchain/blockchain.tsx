@@ -130,16 +130,17 @@ export class Blockchain extends Plugin {
   onActivation() {
     this.active = true
     this.on('manager', 'pluginActivated', (plugin) => {
-      if (plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect') || plugin.name === 'desktopHost') {
+      if ((plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) || plugin.name === 'desktopHost') {
         this.registeredPluginEvents.push(plugin.name)
         this.on(plugin.name, 'chainChanged', () => {
-          console.log('chainChanged event')
-          this.detectNetwork((error, network) => {
-            this.networkStatus = { network, error }
-            console.log('blockchain detect chainChanged', this.networkStatus)
-            this._triggerEvent('networkStatus', [this.networkStatus])
-            
-          })
+          console.log('chainChanged event', plugin.name, this.executionContext.executionContext)
+          if (plugin.name === this.executionContext.executionContext) {
+            this.detectNetwork((error, network) => {
+              this.networkStatus = { network, error }
+              console.log('trigger networkStatus', this.networkStatus)
+              this._triggerEvent('networkStatus', [this.networkStatus])
+            })
+          }
         })
       }
     })
@@ -196,6 +197,7 @@ export class Blockchain extends Plugin {
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
+        console.log('trigger networkStatus 2', this.networkStatus)
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -211,6 +213,7 @@ export class Blockchain extends Plugin {
     setInterval(() => {
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
+        console.log('trigger networkStatus 3', this.networkStatus)
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     }, 30000)
