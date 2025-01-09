@@ -76,7 +76,6 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
   }
 
   sendAsync(data: JsonDataRequest): Promise<any> {
-    //console.log('sendAsync', data)
     return new Promise((resolve, reject) => {
       this.sendAsyncInternal(data, resolve, reject)
     })

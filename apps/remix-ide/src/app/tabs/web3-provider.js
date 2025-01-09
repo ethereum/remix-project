@@ -28,14 +28,13 @@ export class Web3ProviderModule extends Plugin {
     Should be taken carefully and probably not be release as it is now.
   */
   sendAsync(payload) {
-    //console.log('global web3 provider', payload)
+
     return new Promise((resolve, reject) => {
       this.askUserPermission('sendAsync', `Calling ${payload.method} with parameters ${JSON.stringify(payload.params, replacer, '\t')}`).then(
         async (result) => {
           if (result) {
             const provider = this.blockchain.web3().currentProvider
             const resultFn = async (error, message) => {
-              //console.log('resultFn', error, message)
               if (error) {
                 // Handle 'The method "debug_traceTransaction" does not exist / is not available.' error
                 if(error.message && error.code && error.code === -32601) {
@@ -50,16 +49,14 @@ export class Web3ProviderModule extends Plugin {
               }
               if (payload.method === 'eth_sendTransaction') {
                 if (payload.params.length && !payload.params[0].to && message.result) {
-                  //console.log('waiting for receipt', message.result)
                   setTimeout(async () => {
                     const receipt = await this.tryTillReceiptAvailable(message.result)
                     if (!receipt.contractAddress) {
-                      //console.log('receipt available but contract address not present', receipt)
+                      console.log('receipt available but contract address not present', receipt)
                       return
                     }
                     const contractAddressStr = addressToString(receipt.contractAddress)
                     const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', contractAddressStr)
-                    //console.log('contractData', contractData)
                     if (contractData) {
                       const data = await this.call('compilerArtefacts', 'getCompilerAbstract', contractData.file)
                       const contractObject = {
@@ -102,7 +99,6 @@ export class Web3ProviderModule extends Plugin {
 
   async tryTillReceiptAvailable(txhash) {
     try {
-      //console.log('tryTillReceiptAvailable', txhash)
       const receipt = await this.call('blockchain', 'getTransactionReceipt', txhash)
       if (receipt) return receipt
     } catch (e) {

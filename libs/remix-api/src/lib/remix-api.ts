@@ -19,7 +19,6 @@ import { IMenuIconsApi } from "./plugins/menuicons-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
 import { IPopupPanelAPI } from "./plugins/popuppanel-api"
 import { IDesktopClient } from "./plugins/desktop-client"
-import { IWeb3Provider } from "./plugins/web3-provider"
 
 export interface ICustomRemixApi extends IRemixApi {
   popupPanel: IPopupPanelAPI
@@ -42,7 +41,6 @@ export interface ICustomRemixApi extends IRemixApi {
   remixAI: IRemixAI,
   remixAID: IRemixAID
   desktopClient: IDesktopClient
-  web3Provider: IWeb3Provider
 }
 
 
