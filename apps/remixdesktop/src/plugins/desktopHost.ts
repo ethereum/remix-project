@@ -41,7 +41,7 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         eventEmitter.on('contextChanged', (context) => {
             console.log('contextChanged', context)
             for (const client of this.clients) {
-                //client.emit('chainChanged', context)
+                client.emit('chainChanged', context)
             }
         })
     }

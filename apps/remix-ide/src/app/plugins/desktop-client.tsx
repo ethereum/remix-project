@@ -118,8 +118,16 @@ export class DesktopClient extends ViewPlugin {
     console.log('networkStatus handled', context);
     this.state.currentContext = this.blockchain.executionContext.executionContext;
     this.renderComponent();
-    //this.ws.send(stringifyWithBigInt({ type: 'contextChanged', payload: null }));
+    this.debouncedSendContextChanged();
   }
+
+  // Debounced function to send context changed event
+  debouncedSendContextChanged = debounce(() => {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log('Sending context changed event to server');
+      this.ws.send(stringifyWithBigInt({ type: 'contextChanged', payload: null }));
+    }
+  }, 500); // Adjust the debounce wait time as needed
 
   async checkConnection() {
     console.log('Checking connection', this.ws);
@@ -272,4 +280,12 @@ function stringifyWithBigInt(obj) {
   const r = JSON.stringify(obj, (key, value) => (typeof value === 'bigint' ? value.toString() : value));
   console.log('stringifyWithBigInt', r);
   return r;
+}
+
+function debounce(func: (...args: any[]) => void, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return function (...args: any[]) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
 }
