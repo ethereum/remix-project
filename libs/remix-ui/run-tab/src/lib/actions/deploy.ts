@@ -61,9 +61,9 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
       return txHelper.getConstructorInterface(contract.object.abi)
     },
     getConstructorInputs: () => {
-      const constructorInteface = txHelper.getConstructorInterface(contract.object.abi)
+      const constructorInterface = txHelper.getConstructorInterface(contract.object.abi)
 
-      return txHelper.inputParametersDeclarationToString(constructorInteface.inputs)
+      return txHelper.inputParametersDeclarationToString(constructorInterface.inputs)
     },
     isOverSizeLimit: async (args: string) => {
       const encodedParams = await txFormat.encodeParams(args, txHelper.getConstructorInterface(contract.object.abi))
