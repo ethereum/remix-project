@@ -45,7 +45,7 @@ const RemixApp = (props: IRemixAppUi) => {
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
 
-  console.log('RemixApp props', props)
+  //console.log('RemixApp props', props)
 
   const [appState, appStateDispatch] = useReducer(appReducer, {
     ...appInitialState,
