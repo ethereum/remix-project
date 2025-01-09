@@ -14,6 +14,7 @@ interface DesktopClientState {
 const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => {} } & { onConnect: (providerName: Provider) => void }) => {
   const appContext = useContext(AppContext);
   const { connected, providers, onConnect, disableconnect, currentContext } = props;
+  const [title, setTitle] = React.useState('Connecting...');
 
   useEffect(() => {
     console.log('connected', props.connected);
@@ -27,10 +28,26 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => {} 
     });
   }, [props.connected]);
 
+  useEffect(() => {
+    console.log('providers', props.providers);
+    const metamaskProvider = providers.find(provider => provider.name.toLowerCase().includes('metamask'));
+    const braveProvider = providers.find(provider => provider.name.toLowerCase().includes('brave'));
+
+    if (metamaskProvider && braveProvider) {
+      setTitle('Metamask and Brave Wallet for Remix Desktop');
+    } else if (metamaskProvider) {
+      setTitle('Metamask for Remix Desktop');
+    } else if (braveProvider) {
+      setTitle('Brave Wallet for Remix Desktop');
+    } else {
+      setTitle('Connecting...');
+    }
+  },[providers]);
+
   return (
     <div>
       <div className="d-flex p-4 bg-light flex-column">
-        <h3>MetaMask for Desktop</h3>
+        <h3>{title}</h3>
         <p>
           1. Connect to your favorite Ethereum wallet provider
           <br></br>2. Go back to the Remix Desktop application
