@@ -56,26 +56,26 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                 <a href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/" target="__blank">
                   <img className="remixui_carouselImage" src={'/assets/img/solSurvey2024.webp'} alt=""></img>
                 </a>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{flex: '1'}}>
+                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                   The Solidity Developer Survey 2024 is live!
                   </h5>
                   <p className='pt-2'>
-                    Please take a few minute of your time to 
+                    Please take a few minutes of your time to
                     <a
                       className="mx-1"
-                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
+                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey24'])}
                       target="__blank"
                       href="https://cryptpad.fr/form/#/2/form/view/9xjPVmdv8z0Cyyh1ejseMQ0igmx-TedH5CPST3PhRUk/"
                     >
-                      COMPLETE THE SURVEY. 
+                      COMPLETE THE SURVEY.
                     </a>
                   </p>
-                  <p style={{fontSize: '0.8rem'}} className="mb-3">
+                  <p style={{ fontSize: '0.8rem' }} className="mb-3">
                     Thank you for your support! Read the full announcement
                     <a
                       className="remixui_home_text mx-1"
-                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
+                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey24'])}
                       target="__blank"
                       href="https://soliditylang.org/blog/2024/12/27/solidity-developer-survey-2024-announcement/"
                     >
