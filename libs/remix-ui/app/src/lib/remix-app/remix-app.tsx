@@ -14,7 +14,7 @@ import { UsageTypes } from './types'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
-import { desktopConnextionType } from '@remix-api'
+import { desktopConnectionType } from '@remix-api'
 
 declare global {
   interface Window {
@@ -50,7 +50,7 @@ const RemixApp = (props: IRemixAppUi) => {
   const [appState, appStateDispatch] = useReducer(appReducer, {
     ...appInitialState,
     showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron(),
-    connectedToDesktop: props.app.desktopClientMode ? desktopConnextionType.disconnected : desktopConnextionType.disabled
+    connectedToDesktop: props.app.desktopClientMode ? desktopConnectionType .disconnected : desktopConnectionType .disabled
   })
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { desktopConnextionType, GitHubUser } from "@remix-api";
+import { desktopConnectionType , GitHubUser } from "@remix-api";
 import { AppState } from "../interface";
 
 export const appInitialState: AppState = {
@@ -7,5 +7,5 @@ export const appInitialState: AppState = {
   needsGitInit: true,
   canUseGit: false,
   showPopupPanel: false,
-  connectedToDesktop: desktopConnextionType.disabled
+  connectedToDesktop: desktopConnectionType .disabled
 }

@@ -6,6 +6,10 @@ import { EventEmitter } from 'events'
 import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import { Profile } from '@remixproject/plugin-utils'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { AppAction, AppState } from '@remix-ui/app'
+import { desktopConnectionType } from '@remix-api'
+import Home from 'libs/remix-ui/vertical-icons-panel/src/lib/components/Home'
+import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
 
 const profile = {
   name: 'menuicons',
@@ -13,7 +17,7 @@ const profile = {
   description: 'Remix IDE vertical icons',
   version: packageJson.version,
   methods: ['select', 'unlinkContent', 'linkContent'],
-  events: ['toggleContent', 'showContent']
+  events: ['toggleContent', 'showContent'],
 }
 
 export class VerticalIcons extends Plugin {
@@ -21,6 +25,7 @@ export class VerticalIcons extends Plugin {
   htmlElement: HTMLDivElement
   icons: Record<string, IconRecord> = {}
   dispatch: React.Dispatch<any> = () => {}
+  appStateDispatch: React.Dispatch<AppAction> = () => {}
   constructor() {
     super(profile)
     this.events = new EventEmitter()
@@ -35,7 +40,7 @@ export class VerticalIcons extends Plugin {
       .map((value) => {
         return {
           ...value,
-          isRequired: fixedOrder.indexOf(value.profile.name) > -1
+          isRequired: fixedOrder.indexOf(value.profile.name) > -1,
         }
       })
       .sort((a, b) => {
@@ -52,17 +57,21 @@ export class VerticalIcons extends Plugin {
       ...required,
       ...divived.filter((value) => {
         return !value.isRequired
-      })
+      }),
     ]
 
     this.dispatch({
       verticalIconsPlugin: this,
-      icons: sorted
+      icons: sorted,
     })
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
+  }
+
+  setAppStateDispatch(appStateDispatch: React.Dispatch<AppAction>) {
+    this.appStateDispatch = appStateDispatch
   }
 
   onActivation() {
@@ -103,7 +112,7 @@ export class VerticalIcons extends Plugin {
       active: false,
       pinned: false,
       canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
     this.renderComponent()
   }
@@ -138,14 +147,26 @@ export class VerticalIcons extends Plugin {
     this.events.emit('toggleContent', name)
   }
 
-  updateComponent(state: any) {
-    return <RemixUiVerticalIconsPanel verticalIconsPlugin={state.verticalIconsPlugin} icons={state.icons} />
+  updateComponent(state: any, appState: Partial<AppState>) {
+    if (appState.connectedToDesktop === desktopConnectionType.disabled) {
+      return <RemixUiVerticalIconsPanel verticalIconsPlugin={state.verticalIconsPlugin} icons={state.icons} />
+    } else {
+      return (
+        <>
+          <div id="iconsP" className="h-100">
+            <div className="mt-2 my-1 remixui_homeIcon" data-id="verticalIconsHomeIcon" id="verticalIconsHomeIcon">
+              <BasicLogo />
+            </div>
+          </div>
+        </>
+      )
+    }
   }
 
   render() {
     return (
       <div id="icon-panel">
-        <PluginViewWrapper plugin={this} />
+        <PluginViewWrapper useAppContext={true} plugin={this} />
       </div>
     )
   }

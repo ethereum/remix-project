@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import BasicLogo from './BasicLogo'
 import { AppContext } from '@remix-ui/app'
-import { desktopConnextionType } from '@remix-api'
+import { desktopConnectionType } from '@remix-api'
 interface HomeProps {
   verticalIconPlugin: any
 }
@@ -15,7 +15,7 @@ function Home({ verticalIconPlugin }: HomeProps) {
       <div
         className="mt-2 my-1 remixui_homeIcon"
         onClick={async () => {
-          if (appContext.appState.connectedToDesktop === desktopConnextionType.disabled) await verticalIconPlugin.activateHome()
+          if (appContext.appState.connectedToDesktop === desktopConnectionType .disabled) await verticalIconPlugin.activateHome()
         }}
         {...{ plugin: 'home' }}
         data-id="verticalIconsHomeIcon"

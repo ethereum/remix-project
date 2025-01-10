@@ -182,7 +182,6 @@ export class RunTab extends ViewPlugin {
     const udapp = this // eslint-disable-line
 
     const addProvider = async (position, name, displayName, isInjected, isVM, isForkedState, fork = '', dataId = '', title = '', forkedVM = false) => {
-      console.log(`Adding provider ${name}`)
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},

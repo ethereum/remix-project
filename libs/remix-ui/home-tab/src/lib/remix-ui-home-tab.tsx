@@ -12,7 +12,7 @@ import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
 import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import { LanguageOptions } from './components/homeTablangOptions'
-import { desktopConnextionType } from '@remix-api'
+import { desktopConnectionType } from '@remix-api'
 
 declare global {
   interface Window {
@@ -73,7 +73,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     }
   }, [])
 
-  if (appContext.appState.connectedToDesktop != desktopConnextionType.disabled) {
+  if (appContext.appState.connectedToDesktop != desktopConnectionType .disabled) {
     return (<></>)
   }
 

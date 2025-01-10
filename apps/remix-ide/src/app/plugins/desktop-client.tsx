@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import React from 'react';
-import { desktopConnection, desktopConnextionType } from '@remix-api';
+import { desktopConnection, desktopConnectionType } from '@remix-api';
 import { Blockchain, Provider } from '../../blockchain/blockchain';
 import { AppAction, AppModal, ModalTypes } from '@remix-ui/app';
 import { ViewPlugin } from '@remixproject/engine-web';
@@ -42,7 +42,7 @@ export class DesktopClient extends ViewPlugin {
     super(profile);
     this.blockchain = blockchain;
     this.state = {
-      connected: desktopConnextionType.disconnected,
+      connected: desktopConnectionType .disconnected,
       providers: [],
       disableconnect: false,
       currentContext: '',
@@ -179,7 +179,7 @@ export class DesktopClient extends ViewPlugin {
     this.ws.onopen = () => {
       console.log('Connected to server');
       this.emit('connected', true);
-      this.setConnectionState(desktopConnextionType.connected);
+      this.setConnectionState(desktopConnectionType .connected);
       this.call('terminal', 'log', {
         value: 'Connected to the desktop application.',
         type: 'info',
@@ -193,7 +193,7 @@ export class DesktopClient extends ViewPlugin {
       if (parsed && parsed.type === 'error') {
         if (parsed.payload === 'ALREADY_CONNECTED') {
           console.log('ALREADY_CONNECTED');
-          this.setConnectionState(desktopConnextionType.alreadyConnected);
+          this.setConnectionState(desktopConnectionType .alreadyConnected);
           const modalContent: AppModal = {
             id: this.profile.name,
             title: 'Another tab or window is already connected.',
@@ -243,8 +243,8 @@ export class DesktopClient extends ViewPlugin {
       this.ws = null;
 
       this.emit('connected', false);
-      if (this.state.connected !== desktopConnextionType.alreadyConnected) {
-        this.setConnectionState(desktopConnextionType.disconnected);
+      if (this.state.connected !== desktopConnectionType .alreadyConnected) {
+        this.setConnectionState(desktopConnectionType .disconnected);
 
         setTimeout(() => {
           this.connectToWebSocket();
