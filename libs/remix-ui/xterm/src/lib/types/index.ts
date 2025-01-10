@@ -13,7 +13,6 @@ export interface xTerminalUiState {
   shells: string[]
   showOutput: boolean
   workingDir: string
-  selectedTerminalTab: 'output' | 'xterm' | 'transactions'
 }
 
 export interface ActionPayloadTypes {
@@ -27,7 +26,6 @@ export interface ActionPayloadTypes {
   ADD_SHELLS: string[],
   SHOW_OUTPUT: boolean
   SET_WORKING_DIR: string
-  SET_TERMINAL_TAB: 'output' | 'xterm' | 'transactions'
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

@@ -46,7 +46,6 @@ export class TxRunnerWeb3 {
       const listenOnResponse = () => {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
-          console.log('listenOnResponse')
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
@@ -81,10 +80,8 @@ export class TxRunnerWeb3 {
     } else {
       try {
         const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-        console.log('res', res)
         cb(null, res.transactionHash)
       } catch (e) {
-        console.log(e)
         if (!e.message) e.message = ''
         if (e.error) {
           e.message = e.message + ' ' + e.error
@@ -195,7 +192,6 @@ export class TxRunnerWeb3 {
 async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
   try {
     const receipt = await web3.eth.getTransactionReceipt(txhash)
-    console.log('receipt', receipt)
     if (receipt) {
       if (!receipt.to && !receipt.contractAddress) {
         // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
