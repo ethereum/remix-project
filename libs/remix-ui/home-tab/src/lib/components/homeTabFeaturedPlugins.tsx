@@ -131,16 +131,6 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               callback={() => startContractVerification()}
             />
             <PluginButton
-              imgPath="assets/img/staticAnalysis.webp"
-              envID="staticAnalysisLogo"
-              envText="Solidity Analyzers"
-              description={intl.formatMessage({
-                id: 'home.codeAnalyizerPluginDesc'
-              })}
-              maintainedBy='Remix'
-              callback={() => startCodeAnalyzer()}
-            />
-            <PluginButton
               imgPath="assets/img/learnEthLogo.webp"
               envID="learnEthLogo"
               envText="LearnEth Tutorials"
@@ -149,6 +139,16 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               })}
               maintainedBy='Remix'
               callback={() => startLearnEth()}
+            />
+            <PluginButton
+              imgPath="assets/img/staticAnalysis.webp"
+              envID="staticAnalysisLogo"
+              envText="Solidity Analyzers"
+              description={intl.formatMessage({
+                id: 'home.codeAnalyizerPluginDesc'
+              })}
+              maintainedBy='Remix'
+              callback={() => startCodeAnalyzer()}
             />
             <PluginButton
               imgPath="assets/img/cookbook.webp"
