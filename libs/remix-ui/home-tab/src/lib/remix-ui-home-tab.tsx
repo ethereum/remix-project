@@ -73,7 +73,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     }
   }, [])
 
-  if(appContext.appState.connectedToDesktop != desktopConnextionType.disabled) {
+  if (appContext.appState.connectedToDesktop != desktopConnextionType.disabled) {
     return (<></>)
   }
 

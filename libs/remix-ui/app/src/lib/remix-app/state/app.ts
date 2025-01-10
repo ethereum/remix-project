@@ -8,4 +8,4 @@ export const appInitialState: AppState = {
   canUseGit: false,
   showPopupPanel: false,
   connectedToDesktop: desktopConnextionType.disabled
-} 
+}

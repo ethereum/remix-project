@@ -15,7 +15,7 @@ function Home({ verticalIconPlugin }: HomeProps) {
       <div
         className="mt-2 my-1 remixui_homeIcon"
         onClick={async () => {
-          if(appContext.appState.connectedToDesktop === desktopConnextionType.disabled) await verticalIconPlugin.activateHome()
+          if (appContext.appState.connectedToDesktop === desktopConnextionType.disabled) await verticalIconPlugin.activateHome()
         }}
         {...{ plugin: 'home' }}
         data-id="verticalIconsHomeIcon"

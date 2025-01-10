@@ -118,16 +118,16 @@ const ModalWrapper = (props: ModalWrapperProps) => {
         })
         break
       case ModalTypes.fixed:
-          setState({
-            ...props,
-            okFn: null,
-            cancelFn: null,
-            okLabel: null,
-            cancelLabel: null,
-            preventBlur: true,
-            hideCancelIcon: true,
-          })
-          break
+        setState({
+          ...props,
+          okFn: null,
+          cancelFn: null,
+          okLabel: null,
+          cancelLabel: null,
+          preventBlur: true,
+          hideCancelIcon: true,
+        })
+        break
       default:
         setState({
           ...props,

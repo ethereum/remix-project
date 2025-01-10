@@ -6,23 +6,23 @@ import { ElectronPlugin } from '@remixproject/engine-electron'
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
-    name: 'desktopHost',
-    displayName: '',
-    description: '',
-    methods: [],
-    events: ['connected'],
-    maintainedBy: 'Remix'
+  name: 'desktopHost',
+  displayName: '',
+  description: '',
+  methods: [],
+  events: ['connected'],
+  maintainedBy: 'Remix'
 }
 
 export class DesktopHost extends ElectronPlugin {
 
-    constructor() {
-        super(profile)
-    }
+  constructor() {
+    super(profile)
+  }
 
-    onActivation() {
-        console.log('DesktopHost activated')
-        _paq.push(['trackEvent', 'plugin', 'activated', 'DesktopHost'])
-    }
+  onActivation() {
+    console.log('DesktopHost activated')
+    _paq.push(['trackEvent', 'plugin', 'activated', 'DesktopHost'])
+  }
 
 }

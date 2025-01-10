@@ -13,7 +13,6 @@ import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
 
-
 export const providerDescriptions = {
   'vm-cancun': 'Deploy to the in-browser virtual machine running the Cancun fork.',
   'vm-shanghai': 'Deploy to the in-browser virtual machine running the Shanghai fork.',
@@ -216,7 +215,7 @@ export class RunTab extends ViewPlugin {
         isInjected,
         isVM,
         isForkedState,
-      })	
+      })
     }
 
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
@@ -318,7 +317,7 @@ export class RunTab extends ViewPlugin {
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false, false)
 
-    if(isElectron()) {
+    if (isElectron()) {
       // desktop host
       await addProvider(12, 'desktopHost', 'Metamask for Remix Desktop', false, false, false)
     }

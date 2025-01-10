@@ -670,9 +670,7 @@ class AppComponent {
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge'])
 
-    if(!isElectron()){
-      
-    }else{
+    if(isElectron()){
       this.appManager.activatePlugin(['desktopHost'])
     }
   }

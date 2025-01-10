@@ -70,7 +70,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     return aiActive
   }
 
-  if(platform !== appPlatformTypes.desktop && appContext.appState.connectedToDesktop !== desktopConnextionType.disabled) {
+  if (platform !== appPlatformTypes.desktop && appContext.appState.connectedToDesktop !== desktopConnextionType.disabled) {
     return (<><div className="d-flex remixui_statusbar_height flex-row bg-warning justify-content-between align-items-center">
       <DesktopStatus/></div></>)
   }

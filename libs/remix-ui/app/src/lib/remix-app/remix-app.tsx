@@ -54,7 +54,7 @@ const RemixApp = (props: IRemixAppUi) => {
   })
 
   useEffect(() => {
-    if(props.app.params && props.app.params.activate && props.app.params.activate.split(',').includes('desktopClient')){
+    if (props.app.params && props.app.params.activate && props.app.params.activate.split(',').includes('desktopClient')){
       setHideSidePanel(true)
     }
     async function activateApp() {
@@ -119,7 +119,7 @@ const RemixApp = (props: IRemixAppUi) => {
   },[appState.showPopupPanel])
 
   function setListeners() {
-    if(!props.app.desktopClientMode){
+    if (!props.app.desktopClientMode){
       props.app.sidePanel.events.on('toggle', () => {
         setHideSidePanel((prev) => {
           return !prev

@@ -11,7 +11,7 @@ interface DesktopClientState {
   currentContext: string;
 }
 
-const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => {} } & { onConnect: (providerName: Provider) => void }) => {
+const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => void } & { onConnect: (providerName: Provider) => void }) => {
   const appContext = useContext(AppContext);
   const { connected, providers, onConnect, disableconnect, currentContext } = props;
   const [title, setTitle] = React.useState('Connecting...');
@@ -84,8 +84,8 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => {} 
                         {disableconnect
                           ? 'please wait  ...'
                           : currentContext === provider.name
-                          ? 'Connected'
-                          : 'Connect'}
+                            ? 'Connected'
+                            : 'Connect'}
                       </button>
                     </div>
                   </div>
