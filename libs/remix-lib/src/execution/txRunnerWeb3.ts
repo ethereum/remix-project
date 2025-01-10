@@ -18,7 +18,6 @@ export class TxRunnerWeb3 {
   }
 
   async _executeTx (tx, network, txFee, api, promptCb, callback) {
-    console.log('executeTx', tx)
     if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
       // the sending stack (web3.js / metamask need to have the type defined)
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824

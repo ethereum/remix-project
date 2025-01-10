@@ -16,7 +16,6 @@ export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Disp
 }
 
 export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  console.log('fillAccountsList')
   try {
     dispatch(fetchAccountsListRequest())
     try {
@@ -35,7 +34,6 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
-      console.log('loadedAccounts', loadedAccounts)
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     } catch (e) {
       dispatch(fetchAccountsListFailed(e.message))
@@ -59,7 +57,6 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  console.log('setExecutionContext', executionContext)
   plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
     plugin.call('notification', 'toast', alertMsg)
   }, () => { setFinalContext(plugin, dispatch) })

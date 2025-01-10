@@ -1,17 +1,14 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { SettingsProps } from '../types'
 import { EnvironmentUI } from './environment'
 import { NetworkUI } from './network'
 import { AccountUI } from './account'
 import { GasLimitUI } from './gasLimit'
 import { ValueUI } from './value'
-import { AppContext } from '@remix-ui/app'
-import { desktopConnextionType } from '@remix-api'
 
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
-  const appContext = useContext(AppContext)
 
   return (
     <div className="udapp_settings">
@@ -39,8 +36,8 @@ export function SettingsUI(props: SettingsProps) {
         signMessageWithAddress={props.signMessageWithAddress}
         passphrase={props.passphrase}
       />
-      {appContext.appState.connectedToDesktop === desktopConnextionType.disabled ?
-        <><GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} /><ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} /></> : null}
+      <GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
+      <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} />
     </div>
   )
 }

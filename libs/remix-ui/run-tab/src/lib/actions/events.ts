@@ -38,7 +38,6 @@ export const setupEvents = (plugin: RunTab) => {
   })
 
   plugin.blockchain.event.register('contextChanged', async (context) => {
-    console.log('contextChanged', context)
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     if (context !== 'walletconnect') {
@@ -99,12 +98,6 @@ export const setupEvents = (plugin: RunTab) => {
 
   plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('desktopHost', 'chainChanged', (context) => {
-    //console.log('desktopHost chainChanged', context)
-    //fillAccountsList(plugin, dispatch)
-    //updateInstanceBalance(plugin, dispatch)
-  })
-
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(plugin, dispatch, env)
@@ -131,7 +124,7 @@ export const setupEvents = (plugin: RunTab) => {
     if (activatedPlugin.name === 'remixd') {
       dispatch(setRemixDActivated(true))
     } else {
-      if (activatedPlugin && (activatedPlugin.name.startsWith('injected') || activatedPlugin.name === 'desktopHost')) {
+      if (activatedPlugin && activatedPlugin.name.startsWith('injected')) {
         plugin.on(activatedPlugin.name, 'accountsChanged', (accounts: Array<string>) => {
           const accountsMap = {}
           accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})

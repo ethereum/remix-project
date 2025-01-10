@@ -158,7 +158,6 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
   case SET_EXECUTION_ENVIRONMENT: {
     const payload: string = action.payload
-    console.log('SET_EXECUTION_ENVIRONMENT', payload)
 
     return {
       ...state,

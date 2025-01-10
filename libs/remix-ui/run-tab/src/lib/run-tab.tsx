@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { Fragment, useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useReducer, useState } from 'react'
 import semver from 'semver'
 import { FormattedMessage } from 'react-intl'
 import { ModalDialog } from '@remix-ui/modal-dialog'
@@ -57,8 +57,6 @@ import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
-import { AppContext } from '@remix-ui/app'
-import { desktopConnextionType } from '@remix-api'
 
 export type CheckStatus = 'Passed' | 'Failed' | 'Not Found'
 
@@ -69,9 +67,9 @@ export function RunTabUI(props: RunTabProps) {
     title: '',
     message: '',
     okLabel: '',
-    okFn: () => { },
+    okFn: () => {},
     cancelLabel: '',
-    cancelFn: () => { }
+    cancelFn: () => {}
   })
   const [modals, setModals] = useState<Modal[]>([])
   const [focusToaster, setFocusToaster] = useState<string>('')
@@ -89,9 +87,8 @@ export function RunTabUI(props: RunTabProps) {
   const [runTab, dispatch] = useReducer(runTabReducer, initialState)
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
-  const [solcVersion, setSolcVersion] = useState<{ version: string, canReceive: boolean }>({ version: '', canReceive: true })
+  const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
   const [evmCheckComplete, setEvmCheckComplete] = useState(false)
-  const appContext = useContext(AppContext)
 
   const getVersion = () => {
     let version = '0.8.25'
@@ -144,7 +141,7 @@ export function RunTabUI(props: RunTabProps) {
         return 'Not Found'
       } else {
         if (!IsCompatible) {
-          //show modal
+        //show modal
           plugin.call('notification', 'modal', {
             id: 'evm-chainId-incompatible',
             title: 'Incompatible EVM for the selected chain',
@@ -160,7 +157,7 @@ export function RunTabUI(props: RunTabProps) {
             okLabel: 'Switch EVM and Recompile',
             cancelLabel: 'Cancel',
             okFn: () => checkEvmChainCompatibilityOkFunction(chain),
-            cancelFn: () => { }
+            cancelFn: () => {}
           })
           return 'Failed'
         } else {
@@ -373,87 +370,84 @@ export function RunTabUI(props: RunTabProps) {
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
           />
-          {appContext.appState.connectedToDesktop === desktopConnextionType.disabled && (
-            <>
-              <ContractDropdownUI
-                selectedAccount={runTab.accounts.selectedAccount}
-                syncContracts={syncContracts}
-                exEnvironment={runTab.selectExEnv}
-                contracts={runTab.contracts}
-                getSelectedContract={fetchSelectedContract}
-                modal={modal}
-                passphrase={runTab.passphrase}
-                setPassphrase={setPassphraseModal}
-                createInstance={createNewInstance}
-                ipfsCheckedState={runTab.ipfsChecked}
-                setIpfsCheckedState={setCheckIpfs}
-                publishToStorage={publishToStorage}
-                gasEstimationPrompt={gasEstimationPrompt}
-                passphrasePrompt={passphrasePrompt}
-                mainnetPrompt={mainnetPrompt}
-                tooltip={toast}
-                loadAddress={loadFromAddress}
-                networkName={runTab.networkName}
-                setNetworkName={setNetworkName}
-                setSelectedContract={updateSelectedContract}
-                remixdActivated={runTab.remixdActivated}
-                isValidProxyAddress={isValidProxyAddress}
-                isValidProxyUpgrade={isValidProxyUpgrade}
-                proxy={runTab.proxy}
-                solCompilerVersion={solcVersion}
-                setCompilerVersion={setSolcVersion}
-                getCompilerVersion={getVersion}
-                getCompilerDetails={getCompilerDetails}
-                evmCheckComplete={evmCheckComplete}
-                setEvmCheckComplete={setEvmCheckComplete}
-                plugin={plugin}
-                runTabState={runTab}
-              />
-              <RecorderUI
-                plugin={plugin}
-                gasEstimationPrompt={gasEstimationPrompt}
-                passphrasePrompt={passphrasePrompt}
-                mainnetPrompt={mainnetPrompt}
-                storeScenario={storeNewScenario}
-                runCurrentScenario={runScenario}
-                scenarioPrompt={scenarioPrompt}
-                count={runTab.recorder.transactionCount}
-                currentFile={currentfile}
-              />
-              <InstanceContainerUI
-                plugin={plugin}
-                getCompilerDetails={getCompilerDetails}
-                evmCheckComplete={evmCheckComplete}
-                runTabState={runTab}
-                instances={runTab.instances}
-                clearInstances={removeInstances}
-                unpinInstance={unpinPinnedInstance}
-                pinInstance={pinUnpinnedInstance}
-                removeInstance={removeSingleInstance}
-                getContext={getExecutionContext}
-                gasEstimationPrompt={gasEstimationPrompt}
-                passphrasePrompt={passphrasePrompt}
-                mainnetPrompt={mainnetPrompt}
-                runTransactions={executeTransactions}
-                sendValue={runTab.sendValue}
-                solcVersion={solcVersion}
-                getVersion={getVersion}
-                getFuncABIInputs={getFuncABIValues}
-                exEnvironment={runTab.selectExEnv}
-                editInstance={(instance) => {
-                  const { metadata, abi, object } = instance.contractData;
-                  plugin.call('quick-dapp', 'edit', {
-                    address: instance.address,
-                    abi: abi,
-                    name: instance.name,
-                    network: runTab.networkName,
-                    devdoc: object.devdoc,
-                    methodIdentifiers: object.evm.methodIdentifiers,
-                    solcVersion: JSON.parse(metadata).compiler.version,
-                  })
-                }}
-              /></>
-          )}
+          <ContractDropdownUI
+            selectedAccount={runTab.accounts.selectedAccount}
+            syncContracts={syncContracts}
+            exEnvironment={runTab.selectExEnv}
+            contracts={runTab.contracts}
+            getSelectedContract={fetchSelectedContract}
+            modal={modal}
+            passphrase={runTab.passphrase}
+            setPassphrase={setPassphraseModal}
+            createInstance={createNewInstance}
+            ipfsCheckedState={runTab.ipfsChecked}
+            setIpfsCheckedState={setCheckIpfs}
+            publishToStorage={publishToStorage}
+            gasEstimationPrompt={gasEstimationPrompt}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
+            tooltip={toast}
+            loadAddress={loadFromAddress}
+            networkName={runTab.networkName}
+            setNetworkName={setNetworkName}
+            setSelectedContract={updateSelectedContract}
+            remixdActivated={runTab.remixdActivated}
+            isValidProxyAddress={isValidProxyAddress}
+            isValidProxyUpgrade={isValidProxyUpgrade}
+            proxy={runTab.proxy}
+            solCompilerVersion={solcVersion}
+            setCompilerVersion={setSolcVersion}
+            getCompilerVersion={getVersion}
+            getCompilerDetails={getCompilerDetails}
+            evmCheckComplete={evmCheckComplete}
+            setEvmCheckComplete={setEvmCheckComplete}
+            plugin={plugin}
+            runTabState={runTab}
+          />
+          <RecorderUI
+            plugin={plugin}
+            gasEstimationPrompt={gasEstimationPrompt}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
+            storeScenario={storeNewScenario}
+            runCurrentScenario={runScenario}
+            scenarioPrompt={scenarioPrompt}
+            count={runTab.recorder.transactionCount}
+            currentFile={currentfile}
+          />
+          <InstanceContainerUI
+            plugin={plugin}
+            getCompilerDetails={getCompilerDetails}
+            evmCheckComplete={evmCheckComplete}
+            runTabState={runTab}
+            instances={runTab.instances}
+            clearInstances={removeInstances}
+            unpinInstance={unpinPinnedInstance}
+            pinInstance={pinUnpinnedInstance}
+            removeInstance={removeSingleInstance}
+            getContext={getExecutionContext}
+            gasEstimationPrompt={gasEstimationPrompt}
+            passphrasePrompt={passphrasePrompt}
+            mainnetPrompt={mainnetPrompt}
+            runTransactions={executeTransactions}
+            sendValue={runTab.sendValue}
+            solcVersion={solcVersion}
+            getVersion={getVersion}
+            getFuncABIInputs={getFuncABIValues}
+            exEnvironment={runTab.selectExEnv}
+            editInstance={(instance) => {
+              const { metadata, abi, object } = instance.contractData;
+              plugin.call('quick-dapp', 'edit', {
+                address: instance.address,
+                abi: abi,
+                name: instance.name,
+                network: runTab.networkName,
+                devdoc: object.devdoc,
+                methodIdentifiers: object.evm.methodIdentifiers,
+                solcVersion: JSON.parse(metadata).compiler.version,
+              })
+            }}
+          />
         </div>
       </div>
       <ModalDialog id="udappNotify" {...focusModal} handleHide={handleHideModal} />
