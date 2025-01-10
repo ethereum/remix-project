@@ -51,7 +51,7 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
         <p>
           1. Connect to your favorite Ethereum wallet provider
           <br></br>2. Go back to the Remix Desktop application
-          <br></br>3. Deploy using 'MetaMask for Desktop'
+          <br></br>3. Deploy using 'MetaMask/Brave Wallet'
         </p>
       </div>
 
