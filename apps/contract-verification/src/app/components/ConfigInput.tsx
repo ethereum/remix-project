@@ -44,7 +44,7 @@ export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, ini
           type={secret ? 'password' : 'text'}
           className={`form-control small w-100 ${!enabled ? 'bg-transparent pl-0 border-0' : ''}`}
           id={id}
-          placeholder={intl.formatMessage({ id: "contract-verification.configInputPlaceholder", defaultMessage: "Enter API Key" }, { label })}
+          placeholder={intl.formatMessage({ id: "contract-verification.configInputPlaceholder" }, { label })}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           disabled={!enabled}
@@ -53,10 +53,10 @@ export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, ini
         { enabled ? (
           <>
             <button type="button" className="btn btn-primary btn-sm ml-2" onClick={handleSave}>
-              <FormattedMessage id="contract-verification.configInputSaveButton" defaultMessage="Save" />
+              <FormattedMessage id="contract-verification.configInputSaveButton" />
             </button>
             <button type="button" className="btn btn-secondary btn-sm ml-2" onClick={handleCancel}>
-              <FormattedMessage id="contract-verification.configInputCancelButton" defaultMessage="Cancel" />
+              <FormattedMessage id="contract-verification.configInputCancelButton" />
             </button>
           </>
         ) : (

@@ -66,7 +66,7 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
             </optgroup>
           ))
         ) : (
-          <option>Compiled contract required</option>
+          <option value={''}><FormattedMessage id="contract-verification.contractDropDownDefaultText" defaultMessage={'Compiled contract required'} /></option>
         )}
       </select>
     </div>

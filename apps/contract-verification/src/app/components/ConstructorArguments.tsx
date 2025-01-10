@@ -105,7 +105,6 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
         <label className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }} htmlFor="toggleRawInputSwitch">
           <FormattedMessage
             id="contract-verification.constructorArgumentsToggleRawInput"
-            defaultMessage="Enter raw ABI-encoded constructor arguments"
           />
         </label>
       </div>

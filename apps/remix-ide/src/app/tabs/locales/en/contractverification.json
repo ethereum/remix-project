@@ -23,7 +23,8 @@
   "contract-verification.configInputCancelButton": "Cancel",
   "contract-verification.constructorArgumentsToggleRawInput": "Enter raw ABI-encoded constructor arguments",
   "contract-verification.constructorArgumentsRawAbiEncodingResult": "ABI-encoded constructor arguments",
-  "contract-verification.contractDropdownLabel": "{label}"
+  "contract-verification.contractDropdownLabel": "{label}",
+  "contract-verification.contractDropDownDefaultText": "Compiled contract required"
 }
 
 
