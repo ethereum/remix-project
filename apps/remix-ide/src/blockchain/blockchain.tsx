@@ -133,11 +133,9 @@ export class Blockchain extends Plugin {
       if ((plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) || plugin.name === 'desktopHost') {
         this.registeredPluginEvents.push(plugin.name)
         this.on(plugin.name, 'chainChanged', () => {
-          console.log('chainChanged event', plugin.name, this.executionContext.executionContext)
           if (plugin.name === this.executionContext.executionContext) {
             this.detectNetwork((error, network) => {
               this.networkStatus = { network, error }
-              console.log('trigger networkStatus', this.networkStatus)
               this._triggerEvent('networkStatus', [this.networkStatus])
             })
           }
@@ -197,7 +195,6 @@ export class Blockchain extends Plugin {
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
-        console.log('trigger networkStatus 2', this.networkStatus)
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -213,7 +210,6 @@ export class Blockchain extends Plugin {
     setInterval(() => {
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
-        console.log('trigger networkStatus 3', this.networkStatus)
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     }, 30000)
@@ -573,7 +569,6 @@ export class Blockchain extends Plugin {
     if (context.context === 'item-another-chain') {
       this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs', 'focus', 'environmentExplorer'))
     } else {
-      console.log('changeExecutionContext', context)
       return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
     }
   }
