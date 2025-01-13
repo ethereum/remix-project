@@ -1,23 +1,18 @@
 import * as http from 'http'
 import { WebSocketServer, WebSocket } from 'ws'
-import cors from 'cors'
 import EventEmitter from 'events'
 import { RequestArguments } from '../types'
 import path from 'path'
 import express from 'express'
+import cbor from 'cbor'
+
 import { findAvailablePort } from '../utils/portFinder'
 import { isPackaged } from '../main'
 import { isE2ELocal } from '../main'
-import cbor from 'cbor'
+import JSONbig from 'json-bigint'
 
 // Forwarding WebSocket client
 let connectedWebSocket: WebSocket | null = null
-
-// Helper function to send JSON responses
-const sendResponse = (response: http.ServerResponse, data: any, statusCode = 200) => {
-  response.writeHead(statusCode, { 'Content-Type': 'application/json' })
-  response.end(JSON.stringify(data))
-}
 
 // Handle incoming JSON-RPC requests and forward to WebSocket client
 export const handleRequest = async (jsonRpcPayload: RequestArguments, eventEmitter: EventEmitter): Promise<any> => {
@@ -31,20 +26,20 @@ export const handleRequest = async (jsonRpcPayload: RequestArguments, eventEmitt
 
     connectedWebSocket &&
       connectedWebSocket.once('message', async (data: any) => {
-        //if (Buffer.isBuffer(data)) {
-        //    data = data.toString('utf-8');
-        //}
+        if (Buffer.isBuffer(data)) {
+            data = data.toString('utf-8');
+        }
 
         //console.log('received message from WebSocket ONCE client:', data);
 
         clearTimeout(timeout)
         try {
           //console.log('received message from WebSocket ONCE client:', data)
-          const response = parseWithBigInt(new Uint8Array(data))
+          const response = parseWithBigInt(data)
           //console.log('received message from WebSocket ONCE client:', response)
           if (response.id === jsonRpcPayload.id) {
             if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt') {
-              console.log('response from WebSocket client:', response)
+              console.log('response from WebSocket client:', data, response)
               eventEmitter.emit('focus')
             }
             if (response.error) {
@@ -152,10 +147,10 @@ export const startHostServer = async (eventEmitter: EventEmitter) => {
     eventEmitter.emit('connected', true)
 
     connectedWebSocket.on('message', (data: any) => {
-      //if (Buffer.isBuffer(data)) {
-      //     data = data.toString('utf-8');
-      // }
-      const response = parseWithBigInt(new Uint8Array(data))
+      if (Buffer.isBuffer(data)) {
+           data = data.toString('utf-8');
+      }
+      const response = parseWithBigInt(data)
       if (response && response.type) {
         //console.log('received message from WebSocket client:', response)
         eventEmitter.emit(response.type, response.payload)
@@ -189,7 +184,13 @@ export const startHostServer = async (eventEmitter: EventEmitter) => {
 }
 
 function parseWithBigInt(json) {
-  //console.log('parseWithBigInt', json)
+  const result = JSON.parse(json, (key, value) => {
+    if (typeof value === 'string' && /^\d+n?$/.test(value)) {
+      return BigInt(value.endsWith('n') ? value.slice(0, -1) : value)
+    }
+    return value
+  })
+  return result
   try {
     return cbor.decode(json)
   } catch (e) {
