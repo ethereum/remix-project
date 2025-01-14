@@ -31,6 +31,7 @@ export interface RunTabState {
     error: string,
     selectedAccount: string
   },
+  smartAccounts: Record<string, SmartAccount>
   sendValue: string,
   sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
   gasLimit: number,
