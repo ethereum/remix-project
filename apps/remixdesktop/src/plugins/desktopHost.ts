@@ -1,6 +1,7 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { handleRequest, startHostServer } from "../lib/server"
+import { handleRequest, startHostServer } from "../lib/MetaMaskServer"
+import { startVsCodeServer } from "../lib/VsCodeServer"
 import EventEmitter from "events"
 import { ipcMain, shell } from "electron"
 import { RequestArguments } from "../types"
@@ -49,6 +50,7 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
     async startServer(): Promise<void> {
         console.log('desktopHost activated')
         ports = await startHostServer(eventEmitter)
+        await startVsCodeServer(eventEmitter)
         console.log('desktopHost server started', ports)
     }
 }
