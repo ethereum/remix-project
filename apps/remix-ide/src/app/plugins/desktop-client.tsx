@@ -235,9 +235,16 @@ export class DesktopClient extends ViewPlugin {
         }
         if (parsed.method === 'net_version' && result.result === 1337) {
           console.log('Sending result back to server', result, this.blockchain.executionContext)
+          console.log(this.state.providers)
+          if(this.state.providers.length === 0) { // if no providers are available, send the VM context
+            this.ws.send(stringifyWithBigInt(result))
+          }
+
         }else{
           this.ws.send(stringifyWithBigInt(result))
         }
+        
+        
       }
     }
 

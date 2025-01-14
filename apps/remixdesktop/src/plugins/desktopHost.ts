@@ -73,6 +73,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
 
     async init() {
         console.log('initializing destkophost plugin...')
+        
         if (!isConnected)
             await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`)
         // wait for the connection

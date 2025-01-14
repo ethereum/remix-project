@@ -92,7 +92,7 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
                       <div className="d-flex mb-2">{providerLogos[provider.name] && providerLogos[provider.name].map((logo, index) => <img key={index} src={logo} style={{ width: '2rem', height: '2rem', marginRight: '0.5rem' }} />)}</div>
                       <h5 className="card-title">{provider.displayName}</h5>
                       <p className="card-text">{provider.description}</p>
-                      <button disabled={disableconnect || currentContext === provider.name} className="btn btn-primary mt-auto" onClick={() => onConnect(provider)}>
+                      <button data-id={`connection-btn-${provider.name}`} disabled={disableconnect || currentContext === provider.name} className="btn btn-primary mt-auto" onClick={() => onConnect(provider)}>
                         {disableconnect ? 'please wait  ...' : currentContext === provider.name ? 'Connected' : 'Connect'}
                       </button>
                     </div>
