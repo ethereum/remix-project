@@ -93,7 +93,7 @@ export const TabsUI = (props: TabsUIProps) => {
         await props.plugin.call('settings', 'updateCopilotChoice', ai_switch)
         return ai_switch
       }
-      return await props.plugin.call('settings', 'getCopilotSetting')
+      return init_state
     } catch (e) {
       return false
     }
