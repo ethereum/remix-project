@@ -1,4 +1,3 @@
-import { result } from 'lodash'
 import { NightwatchBrowser } from 'nightwatch'
 
 const tests = {
