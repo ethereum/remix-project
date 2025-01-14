@@ -210,7 +210,7 @@ export class DesktopClient extends ViewPlugin {
         console.log('Sending message to web3:', parsed)
       }
 
-      let receipt
+
       if (parsed.method === 'eth_getTransactionReceipt') {
         console.log('Getting receipt for', parsed.params)
         let receipt = await this.tryTillReceiptAvailable(parsed.params[0])
@@ -233,7 +233,11 @@ export class DesktopClient extends ViewPlugin {
         if (parsed.method === 'eth_sendTransaction') {
           console.log('Sending result back to server', result)
         }
-        this.ws.send(stringifyWithBigInt(result))
+        if (parsed.method === 'net_version' && result.result === 1337) {
+          console.log('Sending result back to server', result, this.blockchain.executionContext)
+        }else{
+          this.ws.send(stringifyWithBigInt(result))
+        }
       }
     }
 

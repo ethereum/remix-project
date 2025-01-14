@@ -318,7 +318,7 @@ export class RunTab extends ViewPlugin {
 
     if (isElectron()) {
       // desktop host
-      await addProvider(12, 'desktopHost', 'Metamask/Brave Wallet', false, false, false)
+      await addProvider(5, 'desktopHost', 'Metamask Wallet', false, false, false)
     }
 
     // external provider
