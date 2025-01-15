@@ -1,7 +1,7 @@
-import { NightwatchBrowser } from 'nightwatch';
-import EventEmitter from 'events';
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
-const selector = '.udapp_contractNames';
+const selector = '.udapp_contractNames'
 
 class SelectContract extends EventEmitter {
   command(this: NightwatchBrowser, contractName: string): NightwatchBrowser {
@@ -9,9 +9,9 @@ class SelectContract extends EventEmitter {
       .waitForElementVisible(selector)
       .waitForElementPresent(`${selector} option[value="${contractName}"]`)
       .click(`${selector} option[value="${contractName}"]`)
-      .perform(() => this.emit('complete'));
-    return this;
+      .perform(() => this.emit('complete'))
+    return this
   }
 }
 
-module.exports = SelectContract;
+module.exports = SelectContract
