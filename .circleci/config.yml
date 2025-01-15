@@ -785,7 +785,7 @@ workflows:
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
               job: ["nogroup"]
-              jobsize: ["10"]
+              jobsize: ["1"]
               parallelism: [1]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
