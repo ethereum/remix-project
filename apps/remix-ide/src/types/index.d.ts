@@ -62,3 +62,25 @@ export interface IRemixAppManager {
   registeredPlugins(): Promise<any[]>
   registerContextMenuItems(): Promise<void>
 }
+
+export interface IEventManager {
+  register(eventName: string, obj: any, func?: () => any): void
+  unregister(eventName: string, obj: any, func: () => any): void
+  trigger(eventName: string, args: any[]): void
+}
+
+export type EditorSession = {
+  dispose: () => void
+  getValue: () => any
+  language: string
+  path: string
+  setValue: (content: string) => void
+}
+
+export type EditorEvent = {
+  onBreakPointAdded: (file: any, line: any) => void
+  onBreakPointCleared: (file: any, line: any) => void
+  onDidChangeContent: (file: any) => Promise<void>
+  onEditorMounted: () => void
+  onDiffEditorMounted: () => void
+}
