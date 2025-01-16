@@ -209,7 +209,6 @@ export default class TabProxy extends Plugin {
   }
 
   switchTab (tabName) {
-    console.log('switchTab', tabName)
     if (this._handlers[tabName]) {
       this._handlers[tabName].switchTo()
       this.tabsApi.activateTab(tabName)
