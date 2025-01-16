@@ -17,8 +17,8 @@ export const compileCircuit = async (plugin: CircomPluginClient, appState: AppSt
   }
 }
 
-export const computeWitness = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch'], status: string, witnessValues: Record<string, string>) => {
-  if (status !== 'computing') {
+export const computeWitness = async (plugin: CircomPluginClient, appState: AppState, status: string, witnessValues: Record<string, string>) => {
+  if (status === 'computing') {
     return console.log('Existing witness computation in progress')
   }
 
@@ -94,11 +94,14 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
 
 function getR1csPath(appState: AppState) {
   const fileName = extractNameFromKey(appState.filePath)
+
   return `${extractParentFromKey(appState.filePath)}/.bin/${fileName.replace('.circom', '.r1cs')}`
 }
 
 function getWitnessPath(appState: AppState) {
-  return getR1csPath(appState).replace('.r1cs', '.wtn')
+  const fileName = extractNameFromKey(appState.filePath)
+
+  return isElectron() ? extractParentFromKey(appState.filePath) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn') : getR1csPath(appState).replace('.r1cs', '.wtn')
 }
 
 function getPtauUrl(appState: AppState) {
