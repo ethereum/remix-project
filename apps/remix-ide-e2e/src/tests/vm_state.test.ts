@@ -33,7 +33,7 @@ const tests = {
       .click('*[data-id="delete-state-icon"]')
       .waitForElementVisible(
         {
-          selector: "//*[@data-shared='tooltipPopup' and contains(.,'State not available to delete')]",
+          selector: "//*[@data-shared='tooltipPopup' and contains(.,'State not available to reset')]",
           locateStrategy: 'xpath'
         }
       )
@@ -140,7 +140,7 @@ const tests = {
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
       // check if toaster is shown
-      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state deleted successfully.`)
+      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state reset successfully.`)
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
