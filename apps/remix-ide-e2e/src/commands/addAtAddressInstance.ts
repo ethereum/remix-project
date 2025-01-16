@@ -34,7 +34,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
         })
     } else {
       browser.click({
-        selector: '//*[@id="runAndDeployAtAdressButtonContainer"]',
+        selector: '//*[@id="runAndDeployAtAddressButtonContainer"]',
         locateStrategy: 'xpath'
       })
     }
