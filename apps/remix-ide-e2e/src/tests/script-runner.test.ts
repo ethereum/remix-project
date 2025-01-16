@@ -14,7 +14,6 @@ const tests = {
             .click('*[plugin="pluginManager"]')
             .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
             .click('*[data-id="pluginManagerComponentPluginManager"]')
-            .pause()
             .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
     },
     'Should load default script runner': function (browser: NightwatchBrowser) {
@@ -68,11 +67,11 @@ const tests = {
             .modalFooterOKClick('TemplatesSelection')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab'"
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
             })
             .click({
                 locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab'"
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
             })
             .waitForElementVisible('[data-id="sr-loaded-default"]')
             .waitForElementVisible('[data-id="dependency-ethers-^5"]')
@@ -80,15 +79,14 @@ const tests = {
     },
     'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('filePanel')
             .switchWorkspace('default_workspace')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab'"
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
             })
             .click({
                 locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab'"
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
             })
             .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
             .waitForElementPresent('[data-id="dependency-ethers-^6"]')
