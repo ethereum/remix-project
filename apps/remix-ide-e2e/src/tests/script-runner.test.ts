@@ -9,8 +9,12 @@ const tests = {
     },
     'Should activate plugins': function (browser: NightwatchBrowser) {
         browser
+            .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+            .waitForElementVisible('*[plugin="pluginManager"]')
+            .click('*[plugin="pluginManager"]')
             .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
             .click('*[data-id="pluginManagerComponentPluginManager"]')
+            .pause()
             .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
     },
     'Should load default script runner': function (browser: NightwatchBrowser) {
