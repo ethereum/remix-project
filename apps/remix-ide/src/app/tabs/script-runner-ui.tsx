@@ -1,17 +1,11 @@
-import { IframePlugin, IframeProfile, ViewPlugin } from '@remixproject/engine-web'
+import { ViewPlugin, ViewProfile } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { customScriptRunnerConfig, IScriptRunnerState, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner'
-import { Profile } from '@remixproject/plugin-utils'
-import { Engine, Plugin } from '@remixproject/engine'
-import axios from 'axios'
-import { AppModal } from '@remix-ui/app'
-import { isArray } from 'lodash'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { CustomRemixApi } from '@remix-api'
 import { ScriptRunnerBridgePlugin } from '../plugins/script-runner-bridge'
 
-const profile = {
+const profile: ViewProfile = {
   name: 'UIScriptRunner',
   displayName: 'Script configuration',
   methods: [],
@@ -36,7 +30,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   async onActivation() {
     this.on('scriptRunnerBridge', 'render', () => {
       this.renderComponent()
-    })	
+    })
     this.renderComponent()
   }
 

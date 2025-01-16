@@ -1,7 +1,7 @@
 import { IframePlugin, IframeProfile, ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { customScriptRunnerConfig, IScriptRunnerState, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner' 
+import { customScriptRunnerConfig, IScriptRunnerState, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner'
 import { Profile } from '@remixproject/plugin-utils'
 import { Engine, Plugin } from '@remixproject/engine'
 import axios from 'axios'
@@ -48,7 +48,7 @@ export class ScriptRunnerBridgePlugin extends Plugin {
   }
 
   async onActivation() {
-    if(!this.initialized) {
+    if (!this.initialized) {
       this.setListeners()
       await this.init()
       this.initialized = true
@@ -87,11 +87,9 @@ export class ScriptRunnerBridgePlugin extends Plugin {
     })
   }
 
-
   async renderComponent() {
     this.emit('render')
   }
-
 
   async selectScriptRunner(config: ProjectConfiguration) {
     if (await this.loadScriptRunner(config)) await this.saveCustomConfig(this.customConfig)
@@ -262,7 +260,7 @@ export class ScriptRunnerBridgePlugin extends Plugin {
   }
 
   async openCustomConfig() {
-    
+
     try {
       await this.plugin.call('fileManager', 'open', '.remix/script.config.json')
     } catch (e) {}

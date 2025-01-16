@@ -35,8 +35,7 @@ export interface ScriptRunnerConfig {
     customConfig: customScriptRunnerConfig
   }
 
-
-  export interface IScriptRunnerState {
+export interface IScriptRunnerState {
     customConfig: customScriptRunnerConfig
     configurations: ProjectConfiguration[]
     activeConfig: ProjectConfiguration
