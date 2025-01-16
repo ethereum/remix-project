@@ -243,7 +243,8 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="script-config"
                 className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
                 onClick={async () => {
-                  props.plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
+                  await props.plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
+                  await props.plugin.call('tabs', 'focus', 'UIScriptRunner')
                 }}
               >
                 <i className="fa-kit fa-solid-gear-circle-play"></i>
