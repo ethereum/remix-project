@@ -164,7 +164,9 @@ export default class TabProxy extends Plugin {
     })
 
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
+      
       if (location === 'mainPanel') {
+        console.log('pluginActivated', name, location, displayName, icon, description)
         this.addTab(
           name,
           displayName,
@@ -201,11 +203,13 @@ export default class TabProxy extends Plugin {
   }
 
   focus (name) {
+    console.log('focus', name)
     this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }
 
   switchTab (tabName) {
+    console.log('switchTab', tabName)
     if (this._handlers[tabName]) {
       this._handlers[tabName].switchTo()
       this.tabsApi.activateTab(tabName)
@@ -324,6 +328,7 @@ export default class TabProxy extends Plugin {
   removeTab (name, currentFileTab) {
     delete this._handlers[name]
     let previous = currentFileTab
+    if(!this.loadedTabs.find(tab => tab.name === name)) return // prevent removing tab that doesn't exist
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
       if (!previous && tab.name === name) {
         if(index - 1  >= 0 && this.loadedTabs[index - 1])
