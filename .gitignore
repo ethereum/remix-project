@@ -16,6 +16,7 @@ soljson.js
 *_group*.ts
 stats.json
 release
+.env
 
 
 # compiled output
