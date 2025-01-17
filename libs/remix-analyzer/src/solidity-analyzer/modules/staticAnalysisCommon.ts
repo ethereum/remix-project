@@ -1068,7 +1068,7 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
 
 // To create the method signature similar to contract.evm.gasEstimates.external object
 // For address payable, return address
-function getMethodParamsSplittedTypeDesc (node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
+function getMethodParamsSplitTypeDesc (node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
   return node.parameters.parameters.map((varNode, varIndex) => {
     let finalTypeString
     const typeString = varNode.typeDescriptions.typeString
