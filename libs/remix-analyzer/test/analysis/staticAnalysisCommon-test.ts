@@ -292,7 +292,7 @@ test('staticAnalysisCommon.getFullQualifiedFuncDefinitionIdent', function (t) {
   t.throws(() => common.getFullQualifiedFuncDefinitionIdent(parameterFunctionCall, functionDefinition, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on wrong nodes')
 })
 
-test('staticAnalysisCommon.getSplittedTypeDesc', function (t) {
+test('staticAnalysisCommon.getSplitTypeDesc', function (t) {
   t.plan(3)
   t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.withoutParams, compiledContractObj).length === 0, 'no params, no params type signature')
   t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.bytesArray, compiledContractObj)[0] === 'bytes32[]', 'creates right params type signature')
