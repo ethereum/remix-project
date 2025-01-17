@@ -1,6 +1,6 @@
 import category from './categories'
 import algorithm from './algorithmCategories'
-import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplittedTypeDesc } from './staticAnalysisCommon'
+import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplitTypeDesc } from './staticAnalysisCommon'
 import {
   ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule,
   FunctionDefinitionAstNode, VariableDeclarationAstNode, SupportedVersion
