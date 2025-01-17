@@ -27,7 +27,7 @@ export default class gasCosts implements AnalyzerModule {
       let signature: string
       if (node.nodeType === 'FunctionDefinition') {
         const functionName: string = getFunctionDefinitionName(node)
-        signature = helpers.buildAbiSignature(functionName, getMethodParamsSplittedTypeDesc(node, compilationResults.contracts))
+        signature = helpers.buildAbiSignature(functionName, getMethodParamsSplitTypeDesc(node, compilationResults.contracts))
       } else { signature = node.name + '()' }
 
       return {
