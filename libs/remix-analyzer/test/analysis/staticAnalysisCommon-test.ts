@@ -296,7 +296,7 @@ test('staticAnalysisCommon.getSplitTypeDesc', function (t) {
   t.plan(3)
   t.ok(common.getMethodParamsSplitTypeDesc(funcDefForComplexParams.withoutParams, compiledContractObj).length === 0, 'no params, no params type signature')
   t.ok(common.getMethodParamsSplitTypeDesc(funcDefForComplexParams.bytesArray, compiledContractObj)[0] === 'bytes32[]', 'creates right params type signature')
-  t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.nestedStruct, compiledContractObj)[0] === '(bytes32,uint256,uint256[],address,(bytes32,uint256)[])[][]', 'creates right params type signature')
+  t.ok(common.getMethodParamsSplitTypeDesc(funcDefForComplexParams.nestedStruct, compiledContractObj)[0] === '(bytes32,uint256,uint256[],address,(bytes32,uint256)[])[][]', 'creates right params type signature')
 })
 
 // #################### Complex Node Identification
