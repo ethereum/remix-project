@@ -1,13 +1,14 @@
-
-export function normalizeContractPath(contractPath: string): string[]{
-  const paths = contractPath.split('/')
-  const filename = paths[paths.length - 1]
-  let folders = ''
-  for (let i = 0; i < paths.length - 1; i++) {
-    if (i !== paths.length -1) {
-      folders += `${paths[i]}/`
-    }
+export function joinPaths(paths: string[]): string {
+  if (!paths || paths.length === 0) {
+    return '';
   }
-  const resultingPath = `${folders}${filename}`
-  return [folders,resultingPath, filename]
+
+  let joinedPath = paths[0];
+
+  for (let i = 1; i < paths.length; i++) {
+    // Merging paths
+    joinedPath = `${joinedPath}/${paths[i]}`;
+  }
+
+  return joinedPath;
 }
