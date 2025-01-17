@@ -1162,7 +1162,7 @@ export {
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
-  getMethodParamsSplittedTypeDesc,
+  getMethodParamsSplitTypeDesc,
   getCompilerVersion,
 
   // #################### Complex Node Identification
