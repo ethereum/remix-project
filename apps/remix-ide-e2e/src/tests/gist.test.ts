@@ -81,7 +81,7 @@ module.exports = {
       .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPrompt"]')
       .modalFooterCancelClick('gisthandler')
   },
 
