@@ -245,9 +245,9 @@ module.exports = {
         .switchEnvironment('basic-http-provider')
         .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
         .execute(() => {
-          (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+          (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPrompt"]') as any).focus()
         }, [], () => { })
-        .setValue('[data-id="modalDialogCustomPromp"]', 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9')
+        .setValue('[data-id="modalDialogCustomPrompt"]', 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9')
         .modalFooterOKClick('basic-http-provider')
         .clickLaunchIcon('filePanel')
         .openFile('README.txt')
