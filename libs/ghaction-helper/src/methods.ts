@@ -160,15 +160,15 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
 
 // Convert output.contracts.<filename>.<contractName> in Artifact object compatible form
 const resultToArtifact = (result: any) => {
-  const { fullyQualifiedName, artefact } = result
+  const { fullyQualifiedName, artifact } = result
   return {
     contractName: fullyQualifiedName.split(':')[1],
     sourceName: fullyQualifiedName.split(':')[0],
-    abi: artefact.abi,
-    bytecode: artefact.evm.bytecode.object,
-    deployedBytecode: artefact.evm.deployedBytecode.object,
-    linkReferences: artefact.evm.bytecode.linkReferences,
-    deployedLinkReferences: artefact.evm.deployedBytecode.linkReferences
+    abi: artifact.abi,
+    bytecode: artifact.evm.bytecode.object,
+    deployedBytecode: artifact.evm.deployedBytecode.object,
+    linkReferences: artifact.evm.bytecode.linkReferences,
+    deployedLinkReferences: artifact.evm.deployedBytecode.linkReferences
   }
 }
 
