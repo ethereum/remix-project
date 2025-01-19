@@ -25,7 +25,7 @@ export async function getGitLog(path: string): Promise<string> {
         git.stdout.on('data', function (data) {
             logs += data.toString()
         })
-        git.stderr.on('err', function (data) {
+        git.stderr.on('data', function (data) {
             reject(data.toString())
         })
         git.on('close', function () {
