@@ -455,11 +455,11 @@ contract test {
 
     }
 
-    function addStructs(MyStruct[] memory _structs) public returns (MyStruct[] memory strucmts) {
+    function addStructs(MyStruct[] memory _structs) public returns (MyStruct[] memory structs) {
        strucmts = _structs;
     }
 
-    function addStructs(MyStruct memory _structs) public returns (MyStruct memory _strucmts) {
+    function addStructs(MyStruct memory _structs) public returns (MyStruct memory _structs) {
       _strucmts = _structs;
     }
 }`
