@@ -230,7 +230,7 @@ export const moveTokenProvider = {
       [/[;,.]/, "delimiter"],
 
       // strings
-      [/"([^"\\]|\\.)*$/, "string.invalid"], // non-teminated string
+      [/"([^"\\]|\\.)*$/, "string.invalid"], // non-terminated string
       [/"/, { token: "string.quote", bracket: "@open", next: "@string" }],
 
       // characters
