@@ -36,7 +36,7 @@ function onlyUnique(value: recentFolder, index: number, self: recentFolder[]) {
   return self.findIndex((rc, index) => rc.path === value.path) === index
 }
 
-const deplucateFolderList = (list: recentFolder[]): recentFolder[] => {
+const deduplicateFolderList = (list: recentFolder[]): recentFolder[] => {
   return list.filter(onlyUnique)
 }
 
@@ -52,7 +52,7 @@ export class FSPlugin extends ElectronBasePlugin {
     const openedFolders = (config && config.openedFolders) || []
     const recentFolders: recentFolder[] = (config && config.recentFolders) || []
     this.call('electronconfig', 'writeConfig', {...config, 
-      recentFolders: deplucateFolderList(recentFolders),
+      recentFolders: deduplicateFolderList(recentFolders),
       openedFolders: openedFolders})
     const foldersToDelete: string[] = []
     if (recentFolders && recentFolders.length) {
@@ -69,7 +69,7 @@ export class FSPlugin extends ElectronBasePlugin {
       }
       if (foldersToDelete.length) {
         const newFolders = recentFolders.filter((f: recentFolder) => !foldersToDelete.includes(f.path))
-        this.call('electronconfig', 'writeConfig', {recentFolders: deplucateFolderList(newFolders)})
+        this.call('electronconfig', 'writeConfig', {recentFolders: deduplicateFolderList(newFolders)})
       }
     }
     createWindow()
@@ -361,7 +361,7 @@ class FSPluginClient extends ElectronBasePluginClient {
       path,
       timestamp,
     })
-    config.recentFolders = deplucateFolderList(config.recentFolders)
+    config.recentFolders = deduplicateFolderList(config.recentFolders)
     writeConfig(config)
   }
 
