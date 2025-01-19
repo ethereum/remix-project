@@ -12,11 +12,11 @@ const tests = {
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
         .waitForElementVisible('*[data-id="landingPageImportFromGist"]')
         .click('*[data-id="landingPageImportFromGist"]')
-        .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+        .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]')
         .execute(function () {
-          (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+          (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]') as any).focus()
         })
-        .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', gist_id)
+        .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]', gist_id)
         .modalFooterOKClick('gisthandler')
         .pause(3000)
         .windowHandles(function (result) {
