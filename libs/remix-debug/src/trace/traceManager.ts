@@ -148,10 +148,11 @@ export class TraceManager {
       throw new TraceError(`Invalid step index: ${check.message}`, stepIndex)
     }
     const call = util.findCall(stepIndex, this.traceCache.callsTree.call)
-    if (call === null) {
+    if (call) {
+      return call.callStack
+    } else {
       throw new TraceError('No callstack found for the given step index', stepIndex)
     }
-    return call.callStack
   }
 
   getStackAt (stepIndex) {
