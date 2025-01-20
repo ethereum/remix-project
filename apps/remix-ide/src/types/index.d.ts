@@ -50,7 +50,7 @@ export interface IRemixAppManager {
   pluginLoader: PluginLoader
   canActivatePlugin(from: any, to: any): Promise<boolean>
   canDeactivatePlugin(from: any, to: any): Promise<boolean>
-  checkCanDeactivate(from: any, to: any): Promise<boolean>
+  canDeactivate(from: any, to: any): Promise<boolean>
   deactivatePlugin(name: string): Promise<void>
   canCall(from: string, to: string, method: string, message: string): Promise<boolean>
   onPluginActivated(plugin: any): void
