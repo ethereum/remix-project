@@ -137,8 +137,11 @@ export class TraceManager {
       throw new TraceError(`Invalid step index: ${check.message}`, stepIndex)
     }
     const callsPath = util.buildCallPath(stepIndex, this.traceCache.callsTree.call)
-    if (callsPath === null) throw new TraceError('Failed to build call path: no valid path found', stepIndex)
-    return callsPath
+    if (callsPath) {
+      return callsPath
+    } else {
+      throw new TraceError('Failed to build call path: no valid path found', stepIndex)
+    }
   }
 
   getCallStackAt (stepIndex) {
