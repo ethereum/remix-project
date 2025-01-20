@@ -5,7 +5,8 @@ export const appInitialState: AppState = {
   filePathToId: {},
   autoCompile: false,
   hideWarnings: false,
-  status: 'idle'
+  status: 'idle',
+  compilerFeedback: ''
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -27,6 +28,18 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       filePath: action.payload
+    }
+
+  case 'SET_COMPILER_FEEDBACK':
+    return {
+      ...state,
+      compilerFeedback: action.payload
+    }
+
+  case 'SET_COMPILER_STATUS':
+    return {
+      ...state,
+      status: action.payload
     }
 
   default:
