@@ -24,7 +24,7 @@ import { SolidityScript } from './app/plugins/solidity-script'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtifacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import { Registry } from '@remix-project/remix-lib'
 import { ConfigPlugin } from './app/plugins/config'
@@ -316,10 +316,10 @@ class AppComponent {
     // ----------------- compilation metadata generation service ---------
     const compilerMetadataGenerator = new CompilerMetadata()
     // ----------------- compilation result service (can keep track of compilation results) ----------------------------
-    const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
+    const compilersArtifacts = new CompilerArtifacts() // store all the compilation results (key represent a compiler name)
     Registry.getInstance().put({
-      api: compilersArtefacts,
-      name: 'compilersartefacts'
+      api: compilersArtifacts,
+      name: 'compilersartifacts'
     })
 
     // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
@@ -352,7 +352,7 @@ class AppComponent {
     // ----------------- run script after each compilation results -----------
     const compileAndRun = new CompileAndRun()
     // -------------------Terminal----------------------------------------
-    makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
+    makeUdapp(blockchain, compilersArtifacts, (domEl) => terminal.logHtml(domEl))
     const terminal = new Terminal(
       { appManager, blockchain },
       {
@@ -394,7 +394,7 @@ class AppComponent {
       editor,
       fileManager,
       compilerMetadataGenerator,
-      compilersArtefacts,
+      compilersArtifacts,
       networkModule,
       offsetToLineColumnConverter,
       codeParser,
@@ -506,7 +506,7 @@ class AppComponent {
       Registry.getInstance().get('filemanager').api,
       Registry.getInstance().get('editor').api,
       filePanel,
-      Registry.getInstance().get('compilersartefacts').api,
+      Registry.getInstance().get('compilersartifacts').api,
       networkModule,
       Registry.getInstance().get('fileproviders/browser').api,
       this.engine
@@ -565,7 +565,7 @@ class AppComponent {
       'locale',
       'fileManager',
       'compilerMetadata',
-      'compilerArtefacts',
+      'compilerArtifacts',
       'network',
       'web3Provider',
       'offsetToLineColumnConverter',
