@@ -81,8 +81,8 @@ export class CompilerArtifacts extends Plugin {
   filterAllContractDatas(filter) {
     const contractsData = {}
     Object.keys(this.compilersArtifactsPerFile).map((targetFile) => {
-      const artufact = this.compilersArtifactsPerFile[targetFile]
-      const contracts = artufact.getContracts()
+      const artifact = this.compilersArtifactsPerFile[targetFile]
+      const contracts = artifact.getContracts()
       Object.keys(contracts).map((file) => {
         if (filter(file, contracts[file], artifact)) contractsData[file] = contracts[file]
       })
@@ -91,7 +91,7 @@ export class CompilerArtifacts extends Plugin {
     if (this.compilersArtifacts.__last) {
       const contracts = this.compilersArtifacts.__last.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file], this.compilersArtfacts.__last)) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], this.compilersArtifacts.__last)) contractsData[file] = contracts[file]
       })
     }
     return contractsData
