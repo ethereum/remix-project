@@ -50,7 +50,6 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
     async startServer(): Promise<void> {
         console.log('desktopHost activated')
         ports = await startHostServer(eventEmitter)
-        await startVsCodeServer(eventEmitter)
         console.log('desktopHost server started', ports)
     }
 }

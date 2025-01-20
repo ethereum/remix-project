@@ -161,7 +161,7 @@ export const gitProxy = {
             return 0
         })
 
-        console.log('files', files)
+        //console.log('files', files)
         return files
     },
 

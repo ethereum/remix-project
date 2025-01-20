@@ -3,93 +3,59 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { Compiler } from '@remix-project/remix-solidity'
 
 import { CompilationResult, CompilationSource } from '@remix-project/remix-solidity'
-import { CodeParser } from "../code-parser";
+import { CodeParser } from '../code-parser'
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity';
+import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity'
 import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
-import { lastCompilationResult } from '@remixproject/plugin-api';
-import { monacoTypes } from '@remix-ui/editor';
+import { lastCompilationResult } from '@remixproject/plugin-api'
+import { monacoTypes } from '@remix-ui/editor'
 
 enum MarkerSeverity {
-    Hint = 1,
-    Info = 2,
-    Warning = 4,
-    Error = 8
+  Hint = 1,
+  Info = 2,
+  Warning = 4,
+  Error = 8,
 }
 
 type errorMarker = {
-    message: string
-    severity: monacoTypes.MarkerSeverity
-    position: {
-        start: {
-            line: number
-            column: number
-        },
-        end: {
-            line: number
-            column: number
-        }
-    },
-    file: string
+  message: string
+  severity: monacoTypes.MarkerSeverity
+  position: {
+    start: {
+      line: number
+      column: number
+    }
+    end: {
+      line: number
+      column: number
+    }
+  }
+  file: string
 }
 export default class CodeParserCompiler {
   plugin: CodeParser
   compiler: any // used to compile the current file separately from the main compiler
-  onAstFinished: (success: any, data: CompilationResult, source: CompilationSourceCode, input: any, version: any) => Promise<void>;
-  errorState: boolean;
+  onAstFinished: (success: any, data: CompilationResult, source: CompilationSourceCode, input: any, version: any) => Promise<void>
+  errorState: boolean
   gastEstimateTimeOut: any
-  constructor(
-    plugin: CodeParser
-  ) {
+  constructor(plugin: CodeParser) {
     this.plugin = plugin
   }
 
   init() {
-
     this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
+      console.log('onAstFinished data', data)
+      console.log('onAstFinished source', source)
+      console.log('onAstFinished input', input)
+
       await this.plugin.call('editor', 'clearAnnotations')
       this.errorState = true
+
       const result = new CompilerAbstract('soljson', data, source, input)
-      let allErrors: errorMarker[] = []
-      if (data.errors || data.error) {
-        const file = await this.plugin.call('fileManager', 'getCurrentFile')
-        const currentFileContent = await this.plugin.call('fileManager', 'readFile', file)
+      const allErrors = await this.getErrorMarkers(data, source, input)
+      if (allErrors) {
         const sources = result.getSourceCode().sources || []
-        if (data.error) {
-          if (data.error.formattedMessage) {
-            // mark this file as error
-            const errorMarker = await this.createErrorMarker(data.error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
-            allErrors = [...allErrors, errorMarker]
-          }
-        } else {
-          for (const error of data.errors) {
-            if (!error.sourceLocation) {
-              // mark this file as error
-              const errorMarker = await this.createErrorMarker(error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
-              allErrors = [...allErrors, errorMarker]
-            } else {
-              const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
-              const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn({
-                start: error.sourceLocation.start,
-                length: error.sourceLocation.end - error.sourceLocation.start
-              }, lineBreaks)
-
-              const filePath = error.sourceLocation.file
-              const fileTarget = await this.plugin.call('fileManager', 'getUrlFromPath', filePath)
-
-              const importFilePositions = await this.getPositionForImportErrors(fileTarget.file, currentFileContent)
-              for (const importFilePosition of importFilePositions) {
-                for (const line of importFilePosition.lines) {
-                  allErrors = [...allErrors, await this.createErrorMarker(error, file, line.position)]
-                }
-              }
-
-              allErrors = [...allErrors, await this.createErrorMarker(error, filePath, lineColumn)]
-            }
-          }
-        }
-
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
         if (displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
         await this.addDecorators(allErrors, sources)
@@ -119,16 +85,71 @@ export default class CodeParserCompiler {
       this.plugin.emit('astFinished')
     }
 
-    this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    this.compiler = new Compiler((url, cb) =>
+      this.plugin
+        .call('contentImport', 'resolveAndSave', url, undefined)
+        .then((result) => cb(null, result))
+        .catch((error) => cb(error.message))
+    )
     this.compiler.event.register('compilationFinished', this.onAstFinished)
+  }
+
+  async getErrorMarkers(data: CompilationResult, source: CompilationSourceCode, input: any) {
+    const result = new CompilerAbstract('soljson', data, source, input)
+    let allErrors: errorMarker[] = []
+    if (data.errors || data.error) {
+      const file = await this.plugin.call('fileManager', 'getCurrentFile')
+      const currentFileContent = await this.plugin.call('fileManager', 'readFile', file)
+      const sources = result.getSourceCode().sources || []
+      if (data.error) {
+        if (data.error.formattedMessage) {
+          // mark this file as error
+          const errorMarker = await this.createErrorMarker(data.error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
+          allErrors = [...allErrors, errorMarker]
+        }
+      } else {
+        for (const error of data.errors) {
+          if (!error.sourceLocation) {
+            // mark this file as error
+            const errorMarker = await this.createErrorMarker(error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
+            allErrors = [...allErrors, errorMarker]
+          } else {
+            const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
+            const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn(
+              {
+                start: error.sourceLocation.start,
+                length: error.sourceLocation.end - error.sourceLocation.start,
+              },
+              lineBreaks
+            )
+
+            const filePath = error.sourceLocation.file
+            const fileTarget = await this.plugin.call('fileManager', 'getUrlFromPath', filePath)
+
+            const importFilePositions = await this.getPositionForImportErrors(fileTarget.file, currentFileContent)
+            for (const importFilePosition of importFilePositions) {
+              for (const line of importFilePosition.lines) {
+                allErrors = [...allErrors, await this.createErrorMarker(error, file, line.position)]
+              }
+            }
+
+            allErrors = [...allErrors, await this.createErrorMarker(error, filePath, lineColumn)]
+          }
+        }
+      }
+
+      return allErrors
+    } else {
+      return null
+    }
   }
 
   // COMPILER
 
   /**
-     *
-     * @returns
-     */
+   *
+   * @returns
+   */
   async compile() {
     try {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
@@ -141,28 +162,28 @@ export default class CodeParserCompiler {
         this.compiler.set('useFileConfiguration', true)
         this.compiler.set('compilerRetriggerMode', CompilerRetriggerMode.retrigger)
 
-        if (await this.plugin.call('fileManager', 'exists','remappings.txt')) {
-          const remappings = await this.plugin.call('fileManager', 'readFile','remappings.txt')
+        if (await this.plugin.call('fileManager', 'exists', 'remappings.txt')) {
+          const remappings = await this.plugin.call('fileManager', 'readFile', 'remappings.txt')
           this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
         } else {
           this.compiler.set('remappings', [])
         }
 
         const configFileContent = {
-          "language": "Solidity",
-          "settings": {
-            "optimizer": {
-              "enabled": state.optimize,
-              "runs": state.runs
+          language: 'Solidity',
+          settings: {
+            optimizer: {
+              enabled: state.optimize,
+              runs: state.runs,
             },
-            "outputSelection": {
-              "*": {
-                "": ["ast"],
-                "*": ["evm.gasEstimates"]
-              }
+            outputSelection: {
+              '*': {
+                '': ['ast'],
+                '*': ['evm.gasEstimates'],
+              },
             },
-            "evmVersion": state.evmVersion && state.evmVersion.toString() || undefined,
-          }
+            evmVersion: (state.evmVersion && state.evmVersion.toString()) || undefined,
+          },
         }
 
         this.compiler.set('configFileContent', JSON.stringify(configFileContent))
@@ -187,8 +208,8 @@ export default class CodeParserCompiler {
     }
 
     const errorPriority = {
-      'error': 0,
-      'warning': 1,
+      error: 0,
+      warning: 1,
     }
 
     // sort errorPerFiles by error priority
@@ -197,8 +218,7 @@ export default class CodeParserCompiler {
       const errors = errorsPerFiles[fileName]
       errors.sort((a, b) => {
         return errorPriority[a.severity] - errorPriority[b.severity]
-      }
-      )
+      })
       sortedErrorsPerFiles[fileName] = errors
     }
     const filesWithOutErrors = Object.keys(sources).filter((fileName) => !sortedErrorsPerFiles[fileName])
@@ -225,10 +245,8 @@ export default class CodeParserCompiler {
       const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
       await this.plugin.call('fileDecorator', 'clearFileDecorators', fileTarget.file)
     }
-    if (decorators.length > 0)
-      await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
+    if (decorators.length > 0) await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
     await this.plugin.call('editor', 'clearErrorMarkers', filesWithOutErrors)
-
   }
 
   async createErrorMarker(error: any, filePath: string, lineColumn): Promise<errorMarker> {
@@ -238,14 +256,14 @@ export default class CodeParserCompiler {
       position: {
         start: {
           line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
-          column: ((lineColumn.start && lineColumn.start.column) || 0) + 1
+          column: ((lineColumn.start && lineColumn.start.column) || 0) + 1,
         },
         end: {
           line: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
-          column: ((lineColumn.end && lineColumn.end.column) || 0) + 1
-        }
-      }
-      , file: filePath
+          column: ((lineColumn.end && lineColumn.end.column) || 0) + 1,
+        },
+      },
+      file: filePath,
     }
   }
 
@@ -259,11 +277,7 @@ export default class CodeParserCompiler {
 
   async getPositionForImportErrors(importedFileName: string, text: string) {
     const re = new RegExp(importedFileName, 'gi')
-    const result: SearchResultLine[] = findLinesInStringWithMatch(
-      text,
-      re
-    )
+    const result: SearchResultLine[] = findLinesInStringWithMatch(text, re)
     return result
   }
-
 }

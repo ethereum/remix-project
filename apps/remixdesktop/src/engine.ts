@@ -17,6 +17,7 @@ import { HardhatPlugin } from './plugins/hardhatPlugin';
 import { CircomElectronPlugin } from './plugins/circomElectronBasePlugin';
 import { isE2E } from './main';
 import { DesktopHostPlugin } from './plugins/desktopHost';
+import { VsCodeSyncPlugin } from './plugins/vsCodeSync';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -34,6 +35,7 @@ const hardhatPlugin = new HardhatPlugin()
 const remixAIDesktopPlugin = new RemixAIDesktopPlugin()
 const circomPlugin = new CircomElectronPlugin()
 const desktopHostPlugin = new DesktopHostPlugin()
+const vscodePlugin = new VsCodeSyncPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -50,6 +52,7 @@ engine.register(hardhatPlugin)
 engine.register(remixAIDesktopPlugin)
 engine.register(circomPlugin)
 engine.register(desktopHostPlugin)
+engine.register(vscodePlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')

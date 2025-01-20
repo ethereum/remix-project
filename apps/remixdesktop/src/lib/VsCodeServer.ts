@@ -1,17 +1,42 @@
-import * as http from 'http'
 import { WebSocketServer, WebSocket } from 'ws'
 import EventEmitter from 'events'
-import { RequestArguments } from '../types'
-import path from 'path'
-import express from 'express'
-import cbor from 'cbor'
 
 import { findAvailablePort } from '../utils/portFinder'
-import { isPackaged } from '../main'
-import { isE2ELocal } from '../main'
 
 // Forwarding WebSocket client
 let connectedWebSocket: WebSocket | null = null
+
+export const VSCodeEvents = {
+  CONNECTED: 'connected',
+  OPEN_WORKSPACE: 'openWorkspace',
+  WORKSPACE_AND_OPENED_FILES: 'workspaceAndOpenedFiles',
+} as const;
+
+// Base message type
+export interface VsCodeMessageBase {
+  type: string;
+}
+
+// Specific message types
+export interface OpenWorkspaceMessage extends VsCodeMessageBase {
+  type: 'openWorkspace';
+  payload: {
+    workspaceFolders: string[];
+  };
+}
+
+
+export interface WorkspaceAndOpenedFilesMessage extends VsCodeMessageBase {
+  type: 'workspaceAndOpenedFiles';
+  payload: {
+    openedFiles: string[];
+    workspaceFolders: string[];
+    focusedFile: string | null;
+  };
+}
+// Create a discriminated union for VsCodeMessage
+export type VsCodeMessage = OpenWorkspaceMessage | WorkspaceAndOpenedFilesMessage;
+
 
 export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
   const websocket_port = await findAvailablePort([49600])
@@ -36,10 +61,21 @@ export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
     eventEmitter.emit('connected', true)
 
     connectedWebSocket.on('message', (data: any) => {
-        if(Buffer.isBuffer(data)) {
-            data = data.toString('utf-8');
-        }
-      console.log('received message from VSCODE WebSocket client:', data)
+      if (Buffer.isBuffer(data)) {
+        data = data.toString('utf-8')
+      }
+      try {
+        data = JSON.parse(data)
+      } catch (e) {
+        //
+      }
+      const message: VsCodeMessage = data
+      console.log('VSCODE message:', message)
+      if(message.type === 'openWorkspace') {
+        eventEmitter.emit(VSCodeEvents.OPEN_WORKSPACE, message)
+      } else if(message.type === 'workspaceAndOpenedFiles') {
+        eventEmitter.emit(VSCodeEvents.WORKSPACE_AND_OPENED_FILES, message)
+      }
     })
 
     connectedWebSocket.on('close', () => {
@@ -55,5 +91,5 @@ export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
     })
   })
 
-  console.log(`WebSocket server running on ws://localhost:` + JSON.stringify((wsServer.address() as any).port))
+  console.log(`VSCODE server running on ws://localhost:` + JSON.stringify((wsServer.address() as any).port))
 }

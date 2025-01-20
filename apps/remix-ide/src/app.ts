@@ -71,6 +71,7 @@ import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 import { DesktopClient } from './app/plugins/desktop-client'
 import { DesktopHost } from './app/plugins/electron/desktopHostPlugin'
+import { VSCodeSync } from './app/plugins/electron/vsCodeSync'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -465,6 +466,8 @@ class AppComponent {
       this.engine.register([remixAIDesktop])
       const desktopHost = new DesktopHost()
       this.engine.register([desktopHost])
+      const VSCodeSyncPlugin = new VSCodeSync()
+      this.engine.register([VSCodeSyncPlugin])
     } else{
       //---- desktop client
       const desktopClient = new DesktopClient(blockchain)
@@ -706,7 +709,7 @@ class AppComponent {
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge'])
 
     if(isElectron()){
-      this.appManager.activatePlugin(['desktopHost'])
+      this.appManager.activatePlugin(['desktopHost', 'VSCodeSync'])	
     }
   }
 }

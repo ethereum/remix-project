@@ -20,18 +20,6 @@ const profile: Profile = {
   description: 'fs',
 }
 
-const convertPathToPosix = (pathName: string): string => {
-  return pathName.split(path.sep).join(path.posix.sep)
-}
-
-const convertPathToLocalFileSystem = (pathName: string): string => {
-  return pathName.split(path.posix.sep).join(path.sep)
-}
-
-const getBaseName = (pathName: string): string => {
-  return path.basename(pathName)
-}
-
 function onlyUnique(value: recentFolder, index: number, self: recentFolder[]) {
   return self.findIndex((rc, index) => rc.path === value.path) === index
 }
@@ -44,7 +32,7 @@ export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
     super(profile, clientProfile, isE2E? FSPluginClientE2E: FSPluginClient)
-    this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
+    this.methods = [...super.methods, 'closeWatch', 'removeCloseListener', 'openFolder', 'openFolderInSameWindow']
   }
 
   async onActivation(): Promise<void> {
@@ -483,6 +471,7 @@ class FSPluginClient extends ElectronBasePluginClient {
 }
 
 import os from 'os'
+import { convertPathToPosix, getBaseName, convertPathToLocalFileSystem } from '../utils/fs'
 export class FSPluginClientE2E extends FSPluginClient {
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)

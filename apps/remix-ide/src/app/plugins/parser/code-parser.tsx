@@ -1,7 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { CompilationSourceCode, CompilerAbstract } from '@remix-project/remix-solidity'
 import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
@@ -59,7 +59,8 @@ const profile: Profile = {
     'gasEstimation',
     'declarationOf',
     'getGasEstimates',
-    'getImports'
+    'getImports',
+    'getErrorMarkers'
   ],
   events: [],
   version: '0.0.1'
@@ -767,5 +768,14 @@ export class CodeParser extends Plugin {
       }
       return `(${params.join(', ')})`
     }
+  }
+
+  /**
+   *
+   * @param node
+   * @returns
+   */
+  async getErrorMarkers(data: CompilationResult, source: CompilationSourceCode, input: any) {
+    return this.compilerService.getErrorMarkers(data, source, input)
   }
 }
