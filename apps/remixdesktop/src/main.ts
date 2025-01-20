@@ -34,7 +34,7 @@ const homeDir = app.getPath('userData')
 
 const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
-  // reize factor
+  // resize factor
   let resizeFactor = 0.8
   // if the window is too small the size is 100%
   if( screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
