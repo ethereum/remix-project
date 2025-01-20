@@ -111,8 +111,9 @@ function getPtauUrl(appState: AppState) {
 async function setupGroth16(plugin: CircomPluginClient, appState: AppState, dispatch, r1cs, ptauFinal, zkeyFinal) {
   await snarkjs.zKey.newZKey(r1cs, ptauFinal, zkeyFinal, zkLogger(plugin, dispatch, 'SET_SETUP_EXPORT_FEEDBACK'))
   const vKey = await snarkjs.zKey.exportVerificationKey(zkeyFinal)
+  const template = { groth16: GROTH16_VERIFIER }
 
-  await exportVerificationFiles(plugin, appState, vKey, GROTH16_VERIFIER, zkeyFinal, 'groth16')
+  await exportVerificationFiles(plugin, appState, vKey, template, zkeyFinal, 'groth16')
   dispatch({ type: 'SET_ZKEY', payload: zkeyFinal })
   dispatch({ type: 'SET_VERIFICATION_KEY', payload: vKey })
 }
@@ -120,8 +121,9 @@ async function setupGroth16(plugin: CircomPluginClient, appState: AppState, disp
 async function setupPlonk(plugin: CircomPluginClient, appState: AppState, dispatch, r1cs, ptauFinal, zkeyFinal) {
   await snarkjs.plonk.setup(r1cs, ptauFinal, zkeyFinal, zkLogger(plugin, dispatch, 'SET_SETUP_EXPORT_FEEDBACK'))
   const vKey = await snarkjs.zKey.exportVerificationKey(zkeyFinal)
+  const template = { plonk: PLONK_VERIFIER }
 
-  await exportVerificationFiles(plugin, appState, vKey, PLONK_VERIFIER, zkeyFinal, 'plonk')
+  await exportVerificationFiles(plugin, appState, vKey, template, zkeyFinal, 'plonk')
   dispatch({ type: 'SET_ZKEY', payload: zkeyFinal })
   dispatch({ type: 'SET_VERIFICATION_KEY', payload: vKey })
 }
@@ -168,7 +170,7 @@ function trackEvent(plugin, eventCategory, action, label) {
 
 async function readFileAsUint8Array(plugin: CircomPluginClient, path: string) {
   // @ts-ignore
-  await plugin.call('fileManager', 'readFile', path)
+  return await plugin.call('fileManager', 'readFile', path, { encoding: null })
 }
 
 async function writeFile(plugin: CircomPluginClient, path: string, content: string) {
@@ -181,9 +183,14 @@ function handleError(plugin: CircomPluginClient, event: string, error: Error) {
   trackEvent(plugin, 'error', event, error.message)
 }
 
-function zkLogger(plugin: CircomPluginClient, dispatch, feedbackType) {
-  return (msg: string) => {
-    dispatch({ type: feedbackType, payload: msg })
-    plugin.emit('statusChanged', { key: 'none' })
+function zkLogger(plugin: CircomPluginClient, dispatch, dispatchType) {
+  return {
+    info: (...args) => plugin.call('terminal', 'log', { type: 'log', value: args.join(' ') }),
+    debug: (...args) => plugin.call('terminal', 'log', { type: 'log', value: args.join(' ') }),
+    error: (...args) => {
+      plugin.call('terminal', 'log', { type: 'error', value: args.join(' ') })
+      dispatch({ type: dispatchType as any, payload: args.join(' ') })
+      plugin.emit('statusChanged', { key: args.length, title: `You have ${args.length} problem${args.length === 1 ? '' : 's'}`, type: 'error' })
+    }
   }
 }
