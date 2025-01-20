@@ -103,7 +103,7 @@ import Filepanel from './app/panels/file-panel'
 import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
-import { any } from 'async'
+import { Plugin } from '@remixproject/engine'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -204,7 +204,7 @@ class AppComponent {
     this.panels = {}
     this.workspace = pluginLoader.get()
     this.engine = new RemixEngine()
-    this.engine.register(appManager)
+    this.engine.register(appManager as unknown as Plugin)
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
