@@ -1,6 +1,7 @@
 import { compiler_list } from 'circom_wasm'
 import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
+import { CompilerReport } from '@remix-ui/helper'
 
 export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting" | "proving"
 
@@ -86,34 +87,6 @@ export type CompilationConfig = {
 }
 
 export type PrimeValue = "bn128" | "bls12381" | "goldilocks" | "grumpkin" | "pallas" | "vesta"
-
-export type CompilerFeedbackProps = {
-  feedback: string | CompilerReport[],
-  filePathToId: Record<string, string>,
-  openErrorLocation: (location: string, startRange: string) => void,
-  hideWarnings: boolean,
-  askGPT: (report: CompilerReport) => void
-}
-
-export type CompilerReport = {
-  type: "Error" | "Bug" | "Help" | "Note" | "Warning" | "Unknown",
-  message: string,
-  labels: {
-    style: "Primary" | "Secondary" | "Unknown",
-    file_id: string,
-    range: {
-      start: string,
-      end: string
-    },
-    message: string
-  }[],
-  notes: string[]
-}
-
-export type FeedbackAlertProps = {
-  message: string,
-  askGPT: () => void
-}
 
 export type ConfigurationsProps = {
   setPrimeValue: (prime: PrimeValue) => void,
