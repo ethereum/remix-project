@@ -126,8 +126,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
         </CustomTooltip> }
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
           <span onClick={resetVmState} style={{ cursor: 'pointer', float: 'right', textTransform: 'none' }}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-refresh"  data-id="delete-state-icon"></i>
-            <span className="ml-1" style = {{textTransform: 'none', fontSize: '13px' }}>Reset State</span>
+            <i className="udapp_infoDeployAction ml-2 fas fa-refresh" data-id="delete-state-icon"></i>
+            <span className="ml-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
           </span>
         </CustomTooltip> }
       </label>
