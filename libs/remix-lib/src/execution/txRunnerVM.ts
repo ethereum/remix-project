@@ -24,7 +24,7 @@ export class TxRunnerVM {
   blockNumber
   pendingTxs
   vmaccounts
-  queusTxs
+  queueTxs
   blocks: Uint8Array[]
   logsManager
   commonContext
@@ -41,7 +41,7 @@ export class TxRunnerVM {
     this.commonContext = this.getVMObject().common
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
-    this.queusTxs = []
+    this.queueTxs = []
     /*
       txHash is generated using the nonce,
       in order to have unique transaction hash, we need to keep using different nonce (in case of a call)
