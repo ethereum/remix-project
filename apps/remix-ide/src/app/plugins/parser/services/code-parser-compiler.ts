@@ -58,9 +58,11 @@ export default class CodeParserCompiler {
         const sources = result.getSourceCode().sources || []
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
         if (displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
+        this.plugin.emit('errors', allErrors)
         await this.addDecorators(allErrors, sources)
       } else {
         await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
+        this.plugin.emit('clearErrors')
         await this.clearDecorators(result.getSourceCode().sources)
       }
 

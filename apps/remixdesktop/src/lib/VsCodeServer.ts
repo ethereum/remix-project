@@ -4,39 +4,38 @@ import EventEmitter from 'events'
 import { findAvailablePort } from '../utils/portFinder'
 
 // Forwarding WebSocket client
-let connectedWebSocket: WebSocket | null = null
+let connectedWebSocket: WebSocket = null
 
 export const VSCodeEvents = {
   CONNECTED: 'connected',
   OPEN_WORKSPACE: 'openWorkspace',
   WORKSPACE_AND_OPENED_FILES: 'workspaceAndOpenedFiles',
-} as const;
+} as const
 
 // Base message type
 export interface VsCodeMessageBase {
-  type: string;
+  type: string
 }
 
 // Specific message types
 export interface OpenWorkspaceMessage extends VsCodeMessageBase {
-  type: 'openWorkspace';
+  type: 'openWorkspace'
   payload: {
-    workspaceFolders: string[];
-  };
+    workspaceFolders: string[]
+  }
 }
-
 
 export interface WorkspaceAndOpenedFilesMessage extends VsCodeMessageBase {
-  type: 'workspaceAndOpenedFiles';
+  type: 'workspaceAndOpenedFiles'
   payload: {
-    openedFiles: string[];
-    workspaceFolders: string[];
-    focusedFile: string | null;
-  };
+    openedFiles: string[]
+    workspaceFolders: string[]
+    focusedFile: string | null
+  }
 }
-// Create a discriminated union for VsCodeMessage
-export type VsCodeMessage = OpenWorkspaceMessage | WorkspaceAndOpenedFilesMessage;
 
+// Create a discriminated union for VsCodeMessage
+export type VsCodeMessage = OpenWorkspaceMessage | WorkspaceAndOpenedFilesMessage
 
 export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
   const websocket_port = await findAvailablePort([49600])
@@ -47,13 +46,11 @@ export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
   wsServer.on('connection', (ws) => {
     console.log('VSCODE client connected')
     if (connectedWebSocket?.OPEN) {
-      //ws.send(JSON.stringify({ type: 'error', payload: 'ALREADY_CONNECTED' }))
       ws.close(1000, 'Another client connected')
       return
-      //console.log(connectedWebSocket.url)
     } else {
       try {
-        connectedWebSocket.removeAllListeners()
+        connectedWebSocket?.removeAllListeners()
       } catch (e) {}
     }
 
@@ -71,25 +68,43 @@ export const startVsCodeServer = async (eventEmitter: EventEmitter) => {
       }
       const message: VsCodeMessage = data
       console.log('VSCODE message:', message)
-      if(message.type === 'openWorkspace') {
+      if (message.type === 'openWorkspace') {
         eventEmitter.emit(VSCodeEvents.OPEN_WORKSPACE, message)
-      } else if(message.type === 'workspaceAndOpenedFiles') {
+      } else if (message.type === 'workspaceAndOpenedFiles') {
         eventEmitter.emit(VSCodeEvents.WORKSPACE_AND_OPENED_FILES, message)
       }
     })
 
     connectedWebSocket.on('close', () => {
-      //console.log('WebSocket client disconnected');
       connectedWebSocket = null
       eventEmitter.emit('connected', false)
     })
 
     connectedWebSocket.on('error', (error) => {
-      //console.error('WebSocket error:', error.message);
       connectedWebSocket = null
       eventEmitter.emit('connected', false)
     })
   })
 
-  console.log(`VSCODE server running on ws://localhost:` + JSON.stringify((wsServer.address() as any).port))
+  console.log(`VSCODE server running on ws://localhost:${(wsServer.address() as any).port}`)
 }
+
+/**
+ * Sends a message to the connected VSCode WebSocket client.
+ * @param message - The message to send.
+ * @throws Will throw an error if no client is connected.
+ */
+export const logToVsCode = (message: { type: 'error' | 'log' | 'info' | 'warning'; message: string }) => {
+  if (!connectedWebSocket || connectedWebSocket.readyState !== WebSocket.OPEN) {
+    throw new Error('No VSCode client connected or WebSocket is not open')
+  }
+
+  try {
+    connectedWebSocket.send(JSON.stringify(message))
+    console.log('Message sent to VSCODE:', message)
+  } catch (error) {
+    console.error('Failed to send message to VSCODE:', error)
+  }
+}
+
+

@@ -2,7 +2,7 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from '@remixproject/plug
 
 import { Profile } from '@remixproject/plugin-utils'
 import EventEmitter from 'events'
-import { OpenWorkspaceMessage, startVsCodeServer, VSCodeEvents, WorkspaceAndOpenedFilesMessage } from '../lib/VsCodeServer'
+import { OpenWorkspaceMessage, logToVsCode, startVsCodeServer, VSCodeEvents, WorkspaceAndOpenedFilesMessage } from '../lib/VsCodeServer'
 import { createWindow } from '../main'
 import { convertPathToPosix, getRelativePath, isFocusedFileOpen } from '../utils/fs'
 
@@ -68,13 +68,33 @@ class VsCodeSyncClient extends ElectronBasePluginClient {
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
       console.log('workingDir in VSCODE client', this.workingDir)
-      this.on('solidity' as any, 'compilationFinished', async (file, source: any, languageVersion, data: any, input: any, version) => {
+      this.on('codeParser' as any, 'errors', (data) => {
         console.log('VSCODE client Compilation finished data:', data)
+        for (const error of data) {
+          console.log('VSCODE client Compilation error:', error)
+          logToVsCode({ type: 'error', message: error.message })
+        }
+        /*
         if (data.errors || data.error) {
           console.log('VSCODE client Compilation error:', data.errors || data.error)
+          if (data.error) {
+            if (data.error.formattedMessage) {
+              console.log('VSCODE client Compilation error message:', data.error.formattedMessage)
+              logToVsCode({ type: 'error', message: data.error.formattedMessage })
+            }
+          }else{
+            for (const error of data.errors) {
+              if (error.formattedMessage) {
+                console.log('VSCODE client Compilation error message:', error.formattedMessage)
+                logToVsCode({ type: 'error', message: error.formattedMessage })
+              }
+            }
+          }
         }else{
           console.log('VSCODE client Compilation success')
         }
+      })
+      */
       })
     })
   }
