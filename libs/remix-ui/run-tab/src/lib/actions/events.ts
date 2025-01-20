@@ -222,8 +222,8 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
   _paq.push(['trackEvent', 'udapp', 'broadcastCompilationResult', compilerName])
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
-  plugin.compilersArtefacts[languageVersion] = compiler
-  plugin.compilersArtefacts.__last = compiler
+  plugin.compilersArtifacts[languageVersion] = compiler
+  plugin.compilersArtifacts.__last = compiler
 
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler, compilerName }
