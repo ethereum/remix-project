@@ -8,7 +8,7 @@ import { InjectedCustomProvider } from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
 import { EventManager } from '@remix-project/remix-lib'
 import type { Blockchain } from '../../blockchain/blockchain'
-import type { CompilerArtefacts } from '@remix-project/core-plugin'
+import type { CompilerArtifacts } from '@remix-project/core-plugin'
 import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
@@ -47,13 +47,13 @@ export class RunTab extends ViewPlugin {
   fileManager: any
   editor: any
   filePanel: any
-  compilersArtefacts: CompilerArtefacts
+  compilersArtifacts: CompilerArtifacts
   networkModule: any
   fileProvider: any
   recorder: any
   REACT_API: any
   el: any
-  constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
+  constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtifacts: CompilerArtifacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
     this.engine = engine
@@ -62,7 +62,7 @@ export class RunTab extends ViewPlugin {
     this.fileManager = fileManager
     this.editor = editor
     this.filePanel = filePanel
-    this.compilersArtefacts = compilersArtefacts
+    this.compilersArtifacts = compilersArtifacts
     this.networkModule = networkModule
     this.fileProvider = fileProvider
     this.recorder = new Recorder(blockchain)
@@ -330,9 +330,9 @@ export class RunTab extends ViewPlugin {
   }
 
   async resolveContractAndAddInstance(contractObject, address) {
-    const data = await this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+    const data = await this.compilersArtifacts.getCompilerAbstract(contractObject.contract.file)
 
-    this.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    this.compilersArtifacts.addResolvedContract(addressToString(address), data)
     this.addInstance(address, contractObject.abi, contractObject.name)
   }
 }
