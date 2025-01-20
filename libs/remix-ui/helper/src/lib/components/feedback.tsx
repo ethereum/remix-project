@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { CompilerFeedbackProps, CompilerReport } from '../types'
+import React, { useState } from 'react'
+import { CompilerFeedbackProps, CompilerReport } from '../../types/compilerTypes'
 import { RenderIf } from '@remix-ui/helper'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { FeedbackAlert } from './feedbackAlert'
@@ -9,16 +9,6 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
 
   const handleCloseException = () => {
     setShowException(false)
-  }
-
-  const handleOpenError = (report: CompilerReport) => {
-    if (report.labels.length > 0) {
-      openErrorLocation(filePathToId[report.labels[0].file_id], report.labels[0].range.start)
-    }
-  }
-
-  const handleAskGPT = (report: CompilerReport) => {
-    askGPT(report)
   }
 
   return (
@@ -43,19 +33,19 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
               <>
                 {
                   Array.isArray(feedback) && feedback.map((response, index) => (
-                    <div key={index} onClick={() => handleOpenError(response)}>
+                    <div key={index} onClick={() => openErrorLocation(response)}>
                       <RenderIf condition={response.type === 'Error'}>
                         <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-danger`} data-id="circuit_feedback">
                           <FeedbackAlert
                             message={response.message + (response.labels[0] ? ": " + response.labels[0].message + ` ${filePathToId[response.labels[0].file_id]}:${response.labels[0].range.start}:${response.labels[0].range.end}` : '')}
-                            askGPT={ () => handleAskGPT(response) } />
+                            askGPT={ () => askGPT(response) } />
                         </div>
                       </RenderIf>
                       <RenderIf condition={(response.type === 'Warning') && !hideWarnings}>
                         <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-warning`} data-id="circuit_feedback">
                           <FeedbackAlert
                             message={response.message}
-                            askGPT={() => { handleAskGPT(response) }} />
+                            askGPT={() => { askGPT(response) }} />
                         </div>
                       </RenderIf>
                     </div>
