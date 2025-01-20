@@ -6,6 +6,7 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { CodeCompletionAgent } from '@remix/remix-ai-core';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -41,6 +42,7 @@ export class RemixAIPlugin extends ViewPlugin {
   agent: CodeExplainAgent
   useRemoteInferencer:boolean = false
   dispatch: any
+  completionAgent: CodeCompletionAgent
 
   constructor(inDesktop:boolean) {
     super(profile)
@@ -62,6 +64,7 @@ export class RemixAIPlugin extends ViewPlugin {
       this.useRemoteInferencer = true
       this.initialize()
     }
+    this.completionAgent = new CodeCompletionAgent(this)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -110,6 +113,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_completion(prompt: string, promptAfter: string): Promise<any> {
+    this.completionAgent.searchIndex(prompt)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
     } else {
@@ -175,6 +179,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
+    this.completionAgent.indexWorkspace()
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
     } else {
