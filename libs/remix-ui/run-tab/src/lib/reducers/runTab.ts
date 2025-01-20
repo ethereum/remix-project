@@ -22,7 +22,7 @@ export const runTabInitialState: RunTabState = {
   selectExEnv: 'vm-cancun',
   personalMode: false,
   networkName: 'VM',
-  chainId:'-',
+  chainId: '-',
   providers: {
     providerList: [],
     isRequesting: false,
