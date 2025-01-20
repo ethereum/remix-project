@@ -215,7 +215,7 @@ Before starting to coding, we should ensure all devs / contributors are aware of
 ### code best practices:
  - for code quality: use codeclimate and address issues
  - defining all global variables on top of the page
- - 80-10 characters per line
+ - 80-100 characters per line
  - alphabetically list dependencies and separate npm from local for better readability
  - Use code documentation tool
  - Write modular code.
