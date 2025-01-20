@@ -14,13 +14,16 @@ export interface AppState {
   filePathToId: Record<string, string>,
   autoCompile: boolean,
   hideWarnings: boolean,
-  status: CompilerStatus
+  status: CompilerStatus,
+  compilerFeedback: string
 }
 
 export interface ActionPayloadTypes {
   SET_AUTO_COMPILE: boolean,
   SET_HIDE_WARNINGS: boolean,
-  SET_FILE_PATH: string
+  SET_FILE_PATH: string,
+  SET_COMPILER_FEEDBACK: string,
+  SET_COMPILER_STATUS: CompilerStatus
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T

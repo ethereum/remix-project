@@ -38,14 +38,26 @@ export class NoirPluginClient extends PluginClient {
   }
 
   async compile(path: string): Promise<void> {
-    // @ts-ignore
-    const fileContent = await this.call('fileManager', 'readFile', path)
-    const fileBytes = new TextEncoder().encode(fileContent)
+    try {
+      this.internalEvents.emit('noir_compiling_start')
+      this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Circuit...', type: 'info' })
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+      // @ts-ignore
+      const fileContent = await this.call('fileManager', 'readFile', path)
+      const fileBytes = new TextEncoder().encode(fileContent)
 
-    this.fm.writeFile(`src/${path}`, new Blob([fileBytes]).stream())
-    const program = await compile_program(this.fm)
+      this.fm.writeFile(`src/${path}`, new Blob([fileBytes]).stream())
+      const program = await compile_program(this.fm)
 
-    console.log('program: ', program)
+      console.log('program: ', program)
+      this.internalEvents.emit('noir_compiling_done')
+      this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
+    } catch (e) {
+      this.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
+      this.internalEvents.emit('noir_compiling_errored', e)
+      console.error(e)
+    }
   }
 
   async parse(path: string): Promise<void> {

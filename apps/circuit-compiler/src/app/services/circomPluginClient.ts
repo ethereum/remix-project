@@ -7,8 +7,8 @@ import * as compilerV218 from 'circom_wasm/v2.1.8'
 import * as compilerV217 from 'circom_wasm/v2.1.7'
 import * as compilerV216 from 'circom_wasm/v2.1.6'
 import * as compilerV215 from 'circom_wasm/v2.1.5'
-import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
-import { CompilationConfig, CompilerReport, PrimeValue } from '../types'
+import { extractNameFromKey, extractParentFromKey, CompilerReport } from '@remix-ui/helper'
+import { CompilationConfig, PrimeValue } from '../types'
 import isElectron from 'is-electron'
 
 export class CircomPluginClient extends PluginClient {

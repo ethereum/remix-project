@@ -37,6 +37,13 @@ function App() {
         //   plugin.parse(path, content)
         // }
       })
+      // noir compiling events
+      plugin.internalEvents.on('noir_compiling_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
+      plugin.internalEvents.on('noir_compiling_done', () => {
+        dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+        dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+      })
+      plugin.internalEvents.on('noir_compiling_errored', noirCompilerErrored)
       setIsPluginActivated(true)
     })
   }, [])
@@ -46,6 +53,17 @@ function App() {
       setCurrentLocale()
     }
   }, [isPluginActivated])
+
+  const noirCompilerErrored = (err: ErrorEvent) => {
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
+    try {
+      const report = JSON.parse(err.message)
+
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+    } catch (e) {
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
+    }
+  }
 
   const setCurrentLocale = async () => {
     // @ts-ignore
