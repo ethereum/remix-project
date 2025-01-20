@@ -4,39 +4,39 @@ import { util } from '@remix-project/remix-lib'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
-  name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress', 'getContractDataFromByteCode', 'saveCompilerAbstract', 'getAllCompilerAbstracts'],
+  name: 'compilerArtifacts',
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtifactsByContractName', 'getContractDataFromAddress', 'getContractDataFromByteCode', 'saveCompilerAbstract', 'getAllCompilerAbstracts'],
   events: ['compilationSaved'],
   version: '0.0.1',
 }
 
-export class CompilerArtefacts extends Plugin {
-  compilersArtefactsPerFile: any
-  compilersArtefacts: any
+export class CompilerArtifacts extends Plugin {
+  compilersArtifactsPerFile: any
+  compilersArtifacts: any
   constructor() {
     super(profile)
-    this.compilersArtefacts = {}
-    this.compilersArtefactsPerFile = {}
+    this.compilersArtifacts = {}
+    this.compilersArtifactsPerFile = {}
   }
 
   clear() {
-    this.compilersArtefacts = {}
-    this.compilersArtefactsPerFile = {}
+    this.compilersArtifacts = {}
+    this.compilersArtifactsPerFile = {}
   }
 
   saveCompilerAbstract(file: string, compilerAbstract: CompilerAbstract) {
-    this.compilersArtefactsPerFile[file] = compilerAbstract
+    this.compilersArtifactsPerFile[file] = compilerAbstract
   }
 
   getAllCompilerAbstracts() {
-    return this.compilersArtefactsPerFile
+    return this.compilersArtifactsPerFile
   }
 
   onActivation() {
     const saveCompilationResult = (file, source, languageVersion, data, input?) => {
-      this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
-      this.compilersArtefacts.__last = this.compilersArtefactsPerFile[file]
-      this.emit('compilationSaved', { [file]: this.compilersArtefactsPerFile[file] })
+      this.compilersArtifactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
+      this.compilersArtifacts.__last = this.compilersArtifactsPerFile[file]
+      this.emit('compilationSaved', { [file]: this.compilersArtifactsPerFile[file] })
     }
 
     this.on('solidity', 'compilationFinished', saveCompilationResult)
@@ -59,11 +59,11 @@ export class CompilerArtefacts extends Plugin {
   }
 
   /**
-   * Get artefacts for last compiled contract
+   * Get artifacts for last compiled contract
    * * @returns last compiled contract compiler abstract
    */
   getLastCompilationResult() {
-    return this.compilersArtefacts.__last
+    return this.compilersArtifacts.__last
   }
 
   /**
@@ -80,71 +80,71 @@ export class CompilerArtefacts extends Plugin {
    */
   filterAllContractDatas(filter) {
     const contractsData = {}
-    Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
-      const artefact = this.compilersArtefactsPerFile[targetFile]
-      const contracts = artefact.getContracts()
+    Object.keys(this.compilersArtifactsPerFile).map((targetFile) => {
+      const artifact = this.compilersArtifactsPerFile[targetFile]
+      const contracts = artifact.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file], artefact)) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], artifact)) contractsData[file] = contracts[file]
       })
     })
     // making sure we save last compilation result in there
-    if (this.compilersArtefacts.__last) {
-      const contracts = this.compilersArtefacts.__last.getContracts()
+    if (this.compilersArtifacts.__last) {
+      const contracts = this.compilersArtifacts.__last.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file], this.compilersArtefacts.__last)) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], this.compilersArtifacts.__last)) contractsData[file] = contracts[file]
       })
     }
     return contractsData
   }
 
   /**
-   * Get a particular contract output/artefacts from a compiler output of a Solidity file compilation
+   * Get a particular contract output/artifacts from a compiler output of a Solidity file compilation
    * @param compilerOutput compiler output
    * @param contractName contract name
-   * @returns artefacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
+   * @returns artifacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
    */
-  _getAllContractArtefactsfromOutput(compilerOutput, contractName) {
-    const contractArtefacts = {}
+  _getAllContractArtifactsfromOutput(compilerOutput, contractName) {
+    const contractArtifacts = {}
     for (const filename in compilerOutput) {
-      if (Object.keys(compilerOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = compilerOutput[filename][contractName]
+      if (Object.keys(compilerOutput[filename]).includes(contractName)) contractArtifacts[filename + ':' + contractName] = compilerOutput[filename][contractName]
     }
-    return contractArtefacts
+    return contractArtifacts
   }
 
   /**
-   * Populate resultant object with a particular contract output/artefacts by processing all the artifacts stored in file explorer
+   * Populate resultant object with a particular contract output/artifacts by processing all the artifacts stored in file explorer
    * @param path path to start looking from
    * @param contractName contract to be looked for
-   * @param contractArtefacts populated resultant artefacts object, with fully qualified name (e.g: contracts/1_Storage.sol:Storage) as key
-   * Once method execution completes, contractArtefacts object will hold all possible artefacts for contract
+   * @param contractArtifacts populated resultant artifacts object, with fully qualified name (e.g: contracts/1_Storage.sol:Storage) as key
+   * Once method execution completes, contractArtifacts object will hold all possible artifacts for contract
    */
-  async _populateAllContractArtefactsFromFE(path, contractName, contractArtefacts) {
+  async _populateAllContractArtifactsFromFE(path, contractName, contractArtifacts) {
     const dirList = await this.call('fileManager', 'dirList', path)
     if (dirList && dirList.length) {
       for (const dirPath of dirList) {
         // check if directory contains an 'artifacts' folder and a 'build-info' folder inside 'artifacts'
         if (dirPath === path + '/artifacts' && (await this.call('fileManager', 'exists', dirPath + '/build-info'))) {
           const buildFileList = await this.call('fileManager', 'fileList', dirPath + '/build-info')
-          // process each build-info file to populate the artefacts for contractName
+          // process each build-info file to populate the artifacts for contractName
           for (const buildFile of buildFileList) {
             let content = await this.call('fileManager', 'readFile', buildFile)
             if (content) content = JSON.parse(content)
             const compilerOutput = content.output.contracts
-            const artefacts = this._getAllContractArtefactsfromOutput(compilerOutput, contractName)
-            // populate the resultant object with artefacts
-            Object.assign(contractArtefacts, artefacts)
+            const artifacts = this._getAllContractArtifactsfromOutput(compilerOutput, contractName)
+            // populate the resultant object with artifacts
+            Object.assign(contractArtifacts, artifacts)
           }
-        } else await this._populateAllContractArtefactsFromFE(dirPath, contractName, contractArtefacts)
+        } else await this._populateAllContractArtifactsFromFE(dirPath, contractName, contractArtifacts)
       }
     } else return
   }
 
   /**
-   * Get artefacts for a contract (called by script-runner)
+   * Get artifacts for a contract (called by script-runner)
    * @param name contract name or fully qualified name i.e. <filename>:<contractname> e.g: contracts/1_Storage.sol:Storage
-   * @returns artefacts for the contract
+   * @returns artifacts for the contract
    */
-  async getArtefactsByContractName(name) {
+  async getArtifactsByContractName(name) {
     const contractsDataByFilename = this.getAllContractDatas()
     // check if name is a fully qualified name
     if (name.includes(':')) {
@@ -155,19 +155,19 @@ export class CompilerArtefacts extends Plugin {
       if (Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract]) return contractsDataByFilename[filename][contract]
       else {
         const allContractsData = {}
-        await this._populateAllContractArtefactsFromFE('contracts', contract, allContractsData)
-        if (allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artefact: allContractsData[fullyQualifiedName] }
+        await this._populateAllContractArtifactsFromFE('contracts', contract, allContractsData)
+        if (allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artifact: allContractsData[fullyQualifiedName] }
         else throw new Error(`Could not find artifacts for ${fullyQualifiedName}. Compile contract to generate artifacts.`)
       }
     } else {
       const contractName = name
-      const contractArtefacts = this._getAllContractArtefactsfromOutput(contractsDataByFilename, contractName)
-      let keys = Object.keys(contractArtefacts)
+      const contractArtifacts = this._getAllContractArtifactsfromOutput(contractsDataByFilename, contractName)
+      let keys = Object.keys(contractArtifacts)
       if (!keys.length) {
-        await this._populateAllContractArtefactsFromFE('contracts', contractName, contractArtefacts)
-        keys = Object.keys(contractArtefacts)
+        await this._populateAllContractArtifactsFromFE('contracts', contractName, contractArtifacts)
+        keys = Object.keys(contractArtifacts)
       }
-      if (keys.length === 1) return { fullyQualifiedName: keys[0], artefact: contractArtefacts[keys[0]] }
+      if (keys.length === 1) return { fullyQualifiedName: keys[0], artifact: contractArtifacts[keys[0]] }
       else if (keys.length > 1) {
         throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
           Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
@@ -179,30 +179,30 @@ export class CompilerArtefacts extends Plugin {
 
   async getCompilerAbstract(file) {
     if (!file) return null
-    if (this.compilersArtefactsPerFile[file]) return this.compilersArtefactsPerFile[file]
+    if (this.compilersArtifactsPerFile[file]) return this.compilersArtifactsPerFile[file]
     const path = await this.call('fileManager', 'getPathFromUrl', file)
 
-    if (path && path.file && this.compilersArtefactsPerFile[path.file]) return this.compilersArtefactsPerFile[path.file]
+    if (path && path.file && this.compilersArtifactsPerFile[path.file]) return this.compilersArtifactsPerFile[path.file]
 
-    let artefact = null
-    this.filterAllContractDatas((localFile, data, parentArtefact) => {
+    let artifact = null
+    this.filterAllContractDatas((localFile, data, parentArtifact) => {
       if (localFile === file || (path && path.file && localFile === path.file)) {
-        artefact = parentArtefact
+        artifact = parentArtifact
       }
     })
-    return artefact
+    return artifact
   }
 
   addResolvedContract(address: string, compilerData: CompilerAbstract) {
-    this.compilersArtefacts[address] = compilerData
+    this.compilersArtifacts[address] = compilerData
   }
 
   isResolved(address) {
-    return this.compilersArtefacts[address] !== undefined
+    return this.compilersArtifacts[address] !== undefined
   }
 
   get(key) {
-    return this.compilersArtefacts[key]
+    return this.compilersArtifacts[key]
   }
 
   async getContractDataFromAddress(address) {
