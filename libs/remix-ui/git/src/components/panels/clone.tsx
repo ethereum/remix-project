@@ -58,7 +58,7 @@ export const Clone = (props: CloneProps) => {
   }
 
   const [cloneAllBranches, setcloneAllBranches] = useLocalStorage(
-    "GITHUB_CLONE_ALL_BRANCES",
+    "GITHUB_CLONE_ALL_BRANCHES",
     false
   );
 
