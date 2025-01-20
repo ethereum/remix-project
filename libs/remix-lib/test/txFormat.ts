@@ -313,14 +313,14 @@ tape('test abiEncoderV2 array of tuple', function (t) {
       console.log(error)
       const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[1])
       console.log(decoded)
-      st.equal(decoded[0], 'tuple(uint256,string): _structs 34,test')
+      st.equal(decoded[0], 'tuple(uint256,string): _strucmts 34,test')
     })
 
     txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[2], (error, encoded) => {
       console.log(error)
       const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[2])
       console.log(decoded)
-      st.equal(decoded[0], 'tuple(uint256,string)[]: structs 34,test,123,test2')
+      st.equal(decoded[0], 'tuple(uint256,string)[]: strucmts 34,test,123,test2')
     })
   })
 })
@@ -455,11 +455,11 @@ contract test {
 
     }
 
-    function addStructs(MyStruct[] memory _structs) public returns (MyStruct[] memory structs) {
-       structs = _structs;
+    function addStructs(MyStruct[] memory _structs) public returns (MyStruct[] memory strucmts) {
+       strucmts = _strucmts;
     }
 
-    function addStructs(MyStruct memory _structs) public returns (MyStruct memory _structs) {
-      _structs = _structs;
+    function addStructs(MyStruct memory _structs) public returns (MyStruct memory _strucmts) {
+      _strucmts = _strucmts;
     }
 }`
