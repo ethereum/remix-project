@@ -32,7 +32,7 @@ cannot compile and test files in the workshops.
 
 ## Setting up your Github workshops repo
 
-You can create your own workshops that can be imported in the plugin.
+You can create your own workshops that can be imported into the plugin.
 When importing a github repo the plugin will look for a directory structure describing the workshops.
 For example: https://github.com/ethereum/remix-workshops
 
