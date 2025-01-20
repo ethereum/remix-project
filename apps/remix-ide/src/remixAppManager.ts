@@ -1,4 +1,4 @@
-import { PluginManager } from '@remixproject/engine'
+import { Plugin, PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
@@ -172,7 +172,7 @@ export function canActivate(from, to) {
   return ['ethdoc'].includes(from.name) || isNative(from.name) || (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
-export class RemixAppManager extends PluginManager implements IRemixAppManager {
+export class RemixAppManager extends PluginManager {
   actives = []
   pluginsDirectory: string
   event: EventEmitter
@@ -195,8 +195,8 @@ export class RemixAppManager extends PluginManager implements IRemixAppManager {
     if (this.isRequired(to.name)) return false
     return isNative(from.name)
   }
-
-  async checkCanDeactivate (from, to) {
+  //@ts-ignore - did this compensate for plugins calling this signature of canDeactivate which expects a profile
+  async canDeactivate (from, to) {
     return this.canDeactivatePlugin(from, to)
   }
 
