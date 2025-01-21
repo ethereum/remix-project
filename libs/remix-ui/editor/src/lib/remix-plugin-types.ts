@@ -545,7 +545,7 @@ declare interface ISettings {
 }
 
 declare interface ITerminal {
-    events: {   
+    events: {
     } & StatusEvents
     methods: {
         log(message: TerminalMessage): void
