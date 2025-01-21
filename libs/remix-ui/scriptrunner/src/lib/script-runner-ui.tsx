@@ -32,7 +32,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   }
 
   return (
-    <div className="px-1">
+    <div className="px-1 pt-2">
       <Accordion activeKey={activeKey} defaultActiveKey="default">
         {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
           <div key={index}>
