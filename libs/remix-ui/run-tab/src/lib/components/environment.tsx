@@ -31,6 +31,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const forkStatePrompt = (defaultName: string) => {
     return (
       <div data-id="forkVmStateModal">
+        <ul className='ml-3'>
+          <li><FormattedMessage id="udapp.forkVmStateDesc1"/></li>
+          <li><FormattedMessage id="udapp.forkVmStateDesc2"/></li>
+        </ul>
         <label id="stateName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="udapp.forkStateLabel" />
         </label>
@@ -49,10 +53,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
     return (
       <div data-id="deleteVmStateModal">
         <ul className='ml-3'>
-          <li><FormattedMessage id="udapp.deleteVmStateDesc1"/></li>
-          <li><FormattedMessage id="udapp.deleteVmStateDesc2"/></li>
+          <li><FormattedMessage id="udapp.resetVmStateDesc1"/></li>
+          <li><FormattedMessage id="udapp.resetVmStateDesc2"/></li>
         </ul>
-        <FormattedMessage id="udapp.deleteVmStateDesc3"/>
+        <FormattedMessage id="udapp.resetVmStateDesc3"/>
       </div>
     )
   }
@@ -83,15 +87,15 @@ export function EnvironmentUI(props: EnvironmentProps) {
     } else props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
   }
 
-  const deleteVmState = async() => {
+  const resetVmState = async() => {
     _paq.push(['trackEvent', 'udapp', 'deleteState', `deleteState clicked`])
     const context = currentProvider.name
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
     if (contextExists) {
       props.modal(
-        intl.formatMessage({ id: 'udapp.deleteVmStateTitle' }),
+        intl.formatMessage({ id: 'udapp.resetVmStateTitle' }),
         deleteVmStatePrompt(),
-        intl.formatMessage({ id: 'udapp.delete' }),
+        intl.formatMessage({ id: 'udapp.reset' }),
         async () => {
           const currentProvider = await props.runTabPlugin.call('blockchain', 'getCurrentProvider')
           // Reset environment blocks and account data
@@ -103,35 +107,28 @@ export function EnvironmentUI(props: EnvironmentProps) {
           // If there are pinned contracts, delete pinned contracts folder
           const isPinnedContracts = await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${context}`)
           if (isPinnedContracts) await props.runTabPlugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${context}`)
-          props.runTabPlugin.call('notification', 'toast', `VM state deleted successfully.`)
-          _paq.push(['trackEvent', 'udapp', 'deleteState', `VM state deleted`])
+          props.runTabPlugin.call('notification', 'toast', `VM state reset successfully.`)
+          _paq.push(['trackEvent', 'udapp', 'deleteState', `VM state reset`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
         null
       )
-    } else props.runTabPlugin.call('notification', 'toast', `State not available to delete, as no transactions have been made for selected environment & selected workspace.`)
+    } else props.runTabPlugin.call('notification', 'toast', `State not available to reset, as no transactions have been made for selected environment & selected workspace.`)
   }
 
   const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
     <div className="udapp_crow">
-      <label id="selectExEnv" className="udapp_settingsLabel">
+      <label id="selectExEnv" className="udapp_settingsLabel w-100">
         <FormattedMessage id="udapp.environment" />
-        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
-          <a href="https://chainlist.org/" target="_blank">
-            <i className={'ml-2 fas fa-plug'} aria-hidden="true"></i>
-          </a>
-        </CustomTooltip>
-        <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
-            <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
-          </a>
-        </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
           <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
         </CustomTooltip> }
-        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.deleteVmStateTitle" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-trash" style={{ cursor: 'pointer' }} onClick={deleteVmState} data-id="delete-state-icon"></i>
+        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
+          <span onClick={resetVmState} style={{ cursor: 'pointer', float: 'right', textTransform: 'none' }}>
+            <i className="udapp_infoDeployAction ml-2 fas fa-refresh" data-id="delete-state-icon"></i>
+            <span className="ml-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
+          </span>
         </CustomTooltip> }
       </label>
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
