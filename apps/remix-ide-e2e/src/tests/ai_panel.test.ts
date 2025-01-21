@@ -15,11 +15,11 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Add Ballot #flaky': function (browser: NightwatchBrowser) {
+  'Add Ballot #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
-  'Explain the contract': function (browser: NightwatchBrowser) {
+  'Explain the contract #group1': function (browser: NightwatchBrowser) {
     browser
         .waitForElementVisible('*[data-id="explain-editor"]')
         .click('*[data-id="explain-editor"]')
@@ -30,13 +30,13 @@ module.exports = {
             selector: '//*[@data-id="aichat-view" and contains(.,"Explain the current code")]'
         })
   },
-  'close the popup': function (browser: NightwatchBrowser) {
+  'close the popup #group1': function (browser: NightwatchBrowser) {
     browser
         .waitForElementVisible('*[data-id="popupPanelToggle"]')
         .click('*[data-id="popupPanelToggle"]')
         .waitForElementNotVisible('*[data-id="popupPanelPluginsContainer"]')
   },
-  'Add a bad contract': function (browser: NightwatchBrowser) {
+  'Add a bad contract #group1': function (browser: NightwatchBrowser) {
     browser
         .addFile('Bad.sol', { content: 'errors' })
         .clickLaunchIcon('solidity')
