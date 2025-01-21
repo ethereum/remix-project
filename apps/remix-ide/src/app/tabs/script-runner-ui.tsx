@@ -376,7 +376,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
           }
           message = `${error.response.data.error}`
         }
-        message = `Uknown error: ${error.response.data}`
+        message = `Unknown error: ${error.response.data}`
         this.plugin.call('notification', 'alert', {
           id: 'scriptalert',
           message,
