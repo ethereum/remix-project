@@ -16,7 +16,7 @@ export type Transaction = {
 export class TxRunner {
   event
   pendingTxs
-  queusTxs
+  queueTxs
   opt
   internalRunner
   constructor (internalRunner, opt) {
@@ -25,7 +25,7 @@ export class TxRunner {
     this.event = new EventManager()
 
     this.pendingTxs = {}
-    this.queusTxs = []
+    this.queueTxs = []
   }
 
   rawRun (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, cb) {
@@ -42,14 +42,14 @@ export class TxRunner {
 
 function run (self, tx: Transaction, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
   if (Object.keys(self.pendingTxs).length) {
-    return self.queusTxs.push({ tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback })
+    return self.queueTxs.push({ tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback })
   }
   self.pendingTxs[stamp] = tx
   self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, function (error, result) {
     delete self.pendingTxs[stamp]
     if (callback && typeof callback === 'function') callback(error, result)
-    if (self.queusTxs.length) {
-      const next = self.queusTxs.pop()
+    if (self.queueTxs.length) {
+      const next = self.queueTxs.pop()
       run(self, next.tx, next.stamp, next.confirmationCb, next.gasEstimationForceSend, next.promptCb, next.callback)
     }
   })
