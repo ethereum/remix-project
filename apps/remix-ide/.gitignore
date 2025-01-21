@@ -16,3 +16,4 @@ src/assets/version.json
 src/assets/js/soljson/soljson-v*
 .env
 .env.*.local
+.env.local
