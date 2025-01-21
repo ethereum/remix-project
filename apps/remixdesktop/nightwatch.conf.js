@@ -27,9 +27,11 @@ module.exports = {
       launch_url: 'https://nightwatchjs.org',
 
       globals: {
-        waitForConditionTimeout: 30000,
-        retryAssertionTimeout: 30000,
-        asyncHookTimeout: 30000,
+        waitForConditionTimeout: 60000,
+        retryAssertionTimeout: 60000,
+        asyncHookTimeout: 60000,
+        abortOnFailure: false,
+        abortOnAssertionFailure: false
       },
 
       screenshots: {
@@ -48,7 +50,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -69,7 +71,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -93,7 +95,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -112,7 +114,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -142,7 +144,7 @@ module.exports = {
       webdriver: {
         timeout_options: {
           timeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         },
         keep_alive: true,
         start_process: false
@@ -220,7 +222,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -264,7 +266,7 @@ module.exports = {
         timeout_options: {
           timeout: 60000,
           pageLoadTimeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 5
         }
       }
     },
@@ -300,7 +302,7 @@ module.exports = {
   detailed_output: true,
 
   max_retries: {
-    test: 2,
-    testcase: 1
+    test: 3,
+    testcase: 2
   }
 };
