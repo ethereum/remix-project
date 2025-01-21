@@ -67,7 +67,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           onChange={onInputChanged}
           type={props.modalType === ModalTypes.password ? 'password' : 'text'}
           defaultValue={defaultValue}
-          data-id="modalDialogCustomPromp"
+          data-id="modalDialogCustomPrompt"
           ref={ref}
           className="form-control"
         />
