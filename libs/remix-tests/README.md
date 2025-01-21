@@ -237,9 +237,12 @@ remixTests.runTest (testName: string, testObject: any, contractDetails: Compiled
 * `failureNum` - number of failing tests
 * `timePassed` - time it took for all the tests to run (in seconds)
 
-Running a set of tests given the sourcecode:
+Run a set of tests given the sourcecode:
 ```Javascript
-remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options);
+// Initialize UnitTestRunner
+const runner = new remixTests.UnitTestRunner()
+
+runner.runTestSources(contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function);
 ```
 <em>Params:-</em>
 1. `contractSources` - Contract sources
@@ -261,7 +264,6 @@ remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWork
 
 5. `finalCallback(err)` - called when all tests finish running.
 6. `importCb(url, cb)` - Callback to resolve imported files
-7. `opts` - Custom options
 
 For more details, see parameters' type definitions [here](src/types.ts).
 
