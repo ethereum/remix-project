@@ -758,7 +758,7 @@ export class Blockchain extends Plugin {
             'terminal',
             'logHtml',
             <a href={etherScanLink(network.name, txhash)} target="_blank">
-              view on etherscan
+              view on ETHERSCAN
             </a>
           )
         }
