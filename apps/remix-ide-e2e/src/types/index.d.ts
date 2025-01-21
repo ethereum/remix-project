@@ -77,7 +77,7 @@ declare module 'nightwatch' {
     hidePopupPanel: (this: NightwatchBrowser) => NightwatchBrowser
     enableClipBoard: () => NightwatchBrowser
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
-    selectFiles: (selelectedElements: any[]) => NightwatchBrowser
+    selectFiles: (selectedElements: any[]) => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
