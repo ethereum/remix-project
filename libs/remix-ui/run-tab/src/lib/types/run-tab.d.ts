@@ -1,13 +1,13 @@
-import type { CompilerArtefacts } from '@remix-project/core-plugin'
+import type { CompilerArtifacts } from '@remix-project/core-plugin'
 export interface RunTab extends ViewPlugin {
-  // constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any);
+  // constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtifacts: CompilerArtifacts, networkModule: any, fileProvider: any, engine: any);
   event: any;
   config: any;
   blockchain: Blockchain;
   fileManager: any;
   editor: any;
   filePanel: any;
-  compilersArtefacts: any;
+  compilersArtifacts: any;
   networkModule: any;
   fileProvider: any;
   REACT_API: RunTabState;

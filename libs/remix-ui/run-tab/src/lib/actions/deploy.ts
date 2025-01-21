@@ -42,7 +42,7 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
 
 export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType): ContractData => {
   if (!contractName) return null
-  // const compiler = plugin.compilersArtefacts[compilerAttributeName]
+  // const compiler = plugin.compilersArtifacts[compilerAttributeName]
 
   if (!compiler) return null
 
@@ -84,7 +84,7 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
 }
 
 const getCompilerContracts = (plugin: RunTab) => {
-  return plugin.compilersArtefacts.__last.getData().contracts
+  return plugin.compilersArtifacts.__last.getData().contracts
 }
 
 export const terminalLogger = (plugin: RunTab, view: JSX.Element) => {
@@ -177,9 +177,9 @@ export const createInstance = async (
       return terminalLogger(plugin, log)
     }
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
-    const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+    const data = await plugin.compilersArtifacts.getCompilerAbstract(contractObject.contract.file)
 
-    plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    plugin.compilersArtifacts.addResolvedContract(addressToString(address), data)
     if (plugin.REACT_API.ipfsChecked) {
       _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', plugin.REACT_API.networkName])
       publishToStorage('ipfs', selectedContract)
@@ -397,7 +397,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
 }
 
 export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput, solcVersion: string) => {
-  // build current contract first to get artefacts.
+  // build current contract first to get artifacts.
   const network = plugin.blockchain.networkStatus.network
   const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
   const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
