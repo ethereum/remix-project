@@ -5,6 +5,7 @@ import { IntlProvider } from 'react-intl'
 import { Container } from "./components/container"
 import { NoirAppContext } from "./contexts"
 import { appInitialState, appReducer } from "./reducers/state"
+import { compileNoirCircuit } from "./actions"
 
 const plugin = new NoirPluginClient()
 
@@ -31,11 +32,10 @@ function App() {
       })
       // @ts-ignore
       plugin.on('editor', 'contentChanged', async (path: string, content: string) => {
-        setIsContentChanged(true)
-        // check if autoCompile is enabled
-        // if (path.endsWith('.nr')) {
-        //   plugin.parse(path, content)
-        // }
+        if (path.endsWith('.nr')) {
+          setIsContentChanged(true)
+          plugin.parse(path, content)
+        }
       })
       // noir compiling events
       plugin.internalEvents.on('noir_compiling_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
@@ -53,6 +53,15 @@ function App() {
       setCurrentLocale()
     }
   }, [isPluginActivated])
+
+  useEffect(() => {
+    if (isContentChanged) {
+      (async () => {
+        if (appState.autoCompile) await compileNoirCircuit(plugin, appState)
+      })()
+      setIsContentChanged(false)
+    }
+  }, [appState.autoCompile, isContentChanged])
 
   const noirCompilerErrored = (err: ErrorEvent) => {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
