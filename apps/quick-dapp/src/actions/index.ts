@@ -229,7 +229,7 @@ export const deploy = async (payload: any, callback: any) => {
   }
 
   try {
-    // some times deployment might fail even if it says successfully, that's why we need to do the double check.
+    // sometimes deployment might fail even if it says successfully, that's why we need to do the double check.
     const instanceResp = await axios.get(`https://${payload.subdomain}.surge.sh/assets/instance.json`);
     if (instanceResp.status === 200 && JSON.stringify(instanceResp.data) === instanceJson) {
       callback({ code: 'SUCCESS', error: '' });
