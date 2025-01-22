@@ -62,10 +62,11 @@ export class SecurityAgent {
       this.addFileToReport(newName);
     });
 
-    this.basePlugin.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
-    this.basePlugin.on('vyper', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
-    this.basePlugin.on('hardhat', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
-    this.basePlugin.on('foundry', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
+    // disable for now the compilationFinished event
+    // this.basePlugin.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
+    // this.basePlugin.on('vyper', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
+    // this.basePlugin.on('hardhat', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
+    // this.basePlugin.on('foundry', 'compilationFinished', async (fileName, source, languageVersion, data) => { this.onCompilationFinished(fileName) });
 
     this.watcher = new WorkspaceWatcher(async () => {
       try {
