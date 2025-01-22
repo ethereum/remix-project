@@ -4,15 +4,7 @@ import EventManager from 'events'
 // @ts-ignore
 import { compile_program, createFileManager } from '@noir-lang/noir_wasm/default'
 import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
-
-const DEFAULT_TOML_CONFIG = `[package]
-name = "test"
-authors = [""]
-compiler_version = ">=0.18.0"
-type = "bin"
-
-[dependencies]
-`
+import { DEFAULT_TOML_CONFIG } from '../actions/constants'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
   public fm: FileManager
@@ -23,9 +15,6 @@ export class NoirPluginClient extends PluginClient {
     createClient(this)
     this.internalEvents = new EventManager()
     this.fm = createFileManager('/')
-    const fileBytes = new TextEncoder().encode(DEFAULT_TOML_CONFIG)
-
-    this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
     this.onload()
   }
 
@@ -35,6 +24,24 @@ export class NoirPluginClient extends PluginClient {
 
   onActivation(): void {
     this.internalEvents.emit('noir_activated')
+    this.setup()
+  }
+
+  async setup(): Promise<void> {
+    // @ts-ignore
+    const nargoTomlExists = await this.call('fileManager', 'exists', 'Nargo.toml')
+
+    if (!nargoTomlExists) {
+      await this.call('fileManager', 'writeFile', 'Nargo.toml', DEFAULT_TOML_CONFIG)
+      const fileBytes = new TextEncoder().encode(DEFAULT_TOML_CONFIG)
+
+      this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
+    } else {
+      const nargoToml = await this.call('fileManager', 'readFile', 'Nargo.toml')
+      const fileBytes = new TextEncoder().encode(nargoToml)
+
+      this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
+    }
   }
 
   async compile(path: string): Promise<void> {
@@ -43,11 +50,6 @@ export class NoirPluginClient extends PluginClient {
       this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Circuit...', type: 'info' })
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-      // @ts-ignore
-      const fileContent = await this.call('fileManager', 'readFile', path)
-      const fileBytes = new TextEncoder().encode(fileContent)
-
-      this.fm.writeFile(`src/${path}`, new Blob([fileBytes]).stream())
       const program = await compile_program(this.fm)
 
       console.log('program: ', program)
@@ -60,6 +62,15 @@ export class NoirPluginClient extends PluginClient {
     }
   }
 
-  async parse(path: string): Promise<void> {
+  async parse(path: string, content?: string): Promise<void> {
+    if (!content) {
+      // @ts-ignore
+      content = await this.call('fileManager', 'readFile', path)
+    }
+    const depImports = Array.from(content.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1]);
+    console.log('depImports: ', depImports)
+    const fileBytes = new TextEncoder().encode(content)
+
+    this.fm.writeFile(`src/${path}`, new Blob([fileBytes]).stream())
   }
 }

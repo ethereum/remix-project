@@ -36,12 +36,12 @@ body {
     line-height: 12px;
     text-transform: uppercase;
 }
-.noir_errors_box {
+.circuit_errors_box {
     word-break: break-word;
 }
-.noir_feedback.success,
-.noir_feedback.error,
-.noir_feedback.warning {
+.circuit_feedback.success,
+.circuit_feedback.error,
+.circuit_feedback.warning {
   white-space: pre-line;
   word-wrap: break-word;
   cursor: pointer;
@@ -52,9 +52,9 @@ body {
   padding: 8px 15px;
 }
 
-.noir_feedback.success pre,
-.noir_feedback.error pre,
-.noir_feedback.warning pre {
+.circuit_feedback.success pre,
+.circuit_feedback.error pre,
+.circuit_feedback.warning pre {
   white-space: pre-line;
   overflow-y: hidden;
   background-color: transparent;
@@ -65,9 +65,9 @@ body {
   border-radius: 0;
 }
 
-.noir_feedback.success .close,
-.noir_feedback.error .close,
-.noir_feedback.warning .close {
+.circuit_feedback.success .close,
+.circuit_feedback.error .close,
+.circuit_feedback.warning .close {
   visibility: hidden;
   white-space: pre-line;
   font-weight: bold;
@@ -78,9 +78,9 @@ body {
   padding: 0.5em;
 }
 
-.noir_feedback.success a,
-.noir_feedback.error a,
-.noir_feedback.warning a {
+.circuit_feedback.success a,
+.circuit_feedback.error a,
+.circuit_feedback.warning a {
   bottom: 0;
   right: 0;
 }
