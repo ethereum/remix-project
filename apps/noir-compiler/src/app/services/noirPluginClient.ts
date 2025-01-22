@@ -29,6 +29,24 @@ export class NoirPluginClient extends PluginClient {
 
   onActivation(): void {
     this.internalEvents.emit('noir_activated')
+    this.setup()
+  }
+
+  async setup(): Promise<void> {
+    // @ts-ignore
+    const nargoTomlExists = await this.call('fileManager', 'exists', 'Nargo.toml')
+
+    if (!nargoTomlExists) {
+      await this.call('fileManager', 'writeFile', 'Nargo.toml', DEFAULT_TOML_CONFIG)
+      const fileBytes = new TextEncoder().encode(DEFAULT_TOML_CONFIG)
+
+      this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
+    } else {
+      const nargoToml = await this.call('fileManager', 'readFile', 'Nargo.toml')
+      const fileBytes = new TextEncoder().encode(nargoToml)
+
+      this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
+    }
   }
 
   async setupNargoToml(): Promise<void> {
