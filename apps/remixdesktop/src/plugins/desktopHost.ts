@@ -4,7 +4,14 @@ import { handleRequest, startHostServer } from "../lib/server"
 import EventEmitter from "events"
 import { ipcMain, shell } from "electron"
 import { RequestArguments } from "../types"
+import fs from 'fs'
+import path from 'path'
 
+
+const logFilePath = path.join(__dirname, 'desktopHost.log')
+console.log('logFilePath', logFilePath)
+// Create or clear the log file
+fs.writeFileSync(logFilePath, '', { flag: 'w' })
 const profile = {
     displayName: 'desktopHost',
     name: 'desktopHost',
@@ -72,7 +79,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     }
 
     async init() {
-        console.log('initializing destkophost plugin...')
+        console.log('initializing destkophost plugin...', this.webContentsId)
         
         if (!isConnected)
             await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`)
@@ -90,9 +97,15 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     }
 
     async sendAsync(data: RequestArguments) {
-        //console.log('SEND ASYNC', data)
+        //console.log('SEND ASYNC', data, this.webContentsId)
         const result = await handleRequest(data, eventEmitter)
-        //console.log('RESULT from handleRequest', data, result)
+        console.log('RESULT from handleRequest', data, this.webContentsId, result)
+
+        const logEntry = `
+        Request: ${JSON.stringify(data, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
+        Result: ${JSON.stringify(result, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
+        `
+        fs.appendFileSync(logFilePath, logEntry)
         return result
     }
 }
