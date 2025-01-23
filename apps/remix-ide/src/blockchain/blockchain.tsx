@@ -159,7 +159,7 @@ export class Blockchain extends Plugin {
       _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
       this.emit('providersChanged')
       this.changeExecutionContext({ context: name }, null, null, null)
-      this.call('notification', 'toast', `VM state '${providerName}' forked and selected as current environment.`)
+      this.call('notification', 'toast', `New environment '${providerName}' created with forked state.`)
     })
 
     this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
@@ -689,6 +689,7 @@ export class Blockchain extends Plugin {
   }
 
   removeProvider(name) {
+    if (this.pinnedProviders.includes(name)) this.emit('shouldRemoveProviderFromUdapp', name, this.getProviderObjByName(name))
     this.executionContext.removeProvider(name)
     this.emit('providersChanged')
   }
