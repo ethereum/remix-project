@@ -22,7 +22,7 @@ const txHelper = remixLib.execution.txHelper
 const txFormat = remixLib.execution.txFormat
 
 const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
-  if (/.(.abi)$/.exec(plugin.config.get('currentFile'))) {
+  if (/\.(abi)$/.exec(plugin.config.get('currentFile'))) {
     confirmCb(() => {
       let abi
       try {
@@ -42,7 +42,7 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
 
 export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType): ContractData => {
   if (!contractName) return null
-  // const compiler = plugin.compilersArtefacts[compilerAtributeName]
+  // const compiler = plugin.compilersArtefacts[compilerAttributeName]
 
   if (!compiler) return null
 
@@ -61,9 +61,9 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
       return txHelper.getConstructorInterface(contract.object.abi)
     },
     getConstructorInputs: () => {
-      const constructorInteface = txHelper.getConstructorInterface(contract.object.abi)
+      const constructorInterface = txHelper.getConstructorInterface(contract.object.abi)
 
-      return txHelper.inputParametersDeclarationToString(constructorInteface.inputs)
+      return txHelper.inputParametersDeclarationToString(constructorInterface.inputs)
     },
     isOverSizeLimit: async (args: string) => {
       const encodedParams = await txFormat.encodeParams(args, txHelper.getConstructorInterface(contract.object.abi))
@@ -309,7 +309,7 @@ export const runTransactions = (
   funcIndex?: number) => {
   let callinfo = ''
   if (lookupOnly) callinfo = 'call'
-  else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
+  else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelinteractions'
   else callinfo = 'transact'
   _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
 

@@ -26,7 +26,7 @@ const profile = {
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
     'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff',
-    'hasGitSubmodules'
+    'hasGitSubmodules', 'getOpenedFiles'
   ],
   kind: 'file-system'
 }
@@ -40,7 +40,7 @@ const errorMsg = {
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
-class FileManager extends Plugin {
+export default class FileManager extends Plugin {
   mode: string
   openedFiles: any
   editor: any
