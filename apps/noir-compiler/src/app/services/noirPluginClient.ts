@@ -4,6 +4,7 @@ import EventManager from 'events'
 // @ts-ignore
 import { compile_program, createFileManager } from '@noir-lang/noir_wasm/default'
 import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
+import pathModule from 'path'
 import { DEFAULT_TOML_CONFIG } from '../actions/constants'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
@@ -63,14 +64,54 @@ export class NoirPluginClient extends PluginClient {
   }
 
   async parse(path: string, content?: string): Promise<void> {
-    if (!content) {
-      // @ts-ignore
-      content = await this.call('fileManager', 'readFile', path)
-    }
-    const depImports = Array.from(content.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1]);
-    console.log('depImports: ', depImports)
+    if (!content) content = await this.call('fileManager', 'readFile', path)
+    await this.resolveDependencies(path, content)
     const fileBytes = new TextEncoder().encode(content)
 
-    this.fm.writeFile(`src/${path}`, new Blob([fileBytes]).stream())
+    this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
+  }
+
+  async resolveDependencies (filePath: string, fileContent: string, blackPath: string[] = []): Promise<void> {
+    const imports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1]);
+    console.log('depImports: ', imports)
+
+    for (let dep of imports) {
+      if (!dep.endsWith('.nr')) dep += '.nr'
+      if (blackPath.includes(dep)) return
+      let dependencyContent = ''
+      let path = dep.replace(/(\.\.\/)+/g, '')
+
+      // @ts-ignore
+      const pathExists = await this.call('fileManager', 'exists', path)
+
+      if (pathExists) {
+        dependencyContent = await this.call('fileManager', 'readFile', path)
+      } else {
+        let relativePath = pathModule.resolve(filePath.slice(0, filePath.lastIndexOf('/')), dep)
+
+        if (relativePath.indexOf('/') === 0) relativePath = relativePath.slice(1)
+        // @ts-ignore
+        const relativePathExists = await this.call('fileManager', 'exists', relativePath)
+
+        if (relativePathExists) {
+          path = relativePath
+          dependencyContent = await this.call('fileManager', 'readFile', relativePath)
+        } else {
+          console.error(`Dependency ${dep} not found in Remix file system`)
+        }
+      }
+
+      blackPath.push(dep)
+      // extract all includes from the dependency content
+      const depImports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1])
+
+      if (depImports.length > 0 && dependencyContent.length > 0) {
+        await this.resolveDependencies(path, dependencyContent, blackPath)
+        const fileBytes = new TextEncoder().encode(dependencyContent)
+
+        console.log('writing file: ', `src/${dep}`)
+        this.fm.writeFile(`src/${dep}`, new Blob([fileBytes]).stream())
+      }
+    }
   }
 }
