@@ -22,7 +22,7 @@ const txHelper = remixLib.execution.txHelper
 const txFormat = remixLib.execution.txFormat
 
 const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
-  if (/.(.abi)$/.exec(plugin.config.get('currentFile'))) {
+  if (/\.(abi)$/.exec(plugin.config.get('currentFile'))) {
     confirmCb(() => {
       let abi
       try {
@@ -42,7 +42,7 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
 
 export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType): ContractData => {
   if (!contractName) return null
-  // const compiler = plugin.compilersArtefacts[compilerAtributeName]
+  // const compiler = plugin.compilersArtefacts[compilerAttributeName]
 
   if (!compiler) return null
 
