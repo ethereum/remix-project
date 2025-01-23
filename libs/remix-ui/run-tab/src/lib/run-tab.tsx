@@ -106,6 +106,8 @@ export function RunTabUI(props: RunTabProps) {
     }
   }
 
+  console.log({ plugin, runTab })
+
   const getCompilerDetails = async () => await checkEvmChainCompatibility()
 
   const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
@@ -236,7 +238,7 @@ export function RunTabUI(props: RunTabProps) {
   }, [runTab.popup])
 
   useEffect(() => {
-    if (runTab.selectExEnv.includes('injected') &&
+    if ((runTab.selectExEnv.includes('injected') || runTab.selectExEnv.includes('walletconnect')) &&
       Object.entries(runTab.accounts.loadedAccounts).length === 0 &&
     runTab.accounts.selectedAccount.length > 0) {
       // switch to vm-cancum because no account is loaded from injected provider
