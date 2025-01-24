@@ -6,7 +6,6 @@ import { OpenWorkspaceMessage, logToVsCode, startVsCodeServer, VSCodeEvents, Wor
 import { createWindow } from '../main'
 import { convertPathToPosix, getRelativePath, isFocusedFileOpen } from '../utils/fs'
 
-
 const profile: Profile = {
   displayName: 'VSCodeSync',
   name: 'VSCodeSync',
