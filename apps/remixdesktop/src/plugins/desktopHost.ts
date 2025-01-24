@@ -99,9 +99,9 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     async sendAsync(data: RequestArguments) {
         //console.log('SEND ASYNC', data, this.webContentsId)
         const result = await handleRequest(data, eventEmitter)
-        console.log('RESULT from handleRequest', data, this.webContentsId, result)
 
         const logEntry = `
+        webContentsId: ${this.webContentsId}
         Request: ${JSON.stringify(data, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         Result: ${JSON.stringify(result, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         `
