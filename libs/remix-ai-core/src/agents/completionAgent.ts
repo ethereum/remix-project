@@ -1,4 +1,3 @@
-import FlexSearch from 'flexsearch';
 import lunr from 'lunr';
 
 interface Document {
@@ -19,6 +18,8 @@ export class CodeCompletionAgent {
   props: any;
   indexer: any;
   Documents: Document[] = [];
+  INDEX_THRESHOLD = 0.1;
+  N_MATCHES = 1;
 
   constructor(props) {
     this.props = props;
@@ -40,7 +41,7 @@ export class CodeCompletionAgent {
           id: ++c,
           filename: file,
           content: content,
-          identifier: c*34,
+          identifier: c-1,
         });
       }
     }
@@ -64,15 +65,33 @@ export class CodeCompletionAgent {
     });
   }
 
-  async searchIndex(query: string) {
+  async getContextFiles() {
     try {
-      const searchResult = this.indexer.search(query);
-      console.log('Search result', searchResult);
-      return searchResult[0];
+      const currentFile = await this.props.call('fileManager', 'getCurrentFile');
+      const content = await this.props.call('fileManager', 'readFile', currentFile);
+      const searchResult = this.indexer.search(content);
+      const fcps = await this.processResults(searchResult, currentFile);
+      const resolvedFcps = await Promise.all(fcps);
+      return resolvedFcps;
     } catch (error) {
-      console.log('Error searching index', error);
-      return null;
+      return [];
     }
+  }
+
+  async processResults(results: any, currentFile: string) {
+    const rmResults = await results.filter(result => {
+      const document = this.Documents.find(doc => doc.id === Number(result.ref));
+      return document.filename !== currentFile;
+    });
+    const filteredResults = await rmResults.filter(result => result.score >= this.INDEX_THRESHOLD);
+    const topResults = filteredResults.slice(0, this.N_MATCHES);
+
+    const fileContentPairs = topResults.map(async result => {
+      const document = this.Documents.find(doc => doc.id === Number(result.ref));
+      const currentContent = await this.props.call('fileManager', 'readFile', document.filename);
+      return { file: document.filename, content: currentContent };
+    });
+    return fileContentPairs;
   }
 
 }

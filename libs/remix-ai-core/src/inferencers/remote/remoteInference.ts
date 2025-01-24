@@ -12,7 +12,7 @@ export class RemoteInferencer implements ICompletions {
   max_history = 7
   model_op = RemoteBackendOPModel.CODELLAMA // default model operation change this to llama if necessary
   event: EventEmitter
-  test_env=false
+  test_env=true
   test_url="http://solcodertest.org"
 
   constructor(apiUrl?:string, completionUrl?:string) {
@@ -110,13 +110,16 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  async code_completion(prompt, promptAfter, options:IParams=CompletionParams): Promise<any> {
-    const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion", ...options }
+  async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
+    console.log("code_completion", ctxFiles)
+    const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
+      'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
-  async code_insertion(msg_pfx, msg_sfx, options:IParams=InsertionParams): Promise<any> {
-    const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, ...options, prompt: '' }
+  async code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, options:IParams=InsertionParams): Promise<any> {
+    const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, 'ctxFiles':ctxFiles,
+      'currentFileName':fileName, ...options, prompt: '' }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 

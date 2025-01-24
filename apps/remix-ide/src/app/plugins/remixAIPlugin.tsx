@@ -65,6 +65,12 @@ export class RemixAIPlugin extends ViewPlugin {
       this.initialize()
     }
     this.completionAgent = new CodeCompletionAgent(this)
+
+    // each 10 seconds update the workspace index
+    setInterval(() => {
+      console.log('Indexing workspace')
+      this.completionAgent.indexWorkspace()
+    }, 60000)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -113,11 +119,15 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_completion(prompt: string, promptAfter: string): Promise<any> {
-    this.completionAgent.searchIndex(prompt)
+    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
+
+    const currentFile = await this.call('fileManager', 'getCurrentFile')
+    const contextfiles = await this.completionAgent.getContextFiles()
+    console.log('completion Context files', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
     } else {
-      return await this.remoteInferencer.code_completion(prompt, promptAfter)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFile)
     }
   }
 
@@ -179,11 +189,14 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
-    this.completionAgent.indexWorkspace()
+    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
+
+    const currentFile = await this.call('fileManager', 'getCurrentFile')
+    const contextfiles = this.completionAgent.getContextFiles()
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
     } else {
-      return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx)
+      return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx, contextfiles, currentFile)
     }
   }
 
