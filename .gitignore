@@ -56,8 +56,6 @@ testem.log
 
 # System Files
 .DS_Store
-.vscode/settings.json
-.vscode/launch.json
 
 apps/remixdesktop/.webpack
 apps/remixdesktop/out
