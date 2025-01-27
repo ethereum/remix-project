@@ -54,5 +54,6 @@ export interface AppState {
     canUseGit: boolean
     showPopupPanel: boolean
     connectedToDesktop: desktopConnection
+    desktopClientConnected: desktopConnection
 }
 

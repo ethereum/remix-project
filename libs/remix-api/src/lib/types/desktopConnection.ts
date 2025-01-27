@@ -3,6 +3,7 @@ export const desktopConnectionType = {
     disconnected: 'disconnected',
     disabled: 'disabled',
     alreadyConnected: 'alreadyConnected',
+    connectedToInjected: 'connectedToInjected'
 }
 
 export type desktopConnection  = typeof desktopConnectionType [keyof typeof desktopConnectionType ]

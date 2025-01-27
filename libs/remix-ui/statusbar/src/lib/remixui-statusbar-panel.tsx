@@ -70,9 +70,9 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     return aiActive
   }
 
-  if (platform !== appPlatformTypes.desktop && appContext.appState.connectedToDesktop !== desktopConnectionType .disabled) {
+  if (platform !== appPlatformTypes.desktop && appContext.appState.connectedToDesktop !== desktopConnectionType.disabled) {
     return (<><div className="d-flex remixui_statusbar_height flex-row bg-warning justify-content-between align-items-center">
-      <DesktopStatus/></div></>)
+      <DesktopStatus /></div></>)
   }
 
   return (
@@ -96,9 +96,12 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
           </FloatingFocusManager>
         )}
         <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
-          { (platform !== appPlatformTypes.desktop) && <div className="remixui_statusbar bg-warning px-2 remixui_statusbar_custom_padding d-flex justify-center align-items-center">
+          {(platform !== appPlatformTypes.desktop) && <div className="remixui_statusbar bg-warning px-2 remixui_statusbar_custom_padding d-flex justify-center align-items-center">
             <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-          </div> }
+          </div>}
+          {(platform === appPlatformTypes.desktop) && <div className="remixui_statusbar">
+            <DesktopStatus /></div>}
+
           <div className='d-flex w-100 justify-content-between'>
             <div className="remixui_statusbar remixui_statusbar_gitstatus">
               <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
@@ -108,7 +111,9 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
           <div className="w-100 remixui_statusbar">
             <DidYouKnow />
           </div>
+
           <div className="remixui_statusbar d-flex w-100 justify-content-end p-0">
+
             <div className="remixui_statusbar">
               <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
             </div>

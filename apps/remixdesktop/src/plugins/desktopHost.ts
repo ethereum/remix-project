@@ -34,11 +34,6 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
     eventEmitter.on('connected', (payload) => {
       console.log('connected', payload)
       isConnected = payload
-      if (!isConnected) {
-        for (const client of this.clients) {
-          client.disconnect()
-        }
-      }
     })
     eventEmitter.on('isInjected', (isInjected: boolean) => {
       console.log('isInjected', isInjected)
@@ -80,6 +75,10 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     super(webContentsId, profile)
     this.isConnected = null
     this.isInjected = null
+    eventEmitter.on('connected', async (payload) => {
+      console.log('CLIENT connected', payload)
+      isConnected = payload
+    })
   }
 
   setIsInjected(isInjected: boolean) {
@@ -87,12 +86,12 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       this.isInjected = isInjected
 
       if (isInjected) {
-        this.call('notification' as any, 'toast',  'You are now connected to Metamask!')
+        this.call('notification' as any, 'toast', 'You are now connected to Metamask!')
       } else {
         this.call('notification' as any, 'alert', {
           title: 'Metamask Wallet',
           id: isInjected ? 'Injected' : 'Not_injected',
-          message: isInjected ? 'You are now connected to Metamask!' : 'You are not yet connected to Metamask. Please connect to Metamask in the browser to interact with the blockchain.',
+          message: isInjected ? 'You are now connected to Metamask!' : 'You are not yet connected to Metamask. Please connect to Metamask in the browser.',
         })
       }
     }
@@ -102,11 +101,18 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     if (this.isConnected !== isConnected) {
       this.isConnected = isConnected
       this.call('notification' as any, 'alert', {
-        title: 'Connection',
+        title: 'Metamask Wallet',
         id: isConnected ? 'Connected' : 'Disconnected',
         message: isConnected ? 'You are now connected to Remix on the web!' : 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
       })
     }
+  }
+
+  async disconnect() {
+    this.call('notification' as any, 'alert', {
+      id: 'Connection lost',
+      message: 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
+    })
   }
 
   getIsConnected() {
@@ -126,12 +132,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     console.log('CONNECTED TO REMOTE WEBSOCKET', this.webContentsId)
   }
 
-  async disconnect() {
-    this.call('notification' as any, 'alert', {
-      id: 'Connection lost',
-      message: 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
-    })
-  }
+
 
   async sendAsync(data: RequestArguments) {
     if (!isConnected) {
@@ -139,6 +140,9 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       return { error: 'Not connected to the remote websocket' }
     }
     console.log('SEND ASYNC', data, this.webContentsId)
+    const provider = await this.call('blockchain' as any, 'getProvider')
+      console.log('provider', provider)
+
     if (data.method === 'eth_getTransactionReceipt') {
       ipcMain.emit('focus-window', this.webContentsId)
     }

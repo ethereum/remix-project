@@ -7,5 +7,6 @@ export const appInitialState: AppState = {
   needsGitInit: true,
   canUseGit: false,
   showPopupPanel: false,
-  connectedToDesktop: desktopConnectionType .disabled
+  connectedToDesktop: desktopConnectionType.disabled,
+  desktopClientConnected: desktopConnectionType.connected
 }
