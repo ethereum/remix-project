@@ -106,8 +106,6 @@ export function RunTabUI(props: RunTabProps) {
     }
   }
 
-  console.log({ plugin, runTab })
-
   const getCompilerDetails = async () => await checkEvmChainCompatibility()
 
   const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
