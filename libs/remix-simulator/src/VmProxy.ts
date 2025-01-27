@@ -217,9 +217,9 @@ export class VmProxy {
 
     if (data.createdAddress) {
       const address = data.createdAddress.toString()
-      const checksumedAddress = toChecksumAddress(address)
-      this.vmTraces[this.processingHash].return = checksumedAddress
-      this.txsReceipt[this.processingHash].contractAddress = checksumedAddress
+      const checksummedAddress = toChecksumAddress(address)
+      this.vmTraces[this.processingHash].return = checksummedAddress
+      this.txsReceipt[this.processingHash].contractAddress = checksummedAddress
     } else if (data.execResult.returnValue) {
       this.vmTraces[this.processingHash].return = bytesToHex(data.execResult.returnValue)
     } else {
