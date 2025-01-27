@@ -109,7 +109,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                   >
                     <span
                       onClick={async () => props.deleteForkedState(provider)}
-                      className="btn btn-sm mt-1 border border-danger"
+                      className="btn btn-sm mt-1 mr-4 border border-danger"
                     >
                           Delete Environment
                     </span>
