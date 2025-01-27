@@ -12,7 +12,7 @@ export class RemoteInferencer implements ICompletions {
   max_history = 7
   model_op = RemoteBackendOPModel.CODELLAMA // default model operation change this to llama if necessary
   event: EventEmitter
-  test_env=true
+  test_env=false
   test_url="http://solcodertest.org"
 
   constructor(apiUrl?:string, completionUrl?:string) {
