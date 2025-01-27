@@ -66,7 +66,6 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     this.completionAgent = new CodeCompletionAgent(this)
 
-    // each 10 seconds update the workspace index
     setInterval(() => {
       console.log('Indexing workspace')
       this.completionAgent.indexWorkspace()
@@ -123,7 +122,6 @@ export class RemixAIPlugin extends ViewPlugin {
 
     const currentFile = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles()
-    console.log('completion Context files', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
     } else {

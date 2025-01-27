@@ -111,7 +111,6 @@ export class RemoteInferencer implements ICompletions {
   }
 
   async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
-    console.log("code_completion", ctxFiles)
     const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
       'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)

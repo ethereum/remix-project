@@ -25,6 +25,12 @@ export class CodeCompletionAgent {
     this.props = props;
     this.props.on('fileManager', 'fileAdded', (path) => { });
     this.props.on('filePanel', 'workspaceCreated', async () => { });
+    this.indexer =lunr(function () {
+      this.ref('id')
+      this.field('filename')
+      this.field('content')
+      this.field('Identifier');
+    });
   }
 
   async getDcocuments() {
@@ -45,7 +51,6 @@ export class CodeCompletionAgent {
         });
       }
     }
-    console.log('Documents', documents);
     return documents;
   }
 
@@ -69,7 +74,7 @@ export class CodeCompletionAgent {
     try {
       const currentFile = await this.props.call('fileManager', 'getCurrentFile');
       const content = await this.props.call('fileManager', 'readFile', currentFile);
-      const searchResult = this.indexer.search(content);
+      const searchResult = this.indexer.search(content)
       const fcps = await this.processResults(searchResult, currentFile);
       const resolvedFcps = await Promise.all(fcps);
       return resolvedFcps;
@@ -80,11 +85,12 @@ export class CodeCompletionAgent {
 
   async processResults(results: any, currentFile: string) {
     const rmResults = await results.filter(result => {
-      const document = this.Documents.find(doc => doc.id === Number(result.ref));
-      return document.filename !== currentFile;
+      return this.Documents.find(doc => doc.id === Number(result.ref)).filename !== currentFile;
     });
-    const filteredResults = await rmResults.filter(result => result.score >= this.INDEX_THRESHOLD);
-    const topResults = filteredResults.slice(0, this.N_MATCHES);
+    const extResults = await rmResults.filter(result => {
+      return this.Documents.find(doc => doc.id === Number(result.ref)).filename.split('.').pop() === currentFile.split('.').pop();
+    });
+    const topResults = await extResults.filter(result => result.score >= this.INDEX_THRESHOLD).slice(0, this.N_MATCHES);
 
     const fileContentPairs = topResults.map(async result => {
       const document = this.Documents.find(doc => doc.id === Number(result.ref));
