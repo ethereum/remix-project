@@ -786,7 +786,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [5]
+              parallelism: [1]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
