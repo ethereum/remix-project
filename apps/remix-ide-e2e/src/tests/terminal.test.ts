@@ -195,7 +195,7 @@ module.exports = {
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurrence: true })
   },
 
-  'Emit 2 similar events and check the filtering is done properly #flaky #group11': function (browser: NightwatchBrowser) {
+  'Emit 2 similar events and check the filtering is done properly #group11': function (browser: NightwatchBrowser) {
     let addressRef: string
     browser
       .addFile('contracts/contract_with_event.sol', { content: contract_with_event })
