@@ -136,7 +136,7 @@ export default class PluginManagerComponent extends ViewPlugin {
   }
 
   listenOnEvent () {
-    this.engine.event.on('onRegistration', () => this.renderComponent())
+    this.engine.event.on('onRegistration', () => this.getAndFilterPlugins())
     this.appManager.event.on('activate', () => {
       this.getAndFilterPlugins()
     })
