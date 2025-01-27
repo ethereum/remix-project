@@ -121,7 +121,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
               ></button>}
             </div>
           </div>
-          
+
           { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>
             { Object.keys(props.tagList).map((key) => (
               filterCon.keyValueMap[props.tagList[key]]?.enabled && (
