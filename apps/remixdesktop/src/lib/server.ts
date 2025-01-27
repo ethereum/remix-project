@@ -110,6 +110,7 @@ export const handleRequest = async (
     const timeout = setTimeout(() => {
       // If it times out, remove from pendingRequests.
       delete pendingRequests[requestId]
+      console.error('Timeout waiting for WebSocket response', jsonRpcPayload)
       reject(new Error('Timeout waiting for WebSocket response'))
     }, 240000) // 4-min timeout or whatever you prefer
 

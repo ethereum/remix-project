@@ -37,7 +37,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
   // reize factor
   let resizeFactor = 0.8
   // if the window is too small the size is 100%
-  if( screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
+  if (screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
     resizeFactor = 1
   }
   const width = screen.getPrimaryDisplay().size.width * resizeFactor
@@ -175,18 +175,16 @@ ipcMain.handle('matomo:trackEvent', async (event, data) => {
   }
 })
 
-ipcMain.on('focus-window', (event, windowId) => {
+ipcMain.on('focus-window', (windowId: any) => {
   console.log('focus-window', windowId)
   windowSet.forEach((win: BrowserWindow) => {
-    //if (win.id === windowId) {
-      if(win.isMinimized()) {
+    console.log('win', win.webContents.id)
+    if (win.webContents.id === windowId) {
+      if (win.isMinimized()) {
         win.restore()
       }
       win.show()
       win.focus()
-   // }
+    }
   })
 })
-
-
-

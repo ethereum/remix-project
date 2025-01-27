@@ -140,6 +140,13 @@ export class DesktopClient extends ViewPlugin {
     }
   }
 
+  async isInjected() {
+    const executionContext = this.blockchain.executionContext.executionContext
+    const currentProvider = this.state.providers.find((provider) => provider.name === executionContext)
+    console.log('isInjected', currentProvider)
+    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider.isInjected }))
+  }
+
   async openDesktopApp() {
     console.log('openDesktopApp')
     this.ws.send(stringifyWithBigInt({ type: 'focus', payload: null }))
@@ -183,7 +190,7 @@ export class DesktopClient extends ViewPlugin {
 
     this.ws.onmessage = async (event) => {
       const parsed = JSON.parse(event.data)
-      console.log('Message from server:', parsed.method)
+      console.log('Message from server:', parsed.method, parsed.id)
       if (parsed && parsed.type === 'error') {
         if (parsed.payload === 'ALREADY_CONNECTED') {
           console.log('ALREADY_CONNECTED')
@@ -228,21 +235,23 @@ export class DesktopClient extends ViewPlugin {
         )
       } else {
         const provider = this.blockchain.web3().currentProvider
+        await this.isInjected()
         let result = await provider.sendAsync(parsed)
         if (parsed.method === 'eth_sendTransaction') {
           console.log('Sending result back to server', result)
         }
-        if (parsed.method === 'net_version' && result.result === 1337) {
-          console.log('Sending result back to server', result, this.blockchain.executionContext)
-          console.log(this.state.providers)
-          if (this.state.providers.length === 0) { // if no providers are available, send the VM context
-            this.ws.send(stringifyWithBigInt(result))
-          }
+        // if (parsed.method === 'net_version' && result.result === 1337) {
+        //   console.log('incoming net_version', result)
+        //   console.log('Sending result back to server', result, this.blockchain.executionContext)
+        //   console.log(this.state.providers)
+        //   if (this.state.providers.length === 0) { // if no providers are available, send the VM context
+        //     this.ws.send(stringifyWithBigInt(result))
+        //   }
 
-        } else {
+        // } else {
           console.log('Sending result back to server', result)
           this.ws.send(stringifyWithBigInt(result))
-        }
+        //}
 
       }
     }

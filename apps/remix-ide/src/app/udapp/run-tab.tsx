@@ -314,7 +314,7 @@ export class RunTab extends ViewPlugin {
     })
 
     // wallet connect
-    await addProvider(6, 'walletconnect', 'WalletConnect', false, false, false)
+    await addProvider(20, 'walletconnect', 'WalletConnect', false, false, false)
 
     if (isElectron()) {
       // desktop host

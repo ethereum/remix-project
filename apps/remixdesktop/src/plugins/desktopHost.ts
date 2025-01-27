@@ -21,8 +21,8 @@ const eventEmitter = new EventEmitter()
 let isConnected = false
 
 let ports: {
-    http_port: number
-    websocket_port: number
+  http_port: number
+  websocket_port: number
 }
 
 export class DesktopHostPlugin extends ElectronBasePlugin {
@@ -38,6 +38,12 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
         for (const client of this.clients) {
           client.disconnect()
         }
+      }
+    })
+    eventEmitter.on('isInjected', (isInjected: boolean) => {
+      console.log('isInjected', isInjected)
+      for (const client of this.clients) {
+        client.setIsInjected(isInjected)
       }
     })
     eventEmitter.on('focus', () => {
@@ -68,8 +74,39 @@ const clientProfile: Profile = {
 }
 
 export class DesktopHostPluginClient extends ElectronBasePluginClient {
+  isConnected: boolean
+  isInjected: boolean
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
+    this.isConnected = null
+    this.isInjected = null
+  }
+
+  setIsInjected(isInjected: boolean) {
+    if (this.isInjected !== isInjected && isConnected) {
+      this.isInjected = isInjected
+
+      if (isInjected) {
+        this.call('notification' as any, 'toast',  'You are now connected to Metamask!')
+      } else {
+        this.call('notification' as any, 'alert', {
+          title: 'Metamask Wallet',
+          id: isInjected ? 'Injected' : 'Not_injected',
+          message: isInjected ? 'You are now connected to Metamask!' : 'You are not yet connected to Metamask. Please connect to Metamask in the browser to interact with the blockchain.',
+        })
+      }
+    }
+  }
+
+  setIsConnected(isConnected: boolean) {
+    if (this.isConnected !== isConnected) {
+      this.isConnected = isConnected
+      this.call('notification' as any, 'alert', {
+        title: 'Connection',
+        id: isConnected ? 'Connected' : 'Disconnected',
+        message: isConnected ? 'You are now connected to Remix on the web!' : 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
+      })
+    }
   }
 
   getIsConnected() {
@@ -78,7 +115,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
   }
 
   async init() {
-    console.log('initializing destkophost plugin...', this.webContentsId)
+    console.log('SETTING UP REMOTE WEBSOCKET...', this.webContentsId)
 
     if (!isConnected)
       await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`)
@@ -86,6 +123,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     while (!isConnected) {
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
+    console.log('CONNECTED TO REMOTE WEBSOCKET', this.webContentsId)
   }
 
   async disconnect() {
@@ -96,7 +134,14 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
   }
 
   async sendAsync(data: RequestArguments) {
-    //console.log('SEND ASYNC', data, this.webContentsId)
+    if (!isConnected) {
+      console.log('NOT CONNECTED', this.webContentsId)
+      return { error: 'Not connected to the remote websocket' }
+    }
+    console.log('SEND ASYNC', data, this.webContentsId)
+    if (data.method === 'eth_getTransactionReceipt') {
+      ipcMain.emit('focus-window', this.webContentsId)
+    }
     const result = await handleRequest(data, eventEmitter)
 
     const logEntry = `
@@ -104,6 +149,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
         Request: ${JSON.stringify(data, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         Result: ${JSON.stringify(result, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         `
+
     fs.appendFileSync(logFilePath, logEntry)
     return result
   }
