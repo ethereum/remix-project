@@ -100,3 +100,16 @@ export const addFileInternal = async (plugin: RunTab, path: string, content: str
   const file = await plugin.call('fileManager', 'writeFileNoRewrite', path, content)
   await plugin.call('fileManager', 'open', file.newPath)
 }
+
+/**
+ * @description Persist account selected to localStorage. Other bits of data
+ * should be persisted with the account data.
+ * @param {RunTab} plugin
+ * @param {string} account
+ * @param {string} network
+ * @returns {void}
+ */
+export function persistAccountSelection(plugin: RunTab, account: string, network: string) {
+  const selectedAccount = { account, network, timestamp: Date.now() }
+  localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount))
+}
