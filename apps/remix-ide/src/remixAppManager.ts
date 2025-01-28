@@ -1,8 +1,10 @@
-import {PluginManager} from '@remixproject/engine'
-import {EventEmitter} from 'events'
-import {QueryParams} from '@remix-project/remix-lib'
-import {IframePlugin} from '@remixproject/engine-web'
-import {Registry} from '@remix-project/remix-lib'
+import { Plugin, PluginManager } from '@remixproject/engine'
+import { EventEmitter } from 'events'
+import { QueryParams } from '@remix-project/remix-lib'
+import { IframePlugin } from '@remixproject/engine-web'
+import { Registry } from '@remix-project/remix-lib'
+import { IRemixAppManager, RemixNavigator } from './types'
+import { Profile } from '@remixproject/plugin-utils'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -170,6 +172,10 @@ export function canActivate(from, to) {
 }
 
 export class RemixAppManager extends PluginManager {
+  actives = []
+  pluginsDirectory: string
+  event: EventEmitter
+  pluginLoader: PluginLoader
   constructor() {
     super()
     this.event = new EventEmitter()
@@ -188,8 +194,8 @@ export class RemixAppManager extends PluginManager {
     if (this.isRequired(to.name)) return false
     return isNative(from.name)
   }
-
-  async canDeactivate(from, to) {
+  //@ts-ignore - did this compensate for plugins calling this signature of canDeactivate which expects a profile
+  async canDeactivate (from, to) {
     return this.canDeactivatePlugin(from, to)
   }
 
@@ -205,7 +211,7 @@ export class RemixAppManager extends PluginManager {
         }
       }
       await this.toggleActive(name)
-    }else{
+    } else {
       console.log('cannot deactivate', name)
     }
   }
@@ -259,16 +265,16 @@ export class RemixAppManager extends PluginManager {
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
 
-  isDependent(name) {
+  isDependent(name: string): boolean {
     return dependentModules.includes(name)
   }
 
-  isRequired(name) {
+  isRequired(name: string): boolean {
     // excluding internal use plugins
     return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
   }
 
-  async registeredPlugins() {
+  async registeredPlugins(): Promise<IframePlugin[]> {
     let plugins
     try {
       const res = await fetch(this.pluginsDirectory)
@@ -295,7 +301,7 @@ export class RemixAppManager extends PluginManager {
     const testPluginName = localStorage.getItem('test-plugin-name')
     const testPluginUrl = localStorage.getItem('test-plugin-url')
 
-    for (let plugin of loadLocalPlugins) {
+    for (const plugin of loadLocalPlugins) {
       // fetch the profile from the local plugin
       try {
         const profile = await fetch(`plugins/${plugin}/profile.json`)
@@ -379,7 +385,7 @@ export class RemixAppManager extends PluginManager {
       await this.call('filePanel', 'registerContextMenuItem', {
         id: 'fs',
         name: 'revealInExplorer',
-        label: navigator.userAgentData.platform.indexOf('mac') > -1 ? 'Reveal in Finder' : 'Reveal in Explorer',
+        label: (navigator as RemixNavigator).userAgentData.platform.indexOf('mac') > -1 ? 'Reveal in Finder' : 'Reveal in Explorer',
         type: ['folder', 'file'],
         extension: [],
         path: [],
@@ -407,6 +413,9 @@ export class RemixAppManager extends PluginManager {
  *  (localStorage, queryParams)
  **/
 class PluginLoader {
+  loaders: any
+  current: any
+  donotAutoReload: string[]
   get currentLoader() {
     return this.loaders[this.current]
   }
@@ -442,13 +451,13 @@ class PluginLoader {
         /* Do nothing. */
       },
       get: () => {
-        const {activate} = queryParams.get()
-        if (!activate) return []
-        return activate.split(',')
+        const getContents = queryParams.get()
+        if (!(getContents as any).activate) return []
+        return (getContents as any).activate.split(',')
       },
     }
 
-    this.current = queryParams.get().activate ? 'queryParams' : 'localStorage'
+    this.current = (queryParams.get() as any).activate ? 'queryParams' : 'localStorage'
   }
 
   set(plugin, actives) {
