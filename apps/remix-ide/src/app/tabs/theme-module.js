@@ -118,7 +118,7 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active // Name
     if (next === this.active) return // --> exit out of this method
-    _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
+    _paq.push(['trackEvent', 'themeModule', 'switchThemeTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link') ? document.getElementById('theme-link').remove() : null
