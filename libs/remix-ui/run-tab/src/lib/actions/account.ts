@@ -31,7 +31,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       const provider = plugin.blockchain.getProvider()
 
       if (provider && provider.startsWith('injected')) {
-        const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
+        const selectedAddress = plugin.blockchain.getInjectedWeb3Address() || Object.keys(loadedAccounts)[0]; //Setting default account to first account
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
