@@ -71,13 +71,12 @@ export class NoirPluginClient extends PluginClient {
     this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
   }
 
-  async resolveDependencies (filePath: string, fileContent: string, blackPath: string[] = []): Promise<void> {
+  async resolveDependencies (filePath: string, fileContent: string, parentPath: string = '', visited: Record<string, string[]> = {}): Promise<void> {
     const imports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1]);
-    console.log('depImports: ', imports)
 
     for (let dep of imports) {
       if (!dep.endsWith('.nr')) dep += '.nr'
-      if (blackPath.includes(dep)) return
+      if (visited[filePath] && visited[filePath].includes(parentPath)) return console.log('circular dependency detected')
       let dependencyContent = ''
       let path = dep.replace(/(\.\.\/)+/g, '')
 
@@ -96,21 +95,20 @@ export class NoirPluginClient extends PluginClient {
         if (relativePathExists) {
           path = relativePath
           dependencyContent = await this.call('fileManager', 'readFile', relativePath)
+          visited[filePath] = visited[filePath] ? [...visited[filePath], path] : [path]
+          // extract all mod imports from the dependency content
+          const depImports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1])
+
+          if (depImports.length > 0 && dependencyContent.length > 0) {
+            const fileBytes = new TextEncoder().encode(dependencyContent)
+            const writePath = parentPath ? `${filePath.replace('.nr', '')}/${dep}` : path
+
+            this.fm.writeFile(writePath, new Blob([fileBytes]).stream())
+            await this.resolveDependencies(path, dependencyContent, filePath, visited)
+          }
         } else {
-          console.error(`Dependency ${dep} not found in Remix file system`)
+          throw new Error(`Dependency ${dep} not found in Remix file system`)
         }
-      }
-
-      blackPath.push(dep)
-      // extract all includes from the dependency content
-      const depImports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1])
-
-      if (depImports.length > 0 && dependencyContent.length > 0) {
-        await this.resolveDependencies(path, dependencyContent, blackPath)
-        const fileBytes = new TextEncoder().encode(dependencyContent)
-
-        console.log('writing file: ', `src/${dep}`)
-        this.fm.writeFile(`src/${dep}`, new Blob([fileBytes]).stream())
       }
     }
   }
