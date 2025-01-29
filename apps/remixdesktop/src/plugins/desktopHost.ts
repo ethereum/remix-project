@@ -9,10 +9,12 @@ import path from 'path'
 import os from 'os'
 import { isPackaged } from "../main"
 
-const logFilePath = path.join(os.tmpdir(), 'desktopHost.log')
-console.log('logFilePath', logFilePath)
-// Create or clear the log file
-fs.writeFileSync(logFilePath, '', { flag: 'w' })
+if (!isPackaged) {
+  const logFilePath = path.join(os.tmpdir(), 'desktopHost.log')
+  console.log('logFilePath', logFilePath)
+  // Create or clear the log file
+  fs.writeFileSync(logFilePath, '', { flag: 'w' })
+}
 const profile = {
   displayName: 'desktopHost',
   name: 'desktopHost',
