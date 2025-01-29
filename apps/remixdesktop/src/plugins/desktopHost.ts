@@ -6,8 +6,10 @@ import { ipcMain, shell } from "electron"
 import { RequestArguments } from "../types"
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
+import { isPackaged } from "../main"
 
-const logFilePath = path.join(__dirname, 'desktopHost.log')
+const logFilePath = path.join(os.tmpdir(), 'desktopHost.log')
 console.log('logFilePath', logFilePath)
 // Create or clear the log file
 fs.writeFileSync(logFilePath, '', { flag: 'w' })
@@ -69,51 +71,43 @@ const clientProfile: Profile = {
 }
 
 export class DesktopHostPluginClient extends ElectronBasePluginClient {
-  isConnected: boolean
+
   isInjected: boolean
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
-    this.isConnected = null
     this.isInjected = null
     eventEmitter.on('connected', async (payload) => {
-      console.log('CLIENT connected', payload)
+      console.log('SERVER connected', payload)
       isConnected = payload
+      await this.sendConnectionStatus()
     })
   }
 
-  setIsInjected(isInjected: boolean) {
+  async setIsInjected(isInjected: boolean) {
     if (this.isInjected !== isInjected && isConnected) {
       this.isInjected = isInjected
 
+      await this.sendConnectionStatus()
       if (isInjected) {
         this.call('notification' as any, 'toast', 'You are now connected to Metamask!')
       } else {
-        this.call('notification' as any, 'alert', {
-          title: 'Metamask Wallet',
-          id: isInjected ? 'Injected' : 'Not_injected',
-          message: isInjected ? 'You are now connected to Metamask!' : 'You are not yet connected to Metamask. Please connect to Metamask in the browser.',
-        })
+        this.call('notification' as any, 'toast', 'You are not yet connected to Metamask. Please connect to Metamask in the browser')
       }
     }
   }
 
-  setIsConnected(isConnected: boolean) {
-    if (this.isConnected !== isConnected) {
-      this.isConnected = isConnected
-      this.call('notification' as any, 'alert', {
-        title: 'Metamask Wallet',
-        id: isConnected ? 'Connected' : 'Disconnected',
-        message: isConnected ? 'You are now connected to Remix on the web!' : 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
-      })
+  async sendConnectionStatus() {
+    const provider = await this.call('blockchain' as any, 'getProvider')
+    console.log('provider', provider)
+    if (provider === 'desktopHost' && !this.isInjected) {
+      this.emit('connectedToBrowser')
+    } else if (provider === 'desktopHost' && this.isInjected) {
+      this.emit('connectedToMetamask')
+    } else {
+      this.emit('disconnected')
     }
   }
 
-  async disconnect() {
-    this.call('notification' as any, 'alert', {
-      id: 'Connection lost',
-      message: 'You have been disconnected from Remix on the web. Please select another environment for deploy & run.',
-    })
-  }
 
   getIsConnected() {
     console.log('getIsConnected', isConnected)
@@ -140,21 +134,22 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       return { error: 'Not connected to the remote websocket' }
     }
     console.log('SEND ASYNC', data, this.webContentsId)
-    const provider = await this.call('blockchain' as any, 'getProvider')
-      console.log('provider', provider)
+
 
     if (data.method === 'eth_getTransactionReceipt') {
       ipcMain.emit('focus-window', this.webContentsId)
     }
     const result = await handleRequest(data, eventEmitter)
 
-    const logEntry = `
+    if (!isPackaged) {
+      const logEntry = `
         webContentsId: ${this.webContentsId}
         Request: ${JSON.stringify(data, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         Result: ${JSON.stringify(result, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2)}
         `
 
-    fs.appendFileSync(logFilePath, logEntry)
+      fs.appendFileSync(logFilePath, logEntry)
+    }
     return result
   }
 }
