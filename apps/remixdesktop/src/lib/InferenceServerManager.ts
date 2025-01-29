@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
   IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
-  buildSolgptPromt } from "@remix/remix-ai-core"
+  buildSolgptPrompt } from "@remix/remix-ai-core"
 import { platform } from 'os';
 
 class ServerStatusTimer {
@@ -517,7 +517,7 @@ export class InferenceManager implements ICompletions {
         modelOP = model.modelOP
       }
     }
-    const prompt = buildSolgptPromt(userPrompt, modelOP)
+    const prompt = buildSolgptPrompt(userPrompt, modelOP)
 
     if (params.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })

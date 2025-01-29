@@ -77,6 +77,7 @@ export class LocaleModule extends Plugin {
     const next = localeCode || this.active // Name
     if (next === this.active) return // --> exit out of this method
     _paq.push(['trackEvent', 'localeModule', 'switchTo', next])
+    
     const nextLocale = this.locales[next] // Locale
     if (!this.forced) this._deps.config.set('settings/locale', next)
 
