@@ -72,13 +72,13 @@ export default class constantFunctions implements AnalyzerModule {
             warnings.push({
               warning: `${funcName} : Potentially should be constant/view/pure but is not. ${comments}`,
               location: func.node.src,
-              more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
+              more: `https://docs.soliditylang.org/en/${version}/contracts.html#view-functions`
             })
           } else {
             warnings.push({
               warning: `${funcName} : Is constant but potentially should not be. ${comments}`,
               location: func.node.src,
-              more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
+              more: `https://docs.soliditylang.org/en/${version}/contracts.html#view-functions`
             })
           }
         }
