@@ -71,7 +71,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     })
 
     this.plugin.on('fileManager', 'fileSaved', async (file: string) => {
-
       if (file === configFileName && this.enableCustomScriptRunner) {
         await this.loadCustomConfig()
         this.renderComponent()
@@ -114,7 +113,8 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         activateCustomScriptRunner={this.activateCustomScriptRunner.bind(this)}
         saveCustomConfig={this.saveCustomConfig.bind(this)}
         openCustomConfig={this.openCustomConfig.bind(this)}
-        loadScriptRunner={this.selectScriptRunner.bind(this)} />
+        loadScriptRunner={this.selectScriptRunner.bind(this)}
+      />
     )
   }
 
@@ -184,7 +184,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     this.setIsLoading(config.name, false)
     this.renderComponent()
     return result
-
   }
 
   async execute(script: string, filePath: string) {
@@ -289,7 +288,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         }
       }
     }
-
   }
 
   async openCustomConfig() {

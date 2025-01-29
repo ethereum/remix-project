@@ -86,8 +86,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
       { anyEnabled && <div className='mr-2 mt-3 pb-1 d-flex flex-column'>
         <div className='d-flex flex-grid'>
           <div className={ `${pinned ? "" : "border-dark "}` + "d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
-            <div className="d-flex remixui_grid_cell w-100 flex-column">
-              { !props.hideTitle && <div className='d-flex flex-row pb-1 mb-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
+            <div className="d-flex remixui_grid_cell w-100 space-between justify-content-between flex-column">
+              { !props.hideTitle && <div className='d-flex flex-row pb-1 my-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
                 { props.logo ? props.logoURL !== '' ?
                   <a href={props.logoURL} target="__blank">
                     <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/>
@@ -103,24 +103,25 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                     tooltipText={ props.titleTooltip ? props.titleTooltip : props.title }
                   >
                     <label
-                      className='m-0 p-0 text-uppercase align-items-left font-weight-bold text-truncate overflow-hidden whitespace-nowra'
+                      className='m-0 p-0 text-uppercase align-items-left font-weight-bold text-truncate overflow-hidden whitespace-nowrap'
                     >{ props.title }
                     </label>
                   </CustomTooltip>
                 }
               </div> }
               { props.children }
+              { filterCon.showPin && <button
+                className={`${pinned ? 'fas fa-toggle-on fa-lg text-dark' : 'fas fa-toggle-off fa-lg text-secondary'}` + ` fa-regular border-0 p-0 mt-2 align-self-end mr-1 remixui_grid_cell_pin`}
+                style={{ fontSize: 'large' }}
+                data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
+                onClick={async () => {
+                  if (!props.pinStateCallback) setPinned(!pinned)
+                  if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
+                }}
+              ></button>}
             </div>
           </div>
-          { filterCon.showPin && <button
-            className={`${pinned ? 'fa-circle-check text-dark' : 'fa-circle text-secondary'}` + ` fa-regular border-0 mb-0 remixui_grid_cell_pin`}
-            style={{ fontSize: 'large' }}
-            data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
-            onClick={async () => {
-              if (!props.pinStateCallback) setPinned(!pinned)
-              if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
-            }}
-          ></button>}
+
           { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>
             { Object.keys(props.tagList).map((key) => (
               filterCon.keyValueMap[props.tagList[key]]?.enabled && (

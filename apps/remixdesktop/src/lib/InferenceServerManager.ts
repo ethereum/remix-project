@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
   IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
-  buildSolgptPromt } from "@remix/remix-ai-core"
+  buildSolgptPrompt } from "@remix/remix-ai-core"
 import { platform } from 'os';
 
 class ServerStatusTimer {
@@ -149,8 +149,8 @@ export class InferenceManager implements ICompletions {
     } else {
       // Server is running with successful request
       // console.log('Inference server is running')
-      // console.log('completion is runnig', state.data?.completion)
-      // console.log('general is runnig', state.data?.general)
+      // console.log('completion is running', state.data?.completion)
+      // console.log('general is running', state.data?.general)
     }
     // this._handleResources()
   }
@@ -176,7 +176,7 @@ export class InferenceManager implements ICompletions {
         }
         if (model.modelReqs.GPURequired) {
           if (gpu_available.length < 1) {
-            if (logger)console.warn('GPU requiredfor desktop inference but not available')
+            if (logger)console.warn('GPU required for desktop inference but not available')
           }
         }
       }
@@ -517,7 +517,7 @@ export class InferenceManager implements ICompletions {
         modelOP = model.modelOP
       }
     }
-    const prompt = buildSolgptPromt(userPrompt, modelOP)
+    const prompt = buildSolgptPrompt(userPrompt, modelOP)
 
     if (params.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })

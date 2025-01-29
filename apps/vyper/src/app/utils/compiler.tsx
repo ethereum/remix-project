@@ -31,8 +31,6 @@ const compileReturnType = (output, contract): VyperCompilationResult => {
   const normal = normalizeContractPath(contract)[2]
   const abi = temp[normal]['abi']
   const evm = _.merge(temp[normal]['evm'])
-  const depByteCode = evm.deployedBytecode
-  const runtimeBytecode = evm.bytecode
   const methodIdentifiers = evm.methodIdentifiers
   // TODO: verify this is correct
   const version = output.version || '0.4.0'
@@ -52,8 +50,8 @@ const compileReturnType = (output, contract): VyperCompilationResult => {
   } = {
     contractName: normal,
     abi,
-    bytecode: depByteCode,
-    runtimeBytecode,
+    bytecode: evm.bytecode,
+    runtimeBytecode: evm.deployedBytecode,
     ir: '',
     methodIdentifiers,
     version,

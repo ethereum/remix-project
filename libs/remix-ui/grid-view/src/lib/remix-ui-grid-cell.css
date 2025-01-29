@@ -27,9 +27,6 @@
 .remixui_grid_cell_pin {
   width: 1rem;
   height: 1rem;
-  position: relative;
-  right: 0.9rem;
-  top: -0.7rem;
   background: transparent;
   z-index: 1000;
 }

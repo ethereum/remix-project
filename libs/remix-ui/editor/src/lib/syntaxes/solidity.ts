@@ -1236,7 +1236,7 @@ export const solidityTokensProvider = {
     'abstract',
     'payable',
     'nonpayable',
-    'constants',
+    'constant',
     'immutable',
     'assert',
     'require',

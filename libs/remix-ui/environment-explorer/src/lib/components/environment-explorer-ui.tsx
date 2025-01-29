@@ -15,7 +15,7 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM
+    filterFn: (provider) => provider.isVM && !provider.isForkedVM
   },
   'Forked States': {
     title: 'Deploy to an In-browser Forked State.',
@@ -101,7 +101,20 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     await pinStateCallback(provider, pinned)
                   }}
                 >
-                  <div>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
+                  { provider.isForkedState && <CustomTooltip
+                    placement="auto"
+                    tooltipId={`overlay-tooltip-${provider.name}`}
+                    tooltipText="Delete Environment Immediately"
+                  >
+                    <span
+                      onClick={async () => props.deleteForkedState(provider)}
+                      className="btn btn-sm mt-1 border border-danger"
+                    >
+                          Delete Environment
+                    </span>
+                  </CustomTooltip>
+                  }
                 </RemixUIGridCell>
               ))}
             </RemixUIGridSection>

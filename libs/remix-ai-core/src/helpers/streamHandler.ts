@@ -46,6 +46,7 @@ export const HandleStreamResponse = async (streamResponse,
       }
       catch (error) {
         console.error('Error parsing JSON:', error);
+        return { 'generateText': 'Try again!', 'isGenerating': false }
       }
     }
     if (done_cb) {
@@ -54,10 +55,10 @@ export const HandleStreamResponse = async (streamResponse,
   }
   catch (error) {
     console.error('Error parsing JSON:', error);
-    return { 'generateText': '', 'isGenerating': false }
+    return { 'generateText': 'Try again!', 'isGenerating': false }
   }
 }
 
-export const UpdtateChatHistory = (userPromptprompt: string, AIAnswer: string) => {
-  ChatHistory.pushHistory(userPromptprompt, AIAnswer)
+export const UpdateChatHistory = (userPrompt: string, AIAnswer: string) => {
+  ChatHistory.pushHistory(userPrompt, AIAnswer)
 }
