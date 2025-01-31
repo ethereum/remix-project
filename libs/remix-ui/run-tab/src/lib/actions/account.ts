@@ -3,6 +3,8 @@ import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
+import { PersistedAccount } from "../types"
+import { parse } from "path"
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -101,15 +103,79 @@ export const addFileInternal = async (plugin: RunTab, path: string, content: str
   await plugin.call('fileManager', 'open', file.newPath)
 }
 
+function readFromLocalStorage(key: string) {
+  if (key.length === 0) return null
+  const item = localStorage.getItem(key)
+  if (item === null) {
+    // Only initialize if we're specifically looking for selectedAccount
+    if (key === 'selectedAccount') {
+      const initialValue = { persistId: '', account: '', network: '', timestamp: 0 }
+      localStorage.setItem('selectedAccount', JSON.stringify(initialValue))
+      return initialValue
+    }
+    return null
+  }
+  try {
+    return JSON.parse(item)
+  } catch (e) {
+    return null
+  }
+}
+
+function writeToLocalStorage(readFromLocalStorage: (key: string) => any, key: string, value: any) {
+  if (key.length === 0) return
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch (e) {
+    console.error('Failed to write to localStorage:', e)
+  }
+}
+
 /**
  * @description Persist account selected to localStorage. Other bits of data
  * should be persisted with the account data.
- * @param {RunTab} plugin
- * @param {string} account
- * @param {string} network
- * @returns {void}
+ * @param {PersistedAccount} currentAccount
+ * @returns {[boolean, PersistedAccount]} Returns a tuple with the first element
+ * being a boolean indicating if the account was persisted successfully and the
+ * second element being the persisted account data.
  */
-export function persistAccountSelection(plugin: RunTab, account: string, network: string) {
-  const selectedAccount = { account, network, timestamp: Date.now() }
-  localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount))
+export function tryPersistAccountSelection(currentAccount: PersistedAccount): [boolean, PersistedAccount] {
+  const timestamp = Date.now()
+  if (!currentAccount.account || !currentAccount.network) return [false, null]
+  // get selected account from localStorage and compare current object passed in to see if it is the same
+  const parsedAccount = readFromLocalStorage('selectedAccount')
+
+  if (parsedAccount === null) {
+    writeToLocalStorage(readFromLocalStorage, 'selectedAccount', currentAccount)
+    return [true, currentAccount]
+  }
+  if (parsedAccount?.account === currentAccount?.account && parsedAccount?.network === currentAccount?.network) return [true, currentAccount]
+  const selectedAccount: PersistedAccount = { account: currentAccount.account, network: currentAccount.network, timestamp }
+  writeToLocalStorage(readFromLocalStorage, 'selectedAccount', selectedAccount)
+  return [true, selectedAccount]
+}
+
+/**
+ * @description Check if the persisted account selection matches the environment and account passed in.
+ * @param {string} exEnv - The environment to check against.
+ * @param {string} account - The account to check against.
+ * @returns {object} An object with the account and network if the persisted account selection matches the environment and account passed in.
+ */
+export function checkPersistedAccountSelectionEnvironmentMatch(exEnv: string, account: string): { account: string, network: string } {
+  const parsedAccount = readFromLocalStorage('selectedAccount')
+  if (!parsedAccount) return { account: '', network: '' }
+
+  const emptyResult = { account: '', network: '' }
+  const matchedResult = { account: parsedAccount.account, network: parsedAccount.network }
+
+  // Return empty result if no account is selected in VM environment
+  if (exEnv === 'vm-cancun' && !account) return emptyResult
+
+  // Return match if environment and account match exactly
+  if (exEnv === parsedAccount.network) return matchedResult
+
+  // Return match if not in VM and accounts match
+  if (exEnv !== 'vm-cancun' && account && account === parsedAccount.account) return matchedResult
+
+  return emptyResult
 }

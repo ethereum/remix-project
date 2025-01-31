@@ -35,6 +35,9 @@ export function SettingsUI(props: SettingsProps) {
         modal={props.modal}
         signMessageWithAddress={props.signMessageWithAddress}
         passphrase={props.passphrase}
+        previousAccount={props.previousAccount}
+        dispatch={props.dispatch}
+        runTab={props.runTab}
       />
       <GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
       <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} />

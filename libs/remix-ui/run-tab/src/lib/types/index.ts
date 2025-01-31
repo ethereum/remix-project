@@ -119,6 +119,9 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
+  previousAccount: PersistedAccount | null,
+  dispatch: React.Dispatch<any>
+  runTab: RunTabState
   setAccount: (account: string) => void,
   setUnit: (unit: 'ether' | 'finney' | 'gwei' | 'wei') => void,
   sendValue: string,
@@ -176,6 +179,9 @@ export interface AccountProps {
   addFile: (path: string, content: string) => void,
   setAccount: (account: string) => void,
   personalMode: boolean,
+  previousAccount: PersistedAccount | null,
+  dispatch: React.Dispatch<any>
+  runTab: RunTabState
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
@@ -511,4 +517,10 @@ export interface MultiDeployInputProps {
     type: string
   }[],
   getMultiValsString: (fields: HTMLInputElement[]) => void
+}
+
+export type PersistedAccount = {
+  account: string
+  network: string
+  timestamp?: number
 }
