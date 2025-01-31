@@ -25,7 +25,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
   version: packageJson.version
 }
 
@@ -33,6 +33,7 @@ export type TransactionContextAPI = {
   getAddress: (cb: (error: Error, result: string) => void) => void
   getValue: (cb: (error: Error, result: string) => void) => void
   getGasLimit: (cb: (error: Error, result: string) => void) => void
+  isSmartAccount: (address: string) => boolean
 }
 
 // see TxRunner.ts in remix-lib
@@ -197,6 +198,10 @@ export class Blockchain extends Plugin {
 
   getCurrentNetworkStatus() {
     return this.networkStatus
+  }
+
+  isSmartAccount(address) {
+    return this.transactionContextAPI.isSmartAccount(address)
   }
 
   setupProviders() {
@@ -729,7 +734,7 @@ export class Blockchain extends Plugin {
       (_) => this.executionContext.currentblockGasLimit()
     )
 
-    web3Runner.event.register('transactionBroadcasted', (txhash) => {
+    web3Runner.event.register('transactionBroadcasted', (txhash, isUserOp) => {
       this.executionContext.detectNetwork(async (error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
@@ -748,6 +753,15 @@ export class Blockchain extends Plugin {
                   view on Blockscout
               </a>}
             </span>
+          )
+        } else if (isUserOp) {
+          const userOpLink = `https://jiffyscan.xyz/userOpHash/${txhash}?network=${network.name}`
+          this.call(
+            'terminal',
+            'logHtml',
+            <a href={userOpLink} target="_blank">
+              view on Jiffyscan
+            </a>
           )
         } else {
           this.call(
@@ -901,10 +915,12 @@ export class Blockchain extends Plugin {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         let fromAddress
+        let fromSmartAccount
         let value
         let gasLimit
         try {
           fromAddress = await getAccount()
+          fromSmartAccount = this.isSmartAccount(fromAddress)
           value = await queryValue()
           gasLimit = await getGasLimit()
         } catch (e) {
@@ -917,6 +933,7 @@ export class Blockchain extends Plugin {
           data: args.data.dataHex,
           useCall: args.useCall,
           from: fromAddress,
+          fromSmartAccount,
           value: value,
           gasLimit: gasLimit,
           timestamp: args.data.timestamp
