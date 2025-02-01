@@ -1,6 +1,6 @@
 import React from 'react';
 import { shortenHexData } from '@remix-ui/helper';
-import CheckTxStatus from './ChechTxStatus';
+import CheckTxStatus from './CheckTxStatus';
 import showTable from './Table';
 import { execution } from '@remix-project/remix-lib';
 
