@@ -6,9 +6,11 @@ import { compile_program, createFileManager } from '@noir-lang/noir_wasm/default
 import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
 import pathModule from 'path'
 import { DEFAULT_TOML_CONFIG } from '../actions/constants'
+import NoirParser from './noirParser'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
   public fm: FileManager
+  public parser: NoirParser
 
   constructor() {
     super()
@@ -16,6 +18,7 @@ export class NoirPluginClient extends PluginClient {
     createClient(this)
     this.internalEvents = new EventManager()
     this.fm = createFileManager('/')
+    this.parser = new NoirParser()
     this.onload()
   }
 
@@ -66,6 +69,9 @@ export class NoirPluginClient extends PluginClient {
   async parse(path: string, content?: string): Promise<void> {
     if (!content) content = await this.call('fileManager', 'readFile', path)
     await this.resolveDependencies(path, content)
+    const result = this.parser.parseNoirCode(content)
+
+    console.log('result: ', result)
     const fileBytes = new TextEncoder().encode(content)
 
     this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
