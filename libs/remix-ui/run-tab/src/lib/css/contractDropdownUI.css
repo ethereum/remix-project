@@ -1,1 +1,17 @@
+.contract-list {
+  border: 1px solid var(--secondary);
+  border-radius: 3px;
+  padding: 4px 8px;
+  background-color: var(--light);
+  transition: all 0.3s ease;
+}
+
+.contract-list:hover, .contract-list:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+}
+
+.contract-list:focus {
+  outline: none;
+}
 
