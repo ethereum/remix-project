@@ -1,31 +1,31 @@
 import { ChatHistory } from '../prompts/chat';
-import { JsonStreamParser } from '../types/types'
+import { JsonStreamParser } from '../types/types';
 
-export const HandleSimpleResponse = async (response,
-  cb?: (streamText: string) => void) => {
-  let resultText = ''
+export const HandleSimpleResponse = async (response, cb?: (streamText: string) => void) => {
+  let resultText = '';
   const parser = new JsonStreamParser();
 
   const chunk = parser.safeJsonParse<{ generatedText: string; isGenerating: boolean }>(response);
   for (const parsedData of chunk) {
-    if (parsedData.isGenerating) {
-      resultText += parsedData.generatedText
-      cb(parsedData.generatedText)
-    } else {
-      resultText += parsedData.generatedText
-      cb(parsedData.generatedText)
+    resultText += parsedData.generatedText;
+    if (cb) {
+      cb(parsedData.generatedText);
     }
   }
-}
+};
 
-export const HandleStreamResponse = async (streamResponse,
-  cb: (streamText: string) => void,
-  done_cb?: (result: string) => void) => {
+export const HandleStreamResponse = async (streamResponse, cb: (streamText: string) => void, done_cb?: (result: string) => void) => {
   try {
-    let resultText = ''
+    let resultText = '';
     const parser = new JsonStreamParser();
     const reader = streamResponse.body?.getReader();
     const decoder = new TextDecoder();
+
+    // Check for missing body in the streamResponse
+    if (!reader) {
+      console.error('Stream response body is missing.');
+      return;
+    }
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -35,30 +35,25 @@ export const HandleStreamResponse = async (streamResponse,
       try {
         const chunk = parser.safeJsonParse<{ generatedText: string; isGenerating: boolean }>(decoder.decode(value, { stream: true }));
         for (const parsedData of chunk) {
-          if (parsedData.isGenerating) {
-            resultText += parsedData.generatedText
-            cb(parsedData.generatedText)
-          } else {
-            resultText += parsedData.generatedText
-            cb(parsedData.generatedText)
+          resultText += parsedData.generatedText;
+          if (cb) {
+            cb(parsedData.generatedText);
           }
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error parsing JSON:', error);
-        return { 'generateText': 'Try again!', 'isGenerating': false }
+        return; // Just log the error, without unnecessary return value
       }
     }
+
     if (done_cb) {
-      done_cb(resultText)
+      done_cb(resultText);
     }
+  } catch (error) {
+    console.error('Error processing stream response:', error);
   }
-  catch (error) {
-    console.error('Error parsing JSON:', error);
-    return { 'generateText': 'Try again!', 'isGenerating': false }
-  }
-}
+};
 
 export const UpdateChatHistory = (userPrompt: string, AIAnswer: string) => {
-  ChatHistory.pushHistory(userPrompt, AIAnswer)
-}
+  ChatHistory.pushHistory(userPrompt, AIAnswer);
+};
