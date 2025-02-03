@@ -81,6 +81,7 @@ export class TxRunnerWeb3 {
     } else {
       try {
         if (tx.fromSmartAccount) {
+          await sendUserOp(tx)
           // const userOp = await sendUserOp(tx)
           // cb(null, userOp.userOpHash, true)
         } else {

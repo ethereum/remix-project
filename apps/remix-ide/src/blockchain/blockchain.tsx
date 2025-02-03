@@ -949,7 +949,6 @@ export class Blockchain extends Plugin {
 
         if (!tx.timestamp) tx.timestamp = Date.now()
         const timestamp = tx.timestamp
-
         this._triggerEvent('initiatingTransaction', [timestamp, tx, payLoad])
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb, async (error, result) => {
