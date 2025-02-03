@@ -56,7 +56,7 @@ export class NoirPluginClient extends PluginClient {
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
       const program = await compile_program(this.fm, null, this.logFn.bind(this), this.debugFn.bind(this))
 
-      console.log('program: ', program)
+      this.call('fileManager', 'writeFile', path.replace('.nr', '.json'), JSON.stringify(program, null, 2))
       this.internalEvents.emit('noir_compiling_done')
       this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
       // @ts-ignore
