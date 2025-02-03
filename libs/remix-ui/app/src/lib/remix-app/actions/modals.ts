@@ -14,7 +14,7 @@ type ActionMap<M extends { [index: string]: any }> = {
 export const enum modalActionTypes {
   setModal = 'SET_MODAL',
   setToast = 'SET_TOAST',
-  processQueue = 'PROCESS_QUEUEU',
+  processQueue = 'PROCESS_QUEUE',
   handleHideModal = 'HANDLE_HIDE_MODAL',
   handleToaster = 'HANDLE_HIDE_TOAST'
 }
