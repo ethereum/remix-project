@@ -51,14 +51,16 @@ export class NoirPluginClient extends PluginClient {
   async compile(path: string): Promise<void> {
     try {
       this.internalEvents.emit('noir_compiling_start')
-      this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Circuit...', type: 'info' })
+      this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Program...', type: 'info' })
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-      const program = await compile_program(this.fm)
+      const program = await compile_program(this.fm, null, this.logFn.bind(this), this.debugFn.bind(this))
 
       console.log('program: ', program)
       this.internalEvents.emit('noir_compiling_done')
       this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'Compiled successfully' })
     } catch (e) {
       this.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
       this.internalEvents.emit('noir_compiling_errored', e)
@@ -68,13 +70,29 @@ export class NoirPluginClient extends PluginClient {
 
   async parse(path: string, content?: string): Promise<void> {
     if (!content) content = await this.call('fileManager', 'readFile', path)
-    await this.resolveDependencies(path, content)
     const result = this.parser.parseNoirCode(content)
 
-    console.log('result: ', result)
-    const fileBytes = new TextEncoder().encode(content)
+    if (result.length > 0) {
+      const markers = []
 
-    this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
+      for (const error of result) {
+        markers.push({
+          message: error.message,
+          severity: 'error',
+          position: error.position,
+          file: path,
+        })
+      }
+      // @ts-ignore
+      await this.call('editor', 'addErrorMarker', markers)
+    } else {
+      await this.resolveDependencies(path, content)
+      const fileBytes = new TextEncoder().encode(content)
+
+      this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
+      // @ts-ignore
+      await this.call('editor', 'clearErrorMarkers', [path])
+    }
   }
 
   async resolveDependencies (filePath: string, fileContent: string, parentPath: string = '', visited: Record<string, string[]> = {}): Promise<void> {
@@ -117,5 +135,13 @@ export class NoirPluginClient extends PluginClient {
         }
       }
     }
+  }
+
+  logFn(log) {
+    this.call('terminal', 'log', { type: 'error', value: log })
+  }
+
+  debugFn(log) {
+    this.call('terminal', 'log', { type: 'log', value: log })
   }
 }
