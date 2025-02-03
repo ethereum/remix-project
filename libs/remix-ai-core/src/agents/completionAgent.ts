@@ -135,7 +135,6 @@ export class CodeCompletionAgent {
     // Avoid model out of context
     const totalWords = words1.length + words2.length;
     if (totalWords <= maxWords) {
-      console.log('total words less than max words', totalWords);
       return [words1, words2];
     }
     const halfMaxWords = Math.floor(maxWords / 2);
@@ -156,16 +155,6 @@ export class CodeCompletionAgent {
 
     const splicedText1 = words1.slice(words1.length - takeFromText1);
     const splicedText2 = words2.slice(words2.length - takeFromText2);
-    console.log('take from text 1', takeFromText1)
-    console.log('take from text 2', takeFromText2)
-
-    console.log('Spliced text 1 length:', splicedText1.length);
-    console.log('Spliced text 2 length:', splicedText2.length);
-    console.log('initial word 1 length:', words1.length);
-    console.log('initial word 2 length:', words2.length);
-    console.log('text 1:', splicedText1);
-    console.log('text 2:', splicedText2);
-
     return [splicedText1 , splicedText2]
   }
 
