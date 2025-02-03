@@ -65,13 +65,6 @@ export class RemixAIPlugin extends ViewPlugin {
       this.initialize()
     }
     this.completionAgent = new CodeCompletionAgent(this)
-
-    setInterval(() => {
-      console.log('Indexing workspace')
-      this.completionAgent.indexWorkspace()
-    }, 60000)
-
-
     this.securityAgent = new SecurityAgent(this)
   }
 
@@ -119,11 +112,13 @@ export class RemixAIPlugin extends ViewPlugin {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     const currentFile = await this.call('fileManager', 'getCurrentFile')
-    const contextfiles = await this.completionAgent.getContextFiles()
+    const contextfiles = await this.completionAgent.getContextFiles(prompt)
+    const refined = CodeCompletionAgent.refineContext(prompt, promptAfter)
+    console.log('contextfiles', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
+      return await this.call(this.remixDesktopPluginName, 'code_completion', refined[0], refined[1])
     } else {
-      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFile)
+      return await this.remoteInferencer.code_completion(refined[0], refined[1], contextfiles, currentFile)
     }
   }
 
@@ -185,11 +180,13 @@ export class RemixAIPlugin extends ViewPlugin {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     const currentFile = await this.call('fileManager', 'getCurrentFile')
-    const contextfiles = this.completionAgent.getContextFiles()
+    const contextfiles = this.completionAgent.getContextFiles(msg_pfx)
+    const refined = CodeCompletionAgent.refineContext(msg_pfx, msg_sfx)
+
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', refined[0], refined[1])
     } else {
-      return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx, contextfiles, currentFile)
+      return await this.remoteInferencer.code_insertion(refined[0], refined[1], contextfiles, currentFile)
     }
   }
 
@@ -212,7 +209,7 @@ export class RemixAIPlugin extends ViewPlugin {
     else {
       console.log("chatRequestBuffer is not empty. First process the last request.", this.chatRequestBuffer)
     }
-    _paq.push(['trackEvent', 'ai', 'remixAI_chat', 'askFromTerminal'])
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'remixAI_chat'])
   }
 
   async ProcessChatRequestBuffer(params:IParams=GenerationParams){
