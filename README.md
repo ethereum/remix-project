@@ -1,270 +1,372 @@
 <p align="center">
   <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
 </p>
-<h3 align="center">Remix Project</h3>
-    
+
+<h3 align="center">🚀 Remix Project</h3>
+
 <div align="center">
 
-
-[![CircleCI](https://img.shields.io/circleci/build/github/ethereum/remix-project?logo=circleci)](https://circleci.com/gh/ethereum/remix-project)
-[![Documentation Status](https://readthedocs.org/projects/remix-ide/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
-[![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
-[![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
-[![GitHub](https://img.shields.io/github/license/ethereum/remix-project)](https://github.com/ethereum/remix-project/blob/master/LICENSE)
-[![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/mh9hFCKkEq)
-[![X Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=x&color=green)](https://x.com/ethereumremix)
+[![🔄 CircleCI](https://img.shields.io/circleci/build/github/ethereum/remix-project?logo=circleci)](https://circleci.com/gh/ethereum/remix-project)
+[![📖 Documentation Status](https://readthedocs.org/projects/remix-ide/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
+[![🤝 Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
+[![👥 GitHub Contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
+[![🎉 Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
+[![📜 GitHub License](https://img.shields.io/github/license/ethereum/remix-project)](https://github.com/ethereum/remix-project/blob/master/LICENSE)
+[![💬 Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/mh9hFCKkEq)
+[![🐦 X Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=x&color=green)](https://x.com/ethereumremix)  
 
 </div>
 
-## Remix Project
+---
 
-**Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
+## 🚀 Remix Project
 
-## Remix IDE
-**Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. The IDE comes in 2 flavors and a VSCode extension:
+**Remix Project** is a powerful toolset that includes Remix IDE, a comprehensive smart contract development environment. It also includes Remix Plugin Engine and Remix Libraries, which are essential tools for broader usage.
 
-**Remix Online IDE**, see: [https://remix.ethereum.org](https://remix.ethereum.org)
+---
 
-:point_right: Supported browsers: Firefox v100.0.1 & Chrome v101.0.4951.64. No support for Remix's use on tablets or smartphones or telephones.
+## 🛠️ Remix IDE
 
-**Remix Desktop IDE**, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
+**Remix IDE** is designed for the entire smart contract development lifecycle, catering to users of all skill levels. It promotes a fast development cycle and provides a rich set of plugins with intuitive GUIs. The IDE comes in two versions and a VSCode extension:
 
+🌐 **Remix Online IDE**: [🔗 Open in browser](https://remix.ethereum.org)  
+
+👉 **Supported browsers**:  
+✅ Firefox `v100.0.1+`  
+✅ Chrome `v101.0.4951.64+`  
+⚠️ *Not supported on tablets, smartphones, or telephones.*
+
+🖥️ **Remix Desktop IDE**: [🔗 Download here](https://github.com/ethereum/remix-desktop/releases)  
+
+📸 **Screenshot of Remix IDE**  
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
 
+---
 
-## Remix libraries 
-Remix libraries are essential for Remix IDE's native plugins. Read more about libraries [here](libs/README.md)
+## 📚 Remix Libraries  
 
-## Offline Usage
+Remix libraries are essential for Remix IDE's native plugins. Read more about libraries [here](libs/README.md).  
 
-The `gh-pages` branch of [remix-live](https://github.com/ethereum/remix-live) always has the latest stable build of Remix. It contains a ZIP file with the entire build. Download it to use offline.
+---
 
-Note: It contains the latest supported version of Solidity available at the time of the packaging. Other compiler versions can be used online only.
+## 🔌 Offline Usage  
 
+The `gh-pages` branch of [remix-live](https://github.com/ethereum/remix-live) always contains the **latest stable build** of Remix.  
+It includes a **ZIP file** with the entire build, allowing you to use Remix IDE offline.  
 
-## Setup
+⚠️ **Note**:  
+- The ZIP file contains the **latest supported Solidity version** available at the time of packaging.  
+- Other Solidity compiler versions can only be used **online**.  
 
-* Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
-*Supported versions:*
-```bash
+---
+
+## ⚙️ Setup  
+
+🛠 **Install Dependencies**  
+- Install **Yarn** and **Node.js**:  
+  📖 [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)  
+  📖 [Guide for Yarn](https://classic.yarnpkg.com/lang/en/docs/install)  
+
+✅ **Supported versions**:  
+```json
 "engines": {
     "node": "^20.0.0",
     "npm": "^6.14.15"
   }
 ```
-* Install [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
+
+🛠 **Install Nx CLI globally** to enable running `nx` commands:  
 ```bash
 yarn global add nx
 ```
-* Clone the GitHub repository (`wget` need to be installed first):
 
+🔽 **Clone the GitHub repository**:  
 ```bash
 git clone https://github.com/ethereum/remix-project.git
 ```
-* Build and Run `remix-project`:
 
-1. Move to project directory: `cd remix-project`
-2. Install dependencies: `yarn install` or simply run `yarn`
-3. Build Remix libraries: `yarn run build:libs`
-4. Build Remix project: `yarn build`
-5. Build and run project server: `yarn serve`. Optionally, run `yarn serve:hot` to enable hot module to reload for frontend updates.
+---
 
-Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
+## 🚀 Build and Run Remix Project  
 
-Go to your `text editor` and start developing. The browser will automatically refresh when files are saved.
+1️⃣ **Move to the project directory**:  
+```bash
+cd remix-project
+```
 
-## Production Build
-To generate react production builds for remix-project.
+2️⃣ **Install dependencies**:  
+```bash
+yarn install  # or simply run "yarn"
+```
+
+3️⃣ **Build Remix libraries**:  
+```bash
+yarn run build:libs
+```
+
+4️⃣ **Build the Remix project**:  
+```bash
+yarn build
+```
+
+5️⃣ **Run the project server**:  
+```bash
+yarn serve
+```
+💡 *For hot module reload support, use:*  
+```bash
+yarn serve:hot
+```
+
+🌍 **Open Remix IDE in your browser**:  
+```bash
+http://127.0.0.1:8080
+```
+
+📝 **Start developing in your text editor** – changes will be applied automatically in the browser.  
+
+---
+
+## 🏗️ Production Build  
+
+To generate a **production build** for Remix IDE:  
 ```bash
 yarn run build:production
 ```
-Build can be found in `remix-project/dist/apps/remix-ide` directory.
+The build will be available in:  
+```bash
+remix-project/dist/apps/remix-ide
+```
 
+To **serve the production build**, run:  
 ```bash
 yarn run serve:production
 ```
-Production build will be served by default to `http://localhost:8080/` or `http://127.0.0.1:8080/`
 
-## Docker:
+🌍 **Production build will be available at**:  
+- 🔗 `http://localhost:8080/`  
+- 🔗 `http://127.0.0.1:8080/`  
 
-Prerequisites: 
-* Docker (https://docs.docker.com/desktop/)
-* Docker Compose (https://docs.docker.com/compose/install/)
+---
 
-### Run with docker
+## 🐳 Docker Setup  
 
-If you want to run the latest changes that are merged into the master branch then run:
+### ✅ Prerequisites  
 
-```
+Before running Remix with Docker, install:  
+- 🏗️ **Docker** → [Installation Guide](https://docs.docker.com/desktop/)  
+- 🔄 **Docker Compose** → [Installation Guide](https://docs.docker.com/compose/install/)  
+
+---
+
+### 🚀 Run with Docker  
+
+To run the latest **master branch build**, use:  
+```bash
 docker pull remixproject/remix-ide:latest
 docker run -p 8080:80 remixproject/remix-ide:latest
 ```
 
-If you want to run the latest remix-live release run.
-```
+To run the **latest remix-live release**, use:  
+```bash
 docker pull remixproject/remix-ide:remix_live
 docker run -p 8080:80 remixproject/remix-ide:remix_live
 ```
 
-### Run with docker-compose:
+---
 
-To run locally without building you only need docker-compose.yaml file and you can run:
+### 🏗️ Run with Docker-Compose  
 
-```
+To run Remix **locally without building**, just download `docker-compose.yaml` and execute:  
+```bash
 docker-compose pull
 docker-compose up -d
 ```
 
-Then go to http://localhost:8080 and you can use your Remix instance.
+🌍 **Access Remix IDE at:**  
+🔗 [http://localhost:8080](http://localhost:8080)  
 
-To fetch the docker-compose file without cloning this repo run:
-```
+To fetch the `docker-compose.yaml` file **without cloning** the repo:  
+```bash
 curl https://raw.githubusercontent.com/ethereum/remix-project/master/docker-compose.yaml > docker-compose.yaml
 ```
 
-### Troubleshooting
+---
 
-If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also, ensure [Nx CLI](https://nx.dev/using-nx/nx-cli) is installed globally.
+## 🛠️ Troubleshooting  
 
-Run:
+If you experience build issues, check that you have the **correct versions** of:  
+- Node.js  
+- npm  
+- nvm  
+- Nx CLI  
 
+📌 **Check versions with:**  
 ```bash
 node --version
 npm --version
 nvm --version
 ```
 
-In Debian-based OS such as Ubuntu 14.04LTS, you may need to run `apt-get install build-essential`. After installing `build-essential`, run `npm rebuild`.
-
-## Unit Testing
-
-Run the unit tests using library name like: `nx test <project-name>`
-
-For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
-
-## Browser Testing
-
-To run the tests via Nightwatch:
-
- - Install webdrivers for the first time: `yarn install_webdriver`
- - Build & Serve Remix: `yarn serve`
-
-        
-**NOTE:**
-
-- **The `ballot` tests suite** requires running `ganache` locally.
-
-- **The `remixd` tests suite** requires running `remixd` locally.
-
-- **The `gist` tests suite** requires specifying a GitHub access token in **.env file**. 
-```
-    gist_token = <token> // token should have permission to create a gist
+For **Debian-based systems (Ubuntu 14.04LTS+):**  
+```bash
+sudo apt-get install build-essential
+npm rebuild
 ```
 
-There is a script to allow selecting the browser and a specific test to run:
+---
 
+## 🧪 Unit Testing  
+
+Run **unit tests** for a specific library:  
+```bash
+nx test <project-name>
 ```
+📌 Example:  
+```bash
+nx test remix-analyzer
+```
+
+---
+
+## 🌐 Browser Testing  
+
+To run **browser-based tests** using Nightwatch:
+
+1️⃣ **Install WebDrivers** (for the first time):  
+```bash
+yarn install_webdriver
+```
+
+2️⃣ **Build & Serve Remix:**  
+```bash
+yarn serve
+```
+
+---
+
+## ⚠️ Important Notes  
+
+- 🏛️ **The `ballot` test suite** requires running **Ganache** locally.  
+- 🔄 **The `remixd` test suite** requires running **remixd** locally.  
+- 🔑 **The `gist` test suite** requires a **GitHub access token** in the `.env` file:  
+
+```bash
+gist_token = <token>  # Token must have permission to create a gist
+```
+
+### 🎯 Select a Specific Test  
+
+To select a specific browser and test, use:  
+```bash
 yarn run select_test
 ```
 
-You need to have 
+📌 **Prerequisites:**  
+✔️ Selenium must be running  
+✔️ The IDE must be running  
+✔️ (Optional) `remixd` or `ganache` should be running  
 
-- selenium running 
+---
 
-- the IDE running
+## 📌 Splitting Tests with Groups  
 
-- optionally have remixd or ganache running
+You can group tests within a test file to **run only a specific set of tests**.  
 
-### Splitting tests with groups
+📌 **Key points:**  
+- Group numbers are **file-specific** (e.g., `group1` in `ballot` ≠ `group1` in another test file).  
+- Running a group executes **only the marked tests** + ungrouped tests from the file.  
+- You **don't need sequential numbering** (`#group1`, `#group220`, `#group4` are all valid).  
+- A test can belong to **multiple groups**.  
+- Tests should be **independent** of each other.  
 
-Groups can be used to group tests in a test file together. The advantage is you can avoid running long test files when you want to focus on a specific set of tests within a test file.
+📌 **How to tag a test with a group:**  
 
-These groups only apply to the test file, not across all test files. So for example group1 in the ballot is not related to a group1 in another test file.
-
-Running a group only runs the tests marked as belonging to the group + all the tests in the test file that do not have a group tag. This way you can have tests that run for all groups, for example, to perform common actions.
-
-There is no need to number the groups in a certain order. The number of the group is arbitrary.
-
-A test can have multiple group tags, this means that this test will run in different groups.
-
-You should write your tests so they can be executed in groups and not depend on other groups.
-
-To do this you need to:
-
-- Add a group to tag to a test, they are formatted as #group followed by a number: so it becomes #group1, #group220, #group4. Any number will do. You don't have to do it in a specific order. 
-
-```
+```javascript
   'Should generate test file #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
 ```
 
-- add '@disabled': true to the test file you want to split:
+---
 
-```
+## 🔄 Enable Group Testing  
+
+To **split tests into groups**, follow these steps:  
+
+1️⃣ **Disable the entire test file** by adding this to the test module:  
+```javascript
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done) // , 'http://localhost:8080', false)
   },
 ```
-- change package JSON to locally run all group tests:
 
-```
-    "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
+2️⃣ **Modify the `package.json` file** to run all group tests:  
+```json
+"nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
 ```
 
-- run the build script to build the test files if you want to run the locally
-
-```
+3️⃣ **Build test files** before running locally:  
+```bash
 yarn run build:e2e
 ```
 
-### Locally testing group tests
+---
 
-You can tag any test with a group name, for example, #group10 and easily run the test locally.
+## 🏃 Locally Testing Grouped Tests  
 
-- make sure you have nx installed globally
-- group tests are run like any other test, just specify the correct group number
+To **run a specific test group locally**, use:  
 
-#### method 1
-
-This script will give you an options menu, just select the test you want
-```
+```bash
 yarn run select_test
 ```
 
-### Run the same (flaky) test across all instances in CircleCI
+📌 **Ensure you have:**  
+✔️ `nx` installed globally  
+✔️ The correct group number specified  
 
-In CircleCI all tests are divided across instances to run in parallel. 
-You can also run 1 or more tests simultaneously across all instances.
-This way the pipeline can easily be restarted to check if a test is flaky.
+---
 
-For example:
+## 🔄 Running Flaky Tests in CircleCI  
 
-```
+In **CircleCI**, tests are split across instances to run in parallel.  
+You can also **run a single flaky test multiple times** across all instances.  
+
+📌 **Mark a test as flaky by adding `#flaky` to the group:**  
+
+```javascript
   'Static Analysis run with remixd #group3 #flaky': function (browser) {
 ```
 
-Now, the group3 of this test will be executed in firefox and chrome 80 times.
-If you mark more groups in other tests they will also be executed. 
+Now, **group3** of this test will run **80 times in Firefox and Chrome**.  
+If other tests are tagged with `#group3`, they will also run.  
 
-**CONFIGURATION**
+---
 
-It's important to set a parameter in the .circleci/config.yml, set it to false then the normal tests will run.
-Set it to true to run only tests marked with flaky.
-```
+## ⚙️ CircleCI Configuration  
+
+To **enable flaky tests in CircleCI**, modify `.circleci/config.yml`:  
+```yaml
 parameters:
   run_flaky_tests:
     type: boolean
     default: true
 ```
+📌 **Set `false`** to run normal tests.  
+📌 **Set `true`** to run only flaky tests.  
 
-## Important Links
+---
 
-- Official website: https://remix-project.org
-- Official documentation: https://remix-ide.readthedocs.io/en/latest/
-- Curated list of Remix resources: https://github.com/ethereum/awesome-remix
-- Medium: https://medium.com/remix-ide
-- X: https://x.com/ethereumremix
-- Join Discord: https://discord.gg/mh9hFCKkEq
+## 🔗 Important Links 
+
+[![🌐 Remix Project](https://img.shields.io/badge/Website-Remix%20Project-0d1117?style=for-the-badge&logo=google-chrome)](https://remix-project.org)
+[![📖 Documentation](https://img.shields.io/badge/Docs-Read%20the%20Docs-1976D2?style=for-the-badge&logo=readthedocs&logoColor=white)](https://remix-ide.readthedocs.io/en/latest/)
+[![📰 Medium Blog](https://img.shields.io/badge/Blog-Medium-12100E?style=for-the-badge&logo=medium)](https://medium.com/remix-ide)
+[![🐦 Follow on X](https://img.shields.io/badge/Follow%20on-X-000000?style=for-the-badge&logo=x)](https://x.com/ethereumremix)
+[![💬 Join Discord](https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/zUNteAzJs3) 
+
+ 
+
+---
+
