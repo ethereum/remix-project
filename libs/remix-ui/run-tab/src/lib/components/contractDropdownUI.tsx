@@ -6,6 +6,7 @@ import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import '../css/contractDropdownUI.css'
 const _paq = (window._paq = window._paq || [])
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
@@ -129,7 +130,10 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
       if (!currentContract) props.setSelectedContract(contracts[0].alias)
       else if (!contract) props.setSelectedContract(currentContract)
-      // TODO highlight contractlist box with css.
+      // Highlight contractlist box with css
+      if (contractsRef.current) {
+        contractsRef.current.className = 'contract-list custom-select'
+      }
     }
   }
 
