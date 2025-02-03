@@ -756,7 +756,7 @@ export class Blockchain extends Plugin {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
-         if (isUserOp) {
+        if (isUserOp) {
           const userOpLink = `https://jiffyscan.xyz/userOpHash/${txhash}?network=${network.name}`
           this.call(
             'terminal',

@@ -103,7 +103,6 @@ export class TxRunnerWeb3 {
   }
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    console.log('execute txRunnerWeb3--->', args)
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
