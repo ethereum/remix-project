@@ -21,22 +21,7 @@ export function Container () {
     }
   }
 
-  const handleOpenErrorLocation = async (report: CompilerReport) => {
-    if (report.labels.length > 0) {
-      // const location = noirApp.appState.filePathToId[report.labels[0].file_id]
-      // const startRange = report.labels[0].range.start
-
-      // if (location) {
-      //   const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
-
-      //   await circuitApp.plugin.call('fileManager', 'open', fullPathLocation)
-      //   // @ts-ignore
-      //   const startPosition: { lineNumber: number; column: number } = await circuitApp.plugin.call('editor', 'getPositionAt', startRange)
-      //   // @ts-ignore
-      //   await circuitApp.plugin.call('editor', 'gotoLine', startPosition.lineNumber - 1, startPosition.column)
-      // }
-    }
-  }
+  const handleOpenErrorLocation = async (report: CompilerReport) => {}
 
   const handleCircuitAutoCompile = (value: boolean) => {
     noirApp.dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
@@ -46,48 +31,7 @@ export function Container () {
     noirApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
 
-  const askGPT = async (report: CompilerReport) => {
-    if (report.labels.length > 0) {
-      // const location = circuitApp.appState.filePathToId[report.labels[0].file_id]
-      // const error = report.labels[0].message
-
-      // if (location) {
-      //   const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
-      //   const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
-      //   const message = `
-      //       circom code: ${content}
-      //       error message: ${error}
-      //       full circom error: ${JSON.stringify(report, null, 2)}
-      //       explain why the error occurred and how to fix it.
-      //       `
-      //   await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
-      //   setTimeout(async () => {
-      //     await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
-      //   }, 500)
-      // } else {
-      //   const message = `
-      //       error message: ${error}
-      //       full circom error: ${JSON.stringify(report, null, 2)}
-      //       explain why the error occurred and how to fix it.
-      //       `
-      //   await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
-      //   setTimeout(async () => {
-      //     await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
-      //   }, 500)
-      // }
-    } else {
-      // const error = report.message
-      // const message = `
-      //   error message: ${error}
-      //   full circom error: ${JSON.stringify(report, null, 2)}
-      //   explain why the error occurred and how to fix it.
-      //   `
-      // await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
-      // setTimeout(async () => {
-      //   await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
-      // }, 500)
-    }
-  }
+  const askGPT = async (report: CompilerReport) => {}
 
   const handleCompileClick = () => {
     compileNoirCircuit(noirApp.plugin, noirApp.appState)
