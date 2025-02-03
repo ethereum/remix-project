@@ -105,7 +105,6 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   // @ts-ignore
   const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
-  console.log('account---accounts->', account)
 
   const walletClient = createWalletClient({
     account,
@@ -115,7 +114,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   let salt
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
-  if(safeAddresses.length) {
+  if (safeAddresses.length) {
     const lastSafeAddress: string = safeAddresses[safeAddresses.length - 1]
     const lastSmartAccount: SmartAccount = plugin.REACT_API.smartAccounts[lastSafeAddress]
     salt = lastSmartAccount.salt + 1
