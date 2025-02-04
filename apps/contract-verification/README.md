@@ -6,7 +6,7 @@ With this plugin, contracts written and compiled in Remix can be verified at Sou
 
 Currently, the plugin supports Sourcify, Etherscan, Blockscout and Routescan. To add a new verifier, you need to make the following changes:
 
-In `./src/app/types/VerificationTypes.ts`, add the new verifier to the `VerifierIdentifier` type and the`VERIFIERS` array.
+In `./src/app/types/VerificationTypes.ts`, add the new verifier to the `VerifierIdentifier` type and the `VERIFIERS` array.
 
 In order to interact with the API of the verification service, you need to create a new class that extends the `AbstractVerifier` class. If your API is based on the Etherscan API, you can simply extend the `EtherscanVerifier` class. In this case, see the `RoutescanVerifier` and the `BlockscoutVerifier` for reference. All related classes are located in the `./src/app/Verifiers` directory.
 
