@@ -12,6 +12,8 @@ import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from '@remix-ui/helper'
+import { Provider } from '@remix-ui/environment-explorer'
+
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
@@ -44,6 +46,15 @@ export type Transaction = {
   timestamp?: number
 }
 
+/*
+export type ProviderConfig = {
+  isVM: boolean
+  isInjected: boolean
+  isRpcForkedState?: boolean
+  isVMStateForked?: boolean
+  statePath?: string
+}
+
 export type Provider = {
   options: { [key: string]: string }
   dataId: string
@@ -53,16 +64,13 @@ export type Provider = {
   logos?: string[],
   fork: string
   description?: string
-  isInjected: boolean
-  isVM: boolean
-  isForkedState: boolean
-  isForkedVM: boolean
+  config: ProviderConfig
   title: string
   init: () => Promise<void>
   provider:{
     sendAsync: (payload: any) => Promise<void>
   }
-}
+}*/
 
 export class Blockchain extends Plugin {
   active: boolean

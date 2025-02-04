@@ -9,19 +9,19 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy using a Browser Extension.',
     keywords: ['Injected'],
     providers: [],
-    filterFn: (provider) => provider.isInjected
+    filterFn: (provider) => provider.config.isInjected
   },
   'Remix VMs': {
     title: 'Deploy to an In-browser Virtual Machine.',
     keywords: ['Remix VMs'],
     providers: [],
-    filterFn: (provider) => provider.isVM && !provider.isForkedVM
+    filterFn: (provider) => provider.config.isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
   },
   'Forked States': {
     title: 'Deploy to an In-browser Forked State.',
     keywords: ['Forked State'],
     providers: [],
-    filterFn: (provider) => provider.isForkedState,
+    filterFn: (provider) => provider.config.isVMStateForked,
     descriptionFn: (provider) => {
       const { latestBlock, timestamp } = JSON.parse(provider.description)
       return (
@@ -38,16 +38,16 @@ const defaultSections: environmentExplorerUIGridSections = {
     }
   },
   'Remix forked VMs': {
-    title: 'Deploy to a Remix forked Virtual Machine.',
+    title: 'Deploy to a Live forked Virtual Machine.',
     keywords: ['Remix forked VMs'],
     providers: [],
-    filterFn: (provider) => provider.isForkedVM
+    filterFn: (provider) => provider.config.isRpcForkedState
   },
   'Externals': {
     title: 'Deploy to an external Provider.',
     keywords: ['Externals'],
     providers: [],
-    filterFn: (provider) => (!provider.isInjected && !provider.isVM && !provider.isForkedState && !provider.isForkedVM)
+    filterFn: (provider) => (!provider.config.isInjected && !provider.config.isVM && !provider.config.isRpcForkedState && !provider.config.isVMStateForked)
   },
 }
 export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
@@ -102,7 +102,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                   }}
                 >
                   <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
-                  { provider.isForkedState && <CustomTooltip
+                  { provider.config.isVMStateForked && <CustomTooltip
                     placement="auto"
                     tooltipId={`overlay-tooltip-${provider.name}`}
                     tooltipText="Delete Environment Immediately"
