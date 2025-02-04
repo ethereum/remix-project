@@ -33,7 +33,7 @@ const tests = {
       .click('*[data-id="delete-state-icon"]')
       .waitForElementVisible(
         {
-          selector: "//*[@data-shared='tooltipPopup' and contains(.,'State not available to delete')]",
+          selector: "//*[@data-shared='tooltipPopup' and contains(.,'State not available to reset')]",
           locateStrategy: 'xpath'
         }
       )
@@ -65,7 +65,7 @@ const tests = {
       // check toaster for forked state
       .waitForElementVisible(
         {
-          selector: '//*[@data-shared="tooltipPopup" and contains(.,"VM state \'forkedState_1\' forked")]',
+          selector: '//*[@data-shared="tooltipPopup" and contains(.,"New environment \'forkedState_1\' created with forked state.")]',
           locateStrategy: 'xpath'
         }
       )
@@ -105,7 +105,7 @@ const tests = {
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state 'forkedState_2' forked and selected as current environment.`)
+      .assert.textContains('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
       // check if 'forkedState_2' is selected as current environment 
       .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in environment explorer
@@ -140,7 +140,7 @@ const tests = {
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
       // check if toaster is shown
-      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state deleted successfully.`)
+      .assert.textContains('*[data-shared="tooltipPopup"]', `VM state reset successfully.`)
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted

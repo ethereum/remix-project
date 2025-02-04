@@ -46,7 +46,7 @@ module.exports = composePlugins(withNx(), (config) => {
       process: 'process/browser'
     })
   )
-
+  console.log(process.env.WALLET_CONNECT_PROJECT_ID)
   // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
   config.plugins.push(
     new webpack.DefinePlugin({
