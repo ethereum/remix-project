@@ -81,10 +81,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     this.renderComponent()
   }
 
-  lightUp () {
-    console.log('script runner has been activated')
-  }
-
   render() {
     return (
       <div id="scriptrunnerTab">
