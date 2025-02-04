@@ -4,6 +4,13 @@ import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
 import "viem/window"
+import { custom, http, createWalletClient, parseEther } from "viem"
+import * as chains from "viem/chains"
+import { entryPoint07Address } from "viem/account-abstraction"
+import { toAccount } from "viem/accounts"
+const { createSmartAccountClient } = require("permissionless")
+const { toSafeSmartAccount } = require("permissionless/accounts")
+const { createPimlicoClient } = require("permissionless/clients/pimlico")
 
 export class TxRunnerWeb3 {
   event
@@ -81,9 +88,9 @@ export class TxRunnerWeb3 {
     } else {
       try {
         if (tx.fromSmartAccount) {
-          await sendUserOp(tx)
-          // const userOp = await sendUserOp(tx)
-          // cb(null, userOp.userOpHash, true)
+          // await this.sendUserOp(tx)
+          const userOpHash = await this.sendUserOp(tx)
+          cb(null, userOpHash, true)
         } else {
           const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
           cb(null, res.transactionHash, false)
@@ -194,10 +201,71 @@ export class TxRunnerWeb3 {
         })
     })
   }
-}
 
-const sendUserOp = async (tx) => {
-  console.log('sendUserOp--tx-->', tx)
+  async sendUserOp (tx) {
+  
+    const localStorageKey = 'smartAccounts'
+    const network = 'sepolia'
+    const chain = chains[network]
+
+    let smartAccountsObj = localStorage.getItem(localStorageKey)
+    smartAccountsObj = JSON.parse(smartAccountsObj)
+    const saDetails = smartAccountsObj[chain.id][tx.from]
+    
+    const PIMLICO_API_KEY =''
+    const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+  
+    // @ts-ignore
+    const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
+    // Check that saOwner is there in MM addresses
+    const saOwner = account
+    // const saOwner = saDetails['ownerEOA']
+    
+    const walletClient = createWalletClient({
+      account: saOwner,
+      chain,
+      transport: custom(window.ethereum!),
+    })
+    console.log('walletClient--->', walletClient)
+    const safeAccount = await toSafeSmartAccount({
+      client: walletClient,
+      entryPoint: {
+          address: entryPoint07Address,
+          version: "0.7",
+      },
+      owners: [toAccount(saOwner)],
+      version: "1.4.1",
+      address: tx.from // tx.from & saDetails['address'] should be same
+    })
+
+    console.log('safeAccount----->', safeAccount.address) // 0xcF131Fd4DA8787448477242B0696a122eF3EE3A4
+
+    const paymasterClient = createPimlicoClient({
+      transport: http(BUNDLER_URL),
+      entryPoint: {
+          address: entryPoint07Address,
+          version: "0.7",
+      },
+    })
+    const saClient = createSmartAccountClient({
+        account: safeAccount,
+        chain,
+        paymaster: paymasterClient,
+        bundlerTransport: http(BUNDLER_URL),
+        userOperation: {
+          estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
+        }
+    })
+
+    const txHash = await saClient.sendTransaction({
+        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
+        value: parseEther("0.005"),
+        data: "0x"
+    })
+
+    console.log('txHash----->', txHash)
+    return txHash
+  }
 }
 
 async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
