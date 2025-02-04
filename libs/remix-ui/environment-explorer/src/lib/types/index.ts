@@ -26,7 +26,16 @@ export type environmentExplorerUIGridSections = {
   [key in ProvidersSection]: environmentExplorerUIGridSection
 }
 
+export type ProviderConfig = {
+  isVM: boolean
+  isInjected: boolean
+  isRpcForkedState?: boolean
+  isVMStateForked?: boolean
+  statePath?: string
+}
+
 export type Provider = {
+  position: number
   options: { [key: string]: string }
   dataId: string
   name: string
@@ -35,13 +44,10 @@ export type Provider = {
   logos?: string[],
   fork: string
   description?: string
-  isInjected: boolean
-  isVM: boolean
-  isForkedState: boolean
-  isForkedVM: boolean
+  config: ProviderConfig
   title: string
   init: () => Promise<void>
-  provider: {
+  provider:{
     sendAsync: (payload: any) => Promise<void>
   }
 }
