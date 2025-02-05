@@ -18,7 +18,7 @@ const profile = {
   icon: 'assets/img/solid-gear-circle-play.svg',
   description: 'Configure the dependencies for running scripts.',
   kind: '',
-  location: 'sidePanel',
+  location: 'mainPanel',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
