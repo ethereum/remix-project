@@ -130,32 +130,4 @@ export class CodeCompletionAgent {
     return fileContentPairs;
   }
 
-  // TODO rm context files length
-  static refineContext(words1: string, words2: string, maxWords: number=6500) {
-    // Avoid model out of context
-    const totalWords = words1.length + words2.length;
-    if (totalWords <= maxWords) {
-      return [words1, words2];
-    }
-    const halfMaxWords = Math.floor(maxWords / 2);
-
-    let takeFromText1 = words1.length < halfMaxWords ? words1.length : halfMaxWords;
-    let takeFromText2 = words2.length < halfMaxWords ? words2.length : halfMaxWords;
-
-    // Adjust if one text is taking more than half, we balance by limiting the other text
-    if (words1.length < halfMaxWords && words2.length + words1.length <= maxWords) {
-      takeFromText2 = Math.min(words2.length, maxWords - words1.length);
-    } else if (words2.length < halfMaxWords && words1.length + words2.length <= maxWords) {
-      takeFromText1 = Math.min(words1.length, maxWords - words2.length);
-    } else if (words1.length < halfMaxWords && words2.length + words1.length >= maxWords) {
-      takeFromText2 = Math.min(words2.length, maxWords - words1.length);
-    } else if (words2.length > halfMaxWords && words1.length + words2.length <= maxWords) {
-      takeFromText1 = Math.min(words1.length, maxWords - words2.length);
-    }
-
-    const splicedText1 = words1.slice(words1.length - takeFromText1);
-    const splicedText2 = words2.slice(words2.length - takeFromText2);
-    return [splicedText1 , splicedText2]
-  }
-
 }

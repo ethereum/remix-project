@@ -113,12 +113,10 @@ export class RemixAIPlugin extends ViewPlugin {
 
     const currentFile = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(prompt)
-    const refined = CodeCompletionAgent.refineContext(prompt, promptAfter)
-    console.log('contextfiles', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_completion', refined[0], refined[1])
+      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
     } else {
-      return await this.remoteInferencer.code_completion(refined[0], refined[1], contextfiles, currentFile)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFile)
     }
   }
 
@@ -180,13 +178,12 @@ export class RemixAIPlugin extends ViewPlugin {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     const currentFile = await this.call('fileManager', 'getCurrentFile')
-    const contextfiles = this.completionAgent.getContextFiles(msg_pfx)
-    const refined = CodeCompletionAgent.refineContext(msg_pfx, msg_sfx)
+    const contextfiles = await this.completionAgent.getContextFiles(msg_pfx)
 
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_insertion', refined[0], refined[1])
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
     } else {
-      return await this.remoteInferencer.code_insertion(refined[0], refined[1], contextfiles, currentFile)
+      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFile)
     }
   }
 
