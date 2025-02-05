@@ -340,7 +340,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
         tree.scopeStarts[step] = newScopeId
         tree.scopes[newScopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
-        // for the ctor we we are at the start of its trace, we have to replay this step in order to catch all the locals:
+        // for the ctor we are at the start of its trace, we have to replay this step in order to catch all the locals:
         const nextStep = constructorExecutionStarts ? step : step + 1
         if (constructorExecutionStarts) {
           tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
