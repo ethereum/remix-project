@@ -5,7 +5,7 @@ import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest,
 import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
 import "viem/window"
-import { custom, createWalletClient } from "viem"
+import { custom, createWalletClient, createPublicClient, http } from "viem"
 import { sepolia } from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 import { toAccount } from "viem/accounts"
@@ -112,6 +112,11 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     transport: custom(window.ethereum!),
   })
 
+  const publicClient = createPublicClient({ 
+    chain: sepolia,
+    transport: http("https://eth-sepolia-public.unifra.io") // choose any provider here
+  })
+
   let salt
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   if (safeAddresses.length) {
@@ -121,12 +126,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   } else salt = 0
 
   const safeAccount = await toSafeSmartAccount({
-    client: walletClient,
+    client: publicClient,
     entryPoint: {
       address: entryPoint07Address,
       version: "0.7",
     },
-    owners: [toAccount(account)],
+    owners: [walletClient],
     saltNonce: salt,
     version: "1.4.1"
   })
