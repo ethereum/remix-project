@@ -4,7 +4,7 @@ import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
 import "viem/window"
-import { custom, http, createWalletClient, parseEther } from "viem"
+import { custom, http, createWalletClient, parseEther, createPublicClient } from "viem"
 import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 import { toAccount } from "viem/accounts"
@@ -218,22 +218,29 @@ export class TxRunnerWeb3 {
     // @ts-ignore
     const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
     // Check that saOwner is there in MM addresses
-    const saOwner = account
-    // const saOwner = saDetails['ownerEOA']
-    
+    // const saOwner = account
+    const saOwner = saDetails['ownerEOA']
+    console.log('saOwner--->', saOwner)
+    // both are needed. public client to get nonce and read blockchain. wallet client to sign the useroperation
     const walletClient = createWalletClient({
       account: saOwner,
       chain,
       transport: custom(window.ethereum!),
     })
     console.log('walletClient--->', walletClient)
+
+    const publicClient = createPublicClient({ 
+      chain,
+      transport: http("https://eth-sepolia-public.unifra.io") // choose any provider here
+    })
+
     const safeAccount = await toSafeSmartAccount({
-      client: walletClient,
+      client: publicClient,
       entryPoint: {
           address: entryPoint07Address,
           version: "0.7",
       },
-      owners: [toAccount(saOwner)],
+      owners: [walletClient],
       version: "1.4.1",
       address: tx.from // tx.from & saDetails['address'] should be same
     })
@@ -257,10 +264,11 @@ export class TxRunnerWeb3 {
         }
     })
 
+    console.log('saClient----->', saClient)
+
     const txHash = await saClient.sendTransaction({
         to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
-        value: parseEther("0.005"),
-        data: "0x"
+        value: parseEther("0.005")
     })
 
     console.log('txHash----->', txHash)
