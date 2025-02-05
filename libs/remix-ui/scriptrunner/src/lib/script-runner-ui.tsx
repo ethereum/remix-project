@@ -34,12 +34,10 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
     return <div>Loading...</div>;
   }
 
-  console.log(configurations)
-
   return (
     <div className="px-5">
       <div className="d-flex flex-column justify-content-between mt-4">
-        <div className="text-uppercase mb-3 text-dark" style={{ fontSize: 'xx-large' }}>script configuration</div>
+        <div className="text-uppercase mb-3 text-dark" style={{ fontSize: 'x-large' }}>script configuration</div>
         <div className="text-uppercase text-white" style={{ fontSize: 'large' }}>choose a specific configuration for your script</div>
       </div>
       <div className="mt-5 d-flex flex-column gap-3 mb-4">

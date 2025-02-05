@@ -16,35 +16,28 @@ export interface ConfigSectionProps {
 }
 
 export default function ConfigSection(props: ConfigSectionProps) {
-  console.log(props)
 
   const SectionHeader = () => {
-    const [configRadio, setConfigRadio] = useState(props.activeKey === props.activeConfig.name)
+
     return (
       <section className="">
         <div className="custom-control custom-radio">
           <input
             className="custom-control-input"
             type="radio"
-            name="script-runner-radio-section"
+            name="scriptrunner-config-radio"
             value={props.config.name}
+            id={props.config.title || props.config.name}
             onChange={() => {
               props.setActiveKey(props.config.name)
-              // setConfigRadio(true)
-              // props.setActiveKey(props.config.name)
-              // props.loadScriptRunner(props.config)
-              // props._paq.push(['trackEvent', 'scriptRunnerPlugin', 'loadScriptRunnerConfig', props.config.name])
+              props.loadScriptRunner(props.config)
+              props._paq.push(['trackEvent', 'scriptRunnerPlugin', 'loadScriptRunnerConfig', props.config.name])
             }}
             checked={props.activeKey === props.config.name}
-            id={`${props.config.name}-radio-section`}
           />
-          <label className="form-check-label custom-control-label" htmlFor={`${props.config.name}-radio-section-label`}
+          <label className="form-check-label custom-control-label" htmlFor={`${props.config.title || props.config.name}`}
             data-id={`sr-list-${props.config.name}`}>
-            <FormattedMessage
-              id="scriptrunnerui.defaultSection"
-              defaultMessage={props.config.title || props.config.name}
-              description={props.config.title || props.config.name}
-              values={{ configName: () => props.config.title || props.config.name }} />
+            <div data-id={`sr-list-${props.config.name}`} className="pl-2">{props.config.title || props.config.name}</div>
           </label>
         </div>
       </section>
@@ -81,14 +74,20 @@ export default function ConfigSection(props: ConfigSectionProps) {
       </>
     )
   }
-
+  const sampleLoading = true
+  const sampleError = true
   return (
     <section className="mb-4">
-      <SectionHeader />
-      <div className="d-flex flex-column">
-        {props.config.isLoading && <div className="">
-          <i className="fas fa-spinner fa-spin mr-1"></i>
-        </div>}
+      <section className="d-flex flex-row justify-content-between align-items-center">
+        <SectionHeader />
+        <div className="d-flex">
+          {props.config.isLoading && <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
+            <span>Loading config</span><i className="fas fa-spinner fa-spin ml-1"></i>
+          </div>}
+        </div>
+        <div className="w-50"></div>
+      </section>
+      <section id="errorSection">
         {props.config.errorStatus && props.config.error && <div className="text-danger">
           <CustomTooltip tooltipText={props.config.error}>
             <FontAwesomeIcon data-id={`sr-error-${props.config.name}`} icon={faExclamationCircle}></FontAwesomeIcon>
@@ -106,7 +105,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
               <FontAwesomeIcon data-id={`sr-reload-${props.config.name}`} icon={faRedoAlt}></FontAwesomeIcon>
             </div>
         }
-      </div>
+      </section>
       <section className="d-flex flex-column" style={{ width: '100%' }} >
         <div className="mt-4 bg-light p-3 ">
           <p className="text-dark text-monospace">{props.config.description}</p>
