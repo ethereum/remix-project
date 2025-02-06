@@ -203,24 +203,23 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx) {
-  
     const localStorageKey = 'smartAccounts'
-    const network = 'sepolia'
-    const chain = chains[network]
-
-    let smartAccountsObj = localStorage.getItem(localStorageKey)
-    smartAccountsObj = JSON.parse(smartAccountsObj)
-    const saDetails = smartAccountsObj[chain.id][tx.from]
-    
+    const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
     const PIMLICO_API_KEY =''
     const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+    const network = 'sepolia'
+    const chain = chains[network]
   
     // @ts-ignore
     const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
     // Check that saOwner is there in MM addresses
+    let smartAccountsObj = localStorage.getItem(localStorageKey)
+    smartAccountsObj = JSON.parse(smartAccountsObj)
+    const saDetails = smartAccountsObj[chain.id][tx.from]
     // const saOwner = account
     const saOwner = saDetails['ownerEOA']
     console.log('saOwner--->', saOwner)
+
     // both are needed. public client to get nonce and read blockchain. wallet client to sign the useroperation
     const walletClient = createWalletClient({
       account: saOwner,
@@ -231,7 +230,7 @@ export class TxRunnerWeb3 {
 
     const publicClient = createPublicClient({ 
       chain,
-      transport: http("https://eth-sepolia-public.unifra.io") // choose any provider here
+      transport: http(PUBLIC_NODE_URL) // choose any provider here
     })
 
     const safeAccount = await toSafeSmartAccount({
@@ -245,7 +244,7 @@ export class TxRunnerWeb3 {
       address: tx.from // tx.from & saDetails['address'] should be same
     })
 
-    console.log('safeAccount----->', safeAccount.address) // 0xcF131Fd4DA8787448477242B0696a122eF3EE3A4
+    console.log('safeAccount----->', safeAccount.address) 
 
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
@@ -263,9 +262,7 @@ export class TxRunnerWeb3 {
           estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
         }
     })
-
-    console.log('saClient----->', saClient)
-
+    
     const txHash = await saClient.sendTransaction({
         to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
         value: parseEther("0.005")
