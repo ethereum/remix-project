@@ -20,7 +20,6 @@ enum SupportedFileExtensions {
 }
 
 export class CodeCompletionAgent {
-  private workspacesIndexes = new Map<string, any>();
   props: any;
   indexer: any;
   Documents: Document[] = [];
