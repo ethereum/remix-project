@@ -254,7 +254,8 @@ export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
   stateManager: EVMStateManagerInterface,
-  common: Common
+  common: Common,
+  baseBlockNumber: string // hex
 }
 
 export class VMCommon extends Common {
@@ -275,7 +276,6 @@ export class VMContext {
   blockGasLimitDefault: number
   blockGasLimit: number
   blocks: Record<string, Block>
-  latestBlockNumber: string
   blockByTxHash: Record<string, Block>
   txByHash: Record<string, TypedTransaction>
   currentVm: CurrentVm
@@ -283,20 +283,33 @@ export class VMContext {
   logsManager: any // LogsManager
   exeResults: Record<string, TypedTransaction>
   nodeUrl: string
-  blockNumber: number | 'latest'
+  /*
+    This is the actual number of blocks that are added to the state.
+  */
+  latestBlockNumber: string
+  /*
+    This is the number of block that VMContext is instanciated with.
+    The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
+  */
+  private blockNumber: number | 'latest'
+  /*
+    When a VM is using a live state, baseBlockNumber is the number at which the live state is forked.
+  */
+  baseBlockNumber: string
   stateDb: State
   rawBlocks: string[]
   serializedBlocks: Uint8Array[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[]) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: string) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'cancun'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
-    this.blockNumber = blockNumber
+    this.blockNumber = blockNumber || 0
+    this.baseBlockNumber = baseBlockNumber
     this.blocks = {}
-    this.latestBlockNumber = "0x0"
+    this.latestBlockNumber = '0x0'
     this.blockByTxHash = {}
     this.txByHash = {}
     this.exeResults = {}
@@ -311,27 +324,31 @@ export class VMContext {
 
   async createVm (hardfork) {
     let stateManager: EVMStateManagerInterface
-    if (this.nodeUrl) {
-      let block = this.blockNumber
-      if (this.blockNumber === 'latest') {
-        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
-        block = await provider.getBlockNumber()
-        stateManager = new CustomEthersStateManager({
-          provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
-        })
-        this.blockNumber = block
-      } else {
-        stateManager = new CustomEthersStateManager({
-          provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
-        })
-      }
-    } else {
+    // state trie
+    let trie = null
+    if (this.stateDb) {
       const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
       const mapDb = new MapDB(db)
-      const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+      trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+    }
 
+    const isNetwork = !!this.nodeUrl
+    if (this.nodeUrl) {
+      if (this.blockNumber !== -1 && this.blockNumber !== 'latest') {
+        // we already have the right value for the block number
+      } else if (this.blockNumber === 'latest') {
+        // resolve `latest` to the actual block number
+        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        this.blockNumber = await provider.getBlockNumber()
+      }
+      this.latestBlockNumber = '0x' + this.blockNumber.toString(16)
+      stateManager = new CustomEthersStateManager({
+        provider: this.nodeUrl,
+        blockTag: '0x' + this.blockNumber.toString(16),
+        trie
+      })
+    } else {
+      this.latestBlockNumber = this.blockNumber ? '0x' + this.blockNumber.toString(16) : '0x0'
       stateManager = new StateManagerCommonStorageDump({ trie })
     }
 
@@ -347,14 +364,14 @@ export class VMContext {
     const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
-        number: BIGINT_0,
+        number: isNetwork ? this.blockNumber : BIGINT_0,
         coinbase: '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a',
         difficulty,
         gasLimit: 8000000
       }
     }, { common })
 
-    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock: isNetwork ? null : genesisBlock })
     const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
 
     const vm = await VM.create({
@@ -364,6 +381,7 @@ export class VMContext {
       blockchain,
       evm
     })
+
     // VmProxy and VMContext are very intricated.
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
@@ -374,7 +392,16 @@ export class VMContext {
       await blockchain.putBlock(block)
       this.addBlock(block, false, false, web3vm)
     }
-    return { vm, web3vm, stateManager, common, blocks }
+
+    if (!this.baseBlockNumber && this.blockNumber !== 'latest') {
+      this.baseBlockNumber = '0x' + this.blockNumber.toString(16)
+      this.latestBlockNumber = '0x' + this.blockNumber.toString(16)
+    } else if (this.baseBlockNumber && this.blockNumber !== 'latest') {
+      this.latestBlockNumber = '0x' + (parseInt(this.baseBlockNumber) + this.blockNumber).toString(16)
+    }
+
+    console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks, this.latestBlockNumber, this.blockNumber, this.baseBlockNumber)
+    return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.baseBlockNumber }
   }
 
   getCurrentFork () {
@@ -394,17 +421,16 @@ export class VMContext {
   }
 
   addBlock (block: Block, genesis?: boolean, isCall?: boolean, web3vm?: VmProxy) {
-    let blockNumber = bigIntToHex(block.header.number)
-    if (blockNumber === '0x') {
-      blockNumber = '0x0'
-    }
-
+    let blockNumber = this.baseBlockNumber ? block.header.number + BigInt(this.baseBlockNumber) : block.header.number
+    let blockNumberHex = bigIntToHex(blockNumber)
+    if (blockNumberHex === '0x') blockNumberHex = '0x0'
+  
     this.blocks[bytesToHex(block.hash())] = block
-    this.blocks[blockNumber] = block
-    this.latestBlockNumber = blockNumber
+    this.blocks[blockNumberHex] = block
+    this.latestBlockNumber = blockNumberHex
 
-    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumber, block, web3vm)
-    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumberHex, block, web3vm)
+    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumberHex, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

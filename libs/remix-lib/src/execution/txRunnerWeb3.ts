@@ -37,7 +37,6 @@ export class TxRunnerWeb3 {
     }
 
     let currentDateTime = new Date();
-    const start = currentDateTime.getTime() / 1000
     const cb = (err, resp) => {
       if (err) {
         return callback(err, resp)

@@ -66,25 +66,40 @@ export function EnvironmentUI(props: EnvironmentProps) {
     _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
     let context = currentProvider.name
     context = context.replace('vm-fs-', '')
+
+    let stateTemp = `.states/forked_states/state_temp.json`
+    let statePath = currentProvider.config.statePath
+    if (!statePath) {
+      // if the current provider doesn't have a saved state, we dump the current state from memory.
+      // state_temp.json is removed after the operation completes
+      const state = await props.runTabPlugin.blockchain.executionContext.getStateDetails()
+      statePath = stateTemp
+      await props.runTabPlugin.call('fileManager', 'writeFile', statePath, state)
+    }
+    
     vmStateName.current = `${context}_${Date.now()}`
-    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', currentProvider.config.statePath)
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', statePath)
     if (contextExists) {
       props.modal(
         intl.formatMessage({ id: 'udapp.forkStateTitle' }),
         forkStatePrompt(vmStateName.current),
         intl.formatMessage({ id: 'udapp.fork' }),
         async () => {
-          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', currentProvider.config.statePath)
+          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', statePath)
           currentStateDb = JSON.parse(currentStateDb)
           currentStateDb.stateName = vmStateName.current
-          currentStateDb.forkName = currentProvider.fork
+          currentStateDb.forkName = currentProvider.config.fork
+          currentStateDb.nodeUrl = currentProvider.config.nodeUrl
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+          await props.runTabPlugin.call('fileManager', 'remove', stateTemp)
           _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
-        null
+        () => {
+          props.runTabPlugin.call('fileManager', 'remove', stateTemp)
+        }
       )
     } else props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
   }
