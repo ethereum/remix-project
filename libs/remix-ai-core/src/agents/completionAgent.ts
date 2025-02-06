@@ -41,9 +41,6 @@ export class CodeCompletionAgent {
       this.field('Identifier');
     });
 
-    // listen for file changes
-    this.props.on('fileManager', 'fileRemoved', (path) => { this.indexed.isIndexed = false; });
-
     setInterval(() => {
       this.indexWorkspace()
     }, 60000)
@@ -99,7 +96,7 @@ export class CodeCompletionAgent {
   async getContextFiles(prompt) {
     try {
       if (!this.indexed.isIndexed) {
-        this.indexWorkspace();
+        await this.indexWorkspace();
       }
       const currentFile = await this.props.call('fileManager', 'getCurrentFile');
       const content = prompt;
@@ -113,14 +110,22 @@ export class CodeCompletionAgent {
   }
 
   async processResults(results: any, currentFile: string) {
+
+    // remove the current file name from the results list
     const rmResults = await results.filter(result => {
       return this.Documents.find(doc => doc.id === Number(result.ref)).filename !== currentFile;
     });
+
+    // filter out the results which have the same extension as the current file.
+    // Do not mix and match file extensions as this will lead to incorrect completions
     const extResults = await rmResults.filter(result => {
       return this.Documents.find(doc => doc.id === Number(result.ref)).filename.split('.').pop() === currentFile.split('.').pop();
     });
+
+    // filter out the results which have a score less than the INDEX_THRESHOLD
     const topResults = await extResults.filter(result => result.score >= this.INDEX_THRESHOLD).slice(0, this.N_MATCHES);
 
+    // get the LATEST content of the top results in case the file has been modified and not indexed yet
     const fileContentPairs = topResults.map(async result => {
       const document = this.Documents.find(doc => doc.id === Number(result.ref));
       const currentContent = await this.props.call('fileManager', 'readFile', document.filename);
