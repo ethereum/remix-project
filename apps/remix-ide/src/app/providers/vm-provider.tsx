@@ -133,9 +133,13 @@ export class CancunVMProvider extends BasicVMProvider {
 }
 
 export class ForkedVMStateProvider extends BasicVMProvider {
-  constructor(profile, blockchain, fork) {
+  nodeUrl?: string
+  blockNumber?: string
+  constructor(profile, blockchain, fork: string, nodeUrl?: string, blockNumber?: string) {
     super(profile, blockchain)
     this.blockchain = blockchain
     this.fork = fork
+    this.nodeUrl = nodeUrl
+    this.blockNumber = blockNumber
   }
 }

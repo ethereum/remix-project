@@ -148,7 +148,7 @@ export class ExecutionContext {
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       await network.init()
-      this.currentFork = network.fork
+      this.currentFork = network.config.fork
       this.executionContext = context
       // injected
       web3.setProvider(network.provider)
@@ -215,7 +215,8 @@ export class ExecutionContext {
     const state = {
       db: Object.fromEntries(stateDb.db._database),
       blocks: blocksData.blocks,
-      latestBlockNumber: blocksData.latestBlockNumber
+      latestBlockNumber: blocksData.latestBlockNumber,
+      baseBlockNumber: blocksData.baseBlockNumber
     }
     const stringifyed = JSON.stringify(state, (key, value) => {
       if (key === 'db') {
