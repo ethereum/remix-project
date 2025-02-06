@@ -970,9 +970,41 @@ export class Blockchain extends Plugin {
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
       const isVM = this.executionContext.isVM()
+      const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
-      if (isVM) {
+      const isBasicVMState = isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      const isForkedVMState = isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      const isForkedRpcState = isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
+
+      const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
+      if (hhlogs && hhlogs.length) {
+        const finalLogs = (
+          <div>
+            <div>
+              <b>console.log:</b>
+            </div>
+            {hhlogs.map((log) => {
+              let formattedLog
+              // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+              // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+              // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+              // We check first arg to determine if 'util.format' is needed
+              if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+                formattedLog = format(log[0], ...log.slice(1))
+              } else {
+                formattedLog = log.join(' ')
+              }
+              return <div>{formattedLog}</div>
+            })}
+          </div>
+        )
+        _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
+        this.call('terminal', 'logHtml', finalLogs)
+      }
+
+      if (isBasicVMState || isForkedVMState || isForkedRpcState) {
+        // we don't save the state in case of the isRpcForkedState, only if it's forked
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
             let state = await this.executionContext.getStateDetails()
@@ -980,7 +1012,7 @@ export class Blockchain extends Plugin {
             // Check if provider is forked VM state
             if (provider.startsWith('vm-fs-')) {
               const stateName = provider.replace('vm-fs-', '')
-              const stateFileExists = this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
+              const stateFileExists = await this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
               if (stateFileExists) {
                 let stateDetails = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
                 stateDetails = JSON.parse(stateDetails)
@@ -997,32 +1029,7 @@ export class Blockchain extends Plugin {
             console.error(e)
           }
         }
-
-        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
-        if (hhlogs && hhlogs.length) {
-          const finalLogs = (
-            <div>
-              <div>
-                <b>console.log:</b>
-              </div>
-              {hhlogs.map((log) => {
-                let formattedLog
-                // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-                // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-                // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-                // We check first arg to determine if 'util.format' is needed
-                if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-                  formattedLog = format(log[0], ...log.slice(1))
-                } else {
-                  formattedLog = log.join(' ')
-                }
-                return <div>{formattedLog}</div>
-              })}
-            </div>
-          )
-          _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
-          this.call('terminal', 'logHtml', finalLogs)
-        }
+        
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
