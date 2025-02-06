@@ -69,7 +69,6 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
     try {
       // TODO: remove! no formatting required since already handled on server
       const file = await this.client.call('fileManager', 'getCurrentFile')
-      
       const content = await this.client.call('fileManager', 'readFile', file)
       const messageAI = `Vyper code: ${content}\n error message: ${message}\n explain why the error occurred and how to fix it.`
 
