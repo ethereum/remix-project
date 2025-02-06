@@ -8,8 +8,9 @@ import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import { sepolia } from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
-import { toAccount } from "viem/accounts"
+const { createSmartAccountClient } = require("permissionless")
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
+const { createPimlicoClient } = require("permissionless/clients/pimlico")
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -102,6 +103,11 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
+  const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
+  const PIMLICO_API_KEY =''
+  const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+  const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
+  let salt
 
   // @ts-ignore
   const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
@@ -114,11 +120,9 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   const publicClient = createPublicClient({ 
     chain: sepolia,
-    transport: http("https://eth-sepolia-public.unifra.io") // choose any provider here
+    transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
 
-  let salt
-  const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   if (safeAddresses.length) {
     const lastSafeAddress: string = safeAddresses[safeAddresses.length - 1]
     const lastSmartAccount: SmartAccount = plugin.REACT_API.smartAccounts[lastSafeAddress]
@@ -135,7 +139,33 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     saltNonce: salt,
     version: "1.4.1"
   })
+
+  const paymasterClient = createPimlicoClient({
+    transport: http(BUNDLER_URL),
+    entryPoint: {
+        address: entryPoint07Address,
+        version: "0.7",
+    },
+  })
+
+  const saClient = createSmartAccountClient({
+    account: safeAccount,
+    sepolia,
+    paymaster: paymasterClient,
+    bundlerTransport: http(BUNDLER_URL),
+    userOperation: {
+      estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
+    }
+  })
+
+  const useropHash = await saClient.sendUserOperation({
+    callData: "0x"
+  })
+  console.log('useropHash--->', useropHash)
+  await saClient.waitForUserOperationReceipt({hash: useropHash})
+
   const safeAddress = safeAccount.address
+  console.log('safeAddress--->', safeAddress)
 
   const sAccount: SmartAccount = {
     address : safeAccount.address,
