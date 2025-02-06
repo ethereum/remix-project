@@ -254,7 +254,8 @@ export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
   stateManager: EVMStateManagerInterface,
-  common: Common
+  common: Common,
+  baseBlockNumber: number | 'latest'
 }
 
 export class VMCommon extends Common {
@@ -276,6 +277,7 @@ export class VMContext {
   blockGasLimit: number
   blocks: Record<string, Block>
   latestBlockNumber: string
+  baseBlockNumber: number
   blockByTxHash: Record<string, Block>
   txByHash: Record<string, TypedTransaction>
   currentVm: CurrentVm
@@ -288,13 +290,14 @@ export class VMContext {
   rawBlocks: string[]
   serializedBlocks: Uint8Array[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[]) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: number) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'cancun'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
     this.blockNumber = blockNumber
+    this.baseBlockNumber = baseBlockNumber || -1
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
@@ -311,27 +314,40 @@ export class VMContext {
 
   async createVm (hardfork) {
     let stateManager: EVMStateManagerInterface
+    // state trie
+    let trie = null
+    if (this.stateDb) {
+      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+      const mapDb = new MapDB(db)
+      trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+    }
+
     if (this.nodeUrl) {
       let block = this.blockNumber
-      if (this.blockNumber === 'latest') {
+      if (this.baseBlockNumber !== -1) {
+        stateManager = new CustomEthersStateManager({
+          provider: this.nodeUrl,
+          blockTag: '0x' + this.baseBlockNumber.toString(16),
+          trie
+        })
+        this.blockNumber = this.baseBlockNumber
+      } else if (this.blockNumber === 'latest') {
         const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
+          blockTag: '0x' + block.toString(16),
+          trie
         })
         this.blockNumber = block
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
+          blockTag: '0x' + block.toString(16),
+          trie
         })
       }
     } else {
-      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
-      const mapDb = new MapDB(db)
-      const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
-
       stateManager = new StateManagerCommonStorageDump({ trie })
     }
 
@@ -374,7 +390,10 @@ export class VMContext {
       await blockchain.putBlock(block)
       this.addBlock(block, false, false, web3vm)
     }
-    return { vm, web3vm, stateManager, common, blocks }
+
+    console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks)
+
+    return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.blockNumber }
   }
 
   getCurrentFork () {

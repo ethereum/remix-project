@@ -31,7 +31,10 @@ export type ProviderConfig = {
   isInjected: boolean
   isRpcForkedState?: boolean
   isVMStateForked?: boolean
-  statePath?: string
+  fork: string
+  statePath?: string,
+  blockNumber?: string
+  nodeUrl?: string
 }
 
 export type Provider = {
@@ -41,8 +44,7 @@ export type Provider = {
   name: string
   displayName: string
   logo?: string,
-  logos?: string[],
-  fork: string
+  logos?: string[],  
   description?: string
   config: ProviderConfig
   title: string
