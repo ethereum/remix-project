@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ProjectConfiguration } from '../../types';
 import { faCheck, faExclamationCircle, faRedoAlt, faToggleOn, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
@@ -16,11 +16,16 @@ export interface ConfigSectionProps {
 }
 
 export default function ConfigSection(props: ConfigSectionProps) {
+  const [isVisible, setIsVisible] = useState(true)
+
+  const handleAnimationEnd = () => {
+    setIsVisible(false);
+  }
 
   const SectionHeader = () => {
 
     return (
-      <section className="">
+      <section className="mr-1">
         <div className="custom-control custom-radio">
           <input
             className="custom-control-input"
@@ -74,18 +79,29 @@ export default function ConfigSection(props: ConfigSectionProps) {
       </>
     )
   }
-  const sampleLoading = true
-  const sampleError = true
+
   return (
     <section className="mb-4">
-      <section className="d-flex flex-row justify-content-between align-items-center">
+      <section className="d-flex flex-row ">
         <SectionHeader />
-        <div className="d-flex">
+        <div className="d-flex flex-row ml-3">
           {props.config.isLoading && <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
             <span>Loading config</span><i className="fas fa-spinner fa-spin ml-1"></i>
           </div>}
         </div>
-        <div className="w-50"></div>
+        <>
+          {!props.config.isLoading && !props.config.errorStatus && !props.config.error &&
+          <div onClick={() => props.loadScriptRunner(props.config)} className="pointer px-2 pb-1">
+            { props.activeConfig && props.activeConfig.name === props.config.name &&
+              <div className={`${!isVisible ? 'd-flex flex-row align-items-center justify-content-center pt-1' : 'd-flex flex-row pb-1 align-items-center justify-content-center'}`}>
+                {isVisible && <span onAnimationEnd={handleAnimationEnd} className="text-success" style={{ animation: 'fadeOut 5s forwards', animationFillMode: 'forwards' }}>Config loaded</span>}
+                <FontAwesomeIcon data-id={`sr-loaded-${props.config.name}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
+              </div>
+            }
+          </div>
+          }
+          <div className="w-25"></div>
+        </>
       </section>
       <section id="errorSection">
         {props.config.errorStatus && props.config.error && <div className="text-danger">
