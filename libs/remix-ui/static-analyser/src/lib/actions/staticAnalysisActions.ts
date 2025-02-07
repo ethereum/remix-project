@@ -213,7 +213,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
         warningContainer.current.innerText = 'No compiled AST available'
       }
 
-      props.event.trigger('staticAnaysisWarning', [-1])
+      props.event.trigger('staticAnalysisWarning', [-1])
     }
   }
 }
