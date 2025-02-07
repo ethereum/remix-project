@@ -136,12 +136,6 @@ class NoirParser {
     }
   }
 
-  extractReturnType(line) {
-    const returnMatch = line.match(/->\s*([a-zA-Z_][a-zA-Z0-9_:<>, ]*)/);
-
-    return returnMatch ? returnMatch[1].trim() : null;
-  }
-
   checkFunctionReturnType(line, lineIdx, originalLine) {
     const returnMatch = line.match(/->\s*([a-zA-Z_][a-zA-Z0-9_:<>, ]*)/);
 
@@ -207,17 +201,25 @@ class NoirParser {
   }
 
   isValidNoirType(type) {
-    // Basic types
-    if (this.noirTypes.includes(type)) return true;
+    // Handle visibility modifiers (pub/priv) and extract base type
+    const typeParts = type.split(/\s+/);
+    const baseType = typeParts[typeParts.length - 1]; // Get last part after any modifiers
 
-    // Array types
-    if (type.includes('[') && type.includes(']')) {
-      const baseType = type.match(/\[(.*?);/)?.[1];
-      return baseType && this.noirTypes.includes(baseType);
+    if (this.noirTypes.includes(baseType)) return true;
+    if (baseType.includes('[') && baseType.includes(']')) {
+      const innerTypeMatch = baseType.match(/\[(.*?);/);
+      if (innerTypeMatch) {
+        const innerType = innerTypeMatch[1].trim();
+        return this.noirTypes.includes(innerType);
+      }
+      return false;
     }
-
-    // Generic types or custom types (not supported for now)
     return false;
+  }
+
+  extractReturnType(line) {
+    const returnMatch = line.match(/->\s*((?:pub\s+)?[a-zA-Z_][a-zA-Z0-9_:<>, ]*)/);
+    return returnMatch ? returnMatch[1].trim() : null;
   }
 
   calculatePosition(line, startColumn, endColumn) {
