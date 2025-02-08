@@ -3793,7 +3793,7 @@ declare namespace monaco.editor {
      */
     colorDecorators?: boolean
     /**
-     * Controls what is the condition to spawn a color picker from a color dectorator
+     * Controls what is the condition to spawn a color picker from a color decorator
      */
     colorDecoratorsActivatedOn?: 'clickAndHover' | 'click' | 'hover'
     /**
