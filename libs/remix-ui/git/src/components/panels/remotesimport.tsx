@@ -12,7 +12,7 @@ export const RemotesImport = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [repo, setRepo] = useState<repository>(null);
-  const [repoOtions, setRepoOptions] = useState<any>([]);
+  const [repoOptions, setRepoOptions] = useState<any>([]);
   const [loading, setLoading] = useState(false)
   const [show, setShow] = useState(false)
   const [remoteName, setRemoteName] = useState('')
