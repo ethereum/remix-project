@@ -13,7 +13,7 @@ interface RepositorySelectProps {
 }
 
 const RepositorySelect = (props: RepositorySelectProps) => {
-  const [repoOtions, setRepoOptions] = useState<any>([]);
+  const [repoOptions, setRepoOptions] = useState<any>([]);
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [loading, setLoading] = useState(false)
@@ -76,7 +76,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
       show ?
         <>
           <Select
-            options={repoOtions}
+            options={repoOptions}
             className="mt-1"
             id="repository-select"
             onChange={(e: any) => selectRepo(e)}
