@@ -236,7 +236,7 @@ export const populateWorkspace = async (
     if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
     _paq.push(['trackEvent', 'circuit-compiler', 'template', 'create', workspaceTemplateName])
   }
-  if (workspaceTemplateName === 'multNr') {
+  if (workspaceTemplateName === 'multNr' || workspaceTemplateName === 'stealthDropNr') {
     const isNoirActive = await plugin.call('manager', 'isActive', 'noir-compiler')
     if (!isNoirActive) await plugin.call('manager', 'activatePlugin', 'noir-compiler')
     _paq.push(['trackEvent', 'noir-compiler', 'template', 'create', workspaceTemplateName])
