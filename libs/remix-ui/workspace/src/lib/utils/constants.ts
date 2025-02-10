@@ -13,6 +13,7 @@ export const TEMPLATE_NAMES = {
   'semaphore': 'Semaphore',
   'hashchecker': 'Hash Checker',
   'rln': 'Rate-Limiting Nullifier',
+  'multNr': 'Simple Multiplier',
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
   'uniswapV4Template': 'Uniswap v4 Template',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
