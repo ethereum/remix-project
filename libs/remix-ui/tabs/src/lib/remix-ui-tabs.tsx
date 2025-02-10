@@ -230,25 +230,23 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          {(tabsState.currentExt === 'ts' || tabsState.currentExt === 'js')
-
-            && <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-run-script-config"
-              tooltipText={
-                <span>
-                  <FormattedMessage id="remixUiTabs.tooltipText9" />
-                </span>
-              }><button
-                data-id="script-config"
-                className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
-                onClick={async () => {
-                  props.plugin.call('manager', 'activatePlugin', 'scriptRunnerBridge')
-                }}
-              >
-                <i className="fa-kit fa-solid-gear-circle-play"></i>
-              </button></CustomTooltip>
-          }
+          {(tabsState.currentExt === 'ts' || tabsState.currentExt === 'js') }
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="overlay-tooltip-run-script-config"
+            tooltipText={
+              <span>
+                <FormattedMessage id="remixUiTabs.tooltipText9" />
+              </span>
+            }><button
+              data-id="script-config"
+              className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
+              onClick={async () => {
+                props.plugin.call('manager', 'activatePlugin', 'scriptRunnerBridge')
+              }}
+            >
+              <i className="fa-kit fa-solid-gear-circle-play"></i>
+            </button></CustomTooltip>
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"

@@ -41,8 +41,8 @@ export default function ConfigSection(props: ConfigSectionProps) {
             checked={props.activeKey === props.config.name}
           />
           <label className="form-check-label custom-control-label" htmlFor={`${props.config.title || props.config.name}`}
-            data-id={`sr-list-${props.config.name}`}>
-            <div data-id={`sr-list-${props.config.name}`} className="pl-2">{props.config.title || props.config.name}</div>
+            data-id={`sr-load-${props.config.name}`}>
+            <div data-id={`sr-loaded-${props.config.name}`} className="pl-2">{props.config.title || props.config.name}</div>
           </label>
         </div>
       </section>
