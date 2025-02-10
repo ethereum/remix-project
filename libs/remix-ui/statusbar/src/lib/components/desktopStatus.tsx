@@ -21,14 +21,6 @@ export const DesktopStatus = () => {
           <span className="">Connected to the desktop application</span>
         </>
       ) : null}
-      {appContext.appState.desktopClientConnected === desktopConnectionType.disabled ? (
-        <>
-          <span className="text-secondary">
-            <span className="fas fa-plug-circle-xmark mr-1"></span>
-            <span className="">Metamask</span>
-          </span>
-        </>
-      ) : null}
       {appContext.appState.desktopClientConnected === desktopConnectionType.connected ? (
         <>
           <span className="text-success">
