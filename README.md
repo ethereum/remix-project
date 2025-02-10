@@ -162,7 +162,7 @@ To run the tests via Nightwatch:
     gist_token = <token> // token should have permission to create a gist
 ```
 
-There is a script to allow selecting the browser and a specific test to run:
+There is a script to allow selecting the browser and a specific tests to run:
 
 ```
 yarn run select_test
