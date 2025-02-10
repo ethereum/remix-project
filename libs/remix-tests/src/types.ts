@@ -11,7 +11,7 @@ export interface FinalResult {
     totalTime: number,
     errors: any[],
 }
-/** List of tests to run **/
+/** List of the tests to run **/
 export interface RunListInterface {
   name: string,
   inputs?: any[]
