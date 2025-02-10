@@ -104,7 +104,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
-  const PIMLICO_API_KEY =''
+  const PIMLICO_API_KEY ='pim_J9aaTrRySixhbf3eh3T7dw'
   const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   let salt
@@ -139,7 +139,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     saltNonce: salt,
     version: "1.4.1"
   })
-
+  
   const paymasterClient = createPimlicoClient({
     transport: http(BUNDLER_URL),
     entryPoint: {
@@ -157,15 +157,16 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
     }
   })
-
+  // Make a dummy tx to force smart account deployment
   const useropHash = await saClient.sendUserOperation({
-    callData: "0x"
+    calls: [{
+      to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
+      value: 0
+    }]
   })
-  console.log('useropHash--->', useropHash)
   await saClient.waitForUserOperationReceipt({hash: useropHash})
 
   const safeAddress = safeAccount.address
-  console.log('safeAddress--->', safeAddress)
 
   const sAccount: SmartAccount = {
     address : safeAccount.address,
