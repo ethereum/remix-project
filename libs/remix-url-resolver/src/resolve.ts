@@ -31,9 +31,13 @@ export class RemixURLResolver {
   gistAccessToken: string
   protocol: string
   getDependencies: getPackages
+  packageJSON: {
+    [moduleName: string]: any
+  }
 
   constructor (getDependencies?: getPackages, gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
+    this.packageJSON = {}
     this.getDependencies = getDependencies
     this.setGistToken(gistToken, protocol)
   }
@@ -191,6 +195,44 @@ export class RemixURLResolver {
     }
 
     const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
+
+    // find from the loaded JSON packages is there's a remapping which matches with the current fetchUrl
+    for (const packagePath in this.packageJSON) {
+      const dependencies = this.packageJSON[packagePath].dependencies
+      if (dependencies) {
+        for (const [keyDeps, valueDeps] of Object.entries(dependencies)) {       
+          if (fetchUrl.startsWith(keyDeps) && (valueDeps as string).startsWith('npm:')) {
+            fetchUrl = fetchUrl.replace(keyDeps, (valueDeps as string).replace('npm:',''))
+            break;
+          }
+        }
+      }      
+    }
+
+    // resolve the packageJSON associated with the current fetechUrl
+    if (!this.packageJSON[fetchUrl]) {
+      let splitted = fetchUrl.split('/')
+      /*
+      const contractFolder = splitted.indexOf('contracts')
+      if (contractFolder !== -1) {
+        splitted = splitted.slice(0, contractFolder + 1)
+      }
+      */
+      splitted.pop()
+      while (splitted.length) {
+        const joined = splitted.join('/')
+        const path = npm_urls[0] + joined
+        let packageJson = path  + '/package.json'
+        splitted.pop()
+        try {
+          const response: AxiosResponse = await axios.get(packageJson, { transformResponse: []})
+          this.packageJSON[joined] = JSON.parse(response.data)
+          break
+        } catch (e) {
+        }
+      }
+    }       
+
     process && process.env && process.env['NX_NPM_URL'] && npm_urls.unshift(process.env['NX_NPM_URL'])
     let content = null
     // get response from all urls
