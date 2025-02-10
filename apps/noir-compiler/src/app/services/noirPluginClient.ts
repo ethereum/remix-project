@@ -62,6 +62,22 @@ export class NoirPluginClient extends PluginClient {
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiled successfully' })
     } catch (e) {
+      const regex = /^\s*(\/[^:]+):(\d+):/gm;
+
+      Array.from(e.message.matchAll(regex), (match) => {
+        const errorPath = match[1]
+        const line = parseInt(match[2])
+        // @ts-ignore
+        this.call('editor', 'addErrorMarker', [{
+          message: e.message,
+          severity: 'error',
+          position: {
+            start: { line, column: 1 },
+            end: { line, column: 1 }
+          },
+          file: errorPath.slice(1)
+        }])
+      })
       this.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
       this.internalEvents.emit('noir_compiling_errored', e)
       console.error(e)
@@ -89,7 +105,7 @@ export class NoirPluginClient extends PluginClient {
       await this.resolveDependencies(path, content)
       const fileBytes = new TextEncoder().encode(content)
 
-      this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
+      await this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
       // @ts-ignore
       await this.call('editor', 'clearErrorMarkers', [path])
     }
