@@ -173,7 +173,7 @@ function getSpecialFunctionsInterface (jsonInterface: FunctionDescription[]): Re
 }
 
 /**
- * @dev Prepare a list of tests to run using test contract file ABI, AST & contract name
+ * @dev Prepare a list of the tests to run using test contract file ABI, AST & contract name
  * @param jsonInterface File JSON interface
  * @param fileAST File AST
  * @param testContractName Test contract name
