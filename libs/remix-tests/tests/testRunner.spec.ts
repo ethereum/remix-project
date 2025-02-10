@@ -9,7 +9,7 @@ import { runTest, compilationInterface } from '../src/index'
 import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../src/index'
 
 // deepEqualExcluding allows us to exclude specific keys whose values vary.
-// In this specific test, we'll use this helper to exclude `time` keys.
+// In this specific tests, we'll use this helper to exclude `time` keys.
 // Assertions for the existence of these will be made at the correct places.
 function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
   function removeKeysFromObject(obj: any, excludedKeys: string[]) {
