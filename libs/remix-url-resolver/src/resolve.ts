@@ -200,18 +200,18 @@ export class RemixURLResolver {
     for (const packagePath in this.packageJSON) {
       const dependencies = this.packageJSON[packagePath].dependencies
       if (dependencies) {
-        for (const [keyDeps, valueDeps] of Object.entries(dependencies)) {       
+        for (const [keyDeps, valueDeps] of Object.entries(dependencies)) {
           if (fetchUrl.startsWith(keyDeps) && (valueDeps as string).startsWith('npm:')) {
             fetchUrl = fetchUrl.replace(keyDeps, (valueDeps as string).replace('npm:',''))
             break;
           }
         }
-      }      
+      }
     }
 
     // resolve the packageJSON associated with the current fetechUrl
     if (!this.packageJSON[fetchUrl]) {
-      let splitted = fetchUrl.split('/')
+      const splitted = fetchUrl.split('/')
       /*
       const contractFolder = splitted.indexOf('contracts')
       if (contractFolder !== -1) {
@@ -222,7 +222,7 @@ export class RemixURLResolver {
       while (splitted.length) {
         const joined = splitted.join('/')
         const path = npm_urls[0] + joined
-        let packageJson = path  + '/package.json'
+        const packageJson = path  + '/package.json'
         splitted.pop()
         try {
           const response: AxiosResponse = await axios.get(packageJson, { transformResponse: []})
@@ -231,7 +231,7 @@ export class RemixURLResolver {
         } catch (e) {
         }
       }
-    }       
+    }
 
     process && process.env && process.env['NX_NPM_URL'] && npm_urls.unshift(process.env['NX_NPM_URL'])
     let content = null
