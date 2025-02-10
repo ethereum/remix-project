@@ -205,7 +205,7 @@ export class TxRunnerWeb3 {
   async sendUserOp (tx) {
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
-    const PIMLICO_API_KEY =''
+    const PIMLICO_API_KEY ='pim_J9aaTrRySixhbf3eh3T7dw'
     const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
     const network = 'sepolia'
     const chain = chains[network]
@@ -216,17 +216,14 @@ export class TxRunnerWeb3 {
     let smartAccountsObj = localStorage.getItem(localStorageKey)
     smartAccountsObj = JSON.parse(smartAccountsObj)
     const saDetails = smartAccountsObj[chain.id][tx.from]
-    // const saOwner = account
     const saOwner = saDetails['ownerEOA']
-    console.log('saOwner--->', saOwner)
-
+    
     // both are needed. public client to get nonce and read blockchain. wallet client to sign the useroperation
     const walletClient = createWalletClient({
       account: saOwner,
       chain,
       transport: custom(window.ethereum!),
     })
-    console.log('walletClient--->', walletClient)
 
     const publicClient = createPublicClient({ 
       chain,
@@ -243,8 +240,6 @@ export class TxRunnerWeb3 {
       version: "1.4.1",
       address: tx.from // tx.from & saDetails['address'] should be same
     })
-
-    console.log('safeAccount----->', safeAccount.address) 
 
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
