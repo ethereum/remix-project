@@ -12,7 +12,7 @@ import { extractStateVariables } from './solidity-decoder/stateDecoder'
 /**
   * Ethdebugger is a wrapper around a few classes that helps debug a transaction
   *
-  * - TraceManager - Load / Analyze the trace and retrieve details of specific test
+  * - TraceManager - Load / Analyze the trace and retrieve details of specific tests
   * - CodeManager - Retrieve loaded byte code and help to resolve AST item from vmtrace index
   * - SolidityProxy - Basically used to extract state variable from AST
   * - Breakpoint Manager - Used to add / remove / jump to breakpoint
