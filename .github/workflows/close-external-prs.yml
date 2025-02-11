@@ -1,0 +1,38 @@
+name: "Investigate PR via Manual Trigger"
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'The pull request number to investigate'
+        required: true
+        default: '1'
+
+jobs:
+  investigate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Investigate PR"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Parse the input to get the PR number.
+            const prNumber = parseInt(context.payload.inputs.pr_number);
+            if (isNaN(prNumber)) {
+              core.setFailed("The provided PR number is invalid.");
+            }
+            
+            // Retrieve the pull request details using the GitHub API.
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            
+            console.log(`Investigating PR #${pr.number} by @${pr.user.login}`);
+            console.log(`Changed files: ${pr.changed_files}`);
+            console.log(`Additions: ${pr.additions}, Deletions: ${pr.deletions}`);
+            
+            // Add any further investigation or logic here.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
