@@ -43,7 +43,7 @@ export class InjectedProvider {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(messageHash, account).then((signedData) => {
+      personal.sign(messageHash, account, '').then((signedData) => {
         cb(null, bytesToHex(messageHash), signedData)
       }).catch((error => cb(error)))
     } catch (e) {
