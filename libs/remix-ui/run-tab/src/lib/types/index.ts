@@ -11,6 +11,7 @@ export interface RunTabProps {
   initialState?: RunTabState
 }
 
+
 export interface Contract {
   name: string,
   alias: string,
@@ -22,26 +23,6 @@ export interface Contract {
 export interface ContractList {
   [file: string]: Contract[]
 }
-
-/*
-export type Provider = {
-  name: string
-  displayName: string
-  provider: {
-    sendAsync: () => void
-  },
-  init: () => void
-  title: string
-  dataId: string
-  options: { [key: string]: string}
-  fork: boolean
-  isVM: boolean
-  isInjected: boolean
-  isRpcForkedState?: boolean
-  isVMStateForked?: boolean
-  statePath?: string
-  position: number
-}*/
 
 export interface RunTabState {
   accounts: {
