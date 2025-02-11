@@ -11,7 +11,7 @@ class SwitchBrowserTab extends EventEmitter {
       browser.windowHandles((result) => {
         console.log('switching to window', result)
         if (Array.isArray(result.value)) {
-          browser.switchWindow(result.value[result.value[index] ? index : 0])
+          browser.switchWindow(result.value[index] || result.value[0])
         }
         done()
       })
