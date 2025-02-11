@@ -43,7 +43,7 @@ export class InjectedProvider {
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
       message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
-      personal.sign(message, account, passphrase)
+      personal.sign(message, account, '')
         .then(signedData => cb(undefined, bytesToHex(messageHash), signedData))
         .catch(error => cb(error, bytesToHex(messageHash), undefined))
     } catch (e) {
