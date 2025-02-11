@@ -39,15 +39,15 @@ export class InjectedProvider {
   }
 
   signMessage (message, account, _passphrase, cb) {
-    message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(messageHash, account, '').then((signedData) => {
-        cb(null, bytesToHex(messageHash), signedData)
-      }).catch((error => cb(error)))
+      message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
+      personal.sign(message, account, passphrase)
+        .then(signedData => cb(undefined, bytesToHex(messageHash), signedData))
+        .catch(error => cb(error, bytesToHex(messageHash), undefined))
     } catch (e) {
       cb(e.message)
-    }
+    }    
   }
 }
