@@ -13,7 +13,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
-    .switchBrowserTab(0)
+    .switchBrowserTab(1)
     .hidePopupPanel()
     .perform((done) => {
       if (!loadPlugin) return done()
