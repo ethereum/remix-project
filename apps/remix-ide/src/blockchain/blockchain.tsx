@@ -46,32 +46,6 @@ export type Transaction = {
   timestamp?: number
 }
 
-/*
-export type ProviderConfig = {
-  isVM: boolean
-  isInjected: boolean
-  isRpcForkedState?: boolean
-  isVMStateForked?: boolean
-  statePath?: string
-}
-
-export type Provider = {
-  options: { [key: string]: string }
-  dataId: string
-  name: string
-  displayName: string
-  logo?: string,
-  logos?: string[],
-  fork: string
-  description?: string
-  config: ProviderConfig
-  title: string
-  init: () => Promise<void>
-  provider:{
-    sendAsync: (payload: any) => Promise<void>
-  }
-}*/
-
 export class Blockchain extends Plugin {
   active: boolean
   event: EventManager
