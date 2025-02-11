@@ -6,11 +6,13 @@ import EventEmitter from 'events'
 */
 
 class SwitchBrowserTab extends EventEmitter {
-  command (this: NightwatchBrowser, index: number): NightwatchBrowser {
+  command(this: NightwatchBrowser, index: number): NightwatchBrowser {
     this.api.perform((browser: NightwatchAPI, done) => {
       browser.windowHandles((result) => {
         console.log('switching to window', result)
-        browser.switchWindow(result.value[index])
+        if (Array.isArray(result.value)) {
+          browser.switchWindow(result.value[result.value[index] ? index : 0])
+        }
         done()
       })
       this.emit('complete')
