@@ -9,10 +9,7 @@ class HidePopupPanel extends EventEmitter {
           return localStorage.getItem('did_show_popup_panel')
         }, [], function (result) {
           if (!result.value) {
-
-            browser.
-            saveScreenshot('./reports/screenshots/hidePopupPanel.png')
-            .waitForElementVisible('*[data-id="popupPanelToggle"]')
+            browser.waitForElementVisible('*[data-id="popupPanelToggle"]')
             .click('*[data-id="popupPanelToggle"]')
           }
           done()
