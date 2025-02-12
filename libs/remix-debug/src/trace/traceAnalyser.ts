@@ -113,7 +113,7 @@ export class TraceAnalyser {
       this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
     } else if (traceHelper.isRevertInstruction(step)) {
       context.storageContext.pop()
-      this.traceCache.resetStoreChanges()
+      // this.traceCache.resetStoreChanges() we need to keep the storage changes to show in the GUI
     }
     return context
   }
