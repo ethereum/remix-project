@@ -106,7 +106,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
-        _paq.push(['trackEvent', 'ai', 'remixAI', this.task])
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText,
           range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
