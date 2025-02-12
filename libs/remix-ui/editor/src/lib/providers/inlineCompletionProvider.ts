@@ -162,7 +162,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     let clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
-      console.log("clean starts with comment")
       return ""
     }
 
