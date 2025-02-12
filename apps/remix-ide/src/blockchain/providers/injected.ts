@@ -43,6 +43,7 @@ export class InjectedProvider {
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
       message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
+      // see https://docs.metamask.io/wallet/reference/json-rpc-methods/personal_sign/
       personal.sign(message, account, '')
         .then(signedData => cb(undefined, bytesToHex(messageHash), signedData))
         .catch(error => cb(error, bytesToHex(messageHash), undefined))
