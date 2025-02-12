@@ -230,7 +230,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          {(tabsState.currentExt === 'ts' || tabsState.currentExt === 'js') }
+          {(tabsState.currentExt === 'ts' || tabsState.currentExt === 'js') &&
           <CustomTooltip
             placement="bottom"
             tooltipId="overlay-tooltip-run-script-config"
@@ -246,7 +246,7 @@ export const TabsUI = (props: TabsUIProps) => {
               }}
             >
               <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button></CustomTooltip>
+            </button></CustomTooltip>}
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
