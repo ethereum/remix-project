@@ -55,24 +55,23 @@ export class CodeCompletionAgent {
   }
 
   async getDcocuments() {
-    const documents: Document[] = [];
-    const dirs = await this.props.call('fileManager', 'dirList', '/');
-    let c = 0;
-    for (const dir of dirs) {
-      const files = await this.props.call('fileManager', 'fileList', dir);
-      for (const file of files) {
-        const content = await this.props.call('fileManager', 'readFile', file);
-        // filter out any  SupportedFileExtensions
-        if (! Object.values(SupportedFileExtensions).some(ext => file.endsWith(ext))) continue;
+    try {
+      const documents: Document[] = [];
+      const jsonDirsContracts = await this.props.call('fileManager', 'copyFolderToJson', '/').then((res) => res.contracts);
+      let c = 0;
+      for (const file in jsonDirsContracts.children) {
+        if (!Object.values(SupportedFileExtensions).some(ext => file.endsWith(ext))) continue;
         documents.push({
           id: ++c,
           filename: file,
-          content: content,
-          identifier: c-1,
+          content: jsonDirsContracts.children[file].content,
+          identifier: c - 1,
         });
       }
+      return documents;
+    } catch (error) {
+      return [];
     }
-    return documents;
   }
 
   indexWorkspace() {
@@ -98,6 +97,7 @@ export class CodeCompletionAgent {
       if (!this.indexed.isIndexed) {
         await this.indexWorkspace();
       }
+
       const currentFile = await this.props.call('fileManager', 'getCurrentFile');
       const content = prompt;
       const searchResult = this.indexer.search(content)
