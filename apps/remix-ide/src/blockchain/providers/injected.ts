@@ -48,6 +48,6 @@ export class InjectedProvider {
         .catch(error => cb(error, bytesToHex(messageHash), undefined))
     } catch (e) {
       cb(e.message)
-    }    
+    }
   }
 }
