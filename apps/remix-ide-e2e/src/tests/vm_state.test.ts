@@ -89,6 +89,7 @@ const tests = {
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
       })
       // fork again this state
+      .clickLaunchIcon('udapp')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .click('input[data-id="modalDialogForkState"]')
