@@ -11,7 +11,6 @@ export interface RunTabProps {
   initialState?: RunTabState
 }
 
-
 export interface Contract {
   name: string,
   alias: string,
