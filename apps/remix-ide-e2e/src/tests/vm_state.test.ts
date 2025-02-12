@@ -96,7 +96,12 @@ const tests = {
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       // load the previous contract
-      .addAtAddressInstance(contractAddress, false, false, false)
+      .clickLaunchIcon('filePanel')
+      .openFile('contracts/1_Storage.sol')
+      .perform((done) => {
+        browser.addAtAddressInstance(contractAddress, false, false, false)
+        .perform(() => done())
+      })
       .clickInstance(0)
       // check that the state is loaded
       .clickFunction('retrieve - call')
@@ -118,7 +123,12 @@ const tests = {
         })
       // switch back to the previous state and check the value hasn't changed.
       .switchWorkspace('forkedState_1')
-      .addAtAddressInstance(contractAddress, false, false, false)
+      .clickLaunchIcon('filePanel')
+      .openFile('contracts/1_Storage.sol')
+      .perform((done) => {
+        browser.addAtAddressInstance(contractAddress, false, false, false)
+        .perform(() => done())
+      })
       .clickInstance(0)
       .clickFunction('retrieve - call')
       .testFunction('last',
