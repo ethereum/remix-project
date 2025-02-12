@@ -74,6 +74,30 @@ export class CodeCompletionAgent {
     }
   }
 
+  async getLocalImports(fileContent: string, currentFile: string) {
+    try {
+      const lines = fileContent.split('\n');
+      const imports = [];
+
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('import')) {
+          const parts = trimmedLine.split(' ');
+          if (parts.length >= 2) {
+            const importPath = parts[1].replace(/['";]/g, '');
+            imports.push(importPath);
+          }
+        }
+      }
+      // Only local imports are those files that are in the workspace
+      const localImports = this.Documents.length >0 ? imports.filter((imp) => {return this.Documents.find((doc) => doc.filename === imp);}) : [];
+
+      return localImports;
+    } catch (error) {
+      return [];
+    }
+  }
+
   indexWorkspace() {
     this.getDcocuments().then((documents) => {
       this.indexer =lunr(function () {
@@ -131,6 +155,14 @@ export class CodeCompletionAgent {
       const currentContent = await this.props.call('fileManager', 'readFile', document.filename);
       return { file: document.filename, content: currentContent };
     });
+
+    const localImports = await this.getLocalImports(await this.props.call('fileManager', 'readFile', currentFile), currentFile);
+    // check if the local import is in fileContentPairs file
+    for (const li of localImports) {
+      if (fileContentPairs.find(fcp => fcp.file === li)) continue;
+      const currentContent = await this.props.call('fileManager', 'readFile', li);
+      fileContentPairs.push({ file: li, content: currentContent });
+    }
     return fileContentPairs;
   }
 
