@@ -64,7 +64,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const forkState = async () => {
     _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
-    const context = currentProvider.name
+    let context = currentProvider.name
+    context = context.replace('vm-fs-', '')
     vmStateName.current = `${context}_${Date.now()}`
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', currentProvider.config.statePath)
     if (contextExists) {
