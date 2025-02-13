@@ -10,7 +10,7 @@ import { VMProvider } from './providers/vm'
 import { InjectedProvider } from './providers/injected'
 import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
-import { etherScanLink } from './helper'
+import { etherScanLink, getBlockScoutUrl } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from '@remix-ui/helper'
 import { Provider } from '@remix-ui/environment-explorer'
 
@@ -730,19 +730,34 @@ export class Blockchain extends Plugin {
     )
 
     web3Runner.event.register('transactionBroadcasted', (txhash) => {
-      this.executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork(async (error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
         const viewEtherScanLink = etherScanLink(network.name, txhash)
-
+        const viewBlockScoutLink = await getBlockScoutUrl(network.id, txhash)
         if (viewEtherScanLink) {
-          this.call(
-            'terminal',
-            'logHtml',
-            <a href={etherScanLink(network.name, txhash)} target="_blank">
-              view on etherscan
-            </a>
-          )
+          if (viewBlockScoutLink) {
+            this.call(
+              'terminal',
+              'logHtml',
+              <div className="flex flex-row">
+                <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
+                  view on Etherscan
+                </a>
+                <a href={viewBlockScoutLink} target="_blank">
+                  view on Blockscout
+                </a>
+              </div>
+            )
+          } else {
+            this.call(
+              'terminal',
+              'logHtml',
+              <a href={etherScanLink(network.name, txhash)} target="_blank">
+                view on Etherscan
+              </a>
+            )
+          }
         }
       })
     })
