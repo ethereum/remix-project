@@ -375,7 +375,7 @@ export const isValidContractAddress = async (plugin: RunTab, address: string) =>
 
 export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const network = plugin.blockchain.networkStatus.network
-  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const identifier = network.name.startsWith('vm') ? 'VM' : network.name === 'custom' ? network.name + '-' + network.id : network.name
   const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
 
   if (networkDeploymentsExists) {
