@@ -740,14 +740,14 @@ export class Blockchain extends Plugin {
             this.call(
               'terminal',
               'logHtml',
-              <div className="flex flex-row">
+              <span className="flex flex-row">
                 <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
                   view on Etherscan
                 </a>
                 <a href={viewBlockScoutLink} target="_blank">
                   view on Blockscout
                 </a>
-              </div>
+              </span>
             )
           } else {
             this.call(
