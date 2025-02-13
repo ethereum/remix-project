@@ -99,7 +99,7 @@ const tests = {
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
       .perform((done) => {
-        browser.addAtAddressInstance(contractAddress, true, false, false)
+        browser.addAtAddressInstance(contractAddress, true, true, false)
         .perform(() => done())
       })
       .clickInstance(0)
@@ -126,7 +126,7 @@ const tests = {
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
       .perform((done) => {
-        browser.addAtAddressInstance(contractAddress, true, false, false)
+        browser.addAtAddressInstance(contractAddress, true, true, false)
         .perform(() => done())
       })
       .clickInstance(0)
