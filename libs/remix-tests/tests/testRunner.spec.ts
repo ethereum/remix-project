@@ -362,7 +362,7 @@ describe('testRunner', function () {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'StringTest', filename: __dirname + '/examples_3/simple_string_test.sol' },
           { type: 'testPass', debugTxHash: '0x0f988e614ae6e9a5f560734e8b63f835de14460a5b797e16fa5c68091452d2c5', value: 'Initial value should be hello world', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' },
-          { type: 'testPass', debugTxHash: '0x713ec0ad3cd02ffcd64f54e45b4da5498983d18b5a696ea34e9fb5d01928cb3f', value: 'Value should not be hello wordl', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' }
+          { type: 'testPass', debugTxHash: '0x713ec0ad3cd02ffcd64f54e45b4da5498983d18b5a696ea34e9fb5d01928cb3f', value: 'Value should not be hello world', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' }
         ], ['time', 'web3'])
       })
     })
