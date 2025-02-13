@@ -39,7 +39,7 @@ export const setupEvents = (plugin: RunTab) => {
 
   plugin.blockchain.event.register('contextChanged', async (context) => {
     dispatch(resetProxyDeployments())
-    if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
+    getNetworkProxyAddresses(plugin, dispatch)
     if (context !== 'walletconnect') {
       (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
     }
