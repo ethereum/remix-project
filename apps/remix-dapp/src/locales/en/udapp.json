@@ -52,7 +52,7 @@
   "udapp.forkStateTitle": "Fork VM state",
   "udapp.forkStateLabel": "New environment name",
   "udapp.forkVmStateDesc1":"Forking state will create a new environment with same state as selected environment",
-  "udapp.forkVmStateDesc2":"New environment will be pinned, which can be unpinned or deleted using Envionment Explorer",
+  "udapp.forkVmStateDesc2":"New environment will be pinned, which can be unpinned or deleted using Environment Explorer",
   "udapp.fork": "Fork",
   "udapp.resetVmStateTitle": "Reset VM state",
   "udapp.resetVmStateDesc1": "Resetting the state of this VM will delete the associated transaction details in this Workspace.",
