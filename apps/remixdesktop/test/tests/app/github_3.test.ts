@@ -158,7 +158,7 @@ const tests = {
             browser.waitForElementVisible('*[data-id="remote-sync-origin"]')
                 .click('*[data-id="remote-sync-origin"]')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
-                .waitForElementNotPresent('*[data-id="loader-indicator"]')
+                .waitForElementNotVisible('*[data-id="loader-indicator"]')
                 .pause(2000)
                 .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
                     console.log('Number of branches elements:', (result.value as any).length);
