@@ -358,7 +358,6 @@ export const EditorUI = (props: EditorUIProps) => {
     })
     if (file.language === 'sol') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
-      console.log('monaco ref set to solidity')
     } else if (file.language === 'cairo') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
@@ -367,13 +366,11 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     } else if (file.language === 'circom') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
-      console.log('monaco ref set to circom')
     } else if (file.language === 'toml') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
     } else if (file.language === 'noir') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-noir')
     } else if (file.language === 'python') {
-      console.log('monaco ref set to vyper')
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-vyper')
     }
   }, [props.currentFile, props.isDiff])
