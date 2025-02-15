@@ -162,6 +162,7 @@ const tests = {
                 .saveScreenshot('./reports/screenshots/branches-panel2.png')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
                 .saveScreenshot('./reports/screenshots/branches-panel3.png')
+                .pause(20000)
                 .waitForElementNotPresent('*[data-id="loader-indicator"]')
                 .saveScreenshot('./reports/screenshots/branches-panel4.png')
                 .pause(2000)
