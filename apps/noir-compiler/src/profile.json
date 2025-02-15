@@ -8,7 +8,7 @@
   "canActivate": [],
   "url": "",
   "description": "Enables support for noir circuit compilation",
-  "icon": "assets/img/noir-icon.webp",
+  "icon": "assets/img/noir-icon12.webp",
   "location": "sidePanel",
   "documentation": "",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/noir-compiler",
