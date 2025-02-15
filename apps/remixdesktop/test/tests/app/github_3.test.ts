@@ -155,6 +155,9 @@ const tests = {
 
         if (useIsoGit) {
 
+            const branchSelector = '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]';
+            const minCount = branchCount
+
             browser
                 .saveScreenshot('./reports/screenshots/branches-panel.png')
                 .waitForElementVisible('*[data-id="remote-sync-origin"]')
@@ -162,15 +165,27 @@ const tests = {
                 .saveScreenshot('./reports/screenshots/branches-panel2.png')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
                 .saveScreenshot('./reports/screenshots/branches-panel3.png')
-                .pause(20000)
-                .saveScreenshot('./reports/screenshots/branches-panel4.png')
-                .waitForElementNotPresent('*[data-id="loader-indicator"]')
-                
-                .pause(2000)
-                .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
-                    console.log('Number of branches elements:', (result.value as any).length);
-                    browser.assert.ok((result.value as any).length > branchCount)
-                })
+
+            browser.perform(function (done) {
+                function checkElements() {
+                    browser.execute(
+                        function (xpath) {
+                            return document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+                        },
+                        [branchSelector],
+                        function (result) {
+                            if ((result.value as number) > minCount) {
+                                done();
+                            } else {
+                                browser.pause(1000); // Wait and check again
+                                checkElements();
+                            }
+                        }
+                    );
+                }
+
+                checkElements();
+            });
         } else {
             browser.waitForElementVisible('*[data-id="show-more-branches-on-remote"]')
                 .click('*[data-id="show-more-branches-on-remote"]')
