@@ -131,7 +131,7 @@ const tests = {
             .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
                 console.log('Number of commit-summary elements:', (result.value as any).length);
                 browser.assert.ok((result.value as any).length > commitCount)
-            })
+            }).pause(10000)
     },
     'load more branches from remote #group3': function (browser: NightwatchBrowser) {
 
