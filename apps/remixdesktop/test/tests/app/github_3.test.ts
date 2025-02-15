@@ -175,6 +175,8 @@ const tests = {
                         [branchSelector],
                         function (result) {
                             if ((result.value as number) > minCount) {
+                                console.log('Number of loaded branches elements:', result.value);
+                                browser.saveScreenshot('./reports/screenshots/branches-panel4.png')
                                 done();
                             } else {
                                 browser.pause(1000); // Wait and check again
