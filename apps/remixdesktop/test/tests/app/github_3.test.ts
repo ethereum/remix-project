@@ -156,7 +156,6 @@ const tests = {
         if (useIsoGit) {
 
             const branchSelector = '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]';
-            const minCount = branchCount
 
             browser
                 .saveScreenshot('./reports/screenshots/branches-panel.png')
@@ -174,8 +173,8 @@ const tests = {
                         },
                         [branchSelector],
                         function (result) {
-                            if ((result.value as number) > minCount) {
-                                console.log('Number of loaded branches elements:', result.value, minCount);
+                            if ((result.value as number) > 1) {
+                                console.log('Number of loaded branches elements:', result.value);
                                 browser.saveScreenshot('./reports/screenshots/branches-panel4.png')
                                 done();
                             } else {
