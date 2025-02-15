@@ -163,8 +163,9 @@ const tests = {
                 .waitForElementVisible('*[data-id="loader-indicator"]')
                 .saveScreenshot('./reports/screenshots/branches-panel3.png')
                 .pause(20000)
-                .waitForElementNotPresent('*[data-id="loader-indicator"]')
                 .saveScreenshot('./reports/screenshots/branches-panel4.png')
+                .waitForElementNotPresent('*[data-id="loader-indicator"]')
+                
                 .pause(2000)
                 .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
                     console.log('Number of branches elements:', (result.value as any).length);
