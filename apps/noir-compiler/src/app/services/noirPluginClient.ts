@@ -67,21 +67,23 @@ export class NoirPluginClient extends PluginClient {
       this.call('terminal', 'log', { type: 'log', value: 'Compiled successfully' })
     } catch (e) {
       const regex = /^\s*(\/[^:]+):(\d+):/gm;
+      const pathContent = await this.call('fileManager', 'readFile', path)
 
-      Array.from(e.message.matchAll(regex), (match) => {
+      const markers = Array.from(e.message.matchAll(regex), (match) => {
         const errorPath = match[1]
         const line = parseInt(match[2])
-        // @ts-ignore
-        this.call('editor', 'addErrorMarker', [{
+        const start = { line, column: 1 }
+        const end = { line, column: pathContent.split('\n')[line - 1].length + 1 }
+
+        return {
           message: e.message,
           severity: 'error',
-          position: {
-            start: { line, column: 1 },
-            end: { line, column: 1 }
-          },
+          position: { start, end },
           file: errorPath.slice(1)
-        }])
+        }
       })
+      // @ts-ignore
+      await this.call('editor', 'addErrorMarker', markers)
       this.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
       this.internalEvents.emit('noir_compiling_errored', e)
       console.error(e)
