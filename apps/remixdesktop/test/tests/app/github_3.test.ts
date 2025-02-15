@@ -145,7 +145,7 @@ const tests = {
                 console.log('Number of branches elements:', (result.value as any).length);
                 if (useIsoGit) {
                     branchCount = (result.value as any).length
-                    browser.assert.ok((result.value as any).length == 1).saveScreenshot('./reports/screenshots/branches-panel0.png')
+                    browser.assert.ok((result.value as any).length == 1)
                 } else {
                     branchCount = (result.value as any).length
                     browser.assert.ok((result.value as any).length > 2)
@@ -158,12 +158,9 @@ const tests = {
             const branchSelector = '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]';
 
             browser
-                .saveScreenshot('./reports/screenshots/branches-panel.png')
                 .waitForElementVisible('*[data-id="remote-sync-origin"]')
                 .click('*[data-id="remote-sync-origin"]')
-                .saveScreenshot('./reports/screenshots/branches-panel2.png')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
-                .saveScreenshot('./reports/screenshots/branches-panel3.png')
 
             browser.perform(function (done) {
                 function checkElements() {
@@ -175,7 +172,6 @@ const tests = {
                         function (result) {
                             if ((result.value as number) > 1) {
                                 console.log('Number of loaded branches elements:', result.value);
-                                browser.saveScreenshot('./reports/screenshots/branches-panel4.png')
                                 done();
                             } else {
                                 browser.pause(1000); // Wait and check again
