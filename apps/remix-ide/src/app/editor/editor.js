@@ -512,7 +512,6 @@ export default class Editor extends Plugin {
 
   // error markers
   async addErrorMarker (error){
-    console.log('called addErrorMarker ', error)
     const { from } = this.currentRequest
     this.api.addErrorMarker(error, from)
   }
