@@ -145,7 +145,7 @@ const tests = {
                 console.log('Number of branches elements:', (result.value as any).length);
                 if (useIsoGit) {
                     branchCount = (result.value as any).length
-                    browser.assert.ok((result.value as any).length == 1)
+                    browser.assert.ok((result.value as any).length == 1).saveScreenshot('./reports/screenshots/branches-panel0.png')
                 } else {
                     branchCount = (result.value as any).length
                     browser.assert.ok((result.value as any).length > 2)
@@ -155,10 +155,15 @@ const tests = {
 
         if (useIsoGit) {
 
-            browser.waitForElementVisible('*[data-id="remote-sync-origin"]')
+            browser
+                .saveScreenshot('./reports/screenshots/branches-panel.png')
+                .waitForElementVisible('*[data-id="remote-sync-origin"]')
                 .click('*[data-id="remote-sync-origin"]')
+                .saveScreenshot('./reports/screenshots/branches-panel2.png')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
+                .saveScreenshot('./reports/screenshots/branches-panel3.png')
                 .waitForElementNotPresent('*[data-id="loader-indicator"]')
+                .saveScreenshot('./reports/screenshots/branches-panel4.png')
                 .pause(2000)
                 .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
                     console.log('Number of branches elements:', (result.value as any).length);
