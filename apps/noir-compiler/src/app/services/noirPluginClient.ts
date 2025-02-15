@@ -65,6 +65,8 @@ export class NoirPluginClient extends PluginClient {
       this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiled successfully' })
+      // @ts-ignore
+      await this.call('editor', 'clearErrorMarkers', [path])
     } catch (e) {
       const regex = /^\s*(\/[^:]+):(\d+):/gm;
       const pathContent = await this.call('fileManager', 'readFile', path)

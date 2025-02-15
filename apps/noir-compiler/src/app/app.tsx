@@ -40,7 +40,7 @@ function App() {
       // noir compiling events
       plugin.internalEvents.on('noir_compiling_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
       plugin.internalEvents.on('noir_compiling_done', () => {
-        dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+        dispatch({ type: 'SET_COMPILER_STATUS', payload: 'succeed' })
         dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
       })
       plugin.internalEvents.on('noir_compiling_errored', noirCompilerErrored)
