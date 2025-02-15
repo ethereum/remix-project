@@ -5,6 +5,7 @@ import { faCaretDown, faCaretRight, faCheck, faExclamationCircle, faRedoAlt, faT
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomScriptRunner } from "./custom-script-runner";
 import { CustomTooltip } from "@remix-ui/helper";
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 export interface ScriptRunnerUIProps {
   loadScriptRunner: (config: ProjectConfiguration) => void;
@@ -62,12 +63,18 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
 
                 </div>}
                 {!config.isLoading && config.errorStatus && config.error &&
-                  <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
+                  <div
+                    onClick={() => {
+                      loadScriptRunner(config)
+                      _paq.push(['trackEvent', 'scriptRunnerPlugin', 'loadScriptRunnerConfig', config.name])
+                    }}
+                    className="pointer px-2"
+                  >
                     <FontAwesomeIcon data-id={`sr-reload-${config.name}`} icon={faRedoAlt}></FontAwesomeIcon>
                   </div>}
                 {!config.isLoading && !config.errorStatus && !config.error &&
                   <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
-                    {activeConfig && activeConfig.name !== config.name ?
+                    { activeConfig && activeConfig.name !== config.name ?
                       <FontAwesomeIcon data-id={`sr-toggle-${config.name}`} icon={faToggleOn}></FontAwesomeIcon> :
                       <FontAwesomeIcon data-id={`sr-loaded-${config.name}`} className="text-success" icon={faCheck}></FontAwesomeIcon>
                     }
@@ -87,7 +94,9 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                     </li>
                   ))}
                 </ul></>
-            </Accordion.Collapse></div>))}
+            </Accordion.Collapse>
+          </div>))
+        }
       </Accordion>
       {enableCustomScriptRunner &&
         <CustomScriptRunner
@@ -98,6 +107,6 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
           publishedConfigurations={configurations.filter((config) => config.publish)}
         />}
     </div>
-  );
-};
+  )
+}
 

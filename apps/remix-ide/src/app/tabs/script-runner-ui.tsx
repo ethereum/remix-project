@@ -56,6 +56,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     })
   }
 
+
   async activateCustomScriptRunner(config: customScriptRunnerConfig) {
     this.bridge.activateCustomScriptRunner(config)
   }
