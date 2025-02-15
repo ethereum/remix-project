@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import { Dispatch } from 'react'
 import type { NoirPluginClient } from '../services/noirPluginClient'
 
-export type CompilerStatus = "compiling" | "idle" | "errored" | "warning"
+export type CompilerStatus = "compiling" | "idle" | "errored" | "warning" | "succeed"
 export interface INoirAppContext {
   appState: AppState
   dispatch: Dispatch<Actions>,

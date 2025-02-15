@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { CompileBtn, CompilerFeedback, CompilerReport, CustomTooltip, RenderIf } from '@remix-ui/helper'
+import { CompileBtn, CompilerFeedback, CompilerReport, CustomTooltip, extractNameFromKey, extractParentFromKey, RenderIf } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import { NoirAppContext } from '../contexts'
 import { CompileOptions } from '@remix-ui/helper'
@@ -37,6 +37,11 @@ export function Container () {
     compileNoirCircuit(noirApp.plugin, noirApp.appState)
   }
 
+  const handleViewProgramArtefact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    noirApp.plugin.call('fileManager', 'open', `${extractParentFromKey(noirApp.appState.filePath)}/build/${extractNameFromKey(noirApp.appState.filePath).replace('.nr', '.json')}`)
+  }
+
   return (
     <section>
       <article>
@@ -59,6 +64,11 @@ export function Container () {
             </div>
             <RenderIf condition={noirApp.appState.status !== 'compiling'}>
               <CompilerFeedback feedback={noirApp.appState.compilerFeedback} filePathToId={noirApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={noirApp.appState.hideWarnings} askGPT={askGPT} />
+            </RenderIf>
+            <RenderIf condition={noirApp.appState.status === 'succeed'}>
+              <a className="cursor-pointer text-decoration-none" href='#' onClick={handleViewProgramArtefact}>
+                <i className="text-success mt-1 px-1 fas fa-check"></i> View compiled noir program artefact.
+              </a>
             </RenderIf>
           </div>
         </div>
