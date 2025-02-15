@@ -117,7 +117,7 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
     const r1csBuffer = await plugin.call('fileManager', 'readFile', r1csPath, { encoding: null })
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer)
-    const wtnsPath = isElectron() ? extractParentFromKey(appState.filePath) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn') : r1csPath.replace('.r1cs', '.wtn')
+    const wtnsPath = extractParentFromKey(appState.filePath) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn')
     // @ts-ignore
     const wtnsBuffer = await plugin.call('fileManager', 'readFile', wtnsPath, { encoding: null })
     // @ts-ignore
