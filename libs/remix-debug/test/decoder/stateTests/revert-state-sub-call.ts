@@ -106,18 +106,18 @@ function testRevertStateSubCall (st, privateKey, contractAddress, output, compil
                     // in the other sub call, the value is reverted
                     st.equal(result['p'].value, '0')
                     stateDecoder.decodeState(stateVars, storageViewerOtherContract3).then((result) => {
-                        // and reset back to 234
-                        st.equal(result['p'].value, '234')
-                        cb()
-                      }, (reason) => {
-                        console.log('fail')
-                        st.end(reason)
-                      })
+                      // and reset back to 234
+                      st.equal(result['p'].value, '234')
+                      cb()
+                    }, (reason) => {
+                      console.log('fail')
+                      st.end(reason)
                     })
-                  }, (reason) => {
-                    console.log('fail')
-                    st.end(reason)
                   })
+                }, (reason) => {
+                  console.log('fail')
+                  st.end(reason)
+                })
               })
             }, (reason) => {
               console.log('fail')
