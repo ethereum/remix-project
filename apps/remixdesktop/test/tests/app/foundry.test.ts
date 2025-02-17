@@ -89,7 +89,7 @@ async function installFoundry(): Promise<void> {
             server.stdout.on('data', function (data) {
                 console.log(data.toString())
                 if (
-                    data.toString().includes("foundryup: use - chisel 0.3.0")
+                    data.toString().includes("foundryup: use - chisel 1.0.0-stable")
                 ) {
                     console.log('resolving')
                     resolve()
