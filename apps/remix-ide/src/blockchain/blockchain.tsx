@@ -736,28 +736,28 @@ export class Blockchain extends Plugin {
         const viewEtherScanLink = etherScanLink(network.name, txhash)
         const viewBlockScoutLink = await getBlockScoutUrl(network.id, txhash)
         if (viewEtherScanLink) {
-          if (viewBlockScoutLink) {
-            this.call(
-              'terminal',
-              'logHtml',
-              <span className="flex flex-row">
-                <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
+          this.call(
+            'terminal',
+            'logHtml',
+            <span className="flex flex-row">
+              <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
                   view on Etherscan
-                </a>
-                <a href={viewBlockScoutLink} target="_blank">
-                  view on Blockscout
-                </a>
-              </span>
-            )
-          } else {
-            this.call(
-              'terminal',
-              'logHtml',
-              <a href={etherScanLink(network.name, txhash)} target="_blank">
-                view on Etherscan
               </a>
-            )
-          }
+              {viewBlockScoutLink && <a href={viewBlockScoutLink} target="_blank">
+                  view on Blockscout
+              </a>}
+            </span>
+          )
+        } else {
+          this.call(
+            'terminal',
+            'logHtml',
+            <span className="flex flex-row">
+              {viewBlockScoutLink && <a href={viewBlockScoutLink} target="_blank">
+                  view on Blockscout
+              </a>}
+            </span>
+          )
         }
       })
     })
