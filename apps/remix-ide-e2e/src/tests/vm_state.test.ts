@@ -88,12 +88,12 @@ const tests = {
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
       })
-      // fork again this state. The name of the new forked state will be forkedState_2
+      // fork again this state. The name of the new forked state will be sub_forkedState_2
       .clickLaunchIcon('udapp')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .click('input[data-id="modalDialogForkState"]')
-      .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
+      .setValue('input[data-id="modalDialogForkState"]', 'sub_forkedState_2')
       .modalFooterOKClick('udappNotify')
       // load the previous contract
       .clickLaunchIcon('filePanel')
@@ -116,14 +116,14 @@ const tests = {
           status: '0x1 Transaction mined and execution succeed',
           'decoded input': { 'uint256 num': '57' }
         })
+      .clearConsole()
       .clickFunction('retrieve - call')
       .testFunction('last',
         {
           'decoded output': { '0': 'uint256: 57' }
         })
       // switch back to the previous state and check the value hasn't changed.
-      .clickLaunchIcon('filePanel')
-      .switchWorkspace('forkedState_1')
+      .switchEnvironment('vm-fs-forkedState_1')
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
       .perform((done) => {
@@ -131,11 +131,13 @@ const tests = {
         .perform(() => done())
       })
       .clickInstance(0)
+      .clearConsole()
       .clickFunction('retrieve - call')
       .testFunction('last',
         {
           'decoded output': { '0': 'uint256: 55' }
         })
+      .clickLaunchIcon('filePanel')
   },
   'Should show fork states provider in environment explorer & make txs using forked state #group1': function (browser: NightwatchBrowser) {
     browser
