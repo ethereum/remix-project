@@ -81,43 +81,43 @@ function testRevertStateSubCall (st, privateKey, contractAddress, output, compil
               stateDecoder.decodeState(stateVarsMyContract, storageViewerMyContract).then((result) => {
                 const contractAddressOtherContract = result['myCall'].value
                 const storageViewerOtherContract1 = new StorageViewer({
-                    stepIndex: 300,
-                    tx: tx,
-                    address: contractAddressOtherContract
+                  stepIndex: 300,
+                  tx: tx,
+                  address: contractAddressOtherContract
                 }, new StorageResolver({ web3 }), traceManager)
 
                 const storageViewerOtherContract2 = new StorageViewer({
-                    stepIndex: 550,
-                    tx: tx,
-                    address: contractAddressOtherContract
+                  stepIndex: 550,
+                  tx: tx,
+                  address: contractAddressOtherContract
                 }, new StorageResolver({ web3 }), traceManager)
 
                 const storageViewerOtherContract3 = new StorageViewer({
-                    stepIndex: 556,
-                    tx: tx,
-                    address: contractAddressOtherContract
+                  stepIndex: 556,
+                  tx: tx,
+                  address: contractAddressOtherContract
                 }, new StorageResolver({ web3 }), traceManager)
                 
                 const stateVars = stateDecoder.extractStateVariables('OtherContract', output.sources)
                 stateDecoder.decodeState(stateVars, storageViewerOtherContract1).then((result) => {
-                    // value should be set
-                    st.equal(result['p'].value, '234')
-                    stateDecoder.decodeState(stateVars, storageViewerOtherContract2).then((result) => {
-                        // in the other sub call, the value is reverted
-                        st.equal(result['p'].value, '0')
-                        stateDecoder.decodeState(stateVars, storageViewerOtherContract3).then((result) => {
-                            // and reset back to 234
-                            st.equal(result['p'].value, '234')
-                            cb()
-                          }, (reason) => {
-                            console.log('fail')
-                            st.end(reason)
-                          })
+                  // value should be set
+                  st.equal(result['p'].value, '234')
+                  stateDecoder.decodeState(stateVars, storageViewerOtherContract2).then((result) => {
+                      // in the other sub call, the value is reverted
+                      st.equal(result['p'].value, '0')
+                      stateDecoder.decodeState(stateVars, storageViewerOtherContract3).then((result) => {
+                          // and reset back to 234
+                          st.equal(result['p'].value, '234')
+                          cb()
+                        }, (reason) => {
+                          console.log('fail')
+                          st.end(reason)
                         })
-                      }, (reason) => {
-                        console.log('fail')
-                        st.end(reason)
                       })
+                    }, (reason) => {
+                      console.log('fail')
+                      st.end(reason)
+                    })
               })              
             }, (reason) => {
                 console.log('fail')
