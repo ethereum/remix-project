@@ -88,7 +88,7 @@ const tests = {
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
       })
-      // fork again this state
+      // fork again this state. The name of the new forked state will be forkedState_2
       .clickLaunchIcon('udapp')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
@@ -103,13 +103,13 @@ const tests = {
         .perform(() => done())
       })
       .clickInstance(0)
-      // check that the state is loaded
+      // check that the state is correct
       .clickFunction('retrieve - call')
       .testFunction('last',
         {
           'decoded output': { '0': 'uint256: 55' }
         })
-      // update the state
+      // update the state and check it's correctly applied
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"57"' })
       .testFunction('last',
         {
@@ -122,6 +122,7 @@ const tests = {
           'decoded output': { '0': 'uint256: 57' }
         })
       // switch back to the previous state and check the value hasn't changed.
+      .clickLaunchIcon('filePanel')
       .switchWorkspace('forkedState_1')
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
