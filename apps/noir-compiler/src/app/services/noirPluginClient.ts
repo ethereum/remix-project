@@ -85,7 +85,7 @@ export class NoirPluginClient extends PluginClient {
       })
       // @ts-ignore
       await this.call('editor', 'addErrorMarker', markers)
-      this.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
+      this.emit('statusChanged', { key: markers.length, title: e.message, type: 'error' })
       this.internalEvents.emit('noir_compiling_errored', e)
       console.error(e)
     }
