@@ -199,8 +199,10 @@ const sources = [
   },
   {
     'Untitled10.sol': { content: 'pragma solidity ^0.8.0; import "@module_remapping/token/ERC20/ERC20.sol"; contract test15 {}' },
-    'package.json': { content: `"dependencies": {
+    'package.json': { content: `{
+    "dependencies": {
       "@module_remapping": "npm:@openzeppelin/contracts@^4.9.0"
-  },` }
+  }
+}` }
   }
 ]
