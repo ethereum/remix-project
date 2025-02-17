@@ -1123,13 +1123,7 @@ export function Workspace() {
                         >
                           {currentWorkspace === LOCALHOST ? (
                             <span>&#10003; Connected to Local Filesystem </span>
-                          ) : (
-                            // <span className="pl-3">
-                            //   {' '}
-                            //   <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
-                            // </span>
-                            null
-                          )}
+                          ) : null}
                         </Dropdown.Item>}
                         <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
