@@ -8,7 +8,6 @@ const testMappingStorage = require('./stateTests/mapping')
 const testRevertState = require('./stateTests/revert-state')
 const testRevertStateSubCall = require('./stateTests/revert-state-sub-call')
 
-
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
     console.log('test int storage')
@@ -21,7 +20,7 @@ tape('solidity', function (t) {
           testMappingStorage(st, function () {
             console.log('test revert state')
             testRevertState(st, function () {
-              console.log('test revert state sub call') 
+              console.log('test revert state sub call')
               testRevertStateSubCall(st, function () {
                 st.end()
               })
