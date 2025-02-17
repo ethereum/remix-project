@@ -2,14 +2,22 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-module.exports = {
+const tests = {
 
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
+    'Should activate plugins': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+            .waitForElementVisible('*[plugin="pluginManager"]')
+            .click('*[plugin="pluginManager"]')
+            .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+            .click('*[data-id="pluginManagerComponentPluginManager"]')
+            .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
+    },
     'Should load default script runner': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('scriptRunnerBridge')
             .waitForElementVisible('[data-id="sr-loaded-default"]')
             .waitForElementVisible('[data-id="dependency-ethers-^5"]')
             .waitForElementVisible('[data-id="sr-toggle-ethers6"]')
@@ -57,20 +65,35 @@ module.exports = {
             .waitForElementPresent('*[data-id="create-semaphore"]')
             .scrollAndClick('*[data-id="create-semaphore"]')
             .modalFooterOKClick('TemplatesSelection')
-            .clickLaunchIcon('scriptRunnerBridge')
+            .waitForElementVisible({
+                locateStrategy: 'xpath',
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+            })
+            .click({
+                locateStrategy: 'xpath',
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+            })
             .waitForElementVisible('[data-id="sr-loaded-default"]')
             .waitForElementVisible('[data-id="dependency-ethers-^5"]')
             .waitForElementVisible('[data-id="sr-toggle-ethers6"]')
     },
     'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('filePanel')
             .switchWorkspace('default_workspace')
-            .clickLaunchIcon('scriptRunnerBridge')
+            .waitForElementVisible({
+                locateStrategy: 'xpath',
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+            })
+            .click({
+                locateStrategy: 'xpath',
+                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+            })
             .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
             .waitForElementPresent('[data-id="dependency-ethers-^6"]')
     }
 }
+
+module.exports = tests
 
 
 const deployWithEthersJs = `
