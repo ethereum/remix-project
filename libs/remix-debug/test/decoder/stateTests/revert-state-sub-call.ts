@@ -118,7 +118,7 @@ function testRevertStateSubCall (st, privateKey, contractAddress, output, compil
                     console.log('fail')
                     st.end(reason)
                   })
-              })              
+              })
             }, (reason) => {
               console.log('fail')
               st.end(reason)
