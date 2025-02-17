@@ -1116,7 +1116,7 @@ export function Workspace() {
                         {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                        <Dropdown.Item
+                        {currentWorkspace === LOCALHOST && <Dropdown.Item
                           onClick={() => {
                             switchWorkspace(LOCALHOST)
                           }}
@@ -1130,7 +1130,7 @@ export function Workspace() {
                             // </span>
                             null
                           )}
-                        </Dropdown.Item>
+                        </Dropdown.Item>}
                         <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
                           <Dropdown.Item
