@@ -5,6 +5,7 @@ import { faCaretDown, faCaretRight, faCheck, faExclamationCircle, faRedoAlt, faT
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomScriptRunner } from "./custom-script-runner";
 import { CustomTooltip } from "@remix-ui/helper";
+import ConfigSection from "./components/config-section";
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 export interface ScriptRunnerUIProps {
@@ -33,8 +34,25 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   }
 
   return (
-    <div className="px-1 pt-2">
-      <Accordion activeKey={activeKey} defaultActiveKey="default">
+    <div className="px-5">
+      <div className="d-flex flex-column justify-content-between mt-4">
+        <div className="text-uppercase mb-3 text-dark h2" style={{ fontSize: 'x-large' }}>script configuration</div>
+        <div className="text-uppercase text-dark h3" style={{ fontSize: 'large' }}>choose a specific configuration for your script</div>
+      </div>
+      <div className="mt-5 d-flex flex-column gap-3 mb-4">
+        {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
+          <ConfigSection
+            activeKey={activeKey}
+            setActiveKey={setActiveKey}
+            config={config}
+            key={index}
+            loadScriptRunner={loadScriptRunner}
+            _paq={_paq}
+            activeConfig={activeConfig}
+          />
+        ))}
+      </div>
+      {/* <Accordion activeKey={activeKey} defaultActiveKey="default">
         {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
           <div key={index}>
             <div className="d-flex align-items-baseline justify-content-between">
@@ -97,7 +115,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
             </Accordion.Collapse>
           </div>))
         }
-      </Accordion>
+      </Accordion> */}
       {enableCustomScriptRunner &&
         <CustomScriptRunner
           customConfig={props.customConfig}
