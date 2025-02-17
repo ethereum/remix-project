@@ -7,7 +7,7 @@ import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
 import pathModule from 'path'
 import { DEFAULT_TOML_CONFIG } from '../actions/constants'
 import NoirParser from './noirParser'
-import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
+import { extractNameFromKey } from '@remix-ui/helper'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
   public fm: FileManager
@@ -56,9 +56,8 @@ export class NoirPluginClient extends PluginClient {
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
       await this.setupNargoToml()
       const program = await compile_program(this.fm, null, this.logFn.bind(this), this.debugFn.bind(this))
-      const dir = extractParentFromKey(path)
       const filename = extractNameFromKey(path)
-      const outputPath = `${dir}/build/${filename.replace('.nr', '.json')}`
+      const outputPath = `build/${filename.replace('.nr', '.json')}`
 
       this.call('fileManager', 'writeFile', outputPath, JSON.stringify(program, null, 2))
       this.internalEvents.emit('noir_compiling_done')

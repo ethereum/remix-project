@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { CompileBtn, CompilerFeedback, CompilerReport, CustomTooltip, extractNameFromKey, extractParentFromKey, RenderIf } from '@remix-ui/helper'
+import { CompileBtn, CompilerFeedback, CompilerReport, CustomTooltip, extractNameFromKey, RenderIf } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import { NoirAppContext } from '../contexts'
 import { CompileOptions } from '@remix-ui/helper'
@@ -39,7 +39,7 @@ export function Container () {
 
   const handleViewProgramArtefact = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    noirApp.plugin.call('fileManager', 'open', `${extractParentFromKey(noirApp.appState.filePath)}/build/${extractNameFromKey(noirApp.appState.filePath).replace('.nr', '.json')}`)
+    noirApp.plugin.call('fileManager', 'open', `build/${extractNameFromKey(noirApp.appState.filePath).replace('.nr', '.json')}`)
   }
 
   return (
