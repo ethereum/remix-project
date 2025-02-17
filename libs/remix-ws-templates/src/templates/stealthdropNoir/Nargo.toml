@@ -1,8 +1,7 @@
 [package]
 name = "stealthdrop"
-type = "bin"
 authors = [""]
-compiler_version = "0.16.0"
+compiler_version = ">=0.18.0"
+type = "bin"
 
 [dependencies]
-ecrecover = {tag = "v0.16.1", git = "https://github.com/signorecello/ecrecover-noir.git"}

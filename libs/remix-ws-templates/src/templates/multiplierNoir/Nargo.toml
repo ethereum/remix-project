@@ -1,5 +1,5 @@
 [package]
-name = "test"
+name = "multiplier"
 authors = [""]
 compiler_version = ">=0.18.0"
 type = "bin"
