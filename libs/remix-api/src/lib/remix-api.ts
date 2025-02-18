@@ -41,5 +41,4 @@ export interface ICustomRemixApi extends IRemixApi {
   remixAID: IRemixAID
 }
 
-
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>
