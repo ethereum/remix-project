@@ -5,6 +5,7 @@ import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
 import { Registry } from '@remix-project/remix-lib'
+import { Parser } from "@nomicfoundation/slang";
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -62,6 +63,7 @@ export default class CodeParserAntlrService {
             blocks: ev.data.blocks,
             blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserThresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
           }
+          console.log('parsed', self.cache[ev.data.file])
           self.setFileParsingState(ev.data.file)
         }
         break;
@@ -98,6 +100,7 @@ export default class CodeParserAntlrService {
   }
 
   async parseWithWorker(text: string, file: string) {
+    console.log('parseWithWorker', text, file)
     this.parserStartTime = Date.now()
     this.worker.postMessage({
       cmd: 'parse',
