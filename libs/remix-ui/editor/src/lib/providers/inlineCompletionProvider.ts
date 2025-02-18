@@ -106,7 +106,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
-        _paq.push(['trackEvent', 'ai', 'remixAI', this.task])
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText,
           range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
@@ -163,7 +162,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     let clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
-      console.log("clean starts with comment")
       return ""
     }
 
