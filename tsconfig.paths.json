@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "paths": {
+            "@nomicfoundation/slang": ["node_modules/@nomicfoundation/slang/target/generated/index.d.mts"],
             "@remix-project/core-plugin": [
               "libs/remix-core-plugin/src/index.ts"
             ],

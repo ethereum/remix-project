@@ -5,7 +5,7 @@ import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
 import { Registry } from '@remix-project/remix-lib'
-import { Parser } from "@nomicfoundation/slang";
+import * as slang from "@nomicfoundation/slang";
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -101,6 +101,11 @@ export default class CodeParserAntlrService {
 
   async parseWithWorker(text: string, file: string) {
     console.log('parseWithWorker', text, file)
+    const slp = slang.parser.Parser.create("0.8.22");
+    console.log('slp', slp);
+    const output = slp.parseFileContents(text);
+    console.log('output', output);
+    
     this.parserStartTime = Date.now()
     this.worker.postMessage({
       cmd: 'parse',
