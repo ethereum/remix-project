@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { EnvironmentProps, Provider } from '../types'
+import { EnvironmentProps } from '../types'
+import { Provider } from '@remix-ui/environment-explorer'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
@@ -9,9 +10,9 @@ const _paq = (window._paq = window._paq || [])
 export function EnvironmentUI(props: EnvironmentProps) {
   const vmStateName = useRef('')
 
-  Object.entries(props.providers.providerList.filter((provider) => { return provider.isVM }))
-  Object.entries(props.providers.providerList.filter((provider) => { return provider.isInjected }))
-  Object.entries(props.providers.providerList.filter((provider) => { return !(provider.isVM || provider.isInjected) }))
+  Object.entries(props.providers.providerList.filter((provider) => { return provider.config.isVM }))
+  Object.entries(props.providers.providerList.filter((provider) => { return provider.config.isInjected }))
+  Object.entries(props.providers.providerList.filter((provider) => { return !(provider.config.isVM || provider.config.isInjected) }))
 
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find((exEnv) => exEnv.name === env)
@@ -63,26 +64,41 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const forkState = async () => {
     _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
+
+    let stateTemp = `.states/forked_states/state_temp.json`
+    let statePath = currentProvider.config.statePath
+    if (!statePath) {
+      // if the current provider doesn't have a saved state, we dump the current state from memory.
+      // state_temp.json is removed after the operation completes
+      const state = await props.runTabPlugin.blockchain.executionContext.getStateDetails()
+      statePath = stateTemp
+      await props.runTabPlugin.call('fileManager', 'writeFile', statePath, state)
+    }
+
     const context = currentProvider.name
     vmStateName.current = `${context}_${Date.now()}`
-    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', `.states/${context}/state.json`)
+    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', statePath)
     if (contextExists) {
       props.modal(
         intl.formatMessage({ id: 'udapp.forkStateTitle' }),
         forkStatePrompt(vmStateName.current),
         intl.formatMessage({ id: 'udapp.fork' }),
         async () => {
-          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', `.states/${context}/state.json`)
+          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', statePath)
           currentStateDb = JSON.parse(currentStateDb)
           currentStateDb.stateName = vmStateName.current
-          currentStateDb.forkName = currentProvider.fork
+          currentStateDb.forkName = currentProvider.config.fork
+          currentStateDb.nodeUrl = currentProvider.config.nodeUrl
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+          await props.runTabPlugin.call('fileManager', 'remove', stateTemp)
           _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),
-        null
+        () => {
+          props.runTabPlugin.call('fileManager', 'remove', stateTemp)
+        }
       )
     } else props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
   }
@@ -121,12 +137,12 @@ export function EnvironmentUI(props: EnvironmentProps) {
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel w-100">
         <FormattedMessage id="udapp.environment" />
-        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
+        { currentProvider && currentProvider.config.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
           <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
         </CustomTooltip> }
-        { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
+        { currentProvider && currentProvider.config.isVM && isSaveEvmStateChecked && !currentProvider.config.isVMStateForked && !currentProvider.config.isRpcForkedState && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
           <span onClick={resetVmState} style={{ cursor: 'pointer', float: 'right', textTransform: 'none' }}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-refresh" data-id="delete-state-icon"></i>
+            <i className="udapp_infoDeployAction ml-2 fas fa-refresh fa-solid fa-rotate-right" data-id="delete-state-icon"></i>
             <span className="ml-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
           </span>
         </CustomTooltip> }
@@ -155,7 +171,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 No provider pinned
               </span>
             </Dropdown.Item>}
-            { (props.providers.providerList.filter((provider) => { return provider.isInjected })).map(({ name, displayName }) => (
+            { (props.providers.providerList.filter((provider) => { return provider.config.isInjected })).map(({ name, displayName }) => (
               <Dropdown.Item
                 key={name}
                 onClick={async () => {
@@ -168,8 +184,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 </span>
               </Dropdown.Item>
             ))}
-            { props.providers.providerList.filter((provider) => { return provider.isInjected }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
-            { (props.providers.providerList.filter((provider) => { return provider.isVM })).map(({ displayName, name }) => (
+            { props.providers.providerList.filter((provider) => { return provider.config.isInjected }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+            { (props.providers.providerList.filter((provider) => { return provider.config.isVM })).map(({ displayName, name }) => (
               <Dropdown.Item
                 key={name}
                 onClick={() => {
@@ -182,8 +198,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 </span>
               </Dropdown.Item>
             ))}
-            { props.providers.providerList.filter((provider) => { return provider.isVM }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
-            { (props.providers.providerList.filter((provider) => { return !(provider.isVM || provider.isInjected) })).map(({ displayName, name }) => (
+            { props.providers.providerList.filter((provider) => { return provider.config.isVM }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+            { (props.providers.providerList.filter((provider) => { return !(provider.config.isVM || provider.config.isInjected) })).map(({ displayName, name }) => (
               <Dropdown.Item
                 key={name}
                 onClick={() => {
