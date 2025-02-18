@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
 import { Registry } from '@remix-project/remix-lib'
-import { IRemixAppManager, RemixNavigator } from './types'
+import { RemixNavigator } from './types'
 import { Profile } from '@remixproject/plugin-utils'
 
 const _paq = (window._paq = window._paq || [])
@@ -172,7 +172,15 @@ export function canActivate(from, to) {
   return ['ethdoc'].includes(from.name) || isNative(from.name) || (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
-export class RemixAppManager extends PluginManager {
+class BaseRemixAppManager extends PluginManager {
+  canDeactivate(from: Profile): Promise<boolean>;
+  canDeactivate(from: Profile, to: Profile): Promise<boolean>;
+  canDeactivate(from: Profile, to?: Profile): Promise<boolean> {
+    return this.canDeactivatePlugin(from, to)
+  }
+}
+
+export class RemixAppManager extends BaseRemixAppManager {
   actives = []
   pluginsDirectory: string
   event: EventEmitter
@@ -187,16 +195,16 @@ export class RemixAppManager extends PluginManager {
     }
   }
 
-  async canActivatePlugin(from, to) {
+  async canActivatePlugin (from, to) {
     return canActivate(from, to)
   }
 
-  async canDeactivatePlugin(from, to) {
+  async canDeactivatePlugin (from, to) {
     if (this.isRequired(to.name)) return false
     return isNative(from.name)
   }
-  //@ts-ignore - did this compensate for plugins calling this signature of canDeactivate which expects a profile
-  async canDeactivate (from, to) {
+
+  async canDeactivate (from: Profile<any>, to?: Profile<any>): Promise<boolean> {
     return this.canDeactivatePlugin(from, to)
   }
 

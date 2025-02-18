@@ -104,7 +104,7 @@ export default class PluginManagerComponent extends ViewPlugin {
   }
 
   renderComponent () {
-    if (this.dispatch) this.dispatch({ ...this, activePlugins: this.activePlugins, inactivePlugins: this.inactivePlugins }) // { PluginManagerComponent, activePlugins, inactivePlugins }
+    if (this.dispatch) this.dispatch({ ...this, activePlugins: this.activePlugins, inactivePlugins: this.inactivePlugins })
   }
 
   render () {
@@ -114,7 +114,7 @@ export default class PluginManagerComponent extends ViewPlugin {
 
   }
 
-  getAndFilterPlugins = (filter: string | never = '') => {
+  getAndFilterPlugins = (filter: string= '') => {
     this.filter = typeof filter === 'string' ? filter.toLowerCase() : this.filter
     const isFiltered = (profile) => (profile.displayName + profile.name + profile.description).toLowerCase().includes(this.filter)
     const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)

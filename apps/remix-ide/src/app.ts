@@ -204,7 +204,7 @@ class AppComponent {
     this.panels = {}
     this.workspace = pluginLoader.get()
     this.engine = new RemixEngine()
-    this.engine.register(appManager as unknown as Plugin)
+    this.engine.register(appManager)
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
