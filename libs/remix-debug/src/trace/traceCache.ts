@@ -142,7 +142,6 @@ export class TraceCache {
       if (sstore.address?.toLowerCase() === address?.toLowerCase() && sstore.key) {
         if (sstore.contextCall?.call?.return < index && sstore.contextCall?.call?.reverted) {
           // this is a previous call which has reverted. state changes aren't kept.
-          console.log('reverted state changes', changesIndex)
           continue
         } else {
           ret[sstore.hashedKey] = {
