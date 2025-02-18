@@ -111,12 +111,12 @@ export class RemixAIPlugin extends ViewPlugin {
   async code_completion(prompt: string, promptAfter: string): Promise<any> {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
-    const currentFile = await this.call('fileManager', 'getCurrentFile')
+    const currentFileName = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(prompt)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
+      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter, contextfiles, currentFileName)
     } else {
-      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFile)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFileName)
     }
   }
 
@@ -177,13 +177,13 @@ export class RemixAIPlugin extends ViewPlugin {
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
-    const currentFile = await this.call('fileManager', 'getCurrentFile')
+    const currentFileName = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(msg_pfx)
 
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx, contextfiles, currentFileName)
     } else {
-      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFile)
+      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFileName)
     }
   }
 
