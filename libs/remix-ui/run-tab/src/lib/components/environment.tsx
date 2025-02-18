@@ -121,12 +121,17 @@ export function EnvironmentUI(props: EnvironmentProps) {
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel w-100">
         <FormattedMessage id="udapp.environment" />
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
+          <a href="https://chainlist.org/" target="_blank">
+            <i className='udapp_infoDeployAction ml-2 fas fa-plug' aria-hidden="true"></i>
+          </a>
+        </CustomTooltip>
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
           <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
         </CustomTooltip> }
         { currentProvider && currentProvider.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
           <span onClick={resetVmState} style={{ cursor: 'pointer', float: 'right', textTransform: 'none' }}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-refresh" data-id="delete-state-icon"></i>
+            <i className="udapp_infoDeployAction ml-2 fas fa-rotate-right" data-id="delete-state-icon"></i>
             <span className="ml-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
           </span>
         </CustomTooltip> }
