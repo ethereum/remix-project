@@ -3,6 +3,14 @@ import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
+import "viem/window"
+import { custom, http, createWalletClient, parseEther, createPublicClient } from "viem"
+import * as chains from "viem/chains"
+import { entryPoint07Address } from "viem/account-abstraction"
+import { toAccount } from "viem/accounts"
+const { createSmartAccountClient } = require("permissionless")
+const { toSafeSmartAccount } = require("permissionless/accounts")
+const { createPimlicoClient } = require("permissionless/clients/pimlico")
 
 export class TxRunnerWeb3 {
   event
@@ -38,11 +46,11 @@ export class TxRunnerWeb3 {
 
     let currentDateTime = new Date();
     const start = currentDateTime.getTime() / 1000
-    const cb = (err, resp) => {
+    const cb = (err, resp, isUserOp) => {
       if (err) {
         return callback(err, resp)
       }
-      this.event.trigger('transactionBroadcasted', [resp])
+      this.event.trigger('transactionBroadcasted', [resp, isUserOp])
       const listenOnResponse = () => {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
@@ -64,13 +72,13 @@ export class TxRunnerWeb3 {
         async (value) => {
           try {
             const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-            cb(null, res.transactionHash)
+            cb(null, res.transactionHash, false)
           } catch (e) {
             console.log(`Send transaction failed: ${e.message || e.error} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
-            if (e.receipt) cb(null, e.receipt.transactionHash)
-            else cb(e, null)
+            if (e.receipt) cb(null, e.receipt.transactionHash, false)
+            else cb(e, null, false)
           }
         },
         () => {
@@ -79,8 +87,14 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-        cb(null, res.transactionHash)
+        if (tx.fromSmartAccount) {
+          // await this.sendUserOp(tx)
+          const userOpHash = await this.sendUserOp(tx)
+          cb(null, userOpHash, true)
+        } else {
+          const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+          cb(null, res.transactionHash, false)
+        }
       } catch (e) {
         if (!e.message) e.message = ''
         if (e.error) {
@@ -89,8 +103,8 @@ export class TxRunnerWeb3 {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
-        if (e.receipt) cb(null, e.receipt.transactionHash)
-        else cb(e, null)
+        if (e.receipt) cb(null, e.receipt.transactionHash, false)
+        else cb(e, null, false)
       }
     }
   }
@@ -101,11 +115,11 @@ export class TxRunnerWeb3 {
       data = '0x' + data
     }
 
-    return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
+    return this.runInNode(args.from, args.fromSmartAccount, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
 
-  runInNode (from, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
-    const tx = { from: from, to: to, data: data, value: value }
+  runInNode (from, fromSmartAccount, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
+    const tx = { from: from, fromSmartAccount, to: to, data: data, value: value }
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
       if (this._api && this._api.isVM()) {
@@ -186,6 +200,71 @@ export class TxRunnerWeb3 {
           }, callback)
         })
     })
+  }
+
+  async sendUserOp (tx) {
+    const localStorageKey = 'smartAccounts'
+    const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
+    const PIMLICO_API_KEY ='pim_J9aaTrRySixhbf3eh3T7dw'
+    const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+    const network = 'sepolia'
+    const chain = chains[network]
+  
+    // @ts-ignore
+    const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
+    // Check that saOwner is there in MM addresses
+    let smartAccountsObj = localStorage.getItem(localStorageKey)
+    smartAccountsObj = JSON.parse(smartAccountsObj)
+    const saDetails = smartAccountsObj[chain.id][tx.from]
+    const saOwner = saDetails['ownerEOA']
+    
+    // both are needed. public client to get nonce and read blockchain. wallet client to sign the useroperation
+    const walletClient = createWalletClient({
+      account: saOwner,
+      chain,
+      transport: custom(window.ethereum!),
+    })
+
+    const publicClient = createPublicClient({ 
+      chain,
+      transport: http(PUBLIC_NODE_URL) // choose any provider here
+    })
+
+    const safeAccount = await toSafeSmartAccount({
+      client: publicClient,
+      entryPoint: {
+          address: entryPoint07Address,
+          version: "0.7",
+      },
+      owners: [walletClient],
+      version: "1.4.1",
+      address: tx.from // tx.from & saDetails['address'] should be same
+    })
+
+    const paymasterClient = createPimlicoClient({
+      transport: http(BUNDLER_URL),
+      entryPoint: {
+          address: entryPoint07Address,
+          version: "0.7",
+      },
+    })
+    const saClient = createSmartAccountClient({
+        account: safeAccount,
+        chain,
+        paymaster: paymasterClient,
+        bundlerTransport: http(BUNDLER_URL),
+        userOperation: {
+          estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
+        }
+    })
+    
+    const txHash = await saClient.sendTransaction({
+        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
+        value: parseEther("0.005")
+    })
+
+    console.log('txHash----->', txHash)
+    return txHash
   }
 }
 
