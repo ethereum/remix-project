@@ -275,7 +275,7 @@ function getPkg(pkg, yarnLock, packageLock, deps, url, fetchUrl) {
     } else {
       // const versionSemver = semver.minVersion(version)
       fetchUrl = url.replace(pkg, `${pkg}@${version}`)
-      return encodeURIComponent(fetchUrl)
+      return fetchUrl
     }
   }
   return null
