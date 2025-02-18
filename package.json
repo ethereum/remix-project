@@ -171,6 +171,7 @@
     "jszip": "^3.6.0",
     "just-once": "^2.2.0",
     "latest-version": "^5.1.0",
+    "lunr": "^2.3.9",
     "merge": "^2.1.1",
     "npm-install-version": "^6.0.2",
     "octokit": "^3.1.2",
