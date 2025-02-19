@@ -66,7 +66,7 @@ export function Container () {
               <CompilerFeedback feedback={noirApp.appState.compilerFeedback} filePathToId={noirApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={noirApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
             <RenderIf condition={noirApp.appState.status === 'succeed'}>
-              <a className="cursor-pointer text-decoration-none" href='#' onClick={handleViewProgramArtefact}>
+              <a data-id="view-noir-compilation-result" className="cursor-pointer text-decoration-none" href='#' onClick={handleViewProgramArtefact}>
                 <i className="text-success mt-1 px-1 fas fa-check"></i> View compiled noir program artefact.
               </a>
             </RenderIf>
