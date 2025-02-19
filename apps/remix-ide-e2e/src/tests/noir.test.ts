@@ -9,7 +9,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should create noir workspace template #group1': function (browser: NightwatchBrowser) {
+  'Should create noir workspace template #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
@@ -22,7 +22,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/multiplier.test.ts"]')
   },
-  'Should compile a simple circuit using editor play button #group1': function (browser: NightwatchBrowser) {
+  'Should compile a simple circuit using editor play button #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .openFile('src/main.nr')
       .click('[data-id="play-editor"]')
@@ -33,7 +33,7 @@ module.exports = {
         browser.assert.ok(value.indexOf('noir_version') !== -1, 'compilation result did not show')
       })
   },
-  'Should run script for compute a witness and proof generation #group1': function (browser: NightwatchBrowser) {
+  'Should run script for compute a witness and proof generation #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .openFile('tests/multiplier.test.ts')
