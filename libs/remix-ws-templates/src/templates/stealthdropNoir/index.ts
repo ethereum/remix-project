@@ -7,6 +7,6 @@ export default async () => {
     // @ts-ignore
     'README.md': (await import('raw-loader!./README.md')).default,
     // @ts-ignore
-    'tests/stealthdrop.test.ts': (await import('raw-loader!./tests/stealthdrop.test.ts')).default
+    'tests/stealthdrop.test.ts': (await import('!!raw-loader!./tests/stealthdrop.test.ts')).default
   }
 }
