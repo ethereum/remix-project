@@ -24,13 +24,13 @@ module.exports = {
   },
   'Should compile a simple circuit using editor play button #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('noir-compiler')
       .openFile('src/main.nr')
       .click('[data-id="play-editor"]')
+      .clickLaunchIcon('noir-compiler')
       .waitForElementPresent('[data-id="view-noir-compilation-result"]')
       .click('[data-id="view-noir-compilation-result"]')
       .getEditorValue((value) => {
-        browser.assert.ok(value.indexOf('noir_version') !== -1, 'compilation result did not show') 
+        browser.assert.ok(value.indexOf('noir_version') !== -1, 'compilation result did not show')
       })
   },
   'Should run script for compute a witness and proof generation #group1': function (browser: NightwatchBrowser) {
