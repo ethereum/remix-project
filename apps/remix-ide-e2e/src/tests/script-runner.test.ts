@@ -4,97 +4,105 @@ import init from '../helpers/init'
 
 const tests = {
 
-    before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done, 'http://127.0.0.1:8080', false)
-    },
-    'Should activate plugins': function (browser: NightwatchBrowser) {
-        browser
-            .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-            .waitForElementVisible('*[plugin="pluginManager"]')
-            .click('*[plugin="pluginManager"]')
-            .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-            .click('*[data-id="pluginManagerComponentPluginManager"]')
-            .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
-    },
-    'Should load default script runner': function (browser: NightwatchBrowser) {
-        browser
-            .waitForElementVisible('[data-id="sr-loaded-default"]')
-            .waitForElementVisible('[data-id="dependency-ethers-^5"]')
-            .waitForElementVisible('[data-id="sr-toggle-ethers6"]')
-    },
-    'Should load script runner ethers6': function (browser: NightwatchBrowser) {
-        browser
-            .click('[data-id="sr-toggle-ethers6"]')
-            .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
-            .waitForElementPresent('[data-id="dependency-ethers-^6"]')
-    },
-    'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
-        browser
-            .clickLaunchIcon('filePanel')
-            .waitForElementVisible('[data-path=".remix"]')
-            .waitForElementVisible('[data-id="treeViewDivDraggableItem.remix/script.config.json"]')
-            .openFile('.remix/script.config.json')
-    },
-    'check config file content': function (browser: NightwatchBrowser) {
-        browser
-            .getEditorValue((content) => {
-                console.log(JSON.parse(content))
-                const parsed = JSON.parse(content)
-                browser.assert.ok(parsed.defaultConfig === 'ethers6', 'config file content is correct')
-            })
-    },
-    'execute ethers6 script': function (browser: NightwatchBrowser) {
-        browser
-            .click('*[data-id="treeViewUltreeViewMenu"]') // make sure we create the file at the root folder
-            .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
-            .pause(1000)
-            .click('[data-id="treeViewDivtreeViewItemcontracts"]')
-            .openFile('contracts/2_Owner.sol')
-            .clickLaunchIcon('solidity')
-            .click('*[data-id="compilerContainerCompileBtn"]')
-            .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
-            .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
-    },
-    'switch workspace it should be default again': function (browser: NightwatchBrowser) {
-        browser
-            .clickLaunchIcon('filePanel')
-            .pause(2000)
-            .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
-            .click('*[data-id="workspacesMenuDropdown"]')
-            .click('*[data-id="workspacecreate"]')
-            .waitForElementPresent('*[data-id="create-semaphore"]')
-            .scrollAndClick('*[data-id="create-semaphore"]')
-            .modalFooterOKClick('TemplatesSelection')
-            .waitForElementVisible({
-                locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
-            })
-            .click({
-                locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
-            })
-            .waitForElementVisible('[data-id="sr-loaded-default"]')
-            .waitForElementVisible('[data-id="dependency-ethers-^5"]')
-            .waitForElementVisible('[data-id="sr-toggle-ethers6"]')
-    },
-    'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
-        browser
-            .switchWorkspace('default_workspace')
-            .waitForElementVisible({
-                locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
-            })
-            .click({
-                locateStrategy: 'xpath',
-                selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
-            })
-            .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
-            .waitForElementPresent('[data-id="dependency-ethers-^6"]')
-    }
+  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    init(browser, done, 'http://127.0.0.1:8080', false)
+  },
+  'Should activate plugins': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .waitForElementVisible('*[plugin="pluginManager"]')
+      .click('*[plugin="pluginManager"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .click('*[data-id="pluginManagerComponentPluginManager"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
+  },
+  'Should load default script runner': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
+      .click('*[data-id="verticalIconsKindfilePanel"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts"]')
+      .click('*[data-id="treeViewDivtreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
+      .waitForElementVisible('button[data-id="script-config"]')
+      .click('button[data-id="script-config"]')
+      .waitForElementVisible('[data-id="sr-loaded-default"]')
+      .waitForElementVisible('[data-id="dependency-ethers-^5"]')
+      .waitForElementVisible('[data-id="sr-load-ethers6"]')
+  },
+  'Should load script runner ethers6': function (browser: NightwatchBrowser) {
+    browser
+      .click('[data-id="sr-load-ethers6"]')
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+      .waitForElementPresent('[data-id="dependency-ethers-^6"]')
+  },
+  'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      // .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-path=".remix"]')
+      .waitForElementVisible('[data-id="treeViewDivDraggableItem.remix/script.config.json"]')
+      .openFile('.remix/script.config.json')
+  },
+  'check config file content': function (browser: NightwatchBrowser) {
+    browser
+      .getEditorValue((content) => {
+        console.log(JSON.parse(content))
+        const parsed = JSON.parse(content)
+        browser.assert.ok(parsed.defaultConfig === 'ethers6', 'config file content is correct')
+      })
+  },
+  'execute ethers6 script': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="treeViewUltreeViewMenu"]') // make sure we create the file at the root folder
+      .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
+      .pause(1000)
+      .click('[data-id="treeViewDivtreeViewItemcontracts"]')
+      .openFile('contracts/2_Owner.sol')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+  },
+  'switch workspace it should be default again': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-semaphore"]')
+      .scrollAndClick('*[data-id="create-semaphore"]')
+      .modalFooterOKClick('TemplatesSelection')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .click({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .waitForElementVisible('[data-id="sr-load-default"]')
+      .waitForElementVisible('[data-id="dependency-ethers-^5"]')
+      .waitForElementVisible('[data-id="sr-load-zksyncv6"]')
+  },
+  'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
+    browser
+      .switchWorkspace('default_workspace')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .click({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+      .waitForElementPresent('[data-id="dependency-ethers-^6"]')
+  }
 }
 
 module.exports = tests
-
 
 const deployWithEthersJs = `
 import { ethers } from 'ethers'
@@ -105,7 +113,7 @@ import { ethers } from 'ethers'
  * @param {Array<any>} args list of constructor' parameters
  * @param {Number} accountIndex account index from the exposed account
  * @return {Contract} deployed contract
- * 
+ *
  */
 const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {
 
