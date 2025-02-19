@@ -743,6 +743,7 @@ export class Blockchain extends Plugin {
               <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
                   view on Etherscan
               </a>
+              {' '}
               {viewBlockScoutLink && <a href={viewBlockScoutLink} target="_blank">
                   view on Blockscout
               </a>}
