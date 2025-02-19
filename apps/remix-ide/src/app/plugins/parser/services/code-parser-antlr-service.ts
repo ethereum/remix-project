@@ -103,8 +103,8 @@ export default class CodeParserAntlrService {
     console.log('parseWithWorker', text, file)
     const slp = slang.parser.Parser.create("0.8.22");
     console.log('slp', slp);
-    const output = slp.parseFileContents(text);
-    console.log('output', output);
+    //const output = slp.parseFileContents(text);
+    //console.log('output', output);
     
     this.parserStartTime = Date.now()
     this.worker.postMessage({
