@@ -1,5 +1,5 @@
 import React from 'react';
-import CheckTxStatus from './ChechTxStatus';
+import CheckTxStatus from './CheckTxStatus';
 import Context from './Context';
 import showTable from './Table';
 import { execution } from '@remix-project/remix-lib';
