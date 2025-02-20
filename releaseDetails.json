@@ -1,10 +1,10 @@
 {
-    "version": "v0.60.0",
+    "version": "v0.61.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Delete forked state environments",
-    "highlight2": "Scan code pasted into editor using AI",
-    "highlight3": "Added Linea chain deployment environment",
+    "highlight1": "Added Noir compiler plugin and Noir templates",
+    "highlight2": "Allowed further forking of a forked Remix VM environment",
+    "highlight3": "Improved RemixAI copilot accuracy with better contextual information",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-60-0-a86fb7649d62?source=friends_link&sk=63c8c24be0b818dbd855947f2804aad2"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-61-0-ecd2a383594f?source=friends_link&sk=5e8f3db37656068f715244ac72917648"
   }
