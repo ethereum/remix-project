@@ -246,8 +246,6 @@ export class TxRunner {
     }
 
     let currentDateTime = new Date();
-    const start = currentDateTime.getTime() / 1000;
-
     try {
       const { transactionHash } = await web3.eth.sendTransaction(
         tx,
@@ -258,8 +256,6 @@ export class TxRunner {
       tx = await tryTillTxAvailable(transactionHash);
 
       currentDateTime = new Date();
-      const end = currentDateTime.getTime() / 1000;
-      console.log('tx duration', end - start);
       return {
         receipt,
         tx,
