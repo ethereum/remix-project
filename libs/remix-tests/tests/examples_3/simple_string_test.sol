@@ -12,7 +12,7 @@ contract StringTest {
     return Assert.equal(foo.get(), "Hello world!", "initial value is not correct");
   }
 
-  function valueShouldNotBeHelloWordl() public returns (bool) {
-    return Assert.notEqual(foo.get(), "Hello wordl!", "value should not be hello wordl");
+  function valueShouldNotBeHelloWorld() public returns (bool) {
+    return Assert.notEqual(foo.get(), "Hello world!", "value should not be hello world");
   }
 }
