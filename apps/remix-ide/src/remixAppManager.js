@@ -425,7 +425,8 @@ class PluginLoader {
       'dapp-draft',
       'solidityumlgen',
       'remixGuide',
-      'doc-viewer'
+      'doc-viewer',
+      'UIScriptRunner'
     ]
     this.loaders = {}
     this.loaders.localStorage = {
