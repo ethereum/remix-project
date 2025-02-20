@@ -40,7 +40,7 @@ export default class selfdestruct implements AnalyzerModule {
             warnings.push({
               warning: 'Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.',
               location: node.src,
-              more: `https://solidity.readthedocs.io/en/${version}/introduction-to-smart-contracts.html#deactivate-and-self-destruct`
+              more: `https://docs.soliditylang.org/en/${version}/introduction-to-smart-contracts.html#deactivate-and-self-destruct`
             })
             hasSelf = false
           }
