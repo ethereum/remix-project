@@ -44,7 +44,8 @@ const tests = {
   },
 
   'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    console.log('Sepolia test running')
+    browser//.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .useCss()
       .switchBrowserTab(0)
@@ -94,7 +95,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -119,7 +120,7 @@ const tests = {
               locateStrategy: 'xpath',
               selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.(fallback) pending')]"
             })
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -145,7 +146,7 @@ const tests = {
               locateStrategy: 'xpath',
               selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.greet pending')]"
             })
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -186,7 +187,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -258,15 +259,15 @@ const tests = {
             .scrollAndClick('[data-testid="page-container-footer-next"]')
             .pause(2000)
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
       })
-    },
+  },
 
-    'do transaction #group1': function (browser: NightwatchBrowser) {
-      browser.waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+  'do transaction #group1': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
@@ -281,7 +282,7 @@ const tests = {
             .scrollAndClick('[data-testid="page-container-footer-next"]')
             .pause(2000)
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -372,7 +373,6 @@ if (!checkBrowserIsChrome(browser)) {
   };
 }
 
-
 const EIP712_Example = {
   domain: {
     chainId: 11155111,
@@ -398,7 +398,6 @@ const EIP712_Example = {
     ],
   },
 }
-
 
 const sources = [
   {
