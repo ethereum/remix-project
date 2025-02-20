@@ -203,7 +203,6 @@ export default class TabProxy extends Plugin {
   }
 
   focus (name) {
-    console.log('focus', name)
     this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }
