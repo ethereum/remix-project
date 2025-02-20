@@ -36,7 +36,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
 
   render() {
     return (
-      <div id="scriptrunnerTab">
+      <div className="bg-light" id="scriptrunnerTab">
         <PluginViewWrapper plugin={this} />
       </div>
     )

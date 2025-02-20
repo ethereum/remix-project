@@ -28,7 +28,7 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
         willChange: 'transform',
         boxShadow: "0 1px 7px var(--secondary)"
       } }
-      className="p-1 pb-0 mb-0 d-flex alert alert-warning border border-warning"
+      className="py-2 px-4 pb-0 mb-0 d-flex alert alert-warning border border-warning"
     >
       <span className="align-self-center pl-2 mt-1">
         <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far fa-exclamation-triangle"></i>
