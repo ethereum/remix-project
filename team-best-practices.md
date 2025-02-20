@@ -105,7 +105,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
  - Pull request should be reviewed to comply to coding best practices.
  - You should take the responsibility of the PR you are reviewing.
- - You should make sure the app is viable after the PR is being merged.
+ - You should make sure the app is viable after the PR is merged.
  - You should make sure the PR is correctly tested (e2e tests, unit tests)
  - Ideally You should have enough knowledge to be able to fix related bugs.
       
