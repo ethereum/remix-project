@@ -81,7 +81,7 @@ module.exports = {
       .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPrompt"]')
       .modalFooterCancelClick('gisthandler')
   },
 
@@ -91,11 +91,11 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]')
       .execute(() => {
-        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]') as any).focus()
       }, [], () => {})
-      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.invalidGistId)
+      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]', testData.invalidGistId)
       .modalFooterOKClick('gisthandler')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Not Found')
@@ -135,11 +135,11 @@ module.exports = {
       .click('[data-id="settingsTabSaveGistToken"]')
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
+      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]')
       .execute(function () {
-        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+        (document.querySelector('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]') as any).focus()
       })
-      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
+      .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPrompt"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
       .pause(10000)
       .openFile(`README.txt`)
