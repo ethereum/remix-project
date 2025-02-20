@@ -95,7 +95,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
             { props.activeConfig && props.activeConfig.name === props.config.name &&
               <div className={`${!isVisible ? 'd-flex flex-row align-items-center justify-content-center pt-1' : 'd-flex flex-row pb-1 align-items-center justify-content-center'}`}>
                 {isVisible && <span onAnimationEnd={handleAnimationEnd} className="text-success" style={{ animation: 'fadeOut 5s forwards', animationFillMode: 'forwards' }}>Config loaded</span>}
-                <FontAwesomeIcon data-id={`sr-loaded-${props.config.name}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
+                <FontAwesomeIcon data-id={`sr-loaded-${props.config.title}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
               </div>
             }
           </div>
