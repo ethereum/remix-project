@@ -104,7 +104,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
-  const PIMLICO_API_KEY ='pim_J9aaTrRySixhbf3eh3T7dw'
+  const PIMLICO_API_KEY =''
   const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   let salt
