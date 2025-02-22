@@ -27,7 +27,7 @@
     "@ethereumjs/vm": "8.0.0",
     "@remix-project/remix-astwalker": "^0.0.80",
     "@remix-project/remix-lib": "^0.5.57",
-    "async": "^2.6.2",
+    "async": "^3.2.6",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
     "string-similarity": "^4.0.4",
