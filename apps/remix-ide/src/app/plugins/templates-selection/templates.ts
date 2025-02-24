@@ -339,8 +339,8 @@ export const templates = (intl, plugin) => {
     {
       name: "Noir ZKP",
       items: [
-        { value: "multNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.multNr' }), description: 'A simple multiplier circuit' },
-        { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementaion built in Noir' }
+        { value: "multNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.multNr' }), description: 'A simple multiplier circuit' }
+        // { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementaion built in Noir' }
       ]
     },
     {
