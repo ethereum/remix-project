@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-simulator",
-  "version": "0.2.63",
+  "version": "0.2.64",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -23,7 +23,7 @@
     "@ethereumjs/util": "9.1.0",
     "@ethereumjs/vm": "8.1.1",
     "@metamask/eth-sig-util": "^7.0.2",
-    "@remix-project/remix-lib": "^0.5.70",
+    "@remix-project/remix-lib": "^0.5.71",
     "ansi-gray": "^0.1.1",
     "async": "^3.1.0",
     "body-parser": "^1.18.2",
@@ -71,6 +71,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-simulator#readme",
   "typings": "src/index.d.ts",
-  "gitHead": "a92b8aa830067f879c96b41e301bc3174b87e551",
+  "gitHead": "8a6dc8a37b0fafa44366ab5891a55783a0bfb0c6",
   "types": "./src/index.d.ts"
 }
