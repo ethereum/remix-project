@@ -166,7 +166,6 @@ export default class TabProxy extends Plugin {
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
       
       if (location === 'mainPanel') {
-        console.log('pluginActivated', name, location, displayName, icon, description)
         this.addTab(
           name,
           displayName,
@@ -203,7 +202,6 @@ export default class TabProxy extends Plugin {
   }
 
   focus (name) {
-    console.log('focus', name)
     this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }
