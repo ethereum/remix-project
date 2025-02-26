@@ -50,8 +50,8 @@ export interface InferenceModel {
 }
 
 export interface ICompletions{
-  code_completion(context, params:IParams): Promise<any>;
-  code_insertion(msg_pfx, msg_sfx, params:IParams): Promise<any>;
+  code_completion(context, ctxFiles, fileName, params:IParams): Promise<any>;
+  code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, params:IParams): Promise<any>;
 }
 
 export interface IParams {

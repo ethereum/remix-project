@@ -60,6 +60,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: getTextAtLine(model.getLineCount()).length + 1,
     });
 
+    const endChars = [' ', '\n', ';', '.', '(', ')', '{', '}', '[', ']', ':', ',', '<', '>', '=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '?', '~', '@', '#', '$', '`', '"', "'", '\t', '\r', '\v', '\f'];
+    if (!endChars.some(char => word.endsWith(char))) {
+      return;
+    }
+
     try {
       const split = word.split('\n')
       if (split.length < 2) return
@@ -106,7 +111,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
-        _paq.push(['trackEvent', 'ai', 'remixAI', this.task])
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText,
           range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
@@ -163,7 +167,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     let clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
-      console.log("clean starts with comment")
       return ""
     }
 

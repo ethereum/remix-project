@@ -383,7 +383,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
     const deployments = []
 
-    for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
+    for (const proxyAddress of Object.keys(parsedNetworkFile.deployments)) {
       if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
         const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
 

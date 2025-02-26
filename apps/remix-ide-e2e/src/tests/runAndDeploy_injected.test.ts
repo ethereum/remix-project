@@ -25,6 +25,7 @@ const checkAlerts = function (browser: NightwatchBrowser) {
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -88,7 +89,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -108,7 +109,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -170,7 +171,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -187,7 +188,7 @@ const tests = {
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
@@ -272,6 +273,7 @@ const tests = {
 }
 
 const branch = process.env.CIRCLE_BRANCH;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isMasterBranch = branch === 'master';
 
 module.exports = {

@@ -1,5 +1,6 @@
 import { Web3 } from 'web3'
 import { hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
+import { Personal } from 'web3-eth-personal'
 import { ExecutionContext } from '../execution-context'
 
 export class InjectedProvider {
@@ -38,12 +39,14 @@ export class InjectedProvider {
   }
 
   signMessage (message, account, _passphrase, cb) {
-    message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
-      this.executionContext.web3().eth.sign(messageHash, account).then((signedData) => {
-        cb(null, bytesToHex(messageHash), signedData)
-      }).catch((error => cb(error)))
+      const personal = new Personal(this.executionContext.web3().currentProvider)
+      message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
+      // see https://docs.metamask.io/wallet/reference/json-rpc-methods/personal_sign/
+      personal.sign(message, account, '')
+        .then(signedData => cb(undefined, bytesToHex(messageHash), signedData))
+        .catch(error => cb(error, bytesToHex(messageHash), undefined))
     } catch (e) {
       cb(e.message)
     }
