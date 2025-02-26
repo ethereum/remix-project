@@ -5,7 +5,31 @@ import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
 import { Registry } from '@remix-project/remix-lib'
-import * as slang from "@nomicfoundation/slang";
+
+
+
+let slangModule;
+
+async function getSlang() {
+  if (!slangModule) {
+    slangModule = await import("@nomicfoundation/slang/target/generated/index.mjs");
+  }
+  return slangModule;
+}
+
+async function runSlangParser(source: string) {
+  const slang = await getSlang();
+  console.log(slang.parser);
+
+  const parser = slang.parser.Parser.create("0.8.22");
+  const startTime = Date.now();
+  const parseOutput = parser.parseNonterminal(slang.cst.NonterminalKind.SourceUnit, source);
+  const json = parseOutput.tree.toJson();
+
+  console.log("Time taken: ", Date.now() - startTime, "ms");
+  console.log(json);
+}
+
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -101,11 +125,7 @@ export default class CodeParserAntlrService {
 
   async parseWithWorker(text: string, file: string) {
     console.log('parseWithWorker', text, file)
-    const slp = slang.parser.Parser.create("0.8.22");
-    console.log('slp', slp);
-    //const output = slp.parseFileContents(text);
-    //console.log('output', output);
-    
+    await runSlangParser(text);
     this.parserStartTime = Date.now()
     this.worker.postMessage({
       cmd: 'parse',

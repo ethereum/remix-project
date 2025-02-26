@@ -94,7 +94,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   config.resolve.alias = {
     ...config.resolve.alias,
-    // 'rust-verkle-wasm$': path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/web/run_verkle_wasm.js')
+    "@nomicfoundation/slang/target/generated": path.resolve(
+      __dirname,
+      "/../../node_modules/@nomicfoundation/slang/target/generated"
+    ),
   }
 
 
