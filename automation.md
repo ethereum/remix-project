@@ -18,7 +18,7 @@
  
  - **Autorebase** will automatically rebase the branch (when a new commit lands on master).
  
-   It won't automatically merge to master (this can be done with the first automation).
+   It won't automatically merge into the main branch (this can be done with the first automation).
    
    It is activated by adding the `autorebase` label.
  
