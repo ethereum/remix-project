@@ -11,6 +11,14 @@ class MetaMask {
       paramsObj.chainName = 'Arbitrum One';
       paramsObj.rpcUrls = ['https://arb1.arbitrum.io/rpc'];
     }
+    if (chainId === '0xdef1') {
+      paramsObj.chainName = 'Ink';
+      paramsObj.rpcUrls = ['https://rpc-gel.inkonchain.com'];
+    }
+    if (chainId === '0xba5ed') {
+      paramsObj.chainName = 'Ink Sepolia';
+      paramsObj.rpcUrls = ['https://rpc-gel-sepolia.inkonchain.com'];
+    }
     if (chainId === '0x50877ed6') {
       paramsObj.chainName = 'SKALE Chaos Testnet';
       paramsObj.rpcUrls = [
