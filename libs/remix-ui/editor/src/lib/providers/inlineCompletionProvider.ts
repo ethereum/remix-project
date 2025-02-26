@@ -60,6 +60,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: getTextAtLine(model.getLineCount()).length + 1,
     });
 
+    const endChars = [' ', '\n', ';', '.', '(', ')', '{', '}', '[', ']', ':', ',', '<', '>', '=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '?', '~', '@', '#', '$', '`', '"', "'", '\t', '\r', '\v', '\f'];
+    if (!endChars.some(char => word.endsWith(char))) {
+      return;
+    }
+
     try {
       const split = word.split('\n')
       if (split.length < 2) return
