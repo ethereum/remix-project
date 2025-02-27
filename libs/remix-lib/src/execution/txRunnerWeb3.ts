@@ -4,7 +4,7 @@ import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
 import "viem/window"
-import { custom, http, createWalletClient, parseEther, createPublicClient } from "viem"
+import { custom, http, createWalletClient, parseEther, createPublicClient, keccak256, encodePacked, getAddress } from "viem"
 import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 import { toAccount } from "viem/accounts"
@@ -203,6 +203,9 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx) {
+
+    console.log('sendUserOp------->')
+    console.log('tx------->', tx)
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
     const PIMLICO_API_KEY =''
@@ -257,13 +260,42 @@ export class TxRunnerWeb3 {
           estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
         }
     })
-    
-    const txHash = await saClient.sendTransaction({
-        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
-        value: parseEther("0.005")
-    })
 
-    console.log('txHash----->', txHash)
+    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000002"
+    let bytecode = tx.data
+
+    // function computeDeployedAddress(proxyAddress, salt, bytecode) {
+    //   const saltHash = keccak256(salt);
+    //   const bytecodeHash = keccak256(bytecode);
+    //   const packedData = encodePacked(
+    //     ["bytes1", "address", "bytes32", "bytes32"],
+    //     ["0xff", proxyAddress, saltHash, bytecodeHash]
+    //   );
+    //   return getAddress("0x" + keccak256(packedData).slice(-40)); // Extract last 20 bytes
+    // }
+    
+    
+    // const expectedDeploymentAddress = computeDeployedAddress("0x4e59b44847b379578588920ca78fbf26c0b4956c",  salt, bytecode)
+    let txHash
+    if (!tx.to) {
+      txHash = await saClient.sendTransaction({
+        to:  "0x4e59b44847b379578588920ca78fbf26c0b4956c",
+        data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
+      })
+    } else {
+      console.log('tx--details-->', tx)
+    }
+    
+    
+    // const userOpHash = await saClient.sendUserOperation({calls: [call]}) 0x9c4e3acbf9b27aa7b73c5e2eace7140a623bc608b4faa424ba0325b373912219
+    
+    // const txHash = await saClient.sendTransaction({
+    //     to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
+    //     value: parseEther("0.005")
+    // })
+
+    console.log('userOpHash----->', txHash)
+    // return "0x"
     return txHash
   }
 }
