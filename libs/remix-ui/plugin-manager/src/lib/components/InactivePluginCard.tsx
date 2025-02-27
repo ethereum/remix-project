@@ -43,7 +43,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                   tooltipClasses="text-nowrap"
                   tooltipText={<FormattedMessage id="pluginManager.maintainedByRemix" />}
                 >
-                  <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
+                  <i aria-hidden="true" className="px-1 text-success fa-solid fa-shield-halved"></i>
                 </CustomTooltip>)
                 : profile?.maintainedBy ? (
                   <CustomTooltip
@@ -52,7 +52,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                     tooltipClasses="text-nowrap"
                     tooltipText={"Maintained by " + profile?.maintainedBy}
                   >
-                    <i aria-hidden="true" className="px-1 text-secondary far fa-exclamation-circle"></i>
+                    <i aria-hidden="true" className="px-1 text-secondary fa-solid fa-shield-halved"></i>
                   </CustomTooltip>)
                   : (<CustomTooltip
                     placement="right"
@@ -60,7 +60,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                     tooltipClasses="text-nowrap"
                     tooltipText={<FormattedMessage id="pluginManager.maintainedExternally" />}
                   >
-                    <i aria-hidden="true" className="px-1 text-secondary far fa-exclamation-circle"></i>
+                    <i aria-hidden="true" className="px-1 text-secondary fa-solid fa-shield-halved"></i>
                   </CustomTooltip>)
               }
               {profile.documentation && (
