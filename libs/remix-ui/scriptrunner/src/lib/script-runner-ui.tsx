@@ -39,7 +39,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
         <div className="text-uppercase mb-3 text-dark h2" style={{ fontSize: 'x-large' }}>script configuration</div>
         <div className="text-uppercase text-dark h3" style={{ fontSize: 'large' }}>choose a specific configuration for your script</div>
       </div>
-      <div className="mt-5 d-flex flex-column gap-3 mb-4">
+      <div className="mt-3 d-flex flex-column gap-3 mb-4">
         {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
           <ConfigSection
             activeKey={activeKey}

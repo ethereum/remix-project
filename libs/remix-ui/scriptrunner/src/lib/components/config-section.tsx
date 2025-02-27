@@ -81,27 +81,26 @@ export default function ConfigSection(props: ConfigSectionProps) {
   }
 
   return (
-    <section className="mb-4">
+    <section className="mb-2">
       <section className="d-flex flex-row ">
         <SectionHeader />
-        <div className="d-flex flex-row ml-3">
-          {props.config.isLoading && <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
-            <span>Loading config</span><i className="fas fa-spinner fa-spin ml-1"></i>
-          </div>}
-        </div>
         <>
           {!props.config.isLoading && !props.config.errorStatus && !props.config.error &&
           <div onClick={() => props.loadScriptRunner(props.config)} className="pointer px-2 pb-1">
             { props.activeConfig && props.activeConfig.name === props.config.name &&
               <div className={`${!isVisible ? 'd-flex flex-row align-items-center justify-content-center pt-1' : 'd-flex flex-row pb-1 align-items-center justify-content-center'}`}>
-                {isVisible && <span onAnimationEnd={handleAnimationEnd} className="text-success" style={{ animation: 'fadeOut 5s forwards', animationFillMode: 'forwards' }}>Config loaded</span>}
-                <FontAwesomeIcon data-id={`sr-loaded-${props.config.title}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
+                <FontAwesomeIcon data-id={`sr-loaded-${props.config.name}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
+                {isVisible && <span onAnimationEnd={handleAnimationEnd} className="text-success px-3" style={{ animation: 'fadeOut 5s forwards', animationFillMode: 'forwards' }}>Config loaded</span>}
               </div>
             }
           </div>
           }
-          <div className="w-25"></div>
         </>
+        <div className="d-flex flex-row mx-4">
+          {props.config.isLoading && <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
+            <i className="fas fa-spinner fa-spin"></i><span className='pl-3'>Loading config</span>
+          </div>}
+        </div>
       </section>
       <section id="errorSection">
         {props.config.errorStatus && props.config.error && <div className="text-danger">
@@ -122,8 +121,8 @@ export default function ConfigSection(props: ConfigSectionProps) {
             </div>
         }
       </section>
-      <section className="d-flex flex-column" style={{ width: '100%' }} >
-        <div className="mt-4 bg-light p-3 ">
+      <section className="d-flex flex-column w-100">
+        <div className="mt-2 mb-4 bg-dark p-3 ">
           <p className="text-dark text-monospace">{props.config.description}</p>
           <p className="text-dark">Dependencies</p>
           <ul className="list-unstyled ">
@@ -131,7 +130,6 @@ export default function ConfigSection(props: ConfigSectionProps) {
           </ul>
         </div>
       </section>
-
     </section>
   )
 }
