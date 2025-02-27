@@ -64,7 +64,12 @@ module.exports = composePlugins(withNx(), (config) => {
 
   config.plugins.push(
     new webpack.DefinePlugin({
-      'fetch': `((...args) => args[0].href && (args[0]).href.startsWith('https://github.com') ? fetch('https://common-corsproxy.remixproject.org/?proxy=' + args[0].href) : fetch(...args))`,
+      'fetch': `((...args) => {
+        if (args[0].origin === 'https://github.com') {
+          return fetch('https://api.allorigins.win/raw?url' + args[0])
+        }
+        return fetch(...args)
+      })`,
     })
   )
 
