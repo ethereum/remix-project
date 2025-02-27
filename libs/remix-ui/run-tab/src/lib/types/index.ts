@@ -23,6 +23,13 @@ export interface ContractList {
   [file: string]: Contract[]
 }
 
+export type SmartAccount = {
+  address: string
+  salt: number
+  ownerEOA: string
+  timestamp: number
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
