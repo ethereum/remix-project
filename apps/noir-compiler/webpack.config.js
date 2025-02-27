@@ -62,6 +62,12 @@ module.exports = composePlugins(withNx(), (config) => {
     })
   )
 
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'fetch': `((...args) => args[0].href && (args[0]).href.startsWith('https://github.com') ? fetch('https://api.allorigins.win/raw?url=' + args[0].href) : fetch(...args))`,
+    })
+  )
+
   // source-map loader
   config.module.rules.push({
     test: /\.js$/,
