@@ -92,7 +92,7 @@ import { appPlatformTypes } from '@remix-ui/app'
 import DGitProvider from './app/files/dgitProvider'
 import WorkspaceFileProvider from './app/files/workspaceFileProvider'
 
-import PluginManagerComponent from './app/components/plugin-manager-component'
+import { PluginManagerComponent } from './app/components/plugin-manager-component'
 
 import CompileTab from './app/tabs/compile-tab'
 import SettingsTab from './app/tabs/settings-tab'
@@ -103,7 +103,7 @@ import Filepanel from './app/panels/file-panel'
 import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
-import { any } from 'async'
+import { Plugin } from '@remixproject/engine'
 
 const _paq = (window._paq = window._paq || [])
 
