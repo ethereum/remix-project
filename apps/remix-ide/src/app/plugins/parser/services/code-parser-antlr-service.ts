@@ -6,6 +6,31 @@ import { antlr } from '../types'
 import { pathToFileURL } from 'url'
 import { Registry } from '@remix-project/remix-lib'
 
+
+
+let slangModule;
+
+async function getSlang() {
+  if (!slangModule) {
+    slangModule = await import("@nomicfoundation/slang/target/generated/index.mjs");
+  }
+  return slangModule;
+}
+
+async function runSlangParser(source: string) {
+  const slang = await getSlang();
+  console.log(slang.parser);
+
+  const parser = slang.parser.Parser.create("0.8.22");
+  const startTime = Date.now();
+  const parseOutput = parser.parseNonterminal(slang.cst.NonterminalKind.SourceUnit, source);
+  const json = parseOutput.tree.toJson();
+
+  console.log("Time taken: ", Date.now() - startTime, "ms");
+  console.log(json);
+}
+
+
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
 interface BlockDefinition {
@@ -62,6 +87,7 @@ export default class CodeParserAntlrService {
             blocks: ev.data.blocks,
             blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserThresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
           }
+          console.log('parsed', self.cache[ev.data.file])
           self.setFileParsingState(ev.data.file)
         }
         break;
@@ -98,6 +124,8 @@ export default class CodeParserAntlrService {
   }
 
   async parseWithWorker(text: string, file: string) {
+    console.log('parseWithWorker', text, file)
+    await runSlangParser(text);
     this.parserStartTime = Date.now()
     this.worker.postMessage({
       cmd: 'parse',
