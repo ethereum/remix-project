@@ -62,6 +62,17 @@ module.exports = composePlugins(withNx(), (config) => {
     })
   )
 
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'fetch': `((...args) => {
+        if (args[0].origin === 'https://github.com') {
+          return fetch('https://api.allorigins.win/raw?url' + args[0])
+        }
+        return fetch(...args)
+      })`,
+    })
+  )
+
   // source-map loader
   config.module.rules.push({
     test: /\.js$/,
