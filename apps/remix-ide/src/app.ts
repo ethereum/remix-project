@@ -466,7 +466,7 @@ class AppComponent {
       this.engine.register([remixAIDesktop])
       const desktopHost = new DesktopHost()
       this.engine.register([desktopHost])
-    } else{
+    } else {
       //---- desktop client
       const desktopClient = new DesktopClient(blockchain)
       this.engine.register([desktopClient])
@@ -708,7 +708,7 @@ class AppComponent {
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge'])
 
-    if(isElectron()){
+    if (isElectron()){
       this.appManager.activatePlugin(['desktopHost'])
     }
   }

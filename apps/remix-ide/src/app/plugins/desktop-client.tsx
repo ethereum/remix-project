@@ -250,8 +250,8 @@ export class DesktopClient extends ViewPlugin {
         //   }
 
         // } else {
-          console.log('Sending result back to server', result)
-          this.ws.send(stringifyWithBigInt(result))
+        console.log('Sending result back to server', result)
+        this.ws.send(stringifyWithBigInt(result))
         //}
 
       }
