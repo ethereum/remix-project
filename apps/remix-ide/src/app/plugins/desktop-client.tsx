@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import React from 'react'
 import { desktopConnection, desktopConnectionType } from '@remix-api'
-import { Blockchain, Provider } from '../../blockchain/blockchain'
+import { Blockchain } from '../../blockchain/blockchain'
 import { AppAction, AppModal, ModalTypes } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -10,6 +10,7 @@ import cbor from 'cbor'
 import isElectron from 'is-electron'
 import DesktopClientUI from '../components/DesktopClientUI' // Import the UI component
 import JSONbig from 'json-bigint'
+import { Provider } from '@remix-ui/environment-explorer'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -144,7 +145,7 @@ export class DesktopClient extends ViewPlugin {
     const executionContext = this.blockchain.executionContext.executionContext
     const currentProvider = this.state.providers.find((provider) => provider.name === executionContext)
     console.log('isInjected', currentProvider)
-    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider.isInjected }))
+    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider.config.isInjected }))
   }
 
   async openDesktopApp() {

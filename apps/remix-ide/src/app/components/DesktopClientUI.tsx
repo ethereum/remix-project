@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { AppContext, appActionTypes } from '@remix-ui/app'
-import { Provider } from '../../blockchain/blockchain'
+import { Provider } from '@remix-ui/environment-explorer'
 import { providerLogos } from '../udapp/run-tab'
 import { desktopConnection } from '@remix-api'
 import { set } from 'lodash'
@@ -84,7 +84,7 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
         <div className="row">
           {providers && providers.length > 0 ? (
             providers
-              .filter((provider) => provider.isInjected && provider.name.toLocaleLowerCase().includes('metamask'))
+              .filter((provider) => provider.config.isInjected && provider.name.toLocaleLowerCase().includes('metamask'))
               .map((provider, index) => (
                 <div key={index} className="col-md-4 mb-4">
                   <div className="provider-item card h-100">
