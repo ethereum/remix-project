@@ -501,6 +501,7 @@ jobs:
           command: |
             brew install jq
             cd apps/remixdesktop
+            security unlock-keychain -p ci-password build.keychain
             zsh notarizedmg.sh
       - run:
           name: "remove unnecessary files"
