@@ -95,7 +95,7 @@ let requiredModules = [
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp', 'noir-compiler']
 
 const partnerPlugins = ['cookbookdev']
 
@@ -151,7 +151,8 @@ export function isNative(name) {
     'contract-verification',
     'popupPanel',
     'desktopClient',
-    'LearnEth'
+    'LearnEth',
+    'noir-compiler'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
@@ -315,7 +316,6 @@ export class RemixAppManager extends PluginManager {
     return plugins.map(plugin => {
       if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
-      //console.log('plugin', plugin)
       return new IframePlugin(plugin)
     })
   }
@@ -425,7 +425,8 @@ class PluginLoader {
       'dapp-draft',
       'solidityumlgen',
       'remixGuide',
-      'doc-viewer'
+      'doc-viewer',
+      'UIScriptRunner'
     ]
     this.loaders = {}
     this.loaders.localStorage = {

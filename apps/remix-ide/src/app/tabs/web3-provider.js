@@ -47,6 +47,11 @@ export class Web3ProviderModule extends Plugin {
                   return reject(errorData)
                 }
               }
+              if (message && message.error) {
+                const errorMsg = message.error?.message || message.error
+                this.call('terminal', 'log', { value: errorMsg, type: 'error' } )
+                return reject(errorMsg)
+              }
               if (payload.method === 'eth_sendTransaction') {
                 if (payload.params.length && !payload.params[0].to && message.result) {
                   setTimeout(async () => {

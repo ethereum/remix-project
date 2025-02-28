@@ -80,7 +80,7 @@ import * as remixLib from '@remix-project/remix-lib'
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
-import { ScriptRunnerUIPlugin } from './app/tabs/script-runner-ui'
+import { ScriptRunnerBridgePlugin } from './app/plugins/script-runner-bridge'
 import { ElectronProvider } from './app/files/electronProvider'
 
 const Storage = remixLib.Storage
@@ -105,6 +105,7 @@ import Filepanel from './app/panels/file-panel'
 import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
+import { any } from 'async'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -287,7 +288,7 @@ class AppComponent {
     const search = new SearchPlugin()
 
     //---------------- Script Runner UI Plugin -------------------------
-    const scriptRunnerUI = new ScriptRunnerUIPlugin(this.engine)
+    const scriptRunnerUI = new ScriptRunnerBridgePlugin(this.engine)
 
     //---- templates
     const templates = new TemplatesPlugin()
@@ -687,7 +688,9 @@ class AppComponent {
               this.appManager.call('sidePanel', 'pinView', JSON.parse(lastPinned))
             }
           })
-          .catch(console.error)
+          .catch((e) => {
+            console.error(e)
+          })
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')

@@ -10,8 +10,10 @@ import { VMProvider } from './providers/vm'
 import { InjectedProvider } from './providers/injected'
 import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
-import { etherScanLink } from './helper'
+import { etherScanLink, getBlockScoutUrl } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from '@remix-ui/helper'
+import { Provider } from '@remix-ui/environment-explorer'
+
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
@@ -42,26 +44,6 @@ export type Transaction = {
   gasLimit: string
   useCall: boolean
   timestamp?: number
-}
-
-export type Provider = {
-  options: { [key: string]: string }
-  dataId: string
-  name: string
-  displayName: string
-  logo?: string,
-  logos?: string[],
-  fork: string
-  description?: string
-  isInjected: boolean
-  isVM: boolean
-  isForkedState: boolean
-  isForkedVM: boolean
-  title: string
-  init: () => Promise<void>
-  provider:{
-    sendAsync: (payload: any) => Promise<void>
-  }
 }
 
 export class Blockchain extends Plugin {
@@ -750,18 +732,34 @@ export class Blockchain extends Plugin {
     )
 
     web3Runner.event.register('transactionBroadcasted', (txhash) => {
-      this.executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork(async (error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
         const viewEtherScanLink = etherScanLink(network.name, txhash)
-
+        const viewBlockScoutLink = await getBlockScoutUrl(network.id, txhash)
         if (viewEtherScanLink) {
           this.call(
             'terminal',
             'logHtml',
-            <a href={etherScanLink(network.name, txhash)} target="_blank">
-              view on etherscan
-            </a>
+            <span className="flex flex-row">
+              <a href={etherScanLink(network.name, txhash)} className="mr-3" target="_blank">
+                  view on Etherscan
+              </a>
+              {' '}
+              {viewBlockScoutLink && <a href={viewBlockScoutLink} target="_blank">
+                  view on Blockscout
+              </a>}
+            </span>
+          )
+        } else {
+          this.call(
+            'terminal',
+            'logHtml',
+            <span className="flex flex-row">
+              {viewBlockScoutLink && <a href={viewBlockScoutLink} target="_blank">
+                  view on Blockscout
+              </a>}
+            </span>
           )
         }
       })
