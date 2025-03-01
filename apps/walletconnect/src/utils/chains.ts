@@ -54,6 +54,22 @@ export const bsc = {
   rpcUrl: 'https://rpc.ankr.com/bsc'
 }
 
+export const ink = {
+  chainId: 57073,
+  name: 'Ink',
+  currency: 'ETH',
+  explorerUrl: 'https://explorer.inkonchain.com',
+  rpcUrl: 'https://rpc-gel.inkonchain.com'
+}
+
+export const inkSepolia = {
+  chainId: 763373,
+  name: 'Ink Sepolia',
+  currency: 'ETH',
+  explorerUrl: 'https://explorer-sepolia.inkonchain.com',
+  rpcUrl: 'https://rpc-gel-sepolia.inkonchain.com'
+}
+
 export const optimism = {
   chainId: 10,
   name: 'Optimism',
