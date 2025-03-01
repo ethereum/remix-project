@@ -117,7 +117,6 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.goto(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
-    await page.screenshot({ path: '/home/circleci/remix-project/apps/remixdesktop/reports/screenshots/desktophost.png' });
   }
   
 
