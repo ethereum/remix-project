@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain, protocol } from 'electron';
 import path from 'path';
-
+import "./utils/log"
 
 export let isPackaged = false;
 export const version = app.getVersion();
