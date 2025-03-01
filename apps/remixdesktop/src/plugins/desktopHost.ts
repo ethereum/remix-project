@@ -7,7 +7,8 @@ import { RequestArguments } from "../types"
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import { isPackaged } from "../main"
+import { isE2E, isE2ELocal, isPackaged } from "../main"
+import puppeteer from 'puppeteer'
 
 const logFilePath = isPackaged ? path.join(os.tmpdir(), 'desktopHost.log') : path.join(__dirname, 'desktopHost.log')
 
@@ -112,11 +113,26 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     return isConnected
   }
 
+  async openInCI() {
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
+    console.log('Page opened in CI');
+    await browser.close();
+  }
+  
+
   async init() {
     console.log('SETTING UP REMOTE WEBSOCKET...', this.webContentsId)
 
-    if (!isConnected)
-      await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`)
+    if (!isConnected){
+      if (isE2E && !isE2ELocal) {
+        await this.openInCI();
+      } else {
+        await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
+      }
+    }
+    
     // wait for the connection
     while (!isConnected) {
       await new Promise(resolve => setTimeout(resolve, 1000))
