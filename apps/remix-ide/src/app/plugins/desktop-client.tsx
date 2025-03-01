@@ -144,8 +144,7 @@ export class DesktopClient extends ViewPlugin {
   async isInjected() {
     const executionContext = this.blockchain.executionContext.executionContext
     const currentProvider = this.state.providers.find((provider) => provider.name === executionContext)
-    console.log('isInjected', currentProvider)
-    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider.config.isInjected }))
+    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider && currentProvider.config && currentProvider.config.isInjected }))
   }
 
   async openDesktopApp() {

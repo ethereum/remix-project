@@ -54,7 +54,6 @@ const tests = {
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
       .clickFunction('retrieve - call')
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
-      .pause()
   },
 }
 
