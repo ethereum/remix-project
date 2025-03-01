@@ -118,7 +118,6 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     const page = await browser.newPage();
     await page.goto(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
     console.log('Page opened in CI');
-    await browser.close();
   }
   
 
