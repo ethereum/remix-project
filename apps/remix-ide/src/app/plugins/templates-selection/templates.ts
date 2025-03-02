@@ -331,9 +331,16 @@ export const templates = (intl, plugin) => {
     {
       name: "Circom ZKP",
       items: [
-        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Semaphore protocol for casting a message as a provable group member' },
-        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Hash checker Circom circuit' },
-        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Rate Limiting Nullifier Circom circuit' }
+        { value: "semaphore", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Semaphore protocol for casting a message as a provable group member' },
+        { value: "hashchecker", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Hash checker Circom circuit' },
+        { value: "rln", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Rate Limiting Nullifier Circom circuit' }
+      ]
+    },
+    {
+      name: "Noir ZKP",
+      items: [
+        { value: "multNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.multNr' }), description: 'A simple multiplier circuit' }
+        // { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementaion built in Noir' }
       ]
     },
     {

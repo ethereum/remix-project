@@ -124,6 +124,8 @@
   "filePanel.semaphore": "Semaphore",
   "filePanel.hashchecker": "Hash Checker",
   "filePanel.rln": "Rate-Limiting Nullifier",
+  "filePanel.multNr": "Simple Multiplier",
+  "filePanel.stealthDropNr": "Stealth Drop",
   "filePanel.breakthroughLabsUniswapv4Hooks": "Breakthrough-Labs Hooks",
   "filePanel.uniswapV4Template": "v4 Template",
   "filePanel.uniswapV4HookBookMultiSigSwapHook": "HookBook MultiSigSwapHook",

@@ -1,0 +1,14 @@
+.remixui_spanfade {
+  opacity: 1;
+  animation: fadeOut 3s forwards;
+}
+
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

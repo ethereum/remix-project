@@ -170,7 +170,6 @@ const Model: ModelType = {
           (<any>window)._paq.push(['trackEvent', 'learneth', 'test_step', success])
         }
       } catch (err) {
-        console.log('TESTING ERROR', err)
         yield put({
           type: 'remixide/save',
           payload: { errors: [String(err)]},

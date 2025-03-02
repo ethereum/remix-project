@@ -453,23 +453,23 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async code_completion(prompt, promptAfter, params:IParams=CompletionParams): Promise<any> {
+  async code_completion(prompt, promptAfter, ctxFiles, currentFileName , params:IParams=CompletionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
 
     // as of now no prompt required
-    const payload = { prompt, 'context':promptAfter, ...params }
+    const payload = { prompt, 'context':promptAfter, ctxFiles, currentFileName, ...params }
     return this._makeInferenceRequest('code_completion', payload, AIRequestType.COMPLETION)
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=InsertionParams): Promise<any> {
+  async code_insertion(msg_pfx: string, msg_sfx: string, ctxFiles, currentFileName, params:IParams=InsertionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
-    const payload = { code_pfx:msg_pfx, code_sfx:msg_sfx, ...params }
+    const payload = { code_pfx:msg_pfx, code_sfx:msg_sfx, ctxFiles, currentFileName, ...params }
     return this._makeInferenceRequest('code_insertion', payload, AIRequestType.COMPLETION)
 
   }

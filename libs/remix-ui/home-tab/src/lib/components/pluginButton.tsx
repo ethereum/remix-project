@@ -32,14 +32,14 @@ function PluginButton({ imgPath, envID, envText, callback, l2, description, main
       {l2 && <label className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_l2Label">L2</label>}
       { maintainedBy?.toLowerCase() === 'remix' ? (
         <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-by-remix" tooltipText={<FormattedMessage id="home.maintainedByRemix" />}>
-          <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
+          <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fa-solid fa-shield-halved"></i>
         </CustomTooltip>) :
         maintainedBy ?
           (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={"Maintained by " + maintainedBy}>
-            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary fa-solid fa-shield-halved"></i>
           </CustomTooltip>)
           : (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
-            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary fa-solid fa-shield-halved"></i>
           </CustomTooltip>)
       }
     </div>

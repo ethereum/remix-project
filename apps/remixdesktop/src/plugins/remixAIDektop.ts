@@ -82,13 +82,13 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     return true
   }
 
-  async code_completion(prompt: string, promptAfter: string) {
+  async code_completion(prompt: string, promptAfter: string, ctxFiles=[], fileName: string="") {
     // use general purpose model
-    return this.desktopInferencer.code_completion(prompt, promptAfter)
+    return this.desktopInferencer.code_completion(prompt, promptAfter, ctxFiles, fileName)
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string) {
-    return this.desktopInferencer.code_insertion(msg_pfx, msg_sfx)
+  async code_insertion(msg_pfx: string, msg_sfx: string, ctxFiles=[], fileName: string="") {
+    return this.desktopInferencer.code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName)
   }
 
   async code_generation(prompt: string) {

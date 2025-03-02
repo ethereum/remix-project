@@ -50,8 +50,8 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
               autoPlaySpeed={10000}
               dotListClass="position-relative mt-2"
             >
-              <div
-                className="mx-1 px-1 d-flex" // Please do not delete. just comment this out. To be used every year.
+              {false && <div // no this is not a mistake. keep it false until next year ;)
+                className="mx-1 px-1 d-flex d-none" // Please do not delete. just comment this out or keep hidden. To be used every year.
               >
                 <a href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/" target="__blank">
                   <img className="remixui_carouselImage" src={'/assets/img/solSurvey2024.webp'} alt=""></img>
@@ -83,7 +83,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                     </a>
                   </p>
                 </div>
-              </div>
+              </div> }
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href={releaseDetails.moreLink} target="__blank">
                   <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>

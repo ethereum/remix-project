@@ -22,4 +22,5 @@ export {
 export * from './types/types'
 export * from './helpers/streamHandler'
 export * from './agents/codeExplainAgent'
+export * from './agents/completionAgent'
 export * from './agents/securityAgent'

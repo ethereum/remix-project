@@ -36,6 +36,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
+      .pause(2000)
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')

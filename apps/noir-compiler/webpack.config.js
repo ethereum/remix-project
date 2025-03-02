@@ -2,11 +2,18 @@ const { composePlugins, withNx } = require('@nrwl/webpack')
 const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const fs = require('fs')
+const path = require('path')
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
-  // Update the webpack config as needed here.
-  // e.g. `config.plugins.push(new MyPlugin())`
+  // use the web build for noir-wasm
+  let pkgNoirWasm = fs.readFileSync(path.resolve(__dirname, '../../node_modules/@noir-lang/noir_wasm/package.json'), 'utf8')
+  let typeCount = 0
+
+  pkgNoirWasm = pkgNoirWasm.replace(/"node"/, '"./node"').replace(/"import"/, '"./import"').replace(/"require"/, '"./require"').replace(/"types"/g, match => ++typeCount === 2 ? '"./types"' : match).replace(/"default"/, '"./default"')
+  fs.writeFileSync(path.resolve(__dirname, '../../node_modules/@noir-lang/noir_wasm/package.json'), pkgNoirWasm)
+
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
@@ -52,6 +59,17 @@ module.exports = composePlugins(withNx(), (config) => {
   config.plugins.push(
     new webpack.DefinePlugin({
       WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID),
+    })
+  )
+
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'fetch': `((...args) => {
+        if (args[0].origin === 'https://github.com') {
+          return fetch('https://api.allorigins.win/raw?url' + args[0])
+        }
+        return fetch(...args)
+      })`,
     })
   )
 

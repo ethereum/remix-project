@@ -5,6 +5,8 @@ import * as stateDecoder from '../../src/solidity-decoder/stateDecoder'
 import { MockStorageResolver } from './mockStorageResolver'
 import { compilerInput } from '../helpers/compilerHelper'
 const testMappingStorage = require('./stateTests/mapping')
+const testRevertState = require('./stateTests/revert-state')
+const testRevertStateSubCall = require('./stateTests/revert-state-sub-call')
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
@@ -16,7 +18,13 @@ tape('solidity', function (t) {
         testStructArrayStorage(st, function () {
           console.log('test mapping storage')
           testMappingStorage(st, function () {
-            st.end()
+            console.log('test revert state')
+            testRevertState(st, function () {
+              console.log('test revert state sub call')
+              testRevertStateSubCall(st, function () {
+                st.end()
+              })
+            })
           })
         })
       })
