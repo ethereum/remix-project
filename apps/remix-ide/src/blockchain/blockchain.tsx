@@ -933,6 +933,7 @@ export class Blockchain extends Plugin {
         const tx = {
           to: args.to,
           data: args.data.dataHex,
+          deployedBytecode: args.data.contractDeployedBytecode,
           useCall: args.useCall,
           from: fromAddress,
           fromSmartAccount,

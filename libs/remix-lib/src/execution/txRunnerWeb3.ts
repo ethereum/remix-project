@@ -46,7 +46,7 @@ export class TxRunnerWeb3 {
 
     let currentDateTime = new Date();
     const start = currentDateTime.getTime() / 1000
-    const cb = (err, resp, isUserOp) => {
+    const cb = (err, resp, isUserOp, contractAddress) => {
       if (err) {
         return callback(err, resp)
       }
@@ -57,6 +57,7 @@ export class TxRunnerWeb3 {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
+          if (isUserOp && contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
           resolve({
             receipt,
             tx,
@@ -65,7 +66,6 @@ export class TxRunnerWeb3 {
         })
       }
       listenOnResponse().then((txData) => { 
-          console.log('txData--txRunnerWeb3-listenOnResponse->', txData)
           callback(null, txData) 
         }).catch((error) => { callback(error) })
     }
@@ -75,13 +75,13 @@ export class TxRunnerWeb3 {
         async (value) => {
           try {
             const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-            cb(null, res.transactionHash, false)
+            cb(null, res.transactionHash, false, null)
           } catch (e) {
             console.log(`Send transaction failed: ${e.message || e.error} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
-            if (e.receipt) cb(null, e.receipt.transactionHash, false)
-            else cb(e, null, false)
+            if (e.receipt) cb(null, e.receipt.transactionHash, false, null)
+            else cb(e, null, false, null)
           }
         },
         () => {
@@ -92,11 +92,11 @@ export class TxRunnerWeb3 {
       try {
         if (tx.fromSmartAccount) {
           // await this.sendUserOp(tx)
-          const userOpHash = await this.sendUserOp(tx)
-          cb(null, userOpHash, true)
+          const { txHash, contractAddress } = await this.sendUserOp(tx)
+          cb(null, txHash, true, contractAddress)
         } else {
           const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-          cb(null, res.transactionHash, false)
+          cb(null, res.transactionHash, false, null)
         }
       } catch (e) {
         if (!e.message) e.message = ''
@@ -106,8 +106,8 @@ export class TxRunnerWeb3 {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
-        if (e.receipt) cb(null, e.receipt.transactionHash, false)
-        else cb(e, null, false)
+        if (e.receipt) cb(null, e.receipt.transactionHash, false, null)
+        else cb(e, null, false, null)
       }
     }
   }
@@ -118,11 +118,11 @@ export class TxRunnerWeb3 {
       data = '0x' + data
     }
 
-    return this.runInNode(args.from, args.fromSmartAccount, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
+    return this.runInNode(args.from, args.fromSmartAccount, args.deployedBytecode, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
 
-  runInNode (from, fromSmartAccount, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
-    const tx = { from: from, fromSmartAccount, to: to, data: data, value: value }
+  runInNode (from, fromSmartAccount, deployedBytecode, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
+    const tx = { from: from, fromSmartAccount, deployedBytecode, to: to, data: data, value: value }
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
       if (this._api && this._api.isVM()) {
@@ -263,7 +263,7 @@ export class TxRunnerWeb3 {
         }
     })
 
-    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000015"
+    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000024"
     let bytecode = tx.data
     
     const expectedDeploymentAddress = getContractAddress({ 
@@ -272,20 +272,32 @@ export class TxRunnerWeb3 {
       opcode: 'CREATE2', 
       salt
     })
-    console.log('expectedDeploymentAddress--->', expectedDeploymentAddress)
-    let txHash
+    let txHash, contractAddress
     if (!tx.to) {
       txHash = await saClient.sendTransaction({
         to:  determiniticProxyAddress,
         data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
       })
+      // check if code is deployed to expectedDeployment Address
+      const expectedBytecode = await publicClient.getCode({
+        address: expectedDeploymentAddress, 
+      })
+      if (expectedBytecode === tx.deployedBytecode) {
+        contractAddress = expectedDeploymentAddress
+      } else {
+        contractAddress = undefined
+        console.error('Error in contract deployment')
+      }
     } else {
-      console.log('tx--details-->', tx)
+      txHash = await saClient.sendTransaction({
+        to:  tx.to,
+        data: tx.data,
+        value: tx.value
+      })
     }
 
     console.log('txHash----->', txHash)
-    // return "0x"
-    return txHash
+    return { txHash, contractAddress }
   }
 }
 
