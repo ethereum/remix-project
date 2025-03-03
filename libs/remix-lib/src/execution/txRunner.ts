@@ -5,6 +5,7 @@ export type Transaction = {
   from: string,
   fromSmartAccount: boolean,
   to?: string,
+  deployedBytecode?: string
   value: string,
   data: string,
   gasLimit: number,
@@ -36,6 +37,9 @@ export class TxRunner {
   execute (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     if (args.data && args.data.slice(0, 2) !== '0x') {
       args.data = '0x' + args.data
+    }
+    if (args.deployedBytecode && args.deployedBytecode.slice(0, 2) !== '0x') {
+      args.deployedBytecode = '0x' + args.deployedBytecode
     }
     this.internalRunner.execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
