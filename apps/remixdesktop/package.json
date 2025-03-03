@@ -54,7 +54,7 @@
     "chokidar": "^3.5.3",
     "express": "^4.21.1",
     "isomorphic-git": "^1.24.2",
-    "node-pty": "^0.10.1",
+    "node-pty": "^1.0.0",
     "semver": "^7.6.1"
   },
   "optionalDependencies": {
