@@ -34,7 +34,7 @@ interface DesktopClientState {
 export class DesktopClient extends ViewPlugin {
   blockchain: Blockchain
   ws: WebSocket
-  dispatch: React.Dispatch<any> = () => {}
+  dispatch: React.Dispatch<any> = () => { }
   state: DesktopClientState
   appStateDispatch: React.Dispatch<AppAction>
   queryParams: QueryParams
@@ -81,7 +81,7 @@ export class DesktopClient extends ViewPlugin {
     console.log('contextChanged handled', context)
   }
 
-  onDeactivation() {}
+  onDeactivation() { }
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
@@ -234,24 +234,28 @@ export class DesktopClient extends ViewPlugin {
           })
         )
       } else {
-        const provider = this.blockchain.web3().currentProvider
         await this.isInjected()
-        let result = await provider.sendAsync(parsed)
-        if (parsed.method === 'eth_sendTransaction') {
-          console.log('Sending result back to server', result)
-        }
-        // if (parsed.method === 'net_version' && result.result === 1337) {
-        //   console.log('incoming net_version', result)
-        //   console.log('Sending result back to server', result, this.blockchain.executionContext)
-        //   console.log(this.state.providers)
-        //   if (this.state.providers.length === 0) { // if no providers are available, send the VM context
-        //     this.ws.send(stringifyWithBigInt(result))
-        //   }
+        try {
+          const provider = this.blockchain.web3().currentProvider
 
-        // } else {
-        console.log('Sending result back to server', result)
-        this.ws.send(stringifyWithBigInt(result))
-        //}
+          let result = await provider.sendAsync(parsed)
+
+          console.log('Sending result back to server', result)
+          this.ws.send(stringifyWithBigInt(result))
+
+
+        } catch (e) {
+
+
+          console.log('No provider...', parsed)
+          this.ws.send(stringifyWithBigInt({
+            jsonrpc: '2.0',
+            result: 'error',
+            id: parsed.id,
+          }))
+          return
+
+        }
 
       }
     }
@@ -271,9 +275,9 @@ export class DesktopClient extends ViewPlugin {
     }
   }
 
-  async init() {}
+  async init() { }
 
-  async sendAsync(payload: any) {}
+  async sendAsync(payload: any) { }
 
   async tryTillReceiptAvailable(txhash) {
     try {

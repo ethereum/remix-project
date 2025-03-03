@@ -145,7 +145,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       console.log('NOT CONNECTED', this.webContentsId)
       return { error: 'Not connected to the remote websocket' }
     }
-    console.log('SEND ASYNC', data, this.webContentsId)
+    console.log('SEND ASYNC', data, this.webContentsId, this.isInjected)
 
 
     if (data.method === 'eth_getTransactionReceipt') {
