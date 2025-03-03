@@ -9,7 +9,7 @@ import { ContractDropdownUI } from './components/contractDropdownUI'
 import { InstanceContainerUI } from './components/instanceContainerUI'
 import { RecorderUI } from './components/recorderCardUI'
 import { SettingsUI } from './components/settingsUI'
-import { Modal, Network, RunTabProps, Tx } from './types'
+import { Modal, Network, PersistedAccount, RunTabProps, Tx } from './types'
 import { ContractData } from '@remix-project/core-plugin'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
@@ -57,6 +57,7 @@ import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
+import { checkPersistedAccountSelectionEnvironmentMatch } from './actions/account'
 
 export type CheckStatus = 'Passed' | 'Failed' | 'Not Found'
 
@@ -89,6 +90,7 @@ export function RunTabUI(props: RunTabProps) {
   const currentfile = plugin.config.get('currentFile')
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
   const [evmCheckComplete, setEvmCheckComplete] = useState(false)
+  const [previouslySelectedAccount, setPreviouslySelectedAccount] = useState<PersistedAccount | null>(null)
 
   const getVersion = () => {
     let version = '0.8.25'
@@ -236,7 +238,7 @@ export function RunTabUI(props: RunTabProps) {
   }, [runTab.popup])
 
   useEffect(() => {
-    if (runTab.selectExEnv.includes('injected') &&
+    if ((runTab.selectExEnv.includes('injected') || runTab.selectExEnv.includes('walletconnect')) &&
       Object.entries(runTab.accounts.loadedAccounts).length === 0 &&
     runTab.accounts.selectedAccount.length > 0) {
       // switch to vm-cancum because no account is loaded from injected provider
@@ -244,6 +246,17 @@ export function RunTabUI(props: RunTabProps) {
       setExecutionEnvironment({ context, fork: '' })
     }
   }, [runTab.accounts.loadedAccounts])
+
+  console.log({ runTab, plugin })
+
+  useEffect(() => {
+    console.log('runTab.selectExEnv', runTab.selectExEnv)
+    const { account, network } = checkPersistedAccountSelectionEnvironmentMatch(runTab.selectExEnv, runTab.accounts.selectedAccount)
+    console.log('account', { account, network })
+    if (account.length > 0 && network.length > 0) {
+      setPreviouslySelectedAccount({ account, network })
+    }
+  }, [runTab.selectExEnv, Object.keys(runTab.accounts.loadedAccounts).length])
 
   const setCheckIpfs = (value: boolean) => {
     dispatch(setIpfsCheckedState(value))
@@ -379,6 +392,9 @@ export function RunTabUI(props: RunTabProps) {
             tooltip={toast}
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
+            previousAccount={previouslySelectedAccount}
+            dispatch={dispatch}
+            runTab={runTab}
           />
           <ContractDropdownUI
             selectedAccount={runTab.accounts.selectedAccount}
