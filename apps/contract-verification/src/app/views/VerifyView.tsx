@@ -270,7 +270,7 @@ export const VerifyView = () => {
         (!!contractAddressError || !contractAddress) ? <FormattedMessage id="contract-verification.contractAddressError" defaultMessage="Please provide a valid contract address." /> :
           !selectedChain ? <FormattedMessage id="contract-verification.chainError" defaultMessage="Please select the chain." /> :
             !selectedContract ? <FormattedMessage id="contract-verification.selectedContractError" defaultMessage="Please select the contract." /> :
-              enabledVerifiers['Etherscan'] && !abiEncodedConstructorArgs && !!abiEncodingError ? <FormattedMessage id="contract-verification.constructorArgumentsError" defaultMessage="Etherscan requires constructor arguments." /> :
+              enabledVerifiers['Etherscan'] && !abiEncodedConstructorArgs && !!abiEncodingError ? <FormattedMessage id="contract-verification.constructorArgumentsError" defaultMessage="Must provide constructor arguments if verifying on Etherscan" /> :
                 ((hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)) ? <FormattedMessage id="contract-verification.proxyAddressError" defaultMessage="Please provide a valid proxy address." /> :
                   <FormattedMessage id="contract-verification.generalVerifyError" defaultMessage={"Please provide all necessary data to verify"} />) // Is not expected to be a case
         : <FormattedMessage id="contract-verification.verifyButtonTooltip" defaultMessage="Verify the contract on the selected chains with the selected verifiers." />}>
