@@ -25,7 +25,7 @@ export const VerifyView = () => {
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
   const noVerifierEnabled = VERIFIERS.every((verifierId) => !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)) || Object.values(enabledVerifiers).every((enabled) => !enabled)
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress) || noVerifierEnabled
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress) || noVerifierEnabled || (enabledVerifiers['Etherscan'] && !abiEncodedConstructorArgs && !!abiEncodingError)
 
   // Enable all verifiers with valid configuration
   useEffect(() => {
@@ -270,8 +270,9 @@ export const VerifyView = () => {
         (!!contractAddressError || !contractAddress) ? <FormattedMessage id="contract-verification.contractAddressError" defaultMessage="Please provide a valid contract address." /> :
           !selectedChain ? <FormattedMessage id="contract-verification.chainError" defaultMessage="Please select the chain." /> :
             !selectedContract ? <FormattedMessage id="contract-verification.selectedContractError" defaultMessage="Please select the contract." /> :
-              ((hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)) ? <FormattedMessage id="contract-verification.proxyAddressError" defaultMessage="Please provide a valid proxy address." /> :
-                <FormattedMessage id="contract-verification.generalVerifyError" defaultMessage={"Please provide all necessary data to verify"} />) // Is not expected to be a case
+              enabledVerifiers['Etherscan'] && !abiEncodedConstructorArgs && !!abiEncodingError ? <FormattedMessage id="contract-verification.constructorArgumentsError" defaultMessage="Must provide constructor arguments if verifying on Etherscan" /> :
+                ((hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)) ? <FormattedMessage id="contract-verification.proxyAddressError" defaultMessage="Please provide a valid proxy address." /> :
+                  <FormattedMessage id="contract-verification.generalVerifyError" defaultMessage={"Please provide all necessary data to verify"} />) // Is not expected to be a case
         : <FormattedMessage id="contract-verification.verifyButtonTooltip" defaultMessage="Verify the contract on the selected chains with the selected verifiers." />}>
         <button type="submit" className="w-100 btn btn-primary mt-3" disabled={submitDisabled}>
           <FormattedMessage id="contract-verification.verifyButton" defaultMessage="Verify" />
