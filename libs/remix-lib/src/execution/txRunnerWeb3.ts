@@ -206,12 +206,12 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx) {
-    console.log('sendUserOp------->')
-    console.log('tx------->', tx)
+    console.log('sendUserOp---tx------->', tx)
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
     const PIMLICO_API_KEY =''
     const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+    const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
     const network = 'sepolia'
     const chain = chains[network]
   
@@ -263,20 +263,20 @@ export class TxRunnerWeb3 {
         }
     })
 
-    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000013"
+    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000015"
     let bytecode = tx.data
     
     const expectedDeploymentAddress = getContractAddress({ 
-      bytecode: keccak256(bytecode), 
-      from: '0x4e59b44847b379578588920cA78FbF26c0B4956C', 
+      bytecode, 
+      from: determiniticProxyAddress, 
       opcode: 'CREATE2', 
-      salt: keccak256(salt)
+      salt
     })
     console.log('expectedDeploymentAddress--->', expectedDeploymentAddress)
     let txHash
     if (!tx.to) {
       txHash = await saClient.sendTransaction({
-        to:  "0x4e59b44847b379578588920cA78FbF26c0B4956C",
+        to:  determiniticProxyAddress,
         data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
       })
     } else {
