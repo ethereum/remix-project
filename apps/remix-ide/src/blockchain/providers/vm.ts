@@ -101,6 +101,7 @@ export class VMProvider {
             nodeUrl: provider?.options['nodeUrl'],
             blockNumber,
             stateDb,
+            baseBlockNumer: blockchainState.baseBlockNumber,
             blocks: blockchainState.blocks
           })
         } catch (e) {

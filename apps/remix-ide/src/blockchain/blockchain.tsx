@@ -970,9 +970,15 @@ export class Blockchain extends Plugin {
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
       const isVM = this.executionContext.isVM()
+      const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
-      if (isVM) {
+      const isBasicVMState = isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      const isForkedVMState = isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      const isForkedRpcState = isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
+
+      if (isBasicVMState || isForkedVMState || isForkedRpcState) {
+        // we don't save the state in case of the isRpcForkedState, only if it's forked
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
             let state = await this.executionContext.getStateDetails()
@@ -980,7 +986,7 @@ export class Blockchain extends Plugin {
             // Check if provider is forked VM state
             if (provider.startsWith('vm-fs-')) {
               const stateName = provider.replace('vm-fs-', '')
-              const stateFileExists = this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
+              const stateFileExists = await this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
               if (stateFileExists) {
                 let stateDetails = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
                 stateDetails = JSON.parse(stateDetails)

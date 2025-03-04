@@ -240,7 +240,8 @@ export class Transactions {
   eth_getBlocksData (_, cb) {
     cb(null, {
       blocks: this.txRunnerVMInstance.blocks,
-      latestBlockNumber: this.txRunnerVMInstance.blocks.length - 1
+      latestBlockNumber: this.txRunnerVMInstance.blocks.length - 1,
+      baseBlockNumber: this.vmContext.currentVm.baseBlockNumber
     })
   }
 

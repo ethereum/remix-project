@@ -36,6 +36,7 @@ export type ProviderOptions = {
   fork?: string,
   nodeUrl?: string,
   blockNumber?: number | 'latest',
+  baseBlockNumber: string, // hex
   stateDb?: State,
   details?: boolean
   blocks?: string[],
@@ -54,9 +55,10 @@ export class Provider {
   pendingRequests: Array<any>
 
   constructor (options: ProviderOptions = {} as ProviderOptions) {
+    console.log(options)
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'])
+    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'], options['baseBlockNumber'])
 
     this.Accounts = new Web3Accounts(this.vmContext, options)
     this.Transactions = new Transactions(this.vmContext)
