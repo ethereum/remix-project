@@ -756,15 +756,6 @@ export class Blockchain extends Plugin {
               </a>}
             </span>
           )
-        } else if (isUserOp) {
-          const userOpLink = `https://jiffyscan.xyz/userOpHash/${txhash}?network=${network.name}`
-          this.call(
-            'terminal',
-            'logHtml',
-            <a href={userOpLink} target="_blank">
-              view on Jiffyscan
-            </a>
-          )
         } else {
           this.call(
             'terminal',

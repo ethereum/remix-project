@@ -8,9 +8,9 @@ import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import { sepolia } from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
-const { createSmartAccountClient } = require("permissionless")
+const { createSmartAccountClient } = require("permissionless") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
-const { createPimlicoClient } = require("permissionless/clients/pimlico")
+const { createPimlicoClient } = require("permissionless/clients/pimlico") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -118,7 +118,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     transport: custom(window.ethereum!),
   })
 
-  const publicClient = createPublicClient({ 
+  const publicClient = createPublicClient({
     chain: sepolia,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
@@ -139,12 +139,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     saltNonce: salt,
     version: "1.4.1"
   })
-  
+
   const paymasterClient = createPimlicoClient({
     transport: http(BUNDLER_URL),
     entryPoint: {
-        address: entryPoint07Address,
-        version: "0.7",
+      address: entryPoint07Address,
+      version: "0.7",
     },
   })
 
@@ -164,7 +164,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       value: 0
     }]
   })
-  await saClient.waitForUserOperationReceipt({hash: useropHash})
+  await saClient.waitForUserOperationReceipt({ hash: useropHash })
 
   const safeAddress = safeAccount.address
 
