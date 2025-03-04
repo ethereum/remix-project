@@ -23,6 +23,13 @@ export interface ContractList {
   [file: string]: Contract[]
 }
 
+export type SmartAccount = {
+  address: string
+  salt: number
+  ownerEOA: string
+  timestamp: number
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
@@ -31,6 +38,7 @@ export interface RunTabState {
     error: string,
     selectedAccount: string
   },
+  smartAccounts: Record<string, SmartAccount>
   sendValue: string,
   sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
   gasLimit: number,
@@ -136,6 +144,7 @@ export interface SettingsProps {
   addFile: (path: string, content: string) => void,
   setExecutionContext: (executionContext: { context: string, fork: string }) => void,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
+  createNewSmartAccount: () => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
@@ -177,12 +186,14 @@ export interface AccountProps {
   setAccount: (account: string) => void,
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
+  createNewSmartAccount: () => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   tooltip: (toasterMsg: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
-  passphrase: string
+  passphrase: string,
+  networkName: string
 }
 
 export interface GasPriceProps {
