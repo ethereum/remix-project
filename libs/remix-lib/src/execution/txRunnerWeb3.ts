@@ -3,11 +3,11 @@ import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
+import { randomBytes } from 'crypto'
 import "viem/window"
-import { custom, http, createWalletClient, parseEther, createPublicClient, keccak256, encodePacked, getContractAddress } from "viem"
+import { custom, http, createWalletClient, createPublicClient, encodePacked, getContractAddress } from "viem"
 import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
-import { toAccount } from "viem/accounts"
 const { createSmartAccountClient } = require("permissionless")
 const { toSafeSmartAccount } = require("permissionless/accounts")
 const { createPimlicoClient } = require("permissionless/clients/pimlico")
@@ -263,7 +263,7 @@ export class TxRunnerWeb3 {
         }
     })
 
-    let salt: `0x${string}` = "0x0000000000000000000000000000000000000000000000000000000000000024"
+    const salt: `0x${string}` = `0x${randomBytes(32).toString('hex')}`
     let bytecode = tx.data
     
     const expectedDeploymentAddress = getContractAddress({ 
