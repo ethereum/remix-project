@@ -58,6 +58,7 @@ export class TxRunnerWeb3 {
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
           if (isUserOp && contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
+          console.log('receipt--->', receipt)
           resolve({
             receipt,
             tx,
@@ -65,9 +66,9 @@ export class TxRunnerWeb3 {
           })
         })
       }
-      listenOnResponse().then((txData) => { 
-          callback(null, txData) 
-        }).catch((error) => { callback(error) })
+      listenOnResponse().then((txData) => {
+        callback(null, txData)
+      }).catch((error) => { callback(error) })
     }
 
     if (api.personalMode()) {
@@ -214,7 +215,7 @@ export class TxRunnerWeb3 {
     const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
     const network = 'sepolia'
     const chain = chains[network]
-  
+
     // @ts-ignore
     const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
     // Check that saOwner is there in MM addresses
@@ -222,7 +223,7 @@ export class TxRunnerWeb3 {
     smartAccountsObj = JSON.parse(smartAccountsObj)
     const saDetails = smartAccountsObj[chain.id][tx.from]
     const saOwner = saDetails['ownerEOA']
-    
+
     // both are needed. public client to get nonce and read blockchain. wallet client to sign the useroperation
     const walletClient = createWalletClient({
       account: saOwner,
@@ -230,7 +231,7 @@ export class TxRunnerWeb3 {
       transport: custom(window.ethereum!),
     })
 
-    const publicClient = createPublicClient({ 
+    const publicClient = createPublicClient({
       chain,
       transport: http(PUBLIC_NODE_URL) // choose any provider here
     })
@@ -238,8 +239,8 @@ export class TxRunnerWeb3 {
     const safeAccount = await toSafeSmartAccount({
       client: publicClient,
       entryPoint: {
-          address: entryPoint07Address,
-          version: "0.7",
+        address: entryPoint07Address,
+        version: "0.7",
       },
       owners: [walletClient],
       version: "1.4.1",
@@ -249,38 +250,39 @@ export class TxRunnerWeb3 {
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
       entryPoint: {
-          address: entryPoint07Address,
-          version: "0.7",
+        address: entryPoint07Address,
+        version: "0.7",
       },
     })
     const saClient = createSmartAccountClient({
-        account: safeAccount,
-        chain,
-        paymaster: paymasterClient,
-        bundlerTransport: http(BUNDLER_URL),
-        userOperation: {
-          estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
-        }
+      account: safeAccount,
+      chain,
+      paymaster: paymasterClient,
+      bundlerTransport: http(BUNDLER_URL),
+      userOperation: {
+        estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
+      }
     })
 
     const salt: `0x${string}` = `0x${randomBytes(32).toString('hex')}`
-    let bytecode = tx.data
-    
-    const expectedDeploymentAddress = getContractAddress({ 
-      bytecode, 
-      from: determiniticProxyAddress, 
-      opcode: 'CREATE2', 
+    const bytecode = tx.data
+
+    const expectedDeploymentAddress = getContractAddress({
+      bytecode,
+      from: determiniticProxyAddress,
+      opcode: 'CREATE2',
       salt
     })
     let txHash, contractAddress
     if (!tx.to) {
+      // contract deployment transaction
       txHash = await saClient.sendTransaction({
         to:  determiniticProxyAddress,
         data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
       })
       // check if code is deployed to expectedDeployment Address
       const expectedBytecode = await publicClient.getCode({
-        address: expectedDeploymentAddress, 
+        address: expectedDeploymentAddress,
       })
       if (expectedBytecode === tx.deployedBytecode) {
         contractAddress = expectedDeploymentAddress
@@ -289,6 +291,7 @@ export class TxRunnerWeb3 {
         console.error('Error in contract deployment')
       }
     } else {
+      // contract interaction transaction
       txHash = await saClient.sendTransaction({
         to:  tx.to,
         data: tx.data,
