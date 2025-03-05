@@ -72,7 +72,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           try {
             (console as any).browserError(...arguments)
           } catch (e) {
-            (console as any).browserLog(e.message)
+            (console as any).browserError(e.message)
           }
         }
       })
