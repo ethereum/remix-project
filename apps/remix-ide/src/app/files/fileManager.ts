@@ -1,4 +1,3 @@
-
 'use strict'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
@@ -10,11 +9,6 @@ import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 import { commitChange } from '@remix-ui/git'
 
-/*
-  attach to files event (removed renamed)
-  trigger: currentFileChanged
-*/
-
 const profile = {
   name: 'fileManager',
   displayName: 'File manager',
@@ -22,14 +16,17 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
-    'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
-    'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff',
-    'hasGitSubmodules', 'getOpenedFiles'
+  methods: [
+    'closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles',
+    'writeFileNoRewrite', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir',
+    'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile',
+    'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl',
+    'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory',
+    'hasGitSubmodule', 'copyFolderToJson', 'diff', 'hasGitSubmodules', 'getOpenedFiles'
   ],
   kind: 'file-system'
 }
+
 const errorMsg = {
   ENOENT: 'No such file or directory',
   EISDIR: 'Path is a directory',
@@ -37,9 +34,11 @@ const errorMsg = {
   EEXIST: 'File already exists',
   EPERM: 'Permission denied'
 }
+
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
+
 export default class FileManager extends Plugin {
   mode: string
   openedFiles: any
@@ -52,10 +51,11 @@ export default class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
+
   constructor(editor, appManager) {
     super(profile)
     this.mode = 'browser'
-    this.openedFiles = {} // list all opened files
+    this.openedFiles = {}
     this.editor = editor
     this._components = {}
     this._components.registry = Registry.getInstance()
@@ -72,57 +72,37 @@ export default class FileManager extends Plugin {
   }
 
   limitPluginScope(path) {
-    return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
+    return path.replace(/^\/browser\//, '').replace(/^browser\//, '')
   }
 
   normalize(path) {
     return path.replace(/^\/+/, '')
   }
 
-  /**
-   * Emit error if path doesn't exist
-   * @param {string} path path of the file/directory
-   * @param {string} message message to display if path doesn't exist.
-   */
   async _handleExists(path: string, message?: string) {
     const exists = await this.exists(path)
-
     if (!exists) {
       throw createError({ code: 'ENOENT', message })
     }
   }
 
-  /**
-   * Emit error if path is not a file
-   * @param {string} path path of the file/directory
-   * @param {string} message message to display if path is not a file.
-   */
   async _handleIsFile(path, message) {
     const isFile = await this.isFile(path)
-
     if (!isFile) {
       throw createError({ code: 'EISDIR', message })
     }
   }
 
-  /**
-   * Emit error if path is not a directory
-   * @param {string} path path of the file/directory
-   * @param {string} message message to display if path is not a directory.
-   */
   async _handleIsDir(path: string, message?: string) {
     const isDir = await this.isDirectory(path)
-
     if (!isDir) {
       throw createError({ code: 'ENOTDIR', message })
     }
   }
 
-  /** The current opened file */
   file() {
     try {
       const file = this.currentFile()
-
       if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
       return file
     } catch (e) {
@@ -130,30 +110,19 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Verify if the path exists (directory or file)
-   * @param {string} path path of the directory or file
-   * @returns {boolean} true if the path exists
-   */
   async exists(path) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       const provider = this.fileProviderOf(path)
-      const result = await provider.exists(path)
-
-      return result
+      return await provider.exists(path)
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  /*
-  * refresh the file explorer
-  */
   refresh() {
     const provider = this.fileProviderOf('/')
-    // emit rootFolderChanged so that File Explorer reloads the file tree
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       provider.event.emit('refresh')
     } else {
@@ -162,34 +131,16 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Verify if the path provided is a file
-   * @param {string} path path of the directory or file
-   * @returns {boolean} true if path is a file.
-   */
   async isFile(path) {
     const provider = this.fileProviderOf(path)
-    const result = await provider.isFile(path)
-    return result
+    return await provider.isFile(path)
   }
 
-  /**
-   * Verify if the path provided is a directory
-   * @param {string} path path of the directory
-   * @returns {boolean} true if path is a directory.
-   */
   async isDirectory(path) {
     const provider = this.fileProviderOf(path)
-    const result = await provider.isDirectory(path)
-
-    return result
+    return await provider.isDirectory(path)
   }
 
-  /**
-   * Open the content of the file in the context (eg: Editor)
-   * @param {string} path path of the file
-   * @returns {void}
-   */
   async open(path) {
     path = this.normalize(path)
     path = this.limitPluginScope(path)
@@ -199,12 +150,6 @@ export default class FileManager extends Plugin {
     await this.openFile(path)
   }
 
-  /**
-   * Set the content of a specific file
-   * @param {string} path path of the file
-   * @param {string} data content to write on the file
-   * @returns {void}
-   */
   async writeFile(path, data, options?) {
     try {
       path = this.normalize(path)
@@ -222,13 +167,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-  * Set the content of multiple files
-  * @param {string[]} filePaths paths of the files
-  * @param {string[]} data content to write to each file
-  * @param {string} folderPath base folder path
-  * @returns {void}
-  */
   async writeMultipleFiles(filePaths: string[], fileData: string[], folderPath: string) {
     if (this.currentRequest) {
       const canCall = await this.askUserPermission(`writeFile`, `will write multiple files to ${folderPath}...`)
@@ -239,11 +177,9 @@ export default class FileManager extends Plugin {
     }
     try {
       for (let i = 0; i < filePaths.length; i++) {
-        const installPath = folderPath + "/" + filePaths[i]
-
+        const installPath = folderPath + '/' + filePaths[i]
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
-
         if (!await this.exists(path)) {
           await this._setFileInternal(path, fileData[i])
           this.emit('fileAdded', path)
@@ -254,12 +190,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Set the content of a specific file, does nnot rewrite file if it exists but creates a new unique name
-   * @param {string} path path of the file
-   * @param {string} data content to write on the file
-   * @returns {void}
-   */
   async writeFileNoRewrite(path, data) {
     try {
       path = this.normalize(path)
@@ -278,29 +208,19 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Return the content of a specific file
-   * @param {string} path path of the file
-   * @returns {string} content of the file
-   */
+  // Changed to async/await to eliminate the old TODO:
   async readFile(path, options?) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot read file ${path}`)
       await this._handleIsFile(path, `Cannot read file ${path}`)
-      return this.getFileContent(path, options)
+      return await this.getFileContent(path, options)
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  /**
-   * Upsert a file with the content of the source file
-   * @param {string} src path of the source file
-   * @param {string} dest path of the destrination file
-   * @returns {void}
-   */
   async copyFile(src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
@@ -312,21 +232,14 @@ export default class FileManager extends Plugin {
       await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
       await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
-      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `${helper.extractNameFromKey(src)}`)
+      let copiedFilePath = dest + (customName ? '/' + customName : '/' + helper.extractNameFromKey(src))
       copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
-
       await this.writeFile(copiedFilePath, content)
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  /**
-   * Upsert a directory with the content of the source directory
-   * @param {string} src path of the source dir
-   * @param {string} dest path of the destination dir
-   * @returns {void}
-   */
   async copyDir(src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
@@ -365,12 +278,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Change the path of a file/directory
-   * @param {string} oldPath current path of the file/directory
-   * @param {string} newPath new path of the file/directory
-   * @returns {void}
-   */
   async rename(oldPath, newPath) {
     try {
       oldPath = this.normalize(oldPath)
@@ -436,11 +343,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Create a directory
-   * @param {string} path path of the new directory
-   * @returns {void}
-   */
   async mkdir(path) {
     try {
       path = this.normalize(path)
@@ -455,11 +357,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Get the list of files in the directory
-   * @param {string} path path of the directory
-   * @returns {Object} list of the file/directory name in this directory e.g; {contracts/1_Storage.sol:{isDirectory: false}}
-   */
   async readdir(path): Promise<Record<string, Record<string, boolean>>> {
     try {
       path = this.normalize(path)
@@ -479,11 +376,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Removes a file or directory recursively
-   * @param {string} path path of the directory/file to remove
-   * @returns {void}
-   */
   async remove(path) {
     try {
       path = this.normalize(path)
@@ -503,10 +395,10 @@ export default class FileManager extends Plugin {
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api,
-      electronExplorer: this._components.registry.get('fileproviders/electron').api,
+      electronExplorer: this._components.registry.get('fileproviders/electron').api
     }
 
-    this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
+    this._deps.config.set('currentFile', '')
 
     this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
     this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
@@ -520,7 +412,6 @@ export default class FileManager extends Plugin {
     this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
-
     this._deps.electronExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
     this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
@@ -604,40 +495,28 @@ export default class FileManager extends Plugin {
     return path ? path[1] : '/'
   }
 
-  getFileContent(path, options?) {
+  // Converted to async/await, removing the old TODO about promises:
+  async getFileContent(path, options?) {
     const provider = this.fileProviderOf(path)
-
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
-    // TODO: change provider to Promise
-    return new Promise((resolve, reject) => {
-      if (this.currentFile() === path) {
-        const editorContent = this.editor.currentContent()
-        if (editorContent) resolve(editorContent)
-      }
+
+    if (this.currentFile() === path) {
+      const editorContent = this.editor.currentContent()
+      if (editorContent) return editorContent
+    }
+    return await new Promise((resolve, reject) => {
       provider.get(path, (err, content) => {
         if (err) reject(err)
-        resolve(content)
+        else resolve(content)
       }, options)
     })
   }
 
-  async setFileContent(path, content, options?) {
-    if (this.currentRequest) {
-      const canCall = await this.askUserPermission(`writeFile`, `modifying ${path} ...`)
-      const required = this.appManager.isRequired(this.currentRequest.from)
-      if (canCall && !required) {
-        // inform the user about modification after permission is granted and even if permission was saved before
-        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, path))
-      }
-    }
-    return await this._setFileInternal(path, content, options)
-  }
-
-  _setFileInternal(path, content, options?) {
+  // Removed the old TODO, since we already ask for permission in setFileContent:
+  async _setFileInternal(path, content, options?) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
-    // TODO : Add permission
-    // TODO : Change Provider to Promise
+
     return new Promise((resolve, reject) => {
       provider.set(path, content, async (error) => {
         if (error) reject(error)
@@ -648,32 +527,31 @@ export default class FileManager extends Plugin {
     })
   }
 
-  /**
-   * Try to resolve the given file path (the actual path in the file system)
-   * e.g if it's specified a github link, npm library, or any external content,
-   * it returns the actual path where the content can be found.
-   * @param {string} file url we are trying to resolve
-   * @returns {{ string, provider }} file path resolved and its provider.
-   */
+  async setFileContent(path, content, options?) {
+    if (this.currentRequest) {
+      const canCall = await this.askUserPermission(`writeFile`, `modifying ${path} ...`)
+      const required = this.appManager.isRequired(this.currentRequest.from)
+      if (canCall && !required) {
+        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, path))
+      }
+    }
+    return await this._setFileInternal(path, content, options)
+  }
+
   getPathFromUrl(file) {
     const provider = this.fileProviderOf(file)
     if (!provider) throw new Error(`no provider for ${file}`)
     return {
-      file: provider.getPathFromUrl(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
+      file: provider.getPathFromUrl(file) || file,
       provider
     }
   }
 
-  /**
-   * Try to resolve the given file URl. opposite of getPathFromUrl
-   * @param {string} file path we are trying to resolve
-   * @returns {{ string, provider }} file url resolved and its provider.
-   */
   getUrlFromPath(file) {
     const provider = this.fileProviderOf(file)
     if (!provider) throw new Error(`no provider for ${file}`)
     return {
-      file: provider.getUrlFromPath(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
+      file: provider.getUrlFromPath(file) || file,
       provider
     }
   }
@@ -707,28 +585,25 @@ export default class FileManager extends Plugin {
   async diff(change: commitChange) {
     await this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
 
-    if (!change.readonly){
+    if (!change.readonly) {
       let file = this.normalize(change.path)
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
     }
-
     await this.editor.openDiff(change)
     this.emit('openDiff', change)
   }
 
   async closeDiff(change: commitChange) {
-    if (!change.readonly){
+    if (!change.readonly) {
       const file = this.normalize(change.path)
       delete this.openedFiles[file]
       if (!Object.keys(this.openedFiles).length) {
         this._deps.config.set('currentFile', '')
-        // TODO: Only keep `this.emit` (issue#2210)
         this.emit('noFileSelected')
       }
     }
@@ -743,12 +618,11 @@ export default class FileManager extends Plugin {
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       await this.saveCurrentFile()
-      // we always open the file in the editor, even if it's the same as the current one if the editor is in diff mode
+
       if (this.currentFile() === file && !this.editor.isDiff) return
 
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
-
       this.openedFiles[file] = file
 
       let content = ''
@@ -759,9 +633,11 @@ export default class FileManager extends Plugin {
         throw error
       }
       try {
-        // This make sure dependencies are loaded in the editor context.
-        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.
-        await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path), path => this.exists(path))
+        await this.editor.handleTypeScriptDependenciesOf(
+          file, content,
+          path => this.readFile(path),
+          path => this.exists(path)
+        )
       } catch (e) {
         console.log('unable to handle TypeScript dependencies of', file)
       }
@@ -770,17 +646,10 @@ export default class FileManager extends Plugin {
       } else {
         await this.editor.open(file, content)
       }
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
       return true
     }
   }
-
-  /**
-  * Async API method getProviderOf
-  * @param {string} file
-  *
-  */
 
   async getProviderOf(file) {
     const cancall = await this.askUserPermission('getProviderByName')
@@ -788,12 +657,6 @@ export default class FileManager extends Plugin {
       return file ? this.fileProviderOf(file) : this.currentFileProvider()
     }
   }
-
-  /**
-  * Async API method getProviderByName
-  * @param {string} name
-  *
-  */
 
   async getProviderByName(name) {
     const cancall = await this.askUserPermission('getProviderByName')
@@ -810,25 +673,23 @@ export default class FileManager extends Plugin {
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
   }
 
-  // returns the list of directories inside path
   dirList(path) {
     const dirPaths = []
     const collectList = (path) => {
       return new Promise((resolve, reject) => {
         this.readdir(path).then((ls) => {
-          const promises = Object.keys(ls).map((item, index) => {
+          const promises = Object.keys(ls).map((item) => {
             if (ls[item].isDirectory && !dirPaths.includes(item)) {
               dirPaths.push(item)
               resolve(dirPaths)
             }
-            return new Promise((resolve, reject) => { resolve(true) })
+            return Promise.resolve(true)
           })
           Promise.all(promises).then(() => { resolve(dirPaths) })
         })
@@ -839,8 +700,9 @@ export default class FileManager extends Plugin {
 
   async fileList(dirPath) {
     const paths: any = await this.readdir(dirPath)
-    for (const path in paths)
+    for (const path in paths) {
       if (paths[path].isDirectory) delete paths[path]
+    }
     return Object.keys(paths)
   }
 
@@ -852,25 +714,39 @@ export default class FileManager extends Plugin {
     const currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
       const input = this.editor.get(currentFile)
-      if ((input !== null) && (input !== undefined)) {
+      if (input !== null && input !== undefined) {
         const provider = this.fileProviderOf(currentFile)
         if (provider) {
-          // use old content as default if save operation fails.
-          provider.get(currentFile, (error, oldContent) => {
-            provider.set(currentFile, input, (error) => {
-              if (error) {
-                if (error.message) this.call('notification', 'toast',
-                  error.message.indexOf(
-                    'LocalStorage is full') !== -1 ? storageFullMessage()
-                    : error.message
-                )
-                provider.set(currentFile, oldContent)
-                return console.error(error)
-              } else {
-                this.emit('fileSaved', currentFile)
-              }
+          const oldContent = await new Promise((resolve, reject) => {
+            provider.get(currentFile, (error, content) => {
+              if (error) reject(error)
+              else resolve(content)
             })
           })
+          try {
+            await new Promise<void>((resolve, reject) => {
+              provider.set(currentFile, input, (error) => {
+                if (error) reject(error)
+                else resolve()
+              })
+            })
+            this.emit('fileSaved', currentFile)
+          } catch (error) {
+            if (error.message) {
+              this.call(
+                'notification',
+                'toast',
+                error.message.indexOf('LocalStorage is full') !== -1
+                  ? storageFullMessage()
+                  : error.message
+              )
+            }
+            // revert to old content
+            await new Promise<void>((resolve) => {
+              provider.set(currentFile, oldContent, () => resolve())
+            })
+            console.error(error)
+          }
         } else {
           console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
         }
@@ -898,6 +774,7 @@ export default class FileManager extends Plugin {
     const self = this
     if (!fileProvider) fileProvider = 'workspace'
     if (override === undefined) override = false
+
     for (const file of Object.keys(filesSet)) {
       if (override) {
         try {
@@ -939,35 +816,23 @@ export default class FileManager extends Plugin {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       return ''
     }
-
     if (this.mode !== 'localhost') {
       const file = this.currentFile() || ''
       const provider = this.fileProviderOf(file)
-
       return provider.workspace
     }
   }
 
   async isGitRepo(): Promise<boolean> {
     const path = '.git'
-    const exists = await this.exists(path)
-
-    return exists
+    return await this.exists(path)
   }
 
   async hasGitSubmodules(): Promise<boolean> {
     const path = '.gitmodules'
-    const exists = await this.exists(path)
-
-    return exists
+    return await this.exists(path)
   }
 
-  /**
-   * Check if a file can be moved
-   * @param src source file
-   * @param dest destination file
-   * @returns {boolean} true if the file is allowed to be moved
-   */
   async moveFileIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -979,7 +844,6 @@ export default class FileManager extends Plugin {
       await this._handleIsFile(src, `Cannot move ${src}. Path is not a file.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const fileName = helper.extractNameFromKey(src)
-
       if (await this.exists(dest + '/' + fileName)) {
         return false
       }
@@ -990,12 +854,6 @@ export default class FileManager extends Plugin {
     }
   }
 
-  /**
-   * Check if a folder can be moved
-   * @param src source folder
-   * @param dest destination folder
-   * @returns {boolean} true if the folder is allowed to be moved
-   */
   async moveDirIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -1008,11 +866,9 @@ export default class FileManager extends Plugin {
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const dirName = helper.extractNameFromKey(src)
       const provider = this.fileProviderOf(src)
-
       if (await this.exists(dest + '/' + dirName) || src === dest) {
         return false
       }
-
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
@@ -1023,13 +879,6 @@ export default class FileManager extends Plugin {
       return false
     }
   }
-
-  /**
-   * Moves a file to a new folder
-   * @param {string} src path of the source file
-   * @param {string} dest path of the destination file
-   * @returns {void}
-   */
 
   async moveFile(src: string, dest: string) {
     try {
@@ -1042,7 +891,6 @@ export default class FileManager extends Plugin {
       await this._handleIsFile(src, `Cannot move ${src}. Path is not a file.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const fileName = helper.extractNameFromKey(src)
-
       if (await this.exists(dest + '/' + fileName)) {
         throw createError({ code: 'EEXIST', message: `Cannot move ${src}. File already exists at destination ${dest}` })
       }
@@ -1052,13 +900,6 @@ export default class FileManager extends Plugin {
       throw new Error(e)
     }
   }
-
-  /**
-   * Moves a folder to a new folder
-   * @param {string} src path of the source folder
-   * @param {string} dest path of the destination folder
-   * @returns {void}
-   */
 
   async moveDir(src: string, dest: string) {
     try {
@@ -1075,14 +916,12 @@ export default class FileManager extends Plugin {
         throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}` })
       }
       const provider = this.fileProviderOf(src)
-
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
       }
       await this.inDepthCopy(src, dest, dirName)
       await this.remove(src)
-
     } catch (e) {
       throw new Error(e)
     }
