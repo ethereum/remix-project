@@ -58,7 +58,7 @@ export class TxRunnerWeb3 {
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
           if (isUserOp && contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
-          console.log('receipt--->', receipt)
+          //console.log('receipt--->', receipt)
           resolve({
             receipt,
             tx,
@@ -207,7 +207,7 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx) {
-    console.log('sendUserOp---tx------->', tx)
+    //console.log('sendUserOp---tx------->', tx)
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
     const PIMLICO_API_KEY =''

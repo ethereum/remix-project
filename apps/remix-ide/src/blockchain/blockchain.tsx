@@ -490,7 +490,7 @@ export class Blockchain extends Plugin {
       if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
         return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
       }
-      console.log('inside createContract--txResult->', txResult)
+      //console.log('inside createContract--txResult->', txResult)
       console.log('inside createContract--address->', address)
       finalCb(null, selectedContract, address)
     })
@@ -1052,7 +1052,7 @@ export class Blockchain extends Plugin {
 
       let address = null
       if (txResult && txResult.receipt) {
-        console.log('inside if txResult---blockchain file->', txResult)
+        //console.log('inside if txResult---blockchain file->', txResult)
         // There is no 'contractAddress' field in txResult
         address = txResult.receipt.contractAddress
       }
