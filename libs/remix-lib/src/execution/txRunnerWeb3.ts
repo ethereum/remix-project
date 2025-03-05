@@ -58,7 +58,6 @@ export class TxRunnerWeb3 {
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
           if (isUserOp && contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
-          console.log('receipt--->', receipt)
           resolve({
             receipt,
             tx,
@@ -92,7 +91,6 @@ export class TxRunnerWeb3 {
     } else {
       try {
         if (tx.fromSmartAccount) {
-          // await this.sendUserOp(tx)
           const { txHash, contractAddress } = await this.sendUserOp(tx)
           cb(null, txHash, true, contractAddress)
         } else {
