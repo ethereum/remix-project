@@ -20,7 +20,7 @@ module.exports = {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
-  'Deploy Ballot #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
@@ -30,9 +30,6 @@ module.exports = {
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
-      .getBrowserLogs()
-      .pause(5000)
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
