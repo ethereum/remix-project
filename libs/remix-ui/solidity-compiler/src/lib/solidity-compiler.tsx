@@ -313,7 +313,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 compileErrors[currentFile].error.mode === 'panic' &&
                 modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null, false)}
               {compileErrors[currentFile].errors &&
-                compileErrors[currentFile].errors.length &&
+                compileErrors[currentFile].errors.length > 0 &&
                 compileErrors[currentFile].errors.map((err, index) => {
                   if (hideWarnings) {
                     if (err.severity !== 'warning') {
