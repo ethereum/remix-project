@@ -52,12 +52,24 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         (console as any).browserLog = console.log;
         (console as any).browserError = console.error
         console.log = function () {
-          (window as any).logs.push(JSON.stringify(arguments));
-          (console as any).browserLog(...arguments)
+          try {
+            (window as any).logs.push(JSON.stringify(arguments));
+          } catch (e) {
+          }
+          try {
+            (console as any).browserLog(...arguments)
+          } catch (e) {
+          }
         }
         console.error = function () {
-          (window as any).logs.push(JSON.stringify(arguments));
-          (console as any).browserError(...arguments)
+          try {
+            (window as any).logs.push(JSON.stringify(arguments));
+          } catch (e) {
+          }
+          try {
+            (console as any).browserError(...arguments)
+          } catch (e) {
+          }
         }
       })
     })
