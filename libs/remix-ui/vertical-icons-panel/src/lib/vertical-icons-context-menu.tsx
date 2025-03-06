@@ -6,7 +6,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
   pageX: number
   pageY: number
   profileName: string
-  links: {Documentation: string; CanDeactivate: boolean}
+  links: {Documentation: string; CanDeactivate: boolean; CloseOthers: boolean}
   canBeDeactivated: boolean
   verticalIconPlugin: any
   hideContextMenu: () => void
@@ -14,7 +14,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
 }
 
 interface MenuLinksProps {
-  listItems: {Documentation: string; CanDeactivate: boolean}
+  listItems: {Documentation: string; CanDeactivate: boolean; CloseOthers: boolean}
   hide: () => void
   profileName: string
   canBeDeactivated: boolean
@@ -27,7 +27,7 @@ interface MenuLinksProps {
 interface MenuProps {
   verticalIconsPlugin: Plugin
   profileName: string
-  listItems: {Documentation: string; CanDeactivate: boolean}
+  listItems: {Documentation: string; CanDeactivate: boolean; CloseOthers: boolean}
   hide: () => void
 }
 
@@ -65,10 +65,22 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuLinksProps) => {
+const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction, verticalIconPlugin, toggle }: MenuLinksProps) => {
   return (
     <Fragment>
+      {listItems.CloseOthers && (
+        <li
+          id="menuitemcloseothers"
+          onClick={() => {
+            closeOtherPlugins(profileName, verticalIconPlugin)
+            hide()
+          }}
+          className="remixui_liitem"
+          key="menuitemcloseothers"
+        >
+          <FormattedMessage id="pluginManager.closeOthers" defaultMessage="Close Others" />
+        </li>
+      )}
       {listItems.CanDeactivate ? (
         <li
           id="menuitemdeactivate"
@@ -91,6 +103,17 @@ const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuL
       )}
     </Fragment>
   )
+}
+
+function closeOtherPlugins(exceptName: string, verticalIconPlugin: any) {
+  // Get all active plugins from the verticalIconPlugin
+  const icons = verticalIconPlugin.verticalIconsPlugin?.icons || {}
+  Object.keys(icons).forEach((iconName) => {
+    const icon = icons[iconName]
+    if (iconName !== exceptName && icon.active) {
+      verticalIconPlugin.toggle(iconName)
+    }
+  })
 }
 
 function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
