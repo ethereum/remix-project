@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import React, { Fragment, useEffect, useRef } from 'react'
+import React, { Fragment, useEffect, useState, useRef } from 'react'
 import { FormattedMessage } from 'react-intl'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -33,19 +33,25 @@ interface MenuProps {
 
 const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
   const menuRef = useRef(null)
+  const [hasContextMenu, setHasContextMenu] = useState(false)
+
   ClickOutside(menuRef, props.hideContextMenu)
   useEffect(() => {
     // @ts-ignore
     menuRef.current.focus()
   }, [])
+  useEffect (() => {
+    setHasContextMenu(!props.links.Documentation && !props.links.CanDeactivate)
+  }, [props.links])
+
   return (
     <div
       id="menuItemsContainer"
-      className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
+      className="p-1 text-left remixui_verticalIconContextcontainer bg-light shadow border"
       style={{
         left: props.pageX,
         top: props.pageY,
-        display: 'block'
+        display: hasContextMenu ? 'block' : 'none',
       }}
       ref={menuRef}
       tabIndex={1}
@@ -76,7 +82,7 @@ const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuL
             contextMenuAction(evt, profileName, listItems.Documentation)
             hide()
           }}
-          className="remixui_liitem"
+          className="px-3 remixui_liitem"
           key="menuitemdeactivate"
         >
           <FormattedMessage id="pluginManager.deactivate" />

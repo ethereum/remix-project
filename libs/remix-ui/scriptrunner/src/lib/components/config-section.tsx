@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ProjectConfiguration } from '../../types';
-import { faCheck, faExclamationCircle, faRedoAlt, faToggleOn, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CustomTooltip } from '@remix-ui/helper';
 
@@ -84,7 +84,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
     <section className="mb-2">
       <section className="d-flex flex-row ">
         <SectionHeader />
-        <>
+        <div>
           {!props.config.isLoading && !props.config.errorStatus && !props.config.error &&
           <div onClick={() => props.loadScriptRunner(props.config)} className="pointer px-2 pb-1">
             { props.activeConfig && props.activeConfig.name === props.config.name &&
@@ -95,32 +95,34 @@ export default function ConfigSection(props: ConfigSectionProps) {
             }
           </div>
           }
-        </>
-        <div className="d-flex flex-row mx-4">
-          {props.config.isLoading && <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
-            <i className="fas fa-spinner fa-spin"></i><span className='pl-3'>Loading config</span>
-          </div>}
         </div>
-      </section>
-      <section id="errorSection">
-        {props.config.errorStatus && props.config.error && <div className="text-danger">
-          <CustomTooltip tooltipText={props.config.error}>
-            <FontAwesomeIcon data-id={`sr-error-${props.config.name}`} icon={faExclamationCircle}></FontAwesomeIcon>
-          </CustomTooltip>
-
+        {props.config.isLoading && <div className="d-flex flex-row mx-4">
+          <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
+            <i className="fas fa-spinner fa-spin"></i><span className='pl-3'>Loading config</span>
+          </div>
         </div>}
-        {!props.config.isLoading && props.config.errorStatus && props.config.error &&
+        <div className="ml-4 d-flex" id="errorSection">
+          {props.config.errorStatus && props.config.error && <div className="text-danger">
+            <CustomTooltip tooltipText={props.config.error}>
+              <FontAwesomeIcon data-id={`sr-error-${props.config.name}`} icon={faTimes}></FontAwesomeIcon>
+            </CustomTooltip>
+
+          </div>}
+          {!props.config.isLoading && props.config.errorStatus && props.config.error &&
             <div
               onClick={() => {
                 props.loadScriptRunner(props.config)
-                props._paq.push(['trackEvent', 'scriptRunnerPlugin', 'loadScriptRunnerConfig', props.config.name])
+                props._paq.push(['trackEvent', 'scriptRunnerPlugin', 'error_reloadScriptRunnerConfig', props.config.name])
               }}
-              className="pointer px-2"
+              className="pointer px-2 text-danger d-flex flex-row"
             >
-              <FontAwesomeIcon data-id={`sr-reload-${props.config.name}`} icon={faRedoAlt}></FontAwesomeIcon>
+              <span className="pr-1 text-danger font-weight-bold">Loading error</span>
+              <span className="text-danger">We are not able to load your requested configuration for now, please try again later.</span>
             </div>
-        }
+          }
+        </div>
       </section>
+
       <section className="d-flex flex-column w-100">
         <div className="mt-2 mb-4 bg-dark p-3 ">
           <p className="text-dark text-monospace">{props.config.description}</p>
