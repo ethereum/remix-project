@@ -146,8 +146,8 @@ export class RunTab extends ViewPlugin {
       'vm-paris': 'Deploy to the in-browser virtual machine running the Paris fork.',
       'vm-london': 'Deploy to the in-browser virtual machine running the London fork.',
       'vm-berlin': 'Deploy to the in-browser virtual machine running the Berlin fork.',
-      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet in the in-browser virtual machine.',
-      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet in the in-browser virtual machine.',
+      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet latest block in the in-browser virtual machine.',
+      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet latest block in the in-browser virtual machine.',
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
       'basic-http-provider': 'Deploy to a Custom local network.',
@@ -280,7 +280,7 @@ export class RunTab extends ViewPlugin {
       }, this.blockchain, stateDetail.forkName, stateDetail.nodeUrl, stateDetail.blockNumber)
       const isRpcForkedState = !!stateDetail.nodeUrl
       this.engine.register(fvsProvider)
-      await addProvider(pos, providerName, stateDetail.stateName, { isInjected: false, isVM: true, isRpcForkedState, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json`, fork: stateDetail.forkName })
+      await addProvider(pos, providerName, stateDetail.stateName, { baseBlockNumber: stateDetail.baseBlockNumber,  isInjected: false, isVM: true, isRpcForkedState, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json`, fork: stateDetail.forkName })
     }
 
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {

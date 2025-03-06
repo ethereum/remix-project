@@ -21,27 +21,30 @@ const defaultSections: environmentExplorerUIGridSections = {
     title: 'Deploy to an In-browser Forked State.',
     keywords: ['Forked State'],
     providers: [],
-    filterFn: (provider) => provider.config.isVMStateForked,
+    filterFn: (provider) => provider.config.isVMStateForked || provider.config.isRpcForkedState,
     descriptionFn: (provider) => {
-      const { latestBlock, timestamp } = JSON.parse(provider.description)
-      return (
-        <>
-          <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
-          <CustomTooltip
-            placement="auto"
-            tooltipId="overlay-tooltip-forkedAt"
-            tooltipText={`Forked at: ${(new Date(timestamp)).toLocaleString()}`}
-          >
-            <div><b>Forked at: </b>{(new Date(timestamp)).toDateString()}</div>
-          </CustomTooltip>
-        </>)
+      if (provider.config.baseBlockNumber) {
+        const { latestBlock, timestamp } = JSON.parse(provider.description)
+        return (
+          <>
+            <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
+            {provider.config.baseBlockNumber && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>}
+            <CustomTooltip
+              placement="auto"
+              tooltipId="overlay-tooltip-forkedAt"
+              tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}`}
+            >
+              <div><b>Forked on: </b>{(new Date(timestamp)).toDateString()}</div>
+            </CustomTooltip>
+          </>)
+      } else if (provider.config.statePath) {
+        // At this point we don't have any state in the browser, we start from the latest block
+        return (
+          <>
+            <div><b>{provider.description}</b></div>
+          </>)
+      }      
     }
-  },
-  'Remix forked VMs': {
-    title: 'Deploy to a Live forked Virtual Machine.',
-    keywords: ['Remix forked VMs'],
-    providers: [],
-    filterFn: (provider) => provider.config.isRpcForkedState
   },
   'Externals': {
     title: 'Deploy to an external Provider.',
@@ -102,7 +105,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                   }}
                 >
                   <div data-id={`${provider.name}desc`}>{(section.descriptionFn && section.descriptionFn(provider)) || provider.description}</div>
-                  { provider.config.isVMStateForked && <CustomTooltip
+                  { provider.config.isVMStateForked && provider.config.statePath && <CustomTooltip
                     placement="auto"
                     tooltipId={`overlay-tooltip-${provider.name}`}
                     tooltipText="Delete Environment Immediately"

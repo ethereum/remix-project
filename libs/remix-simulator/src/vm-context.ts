@@ -171,13 +171,11 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     let storage = await super.getContractStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
-      console.log('getContractStorage', this.blockTag)
       storage = toBytes(await this.provider.getStorageAt(
         address.toString(),
         bytesToBigInt(key),
         this.blockTag)
       )
-      console.log('putContractStorage', address.toString(), bytesToHex(key), bytesToHex(storage))
       await super.putContractStorage(address, key, storage)
       return storage
     }
