@@ -393,9 +393,9 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     }
   }
 
-  blockchain['findCommonAncestor'] = findCommonAncestor
-  blockchain['_rebuildCanonical'] = _rebuildCanonical
-  return blockchain
+  anyBlockchain['findCommonAncestor'] = findCommonAncestor
+  anyBlockchain['_rebuildCanonical'] = _rebuildCanonical
+  return anyBlockchain as Blockchain
 }
 
 /*
