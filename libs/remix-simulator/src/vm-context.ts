@@ -493,7 +493,7 @@ export class VMContext {
       }
     }, { common })
 
-    let blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     overrideBlockchain(blockchain, this)
 
     const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
