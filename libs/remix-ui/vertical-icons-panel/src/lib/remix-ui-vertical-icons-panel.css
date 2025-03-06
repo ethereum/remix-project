@@ -149,3 +149,23 @@
     list-style: none;
     margin: 0px;
   }
+
+  .remixui_plugins-list-tooltip {
+    min-width: 200px;
+    max-width: 300px;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .remixui_plugin-names-tooltip ul li {
+    text-transform: capitalize;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
