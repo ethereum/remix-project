@@ -708,7 +708,7 @@ contract C {
               b = blockNumber;
           }
           function checkBlockNumberIsAdvancing()  public returns (bool) {
-              bool ret = b + 1 == block.number
+              bool ret = b + 1 == block.number;
               b = block.number;
               return ret;
           }
