@@ -36,7 +36,7 @@ export type ProviderOptions = {
   fork?: string,
   nodeUrl?: string,
   blockNumber?: number | 'latest',
-  baseBlockNumber: string, // hex
+  baseBlockNumber?: string, // hex
   stateDb?: State,
   details?: boolean
   blocks?: string[],
