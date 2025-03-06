@@ -355,7 +355,7 @@ module.exports = {
         })
       .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
       // Should fork the mainnet VM fork and execute some transaction
-      .click('*[data-id="fork-state-icon"]')  
+      .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .click('input[data-id="modalDialogForkState"]')
       .setValue('input[data-id="modalDialogForkState"]', 'Mainnet fork 1')
@@ -702,13 +702,13 @@ contract C {
 
       pragma solidity >=0.8.2 <0.9.0;
 
-      contract Test {
+      contract MainnetBlockNumberContract {
           uint b;
           constructor(uint blockNumber) {
               b = blockNumber;
           }
           function checkBlockNumberIsAdvancing()  public returns (bool) {
-              bool ret = block.number > b;
+              bool ret = b + 1 == block.number
               b = block.number;
               return ret;
           }
