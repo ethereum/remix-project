@@ -192,7 +192,7 @@ export class RunTab extends ViewPlugin {
         config: providerConfig,
         title,
         init: async function () {
-          const options = await udapp.call(name, 'init')          
+          const options = await udapp.call(name, 'init')
           if (options) {
             this.options = options
             if (options['fork']) this.config.fork = options['fork']
@@ -207,7 +207,7 @@ export class RunTab extends ViewPlugin {
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
       await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, { isInjected: true, isVM: false, isRpcForkedState: false, fork: ''})
+      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, { isInjected: true, isVM: false, isRpcForkedState: false, fork: '' })
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name

@@ -1029,7 +1029,7 @@ export class Blockchain extends Plugin {
             console.error(e)
           }
         }
-        
+
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
