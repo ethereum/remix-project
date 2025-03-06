@@ -189,12 +189,55 @@ jobs:
               rm -rf ~/remix-project/apps/remixdesktop/release/builder*
         - store_artifacts:
             path: apps/remixdesktop/release/
-            destination: remixdesktop-linux
+            destination: remixdesktop-linux-arm64
         - persist_to_workspace:
             root: apps/remixdesktop
             paths:
               - "release"
 
+  build-remixdesktop-linux-arm64:
+      machine:
+        image: ubuntu-2004:current
+      resource_class: arm.large
+      working_directory: ~/remix-project
+      steps:
+        - run: ldd --version
+        - checkout
+        - attach_workspace:
+            at: .
+        - run: unzip ./persist/desktopbuild.zip
+        - run: 
+            command: |
+                nvm install 20.2
+                nvm use 20.2
+                node -v
+                npm install --global yarn node-gyp
+                python -m pip install --upgrade pip
+                pip install setuptools
+                mkdir apps/remixdesktop/build
+                cp -r dist/apps/remix-ide apps/remixdesktop/build
+                cd apps/remixdesktop/
+                yarn add node-pty
+                yarn --ignore-optional
+                yarn add @remix-project/remix-ws-templates
+                ./rundist.bash
+                rm -rf release/*-unpacked
+        - save_cache:
+            key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+            paths:
+              - apps/remixdesktop/node_modules
+        - run:
+            name: "remove unnecessary files"
+            command: |
+              rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
+              rm -rf ~/remix-project/apps/remixdesktop/release/builder*
+        - store_artifacts:
+            path: apps/remixdesktop/release/
+            destination: remixdesktop-linux-arm64
+        - persist_to_workspace:
+            root: apps/remixdesktop
+            paths:
+              - "release"
 
   build-remixdesktop-windows:
     executor:
@@ -834,6 +877,12 @@ workflows:
           filters:
             branches:
               only: [/.*desktop.*/]
+      - build-remixdesktop-linux-arm64:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-linux:
           requires:
             - build-desktop
@@ -847,6 +896,7 @@ workflows:
           requires:
             - build-remixdesktop-mac
             - build-remixdesktop-linux
+            - build-remixdesktop-linux-arm64
             - sign-remixdesktop-windows
             - test-remixdesktop-windows
             - test-remixdesktop-linux
