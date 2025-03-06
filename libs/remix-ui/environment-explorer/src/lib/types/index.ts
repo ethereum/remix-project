@@ -9,6 +9,7 @@ export type environmentExplorerUIProps = {
     pinnedProviders: string[]
   }
   deleteForkedState (provider: Provider): Promise<void>
+  showPinnedContracts (provider: Provider): Promise<void>
   pinStateCallback (provider: Provider, pinned: boolean): Promise<void>
   profile: Profile
 }
