@@ -28,16 +28,19 @@ const defaultSections: environmentExplorerUIGridSections = {
         return (
           <>
             <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
-            {provider.config.baseBlockNumber && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>}
             <CustomTooltip
               placement="auto"
               tooltipId="overlay-tooltip-forkedAt"
-              tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}`}
-            >
-              <div><b>Forked on: </b>{(new Date(timestamp)).toDateString()}</div>
+              tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}}`}
+            >                       
+            <div>
+              {
+                provider.config.baseBlockNumber !== '0x' && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>
+              } 
+            <b>Forked on: </b>{(new Date(timestamp)).toDateString()}</div>
             </CustomTooltip>
           </>)
-      } else if (provider.config.statePath) {
+      } else {
         // At this point we don't have any state in the browser, we start from the latest block
         return (
           <>
@@ -115,6 +118,19 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                       className="btn btn-sm mt-1 border border-danger"
                     >
                           Delete Environment
+                    </span>
+                  </CustomTooltip>
+                  }
+                  { provider.config.isVMStateForked && provider.config.statePath && <CustomTooltip
+                    placement="auto"
+                    tooltipId={`overlay-tooltip-${provider.name}`}
+                    tooltipText="Delete Environment Immediately"
+                  >
+                    <span
+                      onClick={async () => props.showPinnedContracts(provider)}
+                      className="btn btn-sm mt-1 border border-info"
+                    >
+                          Show Pinned Contracts
                     </span>
                   </CustomTooltip>
                   }
