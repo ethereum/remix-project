@@ -93,7 +93,17 @@ export function EnvironmentUI(props: EnvironmentProps) {
           currentStateDb.savingTimestamp = Date.now()
           await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
           props.runTabPlugin.emit('vmStateForked', vmStateName.current)
-          await props.runTabPlugin.call('fileManager', 'remove', stateTemp)
+          try {
+            await props.runTabPlugin.call('fileManager', 'remove', stateTemp)
+          } catch (e) {
+            // we can silent that.  
+          }
+
+          // we also need to copy the pinned contracts:
+          if (await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${currentProvider.name}`)) {
+            // await props.runTabPlugin.call('fileManager', 'mkdir', `.deploys/pinned-contracts/${vmStateName.current}`)
+            await props.runTabPlugin.call('fileManager', 'copyDir', `.deploys/pinned-contracts/${currentProvider.name}`, `.deploys/pinned-contracts`, 'vm-fs-' + vmStateName.current)
+          }
           _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
         },
         intl.formatMessage({ id: 'udapp.cancel' }),

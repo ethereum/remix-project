@@ -528,7 +528,7 @@ export class VMContext {
     } else {
       // it's a standard VM so everything starts from 0.
       this.baseBlockNumber = '0x0'
-      latestBlockNumberTemp = '0x0'
+      latestBlockNumberTemp = '0x' + this.blockNumber.toString(16)
     }
 
     // VmProxy and VMContext are very intricated.
@@ -546,7 +546,7 @@ export class VMContext {
       this.latestBlockNumber = latestBlockNumberTemp
     }
     
-    console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks, this.latestBlockNumber, this.blockNumber, this.baseBlockNumber)
+    console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks, this.latestBlockNumber, this.baseBlockNumber, this.blocks)
     return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.baseBlockNumber }
   }
 

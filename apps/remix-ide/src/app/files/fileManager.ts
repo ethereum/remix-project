@@ -351,7 +351,7 @@ export default class FileManager extends Plugin {
 
   async inDepthCopy(src: string, dest: string, customName?: string) {
     const content = await this.readdir(src)
-    let copiedFolderPath = !customName ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+    let copiedFolderPath = !customName ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + customName
     copiedFolderPath = await helper.createNonClashingDirNameAsync(copiedFolderPath, this)
 
     await this.mkdir(copiedFolderPath)
