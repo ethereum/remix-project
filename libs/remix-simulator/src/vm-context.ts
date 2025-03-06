@@ -171,11 +171,13 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     let storage = await super.getContractStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
+      console.log('getContractStorage', this.blockTag)
       storage = toBytes(await this.provider.getStorageAt(
         address.toString(),
         bytesToBigInt(key),
         this.blockTag)
       )
+      console.log('putContractStorage', address.toString(), bytesToHex(key), bytesToHex(storage))
       await super.putContractStorage(address, key, storage)
       return storage
     }
@@ -269,25 +271,23 @@ export class VMCommon extends Common {
 }
 
 const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
-  const anyBlockchain = blockchain as any
-
   /**
    * Find the common ancestor of the new block and the old block.
    * @param newHeader - the new block header
    */
   const findCommonAncestor = async (newHeader: BlockHeader) => {
-    if (!anyBlockchain._headHeaderHash) throw new Error('No head header set')
+    if (!(blockchain as any)._headHeaderHash) throw new Error('No head header set')
     const ancestorHeaders = new Set<BlockHeader>()
 
-    let header = await anyBlockchain._getHeader(anyBlockchain._headHeaderHash)
-    console.log('findCommonAncestor', header)
+    let header = await (blockchain as any)._getHeader((blockchain as any)._headHeaderHash)
+    console.log('findCommonAncestor', header, newHeader)
     if (header.number > newHeader.number) {
-      header = await anyBlockchain.getCanonicalHeader(newHeader.number)
+      header = await (blockchain as any).getCanonicalHeader(newHeader.number)
       ancestorHeaders.add(header)
     } else {
       while (header.number !== newHeader.number && newHeader.number > BIGINT_0) {
         try {
-          newHeader = await anyBlockchain._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
+          newHeader = await (blockchain as any)._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
           ancestorHeaders.add(newHeader)
         } catch (err) {
           // parent header not found, we reach the start of the fork, jumping to the beginning.
@@ -301,9 +301,9 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
       throw new Error('Failed to find ancient header')
     }
     while (!equalsBytes(header.hash(), newHeader.hash()) && header.number > BIGINT_0) {
-      header = await anyBlockchain.getCanonicalHeader(header.number - BIGINT_1)
+      header = await (blockchain as any).getCanonicalHeader(header.number - BIGINT_1)
       ancestorHeaders.add(header)
-      newHeader = await anyBlockchain._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
+      newHeader = await (blockchain as any)._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
       ancestorHeaders.add(newHeader)
     }
     if (!equalsBytes(header.hash(), newHeader.hash())) {
@@ -341,7 +341,7 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     let staleHeadBlock = false
 
     const loopCondition = async () => {
-      staleHash = await anyBlockchain.safeNumberToHash(currentNumber)
+      staleHash = await (blockchain as any).safeNumberToHash(currentNumber)
       currentCanonicalHash = header.hash()
       return staleHash === false || !equalsBytes(currentCanonicalHash, staleHash)
     }
@@ -361,22 +361,22 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
 
       // mark each key `_heads` which is currently set to the hash in the DB as
       // stale to overwrite later in `_deleteCanonicalChainReferences`.
-      for (const name of Object.keys(anyBlockchain._heads)) {
-        if (staleHash && equalsBytes(anyBlockchain._heads[name], staleHash)) {
+      for (const name of Object.keys((blockchain as any)._heads)) {
+        if (staleHash && equalsBytes((blockchain as any)._heads[name], staleHash)) {
           staleHeads.push(name)
         }
       }
       // flag stale headBlock for reset
       if (
         staleHash &&
-        anyBlockchain._headBlockHash !== undefined &&
-        equalsBytes(anyBlockchain._headBlockHash, staleHash) === true
+        (blockchain as any)._headBlockHash !== undefined &&
+        equalsBytes((blockchain as any)._headBlockHash, staleHash) === true
       ) {
         staleHeadBlock = true
       }
 
       try {
-        header = await anyBlockchain._getHeader(header.parentHash, --currentNumber)
+        header = await (blockchain as any)._getHeader(header.parentHash, --currentNumber)
       } catch (e) {
         break
       }
@@ -384,17 +384,16 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     // When the stale hash is equal to the blockHash of the provided header,
     // set stale heads to last previously valid canonical block
     for (const name of staleHeads) {
-      anyBlockchain._heads[name] = currentCanonicalHash
+      (blockchain as any)._heads[name] = currentCanonicalHash
     }
     // set stale headBlock to last previously valid canonical block
     if (staleHeadBlock) {
-      anyBlockchain._headBlockHash = currentCanonicalHash
+      (blockchain as any)._headBlockHash = currentCanonicalHash
     }
   }
 
-  anyBlockchain['findCommonAncestor'] = findCommonAncestor
-  anyBlockchain['_rebuildCanonical'] = _rebuildCanonical
-  return anyBlockchain as Blockchain
+  (blockchain as any)['findCommonAncestor'] = findCommonAncestor;
+  (blockchain as any)['_rebuildCanonical'] = _rebuildCanonical
 }
 
 /*
@@ -497,7 +496,7 @@ export class VMContext {
     }, { common })
 
     let blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
-    blockchain = overrideBlockchain(blockchain, this)
+    overrideBlockchain(blockchain, this)
 
     const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
 
