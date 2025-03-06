@@ -48,13 +48,22 @@
     },
     "deb": {},
     "linux": {
-        "target": [
-            "deb",
-            "snap",
-            "AppImage"
-        ],
         "category": "WebBrowser",
-        "icon": "assets"
+        "icon": "assets",
+        "target": [
+          {
+            "target": "deb",
+            "arch": ["x64", "arm64"]
+          },
+          {
+            "target": "snap",
+            "arch": ["x64"]
+          },
+          {
+            "target": "AppImage",
+            "arch": ["arm64"]
+          }
+        ]
     },
     "directories": {
         "output": "release"
