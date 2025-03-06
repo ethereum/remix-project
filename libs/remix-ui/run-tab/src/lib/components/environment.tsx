@@ -67,7 +67,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
     let context = currentProvider.name
     context = context.replace('vm-fs-', '')
 
-    let stateTemp = `.states/forked_states/state_temp.json`
+    const stateTemp = `.states/forked_states/state_temp.json`
     let statePath = currentProvider.config.statePath
     if (!statePath) {
       // if the current provider doesn't have a saved state, we dump the current state from memory.
@@ -76,7 +76,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
       statePath = stateTemp
       await props.runTabPlugin.call('fileManager', 'writeFile', statePath, state)
     }
-    
+
     vmStateName.current = `${context}_${Date.now()}`
     const contextExists = await props.runTabPlugin.call('fileManager', 'exists', statePath)
     if (contextExists) {
@@ -96,7 +96,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           try {
             await props.runTabPlugin.call('fileManager', 'remove', stateTemp)
           } catch (e) {
-            // we can silent that.  
+            // we can silent that.
           }
 
           // we also need to copy the pinned contracts:

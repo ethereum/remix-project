@@ -32,12 +32,13 @@ const defaultSections: environmentExplorerUIGridSections = {
               placement="auto"
               tooltipId="overlay-tooltip-forkedAt"
               tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}}`}
-            >                       
-            <div>
-              {
-                provider.config.baseBlockNumber !== '0x' && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>
-              } 
-            <b>Forked on: </b>{(new Date(timestamp)).toDateString()}</div>
+            >
+              <div>
+                {
+                  provider.config.baseBlockNumber !== '0x' && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>
+                }
+                <b>Forked on: </b>{(new Date(timestamp)).toDateString()}
+              </div>
             </CustomTooltip>
           </>)
       } else {
@@ -46,7 +47,7 @@ const defaultSections: environmentExplorerUIGridSections = {
           <>
             <div><b>{provider.description}</b></div>
           </>)
-      }      
+      }
     }
   },
   'Externals': {
