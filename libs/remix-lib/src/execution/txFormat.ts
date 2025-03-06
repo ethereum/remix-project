@@ -233,7 +233,8 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
   let contractBytecode, contractDeployedBytecode
   if (isConstructor) {
     contractBytecode = contract.evm.bytecode.object
-    contractDeployedBytecode = contract.evm.deployedBytecode.object
+    // yul contract doesn't have deployedBytecode
+    if (contract.evm.deployedBytecode && contract.evm.deployedBytecode.object) contractDeployedBytecode = contract.evm.deployedBytecode.object
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       linkBytecode(contract, contracts, (err, bytecode) => {
