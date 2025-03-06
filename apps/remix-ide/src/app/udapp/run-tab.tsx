@@ -280,7 +280,7 @@ export class RunTab extends ViewPlugin {
       }, this.blockchain, stateDetail.forkName, stateDetail.nodeUrl, stateDetail.blockNumber)
       const isRpcForkedState = !!stateDetail.nodeUrl
       this.engine.register(fvsProvider)
-      await addProvider(pos, providerName, stateDetail.stateName, { baseBlockNumber: stateDetail.baseBlockNumber,  isInjected: false, isVM: true, isRpcForkedState, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json`, fork: stateDetail.forkName })
+      await addProvider(pos, providerName, stateDetail.stateName, { baseBlockNumber: stateDetail.baseBlockNumber, isInjected: false, isVM: true, isRpcForkedState, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json`, fork: stateDetail.forkName })
     }
 
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
