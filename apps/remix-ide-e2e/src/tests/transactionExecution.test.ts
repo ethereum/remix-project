@@ -331,7 +331,7 @@ module.exports = {
       })
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
       .clickLaunchIcon('filePanel')
-      .testContracts('MainnetBlockNumberContract.sol', sources[9]['MainnetBlockNumberContract.sol'], ['MainnetBlockNumberContract'])
+      .testContracts('MainnetBlockNumberContract.sol', sources[10]['MainnetBlockNumberContract.sol'], ['MainnetBlockNumberContract'])
       .clickLaunchIcon('udapp')
       .selectContract('MainnetBlockNumberContract')
       .createContract((currentBlockNumber - 1) + '')
