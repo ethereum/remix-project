@@ -46,7 +46,7 @@ export type Provider = {
   name: string
   displayName: string
   logo?: string,
-  logos?: string[],  
+  logos?: string[],
   description?: string
   config: ProviderConfig
   title: string

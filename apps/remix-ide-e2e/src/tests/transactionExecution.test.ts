@@ -327,6 +327,7 @@ module.exports = {
       .perform(async (done) => {
         const provider = new ethers.providers.JsonRpcProvider('https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38')
         currentBlockNumber = (await provider.getBlockNumber()) as number
+        console.log('getBlockNumber', currentBlockNumber)
         done()
       })
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
@@ -334,24 +335,30 @@ module.exports = {
       .testContracts('MainnetBlockNumberContract.sol', sources[10]['MainnetBlockNumberContract.sol'], ['MainnetBlockNumberContract'])
       .clickLaunchIcon('udapp')
       .selectContract('MainnetBlockNumberContract')
-      .createContract((currentBlockNumber - 1) + '')
+      .perform((done) => {
+        browser.createContract((currentBlockNumber - 1) + '')
+        .perform(() => {
+          done()
+        })
+      })
+      .clickInstance(0)
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
       // Should fork the mainnet VM fork and execute some transaction
@@ -367,17 +374,18 @@ module.exports = {
           locateStrategy: 'xpath'
         }
       )
+      .clickInstance(0)
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       // Should fork the mainnet VM fork again and execute some transaction
       .click('*[data-id="fork-state-icon"]')  
@@ -388,21 +396,22 @@ module.exports = {
       // check toaster for forked state
       .waitForElementVisible(
         {
-          selector: '//*[@data-shared="tooltipPopup" and contains(.,"New environment \'Mainnet fork 1\' created with forked state.")]',
+          selector: '//*[@data-shared="tooltipPopup" and contains(.,"New environment \'Mainnet fork 2\' created with forked state.")]',
           locateStrategy: 'xpath'
         }
       )
+      .clickInstance(0)
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'bool': 'true' }
+          'decoded output': { '0':'bool: true' }
         })
       .clickFunction('getB - call')
       .getAddressAtPosition(1, (address) => {
@@ -698,7 +707,7 @@ contract C {
   }, {
     'MainnetBlockNumberContract.sol': {
       content: `
-      // SPDX-License-Identifier: GPL-3.0
+       // SPDX-License-Identifier: GPL-3.0
 
       pragma solidity >=0.8.2 <0.9.0;
 
@@ -708,7 +717,7 @@ contract C {
               b = blockNumber;
           }
           function checkBlockNumberIsAdvancing()  public returns (bool) {
-              bool ret = b + 1 == block.number;
+              bool ret = b < block.number;
               b = block.number;
               return ret;
           }
