@@ -973,8 +973,11 @@ export class Blockchain extends Plugin {
       const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
+      // a basic in-browser VM state.
       const isBasicVMState = isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      // a standard fork of an in-browser state.
       const isForkedVMState = isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      // a fork of an in-browser state which derive from a live network.
       const isForkedRpcState = isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
 
       if (isVM) {
@@ -1006,7 +1009,7 @@ export class Blockchain extends Plugin {
       }
 
       if (isBasicVMState || isForkedVMState || isForkedRpcState) {
-        // we don't save the state in case of the isRpcForkedState, only if it's forked
+        // we save the state in case of the isRpcForkedState only if it's forked
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
             let state = await this.executionContext.getStateDetails()

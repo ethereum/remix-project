@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 
-export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Forked States'
+export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Forked States'
 
 export type environmentExplorerUIProps = {
   state: {
@@ -35,6 +35,7 @@ export type ProviderConfig = {
   statePath?: string,
   blockNumber?: string
   nodeUrl?: string
+  baseBlockNumber?: string
 }
 
 export type Provider = {
