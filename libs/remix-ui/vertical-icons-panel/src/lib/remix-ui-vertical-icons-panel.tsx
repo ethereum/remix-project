@@ -26,6 +26,8 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
   const iconPanelRef = useRef<any>()
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
   const [theme, setTheme] = useState<string>('dark')
+  const [isPanelHovered, setIsPanelHovered] = useState<boolean>(false)
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
   const online = useContext(onLineContext)
 
   const evaluateScrollability = () => {
@@ -67,9 +69,64 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
     verticalIconsPlugin.call('manager', 'deactivatePlugin', name)
   }
 
+  const handlePanelMouseEnter = (e: React.MouseEvent) => {
+    const rect = iconPanelRef.current.getBoundingClientRect()
+    setTooltipPosition({ top: rect.top, left: rect.right + 10 })
+    setIsPanelHovered(true)
+  }
+
+  const handlePanelMouseLeave = () => {
+    setIsPanelHovered(false)
+  }
+
+  const renderAllPluginNames = () => {
+    return (
+      <div className="remixui_plugin-names-tooltip">
+        <h6 className="mb-2">Plugins</h6>
+        <ul className="list-unstyled mb-0">
+          {icons.map((icon) => (
+            <li key={icon.profile.name} className="mb-1 d-flex justify-content-between align-items-center">
+              <span>{icon.profile.displayName || icon.profile.name}</span>
+              {icon.active && (
+                <button
+                  className="btn btn-sm btn-secondary pl-2 pr-2 py-0 ml-2"
+                  style={{ fontSize: '0.7rem' }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    closeOtherPlugins(icon.profile.name)
+                  }}
+                >
+                  Close Others
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-2 text-muted small">
+          <em>Click any icon to open a plugin</em>
+          <br />
+          <em>Use "Close Others" to keep only that plugin open</em>
+        </div>
+      </div>
+    )
+  }
+
+  const closeOtherPlugins = (exceptName: string) => {
+    icons.forEach((icon) => {
+      if (icon.profile.name !== exceptName && icon.active) {
+        verticalIconsPlugin.toggle(icon.profile.name)
+      }
+    })
+  }
+
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons d-flex flex-column remixui_icons_height" ref={iconPanelRef}>
+      <div
+        className="remixui_icons d-flex flex-column remixui_icons_height"
+        ref={iconPanelRef}
+        onMouseEnter={handlePanelMouseEnter}
+        onMouseLeave={handlePanelMouseLeave}
+      >
         <Home verticalIconPlugin={verticalIconsPlugin} />
         <div
           className={
@@ -138,6 +195,25 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
           ) : null }
         </div>
       </div>
+      {isPanelHovered && (
+        <div
+          className="position-fixed remixui_plugins-list-tooltip"
+          style={{
+            top: tooltipPosition.top,
+            left: tooltipPosition.left,
+            zIndex: 1000,
+            backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f8f9fa',
+            color: theme === 'dark' ? '#f8f9fa' : '#212529',
+            boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+            padding: '8px 12px',
+            borderRadius: '4px',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}
+        >
+          {renderAllPluginNames()}
+        </div>
+      )}
     </div>
   )
 }
