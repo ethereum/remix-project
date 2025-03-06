@@ -315,7 +315,6 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     }
   }
 
-
   /**
    * Given a `header`, put all operations to change the canonical chain directly
    * into `ops`. This walks the supplied `header` backwards. It is thus assumed
@@ -338,7 +337,7 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     // track the staleHash: this is the hash currently in the DB which matches
     // the block number of the provided header.
     let staleHash: Uint8Array | false = false
-    let staleHeads: string[] = []
+    const staleHeads: string[] = []
     let staleHeadBlock = false
 
     const loopCondition = async () => {
@@ -379,7 +378,7 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
       try {
         header = await anyBlockchain._getHeader(header.parentHash, --currentNumber)
       } catch (e) {
-        break  
+        break
       }
     }
     // When the stale hash is equal to the blockHash of the provided header,
@@ -522,8 +521,8 @@ export class VMContext {
       } else if (this.baseBlockNumber && this.blockNumber !== 'latest') {
         // the baseBlockNumber is set.
         // this means we are likely loading a VM mainnet fork from a previously saved state,
-        // the latestBlockNumber is baseBlockNumber + 
-        latestBlockNumberTemp = '0x' + (parseInt(this.baseBlockNumber) + blocks.length).toString(16)      
+        // the latestBlockNumber is baseBlockNumber +
+        latestBlockNumberTemp = '0x' + (parseInt(this.baseBlockNumber) + blocks.length).toString(16)
       }
     } else {
       // it's a standard VM so everything starts from 0.
@@ -545,7 +544,7 @@ export class VMContext {
     if (latestBlockNumberTemp) {
       this.latestBlockNumber = latestBlockNumberTemp
     }
-    
+
     console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks, this.latestBlockNumber, this.baseBlockNumber, this.blocks)
     return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.baseBlockNumber }
   }
@@ -577,7 +576,7 @@ export class VMContext {
     }
     let blockNumberHex = bigIntToHex(blockNumber)
     if (blockNumberHex === '0x') blockNumberHex = '0x0'
-  
+
     this.blocks[bytesToHex(block.hash())] = block
     this.blocks[blockNumberHex] = block
     this.latestBlockNumber = blockNumberHex
