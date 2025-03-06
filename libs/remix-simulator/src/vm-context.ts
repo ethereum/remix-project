@@ -454,12 +454,11 @@ export class VMContext {
   async createVm (hardfork) {
     let stateManager: EVMStateManagerInterface
     // state trie
-    let trie = null
-    if (this.stateDb) {
-      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
-      const mapDb = new MapDB(db)
-      trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
-    }
+
+    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+    const mapDb = new MapDB(db)
+    const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+
     if (this.nodeUrl) {
       if (this.blockNumber !== -1 && this.blockNumber !== 'latest') {
         // we already have the right value for the block number
