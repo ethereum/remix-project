@@ -2,9 +2,10 @@
 import React, { useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps } from '../types'
-import { Provider } from '@remix-ui/environment-explorer'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { DropdownLabel } from './dropdownLabel'
+
 const _paq = (window._paq = window._paq || [])
 
 export function EnvironmentUI(props: EnvironmentProps) {
@@ -25,6 +26,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
     'L2 - Optimism': 'https://app.optimism.io/bridge/deposit',
     'L2 - Arbitrum': 'https://bridge.arbitrum.io/'
   }
+
+  const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
 
   const intl = useIntl()
   const isSaveEvmStateChecked = props.config.get('settings/save-evm-state')
@@ -136,7 +139,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
     } else props.runTabPlugin.call('notification', 'toast', `State not available to reset, as no transactions have been made for selected environment & selected workspace.`)
   }
 
-  const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel w-100">
@@ -160,19 +162,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {isL2(currentProvider && currentProvider.displayName)}
-            {currentProvider && currentProvider.displayName}
-            {currentProvider && bridges[currentProvider.displayName.substring(0, 13)] && (
-              <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
-                <i
-                  style={{ fontSize: 'medium' }}
-                  className={'ml-2 fa fa-rocket-launch'}
-                  aria-hidden="true"
-                  onClick={() => {
-                    window.open(bridges[currentProvider.displayName.substring(0, 13)], '_blank')
-                  }}
-                ></i>
-              </CustomTooltip>
-            )}
+            <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} chainId={props.envLabel} runTabState={props.udappState} />
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
             {props.providers.providerList.length === 0 && <Dropdown.Item>
@@ -184,6 +174,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
               <Dropdown.Item
                 key={name}
                 onClick={async () => {
+                  console.log('name when switching selected env', name)
                   handleChangeExEnv(name)
                 }}
                 data-id={`dropdown-item-${name}`}
