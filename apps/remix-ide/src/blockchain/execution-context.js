@@ -152,7 +152,7 @@ export class ExecutionContext {
       if (context === 'walletconnect') {
         await network.provider.udapp.call('walletconnect', 'openModal')
       }
-      this.currentFork = network.config.fork
+      this.currentFork = network.fork
       this.executionContext = context
       // injected
       web3.setProvider(network.provider)

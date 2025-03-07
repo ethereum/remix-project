@@ -50,6 +50,11 @@ export class WalletConnectRemixClient extends PluginClient {
 
   async openModal() {
     await this.web3modal.open()
+    this.web3modal.subscribeState((state) => {
+      if (!state.open) {
+        this.emit('closeModal')
+      }
+    })
   }
 
   subscribeToEvents() {
