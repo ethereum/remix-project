@@ -10,7 +10,7 @@ const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
-  const { selectExEnv, personalMode } = props
+  const { selectExEnv, personalMode, networkName } = props
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
@@ -19,6 +19,7 @@ export function AccountUI(props: AccountProps) {
   const messageRef = useRef('')
 
   const intl = useIntl()
+  let smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
@@ -27,12 +28,31 @@ export function AccountUI(props: AccountProps) {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    props.setAccount('')
-    if (selectExEnv && selectExEnv.startsWith('injected')) {
+    if (smartAccounts.length > 0 && !smartAccounts.includes(selectedAccount) && networkName.includes('Sepolia')) {
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+      })
+    } else
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
         title: intl.formatMessage({ id: 'udapp.injectedTitle' })
       })
+  }, [selectedAccount])
+
+  useEffect(() => {
+    props.setAccount('')
+    if (selectExEnv && selectExEnv.startsWith('injected')) {
+      if (networkName.includes('Sepolia')) {
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+        })
+      } else
+        setPlusOpt({
+          classList: 'udapp_disableMouseEvents',
+          title: intl.formatMessage({ id: 'udapp.injectedTitle' })
+        })
     } else {
       switch (selectExEnv) {
       case 'vm-cancun':
@@ -91,10 +111,11 @@ export function AccountUI(props: AccountProps) {
         })
       }
     }
-  }, [selectExEnv, personalMode])
+  }, [selectExEnv, personalMode, networkName])
 
   const newAccount = () => {
-    props.createNewBlockchainAccount(passphraseCreationPrompt())
+    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia')) props.createNewSmartAccount()
+    else props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
 
   const signMessage = () => {

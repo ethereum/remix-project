@@ -230,9 +230,11 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
       dataHex = data.slice(2)
     }
   }
-  let contractBytecode
+  let contractBytecode, contractDeployedBytecode
   if (isConstructor) {
     contractBytecode = contract.evm.bytecode.object
+    // yul contract doesn't have deployedBytecode
+    if (contract.evm.deployedBytecode && contract.evm.deployedBytecode.object) contractDeployedBytecode = contract.evm.deployedBytecode.object
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       linkBytecode(contract, contracts, (err, bytecode) => {
@@ -250,7 +252,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
   } else {
     dataHex = encodeFunctionId(funAbi) + dataHex
   }
-  callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
+  callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractDeployedBytecode, contractName: contractName })
 }
 
 export function atAddress () {}
