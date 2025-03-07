@@ -174,6 +174,7 @@ export interface NetworkProps {
 }
 
 export interface AccountProps {
+  runTabPlugin: RunTab,
   selectExEnv: string,
   accounts: {
     loadedAccounts: Record<string, any>,

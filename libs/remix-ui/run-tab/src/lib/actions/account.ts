@@ -29,10 +29,11 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
     try {
       let accounts = await plugin.blockchain.getAccounts()
       const provider = plugin.blockchain.getProvider()
+      let safeAddresses = []
       if (provider && provider.startsWith('injected') && accounts?.length) {
         await loadSmartAccounts(plugin)
         if (plugin.REACT_API.smartAccounts) {
-          const safeAddresses = Object.keys(plugin.REACT_API.smartAccounts)
+          safeAddresses = Object.keys(plugin.REACT_API.smartAccounts)
           accounts.push(...safeAddresses)
         }
       }
@@ -43,6 +44,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] = shortenAddress(account, balance)
+        if (safeAddresses.length && safeAddresses.includes(account)) loadedAccounts[account] = `[SMART] ${loadedAccounts[account]}`
       }
 
       if (provider && provider.startsWith('injected')) {

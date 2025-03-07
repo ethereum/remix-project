@@ -19,12 +19,26 @@ export function AccountUI(props: AccountProps) {
   const messageRef = useRef('')
 
   const intl = useIntl()
+  let smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
       props.setAccount(accounts[0])
     }
   }, [accounts, selectedAccount])
+
+  useEffect(() => {
+    if (smartAccounts.length > 0 && !smartAccounts.includes(selectedAccount) && networkName.includes('Sepolia')) {
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+      })
+    } else
+      setPlusOpt({
+        classList: 'udapp_disableMouseEvents',
+        title: intl.formatMessage({ id: 'udapp.injectedTitle' })
+      })
+  }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')

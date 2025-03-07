@@ -23,6 +23,7 @@ export function SettingsUI(props: SettingsProps) {
       />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
+        runTabPlugin={props.runTabPlugin}
         addFile={props.addFile}
         personalMode={props.personalMode}
         selectExEnv={props.selectExEnv}
