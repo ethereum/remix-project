@@ -433,26 +433,6 @@ export const EditorUI = (props: EditorUIProps) => {
         },
       }
     }
-    if (typeOfDecoration === 'lineTextPerFile') {
-      const lineTextDecoration = decoration as lineText
-      return {
-        type: typeOfDecoration,
-        range: new monacoRef.current.Range(
-          lineTextDecoration.position.start.line + 1,
-          lineTextDecoration.position.start.column + 1,
-          lineTextDecoration.position.start.line + 1,
-          1024
-        ),
-        options: {
-          after: {
-            content: ` ${lineTextDecoration.content}`,
-            inlineClassName: `${lineTextDecoration.className}`,
-          },
-          afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
-          hoverMessage: lineTextDecoration.hoverMessage,
-        },
-      }
-    }
   }
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
