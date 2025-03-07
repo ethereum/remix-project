@@ -435,7 +435,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parameters:
       arch:
@@ -521,7 +521,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -853,7 +853,7 @@ workflows:
             - test-remixdesktop-mac
           filters:
             branches:
-              only: [/.*desktop-master.*/]
+              only: [/.*desktop-master.*/, /.*desktop-metamask.*/]
       - build-plugin:
           matrix:
             parameters:
