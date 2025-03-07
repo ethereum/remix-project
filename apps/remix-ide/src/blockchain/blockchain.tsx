@@ -1007,19 +1007,14 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml', finalLogs)
         }
       }
-
       if (isBasicVMState || isForkedVMState || isForkedRpcState) {
-        // we save the state in case of the isRpcForkedState only if it's forked
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
             let state = await this.executionContext.getStateDetails()
-            const provider = this.executionContext.getProvider()
-            // Check if provider is forked VM state
-            if (provider.startsWith('vm-fs-')) {
-              const stateName = provider.replace('vm-fs-', '')
-              const stateFileExists = await this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
+            if (provider.config.statePath) {
+              const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
               if (stateFileExists) {
-                let stateDetails = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
+                let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
                 stateDetails = JSON.parse(stateDetails)
                 state = JSON.parse(state)
                 state['stateName'] = stateDetails.stateName
@@ -1027,9 +1022,12 @@ export class Blockchain extends Plugin {
                 state['savingTimestamp'] = stateDetails.savingTimestamp
                 state = JSON.stringify(state, null, 2)
               }
-              this.call('fileManager', 'writeFile', `.states/forked_states/${stateName}.json`, state)
+              this.call('fileManager', 'writeFile', provider.config.statePath, state)
+            } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
+              // in that case, we store the state only if it is a basic VM.
+              const provider = this.executionContext.getProvider()
+              this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
             }
-            else this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
           } catch (e) {
             console.error(e)
           }
