@@ -26,7 +26,7 @@
   "dependencies": {
     "@ethereum-waffle/chai": "^3.4.4",
     "@remix-project/remix-simulator": "^0.2.50",
-    "chai": "^4.3.7",
+    "chai": "^5.1.2",
     "ethers": "^5.7.2",
     "web3": "^4.1.1"
   },
