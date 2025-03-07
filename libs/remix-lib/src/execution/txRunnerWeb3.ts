@@ -188,7 +188,7 @@ export class TxRunnerWeb3 {
           if (tx.fromSmartAccount && tx.value === "0" && err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1) {
             // Do not show dialog for insufficient funds as smart account may be using paymaster
             // @todo If paymaster is used, check if balance/credits are available
-            return
+            err = null
           }
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
           gasEstimationForceSend(err, () => {
