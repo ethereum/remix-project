@@ -185,6 +185,11 @@ export class TxRunnerWeb3 {
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
             return
           }
+          if (tx.fromSmartAccount && tx.value === "0" && err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1) {
+            // Do not show dialog for insufficient funds as smart account may be using paymaster
+            // @todo If paymaster is used, check if balance/credits are available
+            return
+          }
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
           gasEstimationForceSend(err, () => {
             const defaultGasLimit = 3000000
@@ -214,8 +219,6 @@ export class TxRunnerWeb3 {
     const network = 'sepolia'
     const chain = chains[network]
 
-    // @ts-ignore
-    const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
     // Check that saOwner is there in MM addresses
     let smartAccountsObj = localStorage.getItem(localStorageKey)
     smartAccountsObj = JSON.parse(smartAccountsObj)
