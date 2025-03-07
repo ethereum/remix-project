@@ -73,7 +73,7 @@
     "@remixproject/plugin-electron": "0.3.43",
     "@vscode/ripgrep": "^1.15.6",
     "add": "^2.0.6",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
     "electron-updater": "^6.1.8",
