@@ -1,4 +1,3 @@
-
 version: 2.1
 parameters:
   run_flaky_tests:
@@ -309,7 +308,16 @@ jobs:
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
 
-  # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
+  # to setup a new certificate:
+  # 1) from https://one.digicert.com/signingmanager/dashboard in the 'get started' section, the following configuration variables can be created:
+  #    - SM_API_KEY
+  #    - SM_CLIENT_CERT_PASSWORD
+  #    - SM_CLIENT_CERT_FILE_B64: first download the certificate, then convert it to base 64 using the command: `base64 path/to/your/certificate.crt`
+  # 2) SM_HOST see https://docs.digicert.com/en/digicert-keylocker/overview/requirements.html#host-environment-488570
+  # 3) SM_CODE_SIGNING_CERT_SHA1_HASH: from the digicert one interface, see https://docs.digicert.com/en/digicert-keylocker/certificates/locate-certificate-fingerprint-thumbprint.html
+  # 4) Adding a Signer: from the digicert one interface, see: https://docs.digicert.com/en/digicert-keylocker/certificates/add-signer.html
+
+  # see https://docs.digicert.com/en/digicert-keylocker/ci-cd-integrations/scripts/circleci/scripts-for-signing-using-ksp-library-on-circleci.html
   sign-remixdesktop-windows:
     executor: win/default # executor type
     working_directory: ~/remix-project
@@ -352,7 +360,10 @@ jobs:
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & $env:SSM\smksp_cert_sync.exe
+            & $env:SSM\smksp_registrar.exe list
+            & $env:SSM\smctl.exe keypair ls
             & $env:SSM\smctl.exe healthcheck
+            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user            
       - run:
           name: "Find Signtool"
           shell: powershell.exe
@@ -390,7 +401,7 @@ jobs:
           command: | 
             . .\SetEnvVars.ps1
             dir Env:
-            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
+            & $env:Signtool sign /debug /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
@@ -490,6 +501,7 @@ jobs:
           command: |
             brew install jq
             cd apps/remixdesktop
+            security unlock-keychain -p ci-password build.keychain
             zsh notarizedmg.sh
       - run:
           name: "remove unnecessary files"

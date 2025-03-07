@@ -10,14 +10,12 @@ export interface IRemixAID {
 
   } & StatusEvents,
   methods: {
-    code_completion(context: string): Promise<string>
-    code_insertion(msg_pfx: string, msg_sfx: string): Promise<string>,
-    code_generation(prompt: string): Promise<string | null>,
-    code_explaining(code: string, context?: string): Promise<string | null>,
-    error_explaining(prompt: string): Promise<string | null>,
-    solidity_answer(prompt: string): Promise<string | null>,
-    initializeModelBackend(local: boolean, generalModel?, completionModel?): Promise<boolean>,
-    chatPipe(pipeMessage: string): Promise<void>,
-    ProcessChatRequestBuffer(params:IParams): Promise<void>,
+    code_completion(prompt: string, context: string, params?): Promise<string>
+    code_insertion(msg_pfx: string, msg_sfx: string, params?): Promise<string>,
+    code_generation(prompt: string, params?): Promise<string | null>,
+    code_explaining(code: string, context?: string, params?): Promise<string | null>,
+    error_explaining(prompt: string, context?: string, params?): Promise<string | null>,
+    solidity_answer(prompt: string, params?): Promise<string | null>,
+    initializeModelBackend(local: boolean, generalModel?, completionModel?): Promise<void>,
   }
 }

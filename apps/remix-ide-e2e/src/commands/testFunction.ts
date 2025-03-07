@@ -23,6 +23,7 @@ class TestFunction extends EventEmitter {
       })
       .perform((done) => {
         browser
+          .scrollInto(`[data-id="block_tx${txHash}"]`)
           .waitForElementVisible(`[data-id="block_tx${txHash}"]`, 60000)
           .moveToElement(`[data-id="block_tx${txHash}"]`, 0, 0)
           .pause(2000)
