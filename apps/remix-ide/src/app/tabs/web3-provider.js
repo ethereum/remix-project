@@ -77,12 +77,40 @@ export class Web3ProviderModule extends Plugin {
                       await this.call('compilerArtefacts', 'addResolvedContract', contractAddressStr, data)
                     }
                   }, 50)
-                  const isVM = this.blockchain.executionContext.isVM()
-    
-                  if (isVM && this.blockchain.config.get('settings/save-evm-state')) {
-                    await this.blockchain.executionContext.getStateDetails().then((state) => {
-                      this.call('fileManager', 'writeFile', `.states/${this.blockchain.executionContext.getProvider()}/state.json`, state)
-                    })
+                  const provider = this.blockchain.executionContext.getProviderObject()
+
+                  // a basic in-browser VM state.
+                  const isBasicVMState = provider.config.isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+                  // a standard fork of an in-browser state.
+                  const isForkedVMState = provider.config.isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+                  // a fork of an in-browser state which derive from a live network.
+                  const isForkedRpcState = provider.config.isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
+
+                  if (isBasicVMState || isForkedVMState || isForkedRpcState) {
+                    if (this.blockchain.config.get('settings/save-evm-state')) {
+                      try {
+                        let state = await this.blockchain.executionContext.getStateDetails()
+                        if (provider.config.statePath) {
+                          const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
+                          if (stateFileExists) {
+                            let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
+                            stateDetails = JSON.parse(stateDetails)
+                            state = JSON.parse(state)
+                            state['stateName'] = stateDetails.stateName
+                            state['forkName'] = stateDetails.forkName
+                            state['savingTimestamp'] = stateDetails.savingTimestamp
+                            state = JSON.stringify(state, null, 2)
+                          }
+                          this.call('fileManager', 'writeFile', provider.config.statePath, state)
+                        } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
+                          // in that case, we store the state only if it is a basic VM.
+                          const provider = this.blockchain.executionContext.getProvider()
+                          this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
+                        }
+                      } catch (e) {
+                        console.error(e)
+                      }
+                    }
                   }
                 }
               }

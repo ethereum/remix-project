@@ -336,30 +336,40 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .selectContract('MainnetBlockNumberContract')
       .perform((done) => {
-        browser.createContract((currentBlockNumber - 1) + '')
+        browser.createContract((currentBlockNumber) + '')
+        .waitForElementPresent('*[data-shared="universalDappUiInstance"]')
         .perform(() => {
           done()
         })
       })
       .clickInstance(0)
+      .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
       .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
       // Should fork the mainnet VM fork and execute some transaction
       .click('*[data-id="fork-state-icon"]')
@@ -374,19 +384,26 @@ module.exports = {
           locateStrategy: 'xpath'
         }
       )
+      .pause(2000)
       .clickInstance(0)
+      .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
       // Should fork the mainnet VM fork again and execute some transaction
       .click('*[data-id="fork-state-icon"]')  
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
@@ -400,34 +417,51 @@ module.exports = {
           locateStrategy: 'xpath'
         }
       )
+      .pause(2000)
       .clickInstance(0)
-      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
-      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded output': { '0':'bool: true' }
-        })
       .clickFunction('getB - call')
-      .getAddressAtPosition(1, (address) => {
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .getAddressAtPosition(0, (address) => {
         console.log('Test Fork Mainnet', address)
         addressRef = address
       })
+      // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 6
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '6'})
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, [`0:uint256: ${currentBlockNumber + 7}`]) // checkBlockNumberIsAdvancing is called 7 times
-          .perform(() => done())
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
       })
-      // switch back to Mainnet fork 1 and check that block number is at `currentBlockNumber` + 5
-      .switchEnvironment('Mainnet fork 1')
-      .clickFunction('getB - call')
+      // switch back to Mainnet fork 1 and check that block number is at `currentBlockNumber` + 4
+      .switchEnvironment('vm-fs-Mainnet fork 1')
+      .pause(2000)
+      .clickInstance(0)
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '4'})
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, [`0:uint256: ${currentBlockNumber + 5}`]) // checkBlockNumberIsAdvancing is called 7 times
-          .perform(() => done())
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
       })
     }
 }
@@ -707,24 +741,30 @@ contract C {
   }, {
     'MainnetBlockNumberContract.sol': {
       content: `
-       // SPDX-License-Identifier: GPL-3.0
+      // SPDX-License-Identifier: GPL-3.0
 
       pragma solidity >=0.8.2 <0.9.0;
 
       contract MainnetBlockNumberContract {
-          uint b;
-          constructor(uint blockNumber) {
-              b = blockNumber;
-          }
-          function checkBlockNumberIsAdvancing()  public returns (bool) {
-              bool ret = b < block.number;
-              b = block.number;
-              return ret;
-          }
-          function getB() view public returns(uint) {
-              return b;
-          }
+      uint b;
+      uint orgB;
+      constructor(uint blockNumber) {
+          b = blockNumber;
       }
+      function checkBlockNumberIsAdvancing()  public returns (bool) {
+          if (orgB == 0) orgB = block.number;
+          bool ret = b < block.number;
+          b = block.number;
+          return ret;
+      }
+      function getB() view public returns(uint) {
+          return b;
+      }
+      function checkOrigin(uint incr) public returns (bool) {
+        bool ret = orgB + incr == b;
+        return ret;
+      }
+  }
 `
     }
   }
