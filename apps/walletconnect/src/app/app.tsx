@@ -9,8 +9,8 @@ remix.initClient()
 function App() {
   return (
     <div className="App">
-      <h4 className="mt-1">WalletConnect</h4>
-      <WalletConnectUI />
+      {/* <h4 className="mt-1">WalletConnect</h4>
+      <WalletConnectUI /> */}
     </div>
   )
 }
