@@ -32,7 +32,7 @@
     "@remixproject/plugin-utils": "0.3.33",
     "@remixproject/plugin-ws": "0.3.33",
     "@remix-project/remix-solidity": "^0.5.36",
-    "axios": "1.7.4",
+    "axios": "1.8.2",
     "chokidar": "^2.1.8",
     "commander": "^9.4.1",
     "fs-extra": "^3.0.1",
