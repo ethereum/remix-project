@@ -3,6 +3,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
+import { Provider } from '@remix-ui/environment-explorer'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import { CheckStatus } from '../run-tab'
 export interface RunTabProps {
@@ -20,22 +21,6 @@ export interface Contract {
 
 export interface ContractList {
   [file: string]: Contract[]
-}
-
-export type Provider = {
-  name: string
-  displayName: string
-  provider: {
-    sendAsync: () => void
-  },
-  init: () => void
-  title: string
-  dataId: string
-  options: { [key: string]: string}
-  fork: boolean
-  isVM: boolean
-  isInjected: boolean
-  position: number
 }
 
 export interface RunTabState {

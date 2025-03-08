@@ -88,7 +88,12 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
 
   const askGtp = async () => {
     try {
-      const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
+      let content;
+      try {
+        content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
+      } catch (error) {
+        content = await plugin.call('fileManager', 'readFile', await plugin.call('config', 'getAppParameter', 'currentFile'));
+      }
       const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
 
       await plugin.call('popupPanel', 'showPopupPanel', true)
@@ -97,7 +102,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
       }, 500)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'error_explaining_SolidityError'])
     } catch (err) {
-      console.error('unable to askGtp')
+      console.error('unable to ask RemixAI')
       console.error(err)
     }
   }

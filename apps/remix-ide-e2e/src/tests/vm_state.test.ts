@@ -39,6 +39,7 @@ const tests = {
       )
   },
   'Should fork state successfully #group1': function (browser: NightwatchBrowser) {
+    let contractAddress = ''
     browser
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
@@ -46,6 +47,12 @@ const tests = {
       .clickLaunchIcon('udapp')
       .click('[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
+      .perform((done) => {
+        browser.getAddressAtPosition(0, (address) => {
+          contractAddress = address
+          done()
+        })
+      })      
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"55"' })
       .testFunction('last',
         {
@@ -81,6 +88,56 @@ const tests = {
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
       })
+      // fork again this state. The name of the new forked state will be sub_forkedState_2
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="fork-state-icon"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
+      .click('input[data-id="modalDialogForkState"]')
+      .setValue('input[data-id="modalDialogForkState"]', 'sub_forkedState_2')
+      .modalFooterOKClick('udappNotify')
+      // load the previous contract
+      .clickLaunchIcon('filePanel')
+      .openFile('contracts/1_Storage.sol')
+      .perform((done) => {
+        browser.addAtAddressInstance(contractAddress, true, true, false)
+        .perform(() => done())
+      })
+      .clickInstance(0)
+      // check that the state is correct
+      .clickFunction('retrieve - call')
+      .testFunction('last',
+        {
+          'decoded output': { '0': 'uint256: 55' }
+        })
+      // update the state and check it's correctly applied
+      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"57"' })
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': { 'uint256 num': '57' }
+        })
+      .clearConsole()
+      .clickFunction('retrieve - call')
+      .testFunction('last',
+        {
+          'decoded output': { '0': 'uint256: 57' }
+        })
+      // switch back to the previous state and check the value hasn't changed.
+      .switchEnvironment('vm-fs-forkedState_1')
+      .clickLaunchIcon('filePanel')
+      .openFile('contracts/1_Storage.sol')
+      .perform((done) => {
+        browser.addAtAddressInstance(contractAddress, true, true, false)
+        .perform(() => done())
+      })
+      .clickInstance(0)
+      .clearConsole()
+      .clickFunction('retrieve - call')
+      .testFunction('last',
+        {
+          'decoded output': { '0': 'uint256: 55' }
+        })
+      .clickLaunchIcon('filePanel')
   },
   'Should show fork states provider in environment explorer & make txs using forked state #group1': function (browser: NightwatchBrowser) {
     browser

@@ -52,7 +52,7 @@ commander
   .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
   .option('-r, --runs <number>', 'set runs (e.g: 150, 250 etc)')
   .option('-v, --verbose <level>', 'set verbosity level (0 to 5)', mapVerbosity)
-  .option('-f, --fork <string>', 'set hard fork (e.g: istanbul, berlin etc. See full list of hard forks here: https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks)')
+  .option('-f, --fork <string>', 'set hard fork (e.g: istanbul, berlin etc. See full list of hard forks here: https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks.ts)')
   .option('-n, --nodeUrl <string>', 'set node url (e.g: https://mainnet.infura.io/v3/your-api-key)')
   .option('-b, --blockNumber <string>', 'set block number (e.g: 123456)')
   .option('-k, --killProcess <bool>', 'kill process when tests fail')
