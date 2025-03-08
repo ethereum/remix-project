@@ -46,7 +46,7 @@
     "string-similarity": "^4.0.4",
     "tape": "^4.10.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3",
+    "typescript": "^3.4.3",
     "web3": "^4.1.1"
   },
   "devDependencies": {
