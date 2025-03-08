@@ -4,8 +4,7 @@ import { ConsensusType } from '@ethereumjs/common'
 import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
 import { bytesToHex, Address, hexToBytes } from '@ethereumjs/util'
-import { EVM } from '@ethereumjs/evm'
-import type { Account, AddressLike, BigIntLike } from '@ethereumjs/util'
+import type { AddressLike, BigIntLike } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
 import type { Transaction as InternalTransaction } from './txRunner'
@@ -31,6 +30,7 @@ export class TxRunnerVM {
   blockParentHash
   nextNonceForCall: number
   standaloneTx: boolean
+  baseBlockNumber: string
   getVMObject: () => any
 
   constructor (vmaccounts, api, getVMObject, blocks: Uint8Array[] = []) {
@@ -39,6 +39,7 @@ export class TxRunnerVM {
     // has a default for now for backwards compatibility
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
+    this.baseBlockNumber = this.getVMObject().baseBlockNumber
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queueTxs = []
@@ -155,10 +156,11 @@ export class TxRunnerVM {
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blocks.length % difficulties.length]
+      const blockNumber = this.baseBlockNumber ? parseInt(this.baseBlockNumber) + this.blocks.length : this.blocks.length
       const block = Block.fromBlockData({
         header: {
           timestamp: new Date().getTime() / 1000 | 0,
-          number: this.blocks.length,
+          number: blockNumber,
           coinbase: coinbases[this.blocks.length % coinbases.length],
           difficulty,
           gasLimit,
@@ -206,7 +208,7 @@ export class TxRunnerVM {
   }
 
   runBlockInVm (tx, block, callback) {
-    this.getVMObject().vm.runBlock({ block: block, generate: true, skipNonce: true, skipBlockValidation: true, skipBalance: false }).then((results: RunBlockResult) => {
+    this.getVMObject().vm.runBlock({ block: block, generate: true, skipHeaderValidation: true, skipNonce: true, skipBlockValidation: true, skipBalance: false }).then((results: RunBlockResult) => {
       const result: RunTxResult = results.results[0]
       callback(null, {
         result,

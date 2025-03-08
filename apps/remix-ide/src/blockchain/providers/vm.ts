@@ -98,9 +98,10 @@ export class VMProvider {
           this.worker.postMessage({
             cmd: 'init',
             fork: this.executionContext.getCurrentFork(),
-            nodeUrl: provider?.options['nodeUrl'],
+            nodeUrl: blockchainState.nodeUrl || provider?.options['nodeUrl'],
             blockNumber,
             stateDb,
+            baseBlockNumer: blockchainState.baseBlockNumber,
             blocks: blockchainState.blocks
           })
         } catch (e) {
