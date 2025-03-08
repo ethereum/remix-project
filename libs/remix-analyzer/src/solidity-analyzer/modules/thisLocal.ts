@@ -24,7 +24,7 @@ export default class thisLocal implements AnalyzerModule {
       return {
         warning: 'Use of "this" for local functions: Never use "this" to call functions in the same contract, it only consumes more gas than normal local calls.',
         location: item.src,
-        more: `https://solidity.readthedocs.io/en/${version}/control-structures.html#external-function-calls`
+        more: `https://docs.soliditylang.org/en/${version}/control-structures.html#external-function-calls`
       }
     })
   }
