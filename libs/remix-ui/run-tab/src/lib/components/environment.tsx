@@ -5,6 +5,7 @@ import { EnvironmentProps } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { DropdownLabel } from './dropdownLabel'
+import { setExecutionContext } from '../actions/account'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -162,7 +163,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {isL2(currentProvider && currentProvider.displayName)}
-            <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} chainId={props.envLabel} runTabState={props.udappState} />
+            <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} chainId={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} />
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
             {props.providers.providerList.length === 0 && <Dropdown.Item>
@@ -174,7 +175,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
               <Dropdown.Item
                 key={name}
                 onClick={async () => {
-                  console.log('name when switching selected env', name)
                   handleChangeExEnv(name)
                 }}
                 data-id={`dropdown-item-${name}`}
