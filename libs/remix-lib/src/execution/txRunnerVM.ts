@@ -1,7 +1,7 @@
 'use strict'
 import { RunBlockResult, RunTxResult } from '@ethereumjs/vm'
 import { ConsensusType } from '@ethereumjs/common'
-import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
+import { LegacyTransaction, FeeMarketEIP1559Transaction, EOACodeEIP7702Transaction } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
 import { bytesToHex, Address, hexToBytes } from '@ethereumjs/util'
 import type { AddressLike, BigIntLike } from '@ethereumjs/util'
@@ -104,7 +104,7 @@ export class TxRunnerVM {
   }
 
   async runInVm (tx: InternalTransaction, callback: VMExecutionCallBack) {
-    const { to, data, value, gasLimit, useCall, signed } = tx
+    const { to, data, value, gasLimit, useCall, signed, authorityList } = tx
     let { from } = tx
     let account
 
@@ -129,7 +129,18 @@ export class TxRunnerVM {
         }
 
         const res = await this.getVMObject().stateManager.getAccount(Address.fromString(from))
-        if (!EIP1559) {
+        if (tx.authorityList) {
+          tx = EOACodeEIP7702Transaction.fromTxData({
+            nonce: useCall ? this.nextNonceForCall : res.nonce,
+            maxPriorityFeePerGas: '0x01',
+            maxFeePerGas: '0x7',
+            gasLimit: gasLimit,
+            to: (to as AddressLike),
+            value: (value as BigIntLike),
+            data: hexToBytes(data),
+            authorizationList: authorityList
+          }, { common: this.commonContext }).sign(account.privateKey)
+        } if (!EIP1559) {
           tx = LegacyTransaction.fromTxData({
             nonce: useCall ? this.nextNonceForCall : res.nonce,
             gasPrice: '0x1',
@@ -147,7 +158,7 @@ export class TxRunnerVM {
             to: (to as AddressLike),
             value: (value as BigIntLike),
             data: hexToBytes(data)
-          }).sign(account.privateKey)
+          }, { common: this.commonContext }).sign(account.privateKey)
         }
       }
 

@@ -1,5 +1,10 @@
 'use strict'
 import { EventManager } from '../eventManager'
+import { AuthorizationList } from '@ethereumjs/common'
+/*
+ * A type that represents a `0x`-prefixed hex string.
+ */
+export type PrefixedHexString = `0x${string}`
 
 export type Transaction = {
   from: string,
@@ -12,7 +17,8 @@ export type Transaction = {
   useCall?: boolean,
   timestamp?: number,
   signed?: boolean,
-  type?: '0x1' | '0x2'
+  authorityList?: AuthorizationList
+  type?: '0x1' | '0x2' | '0x4'
 }
 
 export class TxRunner {
