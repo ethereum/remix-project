@@ -44,6 +44,9 @@ export class TxRunnerWeb3 {
         tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
         // tx.type = '0x1'
       }
+      if (tx.authorityList) {
+        tx.type = '0x4'
+      }
     }
 
     let currentDateTime = new Date();
