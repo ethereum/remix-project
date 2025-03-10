@@ -105,7 +105,7 @@ export class TxRunnerVM {
   }
 
   async runInVm (tx: InternalTransaction, callback: VMExecutionCallBack) {
-    const { to, data, value, gasLimit, useCall, signed } = tx
+    const { to, data, value, gasLimit, useCall, signed, authorityList } = tx
     let { from } = tx
     let account
 
@@ -130,7 +130,18 @@ export class TxRunnerVM {
         }
 
         const res = await this.getVMObject().stateManager.getAccount(createAddressFromString(from))
-        if (!EIP1559) {
+        if (tx.authorityList) {
+          tx = createEOACode7702Tx({
+            nonce: useCall ? this.nextNonceForCall : res.nonce,
+            maxPriorityFeePerGas: '0x01',
+            maxFeePerGas: '0x7',
+            gasLimit: gasLimit,
+            to: (to as AddressLike),
+            value: (value as BigIntLike),
+            data: hexToBytes(data as PrefixedHexString),
+            authorizationList: authorityList
+          }, { common: this.commonContext }).sign(account.privateKey)
+        } if (!EIP1559) {
           tx = createLegacyTx({
             nonce: useCall ? this.nextNonceForCall : res.nonce,
             gasPrice: '0x1',
@@ -148,7 +159,7 @@ export class TxRunnerVM {
             to: (to as AddressLike),
             value: (value as BigIntLike),
             data: hexToBytes(data as PrefixedHexString)
-          }).sign(account.privateKey)
+          }, { common: this.commonContext }).sign(account.privateKey)
         }
       }
 
