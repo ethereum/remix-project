@@ -31,7 +31,7 @@ const defaultSections: environmentExplorerUIGridSections = {
             <CustomTooltip
               placement="auto"
               tooltipId="overlay-tooltip-forkedAt"
-              tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}}`}
+              tooltipText={`Forked on: ${(new Date(timestamp)).toLocaleString()}`}
             >
               <div>
                 {
@@ -45,7 +45,7 @@ const defaultSections: environmentExplorerUIGridSections = {
         // At this point we don't have any state in the browser, we start from the latest block
         return (
           <>
-            <div><b>{provider.description}</b></div>
+            <div>{provider.description}</div>
           </>)
       }
     }
@@ -125,7 +125,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                   { provider.config.isVMStateForked && provider.config.statePath && <CustomTooltip
                     placement="auto"
                     tooltipId={`overlay-tooltip-${provider.name}`}
-                    tooltipText="Delete Environment Immediately"
+                    tooltipText="Show Pinned Contracts in the terminal"
                   >
                     <span
                       onClick={async () => props.showPinnedContracts(provider)}
