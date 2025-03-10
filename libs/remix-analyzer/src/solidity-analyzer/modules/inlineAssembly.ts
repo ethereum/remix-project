@@ -25,7 +25,7 @@ export default class inlineAssembly implements AnalyzerModule {
         warning: `The Contract uses inline assembly, this is only advised in rare cases. 
                   Additionally static analysis modules do not parse inline Assembly, this can lead to wrong analysis results.`,
         location: node.src,
-        more: `https://solidity.readthedocs.io/en/${version}/assembly.html`
+        more: `https://docs.soliditylang.org/en/${version}/assembly.html`
       }
     })
   }
