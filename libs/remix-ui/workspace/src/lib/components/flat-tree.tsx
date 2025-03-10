@@ -135,7 +135,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   const handleContextMenu = async (e: any) => {
-    _paq.push(['trackEvent', 'fileExplorer-flatTree', 'contextMenu', { path: e.target.path }])
+    _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', { path: e.target.path }])
     const target = await getEventTarget(e)
     if (target) {
       e.preventDefault()
