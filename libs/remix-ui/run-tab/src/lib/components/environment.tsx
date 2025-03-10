@@ -66,7 +66,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
     _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
     let context = currentProvider.name
     context = context.replace('vm-fs-', '')
-    
+
     let currentStateDb
     try {
       currentStateDb = JSON.parse(await props.runTabPlugin.blockchain.executionContext.getStateDetails())
@@ -74,13 +74,13 @@ export function EnvironmentUI(props: EnvironmentProps) {
       props.runTabPlugin.call('notification', 'toast', `State not available to fork. ${e.message}`)
       return
     }
-    
+
     if (Object.keys(currentStateDb.db).length === 0) {
       props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
       return
     }
 
-    vmStateName.current = `${context}_${Date.now()}`    
+    vmStateName.current = `${context}_${Date.now()}`
     props.modal(
       intl.formatMessage({ id: 'udapp.forkStateTitle' }),
       forkStatePrompt(vmStateName.current),
@@ -91,7 +91,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         currentStateDb.nodeUrl = currentProvider.config.nodeUrl
         currentStateDb.savingTimestamp = Date.now()
         await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-        props.runTabPlugin.emit('vmStateForked', vmStateName.current)        
+        props.runTabPlugin.emit('vmStateForked', vmStateName.current)
 
         // we also need to copy the pinned contracts:
         if (await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${currentProvider.name}`)) {
