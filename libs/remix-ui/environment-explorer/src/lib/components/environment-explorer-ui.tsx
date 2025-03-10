@@ -27,7 +27,7 @@ const defaultSections: environmentExplorerUIGridSections = {
         const { latestBlock, timestamp } = JSON.parse(provider.description)
         return (
           <>
-            <div><b>Latest Block: </b>{parseInt(latestBlock)}</div>
+            <div><b>Latest Block: </b>{provider.config.baseBlockNumber && provider.config.baseBlockNumber !== '0x0' ? parseInt(provider.config.baseBlockNumber) + parseInt(latestBlock) : parseInt(latestBlock)}</div>
             <CustomTooltip
               placement="auto"
               tooltipId="overlay-tooltip-forkedAt"
@@ -35,7 +35,7 @@ const defaultSections: environmentExplorerUIGridSections = {
             >
               <div>
                 {
-                  provider.config.baseBlockNumber !== '0x' && <div><b>Forked at Block </b>{parseInt(provider.config.baseBlockNumber)}</div>
+                  provider.config.baseBlockNumber && provider.config.baseBlockNumber !== '0x0' && <div><b>Origin Block: </b>{parseInt(provider.config.baseBlockNumber)}</div>
                 }
                 <b>Forked on: </b>{(new Date(timestamp)).toDateString()}
               </div>
