@@ -158,7 +158,7 @@ module.exports = {
       .checkTerminalFilter('0xd9145CCE52D386f254917e481eB44e9943F39140', '0xd9145CCE52D386f254917e481eB44e9943F39138', true)
   },
 
-  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which defines a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
@@ -177,7 +177,7 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
-  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork #group3': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which defines a custom error, the error should be logged in the terminal , using London VM Fork #group3': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
       .click('.remixui_compilerConfigSection')
@@ -199,7 +199,7 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param3"')
   },
 
-  'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
+  'Should Compile and Deploy a contract which defines a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
       .click('.udapp_contractActionsContainerSingle > div')
@@ -540,7 +540,7 @@ contract C {
         }
 
         contract MyResolver {
-            // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
+            // Same address for Mainnet, Ropsten, Rinkerby, Gorli and other networks;
             ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
             function resolve() public view returns(address) {
