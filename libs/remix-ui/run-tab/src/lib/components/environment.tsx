@@ -162,8 +162,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
       <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
-            {isL2(currentProvider && currentProvider.displayName)}
-            <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} chainId={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} />
+            {/* {isL2(currentProvider && currentProvider.displayName)} */}
+            <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} chainId={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} isL2={isL2} />
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
             {props.providers.providerList.length === 0 && <Dropdown.Item>

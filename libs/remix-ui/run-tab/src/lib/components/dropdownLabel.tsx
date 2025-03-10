@@ -14,9 +14,10 @@ export type DropDownLabelProps = {
   setExecutionEnv: (executionContext: {
     context: string;
   }) => void
+  isL2: (providerDisplayName: string) => boolean
 }
 
-export function DropdownLabel({ label, bridges, currentProvider, chainId, runTabState, setExecutionEnv }: DropDownLabelProps) {
+export function DropdownLabel({ label, bridges, currentProvider, chainId, runTabState, setExecutionEnv, isL2 }: DropDownLabelProps) {
 
   const [renderLabel, setRenderLabel] = useState(label)
 
@@ -47,7 +48,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
     const selectedEnv = selectedEnvs.find(env => (env.chainId === chainId && env.value === runTabState.selectExEnv) || (env.value === 'walletconnect' && env.value === currentProvider?.name) || env.chainId === chainId)
     if (selectedEnv) {
       setRenderLabel(selectedEnv.name)
-      // setExecutionEnv({ context: selectedEnv.value })
+      setExecutionEnv({ context: selectedEnv.value })
     } else {
       setRenderLabel('Injected Provider - MetaMask')
     }
@@ -56,7 +57,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
   return (
     <>
       <span>{renderLabel}</span>
-      {currentProvider && bridges[currentProvider.displayName.substring(0, 13)] && (
+      {isL2(renderLabel) && bridges[renderLabel.substring(0, 13)] && (
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
           <i
             style={{ fontSize: 'medium' }}
