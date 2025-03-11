@@ -23,6 +23,12 @@ export interface ContractList {
   [file: string]: Contract[]
 }
 
+export type EnvDropdownLabelStateType = {
+  name: string,
+  value: string,
+  chainId?: string | number
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
