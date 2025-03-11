@@ -90,6 +90,10 @@ export class EnvironmentExplorer extends ViewPlugin {
   async showPinnedContracts (provider) {
     if (await this.call('fileManager', 'exists', `.deploys/pinned-contracts/${provider.name}`)) {
       const files = await this.call('fileManager', 'readdir', `.deploys/pinned-contracts/${provider.name}`)
+      if (!files.length) {
+        await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
+        return
+      }
       for (const file in files) {
         if (file.endsWith('.json')) {
           const content = JSON.parse(await this.call('fileManager', 'readFile', file))
