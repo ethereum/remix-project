@@ -278,7 +278,6 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
     const ancestorHeaders = new Set<BlockHeader>()
 
     let header = await (blockchain as any)._getHeader((blockchain as any)._headHeaderHash)
-    console.log('findCommonAncestor', header, newHeader)
     if (header.number > newHeader.number) {
       header = await (blockchain as any).getCanonicalHeader(newHeader.number)
       ancestorHeaders.add(header)
@@ -294,7 +293,6 @@ const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
         }
       }
     }
-    console.log(header.number, newHeader.number)
     if (header.number !== newHeader.number) {
       throw new Error('Failed to find ancient header')
     }
