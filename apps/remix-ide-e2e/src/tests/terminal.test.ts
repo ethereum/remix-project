@@ -69,7 +69,7 @@ module.exports = {
       .pause(1000)
       .executeScriptInTerminal('remix.execute(\'resolveExternalUrlAndSave.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Implementation of the {IERC20} interface.', 60000)
-      .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
+      .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol')
   },
 
   'Call Remix File Resolver (internal URL) from a script #group3': function (browser: NightwatchBrowser) {
