@@ -535,11 +535,6 @@ export class VMContext {
       this.addBlock(block, false, false, web3vm)
     }
 
-    if (latestBlockNumberTemp) {
-      this.latestBlockNumber = latestBlockNumberTemp
-    }
-
-    console.log('creating vm', hardfork, this.nodeUrl, this.blockNumber, this.stateDb, this.rawBlocks, this.latestBlockNumber, this.baseBlockNumber, this.blocks)
     return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.baseBlockNumber }
   }
 
