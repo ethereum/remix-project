@@ -504,28 +504,23 @@ export class VMContext {
       evm
     })
 
-    let latestBlockNumberTemp
     if (this.nodeUrl) {
       if (!this.baseBlockNumber && this.blockNumber !== 'latest') {
         // the baseBlockNumber isn't set.
         // this means we are likely loading a VM mainnet fork from scratch,
         // so we take the current live block number as the baseBlockNumber.
         this.baseBlockNumber = '0x' + this.blockNumber.toString(16)
-        latestBlockNumberTemp = this.baseBlockNumber
+        this.latestBlockNumber = this.baseBlockNumber
       } else if (this.baseBlockNumber && this.blockNumber !== 'latest') {
         // the baseBlockNumber is set.
         // this means we are likely loading a VM mainnet fork from a previously saved state,
         // the latestBlockNumber is baseBlockNumber +
-        latestBlockNumberTemp = '0x' + (parseInt(this.baseBlockNumber) + blocks.length).toString(16)
+        this.latestBlockNumber = '0x' + (parseInt(this.baseBlockNumber) + blocks.length).toString(16)
       }
     } else {
       // it's a standard VM so everything starts from 0.
       this.baseBlockNumber = '0x0'
-      latestBlockNumberTemp = '0x' + this.blockNumber.toString(16)
-    }
-
-    if (latestBlockNumberTemp) {
-      this.latestBlockNumber = latestBlockNumberTemp
+      this.latestBlockNumber = '0x' + this.blockNumber.toString(16)
     }
 
     // VmProxy and VMContext are very intricated.
