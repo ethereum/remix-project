@@ -455,7 +455,7 @@ export class VMContext {
     const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
 
     if (this.nodeUrl) {
-      if (this.blockNumber !== -1 && this.blockNumber !== 'latest') {
+      if (this.blockNumber !== 'latest') {
         // we already have the right value for the block number
       } else if (this.blockNumber === 'latest') {
         // resolve `latest` to the actual block number
