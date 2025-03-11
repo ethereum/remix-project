@@ -39,7 +39,6 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
     setHasInjected(!!injectedProviders)
     setHasBrave(!!braveProvider)
 
-
     setFilteredList(providers.filter((provider) => provider.config.isInjected == true && !provider.name.toLocaleLowerCase().includes('brave')))
 
   }, [providers])
@@ -55,7 +54,6 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
       setTitle('Connecting...')
     }
 
-    
   }, [hasInjected, hasBrave])
 
   if (disabled) {
