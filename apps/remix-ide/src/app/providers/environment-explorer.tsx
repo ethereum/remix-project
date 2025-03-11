@@ -90,6 +90,10 @@ export class EnvironmentExplorer extends ViewPlugin {
   async showPinnedContracts (provider) {
     if (await this.call('fileManager', 'exists', `.deploys/pinned-contracts/${provider.name}`)) {
       const files = await this.call('fileManager', 'readdir', `.deploys/pinned-contracts/${provider.name}`)
+      if (!files) {
+        await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
+        return
+      }
       if (!Object.keys(files).length) {
         await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
         return
