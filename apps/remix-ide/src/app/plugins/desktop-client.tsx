@@ -103,11 +103,14 @@ export class DesktopClient extends ViewPlugin {
     console.log('handleProviderConnect', provider)
     this.state.disableconnect = true
     this.renderComponent()
-    this.blockchain.changeExecutionContext({ context: provider.name, fork: '' }, null, null, () => {
-      console.log('setFinalContext')
-      this.state.disableconnect = false
-      this.renderComponent()
-    })
+    try {
+      this.blockchain.changeExecutionContext({ context: provider.name, fork: '' }, null, null, () => {
+        this.state.disableconnect = false
+        this.renderComponent()
+      })
+    } catch (e) {
+      console.error('Error connecting to provider', e)
+    }
   }
 
   setConnectionState = (state: desktopConnection) => {

@@ -3,7 +3,6 @@ import { AppContext, appActionTypes } from '@remix-ui/app'
 import { Provider } from '@remix-ui/environment-explorer'
 import { providerLogos } from '../udapp/run-tab'
 import { desktopConnection } from '@remix-api'
-import { set } from 'lodash'
 
 interface DesktopClientState {
   connected: desktopConnection
@@ -17,8 +16,9 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
   const { connected, providers, onConnect, disableconnect, currentContext } = props
   const [title, setTitle] = React.useState('Connecting...')
   const [disabled, setDisabled] = React.useState(false)
-  const [hasMetamask, setHasMetamask] = React.useState(false)
+  const [hasInjected, setHasInjected] = React.useState(false)
   const [hasBrave, setHasBrave] = React.useState(false)
+  const [filteredList, setFilteredList] = React.useState<Provider[]>([])
 
   useEffect(() => {
     console.log('connected', props.connected)
@@ -34,24 +34,29 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
 
   useEffect(() => {
     console.log('providers', props.providers)
-    const metamaskProvider = providers.find((provider) => provider.name.toLowerCase().includes('metamask'))
+    const injectedProviders = providers.find((provider) => provider.config.isInjected)
     const braveProvider = providers.find((provider) => provider.name.toLowerCase().includes('brave'))
-    setHasMetamask(!!metamaskProvider)
+    setHasInjected(!!injectedProviders)
     setHasBrave(!!braveProvider)
+
+
+    setFilteredList(providers.filter((provider) => provider.config.isInjected == true && !provider.name.toLocaleLowerCase().includes('brave')))
 
   }, [providers])
 
   useEffect(() => {
-    if (hasMetamask) {
-      setTitle('Connect to MetaMask')
+    if (hasInjected) {
+      setTitle('Connect to Browser Wallet')
       setDisabled(false)
-    } else if (hasBrave && !hasMetamask) {
+    } else if (hasBrave && !hasInjected) {
       setTitle('Brave Wallet is not supported')
       setDisabled(true)
     } else {
       setTitle('Connecting...')
     }
-  },[hasMetamask, hasBrave])
+
+    
+  }, [hasInjected, hasBrave])
 
   if (disabled) {
     return (
@@ -82,9 +87,8 @@ const DesktopClientUI = (props: DesktopClientState & { openDesktopApp: () => voi
 
       <div>
         <div className="row">
-          {providers && providers.length > 0 ? (
-            providers
-              .filter((provider) => provider.config.isInjected && provider.name.toLocaleLowerCase().includes('metamask'))
+          {filteredList && filteredList.length > 0 ? (
+            filteredList
               .map((provider, index) => (
                 <div key={index} className="col-md-4 mb-4">
                   <div className="provider-item card h-100">
