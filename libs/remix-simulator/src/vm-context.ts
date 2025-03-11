@@ -524,6 +524,10 @@ export class VMContext {
       latestBlockNumberTemp = '0x' + this.blockNumber.toString(16)
     }
 
+    if (latestBlockNumberTemp) {
+      this.latestBlockNumber = latestBlockNumberTemp
+    }
+
     // VmProxy and VMContext are very intricated.
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
