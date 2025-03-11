@@ -107,7 +107,7 @@ const App = () => {
         const changedSubmittedContracts = { ...submittedContracts }
 
         for (const receipt of pendingReceipts) {
-          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceed.
+          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceeding.
 
           const { verifierInfo, receiptId } = receipt
           if (receiptId) {
