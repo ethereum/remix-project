@@ -194,7 +194,7 @@ export function swarmHashExtractionPOC32 () {
 
 /**
   * return a regex which extract the cbor encoded metadata : {"ipfs": <IPFS hash>, "solc": <compiler version>} from the bytecode.
-  * ref https://solidity.readthedocs.io/en/v0.6.6/metadata.html?highlight=ipfs#encoding-of-the-metadata-hash-in-the-bytecode
+  * ref https://docs.soliditylang.org/en/v0.6.6/metadata.html?highlight=ipfs#encoding-of-the-metadata-hash-in-the-bytecode
   * @return {RegEx}
   */
 export function cborEncodedValueExtraction () {
