@@ -43,7 +43,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
     { name: 'Dev - Foundry Provider', value: 'foundry-provider', chainId: 31337 },
     { name: 'Dev - Ganache Provider', value: 'ganache-provider', chainId: 1741104841094 },
   ]
-  console.log('runTabState', runTabState)
+
   useEffect(() => {
     const selectedEnv = selectedEnvs.find(env => (env.chainId === chainId && env.value === runTabState.selectExEnv) || (env.value === 'walletconnect' && env.value === currentProvider?.name) || env.chainId === chainId)
     if (selectedEnv) {

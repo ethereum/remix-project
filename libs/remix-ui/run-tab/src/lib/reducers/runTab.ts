@@ -164,7 +164,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       selectExEnv: payload,
       networkName: state.selectExEnv === 'vm-cancun' ? 'VM' : state.networkName,
-      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv).displayName,
+      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv)?.displayName,
       accounts: {
         ...state.accounts,
         selectedAccount: '',
@@ -188,7 +188,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     return {
       ...state,
       networkName: payload,
-      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv).displayName,
+      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv)?.displayName,
     }
   }
 
@@ -198,7 +198,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     return {
       ...state,
       chainId: payload,
-      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv).displayName,
+      displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv)?.displayName,
     }
   }
 
