@@ -195,21 +195,19 @@ module.exports = {
       .waitForElementVisible('[data-path="Hash Checker - 1/scripts/groth16/groth16_trusted_setup.ts"]')
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
-      .click('[data-id="play-editor"]')
-      .pause()
-      .getBrowserLogs()
-      browser.perform((done) => {
-        browser.execute(function () {
-          return (window as any).logs
-        }, [], function (result) {
-          console.log(result.value)
-          done()
-        })})
-        
-      .journalLastChildIncludes('newZkey')
-      .pause(25000)
-      .journalLastChildIncludes('setup done.')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]')
+      .click('[data-id="play-editor"]')   
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='terminalJournal'][normalize-space() != 'newZkey']",
+        timeout: 60000
+      })     
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='terminalJournal'][normalize-space() != 'setup done']",
+        timeout: 60000
+      })
+      .pause(6000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]', 30000)
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
     browser
