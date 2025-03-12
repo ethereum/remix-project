@@ -10,7 +10,7 @@ const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
-  const { selectExEnv, personalMode } = props
+  const { selectExEnv, personalMode, networkName } = props
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
@@ -19,6 +19,7 @@ export function AccountUI(props: AccountProps) {
   const messageRef = useRef('')
 
   const intl = useIntl()
+  const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
@@ -27,12 +28,31 @@ export function AccountUI(props: AccountProps) {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    props.setAccount('')
-    if (selectExEnv && selectExEnv.startsWith('injected')) {
+    if (smartAccounts.length > 0 && !smartAccounts.includes(selectedAccount) && networkName.includes('Sepolia')) {
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+      })
+    } else
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
         title: intl.formatMessage({ id: 'udapp.injectedTitle' })
       })
+  }, [selectedAccount])
+
+  useEffect(() => {
+    props.setAccount('')
+    if (selectExEnv && selectExEnv.startsWith('injected')) {
+      if (networkName.includes('Sepolia')) {
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+        })
+      } else
+        setPlusOpt({
+          classList: 'udapp_disableMouseEvents',
+          title: intl.formatMessage({ id: 'udapp.injectedTitle' })
+        })
     } else {
       switch (selectExEnv) {
       case 'vm-cancun':
@@ -91,10 +111,43 @@ export function AccountUI(props: AccountProps) {
         })
       }
     }
-  }, [selectExEnv, personalMode])
+  }, [selectExEnv, personalMode, networkName])
 
   const newAccount = () => {
-    props.createNewBlockchainAccount(passphraseCreationPrompt())
+    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia'))
+    {
+      return props.modal(
+        intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+        (
+          <div data-id="createSmartAccountModal">
+            <ul className='ml-3'>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc1"/></li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc2"/>
+                <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
+                  target="_blank"
+                  onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
+                      Learn more
+                </a>
+              </li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc3"/></li><br/>
+              <li>{intl.formatMessage({ id: 'udapp.createSmartAccountDesc4' }, { owner: selectedAccount })}</li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc5"/></li><br/>
+              <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
+            </ul>
+          </div>
+        ),
+        intl.formatMessage({ id: 'udapp.continue' }),
+        () => {
+          props.createNewSmartAccount()
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        () => {
+          props.setPassphrase('')
+        }
+      )
+
+    }
+    else props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
 
   const signMessage = () => {
