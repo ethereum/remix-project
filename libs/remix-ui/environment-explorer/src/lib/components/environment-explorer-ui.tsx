@@ -122,7 +122,7 @@ export const EnvironmentExplorerUI = (props: environmentExplorerUIProps) => {
                     </span>
                   </CustomTooltip>
                   }
-                  { provider.config.isVMStateForked && provider.config.statePath && <CustomTooltip
+                  { false && provider.config.isVMStateForked && provider.config.statePath && <CustomTooltip
                     placement="auto"
                     tooltipId={`overlay-tooltip-${provider.name}`}
                     tooltipText="Show Pinned Contracts in the terminal"
