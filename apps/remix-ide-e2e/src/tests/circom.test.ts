@@ -196,8 +196,16 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(10000)
+      .pause()
       .getBrowserLogs()
+      browser.perform((done) => {
+        browser.execute(function () {
+          return (window as any).logs
+        }, [], function (result) {
+          console.log(result.value)
+          done()
+        })
+        
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')
