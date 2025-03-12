@@ -204,7 +204,7 @@ module.exports = {
         }, [], function (result) {
           console.log(result.value)
           done()
-        })
+        })})
         
       .journalLastChildIncludes('newZkey')
       .pause(25000)
