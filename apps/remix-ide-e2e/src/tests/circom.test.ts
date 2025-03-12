@@ -201,11 +201,13 @@ module.exports = {
         selector: "//*[@data-id='terminalJournal'][normalize-space() != 'newZkey']",
         timeout: 60000
       })     
+      .saveScreenshot('./reports/screenshots/groth16_trusted_setup.png')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//*[@data-id='terminalJournal'][normalize-space() != 'setup done']",
         timeout: 60000
       })
+      .saveScreenshot('./reports/screenshots/groth16_trusted_setup_1.png')
       .pause(6000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]', 30000)
   },
