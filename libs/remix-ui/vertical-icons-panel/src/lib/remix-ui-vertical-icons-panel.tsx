@@ -114,7 +114,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
   const closeOtherPlugins = (exceptName: string) => {
     icons.forEach((icon) => {
       if (icon.profile.name !== exceptName && icon.active) {
-        verticalIconsPlugin.toggle(icon.profile.name)
+        verticalIconsPlugin.call('manager', 'togglePlugin', icon.profile.name)
       }
     })
   }
