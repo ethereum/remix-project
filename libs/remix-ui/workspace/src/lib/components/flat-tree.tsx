@@ -9,8 +9,6 @@ import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
 
-const _paq = (window._paq = window._paq || [])
-
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
   const [isIntersecting, setIntersecting] = useState(false)
