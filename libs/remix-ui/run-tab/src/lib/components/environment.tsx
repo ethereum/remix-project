@@ -96,7 +96,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         // we also need to copy the pinned contracts:
         if (await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${currentProvider.name}`)) {
           const files = await props.runTabPlugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${currentProvider.name}`)
-          if (files && files.length) {
+          if (files && Object.keys(files).length) {
             await props.runTabPlugin.call('fileManager', 'copyDir', `.deploys/pinned-contracts/${currentProvider.name}`, `.deploys/pinned-contracts`, 'vm-fs-' + vmStateName.current)
           }
         }
