@@ -410,6 +410,7 @@ module.exports = {
     'switch to origin #flaky #group4': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="remotes-panel"]')
+            .pause(2000)
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="fetch-repositories"]')
             .waitForElementVisible('*[data-id="set-as-default-origin"]')
