@@ -407,7 +407,7 @@ module.exports = {
         console.log(logs2)
         browser.assert.fail(logs2.includes('testcommit'))
     },
-    'switch to origin #flaky #group4': function (browser: NightwatchBrowser) {
+    'switch to origin #group4': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="remotes-panel"]')
             .pause(2000)
