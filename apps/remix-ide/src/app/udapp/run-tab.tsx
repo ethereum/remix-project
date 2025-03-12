@@ -353,7 +353,7 @@ export class RunTab extends ViewPlugin {
 
     if (isElectron()) {
       // desktop host
-      await addProvider(5, 'desktopHost', 'Metamask Wallet', { isInjected: false, isVM: false, isRpcForkedState: false })
+      await addProvider(5, 'desktopHost', 'Browser Wallet', { isInjected: false, isVM: false, isRpcForkedState: false })
     }
     await addProvider(6, 'walletconnect', 'WalletConnect', { isInjected: false, isVM: false, isRpcForkedState: false })
 
