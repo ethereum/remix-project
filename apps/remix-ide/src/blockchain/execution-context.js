@@ -8,7 +8,7 @@ const _paq = window._paq = window._paq || []
 
 let web3
 
-const config  = { defaultTransactionType: '0x0' }
+const config = { defaultTransactionType: '0x0' }
 if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
@@ -21,7 +21,7 @@ web3.eth.setConfig(config)
   trigger contextChanged, web3EndpointChanged
 */
 export class ExecutionContext {
-  constructor () {
+  constructor() {
     this.event = new EventManager()
     this.executionContext = 'vm-cancun'
     this.lastBlock = null
@@ -36,42 +36,42 @@ export class ExecutionContext {
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
   }
 
-  init (config) {
+  init(config) {
     this.executionContext = 'vm-cancun'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
-  getProvider () {
+  getProvider() {
     return this.executionContext
   }
 
-  getProviderObject () {
+  getProviderObject() {
     return this.customNetWorks[this.executionContext]
   }
 
-  getSelectedAddress () {
+  getSelectedAddress() {
     return injectedProvider ? injectedProvider.selectedAddress : null
   }
 
-  getCurrentFork () {
+  getCurrentFork() {
     return this.currentFork
   }
 
-  isVM () {
+  isVM() {
     return this.executionContext.startsWith('vm')
   }
 
-  setWeb3 (context, web3) {
+  setWeb3(context, web3) {
     web3.setConfig(config)
     this.customWeb3[context] = web3
   }
 
-  web3 () {
+  web3() {
     if (this.customWeb3[this.executionContext]) return this.customWeb3[this.executionContext]
     return web3
   }
 
-  detectNetwork (callback) {
+  detectNetwork(callback) {
     return new Promise((resolve, reject) => {
       if (this.isVM()) {
         callback && callback(null, { id: '-', name: 'VM' })
@@ -92,7 +92,7 @@ export class ExecutionContext {
           else if (id === 42) name = 'Kovan'
           else if (id === 11155111) name = 'Sepolia'
           else name = 'Custom'
-  
+
           if (id === 1) {
             web3.eth.getBlock(0).then((block) => {
               if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
@@ -107,12 +107,12 @@ export class ExecutionContext {
             return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
           }
         }
-        web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
+        web3.eth.net.getId().then(id => cb(null, parseInt(id))).catch(err => cb(err))
       }
     })
   }
 
-  removeProvider (name) {
+  removeProvider(name) {
     if (name && this.customNetWorks[name]) {
       if (this.executionContext === name) this.setContext('vm-cancun', null, null, null)
       delete this.customNetWorks[name]
@@ -120,26 +120,26 @@ export class ExecutionContext {
     }
   }
 
-  addProvider (network) {
+  addProvider(network) {
     if (network && network.name && !this.customNetWorks[network.name]) {
       this.customNetWorks[network.name] = network
     }
   }
 
-  getAllProviders () {
+  getAllProviders() {
     return this.customNetWorks
   }
 
-  internalWeb3 () {
+  internalWeb3() {
     return web3
   }
 
-  setContext (context, endPointUrl, confirmCb, infoCb) {
+  setContext(context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+  async executionContextChange(value, endPointUrl, confirmCb, infoCb, cb) {
     _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
@@ -147,27 +147,32 @@ export class ExecutionContext {
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      await network.init()
-      this.currentFork = network.fork
-      this.executionContext = context
-      // injected
-      web3.setProvider(network.provider)
-      await this._updateChainContext()
-      this.event.trigger('contextChanged', [context])
-      cb()
+      try {
+        await network.init()
+        this.currentFork = network.fork
+        this.executionContext = context
+        // injected
+        web3.setProvider(network.provider)
+        await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        cb()
+      } catch (e) {
+        console.error(e)
+        cb(false)
+      }
     }
   }
 
-  currentblockGasLimit () {
+  currentblockGasLimit() {
     return this.blockGasLimit
   }
 
-  stopListenOnLastBlock () {
+  stopListenOnLastBlock() {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
 
-  async _updateChainContext () {
+  async _updateChainContext() {
     if (!this.isVM()) {
       try {
         const block = await web3.eth.getBlock('latest')
@@ -188,13 +193,13 @@ export class ExecutionContext {
     }
   }
 
-  listenOnLastBlock () {
+  listenOnLastBlock() {
     this.listenOnLastBlockId = setInterval(() => {
       this._updateChainContext()
     }, 15000)
   }
 
-  txDetailsLink (network, hash) {
+  txDetailsLink(network, hash) {
     const transactionDetailsLinks = {
       Main: 'https://www.etherscan.io/tx/',
       Rinkeby: 'https://rinkeby.etherscan.io/tx/',
@@ -223,7 +228,7 @@ export class ExecutionContext {
       } else if (key === 'blocks') {
         return value.map(block => bytesToHex(block))
       } else if (key === '') {
-        return value       
+        return value
       }
       if (typeof value === 'string') {
         return value.startsWith('0x') ? value : '0x' + value
@@ -231,7 +236,7 @@ export class ExecutionContext {
         return '0x' + value.toString(16)
       } else {
         return bytesToHex(value)
-      }      
+      }
     }, '\t')
 
     return stringifyed
