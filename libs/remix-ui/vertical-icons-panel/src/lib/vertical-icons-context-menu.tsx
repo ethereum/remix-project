@@ -111,7 +111,7 @@ function closeOtherPlugins(exceptName: string, verticalIconPlugin: any) {
   Object.keys(icons).forEach((iconName) => {
     const icon = icons[iconName]
     if (iconName !== exceptName && icon.active) {
-      verticalIconPlugin.toggle(iconName)
+      verticalIconPlugin.call('manager', 'togglePlugin', iconName)
     }
   })
 }
