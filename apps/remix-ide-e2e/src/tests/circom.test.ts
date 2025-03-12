@@ -198,17 +198,14 @@ module.exports = {
       .click('[data-id="play-editor"]')   
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//*[@data-id='terminalJournal'][normalize-space() != 'newZkey']",
+        selector: `//*[@data-id="terminalJournal"][contains(normalize-space(), "newZkey")]`,
         timeout: 60000
       })     
-      .saveScreenshot('./reports/screenshots/groth16_trusted_setup.png')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//*[@data-id='terminalJournal'][normalize-space() != 'setup done']",
+        selector:`//*[@data-id="terminalJournal"][contains(normalize-space(), "setup done")]`,
         timeout: 60000
       })
-      .saveScreenshot('./reports/screenshots/groth16_trusted_setup_1.png')
-      .pause(6000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]', 30000)
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
