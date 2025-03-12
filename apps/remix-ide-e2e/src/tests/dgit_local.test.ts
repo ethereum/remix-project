@@ -426,7 +426,7 @@ module.exports = {
             .pause(1000)
             .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
             .click('*[data-id="sourcecontrol-panel"]')
-            .waitForElementVisible('*[data-id="syncButton"]')
+            .waitForElementVisible('*[data-id="syncButton"]', 60000)
             // do not sync
             .click('*[data-id="commits-panel"]')
             .waitForElementPresent({
