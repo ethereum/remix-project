@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
+import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, parseUserInput } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
 import { user, assistantAvatar } from './personas';
@@ -43,9 +43,17 @@ export const Default = (props) => {
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
 
+    const userInput = parseUserInput(prompt)
+    const isGeneratePrompt = userInput[0]
+    const newprompt = userInput[1]
+
     let response = null
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
+    } else if (isGeneratePrompt) {
+      GenerationParams.return_stream_response = false
+      GenerationParams.stream_result = false
+      response = await props.plugin.call('remixAI', 'generate', newprompt, GenerationParams);
     } else {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }

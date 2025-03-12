@@ -12,7 +12,7 @@ export class RemoteInferencer implements ICompletions {
   max_history = 7
   model_op = RemoteBackendOPModel.CODELLAMA // default model operation change this to llama if necessary
   event: EventEmitter
-  test_env=false
+  test_env=true
   test_url="http://solcodertest.org"
 
   constructor(apiUrl?:string, completionUrl?:string) {
@@ -149,6 +149,12 @@ export class RemoteInferencer implements ICompletions {
 
   async vulnerability_check(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"vulnerability_check", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
+
+  async generate(userPrompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt: userPrompt, "endpoint":"generate", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
