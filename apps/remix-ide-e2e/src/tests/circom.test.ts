@@ -188,7 +188,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
   },
-  'Should run groth16 trusted setup script for hash checker #group5': function (browser: NightwatchBrowser) {
+  'Should run groth16 trusted setup script for hash checker #flaky #group5': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="treeViewLitreeViewItemscripts/groth16/groth16_trusted_setup.ts"]')
       .waitForElementPresent('[data-path="Hash Checker - 1/scripts/groth16/groth16_trusted_setup.ts"]')
@@ -197,6 +197,7 @@ module.exports = {
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
       .pause(10000)
+      .getBrowserLogs()
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')
