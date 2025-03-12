@@ -148,7 +148,7 @@ module.exports = {
 
   },
 
-  'Should load the code from URL & code params #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should load the code from URL & code params #group1': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
       .refreshPage() // we do one reload for making sure we already have the default workspace
