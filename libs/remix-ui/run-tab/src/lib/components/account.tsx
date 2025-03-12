@@ -19,7 +19,7 @@ export function AccountUI(props: AccountProps) {
   const messageRef = useRef('')
 
   const intl = useIntl()
-  let smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
+  const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
@@ -114,38 +114,38 @@ export function AccountUI(props: AccountProps) {
   }, [selectExEnv, personalMode, networkName])
 
   const newAccount = () => {
-    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia')) 
-      {
-        return props.modal(
-          intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
-          (
-            <div data-id="createSmartAccountModal">
-              <ul className='ml-3'>
-                <li><FormattedMessage id="udapp.createSmartAccountDesc1"/></li><br/>
-                <li><FormattedMessage id="udapp.createSmartAccountDesc2"/>
-                  <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
-                    target="_blank"
-                    onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
+    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia'))
+    {
+      return props.modal(
+        intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+        (
+          <div data-id="createSmartAccountModal">
+            <ul className='ml-3'>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc1"/></li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc2"/>
+                <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
+                  target="_blank"
+                  onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
                       Learn more
-                  </a>
-                </li><br/>
-                <li><FormattedMessage id="udapp.createSmartAccountDesc3"/></li><br/>
-                <li>{intl.formatMessage({ id: 'udapp.createSmartAccountDesc4' }, { owner: selectedAccount })}</li><br/>
-                <li><FormattedMessage id="udapp.createSmartAccountDesc5"/></li><br/>
-                <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
-              </ul> 
-            </div>
-          ),
-          intl.formatMessage({ id: 'udapp.continue' }),
-          () => {
-            props.createNewSmartAccount()
-          },
-          intl.formatMessage({ id: 'udapp.cancel' }),
-          () => {
-            props.setPassphrase('')
-          }
-        )
-        
+                </a>
+              </li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc3"/></li><br/>
+              <li>{intl.formatMessage({ id: 'udapp.createSmartAccountDesc4' }, { owner: selectedAccount })}</li><br/>
+              <li><FormattedMessage id="udapp.createSmartAccountDesc5"/></li><br/>
+              <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
+            </ul>
+          </div>
+        ),
+        intl.formatMessage({ id: 'udapp.continue' }),
+        () => {
+          props.createNewSmartAccount()
+        },
+        intl.formatMessage({ id: 'udapp.cancel' }),
+        () => {
+          props.setPassphrase('')
+        }
+      )
+
     }
     else props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
