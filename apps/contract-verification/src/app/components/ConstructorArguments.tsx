@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 
 import { AppContext } from '../AppContext'
 import { ContractDropdownSelection } from './ContractDropdown'
@@ -30,7 +30,12 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
         constructorArgs.map((inp) => inp.type),
         value
       )
-      const decoded = decodedObj.map((val) => JSON.stringify(val))
+      const decoded = decodedObj.map((val) => {
+        if (val instanceof BigNumber) {
+          return val.toString()
+        }
+        return JSON.stringify(val)
+      })
       return { decoded, errorMessage: '' }
     } catch (e) {
       console.error(e)
@@ -44,12 +49,16 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
 
   const constructorArgsInInitialState = useRef(true)
   useEffect(() => {
+    // Ensures that error is not reset when tabs are switched
+    if ((!abiEncodingError && !abiEncodedConstructorArgs) || !constructorArgsInInitialState.current) {
+      setAbiEncodingError(constructorArgs?.length === 0 ? '' : 'Some constructor arguments are missing')
+    }
+
     if (constructorArgsInInitialState.current) {
       constructorArgsInInitialState.current = false
       return
     }
     setAbiEncodedConstructorArgs('')
-    setAbiEncodingError('')
     setConstructorArgsValues(Array(constructorArgs?.length ?? 0).fill(''))
   }, [constructorArgs])
 
@@ -60,7 +69,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
     // if any constructorArgsValue is falsey (empty etc.), don't encode yet
     if (changedConstructorArgsValues.some((value) => !value)) {
       setAbiEncodedConstructorArgs('')
-      setAbiEncodingError('')
+      setAbiEncodingError('Some constructor arguments are missing')
       return
     }
 
@@ -103,16 +112,14 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
       <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
         <input className="form-check-input custom-control-input" type="checkbox" id="toggleRawInputSwitch" checked={toggleRawInput} onChange={() => setToggleRawInput(!toggleRawInput)} />
         <label className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }} htmlFor="toggleRawInputSwitch">
-          <FormattedMessage
-            id="contract-verification.constructorArgumentsToggleRawInput"
-          />
+          <FormattedMessage id="contract-verification.constructorArgumentsToggleRawInput" />
         </label>
       </div>
       {toggleRawInput ? (
         <div>
           {' '}
           <textarea className="form-control" rows={5} placeholder="0x00000000000000000000000000000000d41867734bbee4c6863d9255b2b06ac1..." value={abiEncodedConstructorArgs} onChange={(e) => handleRawConstructorArgs(e.target.value)} />
-          {abiEncodingError && <div className="text-danger small">{abiEncodingError}</div>}
+          {abiEncodedConstructorArgs && abiEncodingError && <div className="text-danger small">{abiEncodingError}</div>}
         </div>
       ) : (
         <div>
@@ -125,15 +132,12 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
           {abiEncodedConstructorArgs && (
             <div>
               <label className="form-check-label" htmlFor="rawAbiEncodingResult">
-                <FormattedMessage
-                  id="contract-verification.constructorArgumentsRawAbiEncodingResult"
-                  defaultMessage="ABI-encoded constructor arguments"
-                /> :
+                <FormattedMessage id="contract-verification.constructorArgumentsRawAbiEncodingResult" defaultMessage="ABI-encoded constructor arguments" /> :
               </label>
               <textarea className="form-control" rows={5} disabled value={abiEncodedConstructorArgs} id="rawAbiEncodingResult" style={{ opacity: 0.5 }} />
             </div>
           )}
-          {abiEncodingError && <div className="text-danger small">{abiEncodingError}</div>}
+          {constructorArgsValues.some((value) => !!value) && abiEncodingError && <div className="text-danger small">{abiEncodingError}</div>}
         </div>
       )}
     </div>

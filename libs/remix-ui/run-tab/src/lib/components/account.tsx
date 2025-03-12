@@ -223,7 +223,7 @@ export function AccountUI(props: AccountProps) {
       <label className="udapp_settingsLabel">
         <FormattedMessage id="udapp.account" />
         <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
-          <span id="remixRunPlusWraper">
+          <span id="remixRunPlusWrapper">
             <i id="remixRunPlus" className={`ml-2 fas fa-plus udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
         </CustomTooltip>
