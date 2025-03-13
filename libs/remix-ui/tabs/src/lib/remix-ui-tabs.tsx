@@ -46,24 +46,24 @@ interface ITabsAction {
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
   fileDecorations: [],
-  currentExt: '',
+  currentExt: ''
 }
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
   switch (action.type) {
-    case 'SELECT_INDEX':
-      return {
-        ...state,
-        currentExt: action.ext,
-        selectedIndex: action.payload,
-      }
-    case 'SET_FILE_DECORATIONS':
-      return {
-        ...state,
-        fileDecorations: action.payload as fileDecoration[],
-      }
-    default:
-      return state
+  case 'SELECT_INDEX':
+    return {
+      ...state,
+      currentExt: action.ext,
+      selectedIndex: action.payload,
+    }
+  case 'SET_FILE_DECORATIONS':
+    return {
+      ...state,
+      fileDecorations: action.payload as fileDecoration[],
+    }
+  default:
+    return state
   }
 }
 const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
@@ -82,7 +82,7 @@ export const TabsUI = (props: TabsUIProps) => {
     if (props.tabs[tabsState.selectedIndex]) {
       tabsRef.current[tabsState.selectedIndex].scrollIntoView({
         behavior: 'smooth',
-        block: 'center',
+        block: 'center'
       })
     }
   }, [tabsState.selectedIndex])
@@ -155,9 +155,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
-    getAI()
-      .then((value) => setAI_switch(value))
-      .catch((error) => console.log(error))
+    getAI().then((value) => setAI_switch(value)).catch((error) => console.log(error))
     dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
@@ -174,7 +172,7 @@ export const TabsUI = (props: TabsUIProps) => {
     props.onReady({
       activateTab,
       active,
-      setFileDecorations,
+      setFileDecorations
     })
 
     return () => {
@@ -215,11 +213,25 @@ export const TabsUI = (props: TabsUIProps) => {
     >
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-script" tooltipText={<span>{tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? <FormattedMessage id="remixUiTabs.tooltipText1" /> : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? <FormattedMessage id="remixUiTabs.tooltipText2" /> : <FormattedMessage id="remixUiTabs.tooltipText3" />}</span>}>
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="overlay-tooltip-run-script"
+            tooltipText={
+              <span>{
+                tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                  <FormattedMessage id="remixUiTabs.tooltipText1" />
+                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' ||
+                tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText2" />
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipText3" />
+                  )
+              }
+              </span>}>
             <button
               data-id="play-editor"
               className="btn text-success pr-0 py-0 d-flex"
-              disabled={!PlayExtList.includes(tabsState.currentExt)}
+              disabled={!(PlayExtList.includes(tabsState.currentExt))}
               onClick={async () => {
                 const path = active().substr(active().indexOf('/') + 1, active().length)
                 const content = await props.plugin.call('fileManager', 'readFile', path)
@@ -235,8 +247,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   await props.plugin.call('noir-compiler', 'compile', path)
                 }
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }}
-            >
+              }}>
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
