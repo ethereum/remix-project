@@ -673,6 +673,7 @@ jobs:
           condition:
               equal: [ "brave", << parameters.browser >> ]
           steps:
+            - run: yarn install_webdriver
             - run:
                 name: Install Brave Browser
                 command: |
