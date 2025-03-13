@@ -40,7 +40,7 @@ export const SettingsView = () => {
           </div>
           <div className="p-2 my-2 border">
             <span className="font-weight-bold">Etherscan - {selectedChain.name}</span>
-            <ConfigInput label="API Key" id="etherscan-api-key" secret={true} initialValue={chainSettings.verifiers['Etherscan']?.apiKey ?? ''} saveResult={(result) => handleChange('Etherscan', 'apiKey', result)} />
+            <ConfigInput label="API Key" id="etherscan-api-key" secret={true} initialValue={''} saveResult={(result) => handleChange('Etherscan', 'apiKey', result)} />
             <ConfigInput label="API URL" id="etherscan-api-url" secret={false} initialValue={chainSettings.verifiers['Etherscan']?.apiUrl ?? ''} saveResult={(result) => handleChange('Etherscan', 'apiUrl', result)} />
             <ConfigInput label="Explorer URL" id="etherscan-explorer-url" secret={false} initialValue={chainSettings.verifiers['Etherscan']?.explorerUrl ?? ''} saveResult={(result) => handleChange('Etherscan', 'explorerUrl', result)} />
           </div>
@@ -50,7 +50,7 @@ export const SettingsView = () => {
           </div>
           <div className="p-2 my-2 border">
             <span className="font-weight-bold">Routescan - {selectedChain.name}</span>
-            <ConfigInput label="API Key (optional)" id="routescan-api-key" secret={true} initialValue={chainSettings.verifiers['Routescan']?.apiKey ?? ''} saveResult={(result) => handleChange('Routescan', 'apiKey', result)} />
+            <ConfigInput label="API Key (optional)" id="routescan-api-key" secret={true} initialValue={''} saveResult={(result) => handleChange('Routescan', 'apiKey', result)} />
             <ConfigInput label="API URL" id="routescan-api-url" secret={false} initialValue={chainSettings.verifiers['Routescan']?.apiUrl ?? ''} saveResult={(result) => handleChange('Routescan', 'apiUrl', result)} />
             <ConfigInput label="Explorer URL" id="routescan-explorer-url" secret={false} initialValue={chainSettings.verifiers['Routescan']?.explorerUrl ?? ''} saveResult={(result) => handleChange('Routescan', 'explorerUrl', result)} />
           </div>
