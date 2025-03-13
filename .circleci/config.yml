@@ -8,7 +8,7 @@ parameters:
     default: false
   filter:
     type: string
-    default: null
+    default: ''
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
