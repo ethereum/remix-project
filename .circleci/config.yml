@@ -684,7 +684,6 @@ jobs:
             - run:
                 name: Check Brave Version
                 command: brave-browser --version
-      - run:
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
