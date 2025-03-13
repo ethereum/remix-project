@@ -3,6 +3,9 @@ parameters:
   run_flaky_tests:
     type: boolean
     default: false
+  nightly:
+    type: boolean
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -899,11 +902,24 @@ workflows:
           matrix:
             alias: browser-tests
             parameters:
-              browser: ["chrome", "firefox", "brave"]
+              browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
               parallelism: [15]
+
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            alias: nightly-browser-tests
+            parameters:
+              browser: ["brave"]
+              script: ["browser_test.sh"]
+              job: ["0","1","2","3","4","5","6","7","8","9"]
+              jobsize: ["10"]
+              parallelism: [15]
+          when: << pipeline.parameters.nightly >>
       - remix-ide-browser:
           requires:
             - build
