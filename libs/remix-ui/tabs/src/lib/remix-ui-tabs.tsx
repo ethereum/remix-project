@@ -31,6 +31,7 @@ export interface Tab {
 export interface TabsUIApi {
   activateTab: (name: string) => void
   active: () => string
+  activateByTitle: (title: string) => void
 }
 interface ITabsState {
   selectedIndex: number
@@ -168,11 +169,20 @@ export const TabsUI = (props: TabsUIProps) => {
     event.preventDefault()
   }
 
+  const activateByTitle = (title: string) => {
+    const index = tabs.current.findIndex((tab) => tab.title === title)
+    if (index !== -1) {
+      currentIndexRef.current = index
+      dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(tabs.current[index].name) })
+    }
+  }
+
   useEffect(() => {
     props.onReady({
       activateTab,
       active,
-      setFileDecorations
+      setFileDecorations,
+      activateByTitle
     })
 
     return () => {
