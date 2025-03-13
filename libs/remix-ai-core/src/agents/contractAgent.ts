@@ -1,4 +1,5 @@
 import { parse } from "path";
+import { GenerationParams } from "../types/models";
 
 const compilationParams = {
   optimize: false,
@@ -34,9 +35,11 @@ export class ContractAgent {
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
+      console.log('Attempts', this.nAttempts)
+      console.log('Generation attempts', this.generationAttempts)
       if (this.nAttempts > this.generationAttempts) {
         console.error('Failed to generate the code')
-        return "Failed to generate secure code on this prompt ````" + userPrompt + "````"
+        return "Failed to generate secure code on this prompt ```" + userPrompt + "````"
       }
 
       for (const file of parsedFiles.files) {
@@ -46,8 +49,9 @@ export class ContractAgent {
           if (!result.compilationSucceeded) {
             // nasty recursion
             console.log('compilation failed', file.fileName)
-            // const newPrompt = `I couldn't compile the contract ${file.fileName}. ${result.errors}. Please try again.`
-            // await this.plugin.call('remixAI', 'generate', newPrompt, this.generationThreadID); // reuse the same thread
+            const newPrompt = `I couldn't compile the contract ${file.fileName}. ${result.errors}. Try again.`
+            await this.plugin.generate(newPrompt, GenerationParams, this.generationThreadID); // reuse the same thread
+            return "Failed to generate secure code on this prompt ```" + userPrompt + "````"
           }
         }
       }
