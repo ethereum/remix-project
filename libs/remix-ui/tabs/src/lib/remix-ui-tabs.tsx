@@ -60,7 +60,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
   case 'SET_FILE_DECORATIONS':
     return {
       ...state,
-      fileDecorations: action.payload as fileDecoration[],
+      fileDecorations: action.payload as fileDecoration[]
     }
   default:
     return state
@@ -217,16 +217,14 @@ export const TabsUI = (props: TabsUIProps) => {
             placement="bottom"
             tooltipId="overlay-tooltip-run-script"
             tooltipText={
-              <span>{
-                tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+              <span>
+                {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
                   <FormattedMessage id="remixUiTabs.tooltipText1" />
-                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' ||
-                tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText2" />
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText3" />
-                  )
-              }
+                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
+                  <FormattedMessage id="remixUiTabs.tooltipText2" />
+                ) : (
+                  <FormattedMessage id="remixUiTabs.tooltipText3" />
+                )}
               </span>}>
             <button
               data-id="play-editor"
@@ -260,8 +258,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 <FormattedMessage id="remixUiTabs.tooltipText9" />
               </span>
             }
-          >
-            <button
+          ><button
               data-id="script-config"
               className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
               onClick={async () => {

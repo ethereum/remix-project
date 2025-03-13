@@ -254,6 +254,11 @@ export const FlatTree = (props: FlatTreeProps) => {
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
+
+    if (file.path.startsWith("tmp")){
+      return <div style={{ display:'none' }}>Temp File</div>
+    }
+
     return (
       <li
         className={`${labelClass(file)} li_tv`}
