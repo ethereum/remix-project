@@ -39,7 +39,7 @@ export default class etherTransferInLoop implements AnalyzerModule {
       return {
         warning: 'Ether payout should not be done in a loop: Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. If required then make sure that number of iterations are low and you trust each address involved.',
         location: node.src,
-        more: `https://solidity.readthedocs.io/en/${version}/security-considerations.html#gas-limit-and-loops`
+        more: `https://docs.soliditylang.org/en/${version}/security-considerations.html#gas-limit-and-loops`
       }
     })
   }

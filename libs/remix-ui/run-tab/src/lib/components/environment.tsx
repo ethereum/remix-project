@@ -66,27 +66,45 @@ export function EnvironmentUI(props: EnvironmentProps) {
     _paq.push(['trackEvent', 'udapp', 'forkState', `forkState clicked`])
     let context = currentProvider.name
     context = context.replace('vm-fs-', '')
+
+    let currentStateDb
+    try {
+      currentStateDb = JSON.parse(await props.runTabPlugin.blockchain.executionContext.getStateDetails())
+    } catch (e) {
+      props.runTabPlugin.call('notification', 'toast', `State not available to fork. ${e.message}`)
+      return
+    }
+
+    if (Object.keys(currentStateDb.db).length === 0) {
+      props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
+      return
+    }
+
     vmStateName.current = `${context}_${Date.now()}`
-    const contextExists = await props.runTabPlugin.call('fileManager', 'exists', currentProvider.config.statePath)
-    if (contextExists) {
-      props.modal(
-        intl.formatMessage({ id: 'udapp.forkStateTitle' }),
-        forkStatePrompt(vmStateName.current),
-        intl.formatMessage({ id: 'udapp.fork' }),
-        async () => {
-          let currentStateDb = await props.runTabPlugin.call('fileManager', 'readFile', currentProvider.config.statePath)
-          currentStateDb = JSON.parse(currentStateDb)
-          currentStateDb.stateName = vmStateName.current
-          currentStateDb.forkName = currentProvider.fork
-          currentStateDb.savingTimestamp = Date.now()
-          await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
-          props.runTabPlugin.emit('vmStateForked', vmStateName.current)
-          _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
-        },
-        intl.formatMessage({ id: 'udapp.cancel' }),
-        null
-      )
-    } else props.runTabPlugin.call('notification', 'toast', `State not available to fork, as no transactions have been made for selected environment & selected workspace.`)
+    props.modal(
+      intl.formatMessage({ id: 'udapp.forkStateTitle' }),
+      forkStatePrompt(vmStateName.current),
+      intl.formatMessage({ id: 'udapp.fork' }),
+      async () => {
+        currentStateDb.stateName = vmStateName.current
+        currentStateDb.forkName = currentProvider.config.fork
+        currentStateDb.nodeUrl = currentProvider.config.nodeUrl
+        currentStateDb.savingTimestamp = Date.now()
+        await props.runTabPlugin.call('fileManager', 'writeFile', `.states/forked_states/${vmStateName.current}.json`, JSON.stringify(currentStateDb, null, 2))
+        props.runTabPlugin.emit('vmStateForked', vmStateName.current)
+
+        // we also need to copy the pinned contracts:
+        if (await props.runTabPlugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${currentProvider.name}`)) {
+          const files = await props.runTabPlugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${currentProvider.name}`)
+          if (files && Object.keys(files).length) {
+            await props.runTabPlugin.call('fileManager', 'copyDir', `.deploys/pinned-contracts/${currentProvider.name}`, `.deploys/pinned-contracts`, 'vm-fs-' + vmStateName.current)
+          }
+        }
+        _paq.push(['trackEvent', 'udapp', 'forkState', `forked from ${context}`])
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {}
+    )
   }
 
   const resetVmState = async() => {

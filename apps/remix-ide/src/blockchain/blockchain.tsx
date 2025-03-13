@@ -970,34 +970,17 @@ export class Blockchain extends Plugin {
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
       const isVM = this.executionContext.isVM()
+      const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
-      if (isVM) {
-        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
-          try {
-            let state = await this.executionContext.getStateDetails()
-            const provider = this.executionContext.getProvider()
-            // Check if provider is forked VM state
-            if (provider.startsWith('vm-fs-')) {
-              const stateName = provider.replace('vm-fs-', '')
-              const stateFileExists = this.call('fileManager', 'exists', `.states/forked_states/${stateName}.json`)
-              if (stateFileExists) {
-                let stateDetails = await this.call('fileManager', 'readFile', `.states/forked_states/${stateName}.json`)
-                stateDetails = JSON.parse(stateDetails)
-                state = JSON.parse(state)
-                state['stateName'] = stateDetails.stateName
-                state['forkName'] = stateDetails.forkName
-                state['savingTimestamp'] = stateDetails.savingTimestamp
-                state = JSON.stringify(state, null, 2)
-              }
-              this.call('fileManager', 'writeFile', `.states/forked_states/${stateName}.json`, state)
-            }
-            else this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
-          } catch (e) {
-            console.error(e)
-          }
-        }
+      // a basic in-browser VM state.
+      const isBasicVMState = isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      // a standard fork of an in-browser state.
+      const isForkedVMState = isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+      // a fork of an in-browser state which derive from a live network.
+      const isForkedRpcState = isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
 
+      if (isVM) {
         const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
@@ -1023,6 +1006,33 @@ export class Blockchain extends Plugin {
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
+      }
+      if (isBasicVMState || isForkedVMState || isForkedRpcState) {
+        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
+          try {
+            let state = await this.executionContext.getStateDetails()
+            if (provider.config.statePath) {
+              const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
+              if (stateFileExists) {
+                let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
+                stateDetails = JSON.parse(stateDetails)
+                state = JSON.parse(state)
+                state['stateName'] = stateDetails.stateName
+                state['forkName'] = stateDetails.forkName
+                state['savingTimestamp'] = stateDetails.savingTimestamp
+                state = JSON.stringify(state, null, 2)
+              }
+              this.call('fileManager', 'writeFile', provider.config.statePath, state)
+            } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
+              // in that case, we store the state only if it is a basic VM.
+              const provider = this.executionContext.getProvider()
+              this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
+            }
+          } catch (e) {
+            console.error(e)
+          }
+        }
+
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
