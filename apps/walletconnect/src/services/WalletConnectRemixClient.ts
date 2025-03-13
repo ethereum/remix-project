@@ -18,7 +18,7 @@ export class WalletConnectRemixClient extends PluginClient {
     super()
     createClient(this)
     this.internalEvents = new EventManager()
-    this.methods = ['sendAsync', 'init', 'deactivate']
+    this.methods = ['sendAsync', 'init', 'deactivate', 'openModal']
     this.onload()
   }
 
@@ -46,6 +46,15 @@ export class WalletConnectRemixClient extends PluginClient {
     } catch (e) {
       return console.error('Could not get a wallet connection', e)
     }
+  }
+
+  async openModal() {
+    await this.web3modal.open()
+    this.web3modal.subscribeState((state) => {
+      if (!state.open) {
+        this.emit('closeModal')
+      }
+    })
   }
 
   subscribeToEvents() {

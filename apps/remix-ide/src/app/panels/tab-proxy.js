@@ -193,6 +193,10 @@ export default class TabProxy extends Plugin {
       this.tabsApi.setFileDecorations(items)
     })
 
+    this.on('walletconnect', 'closeModal', () => {
+      this.removeTab('walletconnect')
+    })
+
     try {
       this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
     } catch (e) {

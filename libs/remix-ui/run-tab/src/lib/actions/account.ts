@@ -59,7 +59,12 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
   plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
     plugin.call('notification', 'toast', alertMsg)
-  }, () => { setFinalContext(plugin, dispatch) })
+  }, async () => {
+    if (executionContext.context === 'walletconnect') {
+      await plugin.call('walletconnect', 'openModal')
+    }
+    setFinalContext(plugin, dispatch)
+  })
 }
 
 export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>, cbMessage: JSX.Element) => {
