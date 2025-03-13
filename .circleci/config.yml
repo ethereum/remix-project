@@ -819,6 +819,21 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
+  nightly-tests:
+    when: << pipeline.parameters.nightly >>  # ✅ Conditional workflow execution
+    jobs:
+      - build
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            alias: nightly-browser-tests
+            parameters:
+              browser: ["brave"]  # ✅ Brave only runs if nightly=true
+              script: ["browser_test.sh"]
+              job: ["0","1","2","3","4","5","6","7","8","9"]
+              jobsize: ["10"]
+              parallelism: [15]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -908,18 +923,6 @@ workflows:
               jobsize: ["10"]
               parallelism: [15]
 
-      - remix-ide-browser:
-          requires:
-            - build
-          matrix:
-            alias: nightly-browser-tests
-            parameters:
-              browser: ["brave"]
-              script: ["browser_test.sh"]
-              job: ["0","1","2","3","4","5","6","7","8","9"]
-              jobsize: ["10"]
-              parallelism: [15]
-          when: << pipeline.parameters.nightly >>
       - remix-ide-browser:
           requires:
             - build
