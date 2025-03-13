@@ -362,14 +362,11 @@ const tests = {
   }
 }
 
-const branch = process.env.CIRCLE_BRANCH
-const runTestsConditions = true //branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
-
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ...(branch ? (runTestsConditions ? tests : {}) : tests)
+    ...tests
   };
 }
 
