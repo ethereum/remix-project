@@ -714,7 +714,7 @@ jobs:
                 install-chromedriver: false
             - run: yarn install_webdriver
             - run: firefox --version
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << pipeline.parameters.filter >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
