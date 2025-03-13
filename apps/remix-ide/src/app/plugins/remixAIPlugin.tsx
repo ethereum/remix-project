@@ -181,25 +181,12 @@ export class RemixAIPlugin extends ViewPlugin {
     params.threadId = newThreadID
     console.log('Generating code for prompt:', userPrompt)
 
-    let result = {
-      "projectName": "SimpleStorage",
-      "files": [
-        {
-          "fileName": "contracts/SimpleStorage.sol",
-          "content": "pragma solidity ^0.8.0; contract SimpleStorage { uint256 private storedData; function set(uint256 x) public { storedData = x; } function get() public view returns (uint256) { return storedData; } }"
-        },
-        {
-          "fileName": "tests/SimpleStorageTest.sol",
-          "content": "pragma solidity ^0.8.0; import \"truffle/Assert.sol\"; import \"truffle/DeployedAddresses.sol\"; import \"./SimpleStorage.sol\"; contract SimpleStorageTest { function testInitialValue() public { SimpleStorage simpleStorage = SimpleStorage(DeployedAddresses.SimpleStorage()); uint256 expected = 0; Assert.equal(simpleStorage.get(), expected, \"Initially, the stored data should be zero.\"); } function testSetValue() public { SimpleStorage simpleStorage = new SimpleStorage(); simpleStorage.set(42); Assert.equal(simpleStorage.get(), 42, \"Stored data should be 42.\"); } }"
-        }
-      ],
-      "threadID": "thread_5T3AwgoicnkkabuIy2fuGS6t"
+    let result
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
+    } else {
+      result = await this.remoteInferencer.generate(userPrompt, params)
     }
-    // if (this.isOnDesktop && !this.useRemoteInferencer) {
-    //   result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
-    // } else {
-    //   result = await this.remoteInferencer.generate(userPrompt, params)
-    // }
 
     return this.contractor.writeContracts(result, userPrompt)
   }

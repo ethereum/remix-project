@@ -18,14 +18,17 @@ export class ContractAgent {
   nAttempts: number = 0
   generationThreadID: string= ''
   workspaceName: string = ''
+  contracts: any = {}
 
   constructor(props) {
     this.plugin = props;
   }
 
   async writeContracts(payload, userPrompt) {
+    const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
     try {
       console.log('Writing contracts', payload)
+      this.contracts = {}
       const parsedFiles = payload
       this.generationThreadID = parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
@@ -36,7 +39,6 @@ export class ContractAgent {
         return "Failed to generate secure code on this prompt ````" + userPrompt + "````"
       }
 
-      const contracts = {}
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
           const result:CompilationResult = await this.compilecontracts(file.fileName, file.content)
@@ -51,26 +53,35 @@ export class ContractAgent {
       }
 
       console.log('All source files are compiling')
+      await this.createWorkspace(this.workspaceName)
+      await this.plugin.call('filePanel', 'switchToWorkspace', this.workspaceName)
+      for (const file of parsedFiles.files) {
+        const dir = file.fileName.split('/').slice(0, -1).join('/')
+        console.log('Creating directory', dir)
+        // create dir if it does not exist
+        const dirList = await this.plugin.call('fileManager', 'dirList')
+        if (!dirList.includes(dir)) {
+          await this.plugin.call('fileManager', 'mkdir', dir)
+        }
+        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
+        await this.plugin.call('codeFormatter', 'format', file.fileName)
+      }
       return "New workspace created: " + this.workspaceName + "\nUse the Hamburger menu to select it!"
     } catch (error) {
       console.log('Error writing contracts', error)
       this.deleteWorkspace(this.workspaceName )
+      await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
       return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
     }
 
   }
 
-  createWorkspace(workspaceName) {
-    // first get the workspace names
-    const ws = this.plugin.call('filePanel', 'getWorkspaces')
-
-    if (ws.includes(workspaceName)) {
-      const newWorkspaceName = workspaceName + '_1'
-      ws.includes(newWorkspaceName) ?
-        this.plugin.call('filePanel', 'createWorkspace', newWorkspaceName+'_1', true)
-        : this.plugin.call('filePanel', 'createWorkspace', workspaceName, true)
-    }
-    this.plugin.call('filePanel', 'createWorkspace', workspaceName, true)
+  async createWorkspace(workspaceName) {
+    // create random workspace surfixed with timestamp
+    const timestamp = new Date().getTime()
+    workspaceName += '-' + timestamp
+    await this.plugin.call('filePanel', 'createWorkspace', workspaceName, true)
+    this.workspaceName = workspaceName
   }
 
   deleteWorkspace(workspaceName) {
@@ -78,11 +89,12 @@ export class ContractAgent {
   }
 
   async compilecontracts(fileName, fileContent): Promise<CompilationResult> {
+    // do not compile tests files
+    if (fileName.includes('tests/')) return { compilationSucceeded: true, errors: null }
 
-    const contract = {}
-    contract[fileName] = { content : fileContent }
-    console.log('compiling contract', contract)
-    const result = await this.plugin.call('solidity' as any, 'compileWithParameters', contract, compilationParams)
+    this.contracts[fileName] = { content : fileContent }
+    console.log('compiling contract', this.contracts)
+    const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
     console.log('compilation result', result)
     const data = result.data
     const error = data.errors.find((error) => error.type !== 'Warning')
@@ -91,7 +103,6 @@ export class ContractAgent {
         - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
         `
       return { compilationSucceeded: false, errors: msg }
-
     }
 
     return { compilationSucceeded: true, errors: null }
