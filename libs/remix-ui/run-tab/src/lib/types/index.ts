@@ -23,6 +23,12 @@ export interface ContractList {
   [file: string]: Contract[]
 }
 
+export type EnvDropdownLabelStateType = {
+  name: string,
+  value: string,
+  chainId?: string | number
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
@@ -37,7 +43,8 @@ export interface RunTabState {
   selectExEnv: string,
   personalMode: boolean,
   networkName: string,
-  chainId: string
+  chainId: string,
+  displayName: string,
   providers: {
     providerList: Provider[],
     isRequesting: boolean,
@@ -110,6 +117,9 @@ export interface RunTabState {
 
 export interface SettingsProps {
   runTabPlugin: RunTab,
+  udappState: RunTabState
+  envLabel: string,
+  currentSelectedEnv?: string,
   selectExEnv: string,
   EvaluateEnvironmentSelection: any
   accounts: {
@@ -148,6 +158,7 @@ export interface SettingsProps {
 export interface EnvironmentProps {
   checkSelectionCorrectness: any
   runTabPlugin: RunTab,
+  envLabel: string,
   selectedEnv: string,
   providers: {
     providerList: Provider[],
@@ -157,7 +168,9 @@ export interface EnvironmentProps {
   },
   setExecutionContext: (executionContext: { context: string }) => void
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
-  config: any
+  config: any,
+  currentSelectedEnv?: string,
+  udappState: RunTabState
 }
 
 export interface NetworkProps {
