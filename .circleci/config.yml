@@ -671,6 +671,22 @@ jobs:
 
       - when:
           condition:
+              equal: [ "brave", << parameters.browser >> ]
+          steps:
+            - run:
+                name: Install Brave
+                command: |
+                  sudo apt update
+                  sudo apt install -y curl
+                  curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo tee /usr/share/keyrings/brave-browser-archive-keyring.gpg >/dev/null
+                  echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+                  sudo apt update && sudo apt install -y brave-browser
+            - run:
+                name: Check Brave Version
+                command: brave-browser --version
+      - run:
+      - when:
+          condition:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
@@ -882,7 +898,7 @@ workflows:
           matrix:
             alias: browser-tests
             parameters:
-              browser: ["chrome", "firefox"]
+              browser: ["chrome", "firefox", "brave"]
               script: ["browser_test.sh"]
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
