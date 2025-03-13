@@ -41,7 +41,7 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
     menuRef.current.focus()
   }, [])
   useEffect (() => {
-    setHasContextMenu(!props.links.Documentation && !props.links.CanDeactivate)
+    setHasContextMenu(!props.links.Documentation || !props.links.CanDeactivate)
   }, [props.links])
 
   return (
