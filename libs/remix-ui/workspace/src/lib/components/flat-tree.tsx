@@ -143,12 +143,13 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }
 
-  const onDragStart = async (event: SyntheticEvent) => {
+  const onDragStart = async (event: React.DragEvent<HTMLDivElement>) => {
     const target = await getEventTarget(event)
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
     buildMultiSelectedItemProfiles(target)
     setFilesSelected(selectedItems.map((item) => item.path))
+    event.dataTransfer.setData('text/plain', target.path)
   }
 
   useEffect(() => {
