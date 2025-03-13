@@ -6,6 +6,7 @@ import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
+import { tryPersistAccountSelection } from '../actions/account'
 const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
@@ -246,12 +247,19 @@ export function AccountUI(props: AccountProps) {
                 key={index}
                 eventKey={selectedAccount}
                 onSelect={(e) => {
-                  props.setAccount(value)
+                  try {
+                    props.setAccount(value)
+                    const timestamp = Date.now()
+                    const accountPersisted = { account: value, network: props.selectExEnv, timestamp }
+                    tryPersistAccountSelection(accountPersisted)
+                  } catch (error) {
+                    props.setAccount(value)
+                  }
                 }}
                 data-id={`txOriginSelectAccountItem-${value}`}
               >
                 <span data-id={`${value}`}>
-                  {loadedAccounts[value]}
+                  {value === props.previousAccount?.account ? loadedAccounts[value] : `${loadedAccounts[value]} (previously selected)`}
                 </span>
               </Dropdown.Item>
             )) : <Dropdown.Item></Dropdown.Item>}
