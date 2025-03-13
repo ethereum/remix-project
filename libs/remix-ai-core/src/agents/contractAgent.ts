@@ -45,7 +45,7 @@ export class ContractAgent {
           console.log('compilation result', result)
           if (!result.compilationSucceeded) {
             // nasty recursion
-            console.log('compilation failed')
+            console.log('compilation failed', file.fileName)
             // const newPrompt = `I couldn't compile the contract ${file.fileName}. ${result.errors}. Please try again.`
             // await this.plugin.call('remixAI', 'generate', newPrompt, this.generationThreadID); // reuse the same thread
           }
@@ -54,22 +54,27 @@ export class ContractAgent {
 
       console.log('All source files are compiling')
       await this.createWorkspace(this.workspaceName)
-      await this.plugin.call('filePanel', 'switchToWorkspace', this.workspaceName)
+      await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
+      const dirCreated = []
       for (const file of parsedFiles.files) {
         const dir = file.fileName.split('/').slice(0, -1).join('/')
         console.log('Creating directory', dir)
-        // create dir if it does not exist
-        const dirList = await this.plugin.call('fileManager', 'dirList')
-        if (!dirList.includes(dir)) {
+        if (!dirCreated.includes(dir)) {
           await this.plugin.call('fileManager', 'mkdir', dir)
+          dirCreated.push(dir)
         }
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
+        // recompile to have it in the workspace
+        await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
+        await this.plugin.call('solidity' as any, 'compile', file.fileName)
       }
-      return "New workspace created: " + this.workspaceName + "\nUse the Hamburger menu to select it!"
+      this.nAttempts = 0
+      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
     } catch (error) {
       console.log('Error writing contracts', error)
       this.deleteWorkspace(this.workspaceName )
+      this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
       return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
     }
@@ -97,7 +102,11 @@ export class ContractAgent {
     const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
     console.log('compilation result', result)
     const data = result.data
-    const error = data.errors.find((error) => error.type !== 'Warning')
+    let error = false
+
+    if (data.errors) {
+      error = data.errors.find((error) => error.type !== 'Warning')
+    }
     if (data.errors && data.errors.length && error) {
       const msg = `
         - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
