@@ -7,7 +7,6 @@ import { Engine, Plugin } from '@remixproject/engine'
 import axios from 'axios'
 import { AppModal } from '@remix-ui/app'
 import { isArray } from 'lodash'
-import { PluginViewWrapper } from '@remix-ui/helper'
 import { CustomRemixApi } from '@remix-api'
 import { ScriptRunnerUIPlugin } from '../tabs/script-runner-ui'
 
