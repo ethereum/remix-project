@@ -5,7 +5,6 @@ import { extractParentFromKey } from '@remix-ui/helper'
 import { FileSystemContext } from '../contexts'
 
 export const FlatTreeDrop = (props: FlatTreeDropProps) => {
-
   const { getFlatTreeItem, dragSource, handleClickFolder, expandPath } = props
   // delay timer
   const [timer, setTimer] = useState<NodeJS.Timeout>()
@@ -29,7 +28,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
       setFolderToOpen(null)
     }
     if (dragDestination && dragDestination.isDirectory && !expandPath.includes(dragDestination.path) && folderToOpen !== dragDestination.path && props.handleClickFolder) {
-
       setFolderToOpen(dragDestination.path)
       timer && clearTimeout(timer)
       setTimer(
@@ -41,7 +39,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     }
   }
 
-  const onDrop = async (event: SyntheticEvent) => {
+  const onDrop = async (event: React.DragEvent) => {
     event.preventDefault()
 
     const target = await getEventTarget(event)
@@ -51,10 +49,23 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     if (!target || !target.path) {
       dragDestination = {
         path: '/',
-        isDirectory: true
+        isDirectory: true,
       }
     } else {
       dragDestination = getFlatTreeItem(target.path)
+    }
+
+    if (event.dataTransfer?.files.length > 0) {
+      const files = event.dataTransfer.files
+
+      const file = files[0]
+      const reader = new FileReader()
+      reader.readAsText(file)
+
+      reader.onload = (e) => {
+        props.plugin.call('fileManager', 'writeFile', `${dragDestination.path}/${file.name}`, e.target?.result)
+      }
+      return
     }
 
     props.selectedItems.forEach((item) => filePaths.push(item.path))
@@ -77,7 +88,8 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
    * @returns Promise<void>
    */
   const moveItemsSilently = async (items: DragStructure[], targetPath: string) => {
-    const promises = items.filter(item => item.path !== targetPath)
+    const promises = items
+      .filter((item) => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'file') {
           await props.moveFileSilently(targetPath, item.path)
@@ -89,8 +101,9 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     props.resetMultiselect()
   }
 
-  return (<div
-    onDrop={onDrop} onDragOver={onDragOver}
-    className="d-flex h-100"
-  >{props.children}</div>)
+  return (
+    <div onDrop={onDrop} onDragOver={onDragOver} className="d-flex h-100">
+      {props.children}
+    </div>
+  )
 }

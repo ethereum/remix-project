@@ -378,6 +378,7 @@ export interface FlatTreeDropProps {
   selectedItems: DragStructure[]
   setSelectedItems: Dispatch<React.SetStateAction<DragStructure[]>>
   warnMovingItems: (srcs: string[], dest: string) => Promise<void>
+  plugin: any
 }
 
 export type DragStructure = {

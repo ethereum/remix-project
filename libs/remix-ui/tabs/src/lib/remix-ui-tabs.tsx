@@ -189,24 +189,26 @@ export const TabsUI = (props: TabsUIProps) => {
     else return ''
   }
 
+  const handleFileDrop = (event: React.DragEvent) => {
+    event.preventDefault()
+    if (event.dataTransfer?.files.length > 0) {
+      const files = event.dataTransfer.files
+
+      const file = files[0]
+      const reader = new FileReader()
+      reader.readAsText(file)
+
+      reader.onload = (e) => {
+        props.plugin.call('fileManager', 'writeFile', '/tmp/' + file.name, e.target?.result)
+      }
+    }
+  }
+
   return (
     <div
       className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs"
       data-id="tabs-component"
-      onDrop={(event, useLabel: boolean = false) => {
-        event.preventDefault()
-        if (event.dataTransfer?.files.length > 0) {
-          const files = event.dataTransfer.files
-
-          const file = files[0]
-          const reader = new FileReader()
-          reader.readAsText(file)
-
-          reader.onload = (e) => {
-            props.plugin.call('fileManager', 'writeFile', '/tmp/' + file.name, e.target?.result)
-          }
-        }
-      }}
+      onDrop={handleFileDrop}
       onDragOver={(e) => {
         e.preventDefault()
       }}

@@ -48,6 +48,7 @@ interface FlatTreeProps {
   deletePath?: (path: string | string[]) => void | Promise<void>
   editPath?: (path: string, type: string, isNew?: boolean) => void
   warnMovingItems: (srcs: string[], dests: string) => Promise<void>
+  plugin: any
 }
 
 let mouseTimer: any = {
@@ -309,6 +310,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         expandPath={expandPath}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
+        plugin={props.plugin}
       >
         <div data-id="treeViewUltreeViewMenu"
           className='d-flex h-100 w-100 pb-2'
