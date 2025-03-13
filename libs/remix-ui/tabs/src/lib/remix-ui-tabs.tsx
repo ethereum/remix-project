@@ -192,12 +192,13 @@ export const TabsUI = (props: TabsUIProps) => {
     if (event.dataTransfer?.files.length > 0) {
       const files = event.dataTransfer.files
 
-      const file = files[0]
-      const reader = new FileReader()
-      reader.readAsText(file)
+      for (const file of files) {
+        const reader = new FileReader()
+        reader.readAsText(file)
 
-      reader.onload = (e) => {
-        props.plugin.call('fileManager', 'writeFile', '/tmp/' + file.name, e.target?.result)
+        reader.onload = (e) => {
+          props.plugin.call('fileManager', 'writeFile', '/tmp/' + file.name, e.target?.result)
+        }
       }
     }
   }
