@@ -33,7 +33,7 @@ module.exports = {
       .switchEnvironment('vm-paris')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
-      .pause(2000)
+      .pause(3000)
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
       .click('*[data-id="signMessageTextarea"]')
       .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
@@ -110,7 +110,7 @@ module.exports = {
       // Consider adding tests to check return value of contract call
       // See: https://github.com/ethereum/remix-project/pull/1229
       .end()
-  },  
+  },
 
   'Should ensure that save environment state is checked by default #group4 #group5': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
@@ -211,11 +211,11 @@ const sources = [
       pragma solidity ^0.8.0;
       contract HelloWorld {
           string public message;
-          
+
           fallback () external {
               message = 'Hello World!';
           }
-          
+
           function greet(string memory _message) public {
               message = _message;
           }
@@ -229,7 +229,7 @@ const sources = [
         function sendSomeEther(uint256 num) public {
             payable(msg.sender).transfer(num);
         }
-    
+
     }`
     }
   }
