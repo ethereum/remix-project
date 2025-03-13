@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, useContext, Dispatch } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, Dispatch } from 'react'
 import { Popover } from 'react-bootstrap'
 import { DragStructure, FileType, WorkspaceElement } from '../types'
 import { getPathIcon } from '@remix-ui/helper';
@@ -8,8 +8,6 @@ import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
-import { deletePath } from '../actions';
-import { FileSystemContext } from '../contexts';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
