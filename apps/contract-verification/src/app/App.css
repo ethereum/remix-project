@@ -7,7 +7,7 @@ body {
 }
 
 a:focus {
-  background-color: var(bg-light) !important;
+  background-color: var(--bg-light) !important;
 }
 
 .fa-arrow-up-right-from-square::before { content: "\f08e"; }
