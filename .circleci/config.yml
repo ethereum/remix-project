@@ -5,7 +5,7 @@ parameters:
     default: false
   nightly:
     type: boolean
-    default: false
+    default: true
   filter:
     type: string
     default: ''
@@ -826,30 +826,41 @@ workflows:
     when: << pipeline.parameters.nightly >>  # ✅ Conditional workflow execution
     jobs:
       - build
+      # - remix-ide-browser:
+      #     requires:
+      #       - build
+      #     matrix:
+      #       alias: nightly-brave-tests
+      #       parameters:
+      #         browser: ["brave"]  # ✅ Brave only runs if nightly=true
+      #         script: ["browser_test.sh"]
+      #         job: ["0","1","2","3","4","5","6","7","8","9"]
+      #         jobsize: ["10"]
+      #         parallelism: [15]
       - remix-ide-browser:
           requires:
             - build
           matrix:
-            alias: nightly-browser-tests
+            alias: nightly-tests
             parameters:
-              browser: ["brave"]  # ✅ Brave only runs if nightly=true
-              script: ["browser_test.sh"]
-              job: ["0","1","2","3","4","5","6","7","8","9"]
-              jobsize: ["10"]
-              parallelism: [15]
-      - remix-ide-browser:
-          requires:
-            - build
-          matrix:
-            alias: metamask
-            parameters:
-              browser: ["chrome", "brave"]
-              script: ["metamask.sh"]
+              browser: ["chrome"]
+              script: ["nightly.sh"]
               job: ["0"]
-              jobsize: ["10"]
-              parallelism: [1]
+              jobsize: ["1"]
+              parallelism: [15]
+      # - remix-ide-browser:
+      #     requires:
+      #       - build
+      #     matrix:
+      #       alias: metamask
+      #       parameters:
+      #         browser: ["chrome", "brave"]
+      #         script: ["metamask.sh"]
+      #         job: ["0"]
+      #         jobsize: ["10"]
+      #         parallelism: [1]
   build_all:
-    unless: << pipeline.parameters.run_flaky_tests >>
+    unless: << pipeline.parameters.run_flaky_tests | pipeline.parameters.nightly >>
     jobs:
       - build
       - build-desktop

@@ -1,4 +1,5 @@
 const testFolder = './apps/remix-ide-e2e/src/tests/'
+const e = require('express')
 const fs = require('fs')
 
 // build group tests
@@ -15,12 +16,14 @@ fs.readdirSync(testFolder).forEach(file => {
   if (!file.includes('group')) {
     const content = fs.readFileSync(testFolder + file, 'utf8')
     const matches = content.match(/group\d+/g)
+
     createFlakyTestFiles(file, content)
-    createFiles(file, matches)
+    createNonNightlyTestFiles(file, matches, content)
+    createNightlyTestFiles(file, content)
   }
 })
 
-function createFiles(file, matches, flaky = false) {
+function createFiles(file, matches, flaky = false, nightly = false) {
   if (matches) {
     const unique = matches.filter(onlyUnique)
     unique.map((group) => {
@@ -28,10 +31,12 @@ function createFiles(file, matches, flaky = false) {
       const extension = file.split('.')
       extension.shift()
       let filename
-      if (!flaky) {
+      if (!flaky && !nightly) {
         filename = `${testFolder}${file.split('.').shift()}_${group}.${extension.join('.')}`
-      } else {
+      } else if (flaky) {
         filename = `${testFolder}${file.split('.').shift()}_${group}.flaky.ts`
+      } else if (nightly) {
+        filename = `${testFolder}${file.split('.').shift()}_${group}.nightly.ts`
       }
       fs.writeFileSync(filename, rewrite)
     })
@@ -52,4 +57,28 @@ function createFlakyTestFiles(file, text) {
       createFiles(file, matches, true)
     }
   })
+}
+
+function createNightlyTestFiles(file, text) {
+  const lines = text.split('\n')
+  lines.forEach((line, index) => {
+    // if line contains #nightly
+    if (line.includes('#nightly')) {
+      const matches = line.match(/group\d+/g)
+      const unique = matches.filter(onlyUnique)
+      createFiles(file, matches, false, true)
+    }
+  })
+}
+
+function createNonNightlyTestFiles(file, matches, text) {
+  if (matches) {
+    const lines = text.split('\n')
+    lines.forEach((line, index) => {
+      // if line contains #nightly
+      if (!line.includes('#nightly')) {
+        createFiles(file, matches, false, false)
+      }
+    })
+  }
 }
