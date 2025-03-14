@@ -860,7 +860,7 @@ workflows:
       #         jobsize: ["10"]
       #         parallelism: [1]
   build_all:
-    unless: << pipeline.parameters.run_flaky_tests | pipeline.parameters.nightly >>
+    unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
       - build-desktop
