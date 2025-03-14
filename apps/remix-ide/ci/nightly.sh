@@ -13,6 +13,9 @@ then
   exit 0
 fi
 
+# Split tests only if there are valid test files
+TESTFILES=$(echo "$TESTFILES" | circleci tests split --split-by=timings)
+
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
