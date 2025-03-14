@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Button } from "react-bootstrap";
 import { customScriptRunnerConfig, ProjectConfiguration } from "../types";
-import { faCaretDown, faCaretRight, faCheck, faExclamationCircle, faRedoAlt, faToggleOn } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomScriptRunner } from "./custom-script-runner";
-import { CustomTooltip } from "@remix-ui/helper";
 import ConfigSection from "./components/config-section";
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -24,13 +20,13 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const [activeKey, setActiveKey] = useState('default');
 
   useEffect(() => {
-    if (activeConfig) {
+    if (activeConfig && !activeConfig.errorStatus) {
       setActiveKey(activeConfig.name)
     }
   },[activeConfig])
 
   if (!configurations) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -59,7 +55,8 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
           saveCustomConfig={props.saveCustomConfig}
           openCustomConfig={props.openCustomConfig}
           publishedConfigurations={configurations.filter((config) => config.publish)}
-        />}
+        />
+      }
     </div>
   )
 }
