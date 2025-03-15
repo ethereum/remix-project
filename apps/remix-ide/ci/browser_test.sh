@@ -19,7 +19,10 @@ node apps/remix-ide/ci/splice_tests.js $2 $3
 TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask')
 
 # If $4 is provided, filter by it
+
 if [ -n "$4" ]; then
+  # log the filter
+  echo "Filtering by $4"
   TESTFILES=$(echo "$TESTFILES" | grep "$4")
 fi
 
@@ -28,6 +31,10 @@ if [ -z "$TESTFILES" ]; then
   echo "No test files found after filtering. Exiting."
   exit 0  # ✅ Exit gracefully (change to exit 1 if failure is preferred)
 fi
+
+#log the files
+echo "Running the following test files:"
+echo "$TESTFILES"
 
 # Split tests only if there are valid test files
 TESTFILES=$(echo "$TESTFILES" | circleci tests split --split-by=timings)
