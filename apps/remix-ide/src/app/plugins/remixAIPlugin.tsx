@@ -6,7 +6,7 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { CodeCompletionAgent } from '@remix/remix-ai-core';
+import { CodeCompletionAgent, ContractAgent } from '@remix/remix-ai-core';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -18,7 +18,7 @@ const profile = {
   displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
-    "code_insertion", "error_explaining", "vulnerability_check",
+    "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
@@ -40,6 +40,7 @@ export class RemixAIPlugin extends ViewPlugin {
   chatRequestBuffer: chatRequestBufferT<any> = null
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
+  contractor: ContractAgent
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -47,7 +48,6 @@ export class RemixAIPlugin extends ViewPlugin {
   constructor(inDesktop:boolean) {
     super(profile)
     this.isOnDesktop = inDesktop
-    this.codeExpAgent = new CodeExplainAgent(this)
     // user machine dont use ressource for remote inferencing
   }
 
@@ -66,6 +66,8 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     this.completionAgent = new CodeCompletionAgent(this)
     this.securityAgent = new SecurityAgent(this)
+    this.codeExpAgent = new CodeExplainAgent(this)
+    this.contractor = new ContractAgent(this)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -172,6 +174,21 @@ export class RemixAIPlugin extends ViewPlugin {
 
   getVulnerabilityReport(file: string): any {
     return this.securityAgent.getReport(file)
+  }
+
+  async generate(userPrompt: string, params: IParams=GenerationParams, newThreadID:string=""): Promise<any> {
+    params.stream_result = false // enforce no stream result
+    params.threadId = newThreadID
+    console.log('Generating code for prompt:', userPrompt)
+
+    let result
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
+    } else {
+      result = await this.remoteInferencer.generate(userPrompt, params)
+    }
+
+    return this.contractor.writeContracts(result, userPrompt)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
