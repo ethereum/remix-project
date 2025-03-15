@@ -3,6 +3,12 @@ parameters:
   run_flaky_tests:
     type: boolean
     default: false
+  nightly:
+    type: boolean
+    default: true
+  filter:
+    type: string
+    default: ''
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -671,6 +677,23 @@ jobs:
 
       - when:
           condition:
+              equal: [ "brave", << parameters.browser >> ]
+          steps:
+            - run: yarn install_webdriver
+            - run:
+                name: Install Brave Browser
+                command: |
+                  sudo apt update
+                  sudo apt install -y curl gnupg
+                  sudo mkdir -p /etc/apt/keyrings
+                  curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg | sudo tee /etc/apt/keyrings/brave-browser-archive-keyring.gpg >/dev/null
+                  echo "deb [signed-by=/etc/apt/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+                  sudo apt update && sudo apt install -y brave-browser
+            - run:
+                name: Check Brave Version
+                command: brave-browser --version
+      - when:
+          condition:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
@@ -691,7 +714,7 @@ jobs:
                 install-chromedriver: false
             - run: yarn install_webdriver
             - run: firefox --version
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << pipeline.parameters.filter >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -799,8 +822,45 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
+  nightly-tests:
+    when: << pipeline.parameters.nightly >>  # ✅ Conditional workflow execution
+    jobs:
+      - build
+      # - remix-ide-browser:
+      #     requires:
+      #       - build
+      #     matrix:
+      #       alias: nightly-brave-tests
+      #       parameters:
+      #         browser: ["brave"]  # ✅ Brave only runs if nightly=true
+      #         script: ["browser_test.sh"]
+      #         job: ["0","1","2","3","4","5","6","7","8","9"]
+      #         jobsize: ["10"]
+      #         parallelism: [15]
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            alias: nightly-tests
+            parameters:
+              browser: ["chrome"]
+              script: ["nightly.sh"]
+              job: ["0"]
+              jobsize: ["1"]
+              parallelism: [15]
+      # - remix-ide-browser:
+      #     requires:
+      #       - build
+      #     matrix:
+      #       alias: metamask
+      #       parameters:
+      #         browser: ["chrome", "brave"]
+      #         script: ["metamask.sh"]
+      #         job: ["0"]
+      #         jobsize: ["10"]
+      #         parallelism: [1]
   build_all:
-    unless: << pipeline.parameters.run_flaky_tests >>
+    unless: << pipeline.parameters.run_flaky_tests >> or << pipeline.parameters.nightly >>
     jobs:
       - build
       - build-desktop
@@ -887,6 +947,7 @@ workflows:
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
               parallelism: [15]
+
       - remix-ide-browser:
           requires:
             - build
