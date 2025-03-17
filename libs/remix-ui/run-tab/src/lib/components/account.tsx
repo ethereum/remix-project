@@ -298,12 +298,14 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      { enableCSM ? <div className="mt-1">
-        <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
-          <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{"color": "#fff"}}></i>
-          Create Smart Account
-        </button>
-      </div> : null }
+      { enableCSM ? (<div className="mt-1">
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
+          <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
+            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{"color": "#fff"}}></i>
+            Create Smart Account
+          </button>
+        </CustomTooltip>
+      </div>) : null }
     </div>
   )
 }
