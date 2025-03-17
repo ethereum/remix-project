@@ -53,5 +53,12 @@ export type Provider = {
   init: () => Promise<void>
   provider:{
     sendAsync: (payload: any) => Promise<void>
+    udapp?: {
+      REACT_API: {
+        chainId: number,
+        accounts: any,
+        selectExEnv: string
+      }
+    }
   }
 }
