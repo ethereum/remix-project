@@ -21,24 +21,20 @@ export type DropDownLabelProps = {
 export function DropdownLabel({ label, bridges, currentProvider, chainId, runTabState, setExecutionEnv, isL2, plugin }: DropDownLabelProps) {
 
   const [renderLabel, setRenderLabel] = useState(label)
-  const [selectedEnvs, setSelectedEnvs] = useState<EnvDropdownLabelStateType[]>([])
 
   useEffect(() => {
     const checkEnvLabels = async () => {
-      if (selectedEnvs.length === 0) {
-        const envLabels = await plugin.call('udapp', 'getEnvironmentDropdownLabels')
-        setSelectedEnvs(envLabels)
+      const selectedEnvs = await plugin.call('blockchain', 'getAllProviders')
+      const selectedEnv = selectedEnvs[runTabState.selectExEnv]
+      if (selectedEnv) {
+        setRenderLabel(selectedEnv.displayName)
+        setExecutionEnv({ context: selectedEnv.value })
+      } else {
+        setRenderLabel('No provider set')
       }
     }
     checkEnvLabels()
-    const selectedEnv = selectedEnvs.find(env => (env.chainId === chainId && env.value === runTabState.selectExEnv) || (env.value === 'walletconnect' && env.value === currentProvider?.name))
-    if (selectedEnv) {
-      setRenderLabel(selectedEnv.name)
-      setExecutionEnv({ context: selectedEnv.value })
-    } else {
-      setRenderLabel('Injected Provider - MetaMask')
-    }
-  }, [chainId, currentProvider && currentProvider.name])
+  }, [chainId])
 
   return (
     <>

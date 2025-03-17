@@ -16,29 +16,6 @@ import { Recorder } from '../tabs/runTab/model/recorder'
 import { EnvDropdownLabelStateType } from 'libs/remix-ui/run-tab/src/lib/types'
 const _paq = (window._paq = window._paq || [])
 
-const selectedEnvs: EnvDropdownLabelStateType[] = [
-  { name: 'Remix VM (Cancun)', value: 'vm-cancun', chainId: 'vm-cancun' },
-  { name: 'Gnosis Mainnet - MetaMask', value: 'injected-metamask-gnosis', chainId: 100 },
-  { name: 'L2 - Optimism - MetaMask', value: 'injected-metamask-optimism', chainId: 10 },
-  { name: 'L2 - Arbitrum - MetaMask', value: 'injected-metamask-arbitrum', chainId: 42161 },
-  { name: 'Ephemery Testnet - MetaMask', value: 'injected-metamask-ephemery', chainId: 39438143 },
-  { name: 'Sepolia Testnet - MetaMask', value: 'injected-metamask-sepolia', chainId: 11155111 },
-  { name: 'L2 - Linea - MetaMask', value: 'injected-metamask-linea', chainId: 59144 },
-  { name: 'Injected Provider - MetaMask', value: 'injected-MetaMask' },
-  { name: 'WalletConnect', value: 'walletconnect' },
-  { name: 'Remix VM - Mainnet fork', value: 'vm-mainnet-fork', chainId: 'vm-mainnet-fork' },
-  { name: 'Remix VM - Sepolia fork', value: 'vm-sepolia-fork', chainId: 'vm-sepolia-fork' },
-  { name: 'Remix VM - Custom fork', value: 'vm-custom-fork', chainId: 'vm-custom-fork' },
-  { name: 'Remix VM (Shanghai)', value: 'vm-shanghai', chainId: 'vm-shanghai' },
-  { name: 'Remix VM (Paris)', value: 'vm-paris', chainId: 'vm-paris' },
-  { name: 'Remix VM (London)', value: 'vm-london', chainId: 'vm-london' },
-  { name: 'Remix VM (Berlin)', value: 'vm-berlin', chainId: 'vm-berlin' },
-  { name: 'Custom - External Http Provider', value: 'basic-http-provider', chainId: 1741104841094 },
-  { name: 'Dev - Hardhat Provider', value: 'hardhat-provider', chainId: 31337 },
-  { name: 'Dev - Foundry Provider', value: 'foundry-provider', chainId: 31337 },
-  { name: 'Dev - Ganache Provider', value: 'ganache-provider', chainId: 1741104841094 },
-]
-
 const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
@@ -61,8 +38,7 @@ const profile = {
     'clearAllInstances',
     'addInstance',
     'resolveContractAndAddInstance',
-    'showPluginDetails',
-    'getEnvironmentDropdownLabels'
+    'showPluginDetails'
   ]
 }
 
@@ -79,7 +55,6 @@ export class RunTab extends ViewPlugin {
   fileProvider: any
   recorder: any
   REACT_API: any
-  envDropdownLabelState: EnvDropdownLabelStateType[]
   el: any
   constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
@@ -95,7 +70,6 @@ export class RunTab extends ViewPlugin {
     this.fileProvider = fileProvider
     this.recorder = new Recorder(blockchain)
     this.REACT_API = {}
-    this.setEnvironmentDropdownLabels()
     this.setupEvents()
     this.el = document.createElement('div')
   }
@@ -138,14 +112,6 @@ export class RunTab extends ViewPlugin {
 
   createVMAccount(newAccount) {
     return this.blockchain.createVMAccount(newAccount)
-  }
-
-  setEnvironmentDropdownLabels() {
-    this.envDropdownLabelState = selectedEnvs
-  }
-
-  getEnvironmentDropdownLabels() {
-    return this.envDropdownLabelState
   }
 
   sendTransaction(tx) {
