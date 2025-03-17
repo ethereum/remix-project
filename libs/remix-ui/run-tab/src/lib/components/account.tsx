@@ -16,6 +16,7 @@ export function AccountUI(props: AccountProps) {
     classList: '',
     title: ''
   })
+  const [enableCSM, setEnableCSM] = useState(false)
   const messageRef = useRef('')
 
   const intl = useIntl()
@@ -28,27 +29,14 @@ export function AccountUI(props: AccountProps) {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    if (smartAccounts.length > 0 && !smartAccounts.includes(selectedAccount) && networkName.includes('Sepolia')) {
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
-      })
-    } else
-      setPlusOpt({
-        classList: 'udapp_disableMouseEvents',
-        title: intl.formatMessage({ id: 'udapp.injectedTitle' })
-      })
+    if (smartAccounts.length > 0 && !smartAccounts.includes(selectedAccount) && networkName.includes('Sepolia'))
+      setEnableCSM(true)
+    else setEnableCSM(false)
   }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
-      if (networkName.includes('Sepolia')) {
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
-        })
-      } else
         setPlusOpt({
           classList: 'udapp_disableMouseEvents',
           title: intl.formatMessage({ id: 'udapp.injectedTitle' })
@@ -113,41 +101,40 @@ export function AccountUI(props: AccountProps) {
     }
   }, [selectExEnv, personalMode, networkName])
 
-  const newAccount = () => {
-    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia'))
-    {
-      return props.modal(
-        intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
-        (
-          <div data-id="createSmartAccountModal">
-            <ul className='ml-3'>
-              <li><FormattedMessage id="udapp.createSmartAccountDesc1"/></li><br/>
-              <li><FormattedMessage id="udapp.createSmartAccountDesc2"/>
-                <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
-                  target="_blank"
-                  onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
-                      Learn more
-                </a>
-              </li><br/>
-              <li><FormattedMessage id="udapp.createSmartAccountDesc3"/></li><br/>
-              <li>{intl.formatMessage({ id: 'udapp.createSmartAccountDesc4' }, { owner: selectedAccount })}</li><br/>
-              <li><FormattedMessage id="udapp.createSmartAccountDesc5"/></li><br/>
-              <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
-            </ul>
-          </div>
-        ),
-        intl.formatMessage({ id: 'udapp.continue' }),
-        () => {
-          props.createNewSmartAccount()
-        },
-        intl.formatMessage({ id: 'udapp.cancel' }),
-        () => {
-          props.setPassphrase('')
-        }
-      )
+  const createSmartAccount = () => {
+    props.modal(
+      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      (
+        <div data-id="createSmartAccountModal">
+          <ul className='ml-3'>
+            <li><FormattedMessage id="udapp.createSmartAccountDesc1"/></li><br/>
+            <li><FormattedMessage id="udapp.createSmartAccountDesc2"/>
+              <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
+                target="_blank"
+                onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
+                    Learn more
+              </a>
+            </li><br/>
+            <li><FormattedMessage id="udapp.createSmartAccountDesc3"/></li><br/>
+            <li>{intl.formatMessage({ id: 'udapp.createSmartAccountDesc4' }, { owner: selectedAccount })}</li><br/>
+            <li><FormattedMessage id="udapp.createSmartAccountDesc5"/></li><br/>
+            <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
+          </ul>
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.continue' }),
+      () => {
+        props.createNewSmartAccount()
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {
+        props.setPassphrase('')
+      }
+    )
+  }
 
-    }
-    else props.createNewBlockchainAccount(passphraseCreationPrompt())
+  const newAccount = () => {
+    props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
 
   const signMessage = () => {
@@ -311,6 +298,12 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      { enableCSM ? <div className="mt-1">
+        <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
+          <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{"color": "#fff"}}></i>
+          Create Smart Account
+        </button>
+      </div> : null }
     </div>
   )
 }
