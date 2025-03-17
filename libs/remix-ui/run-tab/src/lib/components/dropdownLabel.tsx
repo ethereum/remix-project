@@ -31,14 +31,14 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
       }
     }
     checkEnvLabels()
-    const selectedEnv = selectedEnvs.find(env => (env.chainId === chainId && env.value === runTabState.selectExEnv) || (env.value === 'walletconnect' && env.value === currentProvider?.name) || env.chainId === chainId)
+    const selectedEnv = selectedEnvs.find(env => (env.chainId === chainId && env.value === runTabState.selectExEnv) || (env.value === 'walletconnect' && env.value === currentProvider?.name))
     if (selectedEnv) {
       setRenderLabel(selectedEnv.name)
       setExecutionEnv({ context: selectedEnv.value })
     } else {
       setRenderLabel('Injected Provider - MetaMask')
     }
-  }, [chainId])
+  }, [chainId, currentProvider && currentProvider.name])
 
   return (
     <>
