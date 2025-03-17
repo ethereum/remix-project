@@ -177,7 +177,6 @@ export function Workspace() {
         const content = await global.plugin.call('fileManager', 'readFile', one.key)
         selectedFiles.push({ key: one.key, type: one.type, content: content })
       }
-      _paq.push(['trackEvent', 'fileExplorer', 'publishMultiSelectedFilesToGist', 'publishMultipleFilesToGist'])
       global.dispatchPublishFilesToGist(selectedFiles)
     } catch (error) {
       await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
@@ -573,7 +572,6 @@ export function Workspace() {
   }
 
   const handleMultipleItemCopies = (copied: {key: string, type: 'folder' | 'file' | 'workspace'}[]) => {
-    _paq.push(['trackEvent', 'fileExplorer', 'copyMultipleItemsClick', 'copyMultipleItems'])
     setState((prevState) => {
       return { ...prevState, copyElement: copied }
     })
@@ -584,7 +582,6 @@ export function Workspace() {
   }
 
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
-    _paq.push(['trackEvent', 'fileExplorer', 'copyItemClick', 'copy'])
     setState((prevState) => {
       return { ...prevState, copyElement: [{ key: path, type }]}
     })
@@ -594,7 +591,6 @@ export function Workspace() {
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
-    _paq.push(['trackEvent', 'fileExplorer', 'pasteItemClick', 'paste'])
     dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
     state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
@@ -775,7 +771,6 @@ export function Workspace() {
   const deletePath = async (path: string[]) => {
     if (global.fs.readonly) return global.toast('cannot delete file. ' + name + ' is a read only explorer')
     if (!Array.isArray(path)) path = [path]
-    _paq.push(['trackEvent', 'fileExplorer', 'deletePath', 'delete'])
     global.modal(
       path.length > 1 ? intl.formatMessage({ id: 'filePanel.deleteItems' }) : intl.formatMessage({ id: 'filePanel.deleteItem' }),
       deleteMessage(path),
