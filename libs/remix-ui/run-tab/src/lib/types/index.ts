@@ -23,7 +23,6 @@ export interface ContractList {
   [file: string]: Contract[]
 }
 
-
 export type SmartAccount = {
   address: string
   salt: number
