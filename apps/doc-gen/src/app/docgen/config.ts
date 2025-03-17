@@ -35,7 +35,7 @@ export interface UserConfig {
   pages?: 'single' | 'items' | 'files' | PageAssigner;
 
   /**
-   * An array of sources subdirectories that should be excluded from
+   * An array of source subdirectories that should be excluded from
    * documentation, relative to the contract sources directory.
    */
   exclude?: string[];

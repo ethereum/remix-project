@@ -20,6 +20,8 @@ export function SettingsUI(props: SettingsProps) {
         checkSelectionCorrectness={props.EvaluateEnvironmentSelection}
         modal={props.modal}
         config={props.runTabPlugin.config}
+        udappState={props.udappState}
+        envLabel={props.envLabel}
       />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
