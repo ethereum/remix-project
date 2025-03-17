@@ -208,7 +208,8 @@ export class RunTab extends ViewPlugin {
 
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
-      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency)])
+      const parent = 'injected-' + event.detail.info.name
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency, [], parent)])
       await addProvider(position, name, displayName + ' - ' + event.detail.info.name, { isInjected: true, isVM: false, isRpcForkedState: false, fork: '' })
     }
     const registerInjectedProvider = async (event) => {

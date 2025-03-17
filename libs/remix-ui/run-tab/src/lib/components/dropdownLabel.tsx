@@ -1,9 +1,7 @@
-import { Provider } from '@remix-ui/environment-explorer'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { EnvDropdownLabelStateType, RunTabState } from '../types'
-import { current } from '@reduxjs/toolkit'
+import { RunTabState } from '../types'
 
 export type DropDownLabelProps = {
   label: string
