@@ -13,6 +13,7 @@ orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
+  nx: nrwl/nx@1.7.0
 jobs:
   build:
     machine:
@@ -37,11 +38,12 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
-      - run: nvm use 20.0 && yarn
+      - run: nvm use 20.0 && yarn install --frozen-lockfile
       - save_cache:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+      - nx/set-shas
       - run:
           name: Build
           command: |
@@ -51,7 +53,7 @@ jobs:
             else
               NX_PARALLEL=6 NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build
             fi
-      - run: yarn run build:e2e
+      - run: nvm use 20.0 && yarn run build:e2e
       
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache:
