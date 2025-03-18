@@ -16,8 +16,8 @@ orbs:
   nx: nrwl/nx@1.7.0
 jobs:
   build:
-    machine:
-        image: ubuntu-2004:current
+    docker:
+      - image: cimg/node:lts-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
