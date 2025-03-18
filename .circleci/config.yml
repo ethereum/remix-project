@@ -5,7 +5,7 @@ parameters:
     default: false
   nightly:
     type: boolean
-    default: false
+    default: true
   filter:
     type: string
     default: ''
