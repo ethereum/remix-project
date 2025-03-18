@@ -22,6 +22,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - run: echo "Available CPUs: $(nproc)"
       - run: sudo apt update && sudo apt install zstd
       - checkout
       - restore_cache:
