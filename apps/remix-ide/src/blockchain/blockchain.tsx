@@ -94,11 +94,10 @@ export class Blockchain extends Plugin {
       (_) => this.executionContext.currentblockGasLimit()
     )
     this.txRunner = new TxRunner(web3Runner, {})
-
     this.networkcallid = 0
-    this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
     this.defaultPinnedProviders = ['vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    this.networkStatus = { network: { name: this.defaultPinnedProviders[0], id: ' - ' } }
     this.pinnedProviders = []
     this.setupEvents()
     this.setupProviders()
@@ -384,7 +383,7 @@ export class Blockchain extends Plugin {
 
   async saveDeployedContractStorageLayout(contractObject, proxyAddress, networkInfo) {
     const { contractName, implementationAddress } = contractObject
-    const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
+    const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name === 'VM' ? networkInfo.name.toLowerCase() + '-' + this.getCurrentFork() : networkInfo.name
     const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
     // TODO: make deploys folder read only.
     if (hasPreviousDeploys) {
