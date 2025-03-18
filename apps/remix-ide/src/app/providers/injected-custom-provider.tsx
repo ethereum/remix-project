@@ -22,7 +22,7 @@ export class InjectedCustomProvider extends InjectedProviderDefault {
     this.listenerChainChanged = (chainId: number) => {
       if (chainId !== parseInt(this.chainId)) {
         this.call('blockchain', 'changeExecutionContext', { context: this.parent })
-      }     
+      }
     }
   }
 
