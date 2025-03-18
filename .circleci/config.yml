@@ -30,7 +30,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
-      - run: nvm use 20.0 && yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile
       - save_cache:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
@@ -40,13 +40,12 @@ jobs:
       - run:
           name: Build
           command: |
-            nvm use 20.0
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               NX_PARALLEL=6 NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build:production
             else
               NX_PARALLEL=6 NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build
             fi
-      - run: nvm use 20.0 && yarn run build:e2e
+      - run: yarn run build:e2e
       
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache:
