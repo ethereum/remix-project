@@ -206,7 +206,7 @@ class AppComponent {
     if (pluginLoader.current === 'queryParams') {
       this.workspace.map((workspace) => {
         _paq.push(['trackEvent', 'App', 'queryParams-activated', workspace])
-      })      
+      })
     }
     this.engine = new RemixEngine()
     this.engine.register(appManager)
