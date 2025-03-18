@@ -44,6 +44,7 @@ jobs:
           paths:
             - node_modules
       - nx/set-shas
+          main-branch-name: master
       - run:
           name: Build
           command: |
