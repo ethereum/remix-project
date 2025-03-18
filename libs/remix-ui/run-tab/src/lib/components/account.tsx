@@ -311,8 +311,9 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      { smartAccountSelected ? <span className="udapp_network badge badge-secondary">
+      { smartAccountSelected ? <span className="alert-info badge badge-secondary">
           Owner: {shortenAddress(ownerEOA.current)}
+          <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
         </span> : null 
       }
       { enableCSM ? (<div className="mt-1">

@@ -77,7 +77,7 @@
   "udapp.modalTitle1": "Passphrase to sign a message",
   "udapp.modalMessage1": "Enter your passphrase for this account to sign the message",
   "udapp.copyAccount": "Copy account",
-  "udapp.copyOwnerAccount": "Copy owner account",
+  "udapp.copyOwnerAccount": "Copy owner address",
   "udapp.signMsgUsingAccount": "Sign using this account",
 
   "udapp._comment_environment.tsx": "libs/remix-ui/run-tab/src/lib/components/environment.tsx",
