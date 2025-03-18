@@ -25,6 +25,26 @@ jobs:
     steps:
       - run: nproc
       - run: sudo apt update && sudo apt install zstd
+      - run:
+          name: Install NVM
+          command: |
+            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> $BASH_ENV
+      - run:
+          name: Install Node.js 20.0 and Set as Default
+          command: |
+            source $BASH_ENV
+            nvm install 20.0
+            nvm use 20.0
+            nvm alias default 20.0
+            node -v
+      - run:
+          name: Install Yarn
+          command: |
+            corepack enable
+            yarn -v
       - checkout
       - restore_cache:
           keys:
