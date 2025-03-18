@@ -15,9 +15,8 @@ orbs:
   node: circleci/node@7.0.0
 jobs:
   build:
-    docker:
-      - image: cimg/node:20.0.0-browsers
-
+    machine:
+      image: ubuntu-2204:current
     resource_class:
       xlarge
     working_directory: ~/remix-project

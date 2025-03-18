@@ -40,7 +40,7 @@ const implicitDependencies = projectConfig.implicitDependencies || [];
 
 // Construct the `nx run-many` command
 const projects = [defaultProject, ...implicitDependencies].join(",");
-const command = `yarn nx run-many --target=build --projects=${projects} --configuration=${configArg} --parallel=5`;
+const command = `yarn nx run-many --target=build --projects=${projects} --configuration=${configArg} --parallel=8`;
 
 console.log("Generated command:", command);
 
