@@ -47,7 +47,6 @@ export class WalletConnect extends Plugin {
   }
 
   async openModal() {
-    console.log('opening modal...')
     await this.web3modal.open()
     this.web3modal.subscribeState((state) => {
       if (!state.open) {
