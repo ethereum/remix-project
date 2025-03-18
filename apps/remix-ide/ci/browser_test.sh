@@ -21,9 +21,14 @@ TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask')
 # If $4 is provided, filter by it
 
 if [ -n "$4" ]; then
+  # Convert comma-separated values into a grep OR pattern
+  FILTER_PATTERN=$(echo "$4" | sed 's/,/\\|/g')
+  
   # log the filter
-  echo "Filtering by $4"
-  TESTFILES=$(echo "$TESTFILES" | grep "$4")
+  echo "Filtering by $FILTER_PATTERN"
+
+  # Apply grep with multiple OR patterns
+  TESTFILES=$(echo "$TESTFILES" | grep -E "$FILTER_PATTERN")
 fi
 
 # Check if TESTFILES has content
@@ -38,6 +43,15 @@ echo "$TESTFILES"
 
 # Split tests only if there are valid test files
 TESTFILES=$(echo "$TESTFILES" | circleci tests split --split-by=timings)
+
+if [ -z "$TESTFILES" ]; then
+  echo "No test files found after splitting. Exiting."
+  exit 0  # ✅ Exit gracefully (change to exit 1 if failure is preferred)
+fi
+
+for TESTFILE in $TESTFILES; do
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || TEST_EXITCODE=1
+done
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]

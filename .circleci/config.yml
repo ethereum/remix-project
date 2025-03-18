@@ -5,10 +5,10 @@ parameters:
     default: false
   nightly:
     type: boolean
-    default: true
+    default: false
   filter:
     type: string
-    default: ''
+    default: 'run,debug'
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
