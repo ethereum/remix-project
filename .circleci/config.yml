@@ -17,7 +17,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cimg/node:20.0.0
     resource_class:
       xlarge
     working_directory: ~/remix-project
