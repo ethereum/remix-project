@@ -36,7 +36,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
+      - run: nvm use 20.0 && yarn
       - save_cache:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
