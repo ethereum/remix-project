@@ -15,7 +15,7 @@ orbs:
   node: circleci/node@7.0.0
 jobs:
   build:
-      machine:
+    machine:
         image: ubuntu-2004:current
     resource_class:
       xlarge
