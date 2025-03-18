@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { CodeCompletionAgent, ContractAgent } from '@remix/remix-ai-core';
@@ -41,6 +41,7 @@ export class RemixAIPlugin extends ViewPlugin {
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
   contractor: ContractAgent
+  assistantProvider: string = 'anthropic'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -176,9 +177,10 @@ export class RemixAIPlugin extends ViewPlugin {
     return this.securityAgent.getReport(file)
   }
 
-  async generate(userPrompt: string, params: IParams=GenerationParams, newThreadID:string=""): Promise<any> {
+  async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string=""): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
+    params.provider = this.assistantProvider
     console.log('Generating code for prompt:', userPrompt)
 
     let result

@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { GenerationParams } from "../types/models";
+import { AssistantParams } from "../types/models";
 
 const compilationParams = {
   optimize: false,
@@ -23,6 +23,7 @@ export class ContractAgent {
 
   constructor(props) {
     this.plugin = props;
+    AssistantParams.provider = this.plugin.assistantProvider
   }
 
   async writeContracts(payload, userPrompt) {
@@ -49,9 +50,9 @@ export class ContractAgent {
           if (!result.compilationSucceeded) {
             // nasty recursion
             console.log('compilation failed', file.fileName)
-            const newPrompt = `I couldn't compile the contract ${file.fileName}. ${result.errors}. Try again.`
-            await this.plugin.generate(newPrompt, GenerationParams, this.generationThreadID); // reuse the same thread
-            return "Failed to generate secure code on this prompt ```" + userPrompt + "````"
+            const newPrompt = `The contract ${file.fileName} does not compile. Here is the error message; ${result.errors}. Try again with the same formatting!`
+            await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+            return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
           }
         }
       }
@@ -61,17 +62,19 @@ export class ContractAgent {
       await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedFiles.files) {
+        console.log('Writing file', file.fileName)
         const dir = file.fileName.split('/').slice(0, -1).join('/')
         console.log('Creating directory', dir)
-        if (!dirCreated.includes(dir)) {
+        if (!dirCreated.includes(dir) && dir) {
+          console.log('Creating new directory', dir)
           await this.plugin.call('fileManager', 'mkdir', dir)
           dirCreated.push(dir)
         }
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
         // recompile to have it in the workspace
-        await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
-        await this.plugin.call('solidity' as any, 'compile', file.fileName)
+        // await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
+        // await this.plugin.call('solidity' as any, 'compile', file.fileName)
       }
       this.nAttempts = 0
       return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
@@ -122,8 +125,7 @@ export class ContractAgent {
   }
 
   extractImportPaths(text) {
-
-    // Define the regex pattern to match import paths
+    // eslint-disable-next-line no-useless-escape
     const regex = /import\s*\"([^\"]+)\"\s*;/g;
     const paths = [];
     let match;
