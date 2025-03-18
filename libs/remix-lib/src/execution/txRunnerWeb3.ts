@@ -50,12 +50,12 @@ export class TxRunnerWeb3 {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           if (isCreation && !receipt.contractAddress) {
-            // if it is a isCreation, contractAddress should be defined. 
+            // if it is a isCreation, contractAddress should be defined.
             // if it's not the case look for the event ContractCreated(uint256,address,uint256,bytes32) and extract the address
             // topic id: 0xa1fb700aaee2ae4a2ff6f91ce7eba292f89c2f5488b8ec4c5c5c8150692595c3
             if (receipt.logs && receipt.logs.length) {
               receipt.logs.map((log) => {
-                if (log.topics[0] === '0xa1fb700aaee2ae4a2ff6f91ce7eba292f89c2f5488b8ec4c5c5c8150692595c3') {                  
+                if (log.topics[0] === '0xa1fb700aaee2ae4a2ff6f91ce7eba292f89c2f5488b8ec4c5c5c8150692595c3') {
                   (receipt as any).contractAddress = toChecksumAddress(normalizeHexAddress(toHex(log.topics[2])))
                 }
               })
