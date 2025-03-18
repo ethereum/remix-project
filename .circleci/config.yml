@@ -43,7 +43,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - nx/set-shas
+      - nx/set-shas:
           main-branch-name: master
       - run:
           name: Build
