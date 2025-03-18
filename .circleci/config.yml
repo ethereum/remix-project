@@ -28,7 +28,6 @@ jobs:
       - run:
           name: Install Node.js 20.0 and Set as Default
           command: |
-            source $BASH_ENV
             nvm install 20.0
             nvm use 20.0
             nvm alias default 20.0
