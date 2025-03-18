@@ -399,7 +399,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
 export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput, solcVersion: string) => {
   // build current contract first to get artefacts.
   const network = plugin.blockchain.networkStatus.network
-  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name === 'VM' ? plugin.blockchain.getProvider() : network.name
   const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
 
   if (networkDeploymentsExists) {
