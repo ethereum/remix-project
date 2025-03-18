@@ -26,14 +26,6 @@ jobs:
     steps:
       - run: nproc
       - run: sudo apt update && sudo apt install zstd
-      - run:
-          name: Install Node.js 20.0 and Set as Default
-          command: |
-            nvm install 20.0
-            nvm use 20.0
-            nvm alias default 20.0
-            node -v
-            npm install --global yarn
       - checkout
       - restore_cache:
           keys:
