@@ -32,6 +32,7 @@ jobs:
             nvm use 20.0
             nvm alias default 20.0
             node -v
+            npm install --global yarn
       - checkout
       - restore_cache:
           keys:
