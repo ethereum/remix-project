@@ -21,6 +21,8 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
+    environment:
+      NX_MAX_PARALLEL: 6
     steps:
       - run: nproc
       - run: sudo apt update && sudo apt install zstd
