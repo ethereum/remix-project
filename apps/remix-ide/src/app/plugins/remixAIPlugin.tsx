@@ -41,7 +41,7 @@ export class RemixAIPlugin extends ViewPlugin {
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
   contractor: ContractAgent
-  assistantProvider: string = 'anthropic'
+  assistantProvider: string = 'mistralai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
