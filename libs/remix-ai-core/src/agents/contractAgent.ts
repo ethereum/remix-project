@@ -62,11 +62,8 @@ export class ContractAgent {
       await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedFiles.files) {
-        console.log('Writing file', file.fileName)
         const dir = file.fileName.split('/').slice(0, -1).join('/')
-        console.log('Creating directory', dir)
         if (!dirCreated.includes(dir) && dir) {
-          console.log('Creating new directory', dir)
           await this.plugin.call('fileManager', 'mkdir', dir)
           dirCreated.push(dir)
         }
@@ -79,7 +76,6 @@ export class ContractAgent {
       this.nAttempts = 0
       return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
     } catch (error) {
-      console.log('Error writing contracts', error)
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
@@ -105,9 +101,7 @@ export class ContractAgent {
     if (fileName.includes('tests/')) return { compilationSucceeded: true, errors: null }
 
     this.contracts[fileName] = { content : fileContent }
-    console.log('compiling contract', this.contracts)
     const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
-    console.log('compilation result', result)
     const data = result.data
     let error = false
 

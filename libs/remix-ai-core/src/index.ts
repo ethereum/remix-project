@@ -4,7 +4,7 @@ import { IModel, IModelResponse, IModelRequest, InferenceModel, ICompletions,
   IParams, ChatEntry, AIRequestType, IRemoteModel,
   RemoteBackendOPModel, IStreamResponse } from './types/types'
 import { ModelType } from './types/constants'
-import { DefaultModels, InsertionParams, CompletionParams, GenerationParams, AssistantParams} from './types/models'
+import { DefaultModels, InsertionParams, CompletionParams, GenerationParams, AssistantParams } from './types/models'
 import { getCompletionPrompt, getInsertionPrompt } from './prompts/completionPrompts'
 import { buildSolgptPrompt, PromptBuilder } from './prompts/promptBuilder'
 import { RemoteInferencer } from './inferencers/remote/remoteInference'
