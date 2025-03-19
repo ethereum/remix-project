@@ -26,7 +26,8 @@ module.exports = composePlugins(withNx(), (config) => {
     readline: false,
     child_process: false,
     buffer: require.resolve('buffer/'),
-    vm: require.resolve('vm-browserify')
+    vm: require.resolve('vm-browserify'),
+    tty: false
   };
 
   // add externals
@@ -52,6 +53,9 @@ module.exports = composePlugins(withNx(), (config) => {
     test: /\.js$/,
     use: ['source-map-loader'],
     enforce: 'pre'
+  },{
+    test: /\.css$/i,
+    use: ['style-loader', 'css-loader']
   });
 
   config.ignoreWarnings = [/Failed to parse source map/]; // ignore source-map-loader warnings
