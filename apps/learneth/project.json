@@ -3,12 +3,16 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/learneth/src",
   "projectType": "application",
-  "implicitDependencies": [],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "dependencies": ["default"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/learneth",
@@ -23,8 +27,7 @@
         "webpackConfig": "apps/learneth/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -36,7 +39,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/learneth/**/*.ts"],
@@ -44,7 +47,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "learneth:build",
