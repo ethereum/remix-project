@@ -6,4 +6,5 @@ export { ModalProvider, useDialogDispatchers } from './lib/remix-app/context/pro
 export type { AppModal } from './lib/remix-app/interface/index'
 export type { AlertModal, AppState } from './lib/remix-app/interface/index'
 export { ModalTypes, AppModalCancelTypes } from './lib/remix-app/types/index'
-export type { AppAction, appActionTypes } from './lib/remix-app/actions/app'
+export type { AppAction } from './lib/remix-app/actions/app'
+export { appActionTypes } from './lib/remix-app/actions/app'
