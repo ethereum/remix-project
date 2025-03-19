@@ -24,13 +24,6 @@ interface MenuLinksProps {
   contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
-interface MenuProps {
-  verticalIconsPlugin: Plugin
-  profileName: string
-  listItems: {Documentation: string; CanDeactivate: boolean}
-  hide: () => void
-}
-
 const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
   const menuRef = useRef(null)
   const [hasContextMenu, setHasContextMenu] = useState(false)
@@ -41,13 +34,13 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
     menuRef.current.focus()
   }, [])
   useEffect (() => {
-    setHasContextMenu(!props.links.Documentation || !props.links.CanDeactivate)
-  }, [props.links])
+    setHasContextMenu(props.links.Documentation !=="" || props.links.CanDeactivate)
+  }, [props.links, props.contextMenuAction])
 
   return (
     <div
       id="menuItemsContainer"
-      className="p-1 text-left remixui_verticalIconContextcontainer bg-light shadow border"
+      className="p-2 text-left remixui_verticalIconContextcontainer bg-light shadow border"
       style={{
         left: props.pageX,
         top: props.pageY,
@@ -82,7 +75,7 @@ const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuL
             contextMenuAction(evt, profileName, listItems.Documentation)
             hide()
           }}
-          className="px-3 remixui_liitem"
+          className="remixui_liitem"
           key="menuitemdeactivate"
         >
           <FormattedMessage id="pluginManager.deactivate" />
