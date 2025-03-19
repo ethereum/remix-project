@@ -40,7 +40,7 @@ export class ContractAgent {
       console.log('Generation attempts', this.generationAttempts)
       if (this.nAttempts > this.generationAttempts) {
         console.error('Failed to generate the code')
-        return "Failed to generate secure code on this prompt ```" + userPrompt + "````"
+        throw new Error('Failed to generate the code')
       }
 
       for (const file of parsedFiles.files) {
@@ -52,7 +52,7 @@ export class ContractAgent {
             console.log('compilation failed', file.fileName)
             const newPrompt = `The contract ${file.fileName} does not compile. Here is the error message; ${result.errors}. Try again with the same formatting!`
             await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
-            return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
+            throw new Error("Failed to generate secure code on this prompt ```" + userPrompt + "```")
           }
         }
       }
