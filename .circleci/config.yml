@@ -866,6 +866,7 @@ workflows:
       #         parallelism: [1]
   filtered-tests:
     when: << pipeline.parameters.filter >>  # ✅ Conditional workflow execution
+    name: "Filtered Tests"
     jobs:
       - build
       - remix-ide-browser:
