@@ -37,7 +37,7 @@ function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & Location
     .click('*[data-id="localPluginRadioButtoniframe"]')
     .click(profile.location === 'sidePanel' ? '*[data-id="localPluginRadioButtonsidePanel"]' : '*[data-id="localPluginRadioButtonmainPanel"]')
     .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
-    .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
+    .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]')
     .perform((done) => {
       if (focus) {
         browser.waitForElementVisible(`[data-id="verticalIconsKind${profile.name}"]`)
