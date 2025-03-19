@@ -186,6 +186,14 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
       for (const file of filePaths) {
         const pinnedContract = await plugin.call('fileManager', 'readFile', file)
         const pinnedContractObj = JSON.parse(pinnedContract)
+        const code = await plugin.call('blockchain', 'getCode', pinnedContractObj.address)
+        if (code === '0x') {
+          const msg = `Cannot load contract at ${pinnedContractObj.address} . 
+          Contract not found at that address. If you are using a forked environment, please make sure that this contract was originally deployed in this fork.
+          `
+          await plugin.call('terminal', 'terminal', { type: 'error', value: msg })
+          return
+        }
         pinnedContractObj.isPinned = true
         if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
       }
