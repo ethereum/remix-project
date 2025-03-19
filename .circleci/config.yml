@@ -866,14 +866,13 @@ workflows:
       #         parallelism: [1]
   filtered-tests:
     when: << pipeline.parameters.filter >>  # ✅ Conditional workflow execution
-
+    alias: filtered-tests
     jobs:
       - build
       - remix-ide-browser:
           requires:
             - build
           matrix:
-            alias: << pipeline.parameters.filter >>
             parameters:
               browser: ["chrome"]
               script: ["browser_test.sh"]
