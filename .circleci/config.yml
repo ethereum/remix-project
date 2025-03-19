@@ -873,7 +873,7 @@ workflows:
           requires:
             - build
           matrix:
-            alias: nightly-tests
+            alias: << pipeline.parameters.filter >>
             parameters:
               browser: ["chrome"]
               script: ["browser_test.sh"]
