@@ -1,44 +1,26 @@
 {
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    "tsconfig.base.json": "*",
-    "tslint.json": "*",
-    ".eslintrc.json": "*",
-    "nx.json": "*"
+  "extends": "nx/presets/npm.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": ["default"],
+    "dependencies": ["default"]
   },
   "targetDefaults": {
     "build": {
+      "inputs": ["default", "^dependencies"],
       "cache": true
+    },
+    "serve": {
+      "inputs": ["default", "^dependencies"]
+    },
+    "test": {
+      "inputs": ["default", "^dependencies"]
     }
   },
   "defaultBase": "master",
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ],
-    "serve": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ],
-    "test": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
-  },
   "defaultProject": "remix-ide",
   "generators": {
-    "@nrwl/react": {
+    "@nx/react": {
       "application": {
         "style": "css",
         "linter": "eslint",
@@ -52,7 +34,5 @@
         "linter": "eslint"
       }
     }
-  },
-  "useInferencePlugins": false,
-  "useLegacyCache": true
+  }
 }
