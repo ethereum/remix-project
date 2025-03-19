@@ -183,19 +183,23 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
     try {
       const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
       const filePaths = Object.keys(list)
+      let codeError = false
       for (const file of filePaths) {
         const pinnedContract = await plugin.call('fileManager', 'readFile', file)
         const pinnedContractObj = JSON.parse(pinnedContract)
         const code = await plugin.call('blockchain', 'getCode', pinnedContractObj.address)
         if (code === '0x') {
-          const msg = `Cannot load contract at ${pinnedContractObj.address} . 
-          Contract not found at that address. If you are using a forked environment, please make sure that this contract was originally deployed in this fork.
-          `
-          await plugin.call('terminal', 'terminal', { type: 'error', value: msg })
-          return
+          codeError = true
+          const msg = `Cannot load pinned contract at ${pinnedContractObj.address}: Contract not found at that address.`
+          await plugin.call('terminal', 'log', { type: 'error', value: msg })
+        } else {
+          pinnedContractObj.isPinned = true
+          if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
         }
-        pinnedContractObj.isPinned = true
-        if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
+      }
+      if (codeError) {
+        const msg = `Some pinned contracts cannot be loaded.\nCotracts deployed to a (Mainnet, Custom, Sepolia) fork are not persisted unless there were already on chain.\nDirectly forking one of these forks will enable you to use the pinned contracts feature.`
+        await plugin.call('terminal', 'log', { type: 'log', value: msg })
       }
     } catch (err) {
       console.log(err)
