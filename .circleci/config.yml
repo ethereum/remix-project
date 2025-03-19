@@ -864,6 +864,20 @@ workflows:
       #         job: ["0"]
       #         jobsize: ["10"]
       #         parallelism: [1]
+  filtered-tests:
+    when: << pipeline.parameters.filter >>  # ✅ Conditional workflow execution
+    jobs:
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            alias: nightly-tests
+            parameters:
+              browser: ["chrome"]
+              script: ["nightly.sh"]
+              job: ["0"]
+              jobsize: ["1"]
+              parallelism: [15]
   build_all:
     when:
       and:
