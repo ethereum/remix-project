@@ -70,7 +70,7 @@ module.exports = {
 }
 
 const unformattedContract = `pragma solidity >=0.4.22 <0.9.0;
-contract unfomattedContract {
+contract unformattedContract {
    
 bytes32[]       proposalNames;
                         function beforeAll () public {
@@ -81,7 +81,7 @@ proposalNames.push(bytes32("candidate1"));
 
 const formattedContract = `pragma solidity >=0.4.22 <0.9.0;
 
-contract unfomattedContract {
+contract unformattedContract {
     bytes32[] proposalNames;
 
     function beforeAll() public {
@@ -92,7 +92,7 @@ contract unfomattedContract {
 
 const formattedWithTabWidth2 = `pragma solidity >=0.4.22 <0.9.0;
 
-contract unfomattedContract {
+contract unformattedContract {
   bytes32[] proposalNames;
 
   function beforeAll() public {
