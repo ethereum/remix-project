@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {RemixPlugin} from './Client'
 import {Logger} from './logger'
 import {filePanelProfile} from '@remixproject/plugin-api'
-import {filSystemProfile} from '@remixproject/plugin-api'
+import {fileSystemProfile} from '@remixproject/plugin-api'
 import {editorProfile} from '@remixproject/plugin-api'
 import {settingsProfile} from '@remixproject/plugin-api'
 import {networkProfile} from '@remixproject/plugin-api'
@@ -30,7 +30,7 @@ function App() {
   const [profiles, setProfiles] = useState<Profile[]>([
     pluginManagerProfile,
     filePanelProfile,
-    filSystemProfile,
+    fileSystemProfile,
     dGitProfile,
     networkProfile,
     settingsProfile,
