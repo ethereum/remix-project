@@ -22,7 +22,7 @@ export function RecorderUI(props: RecorderProps) {
   useEffect(() => {
     if (props.txCount > 0 && props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(true)
     else setEnableRunButton(false)
-  console.log('props.txCount', props.txCount)
+    console.log('props.txCount', props.txCount)
   }, [props.currentFile, props.txCount])
 
   const toggleClass = () => {
