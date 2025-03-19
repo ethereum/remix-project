@@ -41,7 +41,7 @@ function isRemixTestFile (path: string) {
 /**
  * @dev Process file to prepare sources object to be passed in solc compiler input
  *
- * See: https://solidity.readthedocs.io/en/latest/using-the-compiler.html#input-description
+ * See: https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description
  *
  * @param filePath path of file to process
  * @param sources existing 'sources' object in which keys are the "global" names of the source files and

@@ -311,7 +311,7 @@ export const runTransactions = (
   if (lookupOnly) callinfo = 'call'
   else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelinteractions'
   else callinfo = 'transact'
-  _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
+  _paq.push(['trackEvent', 'udapp', callinfo, plugin.REACT_API.networkName])
 
   const params = funcABI.type !== 'fallback' ? inputsValues : ''
   plugin.blockchain.runOrCallContractMethod(
@@ -383,7 +383,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
     const deployments = []
 
-    for (const proxyAddress of Object.keys(parsedNetworkFile.deployments)) {
+    for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
       if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
         const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
 
@@ -399,7 +399,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
 export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput, solcVersion: string) => {
   // build current contract first to get artefacts.
   const network = plugin.blockchain.networkStatus.network
-  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name === 'VM' ? plugin.blockchain.getProvider() : network.name
   const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
 
   if (networkDeploymentsExists) {
