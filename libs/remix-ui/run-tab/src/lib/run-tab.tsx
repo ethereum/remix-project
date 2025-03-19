@@ -424,7 +424,7 @@ export function RunTabUI(props: RunTabProps) {
             storeScenario={storeNewScenario}
             runCurrentScenario={runScenario}
             scenarioPrompt={scenarioPrompt}
-            txCount={runTab.recorder.transactionCount}
+            count={runTab.recorder.transactionCount}
             currentFile={currentfile}
           />
           <InstanceContainerUI

@@ -20,10 +20,10 @@ export function RecorderUI(props: RecorderProps) {
   }
 
   useEffect(() => {
-    if (props.txCount > 0 && props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(true)
+    if (props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(true)
     else setEnableRunButton(false)
-    console.log('props.txCount', props.txCount)
-  }, [props.currentFile, props.txCount])
+    console.log('props.count', props.count)
+  }, [props.currentFile])
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
@@ -48,7 +48,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipText={<FormattedMessage id="udapp.transactionsCountTooltip" />}
           >
             <div className="ml-2 badge badge-pill badge-primary text-center" style={{ cursor:"default" }} data-title="The number of recorded transactions">
-              {props.txCount}
+              {props.count}
             </div>
           </CustomTooltip>
           <CustomTooltip
@@ -97,18 +97,18 @@ export function RecorderUI(props: RecorderProps) {
             tooltipClasses="text-nowrap"
             tooltipId="remixUdappTransactionSavetooltip"
             tooltipText={
-              props.txCount === 0
+              props.count === 0
                 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
-                : props.txCount === 1
-                  ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.txCount })
-                  : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.txCount })
+                : props.count === 1
+                  ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+                  : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
             }
           >
             <button
               className="btn btn-sm btn-secondary savetransaction udapp_recorder"
-              disabled={props.txCount === 0 ? true : false}
+              disabled={props.count === 0 ? true : false}
               onClick={triggerRecordButton}
-              style={{ pointerEvents: props.txCount === 0 ? 'none' : 'auto' }}
+              style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}
               id="udappRecorderSave"
             >
               <FormattedMessage id="udapp.save" />
@@ -116,7 +116,7 @@ export function RecorderUI(props: RecorderProps) {
           </CustomTooltip>
           <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="tooltip-run-recorder" tooltipText={<FormattedMessage id="udapp.runRecorderTooltip" />}>
             <button
-              className={enableRunButton ? "btn btn-sm btn-secondary runtransaction udapp_runTxs" : "btn btn-sm btn-secondary runtransaction udapp_runTxs disabled"}
+              className={enableRunButton ? "btn btn-sm btn-secondary runtransaction udapp_runTxs" : "btn btn-sm btn-secondary runtransaction udapp_runTxs"}
               data-id="runtransaction"
               disabled={!enableRunButton}
               onClick={handleClickRunButton}
