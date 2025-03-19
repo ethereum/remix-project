@@ -74,3 +74,6 @@ apps/remixdesktop/circom-download
 apps/remixdesktop/log_input_signals.txt
 apps/remixdesktop/log_input_signals_new.txt
 logs
+
+.nx/cache
+.nx/workspace-data

@@ -10,17 +10,11 @@
     ".eslintrc.json": "*",
     "nx.json": "*"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build"
-        ]
-      }
+  "targetDefaults": {
+    "build": {
+      "cache": true
     }
   },
-  "targetDefaults": {},
   "defaultBase": "master",
   "targetDependencies": {
     "build": [
@@ -58,5 +52,7 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "useInferencePlugins": false,
+  "useLegacyCache": true
 }

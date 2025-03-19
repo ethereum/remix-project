@@ -3,12 +3,29 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
-  "implicitDependencies": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler"],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": ["default"],
+    "dependencies": [
+      "{workspaceRoot}/apps/doc-gen/**/*",
+      "{workspaceRoot}/apps/doc-viewer/**/*",
+      "{workspaceRoot}/apps/contract-verification/**/*",
+      "{workspaceRoot}/apps/vyper/**/*",
+      "{workspaceRoot}/apps/solhint/**/*",
+      "{workspaceRoot}/apps/walletconnect/**/*",
+      "{workspaceRoot}/apps/circuit-compiler/**/*",
+      "{workspaceRoot}/apps/learneth/**/*",
+      "{workspaceRoot}/apps/quick-dapp/**/*",
+      "{workspaceRoot}/apps/remix-dapp/**/*",
+      "{workspaceRoot}/apps/noir-compiler/**/*"
+    ]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/remix-ide",
@@ -32,7 +49,6 @@
           "optimization": false,
           "generateIndexHtml": true,
           "extractCss": false
-
         },
         "production": {
           "optimization": true,
@@ -50,11 +66,10 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "remix-ide:build"
-
       },
       "configurations": {
         "development": {
@@ -62,7 +77,7 @@
           "host": "0.0.0.0",
           "port": 8080
         },
-        "hot":{
+        "hot": {
           "buildTarget": "remix-ide:build:development",
           "port": 8080,
           "hmr": true
@@ -74,7 +89,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"],
