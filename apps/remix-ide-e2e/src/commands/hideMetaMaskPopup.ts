@@ -19,7 +19,7 @@ class HideMetaMaskPopup extends EventEmitter {
             display:none !important;
           }
         `)
-        }, [], done())
+        }, [], done)
       })
       .perform((done) => {
         done()
