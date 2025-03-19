@@ -29,17 +29,13 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt) {
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
     try {
-      console.log('Writing contracts', payload)
       this.contracts = {}
       const parsedFiles = payload
       this.generationThreadID = parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
-      console.log('Attempts', this.nAttempts)
-      console.log('Generation attempts', this.generationAttempts)
       if (this.nAttempts > this.generationAttempts) {
-        console.error('Failed to generate the code')
         throw new Error('Failed to generate the code')
       }
 
