@@ -34,8 +34,8 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
 
     })
   })
-    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
-    .click('li[data-id="treeViewLitreeViewItem' + name + '"')
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"]', 60000)
+    .click('li[data-id="treeViewLitreeViewItem' + name + '"]')
     .pause(2000)
     .perform(() => {
       done()
