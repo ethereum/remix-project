@@ -53,6 +53,9 @@ if [ -z "$TESTFILES" ]; then
   exit 0  # ✅ Exit gracefully (change to exit 1 if failure is preferred)
 fi
 
+echo "Running the following test files after splitting:"
+echo "$TESTFILES"
+
 for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || TEST_EXITCODE=1
 done
