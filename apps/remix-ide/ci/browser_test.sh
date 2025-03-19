@@ -31,15 +31,15 @@ if [ -n "$4" ]; then
   TESTFILES=$(echo "$TESTFILES" | grep -E "$FILTER_PATTERN")
 fi
 
+#log the files
+echo "Running the following test files:"
+echo "$TESTFILES"
+
 # Check if TESTFILES has content
 if [ -z "$TESTFILES" ]; then
   echo "No test files found after filtering. Exiting."
   exit 0  # ✅ Exit gracefully (change to exit 1 if failure is preferred)
 fi
-
-#log the files
-echo "Running the following test files:"
-echo "$TESTFILES"
 
 # Split tests only if there are valid test files
 TESTFILES=$(echo "$TESTFILES" | circleci tests split --split-by=timings)

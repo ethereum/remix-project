@@ -723,7 +723,7 @@ jobs:
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./home/circleci/.npm/_logs
 
   tests-passed:
     machine:

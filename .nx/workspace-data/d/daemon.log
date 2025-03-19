@@ -1,0 +1,48 @@
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.746Z - Started listening on: /var/folders/qv/xmjp70m950b67kdf04fcx00h0000gn/T/26481ed23dae92d5c286/d.sock
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.748Z - [WATCHER]: Subscribed to changes within: /Users/filipmertens/Documents/code/remix-project (native)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.757Z - Established a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.758Z - Established a connection. Number of open connections: 2
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.758Z - Closed a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.759Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.759Z - Done responding to the client Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.759Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 0.
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.760Z - Closed a connection. Number of open connections: 0
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.760Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (sources)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.760Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (outputs)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:33.760Z - Server stopped because: "Request to shutdown"
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.527Z - Started listening on: /var/folders/qv/xmjp70m950b67kdf04fcx00h0000gn/T/26481ed23dae92d5c286/d.sock
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.532Z - [WATCHER]: Subscribed to changes within: /Users/filipmertens/Documents/code/remix-project (native)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.533Z - Established a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.533Z - Established a connection. Number of open connections: 2
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.534Z - Closed a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.534Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.535Z - Done responding to the client Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.535Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 1.
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.536Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (sources)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.536Z - Closed a connection. Number of open connections: 0
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.536Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (outputs)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:48:54.537Z - Server stopped because: "Request to shutdown"
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.139Z - Started listening on: /var/folders/qv/xmjp70m950b67kdf04fcx00h0000gn/T/26481ed23dae92d5c286/d.sock
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.142Z - [WATCHER]: Subscribed to changes within: /Users/filipmertens/Documents/code/remix-project (native)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.144Z - Established a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.145Z - Established a connection. Number of open connections: 2
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.147Z - Closed a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.148Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.148Z - Done responding to the client Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.148Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 0.
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.150Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (sources)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.150Z - Closed a connection. Number of open connections: 0
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.150Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (outputs)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:49:27.150Z - Server stopped because: "Request to shutdown"
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.973Z - Started listening on: /var/folders/qv/xmjp70m950b67kdf04fcx00h0000gn/T/26481ed23dae92d5c286/d.sock
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.976Z - [WATCHER]: Subscribed to changes within: /Users/filipmertens/Documents/code/remix-project (native)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.982Z - Established a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.982Z - Established a connection. Number of open connections: 2
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.983Z - Closed a connection. Number of open connections: 1
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.984Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.984Z - Done responding to the client Shutdown initiated
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.984Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 1.
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.985Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (sources)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.985Z - Closed a connection. Number of open connections: 0
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.985Z - [WATCHER]: Stopping the watcher for /Users/filipmertens/Documents/code/remix-project (outputs)
+[NX v20.6.1 Daemon Server] - 2025-03-19T06:50:46.986Z - Server stopped because: "Request to shutdown"
