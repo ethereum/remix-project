@@ -361,6 +361,7 @@
     "rimraf": "^2.6.1",
     "semver": "^7.4.0",
     "solc": "0.8.26",
+    "source-map-loader": "^5.0.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "style-loader": "^3.3.1",
