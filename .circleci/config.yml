@@ -866,7 +866,6 @@ workflows:
       #         parallelism: [1]
   filtered-tests:
     when: << pipeline.parameters.filter >>  # ✅ Conditional workflow execution
-    name: "Filtered Tests"
     jobs:
       - build
       - remix-ide-browser:
@@ -1036,5 +1035,16 @@ workflows:
           filters:
             branches:
               only: remix_beta
+
+
+trigger:
+  - &detect_fork
+    name: "Detect if PR is a fork"
+    command: |
+      if [[ -z "$CIRCLE_PR_REPONAME" ]]; then
+        echo "export IS_FORK=false" >> $BASH_ENV
+      else
+        echo "export IS_FORK=true" >> $BASH_ENV
+      fi
 
 # VS Code Extension Version: 1.5.1
