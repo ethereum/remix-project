@@ -25,7 +25,7 @@ echo "$TESTFILES"
 
 # If $4 is provided, filter by it
 if [ -n "$4" ]; then
-  FILTER_PATTERN=$(echo "$4" | sed 's/,/\\|/g')
+  FILTER_PATTERN=$(echo "$4" | sed -E 's/[,[:space:]]+/|/g')
   echo "Filtering by pattern: $FILTER_PATTERN"
 
   if [ -n "$TESTFILES" ]; then
