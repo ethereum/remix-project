@@ -24,7 +24,7 @@ export default class deleteDynamicArrays implements AnalyzerModule {
       return {
         warning: 'The "delete" operation when applied to a dynamically sized array in Solidity generates code to delete each of the elements contained. If the array is large, this operation can surpass the block gas limit and raise an OOG exception. Also nested dynamically sized objects can produce the same results.',
         location: node.src,
-        more: `https://solidity.readthedocs.io/en/${version}/types.html#delete`
+        more: `https://docs.soliditylang.org/en/${version}/types.html#delete`
       }
     })
   }

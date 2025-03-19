@@ -435,7 +435,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parameters:
       arch:
@@ -521,7 +521,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -798,7 +798,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [1]
+              parallelism: [5]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:

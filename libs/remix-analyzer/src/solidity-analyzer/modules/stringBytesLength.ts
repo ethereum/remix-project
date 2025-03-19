@@ -27,7 +27,7 @@ export default class stringBytesLength implements AnalyzerModule {
       return [{
         warning: '"bytes" and "string" lengths are not the same since strings are assumed to be UTF-8 encoded (according to the ABI definition) therefore one character is not necessarily encoded in one byte of data.',
         location: this.bytesLengthChecks[0].src,
-        more: `https://solidity.readthedocs.io/en/${version}/abi-spec.html#argument-encoding`
+        more: `https://docs.soliditylang.org/en/${version}/abi-spec.html#argument-encoding`
       }]
     } else {
       return []

@@ -35,7 +35,7 @@ module.exports = composePlugins(withNx(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
-  
+
 
   // add externals
   config.externals = {
@@ -66,7 +66,7 @@ module.exports = composePlugins(withNx(), (config) => {
     new webpack.DefinePlugin({
       'fetch': `((...args) => {
         if (args[0].origin === 'https://github.com') {
-          return fetch('https://api.allorigins.win/raw?url' + args[0])
+          return fetch('https://api.allorigins.win/raw?url=' + args[0])
         }
         return fetch(...args)
       })`,
