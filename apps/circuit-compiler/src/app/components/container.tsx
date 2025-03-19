@@ -120,7 +120,7 @@ export function Container () {
             </label>
             <CustomTooltip
               placement="bottom"
-              tooltipId="showCircumCompilerTooltip"
+              tooltipId="showCircomCompilerTooltip"
               tooltipClasses="text-nowrap"
               tooltipText='See compiler license'
             >
