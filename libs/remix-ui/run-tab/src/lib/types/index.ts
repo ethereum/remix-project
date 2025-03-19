@@ -296,7 +296,7 @@ export interface RecorderProps {
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
   scenarioPrompt: (msg: string, defaultValue: string) => JSX.Element,
-  count: number
+  txCount: number
   currentFile: string
   plugin: RunTab
 }
