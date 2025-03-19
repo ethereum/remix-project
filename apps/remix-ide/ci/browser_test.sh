@@ -12,28 +12,32 @@ npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 sleep 5
 
-# grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
-# TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[$2]" | circleci tests split --split-by=timings )
+set -x  # Enable debug mode
+
+echo "Raw test files before filtering:"
 node apps/remix-ide/ci/splice_tests.js $2 $3
-# Get initial test files (without 'metamask' tests)
-TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask')
+
+# Get initial test files
+TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask' || true)
+
+echo "Filtered test files (without metamask):"
+echo "$TESTFILES"
 
 # If $4 is provided, filter by it
-
 if [ -n "$4" ]; then
-  # Convert comma-separated values into a grep OR pattern
   FILTER_PATTERN=$(echo "$4" | sed 's/,/\\|/g')
-  
-  # log the filter
-  echo "Filtering by $FILTER_PATTERN"
+  echo "Filtering by pattern: $FILTER_PATTERN"
 
-  # Apply grep with multiple OR patterns
-  TESTFILES=$(echo "$TESTFILES" | grep -E "$FILTER_PATTERN")
+  if [ -n "$TESTFILES" ]; then
+    TESTFILES=$(echo "$TESTFILES" | grep -E "$FILTER_PATTERN" || true)
+  fi
 fi
 
-#log the files
+# Log final test files
 echo "Running the following test files:"
 echo "$TESTFILES"
+
+set +x  # Disable debug mode
 
 # Check if TESTFILES has content
 if [ -z "$TESTFILES" ]; then
