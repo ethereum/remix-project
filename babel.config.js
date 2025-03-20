@@ -1,5 +1,5 @@
 module.exports = {
-    "presets": ["@babel/preset-typescript", "@babel/preset-env", "@nrwl/react/babel"],
+    "presets": ["@babel/preset-typescript", "@babel/preset-env", "@nx/react/babel"],
     "plugins": [
         "babel-plugin-replace-ts-export-assignment", 
         "@babel/plugin-transform-modules-commonjs", 

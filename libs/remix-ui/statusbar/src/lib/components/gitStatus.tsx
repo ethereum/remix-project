@@ -1,5 +1,5 @@
 import React, { useEffect, Dispatch, useState, useContext } from 'react'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import '../../css/statusbar.css'
 import { CustomTooltip } from '@remix-ui/helper'

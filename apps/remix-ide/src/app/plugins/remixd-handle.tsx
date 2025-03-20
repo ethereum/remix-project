@@ -3,7 +3,7 @@ import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import packageJson from '../../../../../package.json'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import remixdPackageJson from '../../../../../libs/remixd/package.json'
 const remixdVersion = remixdPackageJson.version;
 import { PluginManager } from '@remixproject/engine'

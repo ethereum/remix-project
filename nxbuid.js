@@ -39,7 +39,7 @@ const projectConfig = JSON.parse(fs.readFileSync(projectConfigPath, "utf8"));
 const implicitDependencies = projectConfig.implicitDependencies || [];
 
 // Construct the `nx run-many` command
-const projects = [defaultProject, ...implicitDependencies].join(",");
+const projects = ['remix-lib', defaultProject, ...implicitDependencies].join(",");
 const command = `yarn nx affected --target=build --projects=${projects}  --base=master --configuration=${configArg} --parallel --skip-nx-cache --max-parallel=8`;
 
 console.log("Generated command:", command);
