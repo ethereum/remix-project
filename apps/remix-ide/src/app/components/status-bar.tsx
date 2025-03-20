@@ -26,14 +26,13 @@ export class StatusBar extends Plugin<any, CustomRemixApi> implements StatusBarI
   currentWorkspaceName: string = ''
   isGitRepo: boolean = false
   isAiActive: boolean = false
-  constructor(filePanel: FilePanelType, veritcalIcons: VerticalIcons) {
+  constructor(filePanel: FilePanelType, verticalIcons: VerticalIcons) {
     super(statusBarProfile)
     this.filePanelPlugin = filePanel
-    this.verticalIcons = veritcalIcons
+    this.verticalIcons = verticalIcons
     this.events = new EventEmitter()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'status-bar')
-    this.filePanelPlugin
   }
 
   async isWorkspaceAGitRepo() {

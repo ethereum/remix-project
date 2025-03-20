@@ -31,7 +31,7 @@ export class VerticalIcons extends Plugin {
   renderComponent() {
     const fixedOrder = ['filePanel', 'search', 'solidity', 'udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'pluginManager']
 
-    const divived = Object.values(this.icons)
+    const divided = Object.values(this.icons)
       .map((value) => {
         return {
           ...value,
@@ -42,7 +42,7 @@ export class VerticalIcons extends Plugin {
         return a.timestamp - b.timestamp
       })
 
-    const required = divived
+    const required = divided
       .filter((value) => value.isRequired)
       .sort((a, b) => {
         return fixedOrder.indexOf(a.profile.name) - fixedOrder.indexOf(b.profile.name)
@@ -50,7 +50,7 @@ export class VerticalIcons extends Plugin {
 
     const sorted: IconRecord[] = [
       ...required,
-      ...divived.filter((value) => {
+      ...divided.filter((value) => {
         return !value.isRequired
       })
     ]
@@ -102,7 +102,7 @@ export class VerticalIcons extends Plugin {
       profile: profile,
       active: false,
       pinned: false,
-      canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
+      canBeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
       timestamp: Date.now()
     }
     this.renderComponent()
