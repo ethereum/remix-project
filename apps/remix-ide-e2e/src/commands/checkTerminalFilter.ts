@@ -14,7 +14,7 @@ class CheckTerminalFilter extends EventEmitter {
 }
 
 function checkFilter (browser: NightwatchBrowser, filter: string, inputTest: string, notContain: boolean, done: VoidFunction) {
-  /*if (browser.options.desiredCapabilities.browserName === 'chrome') { // nightwatch deos not handle well that part.... works locally
+  /*if (browser.options.desiredCapabilities.browserName === 'chrome') { // nightwatch does not handle well that part.... works locally
     done()
     return
   }*/
