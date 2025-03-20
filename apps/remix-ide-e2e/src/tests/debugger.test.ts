@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger #group1': function (browser: NightwatchBrowser) {
+  'Should launch debugger #nightly #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .pause(4000)
       // on autocompile sometimes the compiler returns invalid source, so we need to recompile to make sure the source is valid
@@ -111,7 +111,7 @@ module.exports = {
       })
   },
 
-  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #group2': function (browser: NightwatchBrowser) {
+  'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #nightly #group2': function (browser: NightwatchBrowser) {
     /*
       localVariable_step266_ABIEncoder and localVariable_step717_ABIEncoder
       still contains unwanted values (related to decoding calldata types)
