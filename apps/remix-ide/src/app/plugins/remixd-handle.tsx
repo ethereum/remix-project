@@ -2,9 +2,10 @@
 import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import { WebsocketPlugin } from '@remixproject/engine-web'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
+import remixdPackageJson from '../../../../../libs/remixd/package.json'
+const remixdVersion = remixdPackageJson.version;
 import { PluginManager } from '@remixproject/engine'
 import { AppModal, AlertModal, appPlatformTypes } from '@remix-ui/app'
 import { Registry } from '@remix-project/remix-lib'

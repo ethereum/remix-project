@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 declare global {
   interface Window {
     _paq: any

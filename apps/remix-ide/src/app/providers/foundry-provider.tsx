@@ -1,4 +1,4 @@
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import { AbstractProvider } from './abstract-provider'

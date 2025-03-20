@@ -1,54 +1,32 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
-const {withReact} = require('@nrwl/react')
-const webpack = require('webpack')
-const CopyPlugin = require('copy-webpack-plugin')
-const version = require('../../package.json').version
-const fs = require('fs')
-const TerserPlugin = require('terser-webpack-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const path = require('path')
+const { composePlugins, withNx } = require('@nx/webpack');
+const { withReact } = require('@nx/react');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
+const { readFileSync, writeFileSync, readdirSync, copyFileSync } = require('fs');
+const { execSync } = require('child_process');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const path = require('path');
+
+const version = JSON.parse(readFileSync(path.join(__dirname, '../../package.json'), 'utf8')).version;
 
 const versionData = {
   version: version,
   timestamp: Date.now(),
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
-}
+};
 
 const loadLocalSolJson = async () => {
-  //execute apps/remix-ide/ci/downloadsoljson.sh
-  console.log('loading local soljson')
-  const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
-  // show output
-  console.log(child)
-}
+  console.log('loading local soljson');
+  const child = execSync(`bash ${path.join(__dirname, 'ci/downloadsoljson.sh')}`, { encoding: 'utf8', cwd: process.cwd(), shell: true });
+  console.log(child);
+};
 
-fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
+writeFileSync(path.join(__dirname, 'src/assets/version.json'), JSON.stringify(versionData));
 
+loadLocalSolJson();
 
-loadLocalSolJson()
-
-const project = fs.readFileSync(__dirname + '/project.json', 'utf8')
-
-const implicitDependencies = JSON.parse(project).implicitDependencies
-
-const copyPatterns = implicitDependencies.map((dep) => {
-  try {
-    fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
-  }
-  catch (e) {
-    console.log('error', e)
-    return false
-  }
-})
-
-console.log('Copying plugins... ', copyPatterns)
-
-// Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
-  // Update the webpack config as needed here.
-  // e.g. `config.plugins.push(new MyPlugin())`
-
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
@@ -58,67 +36,40 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     http: require.resolve('stream-http'),
     https: require.resolve('https-browserify'),
     constants: require.resolve('constants-browserify'),
-    os: false, //require.resolve("os-browserify/browser"),
-    timers: false, // require.resolve("timers-browserify"),
     zlib: require.resolve('browserify-zlib'),
+    buffer: require.resolve('buffer/'),
+    vm: require.resolve('vm-browserify'),
+    assert: require.resolve('assert/'),  // Added assert fallback
     'assert/strict': require.resolve('assert/'),
+    os: false,
+    timers: false,
     fs: false,
     module: false,
     tls: false,
     net: false,
     readline: false,
     child_process: false,
-    buffer: require.resolve('buffer/'),
-    vm: require.resolve('vm-browserify')
-  }
+    tty: false,
+    worker_threads: false // Explicitly ignore worker_threads
+  };
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc',
-  }
-
-  // uncomment this to enable react profiling
-  /*
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    'react-dom$': 'react-dom/profiling',
-  }
-  */
-
-  // use the web build instead of the node.js build
-  // we do like that because using "config.resolve.alias" doesn't work
-  let  pkgVerkle = fs.readFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), 'utf8')
-  pkgVerkle = pkgVerkle.replace('"main": "./nodejs/rust_verkle_wasm.js",', '"main": "./web/rust_verkle_wasm.js",')
-  fs.writeFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), pkgVerkle)
-
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    // 'rust-verkle-wasm$': path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/web/run_verkle_wasm.js')
-  }
-
+    solc: 'solc'
+  };
 
   // add public path
-  if(process.env.NX_DESKTOP_FROM_DIST){
-    config.output.publicPath = './'
-  }else{
-    config.output.publicPath = '/'
-  }
+  config.output.publicPath = process.env.NX_DESKTOP_FROM_DIST ? './' : '/';
 
-  // set filename
-  config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
-  config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`
+  config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`;
+  config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`;
 
-  // add copy & provide plugin
   config.plugins.push(
     new CopyPlugin({
       patterns: [
-        {
-          from: '../../node_modules/monaco-editor/min/vs',
-          to: 'assets/js/monaco-editor/min/vs'
-        },
-        ...copyPatterns
-      ].filter(Boolean)
+        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' }
+      ]
     }),
     new CopyFileAfterBuild(),
     new webpack.ProvidePlugin({
@@ -126,16 +77,16 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       url: ['url', 'URL'],
       process: 'process/browser'
     })
-  )
+  );
 
   // source-map loader
   config.module.rules.push({
     test: /\.js$/,
     use: ['source-map-loader'],
     enforce: 'pre'
-  })
+  });
 
-  config.ignoreWarnings = [/Failed to parse source map/, /require function/] // ignore source-map-loader warnings & AST warnings
+  config.ignoreWarnings = [/Failed to parse source map/, /require function/];
 
   // set minimizer
   config.optimization.minimizer = [
@@ -145,24 +96,22 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         ecma: 2015,
         compress: false,
         mangle: false,
-        format: {
-          comments: false
-        }
+        format: { comments: false }
       },
       extractComments: false
     }),
     new CssMinimizerPlugin()
-  ]
+  ];
 
-  // minify code
-  if(process.env.NX_DESKTOP_FROM_DIST)
-    config.optimization.minimize = true
+  if (process.env.NX_DESKTOP_FROM_DIST) {
+    config.optimization.minimize = true;
+  }
 
   config.watchOptions = {
     ignored: /node_modules/
-  }
+  };
 
-  console.log('config', process.env.NX_DESKTOP_FROM_DIST)
+  console.log('config', process.env.NX_DESKTOP_FROM_DIST);
   return config;
 });
 
@@ -170,20 +119,17 @@ class CopyFileAfterBuild {
   apply(compiler) {
     const onEnd = async () => {
       try {
-        console.log('running CopyFileAfterBuild')
-        // This copy the raw-loader files used by the etherscan plugin to the remix-ide root folder.
-        // This is needed because by default the etherscan resources are served from the /plugins/etherscan/ folder,
-        // but the raw-loader try to access the resources from the root folder.
-        const files = fs.readdirSync('./dist/apps/etherscan')
+        console.log('running CopyFileAfterBuild');
+        const files = readdirSync('./dist/apps/etherscan');
         files.forEach((file) => {
           if (file.includes('plugin-etherscan')) {
-            fs.copyFileSync('./dist/apps/etherscan/' + file, './dist/apps/remix-ide/' + file)
+            copyFileSync(`./dist/apps/etherscan/${file}`, `./dist/apps/remix-ide/${file}`);
           }
-        })
+        });
       } catch (e) {
-        console.error('running CopyFileAfterBuild failed with error: ' + e.message)
+        console.error('running CopyFileAfterBuild failed with error: ' + e.message);
       }
-    }
-    compiler.hooks.afterEmit.tapPromise('FileManagerPlugin', onEnd)
+    };
+    compiler.hooks.afterEmit.tapPromise('FileManagerPlugin', onEnd);
   }
 }

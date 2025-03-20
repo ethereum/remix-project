@@ -1,5 +1,5 @@
 import { WebsocketPlugin } from '@remixproject/engine-web'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'hardhat',

@@ -3,7 +3,7 @@
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { Registry } from '@remix-project/remix-lib'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'

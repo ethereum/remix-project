@@ -1,5 +1,5 @@
 import { IframePlugin, IframeProfile, ViewPlugin } from '@remixproject/engine-web'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { customScriptRunnerConfig, IScriptRunnerState, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner'
 import { Profile } from '@remixproject/plugin-utils'

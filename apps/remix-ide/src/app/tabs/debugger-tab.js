@@ -2,7 +2,7 @@ import { Web3 } from 'web3'
 import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
 import { DebuggerApiMixin } from '@remix-ui/debugger-ui'
 import { ViewPlugin } from '@remixproject/engine-web'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { bleach } from '@remix-ui/helper'
 import { compilationFinishedToastMsg, compilingToastMsg, notFoundToastMsg, sourceVerificationNotAvailableToastMsg } from '@remix-ui/helper'

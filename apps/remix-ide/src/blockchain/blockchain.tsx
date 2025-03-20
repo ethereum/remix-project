@@ -17,7 +17,7 @@ import { Provider } from '@remix-ui/environment-explorer'
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
-import * as packageJson from '../../../../package.json'
+import packageJson from '../../../../package.json'
 
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 

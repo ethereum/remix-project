@@ -11,7 +11,7 @@ import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
 import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 
 import './css/style.css'
 

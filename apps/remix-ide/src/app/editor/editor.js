@@ -3,7 +3,7 @@ import React from 'react' // eslint-disable-line
 import { resolve } from 'path'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
 const EventManager = require('../../lib/events')
