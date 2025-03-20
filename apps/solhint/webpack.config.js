@@ -1,5 +1,5 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
-const {withReact} = require('@nrwl/react')
+const { composePlugins, withNx } = require('@nx/webpack')
+const { withReact } = require('@nx/react')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -12,7 +12,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     path: false,
     os: false,
     fs: false,
-    module: false
+    module: false,
+    tty: false,
+    worker_threads: false
   }
 
   // add public path
