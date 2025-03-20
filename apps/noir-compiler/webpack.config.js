@@ -1,18 +1,12 @@
-const { composePlugins, withNx } = require('@nrwl/webpack')
-const webpack = require('webpack')
-const TerserPlugin = require("terser-webpack-plugin")
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
-const fs = require('fs')
-const path = require('path')
+const { composePlugins, withNx } = require('@nx/webpack');
+const webpack = require('webpack');
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
-  // use the web build for noir-wasm
-  let pkgNoirWasm = fs.readFileSync(path.resolve(__dirname, '../../node_modules/@noir-lang/noir_wasm/package.json'), 'utf8')
-  let typeCount = 0
-
-  pkgNoirWasm = pkgNoirWasm.replace(/"node"/, '"./node"').replace(/"import"/, '"./import"').replace(/"require"/, '"./require"').replace(/"types"/g, match => ++typeCount === 2 ? '"./types"' : match).replace(/"default"/, '"./default"')
-  fs.writeFileSync(path.resolve(__dirname, '../../node_modules/@noir-lang/noir_wasm/package.json'), pkgNoirWasm)
+  // Update the webpack config as needed here.
+  // e.g. `config.plugins.push(new MyPlugin())`
 
   // add fallback for node modules
   config.resolve.fallback = {
@@ -23,7 +17,7 @@ module.exports = composePlugins(withNx(), (config) => {
     "http": require.resolve("stream-http"),
     "https": require.resolve("https-browserify"),
     "constants": require.resolve("constants-browserify"),
-    "os": false, //require.resolve("os-browserify/browser"),
+    "os": false, // require.resolve("os-browserify/browser"),
     "timers": false, // require.resolve("timers-browserify"),
     "zlib": require.resolve("browserify-zlib"),
     "fs": false,
@@ -33,35 +27,34 @@ module.exports = composePlugins(withNx(), (config) => {
     "readline": false,
     "child_process": false,
     "buffer": require.resolve("buffer/"),
-    "vm": require.resolve('vm-browserify'),
-  }
-
+    "vm": require.resolve("vm-browserify"),
+    "tty": false
+  };
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc',
-  }
+    solc: 'solc'
+  };
 
   // add public path
-  config.output.publicPath = './'
+  config.output.publicPath = './';
 
   // add copy & provide plugin
   config.plugins.push(
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser',
+      process: 'process/browser'
     })
-  )
+  );
 
   // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
   config.plugins.push(
     new webpack.DefinePlugin({
-      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID),
+      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID)
     })
-  )
-
+  );
   config.plugins.push(
     new webpack.DefinePlugin({
       'fetch': `((...args) => {
@@ -78,10 +71,13 @@ module.exports = composePlugins(withNx(), (config) => {
     test: /\.js$/,
     use: ["source-map-loader"],
     enforce: "pre"
-  })
+  }
+    , {
+      test: /\.css$/i,
+      use: ['style-loader', 'css-loader']
+    });
 
-  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
-
+  config.ignoreWarnings = [/Failed to parse source map/]; // ignore source-map-loader warnings
 
   // set minimizer
   config.optimization.minimizer = [
@@ -92,19 +88,19 @@ module.exports = composePlugins(withNx(), (config) => {
         compress: false,
         mangle: false,
         format: {
-          comments: false,
-        },
+          comments: false
+        }
       },
-      extractComments: false,
+      extractComments: false
     }),
-    new CssMinimizerPlugin(),
+    new CssMinimizerPlugin()
   ];
 
   config.watchOptions = {
     ignored: /node_modules/
-  }
+  };
 
-  config.experiments.syncWebAssembly = true
+  config.experiments.syncWebAssembly = true;
 
   return config;
 });
