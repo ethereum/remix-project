@@ -39,8 +39,8 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     zlib: require.resolve('browserify-zlib'),
     buffer: require.resolve('buffer/'),
     vm: require.resolve('vm-browserify'),
-    assert: require.resolve('assert/'),  // Added assert fallback
-    'assert/strict': require.resolve('assert/'),
+    'assert/strict': require.resolve('assert/'), // Ensure 'assert/strict' is resolved
+    assert: require.resolve('assert/'),
     os: false,
     timers: false,
     fs: false,
