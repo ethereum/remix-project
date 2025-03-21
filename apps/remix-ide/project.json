@@ -25,7 +25,7 @@
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
-      "inputs": ["default", "^dependencies"],
+      "inputs": ["default", "{workspaceRoot}/apps/doc-gen/src"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/remix-ide",
