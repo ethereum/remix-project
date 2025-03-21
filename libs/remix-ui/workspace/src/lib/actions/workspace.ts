@@ -39,7 +39,7 @@ import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { ROOT_PATH } from '../utils/constants'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'

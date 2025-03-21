@@ -2,7 +2,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react' // eslint-disable-line
 import { gitState, GitUI } from '@remix-ui/git'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'dgit',

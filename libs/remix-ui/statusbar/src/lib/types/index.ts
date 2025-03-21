@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 import { Plugin } from '@remixproject/engine'
 import { FilePanelType } from '@remix-ui/workspace'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import { VerticalIcons } from 'apps/remix-ide/src/app/components/vertical-icons'
 import { CustomRemixApi } from '@remix-api'
 export interface PluginProfile {

@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/nx/enforce-module-boundaries */
 import React from 'react' // eslint-disable-line
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
@@ -6,7 +6,7 @@ import isElectron from 'is-electron'
 import { addressToString } from '@remix-ui/helper'
 import { InjectedProviderDefault } from '../providers/injected-provider-default'
 import { InjectedCustomProvider } from '../providers/injected-custom-provider'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { EventManager } from '@remix-project/remix-lib'
 import type { Blockchain } from '../../blockchain/blockchain'
 import { ProviderConfig } from '@remix-ui/environment-explorer'

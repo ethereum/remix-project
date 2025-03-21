@@ -4,7 +4,7 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import './style/environment-explorer.css'
 import { EnvironmentExplorerUI, Provider } from '@remix-ui/environment-explorer'
 
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 
 const _paq = (window._paq = window._paq || [])
 

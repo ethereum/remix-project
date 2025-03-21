@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { AbstractPanel } from './panel'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import { PluginViewWrapper } from '@remix-ui/helper'
 

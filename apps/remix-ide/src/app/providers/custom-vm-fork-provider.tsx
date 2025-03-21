@@ -1,6 +1,6 @@
 import React, {useRef} from 'react' // eslint-disable-line
 import { FormattedMessage } from 'react-intl'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 import { BasicVMProvider } from './vm-provider'
 import { Hardfork } from '@ethereumjs/common'

@@ -1,7 +1,7 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/nx/enforce-module-boundaries */
 import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen'
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'

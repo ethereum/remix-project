@@ -3,12 +3,30 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
-  "implicitDependencies": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler"],
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*"
+    ],
+    "production": [
+      "default"
+    ]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nx/webpack:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "development",
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler"]
+        }
+      ],
+      "inputs": [
+        "default"
+      ],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/remix-ide",
@@ -32,7 +50,6 @@
           "optimization": false,
           "generateIndexHtml": true,
           "extractCss": false
-
         },
         "production": {
           "optimization": true,
@@ -50,11 +67,10 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "remix-ide:build"
-
       },
       "configurations": {
         "development": {
@@ -62,7 +78,7 @@
           "host": "0.0.0.0",
           "port": 8080
         },
-        "hot":{
+        "hot": {
           "buildTarget": "remix-ide:build:development",
           "port": 8080,
           "hmr": true
@@ -74,10 +90,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"],
+        "lintFilePatterns": [
+          "apps/remix-ide/**/*.{ts,tsx,js,jsx}"
+        ],
         "eslintConfig": "apps/remix-ide/.eslintrc"
       }
     }

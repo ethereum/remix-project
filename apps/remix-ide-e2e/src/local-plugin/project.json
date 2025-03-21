@@ -3,11 +3,16 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide-e2e/src/local-plugin/src/",
   "projectType": "application",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": ["default"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "inputs": ["default"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/plugin_api",
@@ -16,8 +21,7 @@
         "main": "apps/remix-ide-e2e/src/local-plugin/src/main.tsx",
         "polyfills": "apps/remix-ide-e2e/src/local-plugin/src/polyfills.ts",
         "tsConfig": "apps/remix-ide-e2e/src/local-plugin/tsconfig.app.json",
-        "assets": [
-        ],
+        "assets": [],
         "styles": [
           "apps/remix-ide-e2e/src/local-plugin/src/styles.css"
         ],
@@ -25,8 +29,7 @@
         "webpackConfig": "apps/remix-ide-e2e/src/local-plugin/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -38,7 +41,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "plugin_api:build",

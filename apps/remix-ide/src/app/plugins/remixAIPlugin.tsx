@@ -1,4 +1,4 @@
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
