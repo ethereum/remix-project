@@ -521,6 +521,7 @@ export function Workspace() {
     try {
       await global.dispatchSwitchToWorkspace(name)
       global.dispatchHandleExpandPath([])
+      _paq.push(['trackEvent', 'Workspace', 'switchWorkspace', name])
     } catch (e) {
       global.modal(
         intl.formatMessage({ id: 'filePanel.workspace.switch' }),
