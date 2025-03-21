@@ -4,28 +4,29 @@
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
   "namedInputs": {
-    "default": ["{projectRoot}/**/*"],
-    "production": ["default"],
-    "dependencies": [
-      "{workspaceRoot}/apps/doc-gen/**/*",
-      "{workspaceRoot}/apps/doc-viewer/**/*",
-      "{workspaceRoot}/apps/contract-verification/**/*",
-      "{workspaceRoot}/apps/vyper/**/*",
-      "{workspaceRoot}/apps/solhint/**/*",
-      "{workspaceRoot}/apps/walletconnect/**/*",
-      "{workspaceRoot}/apps/circuit-compiler/**/*",
-      "{workspaceRoot}/apps/learneth/**/*",
-      "{workspaceRoot}/apps/quick-dapp/**/*",
-      "{workspaceRoot}/apps/remix-dapp/**/*",
-      "{workspaceRoot}/apps/noir-compiler/**/*"
+    "default": [
+      "{projectRoot}/**/*"
+    ],
+    "production": [
+      "default"
     ]
   },
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "development",
-      "inputs": ["default", "{workspaceRoot}/apps/doc-gen/src"],
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler"]
+        }
+      ],
+      "inputs": [
+        "default"
+      ],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/remix-ide",
@@ -90,9 +91,13 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"],
+        "lintFilePatterns": [
+          "apps/remix-ide/**/*.{ts,tsx,js,jsx}"
+        ],
         "eslintConfig": "apps/remix-ide/.eslintrc"
       }
     }
