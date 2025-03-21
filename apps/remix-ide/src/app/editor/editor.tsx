@@ -7,7 +7,6 @@ import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
 import EventManager from '../../lib/events'
-import { EditorEvent, EditorSession, IEventManager } from '../../types'
 
 const profile = {
   displayName: 'Editor',
@@ -18,25 +17,6 @@ const profile = {
 }
 
 export default class Editor extends Plugin {
-  _themes: { light: string; dark: string; remixDark: string }
-  registeredDecorations: { sourceAnnotationsPerFile: unknown; markerPerFile: unknown; lineTextPerFile: unknown }
-  currentDecorations: { sourceAnnotationsPerFile: unknown; markerPerFile: unknown; lineTextPerFile: unknown }
-  event: IEventManager
-  sessions: Record<string, EditorSession>
-  readOnlySessions: Record<string, boolean>
-  previousInput: string
-  saveTimeout: any
-  emptySession: null
-  modes: { sol: string; yul: string; mvir: string; js: string; py: string; vy: string; zok: string; lex: string; txt: string; json: string; abi: string; rs: string; cairo: string; ts: string; move: string; circom: string; nr: string; toml: string }
-  activated: boolean
-  events: EditorEvent
-  api: any
-  dispatch: (state: unknown) => void
-  ref: any
-  currentFile: string
-  currentThemeType: string
-  currentDiffFile: any
-  isDiff: boolean
   constructor () {
     super(profile)
 
@@ -90,7 +70,7 @@ export default class Editor extends Plugin {
     // to be implemented by the react component
     this.api = {}
     this.dispatch = null
-    this.ref = {}
+    this.ref = null
   }
 
   setDispatch (dispatch) {
@@ -98,39 +78,33 @@ export default class Editor extends Plugin {
   }
 
   updateComponent(state) {
-    console.log('session', this)
-    return (
-      <EditorUI
-        editorAPI={state.api}
-        themeType={state.currentThemeType}
-        currentFile={state.currentFile}
-        currentDiffFile={state.currentDiffFile}
-        events={state.events}
-        plugin={state.plugin}
-        isDiff={state.isDiff}
-      />
-    )
-  }
-
-  private refMethod (element){
-    if (element === null) return
-    this.ref = element
-    this.ref.currentContent = () => this.currentContent() // used by e2e test
-    this.ref.setCurrentContent = (value) => {
-      if (this.sessions[this.currentFile]) {
-        this.sessions[this.currentFile].setValue(value)
-        this._onChange(this.currentFile)
-      }
-    }
-    this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
-    this.ref.getCursorPosition = () => this.getCursorPosition()
-    this.ref.addDecoration = (marker, filePath, typeOfDecoration) => this.addDecoration(marker, filePath, typeOfDecoration)
-    this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)
-    this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
+    return <EditorUI
+      editorAPI={state.api}
+      themeType={state.currentThemeType}
+      currentFile={state.currentFile}
+      currentDiffFile={state.currentDiffFile}
+      events={state.events}
+      plugin={state.plugin}
+      isDiff={state.isDiff}
+    />
   }
 
   render () {
-    return <div id='editorView'>
+    return <div ref={(element)=>{
+      this.ref = element
+      this.ref.currentContent = () => this.currentContent() // used by e2e test
+      this.ref.setCurrentContent = (value) => {
+        if (this.sessions[this.currentFile]) {
+          this.sessions[this.currentFile].setValue(value)
+          this._onChange(this.currentFile)
+        }
+      }
+      this.ref.gotoLine = (line, column) => this.gotoLine(line, column || 0)
+      this.ref.getCursorPosition = () => this.getCursorPosition()
+      this.ref.addDecoration = (marker, filePath, typeOfDecoration) => this.addDecoration(marker, filePath, typeOfDecoration)
+      this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)
+      this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
+    }} id='editorView'>
       <PluginViewWrapper plugin={this} />
     </div>
   }
@@ -228,11 +202,10 @@ export default class Editor extends Plugin {
   _getMode (path) {
     if (!path) return this.modes.txt
     const root = path.split('#')[0].split('?')[0]
-    const ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
-    let found
-    if (ext) found = ext[0]
-    else found = 'txt'
-    return ext && this.modes[found] ? this.modes[found] : this.modes.txt
+    let ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    if (ext) ext = ext[0]
+    else ext = 'txt'
+    return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
   }
 
   async handleTypeScriptDependenciesOf (path, content, readFile, exists) {
@@ -274,7 +247,7 @@ export default class Editor extends Plugin {
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  async _createSession (path, content, mode, readOnly = false) {
+  async _createSession (path, content, mode, readOnly) {
     if (!this.activated) return
 
     this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])
@@ -608,7 +581,7 @@ export default class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'markerPerFile')//, this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 
@@ -620,7 +593,7 @@ export default class Editor extends Plugin {
   discardLineTexts() {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile')//, this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 
