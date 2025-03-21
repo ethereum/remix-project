@@ -129,6 +129,14 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const pinContract = async() => {
+    const provider = await props.plugin.call('blockchain', 'getProviderObject')
+    if (!provider.config.statePath && provider.config.isRpcForkedState) {
+      // we can't pin a contract in the following case:
+      // - state is not persisted
+      // - future state is browser stored (e.g it's not just a simple RPC provider)
+      props.plugin.call('notification', 'toast', 'Cannot pin this contract in the current context: state is not persisted. Please fork this provider to start pinning a contract to it.')
+      return
+    }
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const objToSave = {
       name: props.instance.name,
