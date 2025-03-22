@@ -1024,10 +1024,7 @@ export class Blockchain extends Plugin {
                 let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
                 stateDetails = JSON.parse(stateDetails)
                 state = JSON.parse(state)
-                state['stateName'] = stateDetails.stateName
-                state['forkName'] = stateDetails.forkName
-                state['savingTimestamp'] = stateDetails.savingTimestamp
-                state = JSON.stringify(state, null, 2)
+                state = JSON.stringify({...stateDetails, ...(state as any)}, null, 2)
               }
               this.call('fileManager', 'writeFile', provider.config.statePath, state)
             } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
