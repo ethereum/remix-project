@@ -203,6 +203,11 @@ class AppComponent {
     const pluginLoader = this.appManager.pluginLoader
     this.panels = {}
     this.workspace = pluginLoader.get()
+    if (pluginLoader.current === 'queryParams') {
+      this.workspace.map((workspace) => {
+        _paq.push(['trackEvent', 'App', 'queryParams-activated', workspace])
+      })
+    }
     this.engine = new RemixEngine()
     this.engine.register(appManager)
 
@@ -647,6 +652,7 @@ class AppComponent {
               if (callDetails.length > 1) {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', params.call])
                 //@ts-ignore
                 await this.appManager.call(...callDetails).catch(console.error)
               }
@@ -657,6 +663,7 @@ class AppComponent {
 
               // call all functions in the list, one after the other
               for (const call of calls) {
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', call])
                 const callDetails = call.split('//')
                 if (callDetails.length > 1) {
                   this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
