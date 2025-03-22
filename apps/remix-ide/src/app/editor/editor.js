@@ -53,7 +53,7 @@ export default class Editor extends Plugin {
       ts: 'typescript',
       move: 'move',
       circom: 'circom',
-      nr: 'noir',
+      nr: 'move',
       toml: 'toml'
     }
 
