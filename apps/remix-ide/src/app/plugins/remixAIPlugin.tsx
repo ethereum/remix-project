@@ -41,7 +41,7 @@ export class RemixAIPlugin extends ViewPlugin {
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
   contractor: ContractAgent
-  assistantProvider: string = 'mistralai'
+  assistantProvider: string = 'openai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -68,7 +68,7 @@ export class RemixAIPlugin extends ViewPlugin {
     this.completionAgent = new CodeCompletionAgent(this)
     this.securityAgent = new SecurityAgent(this)
     this.codeExpAgent = new CodeExplainAgent(this)
-    this.contractor = new ContractAgent(this)
+    this.contractor = ContractAgent.getInstance(this)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -181,7 +181,7 @@ export class RemixAIPlugin extends ViewPlugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
-    console.log('Generating code for prompt:', userPrompt)
+    console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {

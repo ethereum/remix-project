@@ -67,3 +67,11 @@ export const parseUserInput = (input: string) => {
   if (input.trimStart().startsWith('/generate')) return [true, input.replace('/generate', '').trimStart()]
   else return [false, input]
 }
+
+export const setProvider = (userPrompt: string) => {
+  if (userPrompt.trimStart().startsWith('/setProvider')) {
+    const provider = userPrompt.replace('/setProvider', '').trimStart()
+    return [true, provider]
+  }
+  return [false, '']
+}
