@@ -135,8 +135,8 @@ export type EditorAPIType = {
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
-  contextualListener: any
-  activated: boolean
+  contextualListener?: any
+  activated?: boolean
   themeType: string
   currentFile: string
   currentDiffFile: string
