@@ -1,7 +1,7 @@
 /* global ethereum */
 'use strict'
 import { hash } from '@remix-project/remix-lib'
-import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0 } from '@ethereumjs/util'
+import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0, BIGINT_1, equalsBytes } from '@ethereumjs/util'
 import { keccak256 } from 'ethereum-cryptography/keccak'
 import { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
@@ -15,8 +15,8 @@ import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager } from '@ethereumjs/statemanager'
 import { EVMStateManagerInterface, StorageDump } from '@ethereumjs/common'
 import { EVM } from '@ethereumjs/evm'
-import { Blockchain } from '@ethereumjs/blockchain'
-import { Block } from '@ethereumjs/block'
+import { Blockchain, DBSaveLookups } from '@ethereumjs/blockchain'
+import { Block, BlockHeader } from '@ethereumjs/block'
 import { TypedTransaction } from '@ethereumjs/tx'
 import { State } from './provider'
 import { hexToBytes } from 'web3-utils'
@@ -254,7 +254,8 @@ export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
   stateManager: EVMStateManagerInterface,
-  common: Common
+  common: Common,
+  baseBlockNumber: string // hex
 }
 
 export class VMCommon extends Common {
@@ -267,6 +268,130 @@ export class VMCommon extends Common {
   }
 }
 
+const overrideBlockchain = (blockchain: Blockchain, context: VMContext) => {
+  /**
+   * Find the common ancestor of the new block and the old block.
+   * @param newHeader - the new block header
+   */
+  const findCommonAncestor = async (newHeader: BlockHeader) => {
+    if (!(blockchain as any)._headHeaderHash) throw new Error('No head header set')
+    const ancestorHeaders = new Set<BlockHeader>()
+
+    let header = await (blockchain as any)._getHeader((blockchain as any)._headHeaderHash)
+    if (header.number > newHeader.number) {
+      header = await (blockchain as any).getCanonicalHeader(newHeader.number)
+      ancestorHeaders.add(header)
+    } else {
+      while (header.number !== newHeader.number && newHeader.number > BIGINT_0) {
+        try {
+          newHeader = await (blockchain as any)._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
+          ancestorHeaders.add(newHeader)
+        } catch (err) {
+          // parent header not found, we reach the start of the fork, jumping to the beginning.
+          if (context.blocks['0x0']) newHeader = context.blocks['0x0'].header
+          break
+        }
+      }
+    }
+    if (header.number !== newHeader.number) {
+      throw new Error('Failed to find ancient header')
+    }
+    while (!equalsBytes(header.hash(), newHeader.hash()) && header.number > BIGINT_0) {
+      header = await (blockchain as any).getCanonicalHeader(header.number - BIGINT_1)
+      ancestorHeaders.add(header)
+      newHeader = await (blockchain as any)._getHeader(newHeader.parentHash, newHeader.number - BIGINT_1)
+      ancestorHeaders.add(newHeader)
+    }
+    if (!equalsBytes(header.hash(), newHeader.hash())) {
+      throw new Error('Failed to find ancient header')
+    }
+    return {
+      commonAncestor: header,
+      ancestorHeaders: Array.from(ancestorHeaders),
+    }
+  }
+
+  /**
+   * Given a `header`, put all operations to change the canonical chain directly
+   * into `ops`. This walks the supplied `header` backwards. It is thus assumed
+   * that this header should be canonical header. For each header the
+   * corresponding hash corresponding to the current canonical chain in the DB
+   * is checked. If the number => hash reference does not correspond to the
+   * reference in the DB, we overwrite this reference with the implied number =>
+   * hash reference Also, each `_heads` member is checked; if these point to a
+   * stale hash, then the hash which we terminate the loop (i.e. the first hash
+   * which matches the number => hash of the implied chain) is put as this stale
+   * head hash. The same happens to _headBlockHash.
+   * @param header - The canonical header.
+   * @param ops - The database operations list.
+   * @hidden
+   */
+  const _rebuildCanonical = async (header: BlockHeader, ops: any[]) => {
+    let currentNumber = header.number
+    let currentCanonicalHash: Uint8Array = header.hash()
+
+    // track the staleHash: this is the hash currently in the DB which matches
+    // the block number of the provided header.
+    let staleHash: Uint8Array | false = false
+    const staleHeads: string[] = []
+    let staleHeadBlock = false
+
+    const loopCondition = async () => {
+      staleHash = await (blockchain as any).safeNumberToHash(currentNumber)
+      currentCanonicalHash = header.hash()
+      return staleHash === false || !equalsBytes(currentCanonicalHash, staleHash)
+    }
+
+    while (await loopCondition()) {
+      // handle genesis block
+      const blockHash = header.hash()
+      const blockNumber = header.number
+
+      if (blockNumber === BIGINT_0) {
+        break
+      }
+
+      DBSaveLookups(blockHash, blockNumber).map((op) => {
+        ops.push(op)
+      })
+
+      // mark each key `_heads` which is currently set to the hash in the DB as
+      // stale to overwrite later in `_deleteCanonicalChainReferences`.
+      for (const name of Object.keys((blockchain as any)._heads)) {
+        if (staleHash && equalsBytes((blockchain as any)._heads[name], staleHash)) {
+          staleHeads.push(name)
+        }
+      }
+      // flag stale headBlock for reset
+      if (
+        staleHash &&
+        (blockchain as any)._headBlockHash !== undefined &&
+        equalsBytes((blockchain as any)._headBlockHash, staleHash) === true
+      ) {
+        staleHeadBlock = true
+      }
+
+      try {
+        header = await (blockchain as any)._getHeader(header.parentHash, --currentNumber)
+      } catch (e) {
+        break
+      }
+    }
+    // When the stale hash is equal to the blockHash of the provided header,
+    // set stale heads to last previously valid canonical block
+    for (const name of staleHeads) {
+      (blockchain as any)._heads[name] = currentCanonicalHash
+    }
+    // set stale headBlock to last previously valid canonical block
+    if (staleHeadBlock) {
+      (blockchain as any)._headBlockHash = currentCanonicalHash
+    }
+  }
+
+  (blockchain as any)['findCommonAncestor'] = findCommonAncestor;
+  (blockchain as any)['_rebuildCanonical'] = _rebuildCanonical
+}
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -275,7 +400,6 @@ export class VMContext {
   blockGasLimitDefault: number
   blockGasLimit: number
   blocks: Record<string, Block>
-  latestBlockNumber: string
   blockByTxHash: Record<string, Block>
   txByHash: Record<string, TypedTransaction>
   currentVm: CurrentVm
@@ -283,20 +407,33 @@ export class VMContext {
   logsManager: any // LogsManager
   exeResults: Record<string, TypedTransaction>
   nodeUrl: string
-  blockNumber: number | 'latest'
+  /*
+    This is the actual number of blocks that are added to the state.
+  */
+  latestBlockNumber: string
+  /*
+    This is the number of block that VMContext is instanciated with.
+    The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
+  */
+  private blockNumber: number | 'latest'
+  /*
+    When a VM is using a live state, baseBlockNumber is the number at which the live state is forked.
+  */
+  baseBlockNumber: string
   stateDb: State
   rawBlocks: string[]
   serializedBlocks: Uint8Array[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[]) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: string) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'cancun'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
-    this.blockNumber = blockNumber
+    this.blockNumber = blockNumber || 0
+    this.baseBlockNumber = baseBlockNumber
     this.blocks = {}
-    this.latestBlockNumber = "0x0"
+    this.latestBlockNumber = '0x0'
     this.blockByTxHash = {}
     this.txByHash = {}
     this.exeResults = {}
@@ -311,27 +448,27 @@ export class VMContext {
 
   async createVm (hardfork) {
     let stateManager: EVMStateManagerInterface
-    if (this.nodeUrl) {
-      let block = this.blockNumber
-      if (this.blockNumber === 'latest') {
-        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
-        block = await provider.getBlockNumber()
-        stateManager = new CustomEthersStateManager({
-          provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
-        })
-        this.blockNumber = block
-      } else {
-        stateManager = new CustomEthersStateManager({
-          provider: this.nodeUrl,
-          blockTag: '0x' + block.toString(16)
-        })
-      }
-    } else {
-      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
-      const mapDb = new MapDB(db)
-      const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+    // state trie
 
+    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+    const mapDb = new MapDB(db)
+    const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+
+    if (this.nodeUrl) {
+      if (this.blockNumber !== 'latest') {
+        // we already have the right value for the block number
+      } else if (this.blockNumber === 'latest') {
+        // resolve `latest` to the actual block number
+        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        this.blockNumber = await provider.getBlockNumber()
+      }
+
+      stateManager = new CustomEthersStateManager({
+        provider: this.nodeUrl,
+        blockTag: this.baseBlockNumber || '0x' + this.blockNumber.toString(16),
+        trie
+      })
+    } else {
       stateManager = new StateManagerCommonStorageDump({ trie })
     }
 
@@ -355,6 +492,8 @@ export class VMContext {
     }, { common })
 
     const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    overrideBlockchain(blockchain, this)
+
     const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
 
     const vm = await VM.create({
@@ -364,6 +503,26 @@ export class VMContext {
       blockchain,
       evm
     })
+
+    if (this.nodeUrl) {
+      if (!this.baseBlockNumber && this.blockNumber !== 'latest') {
+        // the baseBlockNumber isn't set.
+        // this means we are likely loading a VM mainnet fork from scratch,
+        // so we take the current live block number as the baseBlockNumber.
+        this.baseBlockNumber = '0x' + this.blockNumber.toString(16)
+        this.latestBlockNumber = this.baseBlockNumber
+      } else if (this.baseBlockNumber && this.blockNumber !== 'latest') {
+        // the baseBlockNumber is set.
+        // this means we are likely loading a VM mainnet fork from a previously saved state,
+        // the latestBlockNumber is baseBlockNumber +
+        this.latestBlockNumber = '0x' + (parseInt(this.baseBlockNumber) + blocks.length).toString(16)
+      }
+    } else {
+      // it's a standard VM so everything starts from 0.
+      this.baseBlockNumber = '0x0'
+      this.latestBlockNumber = '0x' + this.blockNumber.toString(16)
+    }
+
     // VmProxy and VMContext are very intricated.
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
@@ -374,7 +533,8 @@ export class VMContext {
       await blockchain.putBlock(block)
       this.addBlock(block, false, false, web3vm)
     }
-    return { vm, web3vm, stateManager, common, blocks }
+
+    return { vm, web3vm, stateManager, common, blocks, baseBlockNumber: this.baseBlockNumber }
   }
 
   getCurrentFork () {
@@ -394,17 +554,23 @@ export class VMContext {
   }
 
   addBlock (block: Block, genesis?: boolean, isCall?: boolean, web3vm?: VmProxy) {
-    let blockNumber = bigIntToHex(block.header.number)
-    if (blockNumber === '0x') {
-      blockNumber = '0x0'
+    let blockNumber
+    if (genesis) {
+      blockNumber = 0
+    } else if (this.baseBlockNumber) {
+      blockNumber = BigInt(this.baseBlockNumber) + block.header.number
+    } else {
+      blockNumber = block.header.number
     }
+    let blockNumberHex = bigIntToHex(blockNumber)
+    if (blockNumberHex === '0x') blockNumberHex = '0x0'
 
     this.blocks[bytesToHex(block.hash())] = block
-    this.blocks[blockNumber] = block
-    this.latestBlockNumber = blockNumber
+    this.blocks[blockNumberHex] = block
+    this.latestBlockNumber = blockNumberHex
 
-    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumber, block, web3vm)
-    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumberHex, block, web3vm)
+    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumberHex, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

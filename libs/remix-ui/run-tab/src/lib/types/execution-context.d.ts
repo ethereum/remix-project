@@ -32,4 +32,5 @@ export class ExecutionContext {
   _updateChainContext(): Promise<void>;
   listenOnLastBlock(): void;
   txDetailsLink(network: any, hash: any): any;
+  getStateDetails(): Promise<string>
 }

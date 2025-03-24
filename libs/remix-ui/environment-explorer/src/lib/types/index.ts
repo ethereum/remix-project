@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 
-export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Forked States'
+export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Forked States'
 
 export type environmentExplorerUIProps = {
   state: {
@@ -9,6 +9,7 @@ export type environmentExplorerUIProps = {
     pinnedProviders: string[]
   }
   deleteForkedState (provider: Provider): Promise<void>
+  showPinnedContracts (provider: Provider): Promise<void>
   pinStateCallback (provider: Provider, pinned: boolean): Promise<void>
   profile: Profile
 }
@@ -31,7 +32,11 @@ export type ProviderConfig = {
   isInjected: boolean
   isRpcForkedState?: boolean
   isVMStateForked?: boolean
-  statePath?: string
+  fork: string
+  statePath?: string,
+  blockNumber?: string
+  nodeUrl?: string
+  baseBlockNumber?: string
 }
 
 export type Provider = {
@@ -42,12 +47,18 @@ export type Provider = {
   displayName: string
   logo?: string,
   logos?: string[],
-  fork: string
   description?: string
   config: ProviderConfig
   title: string
   init: () => Promise<void>
   provider:{
     sendAsync: (payload: any) => Promise<void>
+    udapp?: {
+      REACT_API: {
+        chainId: number,
+        accounts: any,
+        selectExEnv: string
+      }
+    }
   }
 }

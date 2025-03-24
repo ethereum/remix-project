@@ -129,6 +129,14 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const pinContract = async() => {
+    const provider = await props.plugin.call('blockchain', 'getProviderObject')
+    if (!provider.config.statePath && provider.config.isRpcForkedState) {
+      // we can't pin a contract in the following case:
+      // - state is not persisted
+      // - future state is browser stored (e.g it's not just a simple RPC provider)
+      props.plugin.call('notification', 'toast', 'Cannot pin this contract in the current context: state is not persisted. Please fork this provider to start pinning a contract to it.')
+      return
+    }
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const objToSave = {
       name: props.instance.name,
@@ -372,10 +380,10 @@ export function UniversalDappUI(props: UdappProps) {
             >
               { // receive method added to solidity v0.6.x. use this as diff.
                 props.solcVersion.canReceive === false ? (
-                  <a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
+                  <a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
                     <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
                   </a>
-                ) :<a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+                ) :<a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
                   <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
                 </a>
               }

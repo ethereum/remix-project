@@ -39,7 +39,7 @@ export function getContractsInScope(item: DocItemWithContext) {
         Object.assign(scope, importedScope);
       } else {
         for (const a of i.symbolAliases) {
-          // Delayed function call supports circular dependencies
+          // Delayed function call support circular dependencies
           scope[a.local ?? a.foreign.name] = importedScope[a.foreign.name] ?? (() => importedScope[a.foreign.name]!());
         }
       }

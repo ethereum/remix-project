@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { ethers } from 'ethers/'
+import { ethers } from 'ethers'
 
 interface ContractAddressInputProps {
   label: string | any

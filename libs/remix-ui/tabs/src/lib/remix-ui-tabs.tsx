@@ -125,7 +125,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 mr-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -300,7 +300,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="remix_ai_switch"
                 id="remix_ai_switch"
                 className="btn ai-switch text-ai pl-2 pr-0 py-0"
-                disabled={!(tabsState.currentExt === 'sol')}
+                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom') )}
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                   setAI_switch(!ai_switch)

@@ -2,7 +2,9 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
-import { toBigInt, toHex } from 'web3-utils'
+import { toBigInt, toHex, toChecksumAddress } from 'web3-utils'
+import { ethers } from 'ethers'
+import { normalizeHexAddress } from '../helpers/uiHelper'
 
 export class TxRunnerWeb3 {
   event
@@ -37,8 +39,7 @@ export class TxRunnerWeb3 {
     }
 
     let currentDateTime = new Date();
-    const start = currentDateTime.getTime() / 1000
-    const cb = (err, resp) => {
+    const cb = (err, resp, isCreation: boolean) => {
       if (err) {
         return callback(err, resp)
       }
@@ -48,6 +49,18 @@ export class TxRunnerWeb3 {
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
+          if (isCreation && !receipt.contractAddress) {
+            // if it is a isCreation, contractAddress should be defined.
+            // if it's not the case look for the event ContractCreated(uint256,address,uint256,bytes32) and extract the address
+            // topic id: 0xa1fb700aaee2ae4a2ff6f91ce7eba292f89c2f5488b8ec4c5c5c8150692595c3
+            if (receipt.logs && receipt.logs.length) {
+              receipt.logs.map((log) => {
+                if (log.topics[0] === '0xa1fb700aaee2ae4a2ff6f91ce7eba292f89c2f5488b8ec4c5c5c8150692595c3') {
+                  (receipt as any).contractAddress = toChecksumAddress(normalizeHexAddress(toHex(log.topics[2])))
+                }
+              })
+            }
+          }
           currentDateTime = new Date();
           resolve({
             receipt,
@@ -59,18 +72,19 @@ export class TxRunnerWeb3 {
       listenOnResponse().then((txData) => { callback(null, txData) }).catch((error) => { callback(error) })
     }
 
+    const isCreation = !tx.to
     if (api.personalMode()) {
       promptCb(
         async (value) => {
           try {
             const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-            cb(null, res.transactionHash)
+            cb(null, res.transactionHash, isCreation)
           } catch (e) {
             console.log(`Send transaction failed: ${e.message || e.error} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
-            if (e.receipt) cb(null, e.receipt.transactionHash)
-            else cb(e, null)
+            if (e.receipt) cb(null, e.receipt.transactionHash, isCreation)
+            else cb(e, null, isCreation)
           }
         },
         () => {
@@ -80,7 +94,7 @@ export class TxRunnerWeb3 {
     } else {
       try {
         const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-        cb(null, res.transactionHash)
+        cb(null, res.transactionHash, isCreation)
       } catch (e) {
         if (!e.message) e.message = ''
         if (e.error) {
@@ -89,8 +103,8 @@ export class TxRunnerWeb3 {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
-        if (e.receipt) cb(null, e.receipt.transactionHash)
-        else cb(e, null)
+        if (e.receipt) cb(null, e.receipt.transactionHash, isCreation)
+        else cb(e, null, isCreation)
       }
     }
   }
@@ -135,9 +149,11 @@ export class TxRunnerWeb3 {
           txCopy.gasPrice = undefined
         }
       }
-      this.getWeb3().eth.estimateGas(txCopy)
-        .then(gasEstimation => {
+      const ethersProvider = new ethers.providers.Web3Provider(this.getWeb3().currentProvider as any)
+      ethersProvider.estimateGas(txCopy)
+        .then(gasEstimationBigInt => {
           gasEstimationForceSend(null, () => {
+            const gasEstimation = gasEstimationBigInt.toNumber()
             /*
             * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
             * e.g if the gasestimate
