@@ -707,4 +707,4 @@ const addSlash = (file) => {
   return file
 }
 
-module.exports = DGitProvider
+

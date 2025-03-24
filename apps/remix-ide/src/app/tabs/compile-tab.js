@@ -166,5 +166,3 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     await this.call('config', 'setAppParameter', name, value)
   }
 }
-
-module.exports = CompileTab

@@ -1097,4 +1097,3 @@ export default class FileManager extends Plugin {
   }
 }
 
-module.exports = FileManager

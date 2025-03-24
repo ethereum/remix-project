@@ -7,7 +7,7 @@ const { execSync } = require('child_process');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const path = require('path');
-
+const fs = require('fs');
 const version = JSON.parse(readFileSync(path.join(__dirname, '../../package.json'), 'utf8')).version;
 
 const versionData = {
@@ -25,6 +25,23 @@ const loadLocalSolJson = async () => {
 writeFileSync(path.join(__dirname, 'src/assets/version.json'), JSON.stringify(versionData));
 
 loadLocalSolJson();
+
+const project = fs.readFileSync(__dirname + '/project.json', 'utf8')
+
+const implicitDependencies = JSON.parse(project).targets.build.dependsOn[0].projects
+
+const copyPatterns = implicitDependencies.map((dep) => {
+  try {
+    fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
+    return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
+  }
+  catch (e) {
+    console.log('error', e)
+    return false
+  }
+})
+
+console.log('Copying plugins... ', copyPatterns)
 
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   // add fallback for node modules
