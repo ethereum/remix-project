@@ -1,8 +1,8 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
-const {withReact} = require('@nrwl/react')
-const webpack = require('webpack')
-const TerserPlugin = require('terser-webpack-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const { composePlugins, withNx } = require('@nx/webpack');
+const { withReact } = require('@nx/react');
+const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
@@ -13,10 +13,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.externals = {
     ...config.externals,
     solc: 'solc'
-  }
+  };
 
   // add public path
-  config.output.publicPath = '/'
+  config.output.publicPath = '/';
 
   // add copy & provide plugin
   config.plugins.push(
@@ -26,16 +26,16 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       process: 'process/browser'
     }),
     new webpack.DefinePlugin({})
-  )
+  );
 
   // source-map loader
   config.module.rules.push({
     test: /\.js$/,
     use: ['source-map-loader'],
     enforce: 'pre'
-  })
+  });
 
-  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
+  config.ignoreWarnings = [/Failed to parse source map/]; // ignore source-map-loader warnings
 
   // set minimizer
   config.optimization.minimizer = [
@@ -52,7 +52,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       extractComments: false
     }),
     new CssMinimizerPlugin()
-  ]
+  ];
 
-  return config
-})
+  return config;
+});

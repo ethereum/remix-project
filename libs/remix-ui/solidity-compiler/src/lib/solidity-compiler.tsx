@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { baseURLBin, baseURLWasm, pathToURL } from '@remix-project/remix-solidity'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'

@@ -1,5 +1,5 @@
 /* global ethereum */
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { InjectedProvider } from './injected-provider'
 
 export class InjectedProviderDefaultBase extends InjectedProvider {

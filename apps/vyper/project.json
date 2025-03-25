@@ -3,11 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vyper/src",
   "projectType": "application",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": ["default"],
+    "dependencies": ["default"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/vyper",
@@ -26,8 +32,7 @@
         "webpackConfig": "apps/vyper/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -39,7 +44,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/vyper/**/*.ts"],
@@ -47,7 +52,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "vyper:build",

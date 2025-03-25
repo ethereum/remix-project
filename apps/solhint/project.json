@@ -3,15 +3,19 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/solhint/src",
   "projectType": "application",
-  "implicitDependencies": [],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "dependencies": ["default"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": [
         "{options.outputPath}"
       ],
       "dependsOn": ["install"],
       "defaultConfiguration": "development",
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/solhint",
@@ -48,7 +52,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/solhint/**/*.ts"],
@@ -56,7 +60,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "solhint:build",

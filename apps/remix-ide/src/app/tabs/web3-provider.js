@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import {isBigInt} from 'web3-validator'
 import { addressToString } from "@remix-ui/helper"
 

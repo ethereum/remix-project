@@ -1,6 +1,6 @@
 /* global */
 import React from 'react' // eslint-disable-line
-import * as packageJson from '../../../../../../package.json'
+import packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { RemixUiHomeTab } from '@remix-ui/home-tab' // eslint-disable-line
 

@@ -8,8 +8,14 @@
   ],
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["remix-solidity"]
+        }
+      ],
       "options": {
         "outputPath": "dist/libs/remixd",
         "main": "libs/remixd/src/index.ts",
@@ -22,7 +28,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/remixd/**/*.ts"],

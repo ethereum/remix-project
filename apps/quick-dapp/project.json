@@ -3,13 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/quick-dapp/src",
   "projectType": "application",
-  "implicitDependencies": [],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "dependencies": ["default"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
       "dependsOn": ["install"],
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/quick-dapp",
@@ -18,20 +22,21 @@
         "main": "apps/quick-dapp/src/main.tsx",
         "polyfills": "apps/quick-dapp/src/polyfills.ts",
         "tsConfig": "apps/quick-dapp/tsconfig.app.json",
-        "assets": ["apps/quick-dapp/src/profile.json", "apps/quick-dapp/src/assets/edit-dapp.png"],
+        "assets": [
+          "apps/quick-dapp/src/profile.json",
+          "apps/quick-dapp/src/assets/edit-dapp.png"
+        ],
         "styles": ["apps/quick-dapp/src/index.css"],
         "scripts": [],
         "webpackConfig": "apps/quick-dapp/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
-        "production": {
-        }
+        "development": {},
+        "production": {}
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/quick-dapp/**/*.ts"],
@@ -48,7 +53,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "quick-dapp:build",

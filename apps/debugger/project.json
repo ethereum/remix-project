@@ -3,14 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/debugger/src",
   "projectType": "application",
-  "implicitDependencies": [
-    "remix-debug"
-  ],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "dependencies": ["default"],
+    "remix-debug": ["{workspaceRoot}/libs/remix-debug/**/*"]
+  },
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "inputs": ["default", "^dependencies"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/debugger",
@@ -28,8 +31,7 @@
         "webpackConfig": "apps/debugger/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -41,7 +43,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/debugger/**/*.ts"],
@@ -49,7 +51,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "debugger:build",

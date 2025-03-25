@@ -1,5 +1,5 @@
 import React from 'react' // eslint-disable-line
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { JsonDataRequest, RejectRequest, SuccessRequest } from '../providers/abstract-provider'
 import { Plugin } from '@remixproject/engine'
 import { IProvider } from './abstract-provider'

@@ -1,4 +1,4 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useContext, useEffect, useState } from 'react'

@@ -1,2 +1,2 @@
 export * from './lib/remixui-statusbar-panel'
-export { StatusBarInterface } from './lib/types'
+export type { StatusBarInterface } from './lib/types'

@@ -25,6 +25,6 @@ export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   setFile: (path: string, content: string) => Promise<void>
   getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
   web3: () => any // returns an instance of web3.js
-  onStartDebugging: (debuggerBackend: any) => void // called when debug starts
-  onStopDebugging: () => void // called when debug stops
+  onStartDebugging: (debuggerBackend: any) => Promise<void> // called when debug starts
+  onStopDebugging: () => Promise<void> // called when debug stops
 }

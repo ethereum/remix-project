@@ -1,7 +1,7 @@
 import { RemixApp } from '@remix-ui/app'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'

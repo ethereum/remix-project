@@ -1,4 +1,4 @@
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 import { BasicVMProvider } from './vm-provider'
 
 export class GoerliForkVMProvider extends BasicVMProvider {

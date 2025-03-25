@@ -8,7 +8,7 @@
     ],
     "targets": {
       "build": {
-        "executor": "@nrwl/js:tsc",
+        "executor": "@nx/js:tsc",
         "outputs": ["{options.outputPath}"],
         "options": {
           "outputPath": "dist/libs/ghaction-helper",
@@ -19,7 +19,7 @@
         }
       },
       "lint": {
-        "executor": "@nrwl/linter:eslint",
+        "executor": "@nx/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
           "lintFilePatterns": ["libs/ghaction-helper/**/*.ts"],

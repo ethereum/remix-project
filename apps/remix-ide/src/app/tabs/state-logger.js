@@ -1,6 +1,6 @@
 import { Plugin } from "@remixproject/engine"
 import { EventEmitter } from 'events'
-import * as packageJson from '../../../../../package.json'
+import packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'pluginStateLogger',

@@ -15,6 +15,7 @@ import { createRoot } from 'react-dom/client'
     const config = new Config(configStorage)
     Registry.getInstance().put({ api: config, name: 'config' })
   } catch (e) {}
+  console.log('Remix-IDE')
   const theme = new ThemeModule()
   theme.initTheme()
 
