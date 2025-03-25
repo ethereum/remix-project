@@ -10,6 +10,12 @@
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["remix-solidity"]
+        }
+      ],
       "options": {
         "outputPath": "dist/libs/remixd",
         "main": "libs/remixd/src/index.ts",
