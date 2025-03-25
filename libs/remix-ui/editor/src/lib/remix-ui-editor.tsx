@@ -875,7 +875,9 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
       ],
       run: async () => {
-        const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+        const position = editorRef.current.getPosition()
+        const offset = editorRef.current.getModel().getOffsetAt(position)
+        const { nodesAtPosition } = await retrieveNodesAtPosition(offset, props.plugin)
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
           const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
@@ -903,7 +905,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     const contextmenu = editor.getContribution('editor.contrib.contextmenu')
     const orgContextMenuMethod = contextmenu._onContextMenu
-    const onContextMenuHandlerForFreeFunction = async () => {
+    const onContextMenuHandlerForFreeFunction = async (offset: number) => {
       if (freeFunctionAction) {
         freeFunctionAction.dispose()
         freeFunctionAction = null
@@ -927,7 +929,7 @@ export const EditorUI = (props: EditorUIProps) => {
         return
       }
 
-      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const { nodesAtPosition } = await retrieveNodesAtPosition(offset, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = intl.formatMessage({ id: 'editor.executeFreeFunction2' }, { name: freeFunctionNode.name })
@@ -955,7 +957,9 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()
-      onContextMenuHandlerForFreeFunction()
+      const position = args[0].target.position
+      const offset = editorRef.current.getModel().getOffsetAt(position)
+      onContextMenuHandlerForFreeFunction(offset)
         .then(() => orgContextMenuMethod.apply(contextmenu, args))
         .catch(() => orgContextMenuMethod.apply(contextmenu, args))
     }
