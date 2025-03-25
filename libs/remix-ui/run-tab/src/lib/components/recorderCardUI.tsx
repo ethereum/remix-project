@@ -20,8 +20,8 @@ export function RecorderUI(props: RecorderProps) {
   }
 
   useEffect(() => {
-    if (props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(false)
-    else setEnableRunButton(true)
+    if (props.currentFile && props.currentFile.endsWith('.json')) setEnableRunButton(true)
+    else setEnableRunButton(false)
   }, [props.currentFile])
 
   const toggleClass = () => {
@@ -115,11 +115,11 @@ export function RecorderUI(props: RecorderProps) {
           </CustomTooltip>
           <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="tooltip-run-recorder" tooltipText={<FormattedMessage id="udapp.runRecorderTooltip" />}>
             <button
-              className={enableRunButton ? "btn btn-sm btn-secondary runtransaction udapp_runTxs" : "btn btn-sm btn-secondary runtransaction udapp_runTxs disabled"}
+              className={enableRunButton ? "btn btn-sm btn-secondary runtransaction udapp_runTxs" : "btn btn-sm btn-secondary runtransaction udapp_runTxs"}
               data-id="runtransaction"
-              disabled={enableRunButton}
+              disabled={!enableRunButton}
               onClick={handleClickRunButton}
-              style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}
+              style={{ pointerEvents: !enableRunButton ? 'none' : 'auto' }}
               id="udappRecorderRun"
             >
               <FormattedMessage id="udapp.run" />

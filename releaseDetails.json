@@ -1,10 +1,13 @@
 {
-    "version": "v0.61.0",
+    "version": "v0.62.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Added Noir compiler plugin and Noir templates",
-    "highlight2": "Allowed further forking of a forked Remix VM environment",
-    "highlight3": "Improved RemixAI copilot accuracy with better contextual information",
+    "highlight1": "Forking of Remix VM mainnet fork environment",
+    "highlight2": "Initial code suggestion for vyper and circom",
+    "highlight3": "Support for Phantom wallet & Universal profile",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-61-0-ecd2a383594f?source=friends_link&sk=5e8f3db37656068f715244ac72917648"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-62-0-9a72ac0c4f67?source=friends_link&sk=4b73921ad7f8ad1dd5bce040de854a3f"
   }
+
+
+  

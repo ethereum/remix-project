@@ -370,7 +370,6 @@ module.exports = {
             'decoded output': { '0':'bool: true' }
           }).perform(() => done())
       })
-      .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
       // Should fork the mainnet VM fork and execute some transaction
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
@@ -385,7 +384,15 @@ module.exports = {
         }
       )
       .pause(2000)
+      .perform((done) => {
+        browser.createContract((currentBlockNumber) + '')
+        .waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+        .perform(() => {
+          done()
+        })
+      })
       .clickInstance(0)
+      .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
       .clickFunction('getB - call')
       .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
       .perform((done) => {
@@ -442,8 +449,8 @@ module.exports = {
         console.log('Test Fork Mainnet', address)
         addressRef = address
       })
-      // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 6
-      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '6'})
+      // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 4
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '3'})
       .perform((done) => {
         browser.testFunction('last',
           {
@@ -451,11 +458,11 @@ module.exports = {
             'decoded output': { '0':'bool: true' }
           }).perform(() => done())
       })
-      // switch back to Mainnet fork 1 and check that block number is at `currentBlockNumber` + 4
+      // switch back to Mainnet fork 1 and check that block number is at `currentBlockNumber` + 2
       .switchEnvironment('vm-fs-Mainnet fork 1')
       .pause(2000)
       .clickInstance(0)
-      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '4'})
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '1'})
       .perform((done) => {
         browser.testFunction('last',
           {

@@ -1,33 +1,33 @@
 import { defaultConfig } from "@web3modal/ethers5/react";
 
 export interface Dependency {
-    version: string;
-    name: string;
-    alias?: string;
-    import?: boolean;
-    require: boolean;
-    windowImport?: boolean;
+    version: string
+    name: string
+    alias?: string
+    import?: boolean
+    require: boolean
+    windowImport?: boolean
   }
 
 export interface Replacements {
-    [key: string]: string;
+    [key: string]: string
   }
 
 export interface ProjectConfiguration {
-    name: string;
-    publish: boolean;
-    description: string;
-    dependencies: Dependency[];
-    replacements: Replacements;
-    title: string;
-    errorStatus: boolean;
-    error: string;
-    isLoading: boolean;
+    name: string
+    publish: boolean
+    description: string
+    dependencies: Dependency[]
+    replacements: Replacements
+    title: string
+    errorStatus: boolean
+    error: string
+    isLoading: boolean
   }
 
 export interface customScriptRunnerConfig {
-    baseConfiguration: string;
-    dependencies: Dependency[];
+    baseConfiguration: string
+    dependencies: Dependency[]
   }
 
 export interface ScriptRunnerConfig {

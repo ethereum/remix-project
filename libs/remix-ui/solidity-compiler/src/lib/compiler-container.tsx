@@ -193,7 +193,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             optimize: optimize,
             runs: runs,
             evmVersion: evmVersion !== null && evmVersion !== 'null' && evmVersion !== undefined && evmVersion !== 'undefined' ? evmVersion : 'default',
-            language: language !== null ? language : 'Solidity'
+            language: language !== null ? language : 'Solidity',
+            matomoAutocompileOnce: true
           }
         })
       }
@@ -205,7 +206,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     setDisableCompileButton(isDisabled)
     setState((prevState) => {
-      return { ...prevState, compiledFileName }
+      return { ...prevState, matomoAutocompileOnce: true, compiledFileName }
     })
   }, [compiledFileName])
 
