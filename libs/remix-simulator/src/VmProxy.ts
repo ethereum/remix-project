@@ -4,7 +4,7 @@ import { helpers } from '@remix-project/remix-lib'
 const { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import { toChecksumAddress, bytesToHex, Address, toBytes, bigIntToHex } from '@ethereumjs/util'
-import utils, { toBigInt } from 'web3-utils'
+import { sha3, toHex, toAscii, fromAscii, fromDecimal, fromWei, toWei, isAddress, toBigInt } from 'web3-utils'
 import { isBigInt } from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
@@ -78,16 +78,14 @@ export class VmProxy {
     this.storageCache = {}
     this.sha3Preimages = {}
     // util
-    this.sha3 = (...args) => utils.sha3.apply(this, args)
-    this.toHex = (...args) => utils.toHex.apply(this, args)
-    this.toAscii = (...args) => utils.toAscii.apply(this, args)
-    this.fromAscii = (...args) => utils.fromAscii.apply(this, args)
-    this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
-    this.fromWei = (...args) => utils.fromWei.apply(this, args)
-    this.toWei = (...args) => utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => toBigInt.apply(this, args)
-    this.isAddress = (...args) => utils.isAddress.apply(this, args)
-    this.utils = utils
+    this.sha3 = (...args) => sha3.apply(this, args)
+    this.toHex = (...args) => toHex.apply(this, args)
+    this.toAscii = (...args) => toAscii.apply(this, args)
+    this.fromAscii = (...args) => fromAscii.apply(this, args)
+    this.fromDecimal = (...args) => fromDecimal.apply(this, args)
+    this.fromWei = (...args) => fromWei.apply(this, args)
+    this.toWei = (...args) => toWei.apply(this, args)
+    this.isAddress = (...args) => isAddress.apply(this, args)
     this.txsMapBlock = {}
     this.blocks = {}
     this.lastMemoryUpdate = []
