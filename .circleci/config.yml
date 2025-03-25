@@ -81,7 +81,7 @@ jobs:
 
   build-plugin:
       docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:22.0.0-browsers
       resource_class:
         xlarge
       working_directory: ~/remix-project
@@ -615,7 +615,7 @@ jobs:
           command: node ./apps/remix-ide/ci/lint-targets.js
   remix-libs:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:22.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
