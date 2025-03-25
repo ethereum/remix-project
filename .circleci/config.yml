@@ -10,7 +10,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:22.0.0-browsers
 
     resource_class:
       xlarge
