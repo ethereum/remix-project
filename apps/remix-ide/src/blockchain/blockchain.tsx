@@ -25,7 +25,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject'],
   version: packageJson.version
 }
 
@@ -545,6 +545,10 @@ export class Blockchain extends Plugin {
   }
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
+    if (this.currentRequest && this.currentRequest.from && !this.currentRequest.from.startsWith('injected')) {
+      // only injected provider can update the provider.
+      return
+    }
     if (context.context === 'item-another-chain') {
       this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs', 'focus', 'environmentExplorer'))
     } else {
@@ -563,6 +567,10 @@ export class Blockchain extends Plugin {
   getProviderObjByName(name) {
     const allProviders = this.getAllProviders()
     return allProviders[name]
+  }
+
+  getProviderObject() {
+    return this.executionContext.getProviderObject()
   }
 
   getInjectedWeb3Address() {
@@ -1016,10 +1024,7 @@ export class Blockchain extends Plugin {
                 let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
                 stateDetails = JSON.parse(stateDetails)
                 state = JSON.parse(state)
-                state['stateName'] = stateDetails.stateName
-                state['forkName'] = stateDetails.forkName
-                state['savingTimestamp'] = stateDetails.savingTimestamp
-                state = JSON.stringify(state, null, 2)
+                state = JSON.stringify({ ...stateDetails, ...(state as any) }, null, 2)
               }
               this.call('fileManager', 'writeFile', provider.config.statePath, state)
             } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {

@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.62.0-dev",
+  "version": "0.63.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
@@ -168,7 +168,7 @@
     "isomorphic-git": "^1.25.7",
     "jquery": "^3.3.1",
     "js-yaml": "^4.1.0",
-    "jspdf": "^2.5.1",
+    "jspdf": "^3.0.1",
     "jszip": "^3.6.0",
     "just-once": "^2.2.0",
     "latest-version": "^5.1.0",
