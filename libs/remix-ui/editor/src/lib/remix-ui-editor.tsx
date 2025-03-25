@@ -780,43 +780,45 @@ export const EditorUI = (props: EditorUIProps) => {
 
         // do not stream this response
         const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
         // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
-        const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
+          const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
+          const natSpecCom = "\n" + extractNatspecComments(cm)
+          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
+          const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+          const lines = natSpecCom.split('\n')
+          const newNatSpecCom = []
 
-        const natSpecCom = "\n" + extractNatspecComments(cm)
-        const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
-        const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
-        const lines = natSpecCom.split('\n')
-        const newNatSpecCom = []
+          for (let i = 0; i < lines.length; i++) {
+            let cont = false
 
-        for (let i = 0; i < lines.length; i++) {
-          let cont = false
-
-          for (let j = 0; j < unsupportedDocTags.length; j++) {
-            if (lines[i].includes(unsupportedDocTags[j])) {
-              cont = true
-              break
+            for (let j = 0; j < unsupportedDocTags.length; j++) {
+              if (lines[i].includes(unsupportedDocTags[j])) {
+                cont = true
+                break
+              }
             }
+            if (cont) {continue}
+
+            if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+            else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
           }
-          if (cont) {continue}
 
-          if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
-          else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
-        }
+          // TODO: activate the provider to let the user accept the documentation suggestion
+          // const provider = new RemixSolidityDocumentationProvider(natspecCom)
+          // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
 
-        // TODO: activate the provider to let the user accept the documentation suggestion
-        // const provider = new RemixSolidityDocumentationProvider(natspecCom)
-        // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
+          editor.executeEdits('clipboard', [
+            {
+              range: range,
+              text: newNatSpecCom.join('\n'),
+              forceMoveMarkers: true,
+            },
+          ]);
 
-        editor.executeEdits('clipboard', [
-          {
-            range: range,
-            text: newNatSpecCom.join('\n'),
-            forceMoveMarkers: true,
-          },
-        ]);
-
-        _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
+        })
       },
     }
 
