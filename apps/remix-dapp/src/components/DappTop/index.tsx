@@ -42,7 +42,7 @@ const DappTop: React.FC = () => {
               className="fab fa-twitter btn"
               onClick={() => {
                 window.open(
-                  `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`,
+                  `https://x.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`,
                   '',
                   Object.keys(windowConfig)
                     .map((key) => `${key}=${windowConfig[key]}`)
