@@ -23,7 +23,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules", "tmp"]
 }
