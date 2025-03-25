@@ -22,8 +22,7 @@
     "lib": ["es2017", "es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "verbatimModuleSyntax": false
+    "baseUrl": "."
   },
   "exclude": ["node_modules", "tmp"]
 }

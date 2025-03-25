@@ -1,6 +1,6 @@
 'use strict'
 
-import { IModel, IModelResponse, IModelRequest, InferenceModel, ICompletions,
+import type { IModel, IModelResponse, IModelRequest, InferenceModel, ICompletions,
   IParams, ChatEntry, AIRequestType, IRemoteModel,
   RemoteBackendOPModel, IStreamResponse } from './types/types'
 import { ModelType } from './types/constants'

@@ -3,7 +3,7 @@ var remixLib = require('@remix-project/remix-lib')
 import { bytesToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../.././../../package.json'
+import packageJson from '../../../../.././../../package.json'
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
