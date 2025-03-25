@@ -21,7 +21,7 @@
       "dependsOn": [
         {
           "target": "build",
-          "projects": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler"]
+          "projects": ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler", "remixd"]
         }
       ],
       "inputs": [
