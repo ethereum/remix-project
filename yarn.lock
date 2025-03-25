@@ -5396,18 +5396,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@noir-lang/noir_wasm@^1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@noir-lang/noir_wasm/-/noir_wasm-1.0.0-beta.1.tgz#f02a9f2b963645022fb9a4a34616c3f1ed84fea8"
-  integrity sha512-se4rO5SnIcdwrhnJqJwVXoiNt/W4m0l7hpcm50q2z2ZDX6knB70uCBZMyri2LZ6qty+YhMys4wVFabFNiKga/Q==
+"@noir-lang/noir_wasm@^1.0.0-beta.2":
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@noir-lang/noir_wasm/-/noir_wasm-1.0.0-beta.3.tgz#4e52b15f09473e6f6cbc1bb0148f9a6f6d8c5132"
+  integrity sha512-1EZCmaSYISxJIBLZN1tEyu25E7WIWAYpT3JdnVx+YCHk5uPWtXgroZSqypkpi39TVOJZT6DU/bPfrx0N1GSyog==
   dependencies:
-    "@noir-lang/types" "1.0.0-beta.1"
+    "@noir-lang/types" "1.0.0-beta.3"
     pako "^2.1.0"
 
-"@noir-lang/types@1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@noir-lang/types/-/types-1.0.0-beta.1.tgz#4fe9062a8209c9e0987cc41c9506cc4423004b8f"
-  integrity sha512-rcisXDdKNLA7mh0Ll9j3MGG5BP3W52K3Owr0+opJhs+4jHoAx1Gb5vGNG9s6nYb2i21VZMgOzKVvBd25ck0b9w==
+"@noir-lang/types@1.0.0-beta.3":
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@noir-lang/types/-/types-1.0.0-beta.3.tgz#0170d3b72c55fde76df65e03b98acb3be6a20f4b"
+  integrity sha512-BPOmf0qDiTn4wH1Lo7mHa67GTQFueIVaDUcUb+N9+ALiXC5nVU8HrzWmx1yvZB64ZiCEy7yPdNEaNrszSrE2fg==
 
 "@nomicfoundation/ethereumjs-block@5.0.1":
   version "5.0.1"
