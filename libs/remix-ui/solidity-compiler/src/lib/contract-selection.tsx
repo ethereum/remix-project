@@ -340,6 +340,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           ws.close()
         }
       })
+    } else {
+      await plugin.call('notification', 'toast', 'Error in processing data to scan')
+      console.error(urlResponse.data && urlResponse.data.error ? urlResponse.data.error : urlResponse)
     }
   }
 
