@@ -37,6 +37,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 42161, name: "Arbitrum One" },
       { id: 42170, name: "Arbitrum Nova" },
       { id: 43114, name: "Avalanche C-Chain" },
+      { id: 42220, name: "Celo Mainnet" },
       { id: 44787, name: "Celo Alfajores Testnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
