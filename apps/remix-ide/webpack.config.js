@@ -32,6 +32,8 @@ const implicitDependencies = JSON.parse(project).targets.build.dependsOn[0].proj
 
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
+    // check if the directory exists
+    if(fs.existsSync(__dirname + `/../../dist/apps/${dep}`) && !fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()) return false
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
     return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
   }
@@ -85,8 +87,12 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.plugins.push(
     new CopyPlugin({
       patterns: [
-        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' }
-      ]
+        {
+          from: '../../node_modules/monaco-editor/min/vs',
+          to: 'assets/js/monaco-editor/min/vs'
+        },
+        ...copyPatterns
+      ].filter(Boolean)
     }),
     new CopyFileAfterBuild(),
     new webpack.ProvidePlugin({

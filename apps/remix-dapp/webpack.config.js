@@ -1,10 +1,11 @@
 const { composePlugins, withNx } = require('@nx/webpack');
+const { withReact } = require('@nx/react');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
-module.exports = composePlugins(withNx(), (config) => {
+module.exports = composePlugins(withNx(), withReact(), (config) => {
   // Add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
@@ -73,25 +74,6 @@ module.exports = composePlugins(withNx(), (config) => {
   });
 
   config.ignoreWarnings = [/Failed to parse source map/]; // Ignore source-map-loader warnings
-
-  // Set CSS module rules handler
-  config.module.rules.push({
-    test: /\.css$/,
-    use: [
-      'style-loader',
-      {
-        loader: 'css-loader',
-        options: {
-          modules: {
-            auto: true, // Enables CSS modules automatically for `.module.css` files
-            localIdentName: '[name]__[local]--[hash:base64:5]', // Scoped class names
-          },
-          importLoaders: 1,
-        },
-      },
-      'postcss-loader',
-    ],
-  });
 
   // Set minimizer
   config.optimization.minimizer = [
