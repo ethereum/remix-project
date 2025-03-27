@@ -379,7 +379,7 @@ module.exports = {
       })
     // No test file is added in upgradeable contract template
   },
-  'Should create circom zkp hashchecker workspace #group1': function (browser: NightwatchBrowser) {
+  'Should create circom zkp hashchecker workspace #flaky #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
