@@ -10,7 +10,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
 
     resource_class:
       xlarge
@@ -54,7 +54,7 @@ jobs:
 
   build-desktop:
     docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
 
     resource_class:
       xlarge
@@ -81,7 +81,7 @@ jobs:
 
   build-plugin:
       docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
       resource_class:
         xlarge
       working_directory: ~/remix-project
@@ -598,7 +598,7 @@ jobs:
           command: npx ts-node apps/remix-ide/ci/update_desktop_release_assets.ts
   lint:
     docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -615,7 +615,7 @@ jobs:
           command: node ./apps/remix-ide/ci/lint-targets.js
   remix-libs:
     docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -705,7 +705,7 @@ jobs:
 
   remix-test-plugins:
     docker:
-      - image: cimg/node:23.0.0-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
