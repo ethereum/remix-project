@@ -82,4 +82,7 @@ const GenerationParams:IParams = {
   terminal_output: false,
 }
 
-export { DefaultModels, CompletionParams, InsertionParams, GenerationParams }
+const AssistantParams:IParams = GenerationParams
+AssistantParams.provider = 'openai'
+
+export { DefaultModels, CompletionParams, InsertionParams, GenerationParams, AssistantParams }
