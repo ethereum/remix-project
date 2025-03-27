@@ -3,7 +3,7 @@
 # Bash Menu Script Example
 
 PS3='Select a browser: '
-BROWSERS=( "chrome" "chrome with metamask" "firefox" "exit" )
+BROWSERS=( "chrome" "chrome with metamask" "firefox" "brave" "brave with metamask" "exit" )
 select opt in "${BROWSERS[@]}"
 do
     case $opt in
@@ -20,6 +20,16 @@ do
         "firefox")
             echo "Firefox selected"
             BROWSER="firefoxDesktop"
+            break
+            ;;
+        "brave")
+            echo "Brave selected"
+            BROWSER="braveDesktop"
+            break
+            ;;
+        "brave with metamask")
+            echo "Brave metamask selected"
+            BROWSER="braveDesktopMetamask"
             break
             ;;
         "exit")
@@ -55,6 +65,13 @@ do
             yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $opt --env=$BROWSER
         elif [ "$BROWSER" = "chromeDesktopMetamask" ]; then
             yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $opt --env=$BROWSER
+        elif [ "$BROWSER" = "braveDesktop" ]; then
+            yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-brave.js $opt --env=$BROWSER
+        elif [ "$BROWSER" = "braveDesktopMetamask" ]; then
+            yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-brave.js $opt --env=$BROWSER
+        else
+            echo "Invalid browser"
+            exit 1
         fi
 
     fi
