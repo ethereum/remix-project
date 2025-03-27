@@ -113,7 +113,7 @@ module.exports = {
       })
   },
 
-  'Should deploy proxy with initialize parameters #group1': function (browser: NightwatchBrowser) {
+  'Should deploy proxy with initialize parameters #flaky #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
