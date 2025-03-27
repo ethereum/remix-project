@@ -5,11 +5,11 @@ class GetInstalledPlugins extends EventEmitter {
   command (this: NightwatchBrowser, cb: (plugins: string[]) => void): NightwatchBrowser {
     const browser = this.api
 
-    browser.waitForElementPresent('[plugin]:not([plugin=""]')
+    browser.waitForElementPresent('[plugin]:not([plugin=""])')
       .perform((done) => {
         browser.execute(function () {
           const pluginNames = []
-          const plugins = document.querySelectorAll('[plugin]:not([plugin=""]')
+          const plugins = document.querySelectorAll('[plugin]:not([plugin=""])')
 
           plugins.forEach(plugin => {
             pluginNames.push(plugin.getAttribute('plugin'))
