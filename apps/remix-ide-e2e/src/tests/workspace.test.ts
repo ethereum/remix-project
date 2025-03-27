@@ -407,6 +407,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .pause(5000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
           'Incorrect content')
