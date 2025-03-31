@@ -191,8 +191,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
-  console.log('editor', props)
-
   const formatColor = (name) => {
     let color = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim()
     if (color.length === 4) {
