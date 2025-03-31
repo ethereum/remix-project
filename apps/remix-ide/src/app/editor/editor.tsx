@@ -5,8 +5,7 @@ import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-
-import EventManager from '../../lib/events'
+import { EventManager } from '@remix-project/remix-lib'
 
 const profile = {
   displayName: 'Editor',
@@ -17,6 +16,26 @@ const profile = {
 }
 
 export default class Editor extends Plugin {
+  _themes: any
+  registeredDecorations: any
+  currentDecorations: any
+  event: EventManager
+  sessions: any
+  readOnlySessions: any
+  previousInput: string
+  saveTimeout: number | null
+  emptySession: any
+  modes: any
+  activated: boolean
+  events: any
+  api: any
+  dispatch: any
+  ref: any
+  currentFile: any
+  currentThemeType: any
+  currentDiffFile: any
+  isDiff: any
+
   constructor () {
     super(profile)
 
@@ -199,10 +218,10 @@ export default class Editor extends Plugin {
    * Get Ace mode base of the extension of the session file
    * @param {string} path Path of the file
    */
-  _getMode (path) {
+  _getMode (path: string) {
     if (!path) return this.modes.txt
     const root = path.split('#')[0].split('?')[0]
-    let ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    let ext: RegExpExecArray | string = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
     if (ext) ext = ext[0]
     else ext = 'txt'
     return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
@@ -246,8 +265,9 @@ export default class Editor extends Plugin {
    * @param {string} path path of the file
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
+   * @param {boolean} readOnly optional Whether the file is read-only
    */
-  async _createSession (path, content, mode, readOnly) {
+  async _createSession (path: string, content: string, mode: string, readOnly?: boolean) {
     if (!this.activated) return
 
     this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])
@@ -270,7 +290,7 @@ export default class Editor extends Plugin {
    * Attempts to find the string in the current document
    * @param {string} string
    */
-  find (string) {
+  find (string: string) {
     return this.api.findMatches(this.currentFile, string)
   }
 
@@ -292,7 +312,7 @@ export default class Editor extends Plugin {
    * @param {string} url Address of the text to replace.
    * @param {string} text New text to be place.
    */
-  setText (url, text) {
+  setText (url: string, text: string) {
     if (this.sessions[url]) {
       this.sessions[url].setValue(text)
     }
@@ -302,7 +322,7 @@ export default class Editor extends Plugin {
    * Get the text in the current session, if any.
    * @param {string} url Address of the content to retrieve.
    */
-  getText (url) {
+  getText (url: string) {
     if (this.sessions[url]) {
       return this.sessions[url].getValue()
     }
@@ -313,7 +333,7 @@ export default class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async open (path, content) {
+  async open (path: string, content: string) {
     /*
       we have the following cases:
        - URL prepended with "localhost"
@@ -336,7 +356,7 @@ export default class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async openReadOnly (path, content) {
+  async openReadOnly (path: string, content: string) {
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = true
       const session = await this._createSession(path, content, this._getMode(path))
@@ -361,7 +381,7 @@ export default class Editor extends Plugin {
    * Content of the current session
    * @return {String} content of the file referenced by @arg path
    */
-  currentContent () {
+  currentContent (): string {
     return this.get(this.current())
   }
 
@@ -371,7 +391,7 @@ export default class Editor extends Plugin {
    * @param {string} path Path of the session to get.
    * @return {String} content of the file referenced by @arg path
    */
-  get (path) {
+  get (path: string): string {
     if (!path || this.currentFile === path) {
       return this.api.getValue(path)
     } else if (this.sessions[path]) {
@@ -384,7 +404,7 @@ export default class Editor extends Plugin {
    * returns `undefined` if no session is being edited
    * @return {String} path of the current session
    */
-  current () {
+  current (): string {
     return this.currentFile
   }
 
@@ -409,7 +429,7 @@ export default class Editor extends Plugin {
    * Remove a session based on its path.
    * @param {string} path
    */
-  discard (path) {
+  discard (path: string) {
     if (this.sessions[path]) {
       this.sessions[path].dispose()
       delete this.sessions[path]
@@ -430,7 +450,7 @@ export default class Editor extends Plugin {
    * Resize the editor, and sets whether or not line wrapping is enabled.
    * @param {boolean} useWrapMode Enable (or disable) wrap mode
    */
-  resize (useWrapMode) {
+  resize (useWrapMode: boolean) {
     if (!this.activated) return
     this.emit('setWordWrap', useWrapMode)
   }
@@ -440,7 +460,7 @@ export default class Editor extends Plugin {
    * @param {number} line
    * @param {number} col
    */
-  gotoLine (line, col) {
+  gotoLine (line: number, col: number) {
     if (!this.activated) return
     this.emit('focus')
     this.emit('revealLine', line + 1, col)
@@ -453,7 +473,7 @@ export default class Editor extends Plugin {
    * @param {number} endLineNumber
    * @param {number} endColumn
    */
-  revealRange (startLineNumber, startColumn, endLineNumber, endColumn) {
+  revealRange (startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number) {
     if (!this.activated) return
     this.emit('focus')
     this.emit('revealRange', startLineNumber, startColumn, endLineNumber, endColumn)
@@ -463,7 +483,7 @@ export default class Editor extends Plugin {
    * Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).
    * @param {number} line The line to scroll to
    */
-  scrollToLine (line) {
+  scrollToLine (line: number) {
     if (!this.activated) return
     this.emit('revealLine', line + 1, 0)
   }
@@ -478,7 +498,12 @@ export default class Editor extends Plugin {
    * @param {String} filePath
    * @param {String} plugin
    * @param {String} typeOfDecoration
+   * @param {any} registeredDecorations
+   * @param {any} currentDecorations
+   * @returns {void}
    */
+  clearDecorationsByPlugin(filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any): void;
+  clearDecorationsByPlugin(filePath: string, plugin: string, typeOfDecoration: string);
   clearDecorationsByPlugin (filePath, plugin, typeOfDecoration) {
     if (filePath && !this.sessions[filePath]) throw new Error('file not found' + filePath)
     const path = filePath || this.currentFile
@@ -531,7 +556,7 @@ export default class Editor extends Plugin {
    * @param {String} filePath
    * @param {String} plugin
    */
-  clearAnnotations (filePath) {
+  clearAnnotations (filePath: string) {
     filePath = filePath || this.currentFile
     const { from } = this.currentRequest
     this.clearDecorationsByPlugin(filePath, from, 'sourceAnnotationsPerFile')
@@ -564,7 +589,7 @@ export default class Editor extends Plugin {
    * @param {Object} annotation
    * @param {String} filePath
    */
-  async addAnnotation (annotation, filePath) {
+  async addAnnotation (annotation: object, filePath: string) {
     filePath = filePath || this.currentFile
     await this.addDecoration(annotation, filePath, 'sourceAnnotationsPerFile')
   }
@@ -581,7 +606,7 @@ export default class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations as any[], this.currentDecorations as any[])
     }
   }
 
@@ -593,7 +618,7 @@ export default class Editor extends Plugin {
   discardLineTexts() {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations as any[], this.currentDecorations as any[])
     }
   }
 

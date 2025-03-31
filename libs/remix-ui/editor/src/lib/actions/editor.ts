@@ -13,6 +13,8 @@ export const initialState = {}
 export const reducerActions = (models = initialState, action: Action) => {
   const monaco = action.monaco
   const editors = action.editors as any[]
+  console.log('editors', editors)
+  console.log('action', action)
   switch (action.type) {
   case 'ADD_MODEL': {
     if (!editors) return models
