@@ -83,6 +83,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`;
   config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`;
+  config.optimization.splitChunks = false;
 
   config.plugins.push(
     new CopyPlugin({
@@ -91,7 +92,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
           from: '../../node_modules/monaco-editor/min/vs',
           to: 'assets/js/monaco-editor/min/vs'
         },
-        ...copyPatterns
+        //...copyPatterns
       ].filter(Boolean)
     }),
     new CopyFileAfterBuild(),

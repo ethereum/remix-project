@@ -101,21 +101,30 @@ export const Preload = (props: any) => {
 
     const abortController = new AbortController()
     const signal = abortController.signal
-    async function showRemixTips() {
-      const response = await axios.get('https://raw.githubusercontent.com/remix-project-org/remix-dynamics/main/ide/tips.json', { signal })
-      if (signal.aborted) return
-      const tips = response.data
-      const index = Math.floor(Math.random() * (tips.length - 1))
-      setTip(tips[index])
+  
+    const showRemixTips = async () => {
+      try {
+        const response = await axios.get(
+          'https://raw.githubusercontent.com/remix-project-org/remix-dynamics/main/ide/tips.json',
+          { signal }
+        )
+        const tips = response.data
+        const index = Math.floor(Math.random() * tips.length)
+        setTip(tips[index])
+      } catch (err: any) {
+        if (axios.isCancel(err)) {
+          console.debug('Tip fetch cancelled')
+        } else {
+          console.error('Error fetching tips:', err)
+        }
+      }
     }
-    try {
-      showRemixTips()
-    } catch (e) {
-      console.log(e)
-    }
+  
+    showRemixTips()
+  
     return () => {
-      abortController.abort();
-    };
+      abortController.abort()
+    }
   }, [])
 
   return (

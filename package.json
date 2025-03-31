@@ -220,7 +220,9 @@
     "winston": "^3.3.3",
     "ws": "^8.17.1",
     "xterm": "^5.2.1",
-    "xterm-addon-search": "^0.12.0"
+    "xterm-addon-search": "^0.12.0",
+    "stream-browserify": "^3.0.0",
+    "https-browserify": "^1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
@@ -333,7 +335,6 @@
     "gists": "^1.0.1",
     "gulp": "^4.0.2",
     "hardhat": "^2.14.0",
-    "https-browserify": "^1.0.0",
     "husky": "^8.0.0",
     "ipfs-http-client": "^47.0.1",
     "ipfs-mini": "^1.1.5",
@@ -367,7 +368,7 @@
     "semver": "^7.4.0",
     "solc": "0.8.26",
     "source-map-loader": "^5.0.0",
-    "stream-browserify": "^3.0.0",
+
     "stream-http": "^3.2.0",
     "style-loader": "^4.0.0",
     "tap-spec": "^5.0.0",

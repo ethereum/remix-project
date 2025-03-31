@@ -36,17 +36,17 @@ if (!fs.existsSync(projectConfigPath)) {
 const projectConfig = JSON.parse(fs.readFileSync(projectConfigPath, "utf8"));
 
 // Get implicit dependencies
-const implicitDependencies = projectConfig.implicitDependencies || [];
+const implicitDependencies = ["doc-gen", "doc-viewer", "contract-verification", "vyper", "solhint", "walletconnect", "circuit-compiler", "learneth", "quick-dapp", "remix-dapp", "noir-compiler", "remixd"];
 
 // Construct the `nx run-many` command
-const projects = ['remix-lib', defaultProject, ...implicitDependencies].join(",");
-const command = `yarn nx affected --target=build --projects=${projects}  --base=master --configuration=${configArg} --parallel --skip-nx-cache --max-parallel=8`;
+const projects = [ defaultProject, ...implicitDependencies].join(",");
+const command = `yarn nx run-many --target=build --projects=${projects} --configuration=${configArg} --parallel --skip-nx-cache --max-parallel=20`;
 
 console.log("Generated command:", command);
 
 // Optionally, execute the command
 try {
-  execSync(command, { stdio: "inherit" });
+  //execSync(command, { stdio: "inherit" });
 } catch (error) {
   console.error("Error executing command:", error.message);
 }
