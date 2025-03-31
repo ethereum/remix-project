@@ -92,7 +92,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
           from: '../../node_modules/monaco-editor/min/vs',
           to: 'assets/js/monaco-editor/min/vs'
         },
-        //...copyPatterns
+        ...copyPatterns
       ].filter(Boolean)
     }),
     new CopyFileAfterBuild(),
