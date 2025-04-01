@@ -228,9 +228,8 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx) {
-    console.log('sendUserOp---tx------->', tx)
     const localStorageKey = 'smartAccounts'
-    const PUBLIC_NODE_URL = "https://rpc.ankr.com/eth_sepolia"
+    const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
     const PIMLICO_API_KEY =''
     const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
     const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
@@ -318,7 +317,6 @@ export class TxRunnerWeb3 {
       })
     }
 
-    console.log('txHash----->', txHash)
     return { txHash, contractAddress }
   }
 }
