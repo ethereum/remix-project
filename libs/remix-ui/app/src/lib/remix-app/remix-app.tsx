@@ -247,10 +247,10 @@ const RemixApp = (props: IRemixAppUi) => {
                   </div>
 
                 </PixelSizedPanel>
-                <PanelResizeHandle style={{
-                  backgroundColor: 'var(--primary)',
-                  width: '2px',
-                }} />
+                <PanelResizeHandle
+                  disabled
+                />
+
                 <Panel
 
                   style={{
