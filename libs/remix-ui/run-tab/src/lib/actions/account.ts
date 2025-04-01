@@ -141,7 +141,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       saltNonce: salt,
       version: "1.4.1"
     })
-  
+
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
       entryPoint: {
@@ -149,7 +149,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
         version: "0.7",
       },
     })
-  
+
     const saClient = createSmartAccountClient({
       account: safeAccount,
       sepolia,
@@ -167,9 +167,9 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       }]
     })
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
-  
+
     const safeAddress = safeAccount.address
-  
+
     const sAccount: SmartAccount = {
       address : safeAccount.address,
       salt,
@@ -182,7 +182,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
-  
+
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
     console.error('Failed to create safe smart account: ', error)

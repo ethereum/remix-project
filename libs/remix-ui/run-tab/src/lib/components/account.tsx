@@ -52,10 +52,10 @@ export function AccountUI(props: AccountProps) {
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
-        setPlusOpt({
-          classList: 'udapp_disableMouseEvents',
-          title: intl.formatMessage({ id: 'udapp.injectedTitle' })
-        })
+      setPlusOpt({
+        classList: 'udapp_disableMouseEvents',
+        title: intl.formatMessage({ id: 'udapp.injectedTitle' })
+      })
     } else {
       switch (selectExEnv) {
       case 'vm-cancun':
@@ -314,13 +314,13 @@ export function AccountUI(props: AccountProps) {
       </div>
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">
           Owner: {shortenAddress(ownerEOA.current)}
-          <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
-        </span> : null 
+        <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
+      </span> : null
       }
       { enableCSM ? (<div className="mt-1">
         <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
           <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
-            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{"color": "#fff"}}></i>
+            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
             Create Smart Account
           </button>
         </CustomTooltip>
