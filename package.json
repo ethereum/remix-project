@@ -189,6 +189,7 @@
     "react-intl": "^6.0.4",
     "react-markdown": "^8.0.5",
     "react-multi-carousel": "^2.8.2",
+    "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^6.16.0",
     "react-select": "^5.8.0",
     "react-spinners": "^0.13.8",

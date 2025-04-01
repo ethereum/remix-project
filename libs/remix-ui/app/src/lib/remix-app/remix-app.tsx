@@ -14,6 +14,8 @@ import { UsageTypes } from './types'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { PixelSizedPanel } from './components/PixelSizedPanel'
 
 declare global {
   interface Window {
@@ -78,27 +80,27 @@ const RemixApp = (props: IRemixAppUi) => {
     if (hadUsageTypeAsked) {
       // rewriting the data in user's local storage for consistency
       switch (hadUsageTypeAsked) {
-      case '1': {
-        hadUsageTypeAsked ='beginner'
-        break
-      }
-      case '2': {
-        hadUsageTypeAsked ='prototyper'
-        break
-      }
-      case '3': {
-        hadUsageTypeAsked = 'advanced'
-        break
-      }
-      case '4': {
-        hadUsageTypeAsked = 'production'
-        break
-      }
-      default: {
-        // choosing beginner as default
-        hadUsageTypeAsked = 'beginner'
-        break
-      }
+        case '1': {
+          hadUsageTypeAsked = 'beginner'
+          break
+        }
+        case '2': {
+          hadUsageTypeAsked = 'prototyper'
+          break
+        }
+        case '3': {
+          hadUsageTypeAsked = 'advanced'
+          break
+        }
+        case '4': {
+          hadUsageTypeAsked = 'production'
+          break
+        }
+        default: {
+          // choosing beginner as default
+          hadUsageTypeAsked = 'beginner'
+          break
+        }
       }
       localStorage.setItem('hadUsageTypeAsked', hadUsageTypeAsked)
       _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
@@ -109,7 +111,7 @@ const RemixApp = (props: IRemixAppUi) => {
     if (!appState.showPopupPanel) {
       window.localStorage.setItem('did_show_popup_panel', 'true')
     }
-  },[appState.showPopupPanel])
+  }, [appState.showPopupPanel])
 
   function setListeners() {
     props.app.sidePanel.events.on('toggle', () => {
@@ -196,30 +198,30 @@ const RemixApp = (props: IRemixAppUi) => {
     localStorage.setItem('hadUsageTypeAsked', type)
     // Use the type to setup the UI accordingly
     switch (type) {
-    case UsageTypes.Beginner: {
-      await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
-      await props.app.appManager.call('walkthrough', 'start')
-      // const wName = 'Playground'
-      // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
-      // if (!workspaces.find((workspace) => workspace.name === wName)) {
-      //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
-      // }
-      // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
-      break
-    }
-    case UsageTypes.Advance: {
-      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
-      break
-    }
-    case UsageTypes.Prototyper: {
-      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
-      break
-    }
-    case UsageTypes.Production: {
-      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
-      break
-    }
-    default: throw new Error()
+      case UsageTypes.Beginner: {
+        await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
+        await props.app.appManager.call('walkthrough', 'start')
+        // const wName = 'Playground'
+        // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
+        // if (!workspaces.find((workspace) => workspace.name === wName)) {
+        //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
+        // }
+        // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
+        break
+      }
+      case UsageTypes.Advance: {
+        // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
+        break
+      }
+      case UsageTypes.Prototyper: {
+        // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
+        break
+      }
+      case UsageTypes.Production: {
+        // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
+        break
+      }
+      default: throw new Error()
     }
     // enterDialog tracks first time users
     // userEntry tracks both first time and returning users
@@ -233,35 +235,68 @@ const RemixApp = (props: IRemixAppUi) => {
       <platformContext.Provider value={props.app.platform}>
         <onLineContext.Provider value={online}>
           <AppProvider value={value}>
+            <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
+              <PanelGroup autoSaveId='main' style={{
+                height: '100vh',
+                width: '100vw',
+              }} direction="horizontal">
+
+                <PixelSizedPanel pixelSize={50}>
+                  <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
+                    {props.app.menuicons.render()}
+                  </div>
+
+                </PixelSizedPanel>
+                <PanelResizeHandle style={{
+                  backgroundColor: 'var(--primary)',
+                  width: '2px',
+                }} />
+                <Panel
+
+                  style={{
+                    height: '100vh',
+                  }}>
+                  <div
+                    ref={sidePanelRef}
+                    id="side-panel"
+                    data-id="remixIdeSidePanel"
+                    className={`sidepanel border-right border-left`}
+                  >
+                    {props.app.sidePanel.render()}
+                  </div>
+                </Panel>
+                <PanelResizeHandle style={{
+                  backgroundColor: 'var(--primary)',
+                  width: '2px',
+                }} />
+                <Panel>
+                  <PanelGroup direction="vertical">
+                    <Panel>
+                      <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
+                        <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
+                      </div>
+                    </Panel>
+
+                  </PanelGroup>
+                </Panel>
+                <PanelResizeHandle style={{
+                  backgroundColor: 'var(--primary)',
+                  width: '2px',
+                }} />
+
+              </PanelGroup>
+            </div>
             <OriginWarning></OriginWarning>
             <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
-            <div className='d-flex flex-column'>
+            <div style={{
+              height: '0vh',
+              width: '100vw',
+            }} className='d-flex flex-column'>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-                <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
-                  {props.app.menuicons.render()}
-                </div>
-                <div
-                  ref={sidePanelRef}
-                  id="side-panel"
-                  data-id="remixIdeSidePanel"
-                  className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}
-                >
-                  {props.app.sidePanel.render()}
-                </div>
-                <DragBar
-                  enhanceTrigger={enhanceLeftTrigger}
-                  resetTrigger={resetLeftTrigger}
-                  maximiseTrigger={maximiseLeftTrigger}
-                  minWidth={305}
-                  refObject={sidePanelRef}
-                  hidden={hideSidePanel}
-                  setHideStatus={setHideSidePanel}
-                  layoutPosition='left'
-                ></DragBar>
-                <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
-                  <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
-                </div>
+
+
+
                 <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
                   {props.app.pinnedPanel.render()}
                 </div>

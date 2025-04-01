@@ -33,9 +33,10 @@ pre {
 .sidepanel           {
   display            : flex;
   flex-direction     : row-reverse;
-  width              : 320px;
+  width              : 100vh;
   transition         : width 0.25s;
   padding-bottom     : 1.4rem;
+  height: 100vh;
 }
 .statusBar           {
 
