@@ -190,11 +190,9 @@ export const DynamicPanelGroup: React.FC = () => {
         if (fromPanel && toPanel && fromPanel !== toPanel) {
           handleMoveTab(tabId, fromPanel, toPanel);
         }
-        // ✅ Cleanup drop target highlight
         setActiveDropTarget(null);
       }}
       onDragCancel={() => {
-        // ✅ Also reset if drag is cancelled
         setActiveDropTarget(null);
       }}
     >

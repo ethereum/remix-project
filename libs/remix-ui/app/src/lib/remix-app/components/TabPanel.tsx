@@ -17,6 +17,7 @@ type TabPanelProps = {
   panelId: string;
   //onTabDrop?: (tabId: string, fromPanel: string, toPanel: string) => void;
   isDropTarget?: boolean;
+  draggingTabId?: string;
 };
 
 export const TabPanel: React.FC<TabPanelProps> = ({
@@ -24,9 +25,11 @@ export const TabPanel: React.FC<TabPanelProps> = ({
   defaultActiveTabId,
   panelId,
   //onTabDrop,
-  isDropTarget
+  isDropTarget,
+  draggingTabId,
 }) => {
   const { setNodeRef } = useDroppable({ id: panelId });
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   const [activeTabId, setActiveTabId] = useState(() =>
     defaultActiveTabId || tabs[0]?.id || ""
@@ -51,20 +54,34 @@ export const TabPanel: React.FC<TabPanelProps> = ({
       }}
     >
 
-      <div className="nav-tabs" style={{ display: "flex", borderBottom: "1px solid #ccc" }}>
-        {tabs.map((tab) => (
-          <DraggableTab
-            key={tab.id}
-            tabId={tab.id}
-            panelId={panelId}
-            label={tab.label}
-            isActive={tab.id === activeTabId}
-            onClick={() => setActiveTabId(tab.id)}
-          />
+      <div className="nav-tabs" style={{ display: "flex", borderBottom: "1px solid #ccc", position: "relative" }}>
+        {tabs.map((tab, i) => (
+          <React.Fragment key={tab.id}>
+            {hoverIndex === i && (
+              <div
+                style={{
+                  width: 2,
+                  backgroundColor: "#66f",
+                  height: "100%",
+                  position: "absolute",
+                  left: `${i * 100}px`, // crude estimate — can refine
+                  top: 0,
+                  zIndex: 10,
+                }}
+              />
+            )}
+            <DraggableTab
+              tabId={tab.id}
+              panelId={panelId}
+              label={tab.label}
+              isActive={tab.id === activeTabId}
+              onClick={() => setActiveTabId(tab.id)}
+            />
+          </React.Fragment>
         ))}
       </div>
       <div style={{ flex: 1, overflow: "auto", padding: 10 }}>
-        {activeTab?.content}
+      {activeTab?.content}
       </div>
     </div>
 
