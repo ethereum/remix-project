@@ -36,18 +36,38 @@ export const DynamicPanelGroup: React.FC = () => {
     },
   ]);
 
+  const handleClosePanel = (index: number) => {
+    if (panels.length === 1) return; // Optional: prevent closing the last panel
+  
+    const currentLayout = panelRef.current?.getLayout() ?? [];
+    const newPanels = [...panels];
+    newPanels.splice(index, 1);
+    setPanels(newPanels);
+  
+    requestAnimationFrame(() => {
+      const removedSize = currentLayout[index];
+      const remaining = currentLayout.filter((_, i) => i !== index);
+      const total = remaining.reduce((a, b) => a + b, 0);
+  
+      // Redistribute removed size proportionally
+      const adjusted = remaining.map((s) => s + (s / total) * removedSize);
+      const layout = normalizeAndFixLayout(adjusted);
+  
+      panelRef.current?.setLayout(layout);
+    });
+  };
+
   const handleSplitPanel = (index: number) => {
     const currentLayout = panelRef.current?.getLayout() ?? [];
-
-    console.log("currentLayout", currentLayout);
   
+    const newId = uuidv4();
     const newPanel = {
-      id: uuidv4(),
+      id: newId,
       tabs: [
         {
-          id: uuidv4(),
-          label: `${index}`,
-          content: <p>Split from panel {panels[index].id}</p>,
+          id: newId,
+          label:  `${newId}`.substring(0, 4),
+          content: <PanelContent id={`${newId}`} />,
         },
       ],
     };
@@ -57,16 +77,22 @@ export const DynamicPanelGroup: React.FC = () => {
     setPanels(newPanels);
   
     requestAnimationFrame(() => {
-      const oldSizes = currentLayout;
-      const newPanelSize = 20;
-      const remaining = 100 - newPanelSize;
+      let layout: number[];
   
-      const scaledOldSizes = oldSizes.map((s) => (s / 100) * remaining);
-      const layout = normalizeAndFixLayout([
-        ...scaledOldSizes.slice(0, index + 1),
-        newPanelSize,
-        ...scaledOldSizes.slice(index + 1),
-      ]);
+      if (currentLayout.length === 1) {
+        // Only one panel → split evenly
+        layout = [50, 50];
+      } else {
+        const newPanelSize = 20;
+        const remaining = 100 - newPanelSize;
+  
+        const scaledOldSizes = currentLayout.map((s) => (s / 100) * remaining);
+        layout = normalizeAndFixLayout([
+          ...scaledOldSizes.slice(0, index + 1),
+          newPanelSize,
+          ...scaledOldSizes.slice(index + 1),
+        ]);
+      }
   
       panelRef.current?.setLayout(layout);
     });
@@ -80,6 +106,7 @@ export const DynamicPanelGroup: React.FC = () => {
         <React.Fragment key={panel.id}>
           <Panel order={index} id={panel.id} defaultSize={100 / (panels.length)}>
             <button onClick={() => handleSplitPanel(index)}>Split</button>
+            <button onClick={() => handleClosePanel(index)}>✖</button>
             <TabPanel tabs={panel.tabs} />
           </Panel>
           {index < panels.length - 1 && <PanelResizeHandle style={{

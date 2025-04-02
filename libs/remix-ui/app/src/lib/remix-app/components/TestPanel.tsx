@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 
 export const PanelContent: React.FC<{ id: string }> = ({ id }) => {
     const [count, setCount] = useState(0);
-  
+    const monacoRef = useRef<HTMLDivElement>(null);
+
+    function handleEditorWillMount(monaco) {
+        monacoRef.current = monaco
+    }
     return (
-      <div
-        style={{
-          height: "100%",
-          padding: "1rem",
-          background: "#f7f7f7",
-          borderRight: "1px solid #ccc",
-        }}
-      >
-        <h3>Panel {id}</h3>
-        <p>Count: {count}</p>
-        <button onClick={() => setCount((c) => c + 1)}>Increment</button>
-      </div>
+        <div
+            style={{
+                height: "100%",
+            }}
+        >
+            <Editor
+                onMount={handleEditorWillMount}
+                width="100%"
+                theme="vs-dark"
+            />
+        </div>
     );
-  };
+};
