@@ -89,6 +89,8 @@
     "@apollo/client": "^3.9.5",
     "@babel/plugin-proposal-class-properties": "^7.16.0",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "@erebos/bzz-node": "^0.13.0",
     "@ethereumjs/block": "5.3.0",
     "@ethereumjs/common": "4.4.0",

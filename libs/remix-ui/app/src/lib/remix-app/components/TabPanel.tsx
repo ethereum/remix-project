@@ -1,5 +1,9 @@
 // TabPanel.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDraggable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
+import { DraggableTab } from "./DraggableTab";
+import { use } from "chai";
 
 type Tab = {
   id: string;
@@ -10,40 +14,50 @@ type Tab = {
 type TabPanelProps = {
   tabs: Tab[];
   defaultActiveTabId?: string;
+  panelId: string;
+  //onTabDrop?: (tabId: string, fromPanel: string, toPanel: string) => void;
 };
 
 export const TabPanel: React.FC<TabPanelProps> = ({
   tabs,
   defaultActiveTabId,
+  panelId,
+  //onTabDrop,
 }) => {
-  const [activeTabId, setActiveTabId] = useState(
-    defaultActiveTabId || tabs[0]?.id
+  const { setNodeRef } = useDroppable({ id: panelId });
+
+  const [activeTabId, setActiveTabId] = useState(() =>
+    defaultActiveTabId || tabs[0]?.id || ""
   );
 
-  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) || tabs[0];
+
+  useEffect(() => {
+    console.log({ activeTabId, tabs });
+  },[activeTabId])
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "flex", borderBottom: "1px solid #ccc" }}>
+    <div
+      ref={setNodeRef}
+      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
+
+      <div className="nav-tabs" style={{ display: "flex", borderBottom: "1px solid #ccc" }}>
         {tabs.map((tab) => (
-          <button
+          <DraggableTab
             key={tab.id}
+            tabId={tab.id}
+            panelId={panelId}
+            label={tab.label}
+            isActive={tab.id === activeTabId}
             onClick={() => setActiveTabId(tab.id)}
-            style={{
-              padding: "8px 12px",
-              background: tab.id === activeTabId ? "#eee" : "transparent",
-              border: "none",
-              borderBottom: tab.id === activeTabId ? "2px solid #333" : "none",
-              cursor: "pointer",
-            }}
-          >
-            {tab.label}
-          </button>
+          />
         ))}
       </div>
       <div style={{ flex: 1, overflow: "auto", padding: 10 }}>
         {activeTab?.content}
       </div>
     </div>
+
   );
 };
