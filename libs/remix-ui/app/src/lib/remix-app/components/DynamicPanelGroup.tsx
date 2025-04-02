@@ -39,6 +39,7 @@ export const DynamicPanelGroup: React.FC = () => {
       tabs: [{ id: "1", label: "First", content: <PanelContent id="1" /> }],
     },
   ]);
+  const [activeDropTarget, setActiveDropTarget] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -118,27 +119,50 @@ export const DynamicPanelGroup: React.FC = () => {
 
   const handleMoveTab = (tabId: string, fromPanel: string, toPanel: string) => {
     console.log("Move tab", tabId, "from", fromPanel, "to", toPanel);
-    
+
     setPanels((prev) => {
-      const newPanels = prev.map((p) => {
-        if (p.id === fromPanel) {
-          return {
-            ...p,
-            tabs: p.tabs.filter((tab) => tab.id !== tabId),
-          };
-        } else if (p.id === toPanel) {
-          const movedTab = prev
-            .find((p) => p.id === fromPanel)
-            ?.tabs.find((tab) => tab.id === tabId);
-          return {
-            ...p,
-            tabs: [...p.tabs, movedTab!],
-          };
-        } else {
-          return p;
+      const from = prev.find((p) => p.id === fromPanel);
+      const to = prev.find((p) => p.id === toPanel);
+      if (!from || !to) return prev;
+
+      const movedTab = from.tabs.find((tab) => tab.id === tabId);
+      if (!movedTab) return prev;
+
+      const newPanels = prev
+        .map((p) => {
+          if (p.id === fromPanel) {
+            return {
+              ...p,
+              tabs: p.tabs.filter((tab) => tab.id !== tabId),
+            };
+          } else if (p.id === toPanel) {
+            return {
+              ...p,
+              tabs: [...p.tabs, movedTab],
+            };
+          } else {
+            return p;
+          }
+        })
+        .filter((p) => p.tabs.length > 0); // 🧼 remove empty panel immediately
+
+      requestAnimationFrame(() => {
+        const currentLayout = panelRef.current?.getLayout() ?? [];
+
+        // If a panel was removed, recalculate layout
+        if (newPanels.length < prev.length) {
+          const indexToRemove = prev.findIndex((p) => p.id === fromPanel);
+          const removedSize = currentLayout[indexToRemove];
+          const remaining = currentLayout.filter((_, i) => i !== indexToRemove);
+          const total = remaining.reduce((a, b) => a + b, 0);
+
+          const adjusted = remaining.map((s) => s + (s / total) * removedSize);
+          const layout = normalizeAndFixLayout(adjusted);
+
+          panelRef.current?.setLayout(layout);
         }
       });
-      console.log(newPanels);
+
       return newPanels;
     });
   };
@@ -147,6 +171,14 @@ export const DynamicPanelGroup: React.FC = () => {
   return (
     <DndContext
       sensors={sensors}
+      onDragOver={(event) => {
+        const overPanelId = event.over?.id;
+        if (typeof overPanelId === "string") {
+          setActiveDropTarget(overPanelId);
+        } else {
+          setActiveDropTarget(null);
+        }
+      }}
       onDragEnd={(event) => {
         const { active, over } = event;
         if (!active || !over) return;
@@ -158,6 +190,12 @@ export const DynamicPanelGroup: React.FC = () => {
         if (fromPanel && toPanel && fromPanel !== toPanel) {
           handleMoveTab(tabId, fromPanel, toPanel);
         }
+        // ✅ Cleanup drop target highlight
+        setActiveDropTarget(null);
+      }}
+      onDragCancel={() => {
+        // ✅ Also reset if drag is cancelled
+        setActiveDropTarget(null);
       }}
     >
       <PanelGroup direction="horizontal" ref={panelRef} style={{ height: "100vh" }}>
@@ -166,7 +204,7 @@ export const DynamicPanelGroup: React.FC = () => {
             <Panel order={index} id={panel.id} defaultSize={100 / (panels.length)}>
               <button onClick={() => handleSplitPanel(index)}>Split</button>
               <button onClick={() => handleClosePanel(index)}>✖</button>
-              <TabPanel panelId={panel.id} tabs={panel.tabs} />
+              <TabPanel panelId={panel.id} tabs={panel.tabs} isDropTarget={panel.id === activeDropTarget} />
             </Panel>
             {index < panels.length - 1 && <PanelResizeHandle style={{
               backgroundColor: 'var(--primary)',

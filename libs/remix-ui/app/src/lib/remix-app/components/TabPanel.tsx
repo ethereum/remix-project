@@ -16,6 +16,7 @@ type TabPanelProps = {
   defaultActiveTabId?: string;
   panelId: string;
   //onTabDrop?: (tabId: string, fromPanel: string, toPanel: string) => void;
+  isDropTarget?: boolean;
 };
 
 export const TabPanel: React.FC<TabPanelProps> = ({
@@ -23,6 +24,7 @@ export const TabPanel: React.FC<TabPanelProps> = ({
   defaultActiveTabId,
   panelId,
   //onTabDrop,
+  isDropTarget
 }) => {
   const { setNodeRef } = useDroppable({ id: panelId });
 
@@ -34,12 +36,19 @@ export const TabPanel: React.FC<TabPanelProps> = ({
 
   useEffect(() => {
     console.log({ activeTabId, tabs });
-  },[activeTabId])
+  }, [activeTabId])
 
   return (
     <div
       ref={setNodeRef}
-      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: isDropTarget ? "#3a3d4f" : "#2a2c3f",
+        outline: isDropTarget ? "2px solid #66f" : "none",
+        transition: "outline 0.2s ease",
+      }}
     >
 
       <div className="nav-tabs" style={{ display: "flex", borderBottom: "1px solid #ccc" }}>
