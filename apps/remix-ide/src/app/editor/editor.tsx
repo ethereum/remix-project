@@ -1,7 +1,7 @@
 'use strict'
 import React from 'react' // eslint-disable-line
 import { resolve } from 'path'
-import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
+import { EditorAPIType, EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -28,7 +28,7 @@ export default class Editor extends Plugin {
   modes: Record<string, string>
   activated: boolean
   events: Record<string, any>
-  api: Record<string, any>
+  api: Record<string, any> & EditorAPIType
   dispatch: any
   ref: any
   currentFile: any
@@ -87,7 +87,7 @@ export default class Editor extends Plugin {
     }
 
     // to be implemented by the react component
-    this.api = {}
+    this.api = {} as EditorAPIType
     this.dispatch = null
     this.ref = null
   }
