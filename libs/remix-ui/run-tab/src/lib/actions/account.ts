@@ -73,14 +73,15 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
-    plugin.call('notification', 'toast', alertMsg)
-  }, async () => {
-    if (executionContext.context === 'walletconnect') {
-      await plugin.call('walletconnect', 'openModal')
-    }
-    setFinalContext(plugin, dispatch)
-  })
+  if (executionContext.context === 'walletconnect') {
+    setWalletConnectExecutionContext(plugin, dispatch, executionContext)
+  } else {
+    plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+      plugin.call('notification', 'toast', alertMsg)
+    }, async () => {
+      setFinalContext(plugin, dispatch)
+    })
+  }
 }
 
 export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>, cbMessage: JSX.Element) => {
@@ -228,4 +229,31 @@ export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<
 export const addFileInternal = async (plugin: RunTab, path: string, content: string) => {
   const file = await plugin.call('fileManager', 'writeFileNoRewrite', path, content)
   await plugin.call('fileManager', 'open', file.newPath)
+}
+
+const setWalletConnectExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
+  plugin.call('walletconnect', 'isWalletConnected').then((isConnected) => {
+    if (isConnected) {
+      plugin.call('walletconnect', 'openModal').then(() => {
+        plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+          plugin.call('notification', 'toast', alertMsg)
+        }, async () => {
+          setFinalContext(plugin, dispatch)
+        })
+      })
+    } else {
+      plugin.call('walletconnect', 'openModal').then(() => {
+        plugin.on('walletconnect', 'connectionSuccessful', () => {
+          plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+            plugin.call('notification', 'toast', alertMsg)
+          }, async () => {
+            setFinalContext(plugin, dispatch)
+          })
+        })
+        plugin.on('walletconnect', 'connectionFailed', () => {
+          plugin.call('notification', 'toast', 'Connection failed')
+        })
+      })
+    }
+  })
 }

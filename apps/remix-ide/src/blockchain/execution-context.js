@@ -148,9 +148,6 @@ export class ExecutionContext {
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       await network.init()
-      if (context === 'walletconnect') {
-        await network.provider.udapp.call('walletconnect', 'openModal')
-      }
       this.currentFork = network.fork
       this.executionContext = context
       // injected
