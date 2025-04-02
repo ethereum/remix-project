@@ -7,7 +7,6 @@ type DraggableTabProps = {
     label: string;
     isActive: boolean;
     onClick: () => void;
-
 };
 
 export const DraggableTab: React.FC<DraggableTabProps> = ({

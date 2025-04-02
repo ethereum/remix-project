@@ -117,6 +117,68 @@ export const DynamicPanelGroup: React.FC = () => {
     });
   };
 
+  const moveTabToPosition = (
+    tabId: string,
+    fromPanelId: string,
+    toPanelId: string,
+    targetTabId: string,
+    side: "left" | "right"
+  ) => {
+    setPanels((prev) => {
+      const from = prev.find((p) => p.id === fromPanelId);
+      const to = prev.find((p) => p.id === toPanelId);
+      if (!from || !to) return prev;
+  
+      const movedTab = from.tabs.find((tab) => tab.id === tabId);
+      if (!movedTab) return prev;
+  
+      // Remove tab from source
+      const updatedFromTabs = from.tabs.filter((tab) => tab.id !== tabId);
+  
+      // Calculate insertion index
+      const targetIndex = to.tabs.findIndex((tab) => tab.id === targetTabId);
+      const insertIndex = side === "left" ? targetIndex : targetIndex + 1;
+  
+      // Remove from source first if it's the same panel to prevent index shift
+      const isSamePanel = fromPanelId === toPanelId;
+      let newTabs = isSamePanel ? updatedFromTabs : [...to.tabs];
+      newTabs.splice(insertIndex, 0, movedTab);
+  
+      const newPanels = prev
+        .map((p) => {
+          if (p.id === fromPanelId && !isSamePanel) {
+            return { ...p, tabs: updatedFromTabs };
+          }
+          if (p.id === toPanelId) {
+            return { ...p, tabs: newTabs };
+          }
+          return p;
+        })
+        .filter((p) => p.tabs.length > 0); // Remove empty panel
+  
+      // Layout update if needed
+      if (!isSamePanel) {
+        requestAnimationFrame(() => {
+          const currentLayout = panelRef.current?.getLayout() ?? [];
+          const indexToRemove = prev.findIndex((p) => p.id === fromPanelId);
+          const removedSize = currentLayout[indexToRemove];
+          const remaining = currentLayout.filter((_, i) => i !== indexToRemove);
+          const total = remaining.reduce((a, b) => a + b, 0);
+          const adjusted = remaining.map((s) => s + (s / total) * removedSize);
+          const layout = normalizeAndFixLayout(adjusted);
+          panelRef.current?.setLayout(layout);
+        });
+      }
+  
+      return newPanels;
+    });
+  };
+
+  const findPanelIdForTab = (tabId: string): string | null => {
+    const panel = panels.find((p) => p.tabs.some((t) => t.id === tabId));
+    return panel?.id || null;
+  };
+
   const handleMoveTab = (tabId: string, fromPanel: string, toPanel: string) => {
     console.log("Move tab", tabId, "from", fromPanel, "to", toPanel);
 
@@ -182,14 +244,28 @@ export const DynamicPanelGroup: React.FC = () => {
       onDragEnd={(event) => {
         const { active, over } = event;
         if (!active || !over) return;
-
+      
         const fromPanel = active.data?.current?.fromPanel;
         const tabId = active.id as string;
-        const toPanel = over.id as string;
-
-        if (fromPanel && toPanel && fromPanel !== toPanel) {
-          handleMoveTab(tabId, fromPanel, toPanel);
+        const overId = over.id as string;
+      
+        // Handle directional drop (e.g. "tab-abc-left")
+        const match = overId.match(/^(.+)-(left|right)$/);
+        if (match) {
+          const [_, targetTabId, side] = match;
+          const toPanel = findPanelIdForTab(targetTabId); // you’ll define this
+          if (toPanel && fromPanel) {
+            moveTabToPosition(tabId, fromPanel, toPanel, targetTabId, side as "left" | "right");
+          }
+          setActiveDropTarget(null);
+          return;
         }
+      
+        // fallback: drop on whole panel
+        if (fromPanel && overId !== fromPanel) {
+          handleMoveTab(tabId, fromPanel, overId);
+        }
+      
         setActiveDropTarget(null);
       }}
       onDragCancel={() => {
