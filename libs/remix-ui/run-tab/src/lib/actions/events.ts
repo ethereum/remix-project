@@ -293,6 +293,11 @@ export const resetAndInit = (plugin: RunTab) => {
       } catch (e) {
         cb(e.message)
       }
+    },
+    isSmartAccount: (address) => {
+      const smartAddresses = Object.keys(plugin.REACT_API.smartAccounts)
+      if (smartAddresses && smartAddresses.includes(address)) return true
+      else return false
     }
   })
 }
