@@ -16,25 +16,25 @@ const profile = {
 }
 
 export default class Editor extends Plugin {
-  _themes: any
-  registeredDecorations: any
-  currentDecorations: any
+  _themes: Record<string, string>
+  registeredDecorations: Record<string, any>
+  currentDecorations: Record<string, any>
   event: EventManager
-  sessions: any
-  readOnlySessions: any
+  sessions: Record<string, any>
+  readOnlySessions: Record<string, any>
   previousInput: string
   saveTimeout: number | null
   emptySession: any
-  modes: any
+  modes: Record<string, string>
   activated: boolean
-  events: any
-  api: any
+  events: Record<string, any>
+  api: Record<string, any>
   dispatch: any
   ref: any
   currentFile: any
   currentThemeType: any
   currentDiffFile: any
-  isDiff: any
+  isDiff: boolean
 
   constructor () {
     super(profile)
@@ -97,6 +97,7 @@ export default class Editor extends Plugin {
   }
 
   updateComponent(state) {
+    console.log('editor', this)
     return <EditorUI
       editorAPI={state.api}
       themeType={state.currentThemeType}
