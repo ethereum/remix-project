@@ -149,7 +149,7 @@ export class ExecutionContext {
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       await network.init()
-      this.currentFork = network.fork
+      this.currentFork = network.config.fork
       this.executionContext = context
       // injected
       web3.setProvider(network.provider)
