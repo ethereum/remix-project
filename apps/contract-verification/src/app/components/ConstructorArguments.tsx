@@ -22,7 +22,8 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
   const compiledContract = selectedCompilerAbstract?.data?.contracts?.[filePath]?.[contractName]
   const abi = compiledContract?.abi
 
-  const constructorArgs = abi && abi.find((a) => a.type === 'constructor')?.inputs
+  const abiConstructorArgs = abi && abi.find((a) => a.type === 'constructor')?.inputs
+  const constructorArgs = abiConstructorArgs || []
 
   const decodeConstructorArgs = (value: string) => {
     try {
@@ -51,7 +52,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
   useEffect(() => {
     // Ensures that error is not reset when tabs are switched
     if ((!abiEncodingError && !abiEncodedConstructorArgs) || !constructorArgsInInitialState.current) {
-      setAbiEncodingError(constructorArgs?.length === 0 ? '' : 'Some constructor arguments are missing')
+      setAbiEncodingError(constructorArgs.length === 0 ? '' : 'Some constructor arguments are missing')
     }
 
     if (constructorArgsInInitialState.current) {
@@ -59,8 +60,8 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
       return
     }
     setAbiEncodedConstructorArgs('')
-    setConstructorArgsValues(Array(constructorArgs?.length ?? 0).fill(''))
-  }, [constructorArgs])
+    setConstructorArgsValues(Array(constructorArgs.length).fill(''))
+  }, [abiConstructorArgs])
 
   const handleConstructorArgs = (value: string, index: number) => {
     const changedConstructorArgsValues = [...constructorArgsValues.slice(0, index), value, ...constructorArgsValues.slice(index + 1)]
@@ -104,7 +105,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
   if (!selectedContract) return null
   if (!compilationOutput && Object.keys(compilationOutput).length === 0) return null
   // No render if no constructor args
-  if (!constructorArgs || constructorArgs.length === 0) return null
+  if (constructorArgs.length === 0) return null
 
   return (
     <div className="mt-4">
