@@ -7,6 +7,8 @@ import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, Generati
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { CodeCompletionAgent, ContractAgent } from '@remix/remix-ai-core';
+import axios from 'axios';
+import { user } from 'libs/remix-ui/remix-ai/src/lib/components/personas';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -41,7 +43,7 @@ export class RemixAIPlugin extends ViewPlugin {
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
   contractor: ContractAgent
-  assistantProvider: string = 'openai'
+  assistantProvider: string = 'mistralai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -181,6 +183,20 @@ export class RemixAIPlugin extends ViewPlugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
+
+    let ragContext = ""
+    try {
+      const options = { headers: { 'Content-Type': 'application/json', } }
+      await axios.get('https://0w534tgy9npivp-7860.proxy.runpod.net/repositories', options).then((response) => {
+        console.log('repos:', response.data)
+      })
+      const response = await axios.post('https://0w534tgy9npivp-7860.proxy.runpod.net/query', { query: userPrompt }, options)
+      ragContext = JSON.parse(response.data)
+      console.log('RAG context:', ragContext)
+      userPrompt = "Using the following context: " + ragContext['response'] + "\n\n" + userPrompt
+    } catch (error) {
+      console.log('RAG context error:', error)
+    }
     console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
 
     let result
