@@ -73,6 +73,8 @@ export interface IParams {
   temp?: number;
   return_stream_response?: boolean;
   terminal_output?: boolean;
+  threadId?: string;
+  provider?: string;
 }
 
 export enum AIRequestType {
