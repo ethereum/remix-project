@@ -69,6 +69,7 @@ import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 import { circomPlugin } from './app/plugins/electron/circomElectronPlugin'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
+import { WalletConnect } from './app/plugins/walletconnect'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -387,6 +388,8 @@ class AppComponent {
 
     const templateSelection = new TemplatesSelectionPlugin()
 
+    const walletConnect = new WalletConnect()
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -440,7 +443,8 @@ class AppComponent {
       matomo,
       templateSelection,
       scriptRunnerUI,
-      remixAI
+      remixAI,
+      walletConnect
     ])
 
     //---- fs plugin
