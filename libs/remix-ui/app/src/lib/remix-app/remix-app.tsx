@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './style/remix-app.css'
-import { RemixUIMainPanel } from '@remix-ui/panel'
+import { DynamicPanelGroup, PixelSizedPanel, RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
 import EnterDialog from './components/modals/enter'
 import OriginWarning from './components/modals/origin-warning'
@@ -15,8 +15,7 @@ import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
-import { PixelSizedPanel } from './components/PixelSizedPanel'
-import { DynamicPanelGroup } from './components/DynamicPanelGroup'
+
 
 declare global {
   interface Window {
@@ -237,7 +236,6 @@ const RemixApp = (props: IRemixAppUi) => {
         <onLineContext.Provider value={online}>
           <AppProvider value={value}>
             <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-              <DynamicPanelGroup/>
               <PanelGroup autoSaveId='main' style={{
                 height: '100vh',
                 width: '100vw',

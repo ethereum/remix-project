@@ -9,7 +9,7 @@ import {
 } from "react-resizable-panels";
 import { TabPanel } from "./TabPanel";
 import { v4 as uuidv4 } from "uuid";
-import { PanelContent } from "./TestPanel";
+import { PanelContent } from "./PanelContent";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 
