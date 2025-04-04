@@ -35,14 +35,13 @@ const App = () => {
   const [abiEncodingError, setAbiEncodingError] = useState<string>('')
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
     code: 'en',
-    messages: {}
+    messages: {},
   })
 
   const timer = useRef(null)
 
   useEffect(() => {
     plugin.internalEvents.on('verification_activated', () => {
-
       // @ts-ignore
       plugin.call('locale', 'currentLocale').then((locale: any) => {
         setLocale(locale)
@@ -61,13 +60,13 @@ const App = () => {
       plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
         setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
       })
-
-      // Fetch chains.json and update state
-      fetch('https://chainid.network/chains.json')
-        .then((response) => response.json())
-        .then((data) => setChains(data))
-        .catch((error) => console.error('Failed to fetch chains.json:', error))
     })
+
+    // Fetch chains.json and update state
+    fetch('https://chainid.network/chains.json')
+      .then((response) => response.json())
+      .then((data) => setChains(data))
+      .catch((error) => console.error('Failed to fetch chains.json:', error))
 
     // Clean up on unmount
     return () => {
