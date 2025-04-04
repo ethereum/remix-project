@@ -64,7 +64,7 @@ export const UpdateChatHistory = (userPrompt: string, AIAnswer: string) => {
 }
 
 export const parseUserInput = (input: string) => {
-  if (input.trimStart().startsWith('/generate')) return [true, input.replace('/generate', '').trimStart()]
+  if (input.trimStart().startsWith('/generate')) return [true, input.replace('/generate', 'generate').trimStart()]
   else return [false, input]
 }
 

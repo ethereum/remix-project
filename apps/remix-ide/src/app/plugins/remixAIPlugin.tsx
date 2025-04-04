@@ -187,13 +187,13 @@ export class RemixAIPlugin extends ViewPlugin {
     let ragContext = ""
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
-      await axios.get('https://0w534tgy9npivp-7860.proxy.runpod.net/repositories', options).then((response) => {
-        console.log('repos:', response.data)
-      })
-      const response = await axios.post('https://0w534tgy9npivp-7860.proxy.runpod.net/query', { query: userPrompt }, options)
-      ragContext = JSON.parse(response.data)
-      console.log('RAG context:', ragContext)
-      userPrompt = "Using the following context: " + ragContext['response'] + "\n\n" + userPrompt
+      const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
+      if (response.data) {
+        ragContext = response.data.response
+        userPrompt = "Using the following context: " + ragContext + "\n\n" + userPrompt
+      } else {
+        console.log('Invalid response from RAG context API:', response.data)
+      }
     } catch (error) {
       console.log('RAG context error:', error)
     }

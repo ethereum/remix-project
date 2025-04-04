@@ -38,12 +38,6 @@ export class ContractAgent {
     console.log('payload', payload)
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
     try {
-      this.nAttempts += 1
-      if (this.nAttempts > this.generationAttempts) {
-        this.performCompile = false
-        return ('Failed to generate the code. Number of attemps exceeded')
-      }
-
       if (payload === undefined) {
         payload = await this.plugin.call('remixAI', 'generate', userPrompt, AssistantParams)
       }
@@ -52,13 +46,39 @@ export class ContractAgent {
       this.generationThreadID = parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
 
+      const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
+        await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
+        const dirCreated = []
+        for (const file of parsedResults.files) {
+          const dir = file.fileName.split('/').slice(0, -1).join('/')
+          if (!dirCreated.includes(dir) && dir) {
+            await this.plugin.call('fileManager', 'mkdir', dir)
+            dirCreated.push(dir)
+          }
+          await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
+          await this.plugin.call('codeFormatter', 'format', file.fileName)
+          // recompile to have it in the workspace
+          // await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
+          // await this.plugin.call('solidity' as any, 'compile', file.fileName)
+        }
+        if (this.performCompile) return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
+        return "**New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!\n\n⚠️**Warning**: The compilation failed. Please check the compilation errors in the Remix IDE."
+      }
+
+      this.nAttempts += 1
+      if (this.nAttempts > this.generationAttempts) {
+        this.performCompile = false
+        console.log('Max attempts reached, returning the result')
+        return await writeAIResults(parsedFiles)
+      }
+
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
           const result:CompilationResult = await this.compilecontracts(file.fileName, file.content)
           console.log('compilation result', result)
           if (!result.compilationSucceeded && this.performCompile) {
             // nasty recursion
-            console.log('compilation failed', file.fileName, "reusind the same thread", this.generationThreadID)
+            console.log('compilation failed', file.fileName, "reusing the same thread", this.generationThreadID)
             const newPrompt = `The contract ${file.fileName} does not compile. Here is the error message; ${result.errors}. Try again with the same formatting!`
             return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
             //throw new Error("Failed to generate secure code on this prompt ```" + userPrompt + "```")
@@ -66,31 +86,17 @@ export class ContractAgent {
         }
       }
 
-      console.log('All source files might compile')
-      await this.createWorkspace(this.workspaceName)
-      await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
-      const dirCreated = []
-      for (const file of parsedFiles.files) {
-        const dir = file.fileName.split('/').slice(0, -1).join('/')
-        if (!dirCreated.includes(dir) && dir) {
-          await this.plugin.call('fileManager', 'mkdir', dir)
-          dirCreated.push(dir)
-        }
-        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
-        await this.plugin.call('codeFormatter', 'format', file.fileName)
-        // recompile to have it in the workspace
-        // await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
-        // await this.plugin.call('solidity' as any, 'compile', file.fileName)
-      }
-      this.nAttempts = 0
-      this.performCompile = true
-      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
+      console.log('All source files compile')
+      await writeAIResults(parsedFiles)
     } catch (error) {
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       this.performCompile = true
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
       return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
+    } finally {
+      this.nAttempts = 0
+      this.performCompile = true
     }
 
   }
