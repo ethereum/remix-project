@@ -122,7 +122,7 @@ export type PluginType = {
 export type EditorAPIType = {
   findMatches: (uri: string, value: string) => any
   getFontSize: () => number
-  getValue: (uri: string) => string
+  getValue: (uri: string, value?: string) => string
   getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
   getHoverPosition: (position: monacoTypes.IPosition) => number
   addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
@@ -135,8 +135,8 @@ export type EditorAPIType = {
 
 /* eslint-disable-next-line */
 export interface EditorUIProps {
-  contextualListener: any
-  activated: boolean
+  contextualListener?: any
+  activated?: boolean
   themeType: string
   currentFile: string
   currentDiffFile: string
