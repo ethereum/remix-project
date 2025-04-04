@@ -190,7 +190,7 @@ export class RemixAIPlugin extends ViewPlugin {
       const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
       if (response.data) {
         ragContext = response.data.response
-        userPrompt = "Using the following context: " + ragContext + "\n\n" + userPrompt
+        userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
       } else {
         console.log('Invalid response from RAG context API:', response.data)
       }
