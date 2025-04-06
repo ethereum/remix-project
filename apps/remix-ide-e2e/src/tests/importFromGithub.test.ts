@@ -68,7 +68,7 @@ module.exports = {
     browser
       .click('div[data-id="verticalIconsHomeIcon"]')
       .openFile('package.json')
-      .waitForElementVisible("*[data-path='git-hometab-test.git/package.json'")
+      .waitForElementVisible("*[data-path='git-hometab-test.git/package.json']")
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"name": "remix-project",') !== -1, 'content does contain "name": "remix-project"')
       })
