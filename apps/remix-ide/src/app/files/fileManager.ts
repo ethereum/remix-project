@@ -1,4 +1,3 @@
-
 'use strict'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
@@ -747,32 +746,13 @@ export default class FileManager extends Plugin {
       if (this.currentFile() === file && !this.editor.isDiff) return
 
       const provider = resolved.provider
+      // Activate the editor tab before opening the file
+      await this._components.registry.get('tabs').api.activateByTitle('Editor')
       this._deps.config.set('currentFile', file)
-
       this.openedFiles[file] = file
-
-      let content = ''
-      try {
-        content = await provider.get(file)
-      } catch (error) {
-        console.log(error)
-        throw error
-      }
-      try {
-        // This make sure dependencies are loaded in the editor context.
-        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.
-        await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path), path => this.exists(path))
-      } catch (e) {
-        console.log('unable to handle TypeScript dependencies of', file)
-      }
-      if (provider.isReadOnly(file)) {
-        await this.editor.openReadOnly(file, content)
-      } else {
-        await this.editor.open(file, content)
-      }
-      // TODO: Only keep `this.emit` (issue#2210)
+      await this.syncEditor(file)
       this.emit('currentFileChanged', file)
-      return true
+      this.emit('openFile', file)
     }
   }
 
