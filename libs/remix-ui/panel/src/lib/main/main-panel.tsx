@@ -22,6 +22,7 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
   const refs = [tabsRef, editorRef, mainPanelRef, terminalRef]
 
   const renderPanels = () => {
+    console.log('renderPanels', plugins, layout)
     if (layout.panels) {
       const pluginPanels: PluginRecord[] = []
       Object.values(layout.panels).map((panel: any) => {

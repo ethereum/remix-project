@@ -3,16 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { useDroppable } from "@dnd-kit/core";
 import { DraggableTab } from "./DraggableTab";
-import { use } from "chai";
+import { PanelTab } from "./context/LayoutContext";
 
-type Tab = {
-  id: string;
-  label: string;
-  content: React.ReactNode;
-};
 
 type TabPanelProps = {
-  tabs: Tab[];
+  tabs: PanelTab[];
   defaultActiveTabId?: string;
   panelId: string;
   //onTabDrop?: (tabId: string, fromPanel: string, toPanel: string) => void;

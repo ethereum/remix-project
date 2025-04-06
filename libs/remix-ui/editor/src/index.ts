@@ -1,2 +1,5 @@
-export * from './lib/remix-ui-editor'
+export * from './lib/EditorUI'
 export { default as monacoTypes } from './types/monaco'
+export type { lineText } from './types/'
+export { EditorWrapper } from './lib/wrapper/editorWrapper'
+export type { EditorWrapperProps } from './lib/wrapper/editorWrapper'

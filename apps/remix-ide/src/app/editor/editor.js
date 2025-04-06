@@ -79,15 +79,7 @@ export default class Editor extends Plugin {
 
   updateComponent(state) {
     console.log(state)
-    return <EditorUI
-      editorAPI={state.api}
-      themeType={state.currentThemeType}
-      currentFile={state.currentFile}
-      currentDiffFile={state.currentDiffFile}
-      events={state.events}
-      plugin={state.plugin}
-      isDiff={state.isDiff}
-    />
+    return <></>
   }
 
   render () {

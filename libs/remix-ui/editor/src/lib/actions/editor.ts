@@ -1,116 +1,255 @@
 
 import { monacoTypes } from '@remix-ui/editor';
 import { commitChange } from '@remix-ui/git';
-export interface Action {
-  type: string;
-  payload: Record<string, any>
-  monaco: any,
-  editors: any[]
+import monaco from '../../types/monaco';
+export type EditorAction =
+  | {
+      type: 'ADD_MODEL';
+      payload: {
+        uri: string;
+        value: string;
+        language: string;
+        readOnly?: boolean;
+        events: any;
+      };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'DISPOSE_MODEL';
+      payload: { uri: string };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'SET_VALUE';
+      payload: { uri: string; value: string };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'SET_FOCUSED_GROUP';
+      payload: { groupId: string };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'ADD_TAB';
+      payload: { uri: string; label: string; groupId: string };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'REMOVE_TAB';
+      payload: { uri: string };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'REVEAL_LINE';
+      payload: { line: number; column: number };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'REVEAL_RANGE';
+      payload: {
+        startLineNumber: number;
+        startColumn: number;
+        endLineNumber: number;
+        endColumn: number;
+      };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'FOCUS';
+      payload: {};
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'ADD_DIFF';
+      payload: { value: any };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'SET_FONTSIZE';
+      payload: { size: number };
+      monaco: any;
+      editors: any[];
+    }
+  | {
+      type: 'SET_WORDWRAP';
+      payload: { wrap: boolean };
+      monaco: any;
+      editors: any[];
+    };
+
+export interface EditorModelsState {
+  models: {
+    [uri: string]: {
+      model: monaco.editor.ITextModel;
+      uri: string;
+      language: string;
+      readOnly?: boolean;
+    };
+  };
+  tabs: {
+    [uri: string]: {
+      label: string;
+      uri: string;
+      groupId: string;
+    };
+  };
+  focusedGroupId: string | null;
 }
 
-export const initialState = {}
+export const initialState: EditorModelsState = {
+  models: {},
+  tabs: {},
+  focusedGroupId: null,
+};
 
-export const reducerActions = (models = initialState, action: Action) => {
+export const reducerActions = (state: EditorModelsState = initialState, action: EditorAction): EditorModelsState => {
   const monaco = action.monaco
   const editors = action.editors as any[]
   switch (action.type) {
-  case 'ADD_MODEL': {
-    if (!editors) return models
-    const uri = action.payload.uri
-    const value = action.payload.value
-    const language = action.payload.language
-    const readOnly = action.payload.readOnly
-    if (models[uri]) return models // already existing
-    models[uri] = { language, uri, readOnly }
-    let model
+    case 'ADD_MODEL': {
+      const { uri, value, language, readOnly, events } = action.payload
 
-    try {
-      model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
-    } catch (e) {
+      if (state.models[uri]) return state // already exists
 
-    }
-    models[uri].model = model
-    model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
-    return models
-  }
-  case 'DISPOSE_MODEL': {
-    const uri = action.payload.uri
-    const model = models[uri]?.model
-    if (model) model.dispose()
-    delete models[uri]
-    return models
-  }
-  case 'ADD_DIFF': {
-    if (!editors) return models
-    return models
-  }
-  case 'SET_VALUE': {
-    if (!editors) return models
-    const uri = action.payload.uri
-    const value = action.payload.value
-    const model = models[uri]?.model
-    if (model) {
-      model.setValue(value)
-    }
-    return models
-  }
-  case 'REVEAL_LINE': {
-    if (!editors) return models
-    const line = action.payload.line
-    const column = action.payload.column
-
-    editors.map((editor) => {
-
-      editor.revealLine(line)
-      editor.setPosition({ column, lineNumber: line })
-    })
-    return models
-  }
-  case 'REVEAL_RANGE': {
-    if (!editors) return models
-    const range: monacoTypes.IRange = {
-      startLineNumber: action.payload.startLineNumber + 1,
-      startColumn: action.payload.startColumn,
-      endLineNumber: action.payload.endLineNumber + 1,
-      endColumn: action.payload.endColumn
-    }
-    // reset to start of line
-    if (action.payload.startColumn < 100) {
-      editors.map(editor => editor.revealRange({
-        startLineNumber: range.startLineNumber,
-        startColumn: 1,
-        endLineNumber: range.endLineNumber,
-        endColumn: 1
-      }))
-    } else {
-      editors.map(editor => editor.revealRangeInCenter(range))
-    }
-    return models
-  }
-  case 'FOCUS': {
-    if (!editors) return models
-    editors.map(editor => editor.focus())
-    return models
-  }
-  case 'SET_FONTSIZE': {
-    if (!editors) return models
-    const size = action.payload.size
-    editors.map((editor) => {
-      if (size === 1) {
-        editor.trigger('keyboard', 'editor.action.fontZoomIn', {});
-      } else {
-        editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
+      let model: monaco.editor.ITextModel | undefined = undefined
+      try {
+        model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
+      } catch (e) {
+        console.error('Failed to create model', e)
       }
-    })
-    return models
-  }
-  case 'SET_WORDWRAP': {
-    if (!editors) return models
-    const wrap = action.payload.wrap
-    editors.map(editor =>
-      editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' }))
-    return models
-  }
+
+      if (model) {
+        model.onDidChangeContent(() => events.onDidChangeContent(uri))
+      }
+
+      return {
+        ...state,
+        models: {
+          ...state.models,
+          [uri]: {
+            model,
+            uri,
+            language,
+            readOnly
+          }
+        }
+      }
+    }
+
+    case 'SET_VALUE': {
+      const { uri, value } = action.payload
+      const model = state.models[uri]?.model
+      if (model) model.setValue(value)
+      return state
+    }
+
+    case 'DISPOSE_MODEL': {
+      const { uri } = action.payload
+      const model = state.models[uri]?.model
+      if (model) model.dispose()
+
+      const { [uri]: _, ...rest } = state.models
+
+      return {
+        ...state,
+        models: rest
+      }
+    }
+
+    case 'SET_FOCUSED_GROUP': {
+      return {
+        ...state,
+        focusedGroupId: action.payload.groupId
+      }
+    }
+
+    case 'ADD_TAB': {
+      const { uri, label, groupId } = action.payload
+      return {
+        ...state,
+        tabs: {
+          ...state.tabs,
+          [uri]: { uri, label, groupId }
+        }
+      }
+    }
+
+    case 'REMOVE_TAB': {
+      const { uri } = action.payload
+      const { [uri]: _, ...rest } = state.tabs
+      return {
+        ...state,
+        tabs: rest
+      }
+    }
+    case 'ADD_DIFF': {
+      // You can flesh this out later; just return state for now
+      return state
+    }
+
+    case 'REVEAL_LINE': {
+      const { line, column } = action.payload
+      editors.forEach(editor => {
+        editor.revealLine(line)
+        editor.setPosition({ column, lineNumber: line })
+      })
+      return state
+    }
+
+    case 'REVEAL_RANGE': {
+      const range: monacoTypes.IRange = {
+        startLineNumber: action.payload.startLineNumber + 1,
+        startColumn: action.payload.startColumn,
+        endLineNumber: action.payload.endLineNumber + 1,
+        endColumn: action.payload.endColumn
+      }
+
+      editors.forEach(editor => {
+        if (action.payload.startColumn < 100) {
+          editor.revealRange({
+            startLineNumber: range.startLineNumber,
+            startColumn: 1,
+            endLineNumber: range.endLineNumber,
+            endColumn: 1
+          })
+        } else {
+          editor.revealRangeInCenter(range)
+        }
+      })
+
+      return state
+    }
+
+    case 'FOCUS': {
+      editors.forEach(editor => editor.focus())
+      return state
+    }
+
+    case 'SET_FONTSIZE': {
+      const size = action.payload.size
+      editors.forEach(editor => {
+        const action = size === 1 ? 'editor.action.fontZoomIn' : 'editor.action.fontZoomOut'
+        editor.trigger('keyboard', action, {})
+      })
+      return state
+    }
+
+    case 'SET_WORDWRAP': {
+      const wrap = action.payload.wrap
+      editors.forEach(editor =>
+        editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' }))
+      return state
+    }
   }
 }
 

@@ -53,6 +53,7 @@ export class MainPanel extends AbstractPanel {
   }
 
   renderComponent() {
+    console.log('renderComponent', this.plugins)
     this.dispatch({
       plugins: this.plugins
     })

@@ -1,5 +1,5 @@
 import { CodeParser, genericASTNode } from "../code-parser";
-import { lineText } from '@remix-ui/editor'
+import type { lineText } from '@remix-ui/editor'
 import { lastCompilationResult } from '@remixproject/plugin-api';
 
 export default class CodeParserGasService {

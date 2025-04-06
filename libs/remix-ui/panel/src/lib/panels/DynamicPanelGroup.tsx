@@ -11,6 +11,7 @@ import { TabPanel } from "./TabPanel";
 import { v4 as uuidv4 } from "uuid";
 import { PanelContent } from "./PanelContent";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { useLayoutContext } from "@remix-ui/panel";
 
 
 
@@ -33,12 +34,7 @@ const normalizeAndFixLayout = (sizes: number[]): number[] => {
 
 export const DynamicPanelGroup: React.FC = () => {
   const panelRef = useRef<ImperativePanelGroupHandle>(null);
-  const [panels, setPanels] = useState([
-    {
-      id: uuidv4(),
-      tabs: [{ id: "1", label: "First", content: <PanelContent id="1" /> }],
-    },
-  ]);
+  const { panels, setPanels, focusedGroupId, setFocusedGroupId } = useLayoutContext();
   const [activeDropTarget, setActiveDropTarget] = useState<string | null>(null);
 
   const sensors = useSensors(

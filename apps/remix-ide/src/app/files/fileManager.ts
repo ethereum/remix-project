@@ -9,6 +9,7 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 import { commitChange } from '@remix-ui/git'
+import { EditorPluginType } from '../editor/editor'
 
 /*
   attach to files event (removed renamed)
@@ -43,7 +44,7 @@ const createError = (err) => {
 export default class FileManager extends Plugin {
   mode: string
   openedFiles: any
-  editor: any
+  editor: EditorPluginType
   _components: any
   appManager: RemixAppManager
   _deps: any
@@ -744,7 +745,7 @@ export default class FileManager extends Plugin {
       file = resolved.file
       await this.saveCurrentFile()
       // we always open the file in the editor, even if it's the same as the current one if the editor is in diff mode
-      if (this.currentFile() === file && !this.editor.isDiff) return
+      if (await this.currentFile() === file && !this.editor.isDiff) return
 
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
@@ -807,6 +808,7 @@ export default class FileManager extends Plugin {
   }
 
   fileProviderOf(file) {
+    console.log('fileProviderOf', file)
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
