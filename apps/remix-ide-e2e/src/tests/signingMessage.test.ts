@@ -26,8 +26,8 @@ module.exports = {
         // we check here that the input is strictly "test message"
         browser.assert.equal(signature.value, '0xaa8873317ebf3f34fbcc0eab3e9808d851352674c28a3d6b88dc84db6e10fc183a45bcec983a105964a13b54f18e43eceae29d982bf379826fb7ecfe0d42c6ba1b', 'signature should be tied to the input "test message"')
       })
-      .addFile('signMassage.sol', sources[0]['signMassage.sol'])
-      .openFile('signMassage.sol')
+      .addFile('signMessage.sol', sources[0]['signMessage.sol'])
+      .openFile('signMessage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('udapp')
