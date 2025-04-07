@@ -267,4 +267,4 @@ parameters:
 - Curated list of Remix resources: https://github.com/ethereum/awesome-remix
 - Medium: https://medium.com/remix-ide
 - X: https://x.com/ethereumremix
-- Join Discord: https://discord.gg/mh9hFCKkEq
+- Join Discord: https://discord.com/invite/ZFHV7s44Ef
