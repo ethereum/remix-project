@@ -91,12 +91,12 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .scrollAndClick('*[data-id="settingsTabThemeLabelCerulean"]')
       .pause(5000)
-      .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
-      .checkElementStyle(':root', '--secondary', remixIdeThemes.curelean.secondary)
-      .checkElementStyle(':root', '--success', remixIdeThemes.curelean.success)
-      .checkElementStyle(':root', '--info', remixIdeThemes.curelean.info)
-      .checkElementStyle(':root', '--warning', remixIdeThemes.curelean.warning)
-      .checkElementStyle(':root', '--danger', remixIdeThemes.curelean.danger)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.cerulean.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.cerulean.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.cerulean.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.cerulean.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.cerulean.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.cerulean.danger)
   },
 
   'Should load Flatly theme ': function (browser: NightwatchBrowser) {
