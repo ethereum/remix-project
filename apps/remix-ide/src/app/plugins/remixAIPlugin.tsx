@@ -8,7 +8,6 @@ import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { CodeCompletionAgent, ContractAgent } from '@remix/remix-ai-core';
 import axios from 'axios';
-import { user } from 'libs/remix-ui/remix-ai/src/lib/components/personas';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
