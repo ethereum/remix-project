@@ -7,6 +7,10 @@ declare global {
   interface Window { testplugin: { name: string, url: string }; }
 }
 
+const getFrameId = function (browser: NightwatchBrowser) {
+  return browser.options.desiredCapabilities.browserName === 'chrome' ? 0 : 1
+}
+
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -17,7 +21,7 @@ module.exports = {
     browser.clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonvyper"]')
       .clickLaunchIcon('vyper')
-      .frame(0)
+      .frame(getFrameId(browser))
   },
 
   'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
@@ -69,7 +73,7 @@ module.exports = {
     browser
       // @ts-ignore
       .clickLaunchIcon('vyper')
-      .frame(0)
+      .frame(getFrameId(browser))
       .click('[data-id="compile"]')
       .waitForElementVisible({
         selector:'[data-id="compilation-details"]',
@@ -90,7 +94,7 @@ module.exports = {
       chromeBrowser.setPermission('clipboard-read', 'granted')
       chromeBrowser.setPermission('clipboard-write', 'granted')
       browser
-        .frame(0)
+        .frame(getFrameId(browser))
         .click('[data-id="compile"]')
         .waitForElementVisible({
           selector:'[data-id="compilation-details"]',
@@ -122,7 +126,7 @@ module.exports = {
       .addFile('test_error.vy', { content: wrongContract })
       .clickLaunchIcon('vyper')
       // @ts-ignore
-      .frame(0)
+      .frame(getFrameId(browser))
       .waitForElementVisible('[data-id="compile"]')
       .click('[data-id="compile"]')
       .waitForElementVisible({
@@ -142,7 +146,7 @@ module.exports = {
       .addFile('test.vy', { content: testContract })
       .clickLaunchIcon('vyper')
       // @ts-ignore
-      .frame(0)
+      .frame(getFrameId(browser))
       .waitForElementVisible('[data-id="compile"]')
       .click('[data-id="compile"]')
       .waitForElementVisible({
