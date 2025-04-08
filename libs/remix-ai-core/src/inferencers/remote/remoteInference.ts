@@ -152,4 +152,10 @@ export class RemoteInferencer implements ICompletions {
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
+
+  async generate(userPrompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt: userPrompt, "endpoint":"generate", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
 }

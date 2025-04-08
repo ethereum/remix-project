@@ -62,3 +62,16 @@ export const HandleStreamResponse = async (streamResponse,
 export const UpdateChatHistory = (userPrompt: string, AIAnswer: string) => {
   ChatHistory.pushHistory(userPrompt, AIAnswer)
 }
+
+export const parseUserInput = (input: string) => {
+  if (input.trimStart().startsWith('/generate')) return [true, input.replace('/generate', 'generate').trimStart()]
+  else return [false, input]
+}
+
+export const setProvider = (userPrompt: string) => {
+  if (userPrompt.trimStart().startsWith('/setProvider')) {
+    const provider = userPrompt.replace('/setProvider', '').trimStart()
+    return [true, provider]
+  }
+  return [false, '']
+}
