@@ -6,7 +6,7 @@ import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
 import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
-import { helpers } from "@remix-project/remix-lib";
+import { endpointUrls } from "@remix-project/remix-lib";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -21,7 +21,7 @@ export const GetDeviceCode = () => {
     // Send a POST request
     const response = await axios({
       method: 'post',
-      url: `${helpers.endpointUrls.github}/login/device/code`,
+      url: `${endpointUrls.github}/login/device/code`,
       data: {
         client_id: '2795b4e41e7197d6ea11',
         scope: 'repo gist user:email read:user'
@@ -43,7 +43,7 @@ export const GetDeviceCode = () => {
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
-      url:`${helpers.endpointUrls.github}/login/oauth/access_token`,
+      url:`${endpointUrls.github}/login/oauth/access_token`,
       data: {
         client_id: '2795b4e41e7197d6ea11',
         device_code: gitHubResponse.device_code,
