@@ -16,17 +16,20 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
+import { endpointUrls } from './helpers/endpointHelper'
 export { ConsoleLogs } from './helpers/hhconsoleSigs'
 export { ICompilerApi, ConfigurationSettings, iSolJsonBinData, iSolJsonBinDataBuild } from './types/ICompilerApi'
 export { QueryParams } from './query-params'
 export { VMexecutionResult } from './execution/txRunnerVM'
 export { Registry } from './registry'
 export type { Transaction } from './execution/txRunner'
+export { endpointUrls } from './helpers/endpointHelper'
 
 const helpers = {
   ui: uiHelper,
   compiler: compilerHelper,
-  txResultHelper
+  txResultHelper,
+  endpointUrls
 }
 const execution = {
   EventsDecoder: EventsDecoder,

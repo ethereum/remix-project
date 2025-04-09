@@ -11,6 +11,7 @@ import axios from 'axios'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+import { helpers } from '@remix-project/remix-lib'
 const _paq = (window._paq = window._paq || [])
 
 export const ContractSelection = (props: ContractSelectionProps) => {
@@ -267,10 +268,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const filePath = `.workspaces/${fileName}`
     const file = await plugin.call('fileManager', 'readFile', filePath)
 
-    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName })
+    const urlResponse = await axios.post(`${helpers.endpointUrls.solidityScan}/uploadFile`, { file, fileName })
 
     if (urlResponse.data.status === 'success') {
-      const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
+      const ws = new WebSocket(helpers.endpointUrls.solidityScanWebSocket)
 
       ws.addEventListener('error', console.error);
 
@@ -312,7 +313,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
 
-          const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          const { data: scanData } = await axios.post(`https://${helpers.endpointUrls.solidityScan}/downloadResult`, { url })
           const scanReport: ScanReport = scanData.scan_report
           if (scanReport?.multi_file_scan_details?.length) {
             for (const template of scanReport.multi_file_scan_details) {

@@ -14,6 +14,7 @@ import { UsageTypes } from './types'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
+import { helpers } from '@remix-project/remix-lib'
 
 declare global {
   interface Window {
@@ -59,6 +60,7 @@ const RemixApp = (props: IRemixAppUi) => {
       setLocale(props.app.localeModule.currentLocale())
     }
     if (props.app) {
+      console.log(helpers.endpointUrls)
       activateApp()
     }
     let hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
