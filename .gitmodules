@@ -1,0 +1,3 @@
+[submodule "apps/endpoints"]
+	path = apps/endpoints
+	url = https://github.com/remix-project-org/remix-endpoints
