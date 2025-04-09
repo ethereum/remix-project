@@ -1,5 +1,5 @@
-const { composePlugins, withNx } = require('@nrwl/webpack')
-const { withReact } = require('@nrwl/react')
+const {composePlugins, withNx} = require('@nrwl/webpack')
+const {withReact} = require('@nrwl/react')
 const webpack = require('webpack')
 const CopyPlugin = require('copy-webpack-plugin')
 const version = require('../../package.json').version
@@ -48,7 +48,6 @@ console.log('Copying plugins... ', copyPatterns)
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   // Update the webpack config as needed here.
   // e.g. `config.plugins.push(new MyPlugin())`
-  console.log('config', process.env)
 
   // add fallback for node modules
   config.resolve.fallback = {
@@ -89,7 +88,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   // use the web build instead of the node.js build
   // we do like that because using "config.resolve.alias" doesn't work
-  let pkgVerkle = fs.readFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), 'utf8')
+  let  pkgVerkle = fs.readFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), 'utf8')
   pkgVerkle = pkgVerkle.replace('"main": "./nodejs/rust_verkle_wasm.js",', '"main": "./web/rust_verkle_wasm.js",')
   fs.writeFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), pkgVerkle)
 
@@ -100,9 +99,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
 
   // add public path
-  if (process.env.NX_DESKTOP_FROM_DIST) {
+  if(process.env.NX_DESKTOP_FROM_DIST){
     config.output.publicPath = './'
-  } else {
+  }else{
     config.output.publicPath = '/'
   }
 
@@ -156,7 +155,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   ]
 
   // minify code
-  if (process.env.NX_DESKTOP_FROM_DIST)
+  if(process.env.NX_DESKTOP_FROM_DIST)
     config.optimization.minimize = true
 
   config.watchOptions = {
