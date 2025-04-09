@@ -23,6 +23,9 @@
       ],
       "@remix/remix-ai-core": [
         "../../libs/remix-ai-core/src/index"
+      ],
+      "@remix-project/remix-lib": [
+        "../../libs/remix-lib/src/index.ts"
       ]
     },
     "typeRoots": [
