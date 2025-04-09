@@ -6,7 +6,7 @@ import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
-import { sepolia } from "viem/chains"
+import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 const { createSmartAccountClient } = require("permissionless") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
@@ -108,12 +108,47 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
   )
 }
 
+const createSafeSmartAccount = async(safeAccount, toAddress, usePaymaster, chainObj) => {
+  const PIMLICO_API_KEY =''
+  const chainName = chainObj.name
+  const BUNDLER_URL = `https://api.pimlico.io/v2/${chainName}/rpc?apikey=${PIMLICO_API_KEY}`
+  const paymasterClient = createPimlicoClient({
+    transport: http(BUNDLER_URL),
+    entryPoint: {
+      address: entryPoint07Address,
+      version: "0.7",
+    },
+  })
+
+  console.log('paymasterClient--->', paymasterClient) // api key is shown
+
+  const saClient = createSmartAccountClient({
+    account: safeAccount,
+    chainObj,
+    paymaster: paymasterClient,
+    bundlerTransport: http(BUNDLER_URL),
+    userOperation: {
+      estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
+    }
+  })
+  console.log('saClient--->', saClient) // api key is shown
+
+  // Make a dummy tx to force smart account deployment
+  const useropHash = await saClient.sendUserOperation({
+    calls: [{
+      to: toAddress,
+      value: 0
+    }]
+  })
+  await saClient.waitForUserOperationReceipt({ hash: useropHash })
+}
+
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-  const PIMLICO_API_KEY =''
-  const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
+  const network = 'sepolia'
+  const chain = chains[network]
   let salt
 
   // @ts-ignore
@@ -121,12 +156,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   const walletClient = createWalletClient({
     account,
-    chain: sepolia,
+    chain,
     transport: custom(window.ethereum!),
   })
 
   const publicClient = createPublicClient({
-    chain: sepolia,
+    chain,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
 
@@ -147,33 +182,8 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       saltNonce: salt,
       version: "1.4.1"
     })
-
-    const paymasterClient = createPimlicoClient({
-      transport: http(BUNDLER_URL),
-      entryPoint: {
-        address: entryPoint07Address,
-        version: "0.7",
-      },
-    })
-
-    const saClient = createSmartAccountClient({
-      account: safeAccount,
-      sepolia,
-      paymaster: paymasterClient,
-      bundlerTransport: http(BUNDLER_URL),
-      userOperation: {
-        estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
-      }
-    })
-    // Make a dummy tx to force smart account deployment
-    const useropHash = await saClient.sendUserOperation({
-      calls: [{
-        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
-        value: 0
-      }]
-    })
-    await saClient.waitForUserOperationReceipt({ hash: useropHash })
-
+    await createSafeSmartAccount(safeAccount, '0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44', true, chain)
+    // TO verify creation, check if there is a contract code at this address
     const safeAddress = safeAccount.address
 
     const sAccount: SmartAccount = {
