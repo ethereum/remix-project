@@ -26,7 +26,7 @@ export type { Transaction } from './execution/txRunner'
 const helpers = {
   ui: uiHelper,
   compiler: compilerHelper,
-  txResultHelper,
+  txResultHelper
 }
 const execution = {
   EventsDecoder: EventsDecoder,
