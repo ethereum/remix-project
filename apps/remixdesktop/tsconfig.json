@@ -24,9 +24,6 @@
       "@remix/remix-ai-core": [
         "../../libs/remix-ai-core/src/index"
       ],
-      "@remix-project/remix-lib": [
-        "../../libs/remix-lib/src/index.ts"
-      ],
       "@remix-endpoints-helper": [
         "../../libs/endpoints-helper/src/index.ts"
       ]
