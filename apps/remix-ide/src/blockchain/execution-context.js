@@ -220,7 +220,8 @@ export class ExecutionContext {
     const state = {
       db: Object.fromEntries(stateDb.db._database),
       blocks: blocksData.blocks,
-      latestBlockNumber: blocksData.latestBlockNumber
+      latestBlockNumber: blocksData.latestBlockNumber,
+      baseBlockNumber: blocksData.baseBlockNumber
     }
     const stringifyed = JSON.stringify(state, (key, value) => {
       if (key === 'db') {

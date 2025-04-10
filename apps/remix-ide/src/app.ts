@@ -94,7 +94,7 @@ import { appPlatformTypes } from '@remix-ui/app'
 import DGitProvider from './app/files/dgitProvider'
 import WorkspaceFileProvider from './app/files/workspaceFileProvider'
 
-import PluginManagerComponent from './app/components/plugin-manager-component'
+import { PluginManagerComponent } from './app/components/plugin-manager-component'
 
 import CompileTab from './app/tabs/compile-tab'
 import SettingsTab from './app/tabs/settings-tab'
@@ -105,7 +105,7 @@ import Filepanel from './app/panels/file-panel'
 import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
-import { any } from 'async'
+import { Plugin } from '@remixproject/engine'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -209,6 +209,11 @@ class AppComponent {
     const pluginLoader = this.appManager.pluginLoader
     this.panels = {}
     this.workspace = pluginLoader.get()
+    if (pluginLoader.current === 'queryParams') {
+      this.workspace.map((workspace) => {
+        _paq.push(['trackEvent', 'App', 'queryParams-activated', workspace])
+      })
+    }
     this.engine = new RemixEngine()
     this.engine.register(appManager)
 
@@ -657,6 +662,7 @@ class AppComponent {
               if (callDetails.length > 1) {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', params.call])
                 //@ts-ignore
                 await this.appManager.call(...callDetails).catch(console.error)
               }
@@ -667,6 +673,7 @@ class AppComponent {
 
               // call all functions in the list, one after the other
               for (const call of calls) {
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', call])
                 const callDetails = call.split('//')
                 if (callDetails.length > 1) {
                   this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)

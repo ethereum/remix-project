@@ -4,27 +4,50 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
-import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { shortenAddress, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
 const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
-  const { selectExEnv, personalMode } = props
+  const { selectExEnv, personalMode, networkName } = props
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
     title: ''
   })
+  const [enableCSM, setEnableCSM] = useState(false)
+  const [smartAccountSelected, setSmartAccountSelected] = useState(false)
   const messageRef = useRef('')
+  const ownerEOA = useRef(null)
 
   const intl = useIntl()
+  const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
       props.setAccount(accounts[0])
     }
   }, [accounts, selectedAccount])
+
+  // Uncomment this when we want to show 'Create Smart Account' button
+  // useEffect(() => {
+  //   if (smartAccounts.length > 0 && networkName.includes('Sepolia')) {
+  //     if(smartAccounts.includes(selectedAccount)) {
+  //       setSmartAccountSelected(true)
+  //       setEnableCSM(false)
+  //       ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
+  //     }
+  //     else {
+  //       setSmartAccountSelected(false)
+  //       setEnableCSM(true)
+  //       ownerEOA.current = null
+  //     }
+  //   } else {
+  //     setEnableCSM(false)
+  //     setSmartAccountSelected(false)
+  //   }
+  // }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')
@@ -91,7 +114,38 @@ export function AccountUI(props: AccountProps) {
         })
       }
     }
-  }, [selectExEnv, personalMode])
+  }, [selectExEnv, personalMode, networkName])
+
+  const createSmartAccount = () => {createSmartAccount
+    props.modal(
+      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      (
+        <div className="w-100" data-id="createSmartAccountModal">
+          <FormattedMessage id="udapp.createSmartAccountDesc1"/><br/>
+          <FormattedMessage id="udapp.createSmartAccountDesc2"/><br/><br/>
+          <a href={'https://docs.safe.global/advanced/smart-account-overview#safe-smart-account'}
+            target="_blank"
+            onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
+                Learn more
+          </a>
+          <br/><br/>
+          <FormattedMessage id="udapp.createSmartAccountDesc3"/><br/><br/>
+          <input type="textbox" className="form-control" value={selectedAccount} disabled/><br/>
+          <FormattedMessage id="udapp.createSmartAccountDesc4"/>
+          <FormattedMessage id="udapp.createSmartAccountDesc5"/><br/><br/>
+          <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.continue' }),
+      () => {
+        props.createNewSmartAccount()
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {
+        props.setPassphrase('')
+      }
+    )
+  }
 
   const newAccount = () => {
     props.createNewBlockchainAccount(passphraseCreationPrompt())
@@ -222,14 +276,14 @@ export function AccountUI(props: AccountProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
         <FormattedMessage id="udapp.account" />
-        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
+        {!smartAccountSelected ? <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
           <span id="remixRunPlusWrapper">
             <i id="remixRunPlus" className={`ml-2 fas fa-plus udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
-        </CustomTooltip>
-        <CustomTooltip placement={'top'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
+        </CustomTooltip> : null }
+        {!smartAccountSelected ? <CustomTooltip placement={'top'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
           <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="ml-2 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>
-        </CustomTooltip>
+        </CustomTooltip> : null }
         <span >
           <CopyToClipboard className="fas fa-copy ml-2 p-0" tip={intl.formatMessage({ id: 'udapp.copyAccount' })} content={selectedAccount} direction="top" />
         </span>
@@ -258,6 +312,19 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      { smartAccountSelected ? <span className="alert-info badge badge-secondary">
+          Owner: {shortenAddress(ownerEOA.current)}
+        <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
+      </span> : null
+      }
+      { enableCSM ? (<div className="mt-1">
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
+          <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
+            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
+            Create Smart Account
+          </button>
+        </CustomTooltip>
+      </div>) : null }
     </div>
   )
 }

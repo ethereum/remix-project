@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react' // eslint-disable-line
 import { RunTabUI } from '@remix-ui/run-tab'
 import { ViewPlugin } from '@remixproject/engine-web'
@@ -12,6 +13,7 @@ import { ProviderConfig } from '@remix-ui/environment-explorer'
 import type { CompilerArtefacts } from '@remix-project/core-plugin'
 import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
+import { EnvDropdownLabelStateType } from 'libs/remix-ui/run-tab/src/lib/types'
 const _paq = (window._paq = window._paq || [])
 
 export const providerDescriptions = {
@@ -188,8 +190,8 @@ export class RunTab extends ViewPlugin {
       'vm-paris': 'Deploy to the in-browser virtual machine running the Paris fork.',
       'vm-london': 'Deploy to the in-browser virtual machine running the London fork.',
       'vm-berlin': 'Deploy to the in-browser virtual machine running the Berlin fork.',
-      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet in the in-browser virtual machine.',
-      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet in the in-browser virtual machine.',
+      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet latest block in the in-browser virtual machine.',
+      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet latest block in the in-browser virtual machine.',
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
       'basic-http-provider': 'Deploy to a Custom local network.',
@@ -222,23 +224,24 @@ export class RunTab extends ViewPlugin {
       'foundry-provider': ['assets/img/foundry.png']
     }
 
-    const addProvider = async (position: number, name: string, displayName: string, providerConfig: ProviderConfig, fork = '', dataId = '', title = '') => {
+    const addProvider = async (position: number, name: string, displayName: string, providerConfig: ProviderConfig, dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},
         dataId,
         name,
         displayName,
-        description: providerDescriptions[name] || displayName,
-        logos: providerLogos[name],
-        fork,
+        description: descriptions[name] || displayName,
+        logos: logos[name],
         config: providerConfig,
         title,
         init: async function () {
           const options = await udapp.call(name, 'init')
           if (options) {
             this.options = options
-            if (options['fork']) this.fork = options['fork']
+            if (options['fork']) this.config.fork = options['fork']
+            if (options['nodeUrl']) this.config.nodeUrl = options['nodeUrl']
+            if (options['blockNumber']) this.config.blockNumber = options['blockNumber']
           }
         },
         provider: new Provider(udapp, name)
@@ -256,15 +259,16 @@ export class RunTab extends ViewPlugin {
     }
 
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
-      console.log(`${name} through ${event.detail.info.name}`)
-      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, { isInjected: true, isVM: false, isRpcForkedState: false })
+      // name = `${name} through ${event.detail.info.name}`
+      const parent = 'injected-' + event.detail.info.name
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency, [], parent)])
+      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, { isInjected: true, isVM: false, isRpcForkedState: false, fork: '' })
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name
       const displayName = 'Injected Provider - ' + event.detail.info.name
       await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])
-      await addProvider(0, name, displayName, { isInjected: true, isVM: false, isRpcForkedState: false })
+      await addProvider(0, name, displayName, { isInjected: true, isVM: false, isRpcForkedState: false, fork: '' })
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
@@ -301,14 +305,14 @@ export class RunTab extends ViewPlugin {
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
-    await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-cancun/state.json' }, 'cancun', 'settingsVMCancunMode', titleVM)
-    await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-shanghai/state.json' }, 'shanghai', 'settingsVMShanghaiMode', titleVM)
-    await addProvider(51, 'vm-paris', 'Remix VM (Paris)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-paris/state.json' }, 'paris', 'settingsVMParisMode', titleVM)
-    await addProvider(52, 'vm-london', 'Remix VM (London)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-london/state.json' }, 'london', 'settingsVMLondonMode', titleVM)
-    await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-berlin/state.json' }, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', { isInjected: false, isVM: true, isRpcForkedState: true }, 'cancun', 'settingsVMMainnetMode', titleVM)
-    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', { isInjected: false, isVM: true, isRpcForkedState: true }, 'cancun', 'settingsVMSepoliaMode', titleVM)
-    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', { isInjected: false, isVM: true, isRpcForkedState: true }, '', 'settingsVMCustomMode', titleVM)
+    await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-cancun/state.json', fork: 'cancun' }, 'settingsVMCancunMode', titleVM)
+    await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-shanghai/state.json', fork: 'shanghai' }, 'settingsVMShanghaiMode', titleVM)
+    await addProvider(51, 'vm-paris', 'Remix VM (Paris)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-paris/state.json', fork: 'paris' }, 'settingsVMParisMode', titleVM)
+    await addProvider(52, 'vm-london', 'Remix VM (London)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-london/state.json', fork: 'london' }, 'settingsVMLondonMode', titleVM)
+    await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-berlin/state.json', fork: 'berlin' }, 'settingsVMBerlinMode', titleVM)
+    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'cancun' }, 'settingsVMMainnetMode', titleVM)
+    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'cancun' }, 'settingsVMSepoliaMode', titleVM)
+    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: '' }, 'settingsVMCustomMode', titleVM)
 
     // Forked VM States
     const addFVSProvider = async(stateFilePath, pos) => {
@@ -328,9 +332,10 @@ export class RunTab extends ViewPlugin {
         description: providerDescriptions[providerName],
         methods: ['sendAsync', 'init'],
         version: packageJson.version
-      }, this.blockchain, stateDetail.forkName)
+      }, this.blockchain, stateDetail.forkName, stateDetail.nodeUrl, stateDetail.blockNumber)
+      const isRpcForkedState = !!stateDetail.nodeUrl
       this.engine.register(fvsProvider)
-      await addProvider(pos, providerName, stateDetail.stateName, { isInjected: false, isVM: true, isRpcForkedState: false, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json` }, stateDetail.forkName)
+      await addProvider(pos, providerName, stateDetail.stateName, { nodeUrl: stateDetail.nodeUrl, baseBlockNumber: stateDetail.baseBlockNumber, isInjected: false, isVM: true, isRpcForkedState, isVMStateForked: true, statePath: `.states/forked_states/${stateDetail.stateName}.json`, fork: stateDetail.forkName })
     }
 
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
@@ -353,15 +358,17 @@ export class RunTab extends ViewPlugin {
 
     if (isElectron()) {
       // desktop host
-      await addProvider(5, 'desktopHost', 'Browser Wallet', { isInjected: false, isVM: false, isRpcForkedState: false })
+      await addProvider(5, 'desktopHost', 'Browser Wallet', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
     }
-    await addProvider(6, 'walletconnect', 'WalletConnect', { isInjected: false, isVM: false, isRpcForkedState: false })
+
+    // wallet connect
+    await addProvider(6, 'walletconnect', 'WalletConnect', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
 
     // external provider
-    await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', { isInjected: false, isVM: false, isRpcForkedState: false })
-    await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', { isInjected: false, isVM: false, isRpcForkedState: false })
-    await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', { isInjected: false, isVM: false, isRpcForkedState: false })
-    await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', { isInjected: false, isVM: false, isRpcForkedState: false })
+    await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
+    await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
+    await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
+    await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
 
     // register injected providers
 

@@ -55,7 +55,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
           warnings.push({
             warning: `Potential violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
             location: func.node.src,
-            more: `https://solidity.readthedocs.io/en/${version}/security-considerations.html#re-entrancy`
+            more: `https://docs.soliditylang.org/en/${version}/security-considerations.html#re-entrancy`
           })
         }
       })

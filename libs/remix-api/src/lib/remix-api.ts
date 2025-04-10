@@ -43,5 +43,4 @@ export interface ICustomRemixApi extends IRemixApi {
   desktopClient: IDesktopClient
 }
 
-
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>
