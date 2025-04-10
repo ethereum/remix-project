@@ -853,7 +853,7 @@ workflows:
             - test-remixdesktop-mac
           filters:
             branches:
-              only: [/.*desktop-master.*/]
+              only: [/.*desktop-master.*/, /.*desktop-metamask.*/]
       - build-plugin:
           matrix:
             parameters:
