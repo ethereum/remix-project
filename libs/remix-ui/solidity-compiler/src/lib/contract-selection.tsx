@@ -11,7 +11,7 @@ import axios from 'axios'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
-import { endpointUrls } from '@remix-project/remix-lib'
+import { endpointUrls } from '@remix-endpoints-helper'
 
 const _paq = (window._paq = window._paq || [])
 

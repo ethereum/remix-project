@@ -4,7 +4,7 @@ import { buildSolgptPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
-import { endpointUrls } from "@remix-project/remix-lib"
+import { endpointUrls } from "@remix-endpoints-helper"
 
 const defaultErrorMessage = `Unable to get a response from AI server`
 export class RemoteInferencer implements ICompletions {

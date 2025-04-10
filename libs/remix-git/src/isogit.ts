@@ -7,7 +7,7 @@ import http from 'isomorphic-git/http/web'
 
 import { Octokit } from "octokit"
 import { ElectronBasePluginClient } from "@remixproject/plugin-electron"
-import { endpointUrls } from "@remix-project/remix-lib"
+import { endpointUrls } from "@remix-endpoints-helper"
 const currentbranch = async (input: currentBranchInput, fsConfig: isoGitFSConfig) => {
 
   try {

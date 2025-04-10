@@ -6,7 +6,7 @@ import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
 import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
-import { endpointUrls } from "@remix-project/remix-lib";
+import { endpointUrls } from "@remix-endpoints-helper";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
