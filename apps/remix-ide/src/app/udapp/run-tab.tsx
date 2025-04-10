@@ -251,7 +251,6 @@ export class RunTab extends ViewPlugin {
         displayName,
         description: providerDescriptions[name] || displayName,
         logos: providerLogos[name],
-        fork,
         isInjected: providerConfig.isInjected,
         isVM: providerConfig.isVM,
         isForkedState: providerConfig.isRpcForkedState,
