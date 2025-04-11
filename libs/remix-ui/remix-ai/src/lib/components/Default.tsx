@@ -9,7 +9,6 @@ import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
 
-
 export let ChatApi = null
 
 export const Default = (props) => {

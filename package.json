@@ -145,6 +145,7 @@
     "create-hash": "^1.2.0",
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
+    "dompurify": "^3.2.5",
     "electron-squirrel-startup": "^1.0.0",
     "esbuild": "^0.25.0",
     "esbuild-wasm": "^0.19.6",
