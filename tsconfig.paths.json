@@ -196,6 +196,9 @@
             ],
             "@remix-git": [
               "libs/remix-git/"
+            ],
+            "@remix-endpoints-helper": [
+              "libs/endpoints-helper/src/index.ts"
             ]
         }
     }

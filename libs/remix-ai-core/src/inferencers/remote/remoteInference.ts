@@ -4,6 +4,7 @@ import { buildSolgptPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
+import { endpointUrls } from "@remix-endpoints-helper"
 
 const defaultErrorMessage = `Unable to get a response from AI server`
 export class RemoteInferencer implements ICompletions {
@@ -16,8 +17,8 @@ export class RemoteInferencer implements ICompletions {
   test_url="http://solcodertest.org"
 
   constructor(apiUrl?:string, completionUrl?:string) {
-    this.api_url = apiUrl!==undefined ? apiUrl: this.test_env? this.test_url : "https://solcoder.remixproject.org"
-    this.completion_url = completionUrl!==undefined ? completionUrl : this.test_env? this.test_url : "https://completion.remixproject.org"
+    this.api_url = apiUrl!==undefined ? apiUrl: this.test_env? this.test_url : endpointUrls.solcoder
+    this.completion_url = completionUrl!==undefined ? completionUrl : this.test_env? this.test_url : endpointUrls.completion
     this.event = new EventEmitter()
   }
 
