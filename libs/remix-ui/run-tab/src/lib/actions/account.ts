@@ -4,9 +4,10 @@ import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
+import axios from "axios"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
-import { sepolia } from "viem/chains"
+import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 const { createSmartAccountClient } = require("permissionless") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
@@ -105,9 +106,10 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-  const PIMLICO_API_KEY =''
-  const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44"
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
+  const network = 'sepolia'
+  const chain = chains[network]
   let salt
 
   // @ts-ignore
@@ -115,12 +117,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   const walletClient = createWalletClient({
     account,
-    chain: sepolia,
+    chain,
     transport: custom(window.ethereum!),
   })
 
   const publicClient = createPublicClient({
-    chain: sepolia,
+    chain,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
 
@@ -141,49 +143,25 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       saltNonce: salt,
       version: "1.4.1"
     })
+    const response = await axios.post(`http://localhost:4000/account-abstraction/createSafeSmartAccount`, { safeAccountObj: safeAccount, toAddress, usePaymaster: true, chainObj: chain })
+    console.log('response', response)
+    // TO verify creation, check if there is a contract code at this address
+    // const safeAddress = safeAccount.address
 
-    const paymasterClient = createPimlicoClient({
-      transport: http(BUNDLER_URL),
-      entryPoint: {
-        address: entryPoint07Address,
-        version: "0.7",
-      },
-    })
+    // const sAccount: SmartAccount = {
+    //   address : safeAccount.address,
+    //   salt,
+    //   ownerEOA: account,
+    //   timestamp: Date.now()
+    // }
+    // plugin.REACT_API.smartAccounts[safeAddress] = sAccount
+    // // Save smart accounts in local storage
+    // const smartAccountsStr = localStorage.getItem(localStorageKey)
+    // const smartAccountsObj = JSON.parse(smartAccountsStr)
+    // smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
+    // localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
 
-    const saClient = createSmartAccountClient({
-      account: safeAccount,
-      sepolia,
-      paymaster: paymasterClient,
-      bundlerTransport: http(BUNDLER_URL),
-      userOperation: {
-        estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
-      }
-    })
-    // Make a dummy tx to force smart account deployment
-    const useropHash = await saClient.sendUserOperation({
-      calls: [{
-        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
-        value: 0
-      }]
-    })
-    await saClient.waitForUserOperationReceipt({ hash: useropHash })
-
-    const safeAddress = safeAccount.address
-
-    const sAccount: SmartAccount = {
-      address : safeAccount.address,
-      salt,
-      ownerEOA: account,
-      timestamp: Date.now()
-    }
-    plugin.REACT_API.smartAccounts[safeAddress] = sAccount
-    // Save smart accounts in local storage
-    const smartAccountsStr = localStorage.getItem(localStorageKey)
-    const smartAccountsObj = JSON.parse(smartAccountsStr)
-    smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
-    localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
-
-    return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
+    // return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
     console.error('Failed to create safe smart account: ', error)
     return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
