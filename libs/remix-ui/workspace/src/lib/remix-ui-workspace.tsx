@@ -1023,7 +1023,7 @@ export function Workspace() {
             <header>
               <div className="mx-2 my-2 d-flex flex-column">
                 <div className="mx-2 d-flex">
-                  { currentWorkspace !== LOCALHOST ? (
+                  {(platform === appPlatformTypes.desktop && !global.fs.browser.isSuccessfulWorkspace ) ? null : currentWorkspace !== LOCALHOST ? (
                     <span className="remixui_topmenu d-flex">
                       <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                         <Dropdown.Toggle

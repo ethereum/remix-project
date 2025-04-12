@@ -34,7 +34,7 @@ export const ElectronMenu = (props: {
           <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary mb-1'><FormattedMessage id="electron.openFolder" /></div>
           <div data-id="openFolderButton" onClick={async () => { await props.createWorkspace() }} className='btn btn-primary mb-1'><FormattedMessage id="electron.createProject" /></div>
           <div data-id="openFolderButton" onClick={async () => { props.clone() }} className='btn btn-primary'><FormattedMessage id="electron.gitClone" /></div>
-          
+
           {global.fs.browser.recentFolders.length > 0 ?
             <>
               <label className="py-2 pt-3 align-self-center m-0">
