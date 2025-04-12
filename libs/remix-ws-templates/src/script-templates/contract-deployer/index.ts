@@ -1,5 +1,4 @@
 
-
 export const contractDeployerScripts = async (opts, plugin) => {
   console.log('contractDeployerScripts', opts, plugin)
   if (opts && opts.isElectron) {
