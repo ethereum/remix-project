@@ -34,6 +34,12 @@ export class DesktopHostPlugin extends ElectronBasePlugin {
     this.startServer()
     eventEmitter.on('connected', (payload) => {
       console.log('connected', payload)
+      if (isConnected && payload === false) {
+        console.log('suddenly disconnected')
+        for (const client of this.clients) {
+          client.sendDisconnectAlert()
+        }
+      }
       isConnected = payload
     })
     eventEmitter.on('isInjected', (isInjected: boolean) => {
@@ -75,11 +81,15 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.isInjected = null
-    eventEmitter.on('connected', async (payload) => {
-      console.log('SERVER connected', payload)
-      isConnected = payload
-      await this.sendConnectionStatus()
+  }
+
+  async sendDisconnectAlert() {
+    this.call('notification' as any, 'alert', {
+      id: 'desktopHostAlert',
+      title: 'Disconnected',
+      message: 'You are disconnected from the Browser wallet.',
     })
+
   }
 
   async setIsInjected(isInjected: boolean) {
@@ -118,19 +128,19 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     const page = await browser.newPage();
     await page.goto(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
   }
-  
+
 
   async init() {
     console.log('SETTING UP REMOTE WEBSOCKET...', this.webContentsId)
 
-    if (!isConnected){
+    if (!isConnected) {
       if (isE2E && !isE2ELocal) {
         await this.openInCI();
       } else {
         await shell.openExternal(`http://localhost:${ports.http_port}/?activate=udapp,desktopClient&desktopClientPort=${ports.websocket_port}`);
       }
     }
-    
+
     // wait for the connection
     while (!isConnected) {
       await new Promise(resolve => setTimeout(resolve, 1000))
