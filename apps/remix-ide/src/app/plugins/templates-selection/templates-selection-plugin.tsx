@@ -83,6 +83,12 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
     */
     const createWorkspace = async (item) => {
+
+      if (isElectron()) {
+        await this.call('remix-templates', 'loadTemplateInNewWindow', item.value)
+        return
+      }
+
       const defaultName = await this.call('filePanel', 'getAvailableWorkspaceName', item.displayName)
 
       const username = await this.call('settings', 'get', 'settings/github-user-name')
@@ -183,7 +189,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                         {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                       </div>
                     </div>
-                    <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
+                    <div className={`${isElectron() ? 'w-100' : 'align-items-center justify-content-between w-100 d-flex pt- flex-row'}`}>
                       {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-new${item.name}`}
@@ -192,11 +198,13 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                         <span
                           data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
                           onClick={async () => createWorkspace(item)}
-                          className="btn btn-sm mr-2 border border-primary"
+                          className={`btn btn-sm mr-2 border border-primary ${isElectron() ? 'w-100 mb-2' : ''}`}
                         >
-                          Create
+                          {isElectron()?
+                          <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
                         </span>
                       </CustomTooltip>}
+                      {!isElectron() && 
                       <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-add${item.name}`}
@@ -205,11 +213,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                         <span
                           data-id={`add-${item.value}`}
                           onClick={async () => addToCurrentWorkspace(item)}
-                          className="btn btn-sm border"
+                          className={`btn btn-sm border ${isElectron() ? 'w-100' : ''}`}
                         >
-                          Add to current
+                          'Add to current'
                         </span>
-                      </CustomTooltip>
+                      </CustomTooltip>}
                     </div>
                   </div>
                 </RemixUIGridCell>

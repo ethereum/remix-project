@@ -1134,7 +1134,7 @@ export function Workspace() {
               </div>
             </header>
           </div>
-          <ElectronMenu></ElectronMenu>
+          <ElectronMenu createWorkspace={createWorkspace} clone={cloneGitRepository}></ElectronMenu>
           <div
             className="h-100 remixui_fileExplorerTree"
             onFocus={() => {

@@ -1,6 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
+import { cloneInputType } from '@remix-api'
 
 const profile = {
   name: 'remix-templates',
@@ -18,19 +19,28 @@ export class TemplatesPlugin extends Plugin {
   async getTemplate (template: string, opts?: any) {
     const templateList = Object.keys(templateWithContent)
     if (!templateList.includes(template)) return
+    opts = {
+      ...opts || {},
+      isElectron: true,
+    }
     // @ts-ignore
-    const files = await templateWithContent[template](opts)
+    const files = await templateWithContent[template](opts, this)
+    console.log('files', files)
     return files
   }
   // electron only method
   async loadTemplateInNewWindow (template: string, opts?: any) {
+    console.log('loadTemplateInNewWindow', template, opts)
     const metadata = TEMPLATE_METADATA[template]
+    console.log('metadata', metadata)
     if (metadata) {
       if (metadata.type === 'git') {
-        this.call('notification', 'alert', {
-          id: 'dgitAlert',
-          message: 'This template is not available in the desktop version',
-        })
+
+        const input: cloneInputType = {
+          url: metadata.url,
+        }
+        await this.call('dgitApi', 'clone', input)
+
         return
       } else if (metadata.type === 'plugin'){
         this.call('notification', 'alert', {
