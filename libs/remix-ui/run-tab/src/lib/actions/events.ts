@@ -104,6 +104,10 @@ export const setupEvents = (plugin: RunTab) => {
     updateInstanceBalance(plugin, dispatch)
   })
 
+  plugin.on('desktopHost', 'disconnected', () => {
+    setExecutionContext(plugin, dispatch, { context: 'vm-cancun', fork: '' })
+  })
+
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(plugin, dispatch, env)

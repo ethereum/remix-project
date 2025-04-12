@@ -89,6 +89,7 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       title: 'Disconnected',
       message: 'You are disconnected from the Browser wallet.',
     })
+    this.emit('disconnected')
 
   }
 
