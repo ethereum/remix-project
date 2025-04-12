@@ -201,10 +201,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                           className={`btn btn-sm mr-2 border border-primary ${isElectron() ? 'w-100 mb-2' : ''}`}
                         >
                           {isElectron()?
-                          <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
+                            <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
                         </span>
                       </CustomTooltip>}
-                      {!isElectron() && 
+                      {!isElectron() &&
                       <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-add${item.name}`}
