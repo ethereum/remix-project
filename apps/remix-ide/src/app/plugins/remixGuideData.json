@@ -1,75 +1,260 @@
 {
   "title": "Remix Guide",
-  "description": "Streamlined access to categorized video tutorials for mastering Remix IDE. From fundamentals to advanced techniques, level up your development skills with ease.",
+  "description": "Watch videos to learn Remix and Solidity!",
+ 
   "sections": [
     {
-      "title": "Remix Basics",
+      "title": "Remix Essentials",
       "hScrollable": "false",
       "cells": [
         {
-          "title": "Intro to Remix",
-          "titleTooltip": "Example tooltip",
+          "title": "Intro to Remix's Interface",
+          "titleTooltip": "Remix is a tool for developing smart contracts. Learn its essential features and how to navigate.",
           "tagList": [
             "Remix",
             "Beginner" 
           ],
-          "authorURL": "EatTheBlocks",
+          "authorURL": "",
           "expandViewElement": {
-            "videoID": "vH8T3In6ZkE"
+            "videoID": "XqxIsdWbaZY"
           }
         },
         {
-          "title": "Workspaces",
+          "title": "Basic Workflows",
+          "titleTooltip": "Learn to work in Remix: from choosing a template, checking compiler errors, grabbing the ABI, deploying to local and public chains, to making a simple Dapp.",
           "tagList": [
             "Remix",
             "Beginner"
           ],
           "expandViewElement": {
-            "videoID": "_VepN5pcA0k"
+            "videoID": "BeudEn6XTvQ"
           }
         },
         {
-          "title": "Remixd",
+          "title": "Using AI Tools in Remix",
+          "titleTooltip": "Using AI in Remix: RemixAI",
+          "tagList": [
+            "Remix",
+            "Beginner",
+            "AI"
+          ],
+          "expandViewElement": {
+            "videoID": "wz9obdmCvVo"
+          }
+        },
+        {
+          "title": "Debugger",
+          "titleTooltip": "Learn to use the Remix Debugger",
+          "tagList": [
+            "Remix",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "kn16HOJbKKQ"
+          }
+        },
+        {
+          "title": "Running Scripts in Remix",
+          "titleTooltip": "Automate Remix with JS/TS scripts.",
+          "tagList": [
+            "Remix",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "kc7GJzgi4HU"
+          }
+        }
+      ]
+    },
+    {
+      "title": "File Management and Version Control",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "Loading Files for Editing",
+          "titleTooltip": "Learn how to clone repos, import files, and more file loading tricks.",
+          "tagList": [
+            "Remix",
+            "Beginner" 
+          ],
+          "authorURL": "",
+          "expandViewElement": {
+            "videoID": "QMS2-mDI-vw"
+          }
+        },
+        {
+          "title": "Opening Dependencies",
+          "titleTooltip": "Learn the best practices of loading dependencies in Remix.",
           "tagList": [
             "Remix",
             "Beginner"
           ],
           "expandViewElement": {
-            "videoID": "2OAx2UoLYEI"
+            "videoID": "WNeNJcIFSws"
           }
         },
         {
-          "title": "Verifying w/ Etherscan",
+          "title": "Using the Remix Editor",
+          "titleTooltip": "Learn the tricks of the Remix Editor: autocomplete, quickfixes, importing, gas estimates, and more.",
+          "tagList": [
+            "Remix",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "K2H3Lx9hTlk"
+          }
+        },
+        {
+          "title": "Git & Version Control",
+          "titleTooltip": "Its important to use an external Repo to back up your work.  Learn about Git, Github integration and version control in Remix.",
+          "tagList": [
+            "Remix",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "LNKv3ysoVeE"
+          }
+        },
+        {
+          "title": "Remixd: Connect Remix to Your Computer",
+          "titleTooltip": "Learn to connect Remix to a specific folder on your hard drive. ",
           "tagList": [
             "Remix",
             "Solidity",
             "Plugins"
           ],
           "expandViewElement": {
-            "videoID": "hEJ1OlT8jQ4"
-          }
-        },
-        {
-          "title": "Essential Features",
-          "tagList": [
-            "Remix",
-            "Plugins"
-          ],
-          "expandViewElement": {
-            "videoID": "rBExlmWLCBA"
-          }
-        },
-        {
-          "title": "Remix w/ Hardhat",
-          "tagList": [
-            "Remix"
-          ],
-          "expandViewElement": {
-            "videoID": "8adSqvhvumQ"
+            "videoID": "Sa3KXUxPJ9s"
           }
         }
       ]
     },
+    {
+      "title": "Deploying, Verifying &  Debugging",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "Using the Deploy & Run Plugin",
+          "titleTooltip": "Learn to deploy and to interact with smart contracts.  This video will also show how to use the AtAddress feature, how to use low level interactions and how to pin contracts.",
+          "tagList": [
+            "Solidity",
+            "Beginner",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "f8DnHN0v4fw"
+          }
+        },
+        {
+          "title": "Verifying Contracts",
+          "titleTooltip": "Learn how to verify smart contract in Remix.  Verify contracts on Etherscan, Sourcify, Blockscout, and Routescan.  You can also verfiy Proxy Contracts that use the UUPS pattern.",
+          "tagList": [
+            "Solidity",
+            "Beginner",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "fupWp7ONeKY"
+          }
+        },
+        {
+          "title": "QuickDapp: Generate a Frontend",
+          "titleTooltip": "QuickDapp is a tool for quickly making a simple front end to a smart contract. A great tool for hackathons!",
+          "tagList": [
+            "Solidity",
+            "Beginner",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "l5qVj1xLm8s"
+          }
+        },
+        {
+          "title": "RemixVM & Forking",
+          "titleTooltip": "The Remix VM is the local in-browser test blockchain.  Learn about its features and how to fork and how to share the chain's state.",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "oYkXApf36wk"
+          }
+        },
+        {
+          "title": "Transaction Recorder",
+          "tagList": [
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "GchvmIRSxUo"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Advanced",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "Upgradeable Proxy Contracts",
+          "titleTooltip": "Learn how to deploy and upgrade contracts that use the UUPS pattern. ",
+          "tagList": [
+            "Solidity",
+            "Beginner",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "t0__aGWSaT0"
+          }
+        },
+        {
+          "title": "Static Analysis Tools in Remix",
+          "titleTooltip": "Learn how to use the Static Analysis tools including Slither and Solhint.",
+          "tagList": [
+            "Solidity",
+            "Beginner",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "1CigVWCw7dI"
+          }
+        },
+        {
+          "title": "Using HardHat and Foundry with Remix",
+          "titleTooltip": "Use Remix on a HardHat or Foundry project and a local Hardhat or Anvil node.",
+          "tagList": [
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "ZN7CTfy4BDg"
+          }
+        },
+        {
+          "title": "Introducing Circom for ZKProofs",
+          "titleTooltip": "Learn how to use the Circom compiler plugin so you can begin your journey into writing circuits for Zero Knowledge Proofs (ZKP).",
+          "tagList": [
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "oRTpBhMf3iE"
+          }
+        },
+        {
+          "title": "Vyper and Other Languages in Remix",
+          "titleToolTip": "Learn to use the Vyper compiler.  Also introduces the plugins for the Cairo compiler for Starknet and Stylus for Rust contracts.",
+          "tagList": [
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "vC7alvMe8vY"
+          }
+        }
+      ]
+    },
+
     {
       "title": "Solidity Basics",
       "hScrollable": "false",
@@ -132,69 +317,6 @@
           ],
           "expandViewElement": {
             "videoID": "oTS9uxU6cAM"
-          }
-        }
-      ]
-    },
-    {
-      "title": "Remix Techniques",
-      "hScrollable": "false",
-      "cells": [
-        {
-          "title": "Proxy Contracts",
-          "tagList": [
-            "Remix",
-            "Solidity" 
-          ],
-          "expandViewElement": {
-            "videoID": "YJZV9uiDbJI"
-          }
-        },
-        {
-          "title": "Compile & Run",
-          "tagList": [
-            "Remix"
-          ],
-          "expandViewElement": {
-            "videoID": "ZR8sh7MRDQ4"
-            }
-        },
-        {
-          "title": "Scripts",
-          "tagList": [
-            "Remix"
-          ],
-          "expandViewElement": {
-            "videoID": "Eh1qgOurDxU"
-          }
-        },
-        {
-          "title": "Txn Recorder",
-          "tagList": [
-            "Remix"
-          ],
-          "expandViewElement": {
-            "videoID": "GchvmIRSxUo"
-                        }
-        },
-        {
-          "title": "Solidity Static Analyzers",
-          "tagList": [
-            "Remix",
-            "Solidity"
-          ],
-          "expandViewElement": {
-            "videoID": "0frxvI-r5oU"
-          }
-        },
-        {
-          "title": "Eth Doc Generator",
-          "tagList": [
-            "Remix",
-            "Solidity"
-          ],
-          "expandViewElement": {
-            "videoID": "UkMqdI7TGxw"
           }
         }
       ]
