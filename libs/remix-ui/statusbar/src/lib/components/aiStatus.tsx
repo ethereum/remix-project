@@ -3,7 +3,6 @@ import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useContext, useEffect, useState } from 'react'
 import { appActionTypes, AppContext } from '@remix-ui/app'
-import DOMPurify from 'dompurify';
 
 interface AIStatusProps {
   plugin: StatusBar
@@ -100,32 +99,6 @@ export default function AIStatus(props: AIStatusProps) {
             data-id="aiStatusButton"
             className='aiButton d-flex align-items-center h3 p-1'
             onClick={async () => {
-              try {
-                const markdown = document.getElementsByClassName('nlux-composer-container')
-                const button = markdown[0].getElementsByTagName('button')[0]
-                const textArea = markdown[0].getElementsByTagName('textarea')[0]
-
-                // only add event listeners if they are not already added
-                if (!textArea.dataset.listenerAdded) {
-                  textArea.addEventListener('input', (event) => {
-                    const sanitizedInput = DOMPurify.sanitize(textArea.value)
-                    if (sanitizedInput !== textArea.value) {
-                      textArea.value = sanitizedInput
-                    }
-                  })
-                  textArea.dataset.listenerAdded = 'true'
-                }
-
-                if (!button.dataset.listenerAdded) {
-                  button.dataset.listenerAdded = 'true'
-                  button.addEventListener('click', (event) => {
-                    const sanitizedInput = DOMPurify.sanitize(textArea.value)
-                    if (sanitizedInput !== textArea.value) {
-                      textArea.value = sanitizedInput
-                    }
-                  })
-                }
-              } catch (error) { }
               appContext.appStateDispatch({
                 type: appActionTypes.setShowPopupPanel,
                 payload: !appContext.appState.showPopupPanel
