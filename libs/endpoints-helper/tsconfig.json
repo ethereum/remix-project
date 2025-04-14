@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "composite": true,
+      "declaration": true,
+      "outDir": "dist"
+    },
+    "include": ["src"]
+  }
