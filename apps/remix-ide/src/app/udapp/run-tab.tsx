@@ -241,7 +241,7 @@ export class RunTab extends ViewPlugin {
             "symbol": "XDAI",
             "decimals": 18
           })
-        await addCustomInjectedProvider(11, event, 'injected-metamask-chiado', 'Gnosis Chiado', '', ['https://gnosis-chiado.drpc.org'],
+        await addCustomInjectedProvider(11, event, 'injected-metamask-chiado', 'Gnosis Chiado Testnet', '', ['https://gnosis-chiado.drpc.org'],
           {
             "name": "XDAI",
             "symbol": "XDAI",
