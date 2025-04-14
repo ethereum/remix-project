@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo, Ref } from 'react'
 import Fuse from 'fuse.js'
 import type { Chain } from '../types'
 import { AppContext } from '../AppContext'
-import { useIntl } from 'react-intl'
+import intl, { useIntl } from 'react-intl'
+import { Dropdown } from 'react-bootstrap'
 
 function getChainDescriptor(chain: Chain): string {
   if (!chain) return ''
@@ -15,6 +16,44 @@ interface DropdownProps {
   setSelectedChain: (chain: Chain) => void
   selectedChain: Chain
 }
+
+export const CustomToggle = React.forwardRef(
+  (
+    {
+      children,
+      onClick,
+      icon,
+      className = ''
+    }: {
+      children: React.ReactNode
+      onClick: (e) => void
+      icon: string
+      className: string
+    },
+    ref: Ref<HTMLButtonElement>
+  ) => (
+    <button
+      ref={ref}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick(e)
+      }}
+      className={className.replace('dropdown-toggle', '')}
+    >
+      <div className="d-flex">
+        <div className="mr-auto text-nowrap text-truncate overflow-hidden" data-id={`dropdown-content`}>{children}</div>
+        {icon && (
+          <div className="pr-1">
+            <i className={`${icon} pr-1`}></i>
+          </div>
+        )}
+        <div>
+          <i className="fad fa-sort-circle"></i>
+        </div>
+      </div>
+    </button>
+  )
+)
 
 export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, setSelectedChain, selectedChain }) => {
   const { chains } = React.useContext(AppContext)
@@ -88,32 +127,20 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
   }
 
   return (
-    <div className="dropdown mb-3" ref={dropdownRef}>
-      {' '}
-      {/* Add ref here */}
-      <label htmlFor={id}>{label}</label>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleInputChange}
-        onClick={openDropdown}
-        data-id="chainDropdownbox"
-        placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
-        className="form-control"
-      />
-      <ul className="dropdown-menu show w-100" style={{ maxHeight: '400px', overflowY: 'auto', display: isOpen ? 'initial' : 'none' }}>
+    <Dropdown>
+      <Dropdown.Toggle as={CustomToggle} icon={null} className="btn btn-light btn-block w-100 d-inline-block form-control" data-id="chainDropdownbox">
+        {searchTerm.length > 0 ? searchTerm : intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+      </Dropdown.Toggle>
+      <Dropdown.Menu className="w-100 custom-dropdown-items border bg-light">
         {filteredOptions.map((chain) => (
-          <li
-            key={chain.chainId}
-            onClick={() => handleOptionClick(chain)}
+          <Dropdown.Item key={chain.chainId} onClick={() => handleOptionClick(chain)}
+            className={`${getChainDescriptor(chain).length > 30 ? 'text-truncate text-decoration-none' : 'text-decoration-none'}`}
             data-id={chain.chainId}
-            className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`}
-            style={{ cursor: 'pointer', whiteSpace: 'normal' }}
           >
             {getChainDescriptor(chain)}
-          </li>
+          </Dropdown.Item>
         ))}
-      </ul>
-    </div>
+      </Dropdown.Menu>
+    </Dropdown>
   )
 }
