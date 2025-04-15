@@ -12,10 +12,18 @@ class SwitchBrowserTab extends EventEmitter {
       browser.windowHandles((result) => {
         console.log('switching to window', result)
         if (Array.isArray(result.value)) {
-          if(runtimeBrowser === 'chrome') {
-            index = index
-          }
-          browser.switchWindow(result.value[index] || result.value[0])
+          result.value.forEach((handle, i) => {
+            browser.switchWindow(handle);
+            browser.getTitle((title) => {
+              console.log(`🪟 Tab ${i}: Title → ${title}`);
+            });
+            browser.getCurrentUrl((url) => {
+              console.log(`🌐 Tab ${i}: URL   → ${url}`);
+            });
+          });
+      
+          const targetHandle = result.value[index] || result.value[0];
+          browser.switchWindow(targetHandle);
         }
         done()
       })
