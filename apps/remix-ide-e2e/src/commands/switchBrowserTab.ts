@@ -13,7 +13,7 @@ class SwitchBrowserTab extends EventEmitter {
         console.log('switching to window', result)
         if (Array.isArray(result.value)) {
           if(runtimeBrowser === 'chrome') {
-            index = index + 1
+            index = index
           }
           browser.switchWindow(result.value[index] || result.value[0])
         }
