@@ -59,14 +59,21 @@ module.exports = {
 
     'chromeDesktopMetamask': {
       desiredCapabilities: {
-        'browserName': 'chrome',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', '--no-sandbox', '--verbose'
-            , `--load-extension=${metamaskExtensionPath}`
+          args: [
+            `--load-extension=${metamaskExtensionPath}`,
+            '--window-size=2560,1440',
+            `--user-data-dir=${require('path').resolve('./tmp/chrome-profile')}`,
+            '--no-sandbox',
+            '--disable-dev-shm-usage',
+            '--verbose',
+            '--disable-gpu',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
+            // ⚠️ NO --headless here!
           ]
-          , extensions: []
         }
       }
     },
