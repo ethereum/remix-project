@@ -6,7 +6,7 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { CodeCompletionAgent, ContractAgent } from '@remix/remix-ai-core';
+import { CodeCompletionAgent, ContractAgent, workspaceAgent } from '@remix/remix-ai-core';
 import axios from 'axios';
 const _paq = (window._paq = window._paq || [])
 
@@ -18,7 +18,7 @@ const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion',
-    "solidity_answer", "code_explaining",
+    "solidity_answer", "code_explaining", "generateWorkspace",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
   events: [],
@@ -42,7 +42,8 @@ export class RemixAIPlugin extends ViewPlugin {
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
   contractor: ContractAgent
-  assistantProvider: string = 'mistralai'
+  workspaceAgent: workspaceAgent
+  assistantProvider: string = 'openai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -70,6 +71,7 @@ export class RemixAIPlugin extends ViewPlugin {
     this.securityAgent = new SecurityAgent(this)
     this.codeExpAgent = new CodeExplainAgent(this)
     this.contractor = ContractAgent.getInstance(this)
+    this.workspaceAgent = workspaceAgent.getInstance(this)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -178,23 +180,25 @@ export class RemixAIPlugin extends ViewPlugin {
     return this.securityAgent.getReport(file)
   }
 
-  async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string=""): Promise<any> {
+  async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
 
-    let ragContext = ""
-    try {
-      const options = { headers: { 'Content-Type': 'application/json', } }
-      const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
-      if (response.data) {
-        ragContext = response.data.response
-        userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
-      } else {
-        console.log('Invalid response from RAG context API:', response.data)
+    if (useRag) {
+      try {
+        let ragContext = ""
+        const options = { headers: { 'Content-Type': 'application/json', } }
+        const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
+        if (response.data) {
+          ragContext = response.data.response
+          userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
+        } else {
+          console.log('Invalid response from RAG context API:', response.data)
+        }
+      } catch (error) {
+        console.log('RAG context error:', error)
       }
-    } catch (error) {
-      console.log('RAG context error:', error)
     }
     console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
 
@@ -206,6 +210,39 @@ export class RemixAIPlugin extends ViewPlugin {
     }
 
     return this.contractor.writeContracts(result, userPrompt)
+  }
+
+  async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+    params.stream_result = false // enforce no stream result
+    params.threadId = newThreadID
+    params.provider = this.assistantProvider
+    if (useRag) {
+      try {
+        let ragContext = ""
+        const options = { headers: { 'Content-Type': 'application/json', } }
+        const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
+        if (response.data) {
+          ragContext = response.data.response
+          userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
+        }
+        else {
+          console.log('Invalid response from RAG context API:', response.data)
+        }
+      } catch (error) {
+        console.log('RAG context error:', error)
+      }
+    }
+    const files = this.workspaceAgent.getCurrentWorkspaceFiles()
+    userPrompt = files + "\n\n" + userPrompt
+
+    console.log('workspace --> Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+    let result
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)
+    } else {
+      result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
+    }
+    console.log('workspace --> result', result)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {

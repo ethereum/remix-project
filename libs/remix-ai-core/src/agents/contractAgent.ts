@@ -5,7 +5,7 @@ const compilationParams = {
   optimize: false,
   evmVersion: null,
   language: 'Solidity',
-  version: '0.8.28+commit.7893614a'
+  version: '0.8.29+commit.ab55807c'
 }
 
 interface CompilationResult {
@@ -39,7 +39,14 @@ export class ContractAgent {
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
     try {
       if (payload === undefined) {
-        payload = await this.plugin.call('remixAI', 'generate', userPrompt, AssistantParams)
+        this.nAttempts += 1
+        console.log('No payload, trying again')
+        if (this.nAttempts > this.generationAttempts) {
+          this.performCompile = false
+          console.log('Max attempts reached, returning the result')
+          return "Max attempts reached, returning the result"
+        }
+        return await this.plugin.generate(userPrompt, AssistantParams)
       }
       this.contracts = {}
       const parsedFiles = payload
@@ -78,8 +85,7 @@ export class ContractAgent {
           console.log('compilation result', result)
           if (!result.compilationSucceeded && this.performCompile) {
             // nasty recursion
-            console.log('compilation failed', file.fileName, "reusing the same thread", this.generationThreadID)
-            const newPrompt = `The contract ${file.fileName} does not compile. Here is the error message; ${result.errors}. Try again with the same formatting!`
+            const newPrompt = `Try again this again:${userPrompt}\n The contract ${file.fileName} \n """${file.content}""" does not compile. Here is the error message; ${result.errors}. `
             return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
             //throw new Error("Failed to generate secure code on this prompt ```" + userPrompt + "```")
           }

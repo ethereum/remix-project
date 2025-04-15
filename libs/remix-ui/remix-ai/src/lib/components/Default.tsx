@@ -47,7 +47,7 @@ export const Default = (props) => {
     if (isProvidercmd) {
       if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic') {
         props.plugin.assistantProvider = provider
-        observer.next("AI Provider set to `" + provider + "`")
+        observer.next("AI Provider set to `" + provider + "` successfully! ")
         observer.complete()
       } else { observer.complete()}
       return
@@ -61,13 +61,19 @@ export const Default = (props) => {
     const isGeneratePrompt = userInput[0]
     const newprompt = userInput[1]
 
+    const wsprompt = (prompt.trimStart().startsWith('/workspace')) ? prompt.replace('/workspace', '').trimStart() : undefined
+
     let response = null
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
     } else if (isGeneratePrompt) {
       GenerationParams.return_stream_response = false
       GenerationParams.stream_result = false
-      response = await props.plugin.call('remixAI', 'generate', newprompt, GenerationParams);
+      response = await props.plugin.call('remixAI', 'generate', newprompt, GenerationParams, "", true);
+    } else if (wsprompt !== undefined) {
+      GenerationParams.return_stream_response = false
+      GenerationParams.stream_result = false
+      response = await props.plugin.call('remixAI', 'generateWorkspace', wsprompt, GenerationParams);
     } else {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }

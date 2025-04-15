@@ -532,4 +532,10 @@ export class InferenceManager implements ICompletions {
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
+  async generateWorkspace(userPrompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt: userPrompt, "endpoint":"workspace", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
+
 }
