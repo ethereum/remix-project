@@ -2,6 +2,8 @@
 
 set -e
 
+node dist/apps/remix-ide-e2e/src/update-metamask.js
+
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "metamask" | sort )
 
 # count test files
