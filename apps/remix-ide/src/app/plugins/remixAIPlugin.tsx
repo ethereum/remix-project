@@ -8,6 +8,7 @@ import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { CodeCompletionAgent, ContractAgent, workspaceAgent } from '@remix/remix-ai-core';
 import axios from 'axios';
+import { endpointUrls } from "@remix-endpoints-helper"
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -43,7 +44,7 @@ export class RemixAIPlugin extends ViewPlugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'openai'
+  assistantProvider: string = 'anthropic'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -189,7 +190,7 @@ export class RemixAIPlugin extends ViewPlugin {
       try {
         let ragContext = ""
         const options = { headers: { 'Content-Type': 'application/json', } }
-        const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
+        const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
         if (response.data) {
           ragContext = response.data.response
           userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
@@ -220,7 +221,7 @@ export class RemixAIPlugin extends ViewPlugin {
       try {
         let ragContext = ""
         const options = { headers: { 'Content-Type': 'application/json', } }
-        const response = await axios.post('https://rag.remixproject.org', { query: userPrompt, endpoint:"query" }, options)
+        const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
         if (response.data) {
           ragContext = response.data.response
           userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
@@ -232,10 +233,11 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
-    const files = this.workspaceAgent.getCurrentWorkspaceFiles()
-    userPrompt = files + "\n\n" + userPrompt
+    const files = await this.workspaceAgent.getCurrentWorkspaceFiles()
+    // convert files to string
+    userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
-    console.log('workspace --> Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+    console.log('workspace --> Generating code for prompt:', userPrompt)
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)
@@ -243,6 +245,8 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
     }
     console.log('workspace --> result', result)
+    return this.workspaceAgent.writeGenerationResults(result)
+
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {

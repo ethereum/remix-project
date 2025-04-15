@@ -15,7 +15,7 @@ interface CompilationResult {
 
 export class ContractAgent {
   plugin: any;
-  readonly generationAttempts: number = 3
+  readonly generationAttempts: number = 5
   nAttempts: number = 0
   generationThreadID: string= ''
   workspaceName: string = ''
@@ -121,24 +121,29 @@ export class ContractAgent {
 
   async compilecontracts(fileName, fileContent): Promise<CompilationResult> {
     // do not compile tests files
-    if (fileName.includes('tests/')) return { compilationSucceeded: true, errors: null }
+    try {
+      if (fileName.includes('tests/')) return { compilationSucceeded: true, errors: null }
 
-    this.contracts[fileName] = { content : fileContent }
-    const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
-    const data = result.data
-    let error = false
+      this.contracts[fileName] = { content: fileContent }
+      const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
+      const data = result.data
+      let error = false
 
-    if (data.errors) {
-      error = data.errors.find((error) => error.type !== 'Warning')
+      if (data.errors) {
+        error = data.errors.find((error) => error.type !== 'Warning')
+      }
+      if (data.errors && data.errors.length && error) {
+        const msg = `
+          - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
+          `
+        return { compilationSucceeded: false, errors: msg }
+      }
+
+      return { compilationSucceeded: true, errors: null }
+    } catch (err) {
+      console.error('Error during compilation:', err)
+      return { compilationSucceeded: false, errors: 'An unexpected error occurred during compilation.' }
     }
-    if (data.errors && data.errors.length && error) {
-      const msg = `
-        - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
-        `
-      return { compilationSucceeded: false, errors: msg }
-    }
-
-    return { compilationSucceeded: true, errors: null }
   }
 
   extractImportPaths(text) {

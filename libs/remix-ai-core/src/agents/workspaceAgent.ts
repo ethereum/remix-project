@@ -20,27 +20,31 @@ export class workspaceAgent {
 
   async getCurrentWorkspaceFiles() {
     try {
-      const documents = []
+      let files = '{\n'
       const jsonDirsContracts = await this.plugin.call('fileManager', 'copyFolderToJson', '/').then((res) => res.contracts);
       for (const file in jsonDirsContracts.children) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.endsWith(ext))) continue;
-        documents.push({
-          filename: file,
-          content: jsonDirsContracts.children[file].content,
-        });
+
+        files += `"${file}": ${JSON.stringify(jsonDirsContracts.children[file].content)}},`
       }
-      return JSON.stringify(documents, null, 2);
+      return files + '\n}'
     } catch (error) { console.error('Error getting current workspace files:', error); }
   }
 
   async writeGenerationResults(payload) {
     try {
-      const parsedFiles = JSON.parse(payload)
-      for (const file of parsedFiles.files) {
-        console.log('writing file', file)
-        // await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
-        // await this.plugin.call('codeFormatter', 'format', file.fileName)
+      let modifiedFilesMarkdown = '## Modified Files\n'
+      for (const file of payload.files) {
+        if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
+        console.log('writing file', file.content);
+        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content);
+        // await this.plugin.call('codeFormatter', 'format', fileName);
+        modifiedFilesMarkdown += `- ${file.fileName}\n`
       }
-    } catch (error) { console.error('Error writing generation results:', error); }
+      return modifiedFilesMarkdown
+    } catch (error) {
+      console.error('Error writing generation results:', error);
+      return 'No files modified'
+    }
   }
 }
