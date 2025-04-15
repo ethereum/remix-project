@@ -270,7 +270,7 @@ const createModalMessage = async (
         type="text"
         data-id="modalDialogCustomPromptTextCreate"
         defaultValue={defaultName}
-        className="form-control"
+        className="form-control mb-3"
         onChange={(e) => onChangeTemplateName(e.target.value)}
         onInput={(e) => onChangeTemplateName((e.target as any).value)}
       />
