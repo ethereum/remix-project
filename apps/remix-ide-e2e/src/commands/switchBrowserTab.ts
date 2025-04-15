@@ -48,7 +48,15 @@ class SwitchBrowserTab extends EventEmitter {
           } else {
             const targetHandle = handles[indexOrTitle] || handles[0];
             browser.switchWindow(targetHandle);
-            done();
+            browser.getTitle((title) => {
+              if (title) {
+                console.log(`✅ Switched to tab with title "${title}"`);
+                done();
+              } else {
+                console.log(`❌ No tab with index ${indexOrTitle} found.`);
+              }
+            })
+
           }
         } else {
           done();

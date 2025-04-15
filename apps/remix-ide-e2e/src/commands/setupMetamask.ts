@@ -18,7 +18,8 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
   const words = passphrase.split(' ')
   console.log('setup metamask')
   browser
-    .switchBrowserTab(2)
+    .switchBrowserTab('MetaMask')
+    .saveScreenshot('./reports/screenshots/metamask_setup.png')
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
     .click('input[data-testid="onboarding-terms-checkbox"]')
     .waitForElementVisible('button[data-testid="onboarding-import-wallet"]')
