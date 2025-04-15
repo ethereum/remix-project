@@ -682,7 +682,7 @@ jobs:
             - run: google-chrome --version
       - when:
           condition:
-              equal: [ "chromeMetamask", << parameters.browser >> ]
+              equal: [ "chromeDesktopMetamask", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
                 install-firefox: false
@@ -904,7 +904,7 @@ workflows:
           matrix:
             alias: metamask
             parameters:
-              browser: ["chromeMetamask"]
+              browser: ["chromeDesktopMetamask"]
               script: ["metamask.sh"]
               job: ["0"]
               jobsize: ["10"]

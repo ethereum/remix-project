@@ -46,23 +46,6 @@ module.exports = {
       }
     },
 
-    'chromeMetamask': {
-      desiredCapabilities: {
-        'browserName': 'chrome',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'goog:chromeOptions': {
-          args: [
-            `--load-extension=${metamaskExtensionPath}`,
-            'window-size=2560,1440',
-            '--no-sandbox',
-            '--verbose',
-            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
-          ]
-        }
-      }
-    },
-
     'chromeDesktop': {
       desiredCapabilities: {
         'browserName': 'chrome',
