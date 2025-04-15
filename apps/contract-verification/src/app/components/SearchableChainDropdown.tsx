@@ -128,7 +128,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
 
   return (
     <Dropdown>
-      <Dropdown.Toggle as={CustomToggle} icon={null} className="btn btn-light btn-block w-100 d-inline-block form-control" data-id="chainDropdownbox">
+      <Dropdown.Toggle as={CustomToggle} icon={null} className="btn btn-light border btn-block w-100 d-inline-block form-control" data-id="chainDropdownbox">
         {searchTerm.length > 0 ? searchTerm : intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
       </Dropdown.Toggle>
       <Dropdown.Menu className="w-100 custom-dropdown-items border bg-light">
