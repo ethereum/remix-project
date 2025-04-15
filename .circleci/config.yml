@@ -682,6 +682,17 @@ jobs:
             - run: google-chrome --version
       - when:
           condition:
+              equal: [ "chromeMetamask", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-browser-tools:
+                install-firefox: false
+                install-chrome: true
+                install-chromedriver: false
+                install-geckodriver: false
+            - run: yarn install_webdriver
+            - run: google-chrome --version
+      - when:
+          condition:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
