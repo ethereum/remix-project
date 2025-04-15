@@ -197,7 +197,7 @@ const tests = {
   // main network tests
   'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .switchBrowserTab(1)
+      .switchBrowserTab('MetaMask')
       .click('[data-testid="network-display"]')
       .click('div[data-testid="Ethereum Mainnet"]') // switch to mainnet
       .useCss().switchBrowserTab(0)

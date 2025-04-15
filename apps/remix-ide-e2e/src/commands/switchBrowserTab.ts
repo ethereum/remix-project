@@ -6,13 +6,15 @@ import EventEmitter from 'events'
 */
 
 class SwitchBrowserTab extends EventEmitter {
-  command(this: NightwatchBrowser, index: number): NightwatchBrowser {
+  command(this: NightwatchBrowser, indexOrTitle: number | string): NightwatchBrowser {
     this.api.perform((browser: NightwatchAPI, done) => {
-      const runtimeBrowser = browser.options.desiredCapabilities.browserName
+      const runtimeBrowser = browser.options.desiredCapabilities.browserName;
       browser.windowHandles((result) => {
-        console.log('switching to window', result)
+        console.log('switching to window', result);
         if (Array.isArray(result.value)) {
-          result.value.forEach((handle, i) => {
+          const handles = result.value;
+
+          const logTabInfo = (handle: string, i: number) => {
             browser.switchWindow(handle);
             browser.getTitle((title) => {
               console.log(`🪟 Tab ${i}: Title → ${title}`);
@@ -20,16 +22,41 @@ class SwitchBrowserTab extends EventEmitter {
             browser.getCurrentUrl((url) => {
               console.log(`🌐 Tab ${i}: URL   → ${url}`);
             });
-          });
-      
-          const targetHandle = result.value[index] || result.value[0];
-          browser.switchWindow(targetHandle);
+          };
+
+          handles.forEach((handle, i) => logTabInfo(handle, i));
+
+          if (typeof indexOrTitle === 'string') {
+            let switched = false;
+            const trySwitch = (i = 0) => {
+              if (i >= handles.length) {
+                console.log(`❌ No tab with title including "${indexOrTitle}" found.`);
+                return done();
+              }
+              browser.switchWindow(handles[i]);
+              browser.getTitle((title) => {
+                if (title && title == indexOrTitle) {
+                  console.log(`✅ Switched to tab with title matching "${indexOrTitle}"`);
+                  switched = true;
+                  done();
+                } else {
+                  trySwitch(i + 1);
+                }
+              });
+            };
+            trySwitch();
+          } else {
+            const targetHandle = handles[indexOrTitle] || handles[0];
+            browser.switchWindow(targetHandle);
+            done();
+          }
+        } else {
+          done();
         }
-        done()
-      })
-      this.emit('complete')
-    })
-    return this
+      });
+      this.emit('complete');
+    });
+    return this;
   }
 }
 
