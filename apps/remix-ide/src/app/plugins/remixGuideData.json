@@ -9,7 +9,7 @@
       "cells": [
         {
           "title": "Intro to Remix's Interface",
-          "titleTooltip": "Remix is a tool for developing smart contracts. Learn its essential features and how to navigate.",
+          "titleTooltip":  "Learn how Remix is organized and some essential features",
           "tagList": [
             "Remix",
             "Beginner" 
@@ -21,7 +21,7 @@
         },
         {
           "title": "Basic Workflows",
-          "titleTooltip": "Learn to work in Remix: from choosing a template, checking compiler errors, grabbing the ABI, deploying to local and public chains, to making a simple Dapp.",
+          "titleTooltip": "Learn about choosing a template, checking compiler errors, grabbing the ABI, deploying to local and public chains, and making a basic DApp.",
           "tagList": [
             "Remix",
             "Beginner"
@@ -32,7 +32,7 @@
         },
         {
           "title": "Using AI Tools in Remix",
-          "titleTooltip": "Using AI in Remix: RemixAI",
+          "titleTooltip": "Find out how RemixAI can help you code.",
           "tagList": [
             "Remix",
             "Beginner",
@@ -44,7 +44,7 @@
         },
         {
           "title": "Debugger",
-          "titleTooltip": "Learn to use the Remix Debugger",
+          "titleTooltip": "Learn to use the Remix Debugger.",
           "tagList": [
             "Remix",
             "Plugins"
@@ -116,12 +116,10 @@
           }
         },
         {
-          "title": "Remixd: Connect Remix to Your Computer",
-          "titleTooltip": "Learn to connect Remix to a specific folder on your hard drive. ",
+          "title": "Connect to the Filesystem",
+          "titleTooltip": "Connect Remix to a specific folder on your hard drive. ",
           "tagList": [
-            "Remix",
-            "Solidity",
-            "Plugins"
+            "Remix"
           ],
           "expandViewElement": {
             "videoID": "Sa3KXUxPJ9s"
@@ -134,11 +132,10 @@
       "hScrollable": "false",
       "cells": [
         {
-          "title": "Using the Deploy & Run Plugin",
-          "titleTooltip": "Learn to deploy and to interact with smart contracts.  This video will also show how to use the AtAddress feature, how to use low level interactions and how to pin contracts.",
+          "title": "Deploy & Run",
+          "titleTooltip": "Learn to use the Deploy & Run plugin including using the AtAddress feature, use of low level interactions and pinning contracts.",
           "tagList": [
             "Solidity",
-            "Beginner",
             "Plugins"
           ],
           "expandViewElement": {
@@ -147,9 +144,8 @@
         },
         {
           "title": "Verifying Contracts",
-          "titleTooltip": "Learn how to verify smart contract in Remix.  Verify contracts on Etherscan, Sourcify, Blockscout, and Routescan.  You can also verfiy Proxy Contracts that use the UUPS pattern.",
+          "titleTooltip": "Learn how to use the Contract Verification plugin.",
           "tagList": [
-            "Solidity",
             "Beginner",
             "Plugins"
           ],
@@ -158,10 +154,9 @@
           }
         },
         {
-          "title": "QuickDapp: Generate a Frontend",
+          "title": "Generate a Frontend",
           "titleTooltip": "QuickDapp is a tool for quickly making a simple front end to a smart contract. A great tool for hackathons!",
           "tagList": [
-            "Solidity",
             "Beginner",
             "Plugins"
           ],
@@ -170,7 +165,7 @@
           }
         },
         {
-          "title": "RemixVM & Forking",
+          "title": "Remix VM & Forking",
           "titleTooltip": "The Remix VM is the local in-browser test blockchain.  Learn about its features and how to fork and how to share the chain's state.",
           "tagList": [
             "Solidity",
@@ -182,6 +177,7 @@
         },
         {
           "title": "Transaction Recorder",
+          "titleTooltip": "Learn how to record and replay transactions.",
           "tagList": [
             "Solidity",
             "Advanced"
@@ -197,23 +193,21 @@
       "hScrollable": "false",
       "cells": [
         {
-          "title": "Upgradeable Proxy Contracts",
+          "title": "Upgradeable Proxy",
           "titleTooltip": "Learn how to deploy and upgrade contracts that use the UUPS pattern. ",
           "tagList": [
             "Solidity",
-            "Beginner",
-            "Plugins"
+            "Advanced"
           ],
           "expandViewElement": {
             "videoID": "t0__aGWSaT0"
           }
         },
         {
-          "title": "Static Analysis Tools in Remix",
-          "titleTooltip": "Learn how to use the Static Analysis tools including Slither and Solhint.",
+          "title": "Static Analysis",
+          "titleTooltip": "Use Slither and Solhint in Remix.",
           "tagList": [
             "Solidity",
-            "Beginner",
             "Plugins"
           ],
           "expandViewElement": {
@@ -221,7 +215,7 @@
           }
         },
         {
-          "title": "Using HardHat and Foundry with Remix",
+          "title": "HardHat and Foundry",
           "titleTooltip": "Use Remix on a HardHat or Foundry project and a local Hardhat or Anvil node.",
           "tagList": [
             "Solidity",
@@ -232,7 +226,7 @@
           }
         },
         {
-          "title": "Introducing Circom for ZKProofs",
+          "title": "Circom",
           "titleTooltip": "Learn how to use the Circom compiler plugin so you can begin your journey into writing circuits for Zero Knowledge Proofs (ZKP).",
           "tagList": [
             "Solidity",
@@ -243,8 +237,8 @@
           }
         },
         {
-          "title": "Vyper and Other Languages in Remix",
-          "titleToolTip": "Learn to use the Vyper compiler.  Also introduces the plugins for the Cairo compiler for Starknet and Stylus for Rust contracts.",
+          "title": "Vyper and Others",
+          "titleTooltip": "Learn to use the Vyper compiler.  Also introduces the Cairo compiler and Stylus for Rust contracts.",
           "tagList": [
             "Advanced"
           ],
