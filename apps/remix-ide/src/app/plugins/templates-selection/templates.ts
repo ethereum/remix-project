@@ -14,7 +14,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc20",
           displayName: "ERC20",
           tagList: ["ERC20", "Solidity"],
-          description: 'A simple fungible token contract'
+          description: 'A customizable fungible token contract'
         },
         {
           value: "ozerc20",
@@ -49,7 +49,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
-          description: 'A simple non-fungible token (NFT) contract'
+          description: 'A customizable non-fungible token (NFT) contract'
         },
         {
           value: "ozerc721",
@@ -84,7 +84,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc1155",
           tagList: ["Solidity"],
           displayName: "ERC1155",
-          description: 'A simple multi token contract'
+          description: 'A customizable multi token contract'
         },
         {
           value: "ozerc1155",
