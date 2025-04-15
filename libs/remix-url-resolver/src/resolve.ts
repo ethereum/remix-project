@@ -2,6 +2,7 @@
 import axios, { AxiosResponse } from 'axios'
 import semver from 'semver'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
+import { endpointUrls } from '.';
 
 export interface Imported {
   content: string;
@@ -122,7 +123,7 @@ export class RemixURLResolver {
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://jqgt.remixproject.org/' + url
+      const req = `${endpointUrls.ipfsGateway}/${url}`
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: []})

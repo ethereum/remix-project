@@ -777,43 +777,45 @@ export const EditorUI = (props: EditorUIProps) => {
 
         // do not stream this response
         const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
+        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        setTimeout(async () => {
         // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
-        const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
+          const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
+          const natSpecCom = "\n" + extractNatspecComments(cm)
+          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
+          const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+          const lines = natSpecCom.split('\n')
+          const newNatSpecCom = []
 
-        const natSpecCom = "\n" + extractNatspecComments(cm)
-        const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
-        const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
-        const lines = natSpecCom.split('\n')
-        const newNatSpecCom = []
+          for (let i = 0; i < lines.length; i++) {
+            let cont = false
 
-        for (let i = 0; i < lines.length; i++) {
-          let cont = false
-
-          for (let j = 0; j < unsupportedDocTags.length; j++) {
-            if (lines[i].includes(unsupportedDocTags[j])) {
-              cont = true
-              break
+            for (let j = 0; j < unsupportedDocTags.length; j++) {
+              if (lines[i].includes(unsupportedDocTags[j])) {
+                cont = true
+                break
+              }
             }
+            if (cont) {continue}
+
+            if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+            else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
           }
-          if (cont) {continue}
 
-          if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
-          else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
-        }
+          // TODO: activate the provider to let the user accept the documentation suggestion
+          // const provider = new RemixSolidityDocumentationProvider(natspecCom)
+          // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
 
-        // TODO: activate the provider to let the user accept the documentation suggestion
-        // const provider = new RemixSolidityDocumentationProvider(natspecCom)
-        // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
+          editor.executeEdits('clipboard', [
+            {
+              range: range,
+              text: newNatSpecCom.join('\n'),
+              forceMoveMarkers: true,
+            },
+          ]);
 
-        editor.executeEdits('clipboard', [
-          {
-            range: range,
-            text: newNatSpecCom.join('\n'),
-            forceMoveMarkers: true,
-          },
-        ]);
-
-        _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
+        })
       },
     }
 
@@ -872,7 +874,9 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
       ],
       run: async () => {
-        const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+        const position = editorRef.current.getPosition()
+        const offset = editorRef.current.getModel().getOffsetAt(position)
+        const { nodesAtPosition } = await retrieveNodesAtPosition(offset, props.plugin)
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
           const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
@@ -900,7 +904,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     const contextmenu = editor.getContribution('editor.contrib.contextmenu')
     const orgContextMenuMethod = contextmenu._onContextMenu
-    const onContextMenuHandlerForFreeFunction = async () => {
+    const onContextMenuHandlerForFreeFunction = async (offset: number) => {
       if (freeFunctionAction) {
         freeFunctionAction.dispose()
         freeFunctionAction = null
@@ -924,7 +928,7 @@ export const EditorUI = (props: EditorUIProps) => {
         return
       }
 
-      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const { nodesAtPosition } = await retrieveNodesAtPosition(offset, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = intl.formatMessage({ id: 'editor.executeFreeFunction2' }, { name: freeFunctionNode.name })
@@ -952,7 +956,9 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()
-      onContextMenuHandlerForFreeFunction()
+      const position = args[0].target.position
+      const offset = editorRef.current.getModel().getOffsetAt(position)
+      onContextMenuHandlerForFreeFunction(offset)
         .then(() => orgContextMenuMethod.apply(contextmenu, args))
         .catch(() => orgContextMenuMethod.apply(contextmenu, args))
     }

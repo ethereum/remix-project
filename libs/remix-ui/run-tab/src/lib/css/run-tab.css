@@ -219,7 +219,6 @@
 }
 .udapp_deployDropdown {
   text-align: center;
-  text-transform: uppercase;
 }
 .udapp_checkboxAlign {
   padding-top: 2px;
@@ -409,6 +408,7 @@
 }
 .udapp_contractActionsContainerMultiInner .udapp_multiTitle {
   padding-left: 10px;
+  text-transform: uppercase;
 }
 .udapp_contractProperty .udapp_multiTitle {
   padding: 0;

@@ -7,6 +7,7 @@ import http from 'isomorphic-git/http/web'
 
 import { Octokit } from "octokit"
 import { ElectronBasePluginClient } from "@remixproject/plugin-electron"
+import { endpointUrls } from "@remix-endpoints-helper"
 const currentbranch = async (input: currentBranchInput, fsConfig: isoGitFSConfig) => {
 
   try {
@@ -200,7 +201,7 @@ const addIsomorphicGitProxyConfig = async (input: {
   const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
 
   let config: isoGitProxyConfig = {
-    corsProxy: 'https://corsproxy.remixproject.org/',
+    corsProxy: `${endpointUrls.corsProxy}`,
     http,
     onAuth: url => {
       url
@@ -235,7 +236,7 @@ const addIsomorphicGitProxyConfig = async (input: {
   if (input.provider && input.provider === 'github') {
     config = {
       ...config,
-      corsProxy: 'https://corsproxy.remixproject.org/',
+      corsProxy: `${endpointUrls.corsProxy}`,
     }
   }
 
