@@ -55,6 +55,36 @@ export const CustomToggle = React.forwardRef(
   )
 )
 
+// export const CustomInputToggle = React.forwardRef(
+//   (
+//     {
+//       children,
+//       onClick,
+//       icon,
+//       className = ''
+//     }: {
+//       children: React.ReactNode
+//       onClick: (e) => void
+//       icon: string
+//       className: string
+//     },
+//     ref: Ref<HTMLInputElement>
+//   ) => {
+//     const intl = useIntl()
+//     return (
+//       <input
+//         ref={ref}
+//         placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+//         type="text"
+//         onClick={(e) => {
+//           e.preventDefault()
+//           onClick(e)
+//         }}
+//         className={className.replace('dropdown-toggle', '')}
+//       />
+//     )}
+// )
+
 export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, setSelectedChain, selectedChain }) => {
   const { chains } = React.useContext(AppContext)
   const ethereumChainIds = [1, 11155111, 17000]
@@ -126,21 +156,65 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
     )
   }
 
+  const CustomInputToggle = React.forwardRef(
+    (
+      {
+        children,
+        onClick,
+        icon,
+        className = ''
+      }: {
+        children: React.ReactNode
+        onClick: (e) => void
+        icon: string
+        className: string
+      },
+      ref: Ref<HTMLInputElement>
+    ) => {
+      const intl = useIntl()
+      return (
+        <input
+          ref={ref}
+          placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+          type="text"
+          onClick={(e) => {
+            e.preventDefault()
+            onClick(e)
+          }}
+          onChange={handleInputChange}
+          value={searchTerm}
+          className={className.replace('dropdown-toggle', '')}
+        />
+      )}
+  )
+
   return (
-    <Dropdown>
-      <Dropdown.Toggle as={CustomToggle} icon={null} className="btn btn-light border btn-block w-100 d-inline-block form-control" data-id="chainDropdownbox">
-        {searchTerm.length > 0 ? searchTerm : intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
-      </Dropdown.Toggle>
-      <Dropdown.Menu className="w-100 custom-dropdown-items border bg-light">
+    <div className="dropdown mb-3" ref={dropdownRef}>
+      {' '}
+      {/* Add ref here */}
+      <label htmlFor={id}>{label}</label>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={handleInputChange}
+        onClick={openDropdown}
+        data-id="chainDropdownbox"
+        placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+        className="form-control"
+      />
+      <ul className="dropdown-menu custom-dropdown-items border bg-light show w-100" style={{ maxHeight: '400px', overflowY: 'auto', display: isOpen ? 'initial' : 'none' }}>
         {filteredOptions.map((chain) => (
-          <Dropdown.Item key={chain.chainId} onClick={() => handleOptionClick(chain)}
-            className={`${getChainDescriptor(chain).length > 30 ? 'text-truncate text-decoration-none' : 'text-decoration-none'}`}
+          <li
+            key={chain.chainId}
+            onClick={() => handleOptionClick(chain)}
             data-id={chain.chainId}
+            className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`}
+            style={{ cursor: 'pointer', whiteSpace: 'normal' }}
           >
             {getChainDescriptor(chain)}
-          </Dropdown.Item>
+          </li>
         ))}
-      </Dropdown.Menu>
-    </Dropdown>
+      </ul>
+    </div>
   )
 }
