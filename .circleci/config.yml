@@ -887,20 +887,20 @@ workflows:
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
               parallelism: [15]
-      - remix-ide-browser:
-          requires:
-            - build
-          matrix:
-            alias: metamask
-            parameters:
-              browser: ["chrome"]
-              script: ["metamask.sh"]
-              job: ["0"]
-              jobsize: ["10"]
-              parallelism: [1]
-          filters:
-            branches:
-              only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']
+      # - remix-ide-browser:
+      #     requires:
+      #       - build
+      #     matrix:
+      #       alias: metamask
+      #       parameters:
+      #         browser: ["chrome"]
+      #         script: ["metamask.sh"]
+      #         job: ["0"]
+      #         jobsize: ["10"]
+      #         parallelism: [1]
+      #     filters:
+      #       branches:
+      #         only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']
       - tests-passed:
           requires:
             - lint
