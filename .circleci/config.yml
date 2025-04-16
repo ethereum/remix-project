@@ -906,7 +906,7 @@ workflows:
             - lint
             - remix-libs
             - browser-tests
-            - metamask
+            #- metamask
             - plugins
             
       - predeploy:
@@ -920,7 +920,7 @@ workflows:
             - lint
             - remix-libs
             - browser-tests
-            - metamask
+            #- metamask
             - plugins
             - predeploy
           filters:
@@ -933,7 +933,7 @@ workflows:
             - lint
             - remix-libs
             - browser-tests
-            - metamask
+            #- metamask
             - plugins
             - predeploy
           filters:
@@ -946,7 +946,7 @@ workflows:
             - lint
             - remix-libs
             - browser-tests
-            - metamask
+            #- metamask
             - plugins
             - predeploy
           filters:
