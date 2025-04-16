@@ -177,7 +177,7 @@ const remixIdeThemes = {
     warning: '#c97539',
     danger: '#b84040'
   },
-  curelean: {
+  cerulean: {
     primary: '#2FA4E7',
     secondary: '#e9ecef',
     success: '#73A839',
