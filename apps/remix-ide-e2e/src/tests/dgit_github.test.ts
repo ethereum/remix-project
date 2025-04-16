@@ -376,7 +376,7 @@ module.exports = {
             .pause(1000)
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
             .pause(1000)
-            .setValue('*[data-id="gitubUsername"]', 'git')
+            .setValue('*[data-id="githubUsername"]', 'git')
             .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .pause(1000)
