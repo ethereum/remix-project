@@ -1,5 +1,3 @@
-import { defaultConfig } from "@web3modal/ethers5/react";
-
 export interface Dependency {
     version: string
     name: string

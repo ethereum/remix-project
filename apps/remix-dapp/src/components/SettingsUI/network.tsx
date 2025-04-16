@@ -39,7 +39,7 @@ export function NetworkUI() {
       </div>
       {provider === 'walletconnect' && (
         <div className="mt-2">
-          <w3m-button />
+          {/* <w3m-button /> */}
         </div>
       )}
     </div>

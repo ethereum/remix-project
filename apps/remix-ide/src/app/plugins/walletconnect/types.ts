@@ -1,7 +1,7 @@
 export interface RequestArguments {
 	readonly method: string
 	readonly params?: readonly unknown[] | object
-  readonly id?: string
+  readonly id?: number
 }
 
 export type Chain = {
