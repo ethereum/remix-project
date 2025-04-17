@@ -1,13 +1,12 @@
 {
-    "version": "v0.62.0",
+    "version": "v0.63.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Forking of Remix VM mainnet fork environment",
-    "highlight2": "Initial code suggestion for vyper and circom",
-    "highlight3": "Support for Phantom wallet & Universal profile",
+    "highlight1": "More videos to Remix Guide plugin",
+    "highlight2": "Simplified WalletConnect experience",
+    "highlight3": "Customizable OpenZeppelin workspace templates",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-62-0-9a72ac0c4f67?source=friends_link&sk=4b73921ad7f8ad1dd5bce040de854a3f"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-63-0-0291505a81c2?source=friends_link&sk=7a642b1611c6b54055483323b7afa207"
   }
-
 
   
