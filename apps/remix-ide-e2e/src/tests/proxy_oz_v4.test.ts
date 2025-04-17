@@ -16,7 +16,7 @@ module.exports = {
     return sources
   },
 
-  'Should set the compiler version to 8.19': function(browser: NightwatchBrowser) {
+  'Should set the compiler version to v0.8.19': function(browser: NightwatchBrowser) {
     browser.setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js')
   },
 
