@@ -27,6 +27,7 @@
     "rlp": "^3.0.0",
     "solc": "0.8.26",
     "string-similarity": "^4.0.4",
+    "viem": "2.22.3",
     "web3": "^4.1.1",
     "web3-validator": "^2.0.0"
   },
