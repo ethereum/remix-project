@@ -44,7 +44,7 @@ export class RemixAIPlugin extends ViewPlugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'anthropic'
+  assistantProvider: string = 'openai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -237,7 +237,7 @@ export class RemixAIPlugin extends ViewPlugin {
     // convert files to string
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
-    console.log('workspace --> Generating code for prompt:', userPrompt)
+    console.log('workspace --> Generating code for prompt:\n', userPrompt)
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)
@@ -245,7 +245,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
     }
     console.log('workspace --> result', result)
-    return this.workspaceAgent.writeGenerationResults(result)
+    return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
 
   }
 

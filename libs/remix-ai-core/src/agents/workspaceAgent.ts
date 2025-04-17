@@ -2,6 +2,8 @@ enum SupportedFileExtensions {
   solidity = '.sol',
   vyper = '.vy',
   circom = '.circom',
+  tests_ts = '.test.ts',
+  tests_js = '.test.js',
 }
 
 export class workspaceAgent {
