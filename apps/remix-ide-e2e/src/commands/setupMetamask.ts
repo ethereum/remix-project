@@ -15,6 +15,7 @@ class MetaMask extends EventEmitter {
 }
 
 function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
+  //passphrase = 'asset chalk glimpse inch wall tomorrow fatal major crater omit tiny sun'
   const words = passphrase.split(' ')
   console.log('setup metamask')
   browser
@@ -71,6 +72,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
 
     .saveScreenshot('./reports/screenshots/metamask.png')
     .click('[data-testid="network-display"]')
+    //.pause()
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
     .perform(() => {

@@ -20,7 +20,7 @@ class SwitchBrowserTab extends EventEmitter {
               console.log(`🪟 Tab ${i}: Title → ${title}`);
             });
             browser.getCurrentUrl((url) => {
-              console.log(`🌐 Tab ${i}: URL   → ${url}`);
+              console.log(`🌐 Tab ${i}: URL   → ${JSON.stringify(url)}`);
             });
           };
 

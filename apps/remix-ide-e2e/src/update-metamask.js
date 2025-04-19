@@ -1,3 +1,4 @@
+/*
 const axios = require('axios');
 const fs = require('fs');
 const AdmZip = require('adm-zip');
@@ -57,3 +58,4 @@ function unzipExtension(zipPath) {
     process.exit(1);
   }
 })();
+*/

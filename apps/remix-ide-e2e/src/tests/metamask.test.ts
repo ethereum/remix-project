@@ -5,7 +5,7 @@ import examples from '../examples/example-contracts'
 
 const passphrase = process.env.account_passphrase
 const password = process.env.account_password
-const extension_id = 'nkbihfbeogaeaoehlefnkodbefgpgknn'
+const extension_id = 'elflemdocfpaabifeanlacinlapocnmm'
 const extension_url = `chrome-extension://${extension_id}/home.html`
 
 const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
@@ -54,15 +54,13 @@ const tests = {
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
-      .pause(5000)
+      .pause()
       .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
         browser
           .hideMetaMaskPopup()
-          .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
-          .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
+          .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
+          .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
           .pause(2000)
-          .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
-          .click('*[data-testid="page-container-footer-next"]')
       })
       .switchBrowserTab(0) // back to remix
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
