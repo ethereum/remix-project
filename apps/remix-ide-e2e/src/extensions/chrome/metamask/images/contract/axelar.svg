@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" width="141.596" height="140.816" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 141.596 140.816">
+  <defs>
+    <filter id="d" data-name="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="e" stdDeviation="1.491"/>
+      <feFlood flood-color="#000" flood-opacity=".13"/>
+      <feComposite in2="e" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="c" data-name="Layer 1">
+    <path d="M79.026,59.29L122.249,16.306,105.851,0l-35.023,34.83L35.805,0,19.408,16.306,62.63,59.29c2.264,2.251,5.231,3.377,8.198,3.377s5.934-1.125,8.198-3.377Zm62.57,45.919l-35.023-34.83,35.023-34.831-16.397-16.306-43.221,42.984c-4.527,4.503-4.527,11.803,0,16.306l43.221,42.984,16.397-16.306h0Zm-70.828,.777l35.023,34.83,16.396-16.306-43.221-42.984c-4.529-4.503-11.868-4.503-16.397,0L19.348,124.51l16.397,16.306,35.023-34.83h0Zm-11.15-27.395c2.175-2.163,3.396-5.095,3.396-8.153s-1.221-5.991-3.396-8.153L16.397,19.301,0,35.608l35.023,34.83L0,105.269l16.397,16.306,43.222-42.984h0Z" filter="url(#d)"/>
+  </g>
+</svg>

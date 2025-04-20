@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="101px" viewBox="0 0 100 101" version="1.1" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <title>Aventus logo</title>
+  <defs>
+    <linearGradient x1="13.8586957%" y1="100%" x2="93.2370924%" y2="100%" id="linearGradient-1">
+      <stop stop-color="#F2F1F1" offset="0%"></stop>
+      <stop stop-color="#1D2733" offset="100%"></stop>
+    </linearGradient>
+    <linearGradient x1="13.8586957%" y1="100%" x2="93.2370924%" y2="100%" id="linearGradient-2">
+      <stop stop-color="#F2F1F1" offset="0%"></stop>
+      <stop stop-color="#1D2733" offset="100%"></stop>
+    </linearGradient>
+  </defs>
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="2" transform="translate(-438.000000, -383.000000)">
+      <g id="Group-2" transform="translate(438.000000, 383.000000)">
+        <polygon id="Triangle" fill="url(#linearGradient-1)"
+          points="68.3429811 70.6321715 97.4236848 83.6219961 4.0593202 83.6219961"></polygon>
+        <polygon id="Triangle" fill="url(#linearGradient-2)"
+          points="43.8406582 -1.67375839e-13 43.8406582 23.5560551 0 77.1270838"></polygon>
+        <polygon id="Triangle" fill="#5100FF"
+          transform="translate(60.889803, 63.325395) scale(1, -1) rotate(90.000000) translate(-60.889803, -63.325395) "
+          points="98.2355488 24.3559212 80.2329842 63.7055851 23.5440572 102.294869"></polygon>
+        <polygon id="Rectangle" fill="#1D2733"
+          points="43.8406582 0 97.4236848 83.6219961 68.335756 70.6985967 43.8406582 23.5661989"></polygon>
+      </g>
+    </g>
+  </g>
+</svg>
