@@ -77,7 +77,13 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('div[data-testid="Sepolia"]') // switch to sepolia
     .perform(() => {
       console.log('MetaMask setup complete')
-      done()
+      browser.getCurrentUrl((url) => {
+        console.log('MetaMask URL:', url)
+        browser.globals.extensionUrl = url.value
+        console.log(browser.globals)
+        browser.closeWindow()
+        done()
+      })
     })
 }
 

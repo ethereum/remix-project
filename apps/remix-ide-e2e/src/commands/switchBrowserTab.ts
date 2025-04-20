@@ -34,6 +34,7 @@ class SwitchBrowserTab extends EventEmitter {
                 return done();
               }
               browser.switchWindow(handles[i]);
+              browser.pause(1000)
               browser.getTitle((title) => {
                 if (title && title == indexOrTitle) {
                   console.log(`✅ Switched to tab with title matching "${indexOrTitle}"`);

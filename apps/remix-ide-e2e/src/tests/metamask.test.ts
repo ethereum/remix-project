@@ -8,6 +8,8 @@ const password = process.env.account_password
 const extension_id = 'elflemdocfpaabifeanlacinlapocnmm'
 const extension_url = `chrome-extension://${extension_id}/home.html`
 
+
+
 const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
   return browser.browserName.indexOf('chrome') > -1
 }
@@ -43,10 +45,14 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
     console.log('Sepolia test running')
+
     browser//.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
+      .perform(() => {
+        console.log(browser.globals)
+      })
       .useCss()
       .switchBrowserTab(0)
       .refreshPage()
@@ -54,14 +60,12 @@ const tests = {
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
-      .pause()
-      .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-        browser
-          .hideMetaMaskPopup()
-          .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
-          .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
-          .pause(2000)
-      })
+      .pause(3000)
+      .switchBrowserTab('MetaMask')
+      //   .hideMetaMaskPopup()
+      .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
+      .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
+
       .switchBrowserTab(0) // back to remix
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
@@ -82,22 +86,14 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
+      .pause(1000)
       .clearConsole()
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          checkAlerts(browser)
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
-      })
+      .switchBrowserTab('MetaMask')
+      .waitForElementVisible('[data-testid="confirm-footer-button"]')
+      .click('[data-testid="confirm-footer-button"]') // approve the tx
+      .switchBrowserTab(0) // back to remix
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
   'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
@@ -105,24 +101,18 @@ const tests = {
       .clearConsole()
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .pause(3000)
-            .scrollAndClick('[data-testid="page-container-footer-next"]')
-            .pause(2000)
-            .switchBrowserTab(0) // back to remix
-            .waitForElementVisible({
-              locateStrategy: 'xpath',
-              selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.(fallback) pending')]"
-            })
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
+      .pause(1000)
+      .switchBrowserTab('MetaMask')
+
+      .waitForElementVisible('[data-testid="confirm-footer-button"]')
+      .scrollAndClick('[data-testid="confirm-footer-button"]')
+      .switchBrowserTab(0) // back to remix
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.(fallback) pending')]"
       })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
   'Should run transaction (greet function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
@@ -131,24 +121,17 @@ const tests = {
       .setValue('*[data-title="string _message"]', 'test')
       .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
       .click('*[data-id="greet - transact (not payable)"]')
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .pause(3000)
-            .scrollAndClick('[data-testid="page-container-footer-next"]')
-            .pause(2000)
-            .switchBrowserTab(0) // back to remix
-            .waitForElementVisible({
-              locateStrategy: 'xpath',
-              selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.greet pending')]"
-            })
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
+      .pause(1000)
+      .switchBrowserTab('MetaMask')
+      .waitForElementVisible('[data-testid="confirm-footer-button"]')
+      .scrollAndClick('[data-testid="confirm-footer-button"]')
+      .switchBrowserTab(0) // back to remix
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.greet pending')]"
       })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
 
   'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
@@ -159,7 +142,6 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .click('[data-id="udappNotify-modal-footer-cancel-react"]')
       .waitForElementVisible({
@@ -174,31 +156,26 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
+      .pause(1000)
       .clearConsole()
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          checkAlerts(browser)
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
-      })
+      .switchBrowserTab('MetaMask')
+      .waitForElementPresent('[data-testid="confirm-footer-button"]')
+      .click('[data-testid="confirm-footer-button"]') // approve the tx
+      .switchBrowserTab(0) // back to remix
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
 
   // main network tests
-  'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .switchBrowserTab('MetaMask')
-      .click('[data-testid="network-display"]')
-      .click('div[data-testid="Ethereum Mainnet"]') // switch to mainnet
-      .useCss().switchBrowserTab(0)
+      .execute((done) => {
+        // @ts-ignore
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x1' }]
+        });
+      })
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
@@ -206,9 +183,11 @@ const tests = {
       .switchEnvironment('injected-MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
+
+
   },
 
-  'Should deploy contract on Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should deploy contract on Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
@@ -222,12 +201,8 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
   // debug transaction
-  'Should deploy Ballot to Sepolia using metamask #group1': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .switchBrowserTab(1)
-      .click('[data-testid="network-display"]')
-      .click('div[data-testid="Sepolia"]') // switch to sepolia
-      .useCss().switchBrowserTab(0)
       .addFile('BallotTest.sol', examples.ballot)
       .clickLaunchIcon('udapp')
       .clearConsole()
@@ -247,51 +222,36 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-log' and contains(., 'pending')]"
       })
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .pause(3000)
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .scrollAndClick('[data-testid="page-container-footer-next"]')
-            .pause(2000)
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
-      })
+      .switchBrowserTab('MetaMask')
+      .pause()
+      .waitForElementVisible('[data-testid="confirm-footer-button"]')
+      .scrollAndClick('[data-testid="confirm-footer-button"]')
+      .pause(2000)
+      .switchBrowserTab(0) // back to remix
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
 
-  'do transaction #group1': function (browser: NightwatchBrowser) {
+  'do transaction #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .pause(5000)
-      .perform((done) => { // call delegate
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .pause(5000)
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .scrollAndClick('[data-testid="page-container-footer-next"]')
-            .pause(2000)
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
-      })
+      .pause(1000)
+      .switchBrowserTab('MetaMask')
+      .waitForElementPresent('[data-testid="confirm-footer-button"]')
+      .scrollAndClick('[data-testid="confirm-footer-button"]')
+      .switchBrowserTab(0) // back to remix
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on Etherscan view on Blockscout', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
   },
-  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group3': function (browser: NightwatchBrowser) {
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
@@ -317,16 +277,15 @@ const tests = {
       })
 
   },
-  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
   // EIP 712 tests
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('udapp')
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
@@ -343,18 +302,10 @@ const tests = {
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
       .pause(1000)
-      .perform((done) => { // call delegate
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .pause(1000)
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .scrollAndClick('button[data-testid="page-container-footer-next"]') // confirm
-            .switchBrowserTab(0) // back to remix
-            .perform(() => done())
-        })
-      })
+      .switchBrowserTab('MetaMask')
+      .waitForElementPresent('[data-testid="confirm-footer-button"]')
+      .scrollAndClick('button[data-testid="confirm-footer-button"]') // confirm
+      .switchBrowserTab(0) // back to remix
       .pause(1000)
       .journalChildIncludes('0xec72bbabeb47a3a766af449674a45a91a6e94e35ebf0ae3c644b66def7bd387f1c0b34d970c9f4a1e9398535e5860b35e82b2a8931b7c9046b7766a53e66db3d1b')
   }
