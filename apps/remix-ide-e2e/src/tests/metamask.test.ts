@@ -59,8 +59,15 @@ const tests = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('injected-MetaMask')
-      .pause(10000)
+      //
+      .execute((done) => {
+        // @ts-ignore
+        window.ethereum.request({
+          method: 'wallet_requestPermissions',
+          params: [{ eth_accounts: {} }]
+        });
+      })
+      .pause(3000)
       .switchBrowserTab('MetaMask')
       //   .hideMetaMaskPopup()
       .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
@@ -68,6 +75,8 @@ const tests = {
 
       .switchBrowserTab(0) // back to remix
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+      .switchEnvironment('injected-MetaMask')
+      .pause(2000)
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
   },
 
