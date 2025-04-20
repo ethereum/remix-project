@@ -60,7 +60,7 @@ const tests = {
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
-      .pause(3000)
+      .pause(10000)
       .switchBrowserTab('MetaMask')
       //   .hideMetaMaskPopup()
       .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
