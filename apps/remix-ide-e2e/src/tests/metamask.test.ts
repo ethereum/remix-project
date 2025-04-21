@@ -61,6 +61,7 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .switchEnvironment('injected-MetaMask')
+      .getBrowserLogs()
       .pause(3000)
       .switchBrowserTab('MetaMask')
       //   .hideMetaMaskPopup()
