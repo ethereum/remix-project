@@ -99,7 +99,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(1000)
       .clearConsole()
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .click('[data-testid="confirm-footer-button"]') // approve the tx
       .switchBrowserTab(0) // back to remix
@@ -113,7 +113,7 @@ const tests = {
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .pause(1000)
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
 
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
@@ -133,7 +133,7 @@ const tests = {
       .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
       .click('*[data-id="greet - transact (not payable)"]')
       .pause(1000)
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
       .switchBrowserTab(0) // back to remix
@@ -169,7 +169,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(1000)
       .clearConsole()
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .click('[data-testid="confirm-footer-button"]') // approve the tx
       .switchBrowserTab(0) // back to remix
@@ -233,7 +233,7 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-log' and contains(., 'pending')]"
       })
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .pause()
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
@@ -249,7 +249,7 @@ const tests = {
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .pause(1000)
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
       .switchBrowserTab(0) // back to remix
@@ -313,7 +313,7 @@ const tests = {
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
       .pause(1000)
-      .switchBrowserTab('MetaMask')
+      .switchBrowserTab(extension_url)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .scrollAndClick('button[data-testid="confirm-footer-button"]') // confirm
       .switchBrowserTab(0) // back to remix
