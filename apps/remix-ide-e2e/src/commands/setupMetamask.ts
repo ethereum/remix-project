@@ -52,29 +52,25 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
-    .perform((done) => {
-      browser.execute(function () {
-        function addStyle(styleString) {
-          const style = document.createElement('style')
-          style.textContent = styleString
-          document.head.append(style)
-        }
-        addStyle(`
-          #popover-content {
-            display:none !important
-          } 
-          .popover-container {
-            display:none !important;
-          }
-        `)
-      }, [], done())
-    })
-
+    .waitForElementPresent('.loading-overlay')
+    .waitForElementNotPresent('.loading-overlay')
+    .pause(1000)
     .saveScreenshot('./reports/screenshots/metamask.png')
+    .waitForElementVisible('[data-testid="network-display"]') 
+    .saveScreenshot('./reports/screenshots/metamask_3.png')
     .click('[data-testid="network-display"]')
-    //.pause()
     .click('.mm-modal-content label.toggle-button--off') // show test networks
+    .waitForElementVisible('div[data-testid="Sepolia"]')
     .click('div[data-testid="Sepolia"]') // switch to sepolia
+    .waitForElementVisible({
+      selector: '//*[@data-testid="network-display" and contains(., "Sepolia")]',
+      locateStrategy: 'xpath'
+    })
+    .waitForElementVisible({
+      selector: '//*[@class="eth-overview__balance" and contains(., "SepoliaETH")]',
+      locateStrategy: 'xpath'
+    })
+    .saveScreenshot('./reports/screenshots/metamask_4.png')
     .perform(() => {
       console.log('MetaMask setup complete')
       browser.getCurrentUrl((url) => {
