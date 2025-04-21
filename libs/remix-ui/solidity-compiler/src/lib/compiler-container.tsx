@@ -100,15 +100,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [workspaceName])
 
   useEffect(() => {
-    if (state.useFileConfiguration) {
-      api.fileExists(defaultPath).then((exists) => {
-        if (!exists) createNewConfigFile()
-      })
-      setToggleExpander(true)
-    }
-  }, [state.useFileConfiguration])
-
-  useEffect(() => {
     if (online && state.onlyDownloaded){
       // @ts-ignore
       api.call('compilerloader','getJsonBinData')
