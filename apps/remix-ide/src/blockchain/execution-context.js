@@ -148,7 +148,7 @@ export class ExecutionContext {
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      await network.init()
+      if (context !== 'walletconnect') await network.init()
       this.currentFork = network.config.fork
       this.executionContext = context
       // injected
