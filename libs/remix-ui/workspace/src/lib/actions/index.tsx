@@ -167,7 +167,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
 
             if (data.config?.settings) {
-              await workspaceProvider.set('compiler_config.json', JSON.stringify(data.config?.settings, null, '\t')
+              await workspaceProvider.set('compiler_config.json', JSON.stringify(data.config?.settings, null, '\t'))
             }
           }
 
