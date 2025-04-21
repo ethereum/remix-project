@@ -59,14 +59,8 @@ const tests = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
-      //
-      .execute((done) => {
-        // @ts-ignore
-        window.ethereum.request({
-          method: 'wallet_requestPermissions',
-          params: [{ eth_accounts: {} }]
-        });
-      })
+      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+      .switchEnvironment('injected-MetaMask')
       .pause(3000)
       .switchBrowserTab('MetaMask')
       //   .hideMetaMaskPopup()
@@ -74,8 +68,7 @@ const tests = {
       .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
 
       .switchBrowserTab(0) // back to remix
-      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .switchEnvironment('injected-MetaMask')
+
       .pause(2000)
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
   },
