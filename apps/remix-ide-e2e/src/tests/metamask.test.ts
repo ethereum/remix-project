@@ -69,7 +69,7 @@ const tests = {
           .switchEnvironment('injected-MetaMask')
           //.getBrowserLogs()
           .pause(3000)
-          .switchBrowserTab(extension_url)
+          .switchBrowserTab(extension_url, true)
           //   .hideMetaMaskPopup()
           .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
           .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
@@ -99,7 +99,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(1000)
       .clearConsole()
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .click('[data-testid="confirm-footer-button"]') // approve the tx
       .switchBrowserTab(0) // back to remix
@@ -113,7 +113,7 @@ const tests = {
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .pause(1000)
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
 
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
@@ -133,7 +133,7 @@ const tests = {
       .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
       .click('*[data-id="greet - transact (not payable)"]')
       .pause(1000)
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
       .switchBrowserTab(0) // back to remix
@@ -169,7 +169,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(1000)
       .clearConsole()
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .click('[data-testid="confirm-footer-button"]') // approve the tx
       .switchBrowserTab(0) // back to remix
@@ -233,7 +233,7 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-log' and contains(., 'pending')]"
       })
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .pause()
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
@@ -313,7 +313,7 @@ const tests = {
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
       .pause(1000)
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .scrollAndClick('button[data-testid="confirm-footer-button"]') // confirm
       .switchBrowserTab(0) // back to remix

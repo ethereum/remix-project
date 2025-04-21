@@ -15,7 +15,7 @@ function isValidUrl(str: string): boolean {
 */
 
 class SwitchBrowserTab extends EventEmitter {
-  command(this: NightwatchBrowser, indexOrTitle: number | string): NightwatchBrowser {
+  command(this: NightwatchBrowser, indexOrTitle: number | string, forceReload = false): NightwatchBrowser {
     console.log('Switching to browser tab', indexOrTitle);
     this.api.perform((browser: NightwatchAPI, done) => {
       const runtimeBrowser = browser.options.desiredCapabilities.browserName;
@@ -42,10 +42,18 @@ class SwitchBrowserTab extends EventEmitter {
 
             const checkNext = (i = 0) => {
               if (i >= handles.length) {
-                if (matchedIndex >= 0) {
+                if (matchedIndex >= 0 && !forceReload) {
                   browser.switchWindow(handles[matchedIndex]);
                   console.log(`✅ Switched to tab with title or URL matching "${indexOrTitle}"`);
                   return done();
+                } else if (matchedIndex >= 0 && forceReload) {
+                  console.log(`🔁 Force reloading tab with URL "${indexOrTitle}"`);
+                  browser.switchWindow(handles[matchedIndex]);
+                  browser.refresh(() => {
+                    console.log(`✅ Reloaded tab with URL: ${indexOrTitle}`);
+                    done();
+                  });
+                  return;
                 } else if (isValidUrl(indexOrTitle)) {
                   console.log(`🔍 No tab matched, opening new tab with URL "${indexOrTitle}"`);
                   browser.openNewWindow('tab', () => {
@@ -75,7 +83,7 @@ class SwitchBrowserTab extends EventEmitter {
               });
             };
 
-            checkNext();
+            checkNext(0);
           } else {
             const targetHandle = handles[indexOrTitle] || handles[0];
             browser.switchWindow(targetHandle);
