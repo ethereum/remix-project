@@ -337,16 +337,14 @@ const setWalletConnectExecutionContext = (plugin: RunTab, dispatch: React.Dispat
         plugin.on('walletconnect', 'connectionDisconnected', (msg) => {
           plugin.call('notification', 'toast', msg)
           // reset to default provider if connection fails
-          plugin.blockchain.executionContext.init(null)
-          setFinalContext(plugin, dispatch)
+          setExecutionContext(plugin, dispatch, { context: plugin.blockchain.defaultPinnedProviders[0], fork: null })
         })
       })
     }
     plugin.on('walletconnect', 'connectionDisconnected', (msg) => {
       plugin.call('notification', 'toast', msg)
       // reset to default provider if connection fails
-      plugin.blockchain.executionContext.init(null)
-      setFinalContext(plugin, dispatch)
+      setExecutionContext(plugin, dispatch, { context: plugin.blockchain.defaultPinnedProviders[0], fork: null })
     })
   })
 }
