@@ -234,7 +234,6 @@ const tests = {
         selector: "//span[@class='text-log' and contains(., 'pending')]"
       })
       .switchBrowserTab(extension_url, true)
-      .pause()
       .waitForElementVisible('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
       .pause(2000)
@@ -248,8 +247,7 @@ const tests = {
       .clearConsole()
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .pause(1000)
-      .switchBrowserTab(extension_url)
+      .switchBrowserTab(extension_url, true)
       .waitForElementPresent('[data-testid="confirm-footer-button"]')
       .scrollAndClick('[data-testid="confirm-footer-button"]')
       .switchBrowserTab(0) // back to remix
