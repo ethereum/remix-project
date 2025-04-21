@@ -25,6 +25,8 @@ yarn run serve:production &
 sleep 5
 
 for TESTFILE in $TESTFILES; do
+    echo "Running metamask test: $TESTFILE"
+    echo "running with env $1"
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $TESTFILE --env=$1  || TEST_EXITCODE=1
 done
 
