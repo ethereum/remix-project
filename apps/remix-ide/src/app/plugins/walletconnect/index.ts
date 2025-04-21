@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { createAppKit, Provider } from '@reown/appkit'
 import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
-import { mainnet, arbitrum } from "@reown/appkit/networks"
+import { mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon } from "@reown/appkit/networks"
 import { constants } from './utils/constants'
 import { Chain, RequestArguments } from './types'
 
@@ -33,7 +33,7 @@ export class WalletConnect extends Plugin {
       adapters: [new Ethers5Adapter()],
       projectId: constants.PROJECT_ID,
       metadata: constants.METADATA,
-      networks: [mainnet, arbitrum]
+      networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon]
     })
     this.chains = constants.chains
   }
