@@ -6,6 +6,8 @@ export interface CompilerInput {
   // Optional
   settings:
   {
+    // Optional: viaIR
+    viaIR: boolean
     // Optional: Sorted list of remappings
     remappings?: string[],
     // Optional: Optimizer settings
@@ -148,7 +150,8 @@ export interface CompilerInputOptions {
     },
     evmVersion?: EVMVersion,
     language?: Language,
-    remappings?: string[]
+    remappings?: string[],
+    viaIR: boolean
 }
 
 export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | 'shanghai' | 'cancun' | null
@@ -168,6 +171,7 @@ export interface CompilerState {
     optimize: boolean,
     runs: number
     evmVersion: EVMVersion| null,
+    viaIR: boolean,
     language: Language,
     remappings: string[]
     compilationStartTime: number| null,
