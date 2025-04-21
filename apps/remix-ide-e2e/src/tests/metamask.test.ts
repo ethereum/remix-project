@@ -5,8 +5,8 @@ import examples from '../examples/example-contracts'
 
 const passphrase = process.env.account_passphrase
 const password = process.env.account_password
-const extension_id = 'elflemdocfpaabifeanlacinlapocnmm'
-const extension_url = `chrome-extension://${extension_id}/home.html`
+
+let extension_url = ``
 
 
 
@@ -52,26 +52,34 @@ const tests = {
       .setupMetamask(passphrase, password)
       .perform(() => {
         console.log(browser.globals)
+        extension_url = browser.globals.extensionUrl
       })
-      .useCss()
-      .switchBrowserTab(0)
-      .refreshPage()
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageStartSolidity"]')
-      .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .switchEnvironment('injected-MetaMask')
-      .getBrowserLogs()
-      .pause(3000)
-      .switchBrowserTab('MetaMask')
-      //   .hideMetaMaskPopup()
-      .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
-      .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
+      .perform((browser, done) => {
+        extension_url = browser.globals.extensionUrl
+        console.log('✅ Got extension URL:', extension_url)
 
-      .switchBrowserTab(0) // back to remix
+        browser
+          .useCss()
+          .switchBrowserTab(0)
+          .refreshPage()
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .click('*[data-id="landingPageStartSolidity"]')
+          .clickLaunchIcon('udapp')
+          .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+          .switchEnvironment('injected-MetaMask')
+          //.getBrowserLogs()
+          .pause(3000)
+          .switchBrowserTab(extension_url)
+          //   .hideMetaMaskPopup()
+          .waitForElementVisible('*[data-testid="confirm-btn"]', 60000)
+          .click('*[data-testid="confirm-btn"]') // this connects the metamask account to remix
+          .switchBrowserTab(0) // back to remix
+          .pause(2000)
+          .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
 
-      .pause(2000)
-      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
+        done()
+      })
+
   },
 
   'Should add a contract file #group1': function (browser: NightwatchBrowser) {

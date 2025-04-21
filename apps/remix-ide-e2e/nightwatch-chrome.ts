@@ -70,7 +70,7 @@ module.exports = {
             '--verbose',
             '--disable-gpu',
             '--disable-features=ExtensionOffscreenDocuments',
-            `--user-data-dir=${require('path').resolve('./tmp/chrome-profile')}`
+            //`--user-data-dir=${require('path').resolve('./tmp/chrome-profile')}`
           ]
         }
       }

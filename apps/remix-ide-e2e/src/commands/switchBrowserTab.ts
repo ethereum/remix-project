@@ -1,12 +1,22 @@
 import { NightwatchBrowser, NightwatchAPI } from 'nightwatch'
 import EventEmitter from 'events'
 
+function isValidUrl(str: string): boolean {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 /*
   Switches between browser tabs
 */
 
 class SwitchBrowserTab extends EventEmitter {
   command(this: NightwatchBrowser, indexOrTitle: number | string): NightwatchBrowser {
+    console.log('Switching to browser tab', indexOrTitle);
     this.api.perform((browser: NightwatchAPI, done) => {
       const runtimeBrowser = browser.options.desiredCapabilities.browserName;
       browser.windowHandles((result) => {
@@ -27,25 +37,45 @@ class SwitchBrowserTab extends EventEmitter {
           handles.forEach((handle, i) => logTabInfo(handle, i));
 
           if (typeof indexOrTitle === 'string') {
-            let switched = false;
-            const trySwitch = (i = 0) => {
+            let matchedIndex = -1;
+            const urlMatches: string[] = [];
+
+            const checkNext = (i = 0) => {
               if (i >= handles.length) {
-                console.log(`❌ No tab with title including "${indexOrTitle}" found.`);
-                return done();
-              }
-              browser.switchWindow(handles[i]);
-              browser.pause(1000)
-              browser.getTitle((title) => {
-                if (title && title == indexOrTitle) {
-                  console.log(`✅ Switched to tab with title matching "${indexOrTitle}"`);
-                  switched = true;
-                  done();
+                if (matchedIndex >= 0) {
+                  browser.switchWindow(handles[matchedIndex]);
+                  console.log(`✅ Switched to tab with title or URL matching "${indexOrTitle}"`);
+                  return done();
+                } else if (isValidUrl(indexOrTitle)) {
+                  console.log(`🔍 No tab matched, opening new tab with URL "${indexOrTitle}"`);
+                  browser.openNewWindow('tab', () => {
+                    browser.url(indexOrTitle, () => {
+                      browser.pause(2000);
+                      console.log(`✅ Opened and switched to new tab with URL: ${indexOrTitle}`);
+                      done();
+                    });
+                  });
+                  return;
                 } else {
-                  trySwitch(i + 1);
+                  console.log(`❌ "${indexOrTitle}" is not a valid URL. No tab opened.`);
+                  return done();
                 }
+              }
+
+              browser.switchWindow(handles[i]);
+              browser.pause(500);
+              browser.getTitle((title) => {
+                browser.getCurrentUrl((urlObj) => {
+                  const url = typeof urlObj === 'object' && 'value' in urlObj ? urlObj.value : urlObj;
+                  if ((title && title.includes(indexOrTitle)) || (typeof url === 'string' && url.includes(indexOrTitle))) {
+                    matchedIndex = i;
+                  }
+                  checkNext(i + 1);
+                });
               });
             };
-            trySwitch();
+
+            checkNext();
           } else {
             const targetHandle = handles[indexOrTitle] || handles[0];
             browser.switchWindow(targetHandle);
