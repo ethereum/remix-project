@@ -2754,7 +2754,7 @@ input[type="submit"].btn-block {
   color: var(--text);
   text-align: left;
   list-style: none;
-  background-color: var(--text-background);
+  background-color: transparent;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 2px;
