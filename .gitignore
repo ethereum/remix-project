@@ -17,6 +17,7 @@ soljson.js
 stats.json
 release
 .env
+.env.local
 
 
 # compiled output
