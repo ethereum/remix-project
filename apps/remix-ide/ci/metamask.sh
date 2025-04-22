@@ -2,7 +2,7 @@
 
 set -e
 
-node apps/remix-ide-e2e/src/update-metamask.js
+./apps/remix-ide-e2e/update_metamask.sh
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "metamask" | sort )
 

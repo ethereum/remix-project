@@ -76,6 +76,7 @@
     "build:production": "NODE_ENV=production nx build remix-ide --configuration=production --skip-nx-cache",
     "serve:production": "npx http-server ./dist/apps/remix-ide",
     "install_webdriver": "bash ./apps/remix-ide-e2e/install-webdriver.sh",
+    "update_metamask": "bash ./apps/remix-ide-e2e/update_metamask.sh",
     "select_test": "dotenv -e .env.local -- bash apps/remix-ide-e2e/src/select_tests.sh",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd && chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080",
