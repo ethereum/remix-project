@@ -53,7 +53,7 @@ module.exports = {
   'Disable auto compile': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[for="autoCompile"]')
-      .click('[for="autoCompile"]') // we set it too false in the local storage
+      .click('[for="autoCompile"]') // we set it to false in the local storage
   },
   'Should load the code from URL params (code param) #group1': function (browser: NightwatchBrowser) {
     browser
@@ -62,7 +62,7 @@ module.exports = {
       .refreshPage() // we do one reload for making sure we already have the default workspace
 
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
-      .click('[for="autoCompile"]') // we set it too false again
+      .click('[for="autoCompile"]') // we set it to false again
       .click('[for="autoCompile"]') // back to True in the local storage
       .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .clickLaunchIcon('filePanel')
