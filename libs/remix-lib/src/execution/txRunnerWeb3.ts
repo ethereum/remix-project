@@ -230,11 +230,10 @@ export class TxRunnerWeb3 {
   async sendUserOp (tx) {
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-    const PIMLICO_API_KEY =''
-    const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
     const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
     const network = 'sepolia'
     const chain = chains[network]
+    const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
 
     // Check that saOwner is there in MM addresses
     let smartAccountsObj = localStorage.getItem(localStorageKey)
