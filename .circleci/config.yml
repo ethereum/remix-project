@@ -822,7 +822,7 @@ workflows:
             - build
           matrix:
             parameters:
-              browser: ["chrome"]
+              browser: ["chromeMetamask"]
               script: ["metamask.sh"]
               job: ["0"]
               jobsize: ["1"]
