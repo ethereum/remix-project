@@ -805,10 +805,10 @@ workflows:
             - build
           matrix:
             parameters:
-              browser: ["chrome"]
+              browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
-              job: ["nogroup"]	              
-              jobsize: ["1"]	              
+              job: ["nogroup"]
+              jobsize: ["1"]
               parallelism: [5]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
