@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true   
+    default: false   
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -805,11 +805,11 @@ workflows:
             - build
           matrix:
             parameters:
-              browser: ["chromeMetamask"]
-              script: ["metamask.sh"]
-              job: ["0"]
-              jobsize: ["10"]
-              parallelism: [1]
+              browser: ["chrome"]
+              script: ["flaky.sh"]
+              job: ["nogroup"]	              
+              jobsize: ["1"]	              
+              parallelism: [5]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
