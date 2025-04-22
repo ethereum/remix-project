@@ -140,7 +140,7 @@ export class Compiler {
             if (useFileConfiguration) {
               input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
             } else {
-              input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings, viaIR})
+              input = compilerInput(source.sources,{ optimize, runs, evmVersion, language, remappings, viaIR })
             }
 
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
