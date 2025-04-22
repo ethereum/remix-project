@@ -151,7 +151,6 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       version: "1.4.1"
     })
 
-
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
       entryPoint: {
