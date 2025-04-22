@@ -36,7 +36,7 @@ const localsCheck = {
 }
 
 const tests = {
-  '@disabled': true,
+
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -177,48 +177,15 @@ const tests = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
   },
 
-  // main network tests
-  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .execute((done) => {
-        // @ts-ignore
-        window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x1' }]
-        });
-      })
-      .refreshPage()
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageStartSolidity"]')
-      .clickLaunchIcon('udapp')
-      .switchEnvironment('injected-MetaMask')
-      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
 
-
-  },
-
-  'Should deploy contract on Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"]')
-      .clickLaunchIcon('filePanel')
-      .addFile('Greet.sol', sources[0]['Greet.sol'])
-      .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
-      .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 65000)
-      .modalFooterOKClick('udappNotify')
-      .pause(10000)
-      .assert.containsText('*[data-id="udappNotifyModalDialogModalBody-react"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')
-      .modalFooterCancelClick('udappNotify')
-  },
   // debug transaction
   'Should deploy Ballot to Sepolia using metamask #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+
       .addFile('BallotTest.sol', examples.ballot)
-      .clickLaunchIcon('udapp')
+
       .clearConsole()
       .clearTransactions()
-      .clickLaunchIcon('udapp')
       .waitForElementVisible('input[placeholder="bytes32[] proposalNames"]')
       .pause(2000)
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
@@ -295,6 +262,7 @@ const tests = {
   // EIP 712 tests
   'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('udapp')
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
@@ -317,7 +285,40 @@ const tests = {
       .switchBrowserTab(0) // back to remix
       .pause(1000)
       .journalChildIncludes('0xec72bbabeb47a3a766af449674a45a91a6e94e35ebf0ae3c644b66def7bd387f1c0b34d970c9f4a1e9398535e5860b35e82b2a8931b7c9046b7766a53e66db3d1b')
-  }
+  }  // main network tests
+  ,'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .execute((done) => {
+        // @ts-ignore
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x1' }]
+        });
+      })
+      .refreshPage()
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .click('*[data-id="landingPageStartSolidity"]')
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('injected-MetaMask')
+      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
+
+
+  },
+
+  'Should deploy contract on Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"]')
+      .clickLaunchIcon('filePanel')
+      .addFile('Greet.sol', sources[0]['Greet.sol'])
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 65000)
+      .modalFooterOKClick('udappNotify')
+      .pause(10000)
+      .assert.containsText('*[data-id="udappNotifyModalDialogModalBody-react"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')
+      .modalFooterCancelClick('udappNotify')
+  },
 }
 
 const branch = process.env.CIRCLE_BRANCH
