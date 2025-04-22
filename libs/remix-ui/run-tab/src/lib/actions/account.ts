@@ -4,7 +4,6 @@ import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
-import axios from "axios"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import * as chains from "viem/chains"
