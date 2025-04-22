@@ -1,7 +1,4 @@
-import * as fs from 'fs'
-
-const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/11.13.1_0.crx')
-const metamaskExtension = crxFile.toString('base64')
+const metamaskExtensionPath = 'apps/remix-ide-e2e/src/extensions/chrome/metamask';
 
 module.exports = {
   src_folders: ['dist/apps/remix-ide-e2e/src/tests'],
@@ -44,8 +41,7 @@ module.exports = {
             '--headless=new',
             '--verbose',
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
-          ],
-          extensions: [metamaskExtension]
+          ]
         }
       }
     },
@@ -63,12 +59,35 @@ module.exports = {
 
     'chromeDesktopMetamask': {
       desiredCapabilities: {
-        'browserName': 'chrome',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', '--no-sandbox', '--verbose']
-          ,extensions: [metamaskExtension]
+          args: [
+            `--load-extension=${metamaskExtensionPath}`,
+            '--window-size=2560,1440',
+            '--no-sandbox',
+            '--verbose',
+            '--disable-gpu',
+          ]
+        }
+      }
+    },
+
+    'chromeMetamask': {
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        'goog:chromeOptions': {
+          args: [
+            `--load-extension=${metamaskExtensionPath}`,
+            '--window-size=2560,1440',
+            '--no-sandbox',
+            '--verbose',
+            '--headless=new',
+            '--disable-gpu',
+          ]
         }
       }
     },
@@ -80,7 +99,7 @@ module.exports = {
         'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose'],
-          extensions: [metamaskExtension]
+          extensions: []
         }
       }
     }

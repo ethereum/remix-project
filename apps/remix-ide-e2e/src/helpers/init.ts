@@ -8,6 +8,7 @@ type LoadPlugin = {
   url: string
 }
 
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
@@ -27,7 +28,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
-    .enableClipBoard()
+    //.enableClipBoard()
     .perform((done) => {
       browser.execute(function () { // hide tooltips
         function addStyle(styleString) {
