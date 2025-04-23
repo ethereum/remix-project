@@ -31,23 +31,23 @@ export function AccountUI(props: AccountProps) {
   }, [accounts, selectedAccount])
 
   // Uncomment this when we want to show 'Create Smart Account' button
-  useEffect(() => {
-    if (networkName.includes('Sepolia')) {
-      if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
-        setSmartAccountSelected(true)
-        setEnableCSM(false)
-        ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
-      }
-      else {
-        setSmartAccountSelected(false)
-        setEnableCSM(true)
-        ownerEOA.current = null
-      }
-    } else {
-      setEnableCSM(false)
-      setSmartAccountSelected(false)
-    }
-  }, [selectedAccount])
+  // useEffect(() => {
+  //   if (networkName.includes('Sepolia')) {
+  //     if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
+  //       setSmartAccountSelected(true)
+  //       setEnableCSM(false)
+  //       ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
+  //     }
+  //     else {
+  //       setSmartAccountSelected(false)
+  //       setEnableCSM(true)
+  //       ownerEOA.current = null
+  //     }
+  //   } else {
+  //     setEnableCSM(false)
+  //     setSmartAccountSelected(false)
+  //   }
+  // }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')
