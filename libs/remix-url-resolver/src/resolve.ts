@@ -180,6 +180,20 @@ export class RemixURLResolver {
     return { content, cleanUrl: url }
   }
 
+  async handleV4CoreGithub (url: string): Promise<HandlerResponse> {
+    // e.g https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/interfaces/IExtsload.sol
+    url = url.replace('@uniswap/v4-core', '')
+    url = url.replace('v4-core/', '')
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/${url}`
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
+      return { content: response.data, cleanUrl: req }
+    } catch (e) {
+      throw e
+    }
+  }
   getHandlers (): Handler[] {
     return [
       {
@@ -206,6 +220,15 @@ export class RemixURLResolver {
         type: 'ipfs',
         match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
         handle: (match) => this.handleIPFS(match[1])
+      },
+      {
+        type: 'v4-core-github',
+        match: (url) => { 
+          if (url.startsWith('v4-core/') || url.startsWith('@uniswap/v4-core')) {
+            return [url]
+          }
+        },
+        handle: (match) => this.handleV4CoreGithub(match[0])
       },
       {
         type: 'npm',
