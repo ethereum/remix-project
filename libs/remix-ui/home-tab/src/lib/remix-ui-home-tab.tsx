@@ -83,7 +83,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <HomeTabFile plugin={plugin} />:
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
             {/* <HomeTabLearn plugin={plugin} /> */}
-            <button onClick={async () => await plugin.call('manager', 'activatePlugin', 'remixaiassistant')} className="btn btn-primary">Activate Remix Ai Assistant</button>
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: `${carouselWidth}%` }} id="remixUIHTRight">
             <LanguageOptions plugin={plugin}/>
