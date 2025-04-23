@@ -22,6 +22,7 @@ export class ContractAgent {
   contracts: any = {}
   performCompile: boolean = true
   static instance
+  oldPayload: any = undefined
 
   private constructor(props) {
     this.plugin = props;
@@ -37,6 +38,27 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt) {
     console.log('payload', payload)
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
+
+    const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
+      await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
+      const dirCreated = []
+      for (const file of parsedResults.files) {
+        const dir = file.fileName.split('/').slice(0, -1).join('/')
+        if (!dirCreated.includes(dir) && dir) {
+          await this.plugin.call('fileManager', 'mkdir', dir)
+          dirCreated.push(dir)
+        }
+        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
+        await this.plugin.call('codeFormatter', 'format', file.fileName)
+        // recompile to have it in the workspace
+        // await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
+        // await this.plugin.call('solidity' as any, 'compile', file.fileName)
+      }
+      this.oldPayload = undefined
+      if (this.performCompile) return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
+      return "**New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!\n\n⚠️**Warning**: The compilation failed. Please check the compilation errors in the Remix IDE."
+    }
+
     try {
       if (payload === undefined) {
         this.nAttempts += 1
@@ -44,33 +66,18 @@ export class ContractAgent {
         if (this.nAttempts > this.generationAttempts) {
           this.performCompile = false
           console.log('Max attempts reached, returning the result')
-          return "Max attempts reached, returning the result"
+          if (this.oldPayload) {
+            return await writeAIResults(this.oldPayload)
+          }
+          return "Max attempts reached! Please try again with a different prompt."
         }
         return await this.plugin.generate(userPrompt, AssistantParams)
       }
       this.contracts = {}
       const parsedFiles = payload
+      this.oldPayload = payload
       this.generationThreadID = parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
-
-      const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
-        await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
-        const dirCreated = []
-        for (const file of parsedResults.files) {
-          const dir = file.fileName.split('/').slice(0, -1).join('/')
-          if (!dirCreated.includes(dir) && dir) {
-            await this.plugin.call('fileManager', 'mkdir', dir)
-            dirCreated.push(dir)
-          }
-          await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
-          await this.plugin.call('codeFormatter', 'format', file.fileName)
-          // recompile to have it in the workspace
-          // await this.plugin.call('solidity' as any, 'setCompilerConfig', compilationParams)
-          // await this.plugin.call('solidity' as any, 'compile', file.fileName)
-        }
-        if (this.performCompile) return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
-        return "**New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!\n\n⚠️**Warning**: The compilation failed. Please check the compilation errors in the Remix IDE."
-      }
 
       this.nAttempts += 1
       if (this.nAttempts > this.generationAttempts) {
@@ -81,25 +88,27 @@ export class ContractAgent {
 
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
-          const result:CompilationResult = await this.compilecontracts(file.fileName, file.content)
-          console.log('compilation result', result)
-          if (!result.compilationSucceeded && this.performCompile) {
-            // nasty recursion
-            const newPrompt = `Try again this again:${userPrompt}\n The contract ${file.fileName} \n """${file.content}""" does not compile. Here is the error message; ${result.errors}. `
-            return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
-            //throw new Error("Failed to generate secure code on this prompt ```" + userPrompt + "```")
-          }
+          console.log('adding file', file.fileName, ' to compilation')
+          this.contracts[file.fileName] = { content: file.content }
         }
       }
 
+      const result:CompilationResult = await this.compilecontracts()
+      console.log('compilation result', result)
+      if (!result.compilationSucceeded && this.performCompile) {
+        const newPrompt = `Try this again:${userPrompt}\n while considering this compilation error: Here is the error message\n ${result.errors}. `
+        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+      }
+
       console.log('All source files compile')
-      await writeAIResults(parsedFiles)
+      return await writeAIResults(parsedFiles)
     } catch (error) {
+      console.error('Error writing generation results:', error)
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       this.performCompile = true
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
-      return "Failed to generate secure code on this prompt ```" + userPrompt + "```"
+      return "Failed to generate secure code on user prompt! Please try again with a different prompt."
     } finally {
       this.nAttempts = 0
       this.performCompile = true
@@ -119,17 +128,18 @@ export class ContractAgent {
     this.plugin.call('filePanel', 'deleteWorkspace', workspaceName)
   }
 
-  async compilecontracts(fileName, fileContent): Promise<CompilationResult> {
+  async compilecontracts(): Promise<CompilationResult> {
     // do not compile tests files
     try {
-      if (fileName.includes('tests/')) return { compilationSucceeded: true, errors: null }
-
-      this.contracts[fileName] = { content: fileContent }
+      console.log('Compiling contracts:', this.contracts)
       const result = await this.plugin.call('solidity' as any, 'compileWithParameters', this.contracts, compilationParams)
+      console.log('Compilation result:', result)
       const data = result.data
       let error = false
 
+      // TODO check for data.error additionally
       if (data.errors) {
+        console.log('Compilation errors:', data.errors)
         error = data.errors.find((error) => error.type !== 'Warning')
       }
       if (data.errors && data.errors.length && error) {
