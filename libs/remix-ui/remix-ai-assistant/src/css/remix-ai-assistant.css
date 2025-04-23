@@ -1,0 +1,19 @@
+.ai-assistant-introtop {
+
+}
+
+.ai-assistant-top-height {
+  min-height: 84vh;
+}
+
+.ai-assistant-bottom-height {
+  min-height: 10vh;
+}
+
+.ai-assistant-ai-prompt {
+  height: 100%;
+}
+
+.ai-assistant-text {
+  font-size: 1.1rem;
+}

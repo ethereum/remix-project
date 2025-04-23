@@ -606,12 +606,12 @@ class AppComponent {
       'contentImport',
       'gistHandler',
       'compilerloader',
-      'remixAI'
+      'remixAI',
+      'remixaiassistant'
     ])
     await this.appManager.activatePlugin(['settings'])
 
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgitApi', 'dgit'])
-    await this.appManager.activatePlugin(['remixAiAssistant'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {

@@ -37,9 +37,8 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async makePluginCall(pluginName: string, methodName: string, payload: any) {
-    // const result = await this.call(pluginName, methodName, payload)
-    // return result
-    alert(`makePluginCall: ${pluginName} ${methodName} ${JSON.stringify(payload)}`)
+    const result = await this.call(pluginName, methodName, payload)
+    return result
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
