@@ -125,8 +125,7 @@ jobs:
         - run: 
             command: |
                 node -v
-                yarn add --dev node-gyp@10.2.0
-                sudo apt-get update && sudo apt-get install -y python3-distutils
+                npm install -g node-gyp@10.2.0
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
