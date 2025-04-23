@@ -14,7 +14,7 @@ export const compile = (compilationTargets: Source, settings: CompilerSettings, 
     compiler.set('remappings', settings?.remappings)
     compiler.set('viaIR', settings?.viaIR)
     compiler.loadVersion(canUseWorker(version), urlFromVersion(version))
-    compiler.event.register('compilationFinished', (success, compilationData, source, input, version) => {
+    compiler.event.register('compilationFinished', (success, compilationData, source, input, languageVersion) => {
       resolve(new CompilerAbstract(version, compilationData, source, input))
     })
     compiler.event.register('compilerLoaded', _ => compiler.compile(compilationTargets, ''))
