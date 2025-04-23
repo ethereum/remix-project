@@ -111,7 +111,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // can be zero address too
+  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // A dummy zero value tx is made to this address to create existence of smart account
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   const network = 'sepolia'
   const chain = chains[network]
