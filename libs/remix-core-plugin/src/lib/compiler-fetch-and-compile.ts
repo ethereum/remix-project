@@ -183,9 +183,9 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         config.settings,
         config.language as Language,
-        version as string,        
+        version as string,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropriate path          
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             console.log('resolving', targetPath, url)

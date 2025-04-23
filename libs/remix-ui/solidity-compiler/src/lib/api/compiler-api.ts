@@ -154,7 +154,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   async compileWithParameters (compilationTargets: Source, settings: CompilerInputOptions) {
     const compilerState = this.getCompilerState()
     const version = settings.version || compilerState.currentVersion
-    let settingsCompile: CompilerInput = JSON.parse(compilerInputFactory(null, settings))
+    const settingsCompile: CompilerInput = JSON.parse(compilerInputFactory(null, settings))
     const res = await compile(
       compilationTargets,
       settingsCompile.settings,
