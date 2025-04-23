@@ -192,6 +192,7 @@ export const deploy = async (payload: any, callback: any) => {
     // here is the codebase of dapp-template: https://github.com/drafish/remix-dapp
     const resp = await axios.get(`${window.origin}/plugins/remix-dapp/${path}`);
     files[`dir/${path}`] = resp.data;
+    console.log(`dir/${path}`, `${window.origin}/plugins/remix-dapp/${path}`)
   }
 
   if (logo) {
@@ -204,19 +205,16 @@ export const deploy = async (payload: any, callback: any) => {
   );
 
   try {
+    console.log('files: ', files)
     await surgeClient.publish({
       files,
       domain: `${payload.subdomain}.surge.sh`,
-      onProgress: ({
-        id,
-        progress,
-        file,
-      }: {
+      onProgress: (feedback: {
         id: string;
         progress: number;
         file: string;
       }) => {
-        // console.log({ id, progress, file });
+        // console.log({ id: feedback.id, progress: feedback.progress, file: feedback.file });
       },
       onTick: (tick: string) => {},
     });

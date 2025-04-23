@@ -7,9 +7,8 @@ import { toBytes, addHexPrefix } from '@ethereumjs/util';
 import { toast } from 'react-toastify';
 import txRunner from '../utils/txRunner';
 import metamask from '../utils/metamask';
-// import walletConnect from '../utils/walletConnect';
 import buildData from '../utils/buildData';
-
+import walletConnect from '../utils/walletConnect';
 const { txFormat, txHelper: { makeFullTypeDefinition } } = execution;
 
 const decodeInputParams = (data: any, abi: any) => {
@@ -61,8 +60,21 @@ export const setProvider = async (payload: any) => {
   }
 
   if (provider === 'walletconnect') {
-    // txRunner.setProvider(walletConnect as any);
-    // walletConnect.subscribeToEvents();
+    walletConnect.openModal().then(() => {
+      txRunner.setProvider(walletConnect as any);
+    });
+  }
+
+  const isConnected = walletConnect.isWalletConnected()
+
+  if (isConnected) {
+    await walletConnect.openModal()
+    txRunner.setProvider(walletConnect as any);
+  } else {
+    await walletConnect.openModal()
+    walletConnect.events.on('connectionSuccessful', () => {
+      txRunner.setProvider(walletConnect as any)
+    })
   }
 };
 
