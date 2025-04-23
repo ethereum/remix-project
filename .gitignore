@@ -17,6 +17,7 @@ soljson.js
 stats.json
 release
 .env
+.env.local
 
 
 # compiled output
@@ -74,3 +75,4 @@ apps/remixdesktop/circom-download
 apps/remixdesktop/log_input_signals.txt
 apps/remixdesktop/log_input_signals_new.txt
 logs
+apps/remix-ide-e2e/src/extensions/chrome/metamask

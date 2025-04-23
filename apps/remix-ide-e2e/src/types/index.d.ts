@@ -6,7 +6,7 @@ export type callbackCheckVerifyCallReturnValue = (values: string[]) => {message:
 declare module 'nightwatch' {
   export interface NightwatchCustomCommands {
     clickLaunchIcon(icon: string): NightwatchBrowser
-    switchBrowserTab(index: number): NightwatchBrowser
+    switchBrowserTab(indexOrTitle: number | string, forceReload?: boolean): NightwatchBrowser
     scrollAndClick(target: string): NightwatchBrowser
     scrollInto(target: string): NightwatchBrowser
     testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser

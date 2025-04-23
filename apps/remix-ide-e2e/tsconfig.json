@@ -7,6 +7,7 @@
       "target": "es2015",
       "module": "commonjs",
     },
-    "include": ["**/*.ts", "**/*.js"]
+    "include": ["**/*.ts", "**/*.js"],
+    "exclude": ["src/extensions"],
 }
   

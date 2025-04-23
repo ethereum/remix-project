@@ -12,7 +12,8 @@
     "@openzeppelin/wizard": "^0.4.0",
     "@remix-project/remixd": "../../dist/libs/remixd",
     "deep-equal": "^1.0.1",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "adm-zip": "^0.5.16"
   },
   "devDependencies": {
     "http-server": "^14.1.1",
