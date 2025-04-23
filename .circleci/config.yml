@@ -128,7 +128,7 @@ jobs:
         - run: 
             command: |
                 node -v
-                yarn global add node-gyp@10.2.0
+                yarn add --dev node-gyp@10.2.0
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
