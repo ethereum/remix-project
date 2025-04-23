@@ -130,7 +130,7 @@ export interface CompilerInput {
   // Required
   sources: Source,
   // Optional
-  settings: CompilerSettings  
+  settings: CompilerSettings
 }
 
 export interface Source {

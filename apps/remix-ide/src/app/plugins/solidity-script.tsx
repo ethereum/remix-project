@@ -48,15 +48,15 @@ export class SolidityScript extends Plugin {
       }
     }
     const compilation = await compile(
-      targets, 
+      targets,
       settings,
       params.language,
       params.version,
       async (url, cb) => {
-      await this.call('contentImport', 'resolveAndSave', url)
-        .then((result) => cb(null, result))
-        .catch((error) => cb(error.message))
-    })
+        await this.call('contentImport', 'resolveAndSave', url)
+          .then((result) => cb(null, result))
+          .catch((error) => cb(error.message))
+      })
 
     if (compilation.data.error) {
       this.call('terminal', 'log', compilation.data.error.formattedMessage)
