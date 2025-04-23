@@ -154,7 +154,7 @@ export interface CompilerInputOptions {
     evmVersion?: EVMVersion,
     language?: Language,
     remappings?: string[],
-    viaIR: boolean
+    viaIR?: boolean
 }
 
 export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | 'shanghai' | 'cancun' | null

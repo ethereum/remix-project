@@ -18,7 +18,7 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
         }
       },
       remappings: opts.remappings || [],
-      viaIR: opts.viaIR
+      viaIR: opts.viaIR ? opts.viaIR : undefined
     }
   }
   if (opts.evmVersion) {
