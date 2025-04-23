@@ -44,7 +44,7 @@ export class RemixAIPlugin extends ViewPlugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'openai'
+  assistantProvider: string = 'anthropic'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent
@@ -193,7 +193,7 @@ export class RemixAIPlugin extends ViewPlugin {
         const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
         if (response.data) {
           ragContext = response.data.response
-          userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
+          userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
         } else {
           console.log('Invalid response from RAG context API:', response.data)
         }
