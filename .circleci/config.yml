@@ -350,7 +350,15 @@ jobs:
           command: |
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & $env:SSM\smksp_cert_sync.exe
+            Write-Host "Running cert sync..."
+            & $env:SSM\smksp_cert_sync.exe --verbose
+            Write-Host "Verifying certs after sync..."
+            $certs = & $env:SSM\smctl.exe cert ls
+            Write-Host $certs
+            if (-not ($certs -match "ACTIVE")) {
+              Write-Host "❌ No active certs found after sync. Failing build."
+              exit 1
+            }
             & $env:SSM\smksp_registrar.exe list
             & $env:SSM\smctl.exe keypair ls
             & $env:SSM\smctl.exe healthcheck
