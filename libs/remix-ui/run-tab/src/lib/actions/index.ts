@@ -2,7 +2,7 @@
 import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents, setEventsDispatch } from './events'
-import { createNewBlockchainAccount, createSmartAccount, setExecutionContext, signMessageWithAddress, addFileInternal } from './account'
+import { createNewBlockchainAccount, createSmartAccount, delegationAuthorization, setExecutionContext, signMessageWithAddress, addFileInternal } from './account'
 import { clearInstances, clearPopUp, removeInstance, pinInstance, unpinInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit,
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
@@ -40,6 +40,7 @@ export const setExecutionEnvironment = (executionContext: { context: string, for
 export const hideToaster = () => clearPopUp(dispatch)
 export const createNewAddress = (cbMessage: JSX.Element) => createNewBlockchainAccount(plugin, dispatch, cbMessage)
 export const createNewSmartAccount = () => createSmartAccount(plugin, dispatch)
+export const newDelegationAuthorization = (contractAddress: string) => delegationAuthorization(contractAddress, plugin, dispatch)
 export const setPassphraseModal = (passphrase: string) => setPassphrasePrompt(dispatch, passphrase)
 export const setMatchPassphraseModal = (passphrase: string) => setMatchPassphrasePrompt(dispatch, passphrase)
 export const signMessage = (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => signMessageWithAddress(plugin, dispatch, account, message, modalContent, passphrase)

@@ -16,9 +16,12 @@ export function AccountUI(props: AccountProps) {
     classList: '',
     title: ''
   })
+  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(false)
   const [enableCSM, setEnableCSM] = useState(false)
-  const [smartAccountSelected, setSmartAccountSelected] = useState(false)
+  const [smartAccountSelected, setSmartAccountSelected] = useState(false)  
+
   const messageRef = useRef('')
+  const delegationAuthorizationAddressRef = useRef('')
   const ownerEOA = useRef(null)
 
   const intl = useIntl()
@@ -48,6 +51,17 @@ export function AccountUI(props: AccountProps) {
   //     setSmartAccountSelected(false)
   //   }
   // }, [selectedAccount])
+
+  useEffect(() => {
+    if (networkName.includes('Sepolia')) {
+      if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
+        setEnableDelegationAuthorization(false)
+      }
+      else {
+        setEnableDelegationAuthorization(true)
+      }
+    } else {}
+  }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')
@@ -116,7 +130,7 @@ export function AccountUI(props: AccountProps) {
     }
   }, [selectExEnv, personalMode, networkName])
 
-  const createSmartAccount = () => {createSmartAccount
+  const createSmartAccount = () => {
     props.modal(
       intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
       (
@@ -139,6 +153,29 @@ export function AccountUI(props: AccountProps) {
       intl.formatMessage({ id: 'udapp.continue' }),
       () => {
         props.createNewSmartAccount()
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {
+        props.setPassphrase('')
+      }
+    )
+  }
+
+  const handleDelegationAuthorizationAddressRef = (e) => {
+    delegationAuthorizationAddressRef.current = e.value
+  }
+
+  const createDelegationAuthorization = () => {
+    props.modal(
+      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      (
+        <div className="w-100" data-id="createSmartAccountModal">
+          <input onChange={handleDelegationAuthorizationAddressRef} />
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.continue' }),
+      () => {
+        props.dele()
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
@@ -322,6 +359,14 @@ export function AccountUI(props: AccountProps) {
           <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
             <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
             Create Smart Account
+          </button>
+        </CustomTooltip>
+      </div>) : null }
+      { enableDelegationAuthorization ? (<div className="mt-1">
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
+          <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
+            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
+            Delegation Authorization
           </button>
         </CustomTooltip>
       </div>) : null }
