@@ -330,10 +330,18 @@ jobs:
           shell: powershell.exe
           command: |
             cd C:\
-            New-Item C:\CERT_FILE.p12.b64
-            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            New-Item -Path . -Name "CERT_FILE.p12.b64" -ItemType File -Force
+            Set-Content -Path .\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
             certutil -decode CERT_FILE.p12.b64 Certificate_pkcs12.p12
-            cat Certificate_pkcs12.p12
+            certutil -f -p $env:SM_CLIENT_CERT_PASSWORD -importpfx Certificate_pkcs12.p12 NoRoot
+      - run:
+          name: "Verify Certificate in Store"
+          shell: powershell.exe
+          command: |
+            Write-Host "Checking user cert store for Code Signing certs..."
+            Get-ChildItem Cert:\CurrentUser\My |
+            Where-Object { $_.HasPrivateKey -and $_.EnhancedKeyUsageList.FriendlyName -contains "Code Signing" } |
+            Format-Table Subject, NotAfter, HasPrivateKey
       - restore_cache:
           name: Restore smtools-windows-x64.msi
           keys:
