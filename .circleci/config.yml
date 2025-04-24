@@ -361,8 +361,7 @@ jobs:
             }
             & $env:SSM\smksp_registrar.exe list
             & $env:SSM\smctl.exe keypair ls
-            & $env:SSM\smctl.exe healthcheck
-            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user            
+            & $env:SSM\smctl.exe healthcheck          
       - run:
           name: "Find Signtool"
           shell: powershell.exe
