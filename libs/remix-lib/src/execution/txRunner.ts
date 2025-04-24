@@ -9,6 +9,7 @@ export type PrefixedHexString = `0x${string}`
 export type Transaction = {
   from: string,
   fromSmartAccount: boolean,
+  delegatedAuthorizationEIP7702?: string
   to?: string,
   deployedBytecode?: string
   value: string,
