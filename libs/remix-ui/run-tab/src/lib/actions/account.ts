@@ -108,6 +108,30 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
   )
 }
 
+export const delegationAuthorization = async (contractAddress: string, plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const walletClient = createWalletClient({      
+    transport: custom(window.ethereum!),
+  })
+
+
+  const authorization = await walletClient.signAuthorization({
+    contractAddress: contractAddress as `0x${string}`,
+    account: plugin.REACT_API.accounts.selectedAccount as `0x${string}`
+  })
+
+  const compileData = await plugin.call('compilerArtefact', 'getContractDataFromAddress', contractAddress)
+  const hash = await walletClient.writeContract({
+    abi: compileData.contract.abi,
+    address: plugin.REACT_API.accounts.selectedAccount as `0x${string}`,
+    authorizationList: [authorization],
+    functionName: 'initialize',
+    args: [],
+    chain: undefined,
+    account: plugin.REACT_API.accounts.selectedAccount as `0x${string}`
+  })
+  return { txHash: hash }     
+}
+
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
