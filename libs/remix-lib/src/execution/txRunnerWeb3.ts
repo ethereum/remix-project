@@ -109,10 +109,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        if (tx.delegatedAuthorizationEIP7702) {
-          const { txHash, contractAddress } = await this.authorizeDelegation(tx)
-          cb(null, txHash, isCreation, true, contractAddress)
-        } else if (tx.fromSmartAccount) {
+        if (tx.fromSmartAccount) {
           const { txHash, contractAddress } = await this.sendUserOp(tx)
           cb(null, txHash, isCreation, true, contractAddress)
         } else {
@@ -233,22 +230,6 @@ export class TxRunnerWeb3 {
     })
   }
 
-  async authorizeDelegation (tx) {
-    const walletClient = createWalletClient({      
-      transport: custom(window.ethereum!),
-    })
-
-    const authorization = await walletClient.signAuthorization({ 
-      contractAddress: tx.delegatedAuthorizationEIP7702,
-      executor: 'self',
-    })
-
-    const hash = await walletClient.writeContract({ 
-      abi, 
-      address: eoa.address, 
-      authorizationList: [authorization]
-    })
-  }
   async sendUserOp (tx) {
     const localStorageKey = 'smartAccounts'
     const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
