@@ -120,7 +120,7 @@ jobs:
             Write-Host "Found ACTIVE cert ID: $activeCertId"
 
             $exportPath = "C:\active_cert.cer"
-            & "$env:SSM\smctl.exe" cert export --id $activeCertId --output-path $exportPath
+            & "$env:SSM\smctl.exe" cert export --alias $activeCertId --output-path $exportPath
 
             Write-Host "🔐 Importing cert into CurrentUser\My store..."
             certutil -user -addstore "My" $exportPath
