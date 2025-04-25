@@ -69,7 +69,7 @@ jobs:
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & (Join-Path $env:SSM "smctl.exe") -h
-            & (Join-Path $env:SSM "smksp_cert_sync.exe")
+            & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
             & (Join-Path $env:SSM "smksp_registrar.exe") list
             & (Join-Path $env:SSM "smctl.exe") keypair ls
             & (Join-Path $env:SSM "smctl.exe") healthcheck
@@ -84,6 +84,26 @@ jobs:
               /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               /csp "DigiCert Signing Manager KSP" `
               /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
+              dummy.exe
+
+            # --- Additional debug and fallback signing ---
+            Write-Host "🔍 Listing certs:"
+            & "$env:SSM\smctl.exe" cert ls
+
+            Write-Host "🔍 Dumping key containers:"
+            certutil -csp "DigiCert Signing Manager KSP" -key -user
+
+            Write-Host "🔄 Running cert sync with verbose output:"
+            & "$env:SSM\smksp_cert_sync.exe" --verbose
+
+            Write-Host "🔁 Attempting fallback signing using /k only..."
+            & "$env:Signtool" sign `
+              /debug `
+              /fd sha256 `
+              /td sha256 `
+              /tr http://timestamp.digicert.com `
+              /csp "DigiCert Signing Manager KSP" `
+              /k key_1090356874_27_02 `
               dummy.exe
       - run:
           name: "Verify Signature"
