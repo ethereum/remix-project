@@ -86,23 +86,6 @@ jobs:
             Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
             certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
 
-            # Set environment variable
-            $env:SM_CLIENT_CERT_FILE = "C:\Certificate_pkcs12.p12"
-
-            # Create sm.json as a fallback
-            $smConfigDir = "$env:USERPROFILE\.sm"
-            New-Item -ItemType Directory -Force -Path $smConfigDir
-            @"
-            {
-              "client_certificate_file": "$env:SM_CLIENT_CERT_FILE",
-              "client_certificate_password": "$env:SM_CLIENT_CERT_PASSWORD"
-            }
-            "@ | Set-Content -Path "$smConfigDir\sm.json"
-
-            # Optional debug output
-            Write-Host "✅ Client cert path: $env:SM_CLIENT_CERT_FILE"
-            Write-Host "✅ sm.json:"
-            Get-Content "$smConfigDir\sm.json"
       - restore_cache:
           name: Restore smtools-windows-x64.msi
           keys:
@@ -112,7 +95,6 @@ jobs:
           shell: powershell.exe 
           command: |
             cd C:\
-            $env:SM_CLIENT_CERT_FILE = c:\Certificate_pkcs12.p12
             if (Test-Path 'c:\smtools-windows-x64.msi') {              
               echo 'File exists, skipping download...'
             } else {
@@ -128,7 +110,6 @@ jobs:
           shell: powershell.exe 
           command: |
             cd C:\
-            $env:SM_CLIENT_CERT_FILE = c:\Certificate_pkcs12.p12
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & $env:SSM\smksp_cert_sync.exe
             & $env:SSM\smksp_registrar.exe list
