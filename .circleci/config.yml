@@ -23,9 +23,6 @@ jobs:
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
-      - checkout
-      - attach_workspace:
-         at: .
       - run:
           name: "Install Signing Tools"
           shell: powershell.exe 
@@ -77,9 +74,6 @@ jobs:
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
-      - checkout
-      - attach_workspace:
-         at: .
       - run:
           name: "Client-Tool-Download"
           shell: powershell.exe 
