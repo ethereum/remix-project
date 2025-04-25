@@ -93,7 +93,11 @@ jobs:
             # --- Describe the first ACTIVE certificate for more details ---
             Write-Host "📋 Describing ACTIVE certificate for more details..."
             $certList = & "$env:SSM\smctl.exe" cert ls
-            $activeCertId = ($certList | Select-String -Pattern 'ACTIVE' -Context 2,2 | Where-Object { $_ -match 'ID' }) -replace '.*ID\s+([0-9a-f\-]+).*', '$1'
+            $activeCertId = $certList | ForEach-Object {
+              if ($_ -match "^\s*([0-9a-f\-]+)\s+\S+\s+\*+\s+ACTIVE") {
+                return $matches[1]
+              }
+            }
             if ($activeCertId) {
               Write-Host "🧾 Describing cert ID: $activeCertId"
               & "$env:SSM\smctl.exe" cert describe $activeCertId
@@ -122,7 +126,11 @@ jobs:
 
             # Export the first ACTIVE cert to a file
             $certList = & "$env:SSM\smctl.exe" cert ls
-            $activeCertId = ($certList | Select-String -Pattern 'ACTIVE' -Context 2,2 | Where-Object { $_ -match 'ID' }) -replace '.*ID\s+([0-9a-f\-]+).*', '$1'
+            $activeCertId = $certList | ForEach-Object {
+              if ($_ -match "^\s*([0-9a-f\-]+)\s+\S+\s+\*+\s+ACTIVE") {
+                return $matches[1]
+              }
+            }
             if (-not $activeCertId) {
               Write-Host "❌ No ACTIVE cert ID found."
               exit 1
@@ -131,7 +139,7 @@ jobs:
             Write-Host "Found ACTIVE cert ID: $activeCertId"
 
             $exportPath = "C:\active_cert.cer"
-            & "$env:SSM\smctl.exe" cert export $activeCertId $exportPath
+            & "$env:SSM\smctl.exe" cert download $activeCertId $exportPath
 
             Write-Host "🔐 Importing cert into CurrentUser\My store..."
             certutil -user -addstore "My" $exportPath
