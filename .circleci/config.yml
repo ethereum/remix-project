@@ -66,7 +66,19 @@ jobs:
             & (Join-Path $env:SSM "smksp_registrar.exe") list
             & (Join-Path $env:SSM "smctl.exe") keypair ls
             & (Join-Path $env:SSM "smctl.exe") healthcheck
+
             & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
+
+            Write-Host "🔍 Enumerating DigiCert Signing Manager KSP keys..."
+
+            $keyList = & certutil -csp "DigiCert Signing Manager KSP" -key -user
+            $keyLines = $keyList | Where-Object { $_ -match "^Key Container =" }
+
+            foreach ($line in $keyLines) {
+              $keyContainer = ($line -split "=")[1].Trim()
+              Write-Host "🔎 Dumping details for key container: $keyContainer"
+              certutil -csp "DigiCert Signing Manager KSP" -v -key $keyContainer -user
+            }
 
             certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
 
