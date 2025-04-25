@@ -19,6 +19,9 @@ jobs:
   test-signing-tool-windows:
     executor: win/default
     steps:
+      - checkout
+      - attach_workspace:
+         at: .
       - run:
           name: "Install Signing Tools"
           shell: powershell.exe 
@@ -64,6 +67,9 @@ jobs:
   check-signing-readiness-windows:
     executor: win/default
     steps:
+      - checkout
+      - attach_workspace:
+         at: .
       - run:
           name: "Client-Tool-Download"
           shell: powershell.exe 
