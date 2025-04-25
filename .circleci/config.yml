@@ -63,6 +63,7 @@ jobs:
               /tr http://timestamp.digicert.com `
               /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               /csp "DigiCert Signing Manager KSP" `
+              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               dummy.exe
       - run:
           name: "Verify Signature"
