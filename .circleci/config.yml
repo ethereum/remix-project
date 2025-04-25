@@ -61,7 +61,7 @@ jobs:
           command: |
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & (Join-Path $env:SSM "smctl.exe") login --client-cert
+            & (Join-Path $env:SSM "smctl.exe") -h
             & (Join-Path $env:SSM "smksp_cert_sync.exe")
             & (Join-Path $env:SSM "smksp_registrar.exe") list
             & (Join-Path $env:SSM "smctl.exe") keypair ls
