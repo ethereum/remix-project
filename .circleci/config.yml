@@ -90,6 +90,17 @@ jobs:
             Write-Host "🔍 Listing certs:"
             & "$env:SSM\smctl.exe" cert ls
 
+            # --- Describe the first ACTIVE certificate for more details ---
+            Write-Host "📋 Describing ACTIVE certificate for more details..."
+            $certList = & "$env:SSM\smctl.exe" cert ls
+            $activeCertId = ($certList | Select-String -Pattern 'ACTIVE' -Context 2,2 | Where-Object { $_ -match 'ID' }) -replace '.*ID\s+([0-9a-f\-]+).*', '$1'
+            if ($activeCertId) {
+              Write-Host "🧾 Describing cert ID: $activeCertId"
+              & "$env:SSM\smctl.exe" cert describe $activeCertId
+            } else {
+              Write-Host "⚠️ No ACTIVE cert found to describe."
+            }
+
             Write-Host "🔍 Dumping key containers:"
             certutil -csp "DigiCert Signing Manager KSP" -key -user
 
