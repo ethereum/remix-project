@@ -2,7 +2,7 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
-import { ethers } from 'ethers'
+import { BrowserProvider } from 'ethers'
 import { normalizeHexAddress } from '../helpers/uiHelper'
 import { toBigInt, toHex, toChecksumAddress } from 'web3-utils'
 import { randomBytes } from 'crypto'
@@ -167,11 +167,11 @@ export class TxRunnerWeb3 {
           txCopy.gasPrice = undefined
         }
       }
-      const ethersProvider = new ethers.providers.Web3Provider(this.getWeb3().currentProvider as any)
+      const ethersProvider = new BrowserProvider(this.getWeb3().currentProvider as any)
       ethersProvider.estimateGas(txCopy)
         .then(gasEstimationBigInt => {
           gasEstimationForceSend(null, () => {
-            const gasEstimation = gasEstimationBigInt.toNumber()
+            const gasEstimation = Number(gasEstimationBigInt)
             /*
             * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
             * e.g if the gasestimate

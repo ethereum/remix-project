@@ -2,7 +2,7 @@ import { toHex, toNumber, toBigInt } from 'web3-utils'
 import { toChecksumAddress, Address, bigIntToHex, bytesToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
-import { ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { VMexecutionResult } from '@remix-project/remix-lib'
 import { VMContext } from '../vm-context'
 import { Log, EvmError } from '@ethereumjs/evm'
@@ -191,7 +191,7 @@ export class Transactions {
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `${bytesToHex(result.execResult.returnValue) || '0x00'}`
-          const abiCoder = new ethers.utils.AbiCoder()
+          const abiCoder = new AbiCoder()
           const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
           return cb('revert ' + reason)
         } catch (e) {

@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { Blockchain } from '../../blockchain/blockchain'
-import { ethers } from 'ethers'
+import { JsonRpcProvider } from 'ethers'
 
 export type JsonDataRequest = {
   id: number
@@ -33,7 +33,7 @@ export interface IProvider {
 }
 
 export abstract class AbstractProvider extends Plugin implements IProvider {
-  provider: ethers.providers.JsonRpcProvider
+  provider: JsonRpcProvider
   blockchain: Blockchain
   defaultUrl: string
   connected: boolean
@@ -93,7 +93,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         this.call('notification', 'modal', modalContent)
       })
     })()
-    this.provider = new ethers.providers.JsonRpcProvider(this.nodeUrl)
+    this.provider = new JsonRpcProvider(this.nodeUrl)
     return {
       nodeUrl: this.nodeUrl
     }

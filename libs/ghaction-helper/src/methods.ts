@@ -1,5 +1,5 @@
 // @ts-ignore
-import { ethers } from "ethers"
+import { BrowserProvider } from "ethers"
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
@@ -14,7 +14,7 @@ const providerConfig = {
 const config = { defaultTransactionType: '0x0' }
 global.remixProvider = new Provider(providerConfig)
 global.remixProvider.init()
-global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
+global.web3Provider = new BrowserProvider(global.remixProvider)
 global.provider = global.web3Provider
 global.ethereum = global.web3Provider
 global.web3 = new Web3(global.web3Provider)

@@ -5,7 +5,7 @@ import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT
 import { keccak256 } from 'ethereum-cryptography/keccak'
 import { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
-import { ethers } from 'ethers'
+import { JsonRpcProvider } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
@@ -99,7 +99,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
 }
 
 export interface CustomEthersStateManagerOpts {
-  provider: string | ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  provider: string | JsonRpcProvider
   blockTag: string,
   /**
    * A {@link Trie} instance
@@ -108,14 +108,14 @@ export interface CustomEthersStateManagerOpts {
 }
 
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
-  private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  private provider: JsonRpcProvider
   private blockTag: string
 
   constructor(opts: CustomEthersStateManagerOpts) {
     super(opts)
     if (typeof opts.provider === 'string') {
-      this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
-    } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
+      this.provider = new JsonRpcProvider(opts.provider)
+    } else if (opts.provider instanceof JsonRpcProvider) {
       this.provider = opts.provider
     } else {
       throw new Error(`valid JsonRpcProvider or url required; got ${opts.provider}`)
@@ -171,7 +171,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     let storage = await super.getContractStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
-      storage = toBytes(await this.provider.getStorageAt(
+      storage = toBytes(await this.provider.getStorage(
         address.toString(),
         bytesToBigInt(key),
         this.blockTag)
@@ -459,7 +459,7 @@ export class VMContext {
         // we already have the right value for the block number
       } else if (this.blockNumber === 'latest') {
         // resolve `latest` to the actual block number
-        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        const provider = new JsonRpcProvider(this.nodeUrl)
         this.blockNumber = await provider.getBlockNumber()
       }
 
