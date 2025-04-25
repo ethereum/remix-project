@@ -88,7 +88,7 @@ jobs:
             $outputExe = "C:\dummy-signed.exe"
 
             Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
-            & "$env:SSM\smctl.exe" sign --keypair-alias=key_1090356874_27_02 --input=$inputExe --output=$outputExe
+            & "$env:SSM\smctl.exe" sign --keypair-alias=key_1090356874_27_02 --input=$inputExe
 
             if (Test-Path $outputExe) {
               Write-Host "✅ Remote signing succeeded. Signed file: $outputExe"
