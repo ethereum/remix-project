@@ -88,6 +88,7 @@ jobs:
                 & (Join-Path $env:SSM "smctl.exe") cert export --id $id --output-path $path
                 certutil -dump $path
               }
+            }
 
             if (-not ($certsOutput -match "Code Signing")) {
               Write-Host "❌ No Code Signing capable certificate found!"
