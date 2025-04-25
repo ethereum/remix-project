@@ -96,7 +96,10 @@ jobs:
             $b64 = $env:SM_CLIENT_CERT_FILE_B64
             Set-Content -Path .\CERT_FILE.p12.b64 -Value $b64
             certutil -decode CERT_FILE.p12.b64 client_certificate.p12
-            $targetPath = "$env:USERPROFILE\AppData\Local\DigiCert\SM\client_certificate.p12"
+
+            $targetDir = "$env:USERPROFILE\AppData\Local\DigiCert\SM"
+            $targetPath = Join-Path $targetDir "client_certificate.p12"
+            New-Item -ItemType Directory -Force -Path $targetDir
             Move-Item -Force -Path .\client_certificate.p12 -Destination $targetPath
 
             Write-Host "Verifying client certificate password..."
