@@ -18,58 +18,7 @@ orbs:
   node: circleci/node@7.0.0
 jobs:
 
-  test-signing-tool-windows:
-    executor: win/default
-    environment:
-      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
-      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
-      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
-    steps:
-      - run:
-          name: "Install Signing Tools"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            if (-not (Test-Path 'c:\smtools-windows-x64.msi')) {
-              curl.exe -X GET https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            }
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-      - run:
-          name: "Sync Certs"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            & "$env:SSM\smksp_cert_sync.exe" --verbose
-            $certs = & "$env:SSM\smctl.exe" cert ls
-            Write-Host $certs
-            if (-not ($certs -match "ACTIVE")) {
-              Write-Host "❌ No active certs found after sync."
-              exit 1
-            }
-      - run:
-          name: "Create Dummy EXE"
-          shell: powershell.exe
-          command: |
-            echo "hello" > dummy.txt
-            copy dummy.txt dummy.exe
-      - run:
-          name: "Sign Dummy EXE"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            & "$env:Signtool" sign `
-              /fd sha256 `
-              /td sha256 `
-              /tr http://timestamp.digicert.com `
-              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              /csp "DigiCert Signing Manager KSP" `
-              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              dummy.exe
-      - run:
-          name: "Verify Signature"
-          shell: powershell.exe
-          command: |
-            & "$env:Signtool" verify /pa /v dummy.exe
+
   check-signing-readiness-windows:
     executor: win/default
     environment:
@@ -140,11 +89,13 @@ jobs:
           command: |
             cd C:\
             & "$env:Signtool" sign `
+              / debug `
               /fd sha256 `
               /td sha256 `
               /tr http://timestamp.digicert.com `
               /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               /csp "DigiCert Signing Manager KSP" `
+              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               dummy.exe
       - run:
           name: "Verify Signature"
@@ -955,10 +906,6 @@ workflows:
     when: << pipeline.parameters.windows >>
     jobs:
       - check-signing-readiness-windows
-  test-windows-signing-tool:
-    when: << pipeline.parameters.windows-test-signing >>
-    jobs:
-      - test-signing-tool-windows
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
