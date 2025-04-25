@@ -80,6 +80,21 @@ jobs:
 
             Write-Host "📄 Listing CurrentUser\My certificates..."
             Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+
+            Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
+
+            $certId = "9495a37f-c5e8-4cc5-913e-e85890356375"
+            $inputExe = "C:\dummy.exe"
+            $outputExe = "C:\dummy-signed.exe"
+
+            & "$env:SSM\smctl.exe" sign -c $certId -i $inputExe -o $outputExe
+
+            if (Test-Path $outputExe) {
+              Write-Host "✅ Remote signing succeeded. Signed file: $outputExe"
+            } else {
+              Write-Host "❌ Remote signing failed. No output file found."
+              exit 1
+            }
             
   build:
     docker:
