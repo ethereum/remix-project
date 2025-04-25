@@ -18,6 +18,10 @@ jobs:
 
   test-signing-tool-windows:
     executor: win/default
+    environment:
+      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
+      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
+      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
       - checkout
       - attach_workspace:
@@ -35,6 +39,7 @@ jobs:
           name: "Sync Certs"
           shell: powershell.exe
           command: |
+            cd C:\
             & "$env:SSM\smksp_cert_sync.exe" --verbose
             $certs = & "$env:SSM\smctl.exe" cert ls
             Write-Host $certs
@@ -52,6 +57,7 @@ jobs:
           name: "Sign Dummy EXE"
           shell: powershell.exe
           command: |
+            cd C:\
             & "$env:Signtool" sign `
               /fd sha256 `
               /td sha256 `
@@ -66,6 +72,10 @@ jobs:
             & "$env:Signtool" verify /pa /v dummy.exe
   check-signing-readiness-windows:
     executor: win/default
+    environment:
+      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
+      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
+      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
       - checkout
       - attach_workspace:
