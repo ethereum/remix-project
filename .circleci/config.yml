@@ -36,10 +36,6 @@ jobs:
             Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
             certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
 
-      - restore_cache:
-          name: Restore smtools-windows-x64.msi
-          keys:
-            - dl-smtools-windows-x64.msi
       - run:
           name: "Client-Tool-Download"
           shell: powershell.exe 
@@ -51,10 +47,7 @@ jobs:
               echo 'Downloading smtools-windows-x64.msi ...'
               curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
             }
-      - save_cache:
-          key: dl-smtools-windows-x64.msi
-          paths:
-            - c:\smtools-windows-x64.msi
+
       - run:
           name: "Create Dummy EXE"
           shell: powershell.exe
@@ -80,7 +73,7 @@ jobs:
             $downloadPath = "C:\downloaded_cert.cer"
 
             Write-Host "📥 Downloading cert ID: $certId to $downloadPath..."
-            & "$env:SSM\smctl.exe" cert download $certId –-out $downloadPath
+            & "$env:SSM\smctl.exe" certificate download $certId –-out $downloadPath
 
             Write-Host "🔐 Adding cert to CurrentUser\My..."
             certutil -user -addstore "My" $downloadPath
@@ -88,11 +81,6 @@ jobs:
             Write-Host "📄 Listing CurrentUser\My certificates..."
             Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
             
-      - run:
-          name: "Verify Signature"
-          shell: powershell.exe
-          command: |
-            & "$env:Signtool" verify /pa /v dummy.exe
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
