@@ -67,16 +67,7 @@ jobs:
             & (Join-Path $env:SSM "smctl.exe") keypair ls
             & (Join-Path $env:SSM "smctl.exe") healthcheck
 
-            # Download and install certificate explicitly
-            # Manually specify the certificate ID to download
-            $certId = "9495a37f-c5e8-4cc5-913e-e85890356375"
-            $downloadPath = "C:\cert_1090356874.pem"
 
-            Write-Host "📥 Downloading cert ID: $certId to $downloadPath..."
-            & "$env:SSM\smctl.exe" certificate download $certId
-
-            Write-Host "🔐 Adding cert to CurrentUser\My..."
-            #certutil -user -addstore "My" $downloadPath
 
             & "$env:SSM\smctl.exe" windows certsync --keypair-alias=key_1090356874_27_02
 
@@ -95,15 +86,8 @@ jobs:
             Write-Host "✅ Signtool added to PATH"
             
             & "$env:SSM\smctl.exe" sign --keypair-alias key_1090356874_27_02 --input $inputExe --verbose
+            signtool verify /pa /v dummy.exe
             
-            & $env:Signtool sign /debug `
-              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              /csp "DigiCert Signing Manager KSP" `
-              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              /tr http://timestamp.digicert.com `
-              /td SHA256 `
-              /fd SHA256 `
-              $inputExe `
             
   build:
     docker:
