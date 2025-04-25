@@ -73,13 +73,13 @@ jobs:
             $downloadPath = "C:\downloaded_cert.cer"
 
             Write-Host "📥 Downloading cert ID: $certId to $downloadPath..."
-            & "$env:SSM\smctl.exe" certificate download $certId –-out $downloadPath
+            & "$env:SSM\smctl.exe" certificate download $certId
 
-            Write-Host "🔐 Adding cert to CurrentUser\My..."
-            certutil -user -addstore "My" $downloadPath
+            #Write-Host "🔐 Adding cert to CurrentUser\My..."
+            #certutil -user -addstore "My" $downloadPath
 
-            Write-Host "📄 Listing CurrentUser\My certificates..."
-            Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            #Write-Host "📄 Listing CurrentUser\My certificates..."
+            #Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
             
   build:
     docker:
