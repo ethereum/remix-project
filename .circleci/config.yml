@@ -93,10 +93,13 @@ jobs:
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
 
             Write-Host "Running DigiCert cert sync..."
-            & $env:SSM\smksp_cert_sync.exe --verbose
+            & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
+
+            Write-Host "Running DigiCert healthcheck..."
+            & (Join-Path $env:SSM "smctl.exe") healthcheck
 
             Write-Host "Listing available certs..."
-            $certs = & $env:SSM\smctl.exe cert ls
+            $certs = & (Join-Path $env:SSM "smctl.exe") cert ls
             Write-Host $certs
 
             if (-not ($certs -match "ACTIVE")) {
@@ -105,6 +108,15 @@ jobs:
             }
 
             Write-Host "✅ Signing Manager cert is ready."
+
+            Write-Host "Checking EKU for Code Signing..."
+            $eku = & (Join-Path $env:SSM "smctl.exe") cert ls
+            if (-not ($eku -match "Code Signing")) {
+              Write-Host "❌ No cert found with Code Signing EKU"
+              exit 1
+            } else {
+              Write-Host "✅ Code Signing EKU is present"
+            }
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -514,7 +526,14 @@ jobs:
           command: | 
             . .\SetEnvVars.ps1
             dir Env:
-            & $env:Signtool sign /debug /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
+            & $env:Signtool sign /debug `
+              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
+              /csp "DigiCert Signing Manager KSP" `
+              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
+              /tr http://timestamp.digicert.com `
+              /td SHA256 `
+              /fd SHA256 `
+              $PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
