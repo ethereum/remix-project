@@ -130,7 +130,6 @@ jobs:
             cd C:\
             $env:SM_CLIENT_CERT_FILE = c:\Certificate_pkcs12.p12
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & (Join-Path $env:SSM "smctl.exe") login --client-cert
             & $env:SSM\smksp_cert_sync.exe
             & $env:SSM\smksp_registrar.exe list
             & $env:SSM\smctl.exe keypair ls
