@@ -74,6 +74,18 @@ jobs:
             $certsOutput = & (Join-Path $env:SSM "smctl.exe") cert ls
             Write-Host $certsOutput
 
+            # Export all synced certs to files and print their content using certutil
+            Write-Host "📦 Exporting certs to inspect EKUs and validity..."
+            $certsList = & (Join-Path $env:SSM "smctl.exe") cert ls --json | ConvertFrom-Json
+            foreach ($cert in $certsList) {
+              $id = $cert.id
+              $alias = $cert.alias
+              $path = "C:\$alias.pem"
+              Write-Host "Exporting cert ID $id to $path"
+              & (Join-Path $env:SSM "smctl.exe") cert export --id $id --output-path $path
+              certutil -dump $path
+            }
+
             if (-not ($certsOutput -match "Code Signing")) {
               Write-Host "❌ No Code Signing capable certificate found!"
             } else {
