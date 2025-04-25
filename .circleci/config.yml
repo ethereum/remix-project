@@ -8,7 +8,7 @@ parameters:
     default: true
   windows-test-signing:
     type: boolean
-    default: true
+    default: false
   runbuild:
     type: boolean
     default: false
@@ -87,6 +87,20 @@ jobs:
               echo 'Downloading smtools-windows-x64.msi ...'
               curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
             }
+      - run:
+          name: "Client-Cert-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            Write-Host "Creating and decoding client auth cert..."
+            $b64 = $env:SM_CLIENT_CERT_FILE_B64
+            Set-Content -Path .\CERT_FILE.p12.b64 -Value $b64
+            certutil -decode CERT_FILE.p12.b64 client_certificate.p12
+            $targetPath = "$env:USERPROFILE\AppData\Local\DigiCert\SM\client_certificate.p12"
+            Move-Item -Force -Path .\client_certificate.p12 -Destination $targetPath
+
+            Write-Host "Verifying client certificate password..."
+            certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump $targetPath
       - run:
           name: "Client-Tool-Setup"
           shell: powershell.exe
