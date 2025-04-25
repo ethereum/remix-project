@@ -74,8 +74,19 @@ jobs:
             & (Join-Path $env:SSM "smctl.exe") keypair ls
             & (Join-Path $env:SSM "smctl.exe") healthcheck
 
-            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
-            & (Join-Path $env:SSM "smctl.exe") certificate desc 9495a37f-c5e8-4cc5-913e-e85890356375
+            # Download and install certificate explicitly
+            # Manually specify the certificate ID to download
+            $certId = "9495a37f-c5e8-4cc5-913e-e85890356375"
+            $downloadPath = "C:\downloaded_cert.cer"
+
+            Write-Host "📥 Downloading cert ID: $certId to $downloadPath..."
+            & "$env:SSM\smctl.exe" cert download $certId –-out $downloadPath
+
+            Write-Host "🔐 Adding cert to CurrentUser\My..."
+            certutil -user -addstore "My" $downloadPath
+
+            Write-Host "📄 Listing CurrentUser\My certificates..."
+            Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
             
       - run:
           name: "Verify Signature"
