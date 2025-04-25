@@ -67,6 +67,7 @@ jobs:
           shell: powershell.exe 
           command: |
             cd C:\
+            & (Join-Path $env:SSM "smctl.exe") config set --signing-tool signtool --path "$env:Signtool"
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & (Join-Path $env:SSM "smctl.exe") -h
             & (Join-Path $env:SSM "smksp_cert_sync.exe")
