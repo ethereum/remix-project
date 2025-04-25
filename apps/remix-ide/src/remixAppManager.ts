@@ -97,7 +97,7 @@ let requiredModules = [
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'circuit-compiler', 'learneth', 'quick-dapp', 'noir-compiler']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'circuit-compiler', 'learneth', 'quick-dapp', 'noir-compiler', 'aztec-compiler']
 
 const partnerPlugins = ['cookbookdev']
 
@@ -153,7 +153,8 @@ export function isNative(name) {
     'contract-verification',
     'popupPanel',
     'LearnEth',
-    'noir-compiler'
+    'noir-compiler',
+    'aztec-compiler',
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
