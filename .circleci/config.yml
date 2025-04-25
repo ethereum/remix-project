@@ -85,6 +85,7 @@ jobs:
             Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
             certutil -decode CERT_FILE.p12.b64 Certificate_pkcs12.p12
             cat Certificate_pkcs12.p12
+            $env:SM_CLIENT_CERT_FILE = c:\Certificate_pkcs12.p12
       - restore_cache:
           name: Restore smtools-windows-x64.msi
           keys:
@@ -94,6 +95,7 @@ jobs:
           shell: powershell.exe 
           command: |
             cd C:\
+            $env:SM_CLIENT_CERT_FILE = c:\Certificate_pkcs12.p12
             if (Test-Path 'c:\smtools-windows-x64.msi') {              
               echo 'File exists, skipping download...'
             } else {
