@@ -3,11 +3,97 @@ parameters:
   run_flaky_tests:
     type: boolean
     default: false   
+  windows:
+    type: boolean
+    default: true
+
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
 jobs:
+  windows-test-signing:
+    type: boolean
+    default: true
+  test-signing-tool-windows:
+    executor: win/default
+    steps:
+      - run:
+          name: "Install Signing Tools"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (-not (Test-Path 'c:\smtools-windows-x64.msi')) {
+              curl.exe -X GET https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+      - run:
+          name: "Sync Certs"
+          shell: powershell.exe
+          command: |
+            & "$env:SSM\smksp_cert_sync.exe" --verbose
+            $certs = & "$env:SSM\smctl.exe" cert ls
+            Write-Host $certs
+            if (-not ($certs -match "ACTIVE")) {
+              Write-Host "❌ No active certs found after sync."
+              exit 1
+            }
+      - run:
+          name: "Create Dummy EXE"
+          shell: powershell.exe
+          command: |
+            echo "hello" > dummy.txt
+            copy dummy.txt dummy.exe
+      - run:
+          name: "Sign Dummy EXE"
+          shell: powershell.exe
+          command: |
+            & "$env:Signtool" sign `
+              /fd sha256 `
+              /td sha256 `
+              /tr http://timestamp.digicert.com `
+              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
+              /csp "DigiCert Signing Manager KSP" `
+              dummy.exe
+      - run:
+          name: "Verify Signature"
+          shell: powershell.exe
+          command: |
+            & "$env:Signtool" verify /pa /v dummy.exe
+  check-signing-readiness-windows:
+    executor: win/default
+    steps:
+      - run:
+          name: "Client-Tool-Download"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (Test-Path 'c:\smtools-windows-x64.msi') {              
+              echo 'File exists, skipping download...'
+            } else {
+              echo 'Downloading smtools-windows-x64.msi ...'
+              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+      - run:
+          name: "Client-Tool-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+
+            Write-Host "Running DigiCert cert sync..."
+            & $env:SSM\smksp_cert_sync.exe --verbose
+
+            Write-Host "Listing available certs..."
+            $certs = & $env:SSM\smctl.exe cert ls
+            Write-Host $certs
+
+            if (-not ($certs -match "ACTIVE")) {
+              Write-Host "❌ No active signing certs found after sync."
+              exit 1
+            }
+
+            Write-Host "✅ Signing Manager cert is ready."
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -350,6 +436,23 @@ jobs:
           command: |
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+
+            # Check client cert path and password
+            Write-Host "🔍 Checking client certificate path and password..."
+            Write-Host "SM_CLIENT_CERT_FILE: $env:SM_CLIENT_CERT_FILE"
+            if (-not (Test-Path $env:SM_CLIENT_CERT_FILE)) {
+              Write-Host "❌ Client certificate file not found at $env:SM_CLIENT_CERT_FILE"
+              exit 1
+            }
+            try {
+              certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump "$env:SM_CLIENT_CERT_FILE"
+              Write-Host "✅ Client certificate password appears to be correct."
+            } catch {
+              Write-Host "❌ Client certificate password is incorrect or file is invalid."
+              exit 1
+            }
+
+            # Continue with sync and verification
             Write-Host "Running cert sync..."
             & $env:SSM\smksp_cert_sync.exe --verbose
             Write-Host "Verifying certs after sync..."
@@ -361,7 +464,8 @@ jobs:
             }
             & $env:SSM\smksp_registrar.exe list
             & $env:SSM\smctl.exe keypair ls
-            & $env:SSM\smctl.exe healthcheck          
+            & $env:SSM\smctl.exe healthcheck
+            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
       - run:
           name: "Find Signtool"
           shell: powershell.exe
@@ -783,6 +887,14 @@ jobs:
       - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
     
 workflows:
+  check-windows-signing-readiness:
+    when: << pipeline.parameters.windows >>
+    jobs:
+      - check-signing-readiness-windows
+  test-windows-signing-tool:
+    when: << pipeline.parameters.windows-test-signing >>
+    jobs:
+      - test-signing-tool-windows
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
