@@ -101,6 +101,8 @@ jobs:
             $targetPath = Join-Path $targetDir "client_certificate.p12"
             New-Item -ItemType Directory -Force -Path $targetDir
             Move-Item -Force -Path .\client_certificate.p12 -Destination $targetPath
+            $env:SM_CLIENT_CERT_FILE = $targetPath
+            
 
             Write-Host "Verifying client certificate password..."
             certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump $targetPath
