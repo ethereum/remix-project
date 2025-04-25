@@ -6,15 +6,16 @@ parameters:
   windows:
     type: boolean
     default: true
+  windows-test-signing:
+    type: boolean
+    default: true
 
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
 jobs:
-  windows-test-signing:
-    type: boolean
-    default: true
+
   test-signing-tool-windows:
     executor: win/default
     steps:
