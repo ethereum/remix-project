@@ -128,6 +128,29 @@ jobs:
             } else {
               Write-Host "✅ Found a Code Signing certificate."
             }
+      - run:
+          name: "Create Dummy EXE"
+          shell: powershell.exe
+          command: |
+            echo "hello" > dummy.txt
+            copy dummy.txt dummy.exe
+      - run:
+          name: "Sign Dummy EXE"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            & "$env:Signtool" sign `
+              /fd sha256 `
+              /td sha256 `
+              /tr http://timestamp.digicert.com `
+              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
+              /csp "DigiCert Signing Manager KSP" `
+              dummy.exe
+      - run:
+          name: "Verify Signature"
+          shell: powershell.exe
+          command: |
+            & "$env:Signtool" verify /pa /v dummy.exe
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
