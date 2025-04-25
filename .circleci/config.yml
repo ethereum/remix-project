@@ -105,6 +105,21 @@ jobs:
               /csp "DigiCert Signing Manager KSP" `
               /k key_1090356874_27_02 `
               dummy.exe
+
+            # --- Enumerate all certs in CurrentUser\My and LocalMachine\My ---
+            Write-Host "🔍 Enumerating all certs in Cert:\CurrentUser\My..."
+            Get-ChildItem Cert:\CurrentUser\My | ForEach-Object {
+                Write-Host "-------------------------------"
+                Write-Host "Store: CurrentUser\My"
+                $_ | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            }
+
+            Write-Host "🔍 Enumerating all certs in Cert:\LocalMachine\My..."
+            Get-ChildItem Cert:\LocalMachine\My | ForEach-Object {
+                Write-Host "-------------------------------"
+                Write-Host "Store: LocalMachine\My"
+                $_ | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            }
       - run:
           name: "Verify Signature"
           shell: powershell.exe
