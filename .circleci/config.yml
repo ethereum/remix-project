@@ -87,7 +87,7 @@ jobs:
             $inputExe = "C:\dummy.exe"
             $outputExe = "C:\dummy-signed.exe"
 
-            & "$env:SSM\smctl.exe" sign -c $certId -i $inputExe -o $outputExe
+            & "$env:SSM\smctl.exe" sign --keypair-alias=key_1090356874_27_02 -i $inputExe -o $outputExe
 
             if (Test-Path $outputExe) {
               Write-Host "✅ Remote signing succeeded. Signed file: $outputExe"
