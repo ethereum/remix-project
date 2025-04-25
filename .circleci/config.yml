@@ -77,6 +77,19 @@ jobs:
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
       - run:
+          name: "Certificate-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            New-Item C:\CERT_FILE.p12.b64
+            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            certutil -decode CERT_FILE.p12.b64 Certificate_pkcs12.p12
+            cat Certificate_pkcs12.p12
+      - restore_cache:
+          name: Restore smtools-windows-x64.msi
+          keys:
+            - dl-smtools-windows-x64.msi
+      - run:
           name: "Client-Tool-Download"
           shell: powershell.exe 
           command: |
@@ -87,65 +100,21 @@ jobs:
               echo 'Downloading smtools-windows-x64.msi ...'
               curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
             }
-      - run:
-          name: "Client-Cert-Setup"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            Write-Host "Creating and decoding client auth cert..."
-            $b64 = $env:SM_CLIENT_CERT_FILE_B64
-            Set-Content -Path .\CERT_FILE.p12.b64 -Value $b64
-            certutil -decode CERT_FILE.p12.b64 client_certificate.p12
-
-            $targetDir = "$env:USERPROFILE\AppData\Local\DigiCert\SM"
-            $targetPath = Join-Path $targetDir "client_certificate.p12"
-            New-Item -ItemType Directory -Force -Path $targetDir
-            Move-Item -Force -Path .\client_certificate.p12 -Destination $targetPath
-            $env:SM_CLIENT_CERT_FILE = $targetPath
-            $smConfigDir = "$env:USERPROFILE\.sm"
-            New-Item -ItemType Directory -Force -Path $smConfigDir
-
-            @"
-            {
-              "client_certificate_file": "$env:SM_CLIENT_CERT_FILE",
-              "client_certificate_password": "$env:SM_CLIENT_CERT_PASSWORD"
-            }
-            "@ | Set-Content -Path "$smConfigDir\sm.json"
-
-            Write-Host "Verifying client certificate password..."
-            certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump $targetPath
+      - save_cache:
+          key: dl-smtools-windows-x64.msi
+          paths:
+            - c:\smtools-windows-x64.msi
       - run:
           name: "Client-Tool-Setup"
-          shell: powershell.exe
+          shell: powershell.exe 
           command: |
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-
-            Write-Host "Running DigiCert cert sync..."
-            & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
-            & (Join-Path $env:SSM "smctl.exe") config view
-            Write-Host "Running DigiCert healthcheck..."
-            & (Join-Path $env:SSM "smctl.exe") healthcheck
-
-            Write-Host "Listing available certs..."
-            $certs = & (Join-Path $env:SSM "smctl.exe") cert ls
-            Write-Host $certs
-
-            if (-not ($certs -match "ACTIVE")) {
-              Write-Host "❌ No active signing certs found after sync."
-              exit 1
-            }
-
-            Write-Host "✅ Signing Manager cert is ready."
-
-            Write-Host "Checking EKU for Code Signing..."
-            $eku = & (Join-Path $env:SSM "smctl.exe") cert ls
-            if (-not ($eku -match "Code Signing")) {
-              Write-Host "❌ No cert found with Code Signing EKU"
-              exit 1
-            } else {
-              Write-Host "✅ Code Signing EKU is present"
-            }
+            & $env:SSM\smksp_cert_sync.exe
+            & $env:SSM\smksp_registrar.exe list
+            & $env:SSM\smctl.exe keypair ls
+            & $env:SSM\smctl.exe healthcheck
+            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user 
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
