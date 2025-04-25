@@ -111,11 +111,23 @@ jobs:
           command: |
             cd C:\
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & $env:SSM\smksp_cert_sync.exe
-            & $env:SSM\smksp_registrar.exe list
-            & $env:SSM\smctl.exe keypair ls
-            & $env:SSM\smctl.exe healthcheck
-            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user 
+            & (Join-Path $env:SSM "smctl.exe") login --client-cert
+            & (Join-Path $env:SSM "smksp_cert_sync.exe")
+            & (Join-Path $env:SSM "smksp_registrar.exe") list
+            & (Join-Path $env:SSM "smctl.exe") keypair ls
+            & (Join-Path $env:SSM "smctl.exe") healthcheck
+            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
+
+            Write-Host "🔍 Checking certs for Code Signing capability..."
+            $certsOutput = & (Join-Path $env:SSM "smctl.exe") cert ls
+            Write-Host $certsOutput
+
+            if (-not ($certsOutput -match "Code Signing")) {
+              Write-Host "❌ No Code Signing capable certificate found!"
+              exit 1
+            } else {
+              Write-Host "✅ Found a Code Signing certificate."
+            }
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
