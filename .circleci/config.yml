@@ -56,6 +56,13 @@ jobs:
           paths:
             - c:\smtools-windows-x64.msi
       - run:
+          name: "Create Dummy EXE"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            echo "hello" > dummy.txt
+            copy dummy.txt dummy.exe
+      - run:
           name: "Client-Tool-Setup"
           shell: powershell.exe 
           command: |
@@ -69,56 +76,6 @@ jobs:
 
             & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
 
-            Write-Host "🔍 Enumerating DigiCert Signing Manager KSP keys..."
-
-            $keyList = & certutil -csp "DigiCert Signing Manager KSP" -key -user
-            $keyLines = $keyList | Where-Object { $_ -match "^Key Container =" }
-
-            foreach ($line in $keyLines) {
-              $keyContainer = ($line -split "=")[1].Trim()
-              Write-Host "🔎 Dumping details for key container: $keyContainer"
-              certutil -csp "DigiCert Signing Manager KSP" -v -key $keyContainer -user
-            }
-
-            certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
-
-            Write-Host "🔍 Checking certs for Code Signing capability..."
-            $certsOutput = & (Join-Path $env:SSM "smctl.exe") cert ls
-            Write-Host $certsOutput
-
-            # Export all synced certs to files and print their content using certutil
-            Write-Host "📦 Exporting certs to inspect EKUs and validity..."
-            $rawCertList = & (Join-Path $env:SSM "smctl.exe") cert ls
-            $certBlocks = $rawCertList -split "ID\s+:" | Where-Object { $_ -match "FINGERPRINT" }
-            foreach ($block in $certBlocks) {
-              if ($block -match "([0-9a-f\-]{36})") {
-                $id = $matches[1]
-                $aliasLine = ($block -split "`n" | Where-Object { $_ -match "ALIAS" })[0]
-                $alias = ($aliasLine -split "ALIAS\s+:")[1].Trim()
-                $path = "C:\$alias.pem"
-                Write-Host "Exporting cert ID $id to $path"
-                & (Join-Path $env:SSM "smctl.exe") cert export --id $id --output-path $path
-                certutil -dump $path
-              }
-            }
-
-            if (-not ($certsOutput -match "Code Signing")) {
-              Write-Host "❌ No Code Signing capable certificate found!"
-            } else {
-              Write-Host "✅ Found a Code Signing certificate."
-            }
-      - run:
-          name: "Create Dummy EXE"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            echo "hello" > dummy.txt
-            copy dummy.txt dummy.exe
-      - run:
-          name: "Sign Dummy EXE"
-          shell: powershell.exe
-          command: |
-            cd C:\
             & "$env:Signtool" sign `
               /debug `
               /fd sha256 `
