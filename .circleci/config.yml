@@ -106,6 +106,31 @@ jobs:
               /k key_1090356874_27_02 `
               dummy.exe
 
+            # --- Export DigiCert cert and import manually into CurrentUser\My ---
+            Write-Host "📤 Exporting cert and manually installing into CurrentUser\My..."
+
+            # Export the first ACTIVE cert to a file
+            $certList = & "$env:SSM\smctl.exe" cert ls
+            $activeCertId = ($certList | Select-String -Pattern 'ACTIVE' -Context 2,2 | Where-Object { $_ -match 'ID' }) -replace '.*ID\s+([0-9a-f\-]+).*', '$1'
+            if (-not $activeCertId) {
+              Write-Host "❌ No ACTIVE cert ID found."
+              exit 1
+            }
+
+            Write-Host "Found ACTIVE cert ID: $activeCertId"
+
+            $exportPath = "C:\active_cert.cer"
+            & "$env:SSM\smctl.exe" cert export --id $activeCertId --output-path $exportPath
+
+            Write-Host "🔐 Importing cert into CurrentUser\My store..."
+            certutil -user -addstore "My" $exportPath
+
+            Write-Host "✅ Certificate imported. Dumping CurrentUser\My store contents..."
+            Get-ChildItem Cert:\CurrentUser\My | ForEach-Object {
+                Write-Host "-------------------------------"
+                $_ | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            }
+
             # --- Enumerate all certs in CurrentUser\My and LocalMachine\My ---
             Write-Host "🔍 Enumerating all certs in Cert:\CurrentUser\My..."
             Get-ChildItem Cert:\CurrentUser\My | ForEach-Object {
