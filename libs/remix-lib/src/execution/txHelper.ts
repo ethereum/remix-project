@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { Interface, AbiCoder } from 'ethers'
 
 export function makeFullTypeDefinition (typeDef) {
   if (typeDef && typeDef.type.indexOf('tuple') === 0 && typeDef.components) {
@@ -28,19 +28,20 @@ export function encodeParams (funABI, args) {
 
   // NOTE: the caller will concatenate the bytecode and this
   //       it could be done here too for consistency
-  const abiCoder = new ethers.utils.AbiCoder()
+  const abiCoder = new AbiCoder()
   return abiCoder.encode(types, args)
 }
 
 export function encodeFunctionId (funABI) {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
-  const abi = new ethers.utils.Interface([funABI])
-  return abi.getSighash(funABI.name)
+  const abi = new Interface([funABI])
+  console.log('encodeFunctionId', abi.getFunction(funABI.name).selector)
+  return abi.getFunction(funABI.name).selector
 }
 
-export function getFunctionFragment (funABI): ethers.utils.Interface {
+export function getFunctionFragment (funABI): Interface {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return null
-  return new ethers.utils.Interface([funABI])
+  return new Interface([funABI])
 }
 
 export function sortAbiFunction (contractabi) {
