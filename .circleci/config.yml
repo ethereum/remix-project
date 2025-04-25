@@ -81,6 +81,7 @@ jobs:
           name: "Create Dummy EXE"
           shell: powershell.exe
           command: |
+            cd C:\
             echo "hello" > dummy.txt
             copy dummy.txt dummy.exe
       - run:
