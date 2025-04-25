@@ -68,6 +68,8 @@ jobs:
             & (Join-Path $env:SSM "smctl.exe") healthcheck
             & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
 
+            certutil.exe -csp "DigiCert Signing Manager KSP" -key -user
+
             Write-Host "🔍 Checking certs for Code Signing capability..."
             $certsOutput = & (Join-Path $env:SSM "smctl.exe") cert ls
             Write-Host $certsOutput
