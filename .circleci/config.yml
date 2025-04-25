@@ -123,7 +123,7 @@ jobs:
 
             Write-Host "Running DigiCert cert sync..."
             & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
-
+            & (Join-Path $env:SSM "smctl.exe") config view
             Write-Host "Running DigiCert healthcheck..."
             & (Join-Path $env:SSM "smctl.exe") healthcheck
 
