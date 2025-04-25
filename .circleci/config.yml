@@ -102,7 +102,15 @@ jobs:
             New-Item -ItemType Directory -Force -Path $targetDir
             Move-Item -Force -Path .\client_certificate.p12 -Destination $targetPath
             $env:SM_CLIENT_CERT_FILE = $targetPath
-            
+            $smConfigDir = "$env:USERPROFILE\.sm"
+            New-Item -ItemType Directory -Force -Path $smConfigDir
+
+            @"
+            {
+              "client_certificate_file": "$env:SM_CLIENT_CERT_FILE",
+              "client_certificate_password": "$env:SM_CLIENT_CERT_PASSWORD"
+            }
+            "@ | Set-Content -Path "$smConfigDir\sm.json"
 
             Write-Host "Verifying client certificate password..."
             certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump $targetPath
