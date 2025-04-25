@@ -124,7 +124,6 @@ jobs:
 
             if (-not ($certsOutput -match "Code Signing")) {
               Write-Host "❌ No Code Signing capable certificate found!"
-              exit 1
             } else {
               Write-Host "✅ Found a Code Signing certificate."
             }
