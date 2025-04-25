@@ -88,7 +88,8 @@ jobs:
             $certId = "9495a37f-c5e8-4cc5-913e-e85890356375"
             $inputExe = "C:\dummy.exe"
             $outputExe = "C:\dummy-signed.exe"
-            & "$env:SSM\smctl.exe" sign --keypair-alias key_1090356874_27_02 --input $inputExe --verbode
+            Copy-Item "C:\Windows\System32\notepad.exe" "C:\dummy.exe"
+            & "$env:SSM\smctl.exe" sign --keypair-alias key_1090356874_27_02 --input $inputExe --verbose
             & $env:Signtool sign /debug `
               /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
               /csp "DigiCert Signing Manager KSP" `
