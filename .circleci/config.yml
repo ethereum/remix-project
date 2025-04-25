@@ -89,7 +89,7 @@ jobs:
           command: |
             cd C:\
             & "$env:Signtool" sign `
-              / debug `
+              /debug `
               /fd sha256 `
               /td sha256 `
               /tr http://timestamp.digicert.com `
