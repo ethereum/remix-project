@@ -89,9 +89,11 @@ jobs:
             $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
             $keyAlias = $null
             foreach ($line in $keyLines) {
-              write-host $line
-              if ($line -match "^\s*(\S+)\s+($($chosen.id))\s+") {
-                $keyAlias = $matches[1]
+              Write-Host $line
+              $cells = $line -split '\s+'
+              # The certificate ID is in the last column; alias is the third column
+              if ($cells[-1] -eq $chosen.id) {
+                $keyAlias = $cells[2]
                 break
               }
             }
