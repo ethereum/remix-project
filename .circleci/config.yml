@@ -150,7 +150,6 @@ jobs:
             echo "hello" > dummy.txt
             copy dummy.txt dummy.exe
       - check-signing-readiness:
-          name: "Client-Tool-Setup"
           exe-path: 'C:\dummy.exe'
             
             
