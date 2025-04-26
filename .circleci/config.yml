@@ -151,7 +151,7 @@ jobs:
             copy dummy.txt dummy.exe
       - check-signing-readiness:
           name: "Client-Tool-Setup"
-          exe-path: "C:\dummy.exe"
+          exe-path: 'C:\dummy.exe'
             
             
   build:
