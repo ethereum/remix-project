@@ -72,6 +72,7 @@ jobs:
             $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
             $activeCerts = @()
             foreach ($line in $certLines) {
+              write-host $line
               if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+\*+\s+ACTIVE") {
                 $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
               }
