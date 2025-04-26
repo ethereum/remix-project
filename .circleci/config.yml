@@ -73,7 +73,7 @@ jobs:
             $activeCerts = @()
             foreach ($line in $certLines) {
               write-host $line
-              if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+\*+\s+ACTIVE") {
+              if ($line -match '^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\bACTIVE\b') {
                 $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
               }
             }
