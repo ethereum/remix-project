@@ -115,17 +115,19 @@ jobs:
             Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
 
             Write-Host "🔍 Verifying code signing capability in the Windows store..."
+            $expectedThumbprint = $env:SM_CODE_SIGNING_CERT_SHA1_HASH.ToUpper().Replace(" ", "")
+            Write-Host "Expected thumbprint: $expectedThumbprint"
             $storeCert = Get-ChildItem Cert:\CurrentUser\My |
               Where-Object {
                 $_.HasPrivateKey -and
                 ($_.EnhancedKeyUsageList | Where-Object { $_.FriendlyName -eq "Code Signing" }) -and
-                $_.Thumbprint -eq $env:SELECTED_CERT_ID
+                $_.Thumbprint -eq $expectedThumbprint
               }
             if (-not $storeCert) {
-              Write-Host "❌ No code signing certificate with private key found matching thumbprint $env:SELECTED_CERT_ID. Failing."
+              Write-Host "❌ No code signing certificate with private key found matching thumbprint $expectedThumbprint. Failing."
               exit 1
             }
-            Write-Host "✅ Code signing certificate with private key is present in CurrentUser\My."
+            Write-Host "✅ Code signing certificate with private key ($expectedThumbprint) is present in CurrentUser\My."
 
             Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
 
