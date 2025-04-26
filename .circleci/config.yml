@@ -60,22 +60,62 @@ jobs:
           shell: powershell.exe 
           command: |
             cd C:\
+            # --- Debug: Print all environment variables and key paths ---
+            Write-Host "==== [DEBUG] All environment variables ===="
+            dir env:
+            Write-Host "==== [DEBUG] SM_CLIENT_CERT_FILE: $env:SM_CLIENT_CERT_FILE ===="
+            Write-Host "==== [DEBUG] SM_CLIENT_CERT_PASSWORD present: $(-not [string]::IsNullOrEmpty($env:SM_CLIENT_CERT_PASSWORD)) ===="
+            Write-Host "==== [DEBUG] SSM: $env:SSM ===="
+            Write-Host "==== [DEBUG] PATH: $env:PATH ===="
+            # Print tool versions if available
+            if (Test-Path (Join-Path $env:SSM "smctl.exe")) {
+              Write-Host "==== [DEBUG] smctl.exe version ===="
+              & (Join-Path $env:SSM "smctl.exe") --version
+            }
+            if (Test-Path (Join-Path $env:SSM "smksp_cert_sync.exe")) {
+              Write-Host "==== [DEBUG] smksp_cert_sync.exe version ===="
+              & (Join-Path $env:SSM "smksp_cert_sync.exe") --version
+            }
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & (Join-Path $env:SSM "smctl.exe") -h
-            & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
-            & (Join-Path $env:SSM "smksp_registrar.exe") list
-            & (Join-Path $env:SSM "smctl.exe") keypair ls
-            & (Join-Path $env:SSM "smctl.exe") healthcheck
+
+            # --- smctl -h ---
+            Write-Host "==== [DEBUG] smctl.exe -h output ===="
+            $smctlHelp = & (Join-Path $env:SSM "smctl.exe") -h
+            Write-Host $smctlHelp
+
+            # --- smksp_cert_sync ---
+            Write-Host "==== [DEBUG] smksp_cert_sync.exe --verbose output ===="
+            $smkspCertSync = & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
+            Write-Host $smkspCertSync
+
+            # --- smksp_registrar.exe list ---
+            Write-Host "==== [DEBUG] smksp_registrar.exe list output ===="
+            $smkspRegistrar = & (Join-Path $env:SSM "smksp_registrar.exe") list
+            Write-Host $smkspRegistrar
+
+            # --- smctl keypair ls ---
+            Write-Host "==== [DEBUG] smctl.exe keypair ls output ===="
+            $keypairLs = & (Join-Path $env:SSM "smctl.exe") keypair ls
+            Write-Host $keypairLs
+
+            # --- smctl healthcheck ---
+            Write-Host "==== [DEBUG] smctl.exe healthcheck output ===="
+            $healthcheck = & (Join-Path $env:SSM "smctl.exe") healthcheck
+            Write-Host $healthcheck
 
             # --- Begin certificate and keypair selection block ---
             Write-Host "🔍 Parsing ACTIVE certificates..."
             $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
+            Write-Host "==== [DEBUG] smctl.exe cert ls raw output ===="
+            Write-Host $certLines
             $activeCerts = @()
             foreach ($line in $certLines) {
               if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+\*+\s+ACTIVE") {
                 $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
               }
             }
+            Write-Host "==== [DEBUG] Parsed ACTIVE certificates array ===="
+            $activeCerts | ForEach-Object { Write-Host $_ }
             if ($activeCerts.Count -eq 0) {
               Write-Host "❌ No ACTIVE certificates found. Failing."
               exit 1
@@ -86,6 +126,8 @@ jobs:
 
             Write-Host "🔍 Finding keypair alias for the selected cert..."
             $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
+            Write-Host "==== [DEBUG] smctl.exe keypair ls raw output ===="
+            Write-Host $keyLines
             $keyAlias = $null
             foreach ($line in $keyLines) {
               if ($line -match "^\s*(\S+)\s+($($chosen.id))\s+") {
@@ -93,6 +135,9 @@ jobs:
                 break
               }
             }
+            Write-Host "==== [DEBUG] Chosen certificate ID: $($chosen.id)"
+            Write-Host "==== [DEBUG] Chosen certificate alias: $($chosen.alias)"
+            Write-Host "==== [DEBUG] Key Alias: $keyAlias"
             if (-not $keyAlias) {
               Write-Host "❌ No keypair found for certificate ID $($chosen.id). Failing."
               exit 1
@@ -105,10 +150,18 @@ jobs:
             $env:SELECTED_KEYPAIR_ALIAS = $keyAlias
             # --- End certificate and keypair selection block ---
 
-            & "$env:SSM\smctl.exe" windows certsync --keypair-alias=$env:SELECTED_KEYPAIR_ALIAS
+            Write-Host "==== [DEBUG] Running smctl.exe windows certsync --keypair-alias ===="
+            $certSyncOut = & "$env:SSM\smctl.exe" windows certsync --keypair-alias=$env:SELECTED_KEYPAIR_ALIAS
+            Write-Host $certSyncOut
 
             Write-Host "📄 Listing CurrentUser\My certificates..."
-            Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            $certList = Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+            Write-Host "==== [DEBUG] Get-ChildItem Cert:\CurrentUser\My output ===="
+            Write-Host $certList
+
+            Write-Host "==== [DEBUG] certutil -csp DigiCert Signing Manager KSP -key -user output ===="
+            $certutilOut = & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
+            Write-Host $certutilOut
 
             Write-Host "🔍 Verifying code signing capability in the Windows store..."
             $storeCert = Get-ChildItem Cert:\CurrentUser\My |
@@ -129,13 +182,23 @@ jobs:
             $inputExe = "C:\dummy.exe"
             $outputExe = "C:\dummy-signed.exe"
             Copy-Item "C:\Windows\System32\notepad.exe" "C:\dummy.exe"
-            
+
+            Write-Host "==== [DEBUG] Remote sign attempt variables ===="
+            Write-Host "inputExe: $inputExe"
+            Write-Host "outputExe: $outputExe"
+            Write-Host "SELECTED_KEYPAIR_ALIAS: $env:SELECTED_KEYPAIR_ALIAS"
+
             Write-Host "🔧 Adding Signtool to PATH..."
             $env:PATH += ";C:\Program Files (x86)\Windows Kits\10\App Certification Kit"
             Write-Host "✅ Signtool added to PATH"
-            
-            & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $inputExe --verbose
-            signtool verify /pa /v dummy.exe
+
+            Write-Host "==== [DEBUG] smctl sign output ===="
+            $signOut = & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $inputExe --verbose
+            Write-Host $signOut
+
+            Write-Host "==== [DEBUG] signtool verify output ===="
+            $signtoolVerify = signtool verify /pa /v dummy.exe
+            Write-Host $signtoolVerify
             
             
   build:
