@@ -16,45 +16,13 @@ orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
-jobs:
 
-
-  check-signing-readiness-windows:
-    executor: win/default
-    environment:
-      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
-      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
-      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
+commands:
+  check-signing-readiness:
+    parameters:
+      exe-path:
+        type: string
     steps:
-      - run:
-          name: "Certificate-Setup"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            Write-Host "🔐 Decoding and setting up client certificate..."
-            New-Item -ItemType File -Path C:\CERT_FILE.p12.b64 -Force
-            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
-            certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
-
-      - run:
-          name: "Client-Tool-Download"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            if (Test-Path 'c:\smtools-windows-x64.msi') {              
-              echo 'File exists, skipping download...'
-            } else {
-              echo 'Downloading smtools-windows-x64.msi ...'
-              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            }
-
-      - run:
-          name: "Create Dummy EXE"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            echo "hello" > dummy.txt
-            copy dummy.txt dummy.exe
       - run:
           name: "Client-Tool-Setup"
           shell: powershell.exe 
@@ -132,16 +100,58 @@ jobs:
             Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
 
             $certId = $env:SELECTED_CERT_ID
-            $inputExe = "C:\dummy.exe"
-            $outputExe = "C:\dummy-signed.exe"
-            Copy-Item "C:\Windows\System32\notepad.exe" "C:\dummy.exe"
+            $inputExe = "<< parameters.exe-path >>"
+            $outputExe = "<< parameters.exe-path >>-signed.exe"
+            Copy-Item "C:\Windows\System32\notepad.exe" $inputExe
             
             Write-Host "🔧 Adding Signtool to PATH..."
             $env:PATH += ";C:\Program Files (x86)\Windows Kits\10\App Certification Kit"
             Write-Host "✅ Signtool added to PATH"
             
             & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $inputExe --verbose
-            signtool verify /pa /v dummy.exe
+            signtool verify /pa /v $inputExe
+jobs:
+
+
+  check-signing-readiness-windows:
+    executor: win/default
+    environment:
+      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
+      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
+      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
+    steps:
+      - run:
+          name: "Certificate-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            Write-Host "🔐 Decoding and setting up client certificate..."
+            New-Item -ItemType File -Path C:\CERT_FILE.p12.b64 -Force
+            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
+
+      - run:
+          name: "Client-Tool-Download"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (Test-Path 'c:\smtools-windows-x64.msi') {              
+              echo 'File exists, skipping download...'
+            } else {
+              echo 'Downloading smtools-windows-x64.msi ...'
+              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+
+      - run:
+          name: "Create Dummy EXE"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            echo "hello" > dummy.txt
+            copy dummy.txt dummy.exe
+      - check-signing-readiness:
+          name: "Client-Tool-Setup"
+          exe-path: "C:\dummy.exe"
             
             
   build:
