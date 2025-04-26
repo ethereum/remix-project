@@ -67,16 +67,65 @@ jobs:
             & (Join-Path $env:SSM "smctl.exe") keypair ls
             & (Join-Path $env:SSM "smctl.exe") healthcheck
 
+            # --- Begin certificate and keypair selection block ---
+            Write-Host "🔍 Parsing ACTIVE certificates..."
+            $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
+            $activeCerts = @()
+            foreach ($line in $certLines) {
+              if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+\*+\s+ACTIVE") {
+                $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
+              }
+            }
+            if ($activeCerts.Count -eq 0) {
+              Write-Host "❌ No ACTIVE certificates found. Failing."
+              exit 1
+            }
+            # Select the first ACTIVE certificate
+            $chosen = $activeCerts[0]
+            Write-Host "✅ Selected ACTIVE certificate ID $($chosen.id), alias $($chosen.alias)"
 
+            Write-Host "🔍 Finding keypair alias for the selected cert..."
+            $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
+            $keyAlias = $null
+            foreach ($line in $keyLines) {
+              if ($line -match "^\s*(\S+)\s+($($chosen.id))\s+") {
+                $keyAlias = $matches[1]
+                break
+              }
+            }
+            if (-not $keyAlias) {
+              Write-Host "❌ No keypair found for certificate ID $($chosen.id). Failing."
+              exit 1
+            }
+            Write-Host "✅ Using keypair alias $keyAlias"
 
-            & "$env:SSM\smctl.exe" windows certsync --keypair-alias=key_1090356874_27_02
+            # Export variables for later use
+            $env:SELECTED_CERT_ID = $chosen.id
+            $env:SELECTED_CERT_ALIAS = $chosen.alias
+            $env:SELECTED_KEYPAIR_ALIAS = $keyAlias
+            # --- End certificate and keypair selection block ---
+
+            & "$env:SSM\smctl.exe" windows certsync --keypair-alias=$env:SELECTED_KEYPAIR_ALIAS
 
             Write-Host "📄 Listing CurrentUser\My certificates..."
             Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
 
+            Write-Host "🔍 Verifying code signing capability in the Windows store..."
+            $storeCert = Get-ChildItem Cert:\CurrentUser\My |
+              Where-Object {
+                $_.HasPrivateKey -and
+                ($_.EnhancedKeyUsageList | Where-Object { $_.FriendlyName -eq "Code Signing" }) -and
+                $_.Thumbprint -eq $env:SELECTED_CERT_ID
+              }
+            if (-not $storeCert) {
+              Write-Host "❌ No code signing certificate with private key found matching thumbprint $env:SELECTED_CERT_ID. Failing."
+              exit 1
+            }
+            Write-Host "✅ Code signing certificate with private key is present in CurrentUser\My."
+
             Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
 
-            $certId = "9495a37f-c5e8-4cc5-913e-e85890356375"
+            $certId = $env:SELECTED_CERT_ID
             $inputExe = "C:\dummy.exe"
             $outputExe = "C:\dummy-signed.exe"
             Copy-Item "C:\Windows\System32\notepad.exe" "C:\dummy.exe"
@@ -85,7 +134,7 @@ jobs:
             $env:PATH += ";C:\Program Files (x86)\Windows Kits\10\App Certification Kit"
             Write-Host "✅ Signtool added to PATH"
             
-            & "$env:SSM\smctl.exe" sign --keypair-alias key_1090356874_27_02 --input $inputExe --verbose
+            & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $inputExe --verbose
             signtool verify /pa /v dummy.exe
             
             
