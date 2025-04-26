@@ -89,6 +89,7 @@ jobs:
             $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
             $keyAlias = $null
             foreach ($line in $keyLines) {
+              write-host $line
               if ($line -match "^\s*(\S+)\s+($($chosen.id))\s+") {
                 $keyAlias = $matches[1]
                 break
