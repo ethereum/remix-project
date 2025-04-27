@@ -6,12 +6,18 @@ parameters:
   windows:
     type: boolean
     default: true
+  mac:
+    type: boolean
+    default: true
+  linux:
+    type: boolean
+    default: true
   windows-test-signing:
     type: boolean
     default: false
   runbuild:
     type: boolean
-    default: false
+    default: true
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -865,7 +871,7 @@ jobs:
       - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
     
 workflows:
-  check-windows-signing-readiness:
+  windows:
     when: << pipeline.parameters.windows >>
     jobs:
       - check-signing-readiness-windows
@@ -875,19 +881,38 @@ workflows:
       - build-remixdesktop-windows:
           requires:
             - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
       - sign-remixdesktop-windows:
           requires:
             - build-remixdesktop-windows
-           # - test-remixdesktop-windows
-      # - test-remixdesktop-windows:
-      #     requires:
-      #      - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
+            - test-remixdesktop-windows
+       - test-remixdesktop-windows:
+           requires:
+            - build-desktop
+
+  mac:
+    when: << pipeline.parameters.mac >>
+    jobs:
+      - build-desktop
+      - build-remixdesktop-mac:
+          requires:
+            - build-desktop
+          matrix:
+            parameters: 
+              arch: ["arm64", "x64"]
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
+
+  linux:
+    when: << pipeline.parameters.linux >>
+    jobs:
+      - build-desktop
+      - build-remixdesktop-linux:
+          requires:
+            - build-desktop
+      - test-remixdesktop-linux:
+          requires:
+            - build-desktop
 
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
@@ -907,57 +932,57 @@ workflows:
     when: << pipeline.parameters.runbuild >>
     jobs:
       - build
-      - build-desktop
-      - build-remixdesktop-mac:
-          requires:
-            - build-desktop
-          matrix:
-            parameters: 
-              arch: ["arm64", "x64"]
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - test-remixdesktop-mac:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - build-remixdesktop-windows:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - sign-remixdesktop-windows:
-          requires:
-            - build-remixdesktop-windows
-      - build-remixdesktop-linux:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - test-remixdesktop-linux:
-          requires:
-            - build-desktop
-      - test-remixdesktop-windows:
-          requires:
-           - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - uploadartifacts:
-          requires:
-            - build-remixdesktop-mac
-            - build-remixdesktop-linux
-            - sign-remixdesktop-windows
-            - test-remixdesktop-windows
-            - test-remixdesktop-linux
-            - test-remixdesktop-mac
-          filters:
-            branches:
-              only: [/.*desktop-master.*/, /.*desktop-metamask.*/]
+      # - build-desktop
+      # - build-remixdesktop-mac:
+      #     requires:
+      #       - build-desktop
+      #     matrix:
+      #       parameters: 
+      #         arch: ["arm64", "x64"]
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - test-remixdesktop-mac:
+      #     requires:
+      #       - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - build-remixdesktop-windows:
+      #     requires:
+      #       - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - sign-remixdesktop-windows:
+      #     requires:
+      #       - build-remixdesktop-windows
+      # - build-remixdesktop-linux:
+      #     requires:
+      #       - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - test-remixdesktop-linux:
+      #     requires:
+      #       - build-desktop
+      # - test-remixdesktop-windows:
+      #     requires:
+      #      - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - uploadartifacts:
+      #     requires:
+      #       - build-remixdesktop-mac
+      #       - build-remixdesktop-linux
+      #       - sign-remixdesktop-windows
+      #       - test-remixdesktop-windows
+      #       - test-remixdesktop-linux
+      #       - test-remixdesktop-mac
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop-master.*/, /.*desktop-metamask.*/]
       - build-plugin:
           matrix:
             parameters:
