@@ -12,10 +12,7 @@ parameters:
   linux:
     type: boolean
     default: true
-  windows-test-signing:
-    type: boolean
-    default: false
-  runbuild:
+  web:
     type: boolean
     default: true
 orbs:
@@ -928,8 +925,8 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
-  build_all:
-    when: << pipeline.parameters.runbuild >>
+  web:
+    when: << pipeline.parameters.web >>
     jobs:
       - build
       # - build-desktop
