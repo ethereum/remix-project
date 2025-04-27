@@ -881,7 +881,7 @@ workflows:
       - sign-remixdesktop-windows:
           requires:
             - build-remixdesktop-windows
-            - test-remixdesktop-windows
+           # - test-remixdesktop-windows
       # - test-remixdesktop-windows:
       #     requires:
       #      - build-desktop
