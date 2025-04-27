@@ -28,6 +28,9 @@ import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 const _paq = (window._paq = window._paq || [])
 
+// Key for localStorage
+const HIDE_PASTE_WARNING_KEY = 'remixide.hide_paste_warning';
+
 enum MarkerSeverity {
   Hint = 1,
   Info = 2,
@@ -668,11 +671,11 @@ export const EditorUI = (props: EditorUIProps) => {
           if (askAI) {
              // Proceed with the original okFn logic
             (async () => {
-               await props.plugin.call('popupPanel', 'showPopupPanel', true)
-               setTimeout(async () => {
-                 props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
-               }, 500)
-               _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
+            await props.plugin.call('popupPanel', 'showPopupPanel', true)
+            setTimeout(async () => {
+              props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+            }, 500)
+            _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
             })();
           }
         };
