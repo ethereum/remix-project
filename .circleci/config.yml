@@ -103,7 +103,7 @@ commands:
             Write-Host "✅ Signtool added to PATH"
             
             & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $EXECUTABLE --verbose
-            signtool verify /pa /v $inputExe
+            signtool verify /pa /v $EXECUTABLE
 jobs:
 
 
