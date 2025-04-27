@@ -885,9 +885,9 @@ workflows:
           requires:
             - build-remixdesktop-windows
             - test-remixdesktop-windows
-       - test-remixdesktop-windows:
-           requires:
-            - build-desktop
+      - test-remixdesktop-windows:
+          requires:
+          - build-desktop
 
   mac:
     when: << pipeline.parameters.mac >>
