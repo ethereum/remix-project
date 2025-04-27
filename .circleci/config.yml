@@ -143,7 +143,7 @@ jobs:
             cd C:\
             echo "hello" > dummy.txt
             copy dummy.txt dummy.exe
-            "Set-Variable -Name 'EXECUTABLE' -Value '$file' -Scope Global" > SetEnvVars.ps1
+            "Set-Variable -Name 'EXECUTABLE' -Value 'dummy.exe' -Scope Global" > SetEnvVars.ps1
       - check-signing-readiness
             
             
