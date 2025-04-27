@@ -15,6 +15,9 @@ parameters:
   web:
     type: boolean
     default: true
+  run_metamask_tests:
+    type: boolean
+    default: false   
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -268,7 +271,7 @@ jobs:
         - run: 
             command: |
                 node -v
-                yarn global add node-gyp@10.2.0
+                npm install -g node-gyp@10.2.0
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
@@ -765,6 +768,17 @@ jobs:
             - run: google-chrome --version
       - when:
           condition:
+              equal: [ "chromeMetamask", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-browser-tools:
+                install-firefox: false
+                install-chrome: true
+                install-chromedriver: false
+                install-geckodriver: false
+            - run: yarn install_webdriver
+            - run: google-chrome --version
+      - when:
+          condition:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
@@ -925,6 +939,21 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
+
+  run_metamask_tests:
+    when: << pipeline.parameters.run_metamask_tests >>
+    jobs:
+      - build
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chromeMetamask"]
+              script: ["metamask.sh"]
+              job: ["0"]
+              jobsize: ["1"]
+              parallelism: [1]
   web:
     when: << pipeline.parameters.web >>
     jobs:
@@ -1019,7 +1048,7 @@ workflows:
           matrix:
             alias: metamask
             parameters:
-              browser: ["chrome"]
+              browser: ["chromeMetamask"]
               script: ["metamask.sh"]
               job: ["0"]
               jobsize: ["10"]

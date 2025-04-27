@@ -32,8 +32,8 @@ export function AccountUI(props: AccountProps) {
 
   // Uncomment this when we want to show 'Create Smart Account' button
   // useEffect(() => {
-  //   if (smartAccounts.length > 0 && networkName.includes('Sepolia')) {
-  //     if(smartAccounts.includes(selectedAccount)) {
+  //   if (networkName.includes('Sepolia')) {
+  //     if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
   //       setSmartAccountSelected(true)
   //       setEnableCSM(false)
   //       ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA

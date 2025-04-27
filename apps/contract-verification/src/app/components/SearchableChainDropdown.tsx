@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo, Ref } from 'react'
 import Fuse from 'fuse.js'
 import type { Chain } from '../types'
 import { AppContext } from '../AppContext'
-import { useIntl } from 'react-intl'
+import intl, { useIntl } from 'react-intl'
+import { Dropdown } from 'react-bootstrap'
 
 function getChainDescriptor(chain: Chain): string {
   if (!chain) return ''
@@ -15,6 +16,74 @@ interface DropdownProps {
   setSelectedChain: (chain: Chain) => void
   selectedChain: Chain
 }
+
+export const CustomToggle = React.forwardRef(
+  (
+    {
+      children,
+      onClick,
+      icon,
+      className = ''
+    }: {
+      children: React.ReactNode
+      onClick: (e) => void
+      icon: string
+      className: string
+    },
+    ref: Ref<HTMLButtonElement>
+  ) => (
+    <button
+      ref={ref}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick(e)
+      }}
+      className={className.replace('dropdown-toggle', '')}
+    >
+      <div className="d-flex">
+        <div className="mr-auto text-nowrap text-truncate overflow-hidden" data-id={`dropdown-content`}>{children}</div>
+        {icon && (
+          <div className="pr-1">
+            <i className={`${icon} pr-1`}></i>
+          </div>
+        )}
+        <div>
+          <i className="fad fa-sort-circle"></i>
+        </div>
+      </div>
+    </button>
+  )
+)
+
+// export const CustomInputToggle = React.forwardRef(
+//   (
+//     {
+//       children,
+//       onClick,
+//       icon,
+//       className = ''
+//     }: {
+//       children: React.ReactNode
+//       onClick: (e) => void
+//       icon: string
+//       className: string
+//     },
+//     ref: Ref<HTMLInputElement>
+//   ) => {
+//     const intl = useIntl()
+//     return (
+//       <input
+//         ref={ref}
+//         placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+//         type="text"
+//         onClick={(e) => {
+//           e.preventDefault()
+//           onClick(e)
+//         }}
+//         className={className.replace('dropdown-toggle', '')}
+//       />
+//     )}
+// )
 
 export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, setSelectedChain, selectedChain }) => {
   const { chains } = React.useContext(AppContext)
@@ -87,6 +156,38 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
     )
   }
 
+  const CustomInputToggle = React.forwardRef(
+    (
+      {
+        children,
+        onClick,
+        icon,
+        className = ''
+      }: {
+        children: React.ReactNode
+        onClick: (e) => void
+        icon: string
+        className: string
+      },
+      ref: Ref<HTMLInputElement>
+    ) => {
+      const intl = useIntl()
+      return (
+        <input
+          ref={ref}
+          placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
+          type="text"
+          onClick={(e) => {
+            e.preventDefault()
+            onClick(e)
+          }}
+          onChange={handleInputChange}
+          value={searchTerm}
+          className={className.replace('dropdown-toggle', '')}
+        />
+      )}
+  )
+
   return (
     <div className="dropdown mb-3" ref={dropdownRef}>
       {' '}
@@ -101,7 +202,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
         placeholder={intl.formatMessage({ id: "contract-verification.searchableChainDropdown", defaultMessage: "Select a chain" })}
         className="form-control"
       />
-      <ul className="dropdown-menu show w-100" style={{ maxHeight: '400px', overflowY: 'auto', display: isOpen ? 'initial' : 'none' }}>
+      <ul className="dropdown-menu custom-dropdown-items border bg-light show w-100" style={{ maxHeight: '400px', overflowY: 'auto', display: isOpen ? 'initial' : 'none' }}>
         {filteredOptions.map((chain) => (
           <li
             key={chain.chainId}

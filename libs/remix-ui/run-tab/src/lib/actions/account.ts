@@ -6,7 +6,7 @@ import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
-import { sepolia } from "viem/chains"
+import * as chains from "viem/chains"
 import { entryPoint07Address } from "viem/account-abstraction"
 const { createSmartAccountClient } = require("permissionless") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
@@ -73,9 +73,15 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
-    plugin.call('notification', 'toast', alertMsg)
-  }, () => { setFinalContext(plugin, dispatch) })
+  if (executionContext.context === 'walletconnect') {
+    setWalletConnectExecutionContext(plugin, dispatch, executionContext)
+  } else {
+    plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+      plugin.call('notification', 'toast', alertMsg)
+    }, async () => {
+      setFinalContext(plugin, dispatch)
+    })
+  }
 }
 
 export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>, cbMessage: JSX.Element) => {
@@ -105,9 +111,12 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const localStorageKey = 'smartAccounts'
   const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-  const PIMLICO_API_KEY =''
-  const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
+  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // A dummy zero value tx is made to this address to create existence of smart account
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
+  const network = 'sepolia'
+  const chain = chains[network]
+  const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
+
   let salt
 
   // @ts-ignore
@@ -115,12 +124,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   const walletClient = createWalletClient({
     account,
-    chain: sepolia,
+    chain,
     transport: custom(window.ethereum!),
   })
 
   const publicClient = createPublicClient({
-    chain: sepolia,
+    chain,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
 
@@ -152,7 +161,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
     const saClient = createSmartAccountClient({
       account: safeAccount,
-      sepolia,
+      chain,
       paymaster: paymasterClient,
       bundlerTransport: http(BUNDLER_URL),
       userOperation: {
@@ -162,12 +171,13 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     // Make a dummy tx to force smart account deployment
     const useropHash = await saClient.sendUserOperation({
       calls: [{
-        to: "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44",
+        to: toAddress,
         value: 0
       }]
     })
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
 
+    // TO verify creation, check if there is a contract code at this address
     const safeAddress = safeAccount.address
 
     const sAccount: SmartAccount = {
@@ -223,4 +233,31 @@ export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<
 export const addFileInternal = async (plugin: RunTab, path: string, content: string) => {
   const file = await plugin.call('fileManager', 'writeFileNoRewrite', path, content)
   await plugin.call('fileManager', 'open', file.newPath)
+}
+
+const setWalletConnectExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
+  plugin.call('walletconnect', 'isWalletConnected').then((isConnected) => {
+    if (isConnected) {
+      plugin.call('walletconnect', 'openModal').then(() => {
+        plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+          plugin.call('notification', 'toast', alertMsg)
+        }, async () => {
+          setFinalContext(plugin, dispatch)
+        })
+      })
+    } else {
+      plugin.call('walletconnect', 'openModal').then(() => {
+        plugin.on('walletconnect', 'connectionSuccessful', () => {
+          plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+            plugin.call('notification', 'toast', alertMsg)
+          }, async () => {
+            setFinalContext(plugin, dispatch)
+          })
+        })
+        plugin.on('walletconnect', 'connectionFailed', () => {
+          plugin.call('notification', 'toast', 'Connection failed')
+        })
+      })
+    }
+  })
 }
