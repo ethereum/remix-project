@@ -869,19 +869,19 @@ workflows:
     when: << pipeline.parameters.windows >>
     jobs:
       - check-signing-readiness-windows
-      # - build-desktop:
-      #     requires:
-      #       - check-signing-readiness-windows
-      # - build-remixdesktop-windows:
-      #     requires:
-      #       - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - sign-remixdesktop-windows:
-      #     requires:
-      #       - build-remixdesktop-windows
-      #       - test-remixdesktop-windows
+      - build-desktop:
+          requires:
+            - check-signing-readiness-windows
+      - build-remixdesktop-windows:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - sign-remixdesktop-windows:
+          requires:
+            - build-remixdesktop-windows
+            - test-remixdesktop-windows
       # - test-remixdesktop-windows:
       #     requires:
       #      - build-desktop
