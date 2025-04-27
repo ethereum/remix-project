@@ -412,7 +412,7 @@ export class VMContext {
   */
   latestBlockNumber: string
   /*
-    This is the number of block that VMContext is instanciated with.
+    This is the number of block that VMContext is instantiated with.
     The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
   */
   private blockNumber: number | 'latest'
