@@ -40,7 +40,7 @@ commands:
               echo 'Downloading smtools-windows-x64.msi ...'
               curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
             }
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+
   sign-windows-command:
     steps:
       - setup-windows-clienttools
@@ -51,7 +51,7 @@ commands:
             cd C:\
             . .\SetEnvVars.ps1
             dir Env:
-
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & (Join-Path $env:SSM "smctl.exe") -h
             & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
             & (Join-Path $env:SSM "smksp_registrar.exe") list
