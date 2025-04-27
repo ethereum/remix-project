@@ -950,6 +950,7 @@ workflows:
     when: << pipeline.parameters.windows >>
     jobs:
       - check-signing-readiness-windows
+      - build-desktop
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
