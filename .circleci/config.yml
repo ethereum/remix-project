@@ -18,8 +18,32 @@ orbs:
   node: circleci/node@7.0.0
 
 commands:
-  check-signing-readiness:
+  setup-windows-clienttools:
     steps:
+      - run:
+          name: "Certificate-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            Write-Host "🔐 Decoding and setting up client certificate..."
+            New-Item -ItemType File -Path C:\CERT_FILE.p12.b64 -Force
+            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
+      - run:
+          name: "Client-Tool-Download"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (Test-Path 'c:\smtools-windows-x64.msi') {              
+              echo 'File exists, skipping download...'
+            } else {
+              echo 'Downloading smtools-windows-x64.msi ...'
+              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+  sign-windows-command:
+    steps:
+      - setup-windows-clienttools
       - run:
           name: "Client-Tool-Setup"
           shell: powershell.exe 
@@ -27,7 +51,7 @@ commands:
             cd C:\
             . .\SetEnvVars.ps1
             dir Env:
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+
             & (Join-Path $env:SSM "smctl.exe") -h
             & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
             & (Join-Path $env:SSM "smksp_registrar.exe") list
@@ -115,35 +139,13 @@ jobs:
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
     steps:
       - run:
-          name: "Certificate-Setup"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            Write-Host "🔐 Decoding and setting up client certificate..."
-            New-Item -ItemType File -Path C:\CERT_FILE.p12.b64 -Force
-            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
-            certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
-
-      - run:
-          name: "Client-Tool-Download"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            if (Test-Path 'c:\smtools-windows-x64.msi') {              
-              echo 'File exists, skipping download...'
-            } else {
-              echo 'Downloading smtools-windows-x64.msi ...'
-              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            }
-
-      - run:
           name: "Create Dummy EXE"
           shell: powershell.exe
           command: |
             cd C:\
             Copy-Item "C:\Windows\System32\notepad.exe" dummy.exe
             "Set-Variable -Name 'EXECUTABLE' -Value 'dummy.exe' -Scope Global" > SetEnvVars.ps1
-      - check-signing-readiness
+      - sign-windows-command
             
             
   build:
@@ -463,66 +465,6 @@ jobs:
       - checkout
       - attach_workspace:
          at: .
-      - restore_cache:
-          name: Restore smtools-windows-x64.msi
-          keys:
-            - dl-smtools-windows-x64.msi
-      - run:
-          name: "Client-Tool-Download"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            if (Test-Path 'c:\smtools-windows-x64.msi') {              
-              echo 'File exists, skipping download...'
-            } else {
-              echo 'Downloading smtools-windows-x64.msi ...'
-              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            }
-      - save_cache:
-          key: dl-smtools-windows-x64.msi
-          paths:
-            - c:\smtools-windows-x64.msi
-      - run:
-          name: "Client-Tool-Setup"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-
-            # Check client cert path and password
-            Write-Host "🔍 Checking client certificate path and password..."
-            Write-Host "SM_CLIENT_CERT_FILE: $env:SM_CLIENT_CERT_FILE"
-            if (-not (Test-Path $env:SM_CLIENT_CERT_FILE)) {
-              Write-Host "❌ Client certificate file not found at $env:SM_CLIENT_CERT_FILE"
-              exit 1
-            }
-            try {
-              certutil -p "$env:SM_CLIENT_CERT_PASSWORD" -dump "$env:SM_CLIENT_CERT_FILE"
-              Write-Host "✅ Client certificate password appears to be correct."
-            } catch {
-              Write-Host "❌ Client certificate password is incorrect or file is invalid."
-              exit 1
-            }
-
-            # Continue with sync and verification
-            Write-Host "Running cert sync..."
-            & $env:SSM\smksp_cert_sync.exe --verbose
-            Write-Host "Verifying certs after sync..."
-            $certs = & $env:SSM\smctl.exe cert ls
-            Write-Host $certs
-            if (-not ($certs -match "ACTIVE")) {
-              Write-Host "❌ No active certs found after sync. Failing build."
-              exit 1
-            }
-            & $env:SSM\smksp_registrar.exe list
-            & $env:SSM\smctl.exe keypair ls
-            & $env:SSM\smctl.exe healthcheck
-            & "C:\Windows\System32\certutil.exe" -csp "DigiCert Signing Manager KSP" -key -user
-      - run:
-          name: "Find Signtool"
-          shell: powershell.exe
-          command: |
-            Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit' -Filter signtool.exe -Recurse
       - run:
           name: read env
           shell: powershell.exe
@@ -549,31 +491,8 @@ jobs:
             } else {
                 Write-Host "Error: package.json file not found at $packageJsonPath."
             }
-      - run:
-          name: "Signtool-Signing"
-          shell: powershell.exe
-          command: | 
-            . .\SetEnvVars.ps1
-            dir Env:
-            & $env:Signtool sign /debug `
-              /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              /csp "DigiCert Signing Manager KSP" `
-              /k $env:SM_CODE_SIGNING_CERT_SHA1_HASH `
-              /tr http://timestamp.digicert.com `
-              /td SHA256 `
-              /fd SHA256 `
-              $EXECUTABLE
-      - run:
-          name: "Signtool-Verification"
-          shell: powershell.exe
-          command: |
-            . .\SetEnvVars.ps1
-            $verify_output = $(& $env:Signtool verify /v /pa $EXECUTABLE)
-            echo ${verify_output}
-            if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
-              echo 'Verification failed'
-              exit 1
-            }
+      - sign-windows-command
+          
       - run:
           name: "remove unnecessary files"
           shell: bash.exe
@@ -950,7 +869,26 @@ workflows:
     when: << pipeline.parameters.windows >>
     jobs:
       - check-signing-readiness-windows
-      - build-desktop
+      # - build-desktop:
+      #     requires:
+      #       - check-signing-readiness-windows
+      # - build-remixdesktop-windows:
+      #     requires:
+      #       - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+      # - sign-remixdesktop-windows:
+      #     requires:
+      #       - build-remixdesktop-windows
+      #       - test-remixdesktop-windows
+      # - test-remixdesktop-windows:
+      #     requires:
+      #      - build-desktop
+      #     filters:
+      #       branches:
+      #         only: [/.*desktop.*/]
+
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
