@@ -19,15 +19,14 @@ orbs:
 
 commands:
   check-signing-readiness:
-    parameters:
-      exe-path:
-        type: string
     steps:
       - run:
           name: "Client-Tool-Setup"
           shell: powershell.exe 
           command: |
             cd C:\
+            . .\SetEnvVars.ps1
+            dir Env:
             msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
             & (Join-Path $env:SSM "smctl.exe") -h
             & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
@@ -97,18 +96,13 @@ commands:
             }
             Write-Host "✅ Code signing certificate with private key ($expectedThumbprint) is present in CurrentUser\My."
 
-            Write-Host "🌩️ Attempting cloud-based signing using smctl sign..."
-
-            $certId = $env:SELECTED_CERT_ID
-            $inputExe = "<< parameters.exe-path >>"
-            $outputExe = "<< parameters.exe-path >>-signed.exe"
-            Copy-Item "C:\Windows\System32\notepad.exe" $inputExe
+            Write-Host "🌩️ Attempting cloud-based signing $($EXECUTABLE) using smctl sign..."
             
             Write-Host "🔧 Adding Signtool to PATH..."
             $env:PATH += ";C:\Program Files (x86)\Windows Kits\10\App Certification Kit"
             Write-Host "✅ Signtool added to PATH"
             
-            & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $inputExe --verbose
+            & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $EXECUTABLE --verbose
             signtool verify /pa /v $inputExe
 jobs:
 
@@ -149,8 +143,8 @@ jobs:
             cd C:\
             echo "hello" > dummy.txt
             copy dummy.txt dummy.exe
-      - check-signing-readiness:
-          exe-path: 'C:\dummy.exe'
+            "Set-Variable -Name 'EXECUTABLE' -Value '$file' -Scope Global" > SetEnvVars.ps1
+      - check-signing-readiness
             
             
   build:
@@ -547,8 +541,8 @@ jobs:
                     # Store the version value in an environment variable
                     $version = $packageJsonContent.version
                     $file = "C:\Users\circleci\remix-project\release\Remix-Desktop-Setup-$($version).exe" 
-                    Write-Host "Version $(file) stored in PACKAGE_VERSION environment variable."
-                    "Set-Variable -Name 'PACKAGE_VERSION' -Value '$file' -Scope Global" > SetEnvVars.ps1
+                    Write-Host "Version $(file) stored in EXECUTABLE environment variable."
+                    "Set-Variable -Name 'EXECUTABLE' -Value '$file' -Scope Global" > SetEnvVars.ps1
                     dir Env:
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
@@ -569,13 +563,13 @@ jobs:
               /tr http://timestamp.digicert.com `
               /td SHA256 `
               /fd SHA256 `
-              $PACKAGE_VERSION
+              $EXECUTABLE
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
           command: |
             . .\SetEnvVars.ps1
-            $verify_output = $(& $env:Signtool verify /v /pa $PACKAGE_VERSION)
+            $verify_output = $(& $env:Signtool verify /v /pa $EXECUTABLE)
             echo ${verify_output}
             if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
               echo 'Verification failed'
