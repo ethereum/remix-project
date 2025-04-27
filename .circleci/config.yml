@@ -141,8 +141,7 @@ jobs:
           shell: powershell.exe
           command: |
             cd C:\
-            echo "hello" > dummy.txt
-            copy dummy.txt dummy.exe
+            Copy-Item "C:\Windows\System32\notepad.exe" dummy.exe
             "Set-Variable -Name 'EXECUTABLE' -Value 'dummy.exe' -Scope Global" > SetEnvVars.ps1
       - check-signing-readiness
             
