@@ -469,6 +469,7 @@ jobs:
           name: read env
           shell: powershell.exe
           command: |
+            cd C:\
             # Specify the path to your package.json file
             $packageJsonPath = "C:\Users\circleci\remix-project\apps\remixdesktop\package.json"
 
@@ -482,9 +483,8 @@ jobs:
                     # Store the version value in an environment variable
                     $version = $packageJsonContent.version
                     $file = "C:\Users\circleci\remix-project\release\Remix-Desktop-Setup-$($version).exe" 
-                    Write-Host "Version $(file) stored in EXECUTABLE environment variable."
+                    Write-Host "Version $($file) stored in EXECUTABLE environment variable."
                     "Set-Variable -Name 'EXECUTABLE' -Value '$file' -Scope Global" > SetEnvVars.ps1
-                    dir Env:
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
                 }
