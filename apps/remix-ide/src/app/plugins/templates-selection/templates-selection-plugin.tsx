@@ -213,8 +213,8 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >
-                       {isElectron()?
-                            <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
+                              {isElectron()?
+                                <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
                             </span>
                           </CustomTooltip>}
                           {!isElectron() &&
