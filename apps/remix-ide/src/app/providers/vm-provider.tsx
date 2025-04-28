@@ -146,7 +146,7 @@ export class PectraVMProvider extends BasicVMProvider {
       blockchain
     )
     this.blockchain = blockchain
-    this.fork = 'pectra'
+    this.fork = 'prague'
   }
 }
 
