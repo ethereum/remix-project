@@ -109,14 +109,23 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const aaSupportedNetworks = {
+    "11155111": {
+      name: "sepolia",
+      publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
+    },
+    "10200": {
+      name: "gnosisChiado",
+      publicNodeUrl: "https://gnosis-chiado.drpc.org"
+    }
+  }
+  const {chainId} = plugin.REACT_API
+  const chain = chains[aaSupportedNetworks[chainId].name]
+  const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
+  const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
   const localStorageKey = 'smartAccounts'
-  const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
   const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // A dummy zero value tx is made to this address to create existence of smart account
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
-  const network = 'sepolia'
-  const chain = chains[network]
-  const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
-
   let salt
 
   // @ts-ignore
@@ -127,11 +136,14 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     chain,
     transport: custom(window.ethereum!),
   })
+  console.log('PUBLIC_NODE_URL---->', PUBLIC_NODE_URL)
 
   const publicClient = createPublicClient({
     chain,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
+  console.log('publicClient---->', publicClient)
+
 
   if (safeAddresses.length) {
     const lastSafeAddress: string = safeAddresses[safeAddresses.length - 1]
@@ -150,6 +162,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       saltNonce: salt,
       version: "1.4.1"
     })
+    console.log('safeAccount.address--->', safeAccount.address)
 
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
@@ -168,6 +181,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
         estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
       }
     })
+
     // Make a dummy tx to force smart account deployment
     const useropHash = await saClient.sendUserOperation({
       calls: [{
@@ -176,10 +190,11 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       }]
     })
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
+    console.log('useropHash--->', useropHash)
+
 
     // TO verify creation, check if there is a contract code at this address
     const safeAddress = safeAccount.address
-
     const sAccount: SmartAccount = {
       address : safeAccount.address,
       salt,
@@ -190,7 +205,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     // Save smart accounts in local storage
     const smartAccountsStr = localStorage.getItem(localStorageKey)
     const smartAccountsObj = JSON.parse(smartAccountsStr)
-    smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
+    smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
 
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
