@@ -12,6 +12,8 @@ module.exports = {
     start_process: true,
     port: 9515,
     server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
+    "keep_alive": { "enabled": true, "keepAliveMsecs": 60000 },
+    "timeout_options": { "timeout": 60000, "retry_attempts": 3 }
   },
 
   test_settings: {
@@ -40,6 +42,7 @@ module.exports = {
             '--no-sandbox',
             '--headless=new',
             '--verbose',
+            '--disable-dev-shm-usage',
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }
