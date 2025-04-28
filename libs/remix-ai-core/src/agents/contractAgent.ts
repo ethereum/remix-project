@@ -48,6 +48,7 @@ export class ContractAgent {
           await this.plugin.call('fileManager', 'mkdir', dir)
           dirCreated.push(dir)
         }
+        // check if file already exists
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
         // recompile to have it in the workspace
@@ -88,7 +89,6 @@ export class ContractAgent {
 
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
-          console.log('adding file', file.fileName, ' to compilation')
           this.contracts[file.fileName] = { content: file.content }
         }
       }
@@ -96,7 +96,7 @@ export class ContractAgent {
       const result:CompilationResult = await this.compilecontracts()
       console.log('compilation result', result)
       if (!result.compilationSucceeded && this.performCompile) {
-        const newPrompt = `Try this again:${userPrompt}\n while considering this compilation error: Here is the error message\n ${result.errors}. `
+        const newPrompt = `Payload:\n${JSON.stringify(this.contracts)}}\n\n While considering this compilation error: Here is the error message\n ${result.errors}. Try this again:${userPrompt}\n `
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
