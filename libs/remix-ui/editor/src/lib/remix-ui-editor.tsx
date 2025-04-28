@@ -669,13 +669,13 @@ export const EditorUI = (props: EditorUIProps) => {
             }
           }
           if (askAI) {
-             // Proceed with the original okFn logic
+            // Proceed with the original okFn logic
             (async () => {
-            await props.plugin.call('popupPanel', 'showPopupPanel', true)
-            setTimeout(async () => {
-              props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
-            }, 500)
-            _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
+              await props.plugin.call('popupPanel', 'showPopupPanel', true)
+              setTimeout(async () => {
+                props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+              }, 500)
+              _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
             })();
           }
         };
@@ -686,7 +686,7 @@ export const EditorUI = (props: EditorUIProps) => {
           okLabel: 'Ask RemixAI',
           cancelLabel: 'Close',
           cancelFn: () => handleClose(false), // Pass false for askAI
-          okFn: () => handleClose(true),     // Pass true for askAI
+          okFn: () => handleClose(true),      // Pass true for askAI
           message: (
             <div>
               {' '}
