@@ -9,7 +9,6 @@ export type PrefixedHexString = `0x${string}`
 export type Transaction = {
   from: string,
   fromSmartAccount: boolean,
-  delegatedAuthorizationEIP7702?: string
   to?: string,
   deployedBytecode?: string
   value: string,
@@ -18,7 +17,7 @@ export type Transaction = {
   useCall?: boolean,
   timestamp?: number,
   signed?: boolean,
-  authorityList?: AuthorizationList
+  authorizationList?: AuthorizationList
   type?: '0x1' | '0x2' | '0x4'
 }
 
@@ -42,9 +41,8 @@ export class TxRunner {
   }
 
   execute (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    if (args.data && args.data.slice(0, 2) !== '0x') {
-      args.data = '0x' + args.data
-    }
+    if (!args.data) args.data = '0x'
+    if (args.data.slice(0, 2) !== '0x') args.data = '0x' + args.data
     if (args.deployedBytecode && args.deployedBytecode.slice(0, 2) !== '0x') {
       args.deployedBytecode = '0x' + args.deployedBytecode
     }

@@ -110,6 +110,12 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const delegationAuthorization = async (contractAddress: string, plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
+  console.log(artefact)
+  if (!artefact) {
+    await plugin.call('notification', 'toast', `The contract with address ${contractAddress} doesn't seem to have been compiled in Remix. Please first compile and deploy a contract.`)
+    return
+  }
   const provider = {
     request: async (query) => {
       const ret = await plugin.call('web3Provider', 'sendAsync', query)
@@ -119,8 +125,8 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   const ethersProvider = new BrowserProvider(provider)
   const signer = await ethersProvider.getSigner()
   const authSignerPKey = new BaseWallet(new SigningKey('0x503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb'), ethersProvider)
-  const auth = await authSignerPKey.authorize({ address: contractAddress })
-  
+  const auth = await authSignerPKey.authorize({ address: contractAddress });
+  (auth.nonce as any) = [auth.nonce]
   const tx = await signer.sendTransaction({
     type: 4,
     to: plugin.REACT_API.accounts.selectedAccount,
@@ -129,8 +135,20 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   console.log(tx)
   
   const receipt = await tx.wait()
-  console.log(receipt) 
-  
+  console.log(receipt)
+
+  const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
+  const contractObject = {
+    name: artefact.name,
+    abi: artefact.contract.abi,
+    compiler: data,
+    contract: {
+      file : artefact.file,
+      object: artefact.contract
+    }
+  }
+  plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
+  await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
   return { txHash: receipt.hash }
 }
 

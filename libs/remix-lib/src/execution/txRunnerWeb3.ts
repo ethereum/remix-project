@@ -44,7 +44,7 @@ export class TxRunnerWeb3 {
         tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
         // tx.type = '0x1'
       }
-      if (tx.authorityList) {
+      if (tx.authorizationList) {
         tx.type = '0x4'
       }
     }
@@ -131,12 +131,7 @@ export class TxRunnerWeb3 {
   }
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    let data = args.data
-    if (data.slice(0, 2) !== '0x') {
-      data = '0x' + data
-    }
-
-    return this.runInNode(args.from, args.fromSmartAccount, args.deployedBytecode, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
+    return this.runInNode(args.from, args.fromSmartAccount, args.deployedBytecode, args.to, args.data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
 
   runInNode (from, fromSmartAccount, deployedBytecode, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {

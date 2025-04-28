@@ -247,6 +247,16 @@ export type CurrentVm = {
 
 export class VMCommon extends Common {
 
+  constructor (opts: CommonOpts) {
+    super(opts)
+    // remove eips:
+    const eipsToRemove = [7251, 7002]
+    this._activatedEIPsCache = this._activatedEIPsCache.filter(item => eipsToRemove.indexOf(item) === -1)
+    if (opts.hardfork === 'prague') {
+      this._activatedEIPsCache.push(7702)
+    }
+  }
+
   /**
     * Always return the fork set at initialization
     */
