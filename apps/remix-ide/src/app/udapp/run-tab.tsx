@@ -416,6 +416,7 @@ class Provider {
   }
   request (payload): Promise<any> {
     return new Promise((resolve, reject) => {
+      console.log('request', payload)
       this.udapp.call(this.name, 'sendAsync', payload).then((response) => {
         if (response.error) {
           reject(response.error.message)

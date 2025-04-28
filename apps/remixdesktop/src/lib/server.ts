@@ -78,7 +78,7 @@ function setupMessageHandler(ws: WebSocket, eventEmitter: EventEmitter) {
         }
       } else {
         // If there's no matching pending request, you can decide to ignore or handle differently
-        // console.log('No pending request matches id', requestId, parsed)
+        console.log('No pending request matches id', requestId, parsed)
       }
     } else if (parsed?.type) {
       // Possibly a "notification" or event-based message
@@ -121,7 +121,7 @@ export const handleRequest = async (
         reject(err)
       } else {
         // If you want to log for specific methods:
-        if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt') {
+        if (jsonRpcPayload.method === 'eth_sendTransaction' || jsonRpcPayload.method === 'eth_getTransactionReceipt' || jsonRpcPayload.method === 'eth_chainId') {
           console.log('Sent message to WebSocket client:', jsonRpcPayload)
         }
       }
