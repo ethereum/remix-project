@@ -116,7 +116,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     },
     "10200": {
       name: "gnosisChiado",
-      publicNodeUrl: "https://gnosis-chiado.drpc.org"
+      publicNodeUrl: "https://rpc.chiadochain.net/"
     }
   }
   const {chainId} = plugin.REACT_API
