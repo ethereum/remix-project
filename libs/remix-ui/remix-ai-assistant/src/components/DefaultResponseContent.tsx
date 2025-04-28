@@ -1,0 +1,33 @@
+import React from 'react'
+
+export default function DefaultResponseContent() {
+  return (
+    <>
+      <h5 className="ai-assistant-text-heading">Remix AI Assistant</h5>
+      <p className="ai-assistant-text">The Web3 AI Assistant helps you by providing personalized recommendations, answering queries about blockchain technology, and assisting with writing smart contracts.</p>
+      <div className="mb-3 w-100">
+        <button className="btn btn-secondary btn-block">
+          <div className="d-flex flex-row justify-content-start align-items-center">
+            <span className="fas fa-user-robot-xmarks"></span>
+            <span className="ml-2">Ask to explain a contract</span>
+          </div>
+        </button>
+        <button className="btn btn-secondary btn-block">
+          <div className="d-flex flex-row justify-content-start align-items-center">
+            <span className="fas fa-user-robot-xmarks"></span>
+            <span className="ml-2">Ask to explain a function</span>
+          </div>
+        </button>
+        <button className="btn btn-secondary btn-block">
+          <div className="d-flex flex-row justify-content-start align-items-center">
+            <span className="fas fa-user-robot-xmarks"></span>
+            <span className="ml-2">Ask to solve an error</span>
+          </div>
+        </button>
+      </div>
+      <p>
+        <a href="#" className="text-primary ai-assistant-text">Discover all functionalities</a>
+      </p>
+    </>
+  )
+}
