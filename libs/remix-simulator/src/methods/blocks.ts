@@ -88,10 +88,10 @@ export class Blocks {
   }
 
   toHex (value) {
-    if (!value) return '0x0'
+    if (!value) return '0x00'
     const v = bytesToHex(value)
     // @ts-ignore
-    return ((v === '0x' || v === '') ? '0x0' : v)
+    return ((v === '0x' || v === '') ? '0x00' : v)
   }
 
   eth_getBlockByHash (payload, cb) {

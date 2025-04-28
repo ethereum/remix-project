@@ -16,7 +16,7 @@ export function AccountUI(props: AccountProps) {
     classList: '',
     title: ''
   })
-  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(false)
+  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(true)
   const [enableCSM, setEnableCSM] = useState(false)
   const [smartAccountSelected, setSmartAccountSelected] = useState(false)  
 
@@ -52,6 +52,7 @@ export function AccountUI(props: AccountProps) {
   //   }
   // }, [selectedAccount])
 
+  /*
   useEffect(() => {
     if (networkName.includes('Sepolia')) {
       if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
@@ -62,7 +63,7 @@ export function AccountUI(props: AccountProps) {
       }
     } else {}
   }, [selectedAccount])
-
+*/
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
@@ -162,7 +163,7 @@ export function AccountUI(props: AccountProps) {
   }
 
   const handleDelegationAuthorizationAddressRef = (e) => {
-    delegationAuthorizationAddressRef.current = e.value
+    delegationAuthorizationAddressRef.current = e.target.value
   }
 
   const createDelegationAuthorization = () => {
@@ -175,7 +176,7 @@ export function AccountUI(props: AccountProps) {
       ),
       intl.formatMessage({ id: 'udapp.continue' }),
       () => {
-        props.dele()
+        props.delegationAuthorization(delegationAuthorizationAddressRef.current)
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {

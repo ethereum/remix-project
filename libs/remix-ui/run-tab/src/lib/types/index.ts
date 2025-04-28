@@ -154,7 +154,7 @@ export interface SettingsProps {
   setExecutionContext: (executionContext: { context: string, fork: string }) => void,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   createNewSmartAccount: () => void,
-  delegationAuthorization: () => void,
+  delegationAuthorization: (contractAddress: string) => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
@@ -201,6 +201,7 @@ export interface AccountProps {
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   createNewSmartAccount: () => void,
+  delegationAuthorization: (contractAddress: string) => void
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   tooltip: (toasterMsg: string) => void,
