@@ -1,4 +1,4 @@
-import { CustomTooltip } from '@remix-ui/helper'
+import { CustomTooltip, RenderIf } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { RunTabState } from '../types'
@@ -37,7 +37,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
   return (
     <>
       <span>{renderLabel}</span>
-      {isL2(renderLabel) && bridges[renderLabel.substring(0, 13)] && (
+      <RenderIf condition={isL2(renderLabel) && bridges[renderLabel.substring(0, 13)]}>
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
           <i
             style={{ fontSize: 'medium' }}
@@ -48,7 +48,21 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
             }}
           ></i>
         </CustomTooltip>
-      )}
+      </RenderIf>
+      <RenderIf condition={runTabState.selectExEnv === 'walletconnect'}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
+          <i
+            style={{ fontSize: 'medium' }}
+            className={'ml-1 fa fa-wallet'}
+            aria-hidden="true"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              plugin.call('walletconnect', 'openModal')
+            }}
+          ></i>
+        </CustomTooltip>
+      </RenderIf>
     </>
   )
 }

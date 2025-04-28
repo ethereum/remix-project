@@ -29,17 +29,19 @@ export class WalletConnect extends Plugin {
 
   constructor () {
     super(profile)
-    this.appkit = createAppKit({
-      adapters: [new Ethers5Adapter()],
-      projectId: constants.PROJECT_ID,
-      metadata: constants.METADATA,
-      networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon]
-    })
-    this.chains = constants.chains
   }
 
   onActivation() {
-    this.subscribeToEvents()
+    if (!this.appkit) {
+      this.appkit = createAppKit({
+        adapters: [new Ethers5Adapter()],
+        projectId: constants.PROJECT_ID,
+        metadata: constants.METADATA,
+        networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon]
+      })
+      this.chains = constants.chains
+      this.subscribeToEvents()
+    }
   }
 
   async init() {
@@ -115,7 +117,7 @@ export class WalletConnect extends Plugin {
       return this.sendWalletConnectRequest(data)
     } else {
       const err = `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
-      console.error(err)
+
       return { jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id }
     }
 

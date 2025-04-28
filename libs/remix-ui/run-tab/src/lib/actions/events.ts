@@ -40,9 +40,6 @@ export const setupEvents = (plugin: RunTab) => {
   plugin.blockchain.event.register('contextChanged', async (context) => {
     dispatch(resetProxyDeployments())
     getNetworkProxyAddresses(plugin, dispatch)
-    if (context !== 'walletconnect') {
-      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
-    }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
     // 'contextChanged' & 'networkStatus' both are triggered on workspace & network change
