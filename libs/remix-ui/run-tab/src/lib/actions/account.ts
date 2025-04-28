@@ -4,7 +4,7 @@ import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
-import { BrowserProvider } from "ethers" 
+import { BrowserProvider, BaseWallet, SigningKey } from "ethers" 
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import * as chains from "viem/chains"
@@ -117,10 +117,11 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
     }
   }
   const ethersProvider = new BrowserProvider(provider)
-  const authSigner = await ethersProvider.getSigner()
-  const auth = await authSigner.authorize({ address: contractAddress })
+  const signer = await ethersProvider.getSigner()
+  const authSignerPKey = new BaseWallet(new SigningKey('0x503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb'), ethersProvider)
+  const auth = await authSignerPKey.authorize({ address: contractAddress })
   
-  const tx = await authSigner.sendTransaction({
+  const tx = await signer.sendTransaction({
     type: 4,
     to: plugin.REACT_API.accounts.selectedAccount,
     authorizationList: [ auth ]
@@ -130,7 +131,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   const receipt = await tx.wait()
   console.log(receipt) 
   
-  return { txHash: receipt.hash }     
+  return { txHash: receipt.hash }
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
