@@ -99,6 +99,10 @@ export const handleRequest = async (
     throw new Error('No active WebSocket connection to forward request')
   }
 
+  if (typeof jsonRpcPayload.id === 'undefined') {
+    jsonRpcPayload = { ...jsonRpcPayload, id: Math.floor(Math.random() * 1e9).toString() }
+  }
+
   const requestId = jsonRpcPayload.id
 
   return new Promise((resolve, reject) => {
