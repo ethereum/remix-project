@@ -1,49 +1,26 @@
-import { Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import React from 'react'
+import { CustomTooltip } from '@remix-ui/helper'
 
-export const TargetProjectSelector = ({
-  projectList,
-  targetProject,
-  setTarget,
-  onReload,
-}: {
-  projectList: string[];
-  targetProject: string;
-  setTarget: (e: React.ChangeEvent<any>) => void;
-  onReload: () => void;
-}) => {
-  return (
-    <Form.Group className="mt-3" style={{ marginTop: '10px' }}>
-      <Form.Text className="text-muted">
-        <small>TARGET PROJECT </small>
-        <OverlayTrigger placement="top" overlay={<Tooltip id={''}>Reload</Tooltip>}>
-          <span style={{ cursor: 'pointer' }} onClick={onReload}>
-          </span>
-        </OverlayTrigger>
-      </Form.Text>
-      <InputGroup className="mt-2">
-        <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip id={''}>
-              The project must be located under the `aztec` folder in the root directory.
-            </Tooltip>
-          }
-        >
-          <Form.Control
-            className="custom-select"
-            as="select"
-            value={targetProject}
-            onChange={setTarget}
-          >
-            <option value="">-- Select Project --</option>
-            {projectList.map((projectName, idx) => (
-              <option key={idx} value={projectName}>
-                {projectName}
-              </option>
-            ))}
-          </Form.Control>
-        </OverlayTrigger>
-      </InputGroup>
-    </Form.Group>
-  );
-};
+export const TargetProjectSelector = ({ projectList, targetProject, setTarget, onReload }) => (
+  <div className="mb-3">
+    <div className="d-flex align-items-center text-muted text-white">
+      <small className="text-white">TARGET PROJECT</small>
+      <i
+        className="fas fa-sync ml-2"
+        title="Reload"
+        style={{ cursor: 'pointer' }}
+        onClick={onReload}
+      />
+    </div>
+    <CustomTooltip tooltipText="Target project must be under root/aztec directory/">
+      <select
+        className="custom-select mt-2"
+        value={targetProject}
+        onChange={setTarget}
+      >
+        <option value="">-- Select Project --</option>
+        {projectList.map((proj, idx) => <option key={idx} value={proj}>{proj}</option>)}
+      </select>
+    </CustomTooltip>
+  </div>
+)

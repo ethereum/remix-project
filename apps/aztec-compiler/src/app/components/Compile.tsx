@@ -1,18 +1,30 @@
-import { useState, useEffect, useRef, useContext } from 'react'
-import { Collapse, Button, Card, Form, Alert, Spinner, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import JSZip from 'jszip'
 import axios from 'axios'
 import { PluginContext } from '../contexts/pluginContext'
+import { CustomTooltip } from '@remix-ui/helper'
 import { ImportExampleSelector } from './compile/ImportExampleSelector'
 import { TargetProjectSelector } from './compile/TargetProjectSelector'
 import { CompileStatusPanel } from './compile/CompileStatusPanel'
 import { FileUtil } from '../utils/fileutils'
+import { ModalDialog } from '@remix-ui/modal-dialog'
 
-const BASE_URL = process.env.AZTEC_PLUGIN_API_BASE_URL
-const WS_URL = process.env.AZTEC_PLUGIN_WS_URL
+const BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_DEV
+    : process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_PROD
+
+const WS_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_DEV
+    : process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_PROD
+
+console.log(BASE_URL)
+console.log(WS_URL)
+
 
 export const Compile = () => {
-  const [openCompile, setOpenCompile] = useState(false)
+  const [version] = useState('v0.85.0')
   const [projectList, setProjectList] = useState<string[]>([])
   const [targetProject, setTargetProject] = useState<string>('')
   const [compileError, setCompileError] = useState<string | null>(null)
@@ -24,14 +36,20 @@ export const Compile = () => {
   const wsRef = useRef<WebSocket | null>(null)
   const requestIdRef = useRef<string>('')
   const { plugin: client } = useContext(PluginContext)
+  const [modal, setModal] = useState({ hide: true, title: '', message: '', okLabel: 'Close' })
+
+  const showModal = (title: string, message: string) => {
+    setModal({ hide: false, title, message, okLabel: 'Close' })
+  }
+  const hideModal = () => setModal({ ...modal, hide: true })
 
   useEffect(() => {
     const fetchExamples = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/examples`)
         setExamples(res.data.examples)
-      } catch (err) {
-        console.error('Failed to fetch examples', err)
+      } catch {
+        console.error('Failed to fetch examples')
       }
     }
     fetchExamples()
@@ -39,11 +57,7 @@ export const Compile = () => {
 
   useEffect(() => {
     getList()
-    return () => {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.close()
-      }
-    }
+    return () => wsRef.current?.readyState === WebSocket.OPEN && wsRef.current.close()
   }, [])
 
   const generateUniqueId = () => {
@@ -104,16 +118,11 @@ export const Compile = () => {
 
   const handleCompile = async () => {
     if (!targetProject) {
-      await client.call('terminal', 'log', {
-        type: 'error',
-        value: 'No target project selected!'
-      })
-      setCompileError('No target project selected!')
+      showModal('Error', 'No target project selected!')
       return
     }
 
     setLoading(true)
-    setCompileError(null)
     setCompileLogs([])
     requestIdRef.current = generateUniqueId()
 
@@ -147,7 +156,7 @@ export const Compile = () => {
     }
 
     ws.onerror = () => {
-      setCompileError('WebSocket connection failed.')
+      showModal('Error', 'WebSocket connection failed')
       setLoading(false)
     }
 
@@ -183,13 +192,14 @@ export const Compile = () => {
 
       await client.call('terminal', 'log', {
         type: 'info',
-        value: '✅ Compilation completed!'
+        value: 'Compilation completed!'
       })
+      showModal('Success', `Compilation completed! JSON generated under ${targetProject}/target`)
     } catch (error: any) {
-      setCompileError(`Compilation failed: ${error.message}`)
+      showModal('Error', `Compilation failed: ${error.message}`)
       await client.call('terminal', 'log', {
         type: 'error',
-        value: `❌ Compilation failed: ${error.message}`
+        value: `Compilation failed: ${error.message}`
       })
     } finally {
       setLoading(false)
@@ -249,7 +259,7 @@ export const Compile = () => {
 
       await client.call('terminal', 'log', {
         type: 'info',
-        value: `✅ Example "${exampleName}" imported.`
+        value: `Example "${exampleName}" imported.`
       })
       
       setTargetProject(`aztec/${exampleName}`)
@@ -258,69 +268,47 @@ export const Compile = () => {
       console.error(`Failed to import example ${exampleName}`, err)
       await client.call('terminal', 'log', {
         type: 'error',
-        value: `❌ Failed to import ${exampleName}: ${err.message}`
+        value: `Failed to import ${exampleName}: ${err.message}`
       })
     }
   }
 
   return (
-    <Card className="mb-3">
-      <Card.Header
-        onClick={() => setOpenCompile(!openCompile)}
-        aria-controls="compile-collapse"
-        aria-expanded={openCompile}
-        className="d-flex align-items-center justify-content-between"
-        style={{ cursor: 'pointer' }}
-      >
-        <div className="d-flex align-items-center">Compile Aztec Project</div>
-      </Card.Header>
-      <Collapse in={openCompile}>
-        <div id="compile-collapse" style={{ transition: 'height 0.3s ease-in-out', overflow: 'hidden' }}>
-          <Card.Body>
-            <Form>
-              <ImportExampleSelector
-                examples={examples}
-                exampleToImport={exampleToImport}
-                setExampleToImport={setExampleToImport}
-                importExample={importExample}
-              />
-              <TargetProjectSelector
-                projectList={projectList}
-                targetProject={targetProject}
-                setTarget={setTarget}
-                onReload={getList}
-              />
-              <Button
-                variant="primary"
-                className="w-100 mt-3"
-                disabled={!targetProject || loading}
-                onClick={handleCompile}
-              >
-                {loading ? (
-                  <>
-                    <Spinner animation="border" size="sm" /> Compiling...
-                  </>
-                ) : (
-                  'Compile'
-                )}
-              </Button>
-              <CompileStatusPanel
-                loading={loading}
-                queuePosition={queuePosition}
-                checkQueueStatus={checkQueueStatus}
-              />
-              {compileError && (
-                <Alert variant="danger" className="mt-2" style={{
-                  fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
-                  fontSize: '12px',
-                }}>
-                  {compileError}
-                </Alert>
-              )}
-            </Form>
-          </Card.Body>
-        </div>
-      </Collapse>
-    </Card>
+  <>
+    <div className="remixui_panel mb-3">
+      <div className="compiler-version">
+        <span className="compiler-version-label">Compiler Version:</span>
+        <span className="compiler-version-value">{version}</span>
+      </div>
+      <div className="remixui_panelBody px-4 pt-0">
+        <ImportExampleSelector
+          examples={examples}
+          exampleToImport={exampleToImport}
+          setExampleToImport={setExampleToImport}
+          importExample={importExample}
+        />
+        <TargetProjectSelector
+          projectList={projectList}
+          targetProject={targetProject}
+          setTarget={(e) => setTargetProject(e.target.value)}
+          onReload={getList}
+        />
+        <button
+          className="btn btn-primary btn-block mt-3"
+          disabled={!targetProject || loading}
+          onClick={handleCompile}
+        >
+          {loading && <i className="fas fa-sync fa-spin mr-2"></i>}
+          {loading ? 'Compiling...' : 'Compile'}
+        </button>
+        <CompileStatusPanel
+          loading={loading}
+          queuePosition={queuePosition}
+          checkQueueStatus={checkQueueStatus}
+        />
+      </div>
+    </div>
+    <ModalDialog id="compileModal" title={modal.title} message={modal.message} hide={modal.hide} okLabel={modal.okLabel} okFn={hideModal} handleHide={hideModal} />
+  </>
   )
 }

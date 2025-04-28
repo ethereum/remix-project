@@ -99,5 +99,15 @@ module.exports = composePlugins(withNx(), (config) => {
 
   config.experiments.syncWebAssembly = true
 
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_DEV':  JSON.stringify(process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_DEV),
+      'process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_PROD': JSON.stringify(process.env.REACT_APP_AZTEC_PLUGIN_API_BASE_URL_PROD),
+      'process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_DEV':       JSON.stringify(process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_DEV),
+      'process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_PROD':      JSON.stringify(process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_PROD),
+    })
+  )
+  
   return config;
 });

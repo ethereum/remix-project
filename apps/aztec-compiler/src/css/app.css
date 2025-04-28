@@ -99,3 +99,17 @@ body {
     width: auto;
     color: var(--text);
 }
+
+.compiler-version {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6c757d;
+    padding: 0 1rem 0.5rem 1rem;
+}
+  
+.compiler-version-value {
+    color: #ffffff;
+    font-weight: 500;
+}

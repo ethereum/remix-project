@@ -1,44 +1,25 @@
-import { Form, InputGroup, Button } from 'react-bootstrap';
+import React from 'react'
+import { CustomTooltip } from '@remix-ui/helper'
 
-export const ImportExampleSelector = ({
-  examples,
-  exampleToImport,
-  setExampleToImport,
-  importExample,
-}: {
-  examples: string[];
-  exampleToImport: string;
-  setExampleToImport: (v: string) => void;
-  importExample: (v: string) => void;
-}) => {
-  return (
-    <Form.Group>
-      <Form.Text className="text-muted">
-        <small>IMPORT EXAMPLE PROJECT</small>
-      </Form.Text>
-      <InputGroup className="mt-2">
-        <Form.Control
-          className="custom-select"
-          as="select"
-          value={exampleToImport}
-          onChange={(e) => setExampleToImport(e.target.value)}
-        >
-          <option value="">-- Select Example --</option>
-          {examples.map((exampleName) => (
-            <option key={exampleName} value={exampleName}>
-              {exampleName}
-            </option>
-          ))}
-        </Form.Control>
-      </InputGroup>
-      <Button
-        className="w-100 mt-2"
-        variant="secondary"
-        disabled={!exampleToImport}
-        onClick={() => importExample(exampleToImport)}
+export const ImportExampleSelector = ({ examples, exampleToImport, setExampleToImport, importExample }) => (
+  <div className="mb-3">
+    <div className="text-muted"><small className="text-white">IMPORT EXAMPLE PROJECT</small></div>
+    <CustomTooltip tooltipText="Download template code">
+      <select
+        className="custom-select mt-2"
+        value={exampleToImport}
+        onChange={(e) => setExampleToImport(e.target.value)}
       >
-        Import Selected Example
-      </Button>
-    </Form.Group>
-  );
-};
+        <option value="">-- Select Example --</option>
+        {examples.map((ex) => <option key={ex} value={ex}>{ex}</option>)}
+      </select>
+    </CustomTooltip>
+    <button
+      className="btn btn-secondary btn-block mt-2"
+      disabled={!exampleToImport}
+      onClick={() => importExample(exampleToImport)}
+    >
+      Import Selected Example
+    </button>
+  </div>
+)

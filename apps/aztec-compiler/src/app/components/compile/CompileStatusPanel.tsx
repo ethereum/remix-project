@@ -1,35 +1,18 @@
-import { Alert, Button } from 'react-bootstrap';
+import React from 'react'
+import { CustomTooltip } from '@remix-ui/helper'
 
-export const CompileStatusPanel = ({
-  loading,
-  queuePosition,
-  checkQueueStatus,
-}: {
-  loading: boolean;
-  queuePosition: number | null;
-  checkQueueStatus: () => void;
-}) => {
-  if (!loading) return null;
-
+export const CompileStatusPanel = ({ loading, queuePosition, checkQueueStatus }) => {
+  if (!loading) return null
   return (
-    <div className="mt-3" style={{ marginTop: '10px' }}>
-      <div className="d-flex align-items-center justify-content-between">
-        <Button size="sm" variant="outline-primary" onClick={checkQueueStatus}>
-          Check Compile Order
-        </Button>
-      </div>
+    <div className="mt-3">
+      <button className="btn btn-outline-primary btn-sm" onClick={checkQueueStatus}>
+        Check Compile Order
+      </button>
       {queuePosition !== null && (
-        <Alert
-          variant="info"
-          className="mt-2"
-          style={{
-            fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
-            fontSize: '12px',
-          }}
-        >
-          You're currently <strong>#{queuePosition + 1}</strong> in the queue.<br />
-        </Alert>
+        <div className="remixui_alert remixui_alert-info mt-2" style={{ fontFamily: 'Menlo, Monaco, Consolas', fontSize: '12px' }}>
+          You're currently <strong>#{queuePosition + 1}</strong> in the queue.
+        </div>
       )}
     </div>
-  );
-};
+  )
+}
