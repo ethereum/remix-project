@@ -17,11 +17,11 @@ import { Transaction } from './txRunner'
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function createContract ({ from, data, value, gasLimit, signed }: Transaction, txRunner, callbacks, finalCallback) {
+export function createContract ({ from, data, value, gasLimit, signed, authorizationList }: Transaction, txRunner, callbacks, finalCallback) {
   if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
     return finalCallback('all the callbacks must have been defined')
   }
-  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed }
+  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed, authorizationList}
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)
@@ -43,9 +43,9 @@ export function createContract ({ from, data, value, gasLimit, signed }: Transac
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function callFunction ({ from, to, data, value, gasLimit, signed }: Transaction, funAbi , txRunner, callbacks, finalCallback) {
+export function callFunction ({ from, to, data, value, gasLimit, signed, authorizationList }: Transaction, funAbi , txRunner, callbacks, finalCallback) {
   const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure' || funAbi.constant
-  const tx = { from, to, data, useCall, value, gasLimit, signed }
+  const tx = { from, to, data, useCall, value, gasLimit, signed, authorizationList }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)

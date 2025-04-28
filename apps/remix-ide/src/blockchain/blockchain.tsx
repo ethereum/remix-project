@@ -915,7 +915,7 @@ export class Blockchain extends Plugin {
       return new Promise(async (resolve, reject) => {
         let fromAddress
         let fromSmartAccount
-        let delegatedAuthorizationEIP7702
+        let authorizationList
         let value
         let gasLimit
         try {
@@ -938,7 +938,7 @@ export class Blockchain extends Plugin {
           value: value,
           gasLimit: gasLimit,
           timestamp: args.data.timestamp,
-          delegatedAuthorizationEIP7702: args.delegatedAuthorizationEIP7702
+          authorizationList: args.authorizationList
         }
         const payLoad = {
           funAbi: args.data.funAbi,
