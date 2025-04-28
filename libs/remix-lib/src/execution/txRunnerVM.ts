@@ -64,12 +64,9 @@ export class TxRunnerVM {
     }
   }
 
-  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
-    let data = args.data
-    if (data.slice(0, 2) !== '0x') {
-      data = '0x' + data
-    }
-
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {    
+    if (!args.data) args.data = '0x'
+    if (args.data.slice(0, 2) !== '0x') args.data = '0x' + args.data    
     try {
       this.runInVm(args, callback)
     } catch (e) {
@@ -130,7 +127,7 @@ export class TxRunnerVM {
         }
 
         const res = await this.getVMObject().stateManager.getAccount(createAddressFromString(from))
-        if (tx.authorityList) {
+        if (authorityList) {
           tx = createEOACode7702Tx({
             nonce: useCall ? this.nextNonceForCall : res.nonce,
             maxPriorityFeePerGas: '0x01',

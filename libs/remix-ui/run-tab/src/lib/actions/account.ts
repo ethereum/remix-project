@@ -4,6 +4,7 @@ import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
+import { BrowserProvider, BaseWallet, SigningKey } from "ethers" 
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import * as chains from "viem/chains"
@@ -109,27 +110,28 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const delegationAuthorization = async (contractAddress: string, plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  const walletClient = createWalletClient({      
-    transport: custom(window.ethereum!),
-  })
-
-
-  const authorization = await walletClient.signAuthorization({
-    contractAddress: contractAddress as `0x${string}`,
-    account: plugin.REACT_API.accounts.selectedAccount as `0x${string}`
-  })
-
-  const compileData = await plugin.call('compilerArtefact', 'getContractDataFromAddress', contractAddress)
-  const hash = await walletClient.writeContract({
-    abi: compileData.contract.abi,
-    address: plugin.REACT_API.accounts.selectedAccount as `0x${string}`,
-    authorizationList: [authorization],
-    functionName: 'initialize',
-    args: [],
-    chain: undefined,
-    account: plugin.REACT_API.accounts.selectedAccount as `0x${string}`
-  })
-  return { txHash: hash }     
+  const provider = {
+    request: async (query) => {
+      const ret = await plugin.call('web3Provider', 'sendAsync', query)
+      return ret.result
+    }
+  }
+  const ethersProvider = new BrowserProvider(provider)
+  const signer = await ethersProvider.getSigner()
+  const authSignerPKey = new BaseWallet(new SigningKey('0x503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb'), ethersProvider)
+  const auth = await authSignerPKey.authorize({ address: contractAddress })
+  
+  const tx = await signer.sendTransaction({
+    type: 4,
+    to: plugin.REACT_API.accounts.selectedAccount,
+    authorizationList: [ auth ]
+  });
+  console.log(tx)
+  
+  const receipt = await tx.wait()
+  console.log(receipt) 
+  
+  return { txHash: receipt.hash }
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
