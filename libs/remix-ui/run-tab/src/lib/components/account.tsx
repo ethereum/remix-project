@@ -23,6 +23,7 @@ export function AccountUI(props: AccountProps) {
 
   const intl = useIntl()
   const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
+  const aaSupportedChainIds = ["11155111", "10200"] // Sepolia, Gnosis Chiado
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
@@ -31,23 +32,23 @@ export function AccountUI(props: AccountProps) {
   }, [accounts, selectedAccount])
 
   // Uncomment this when we want to show 'Create Smart Account' button
-  // useEffect(() => {
-  //   if (networkName.includes('Sepolia')) {
-  //     if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
-  //       setSmartAccountSelected(true)
-  //       setEnableCSM(false)
-  //       ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
-  //     }
-  //     else {
-  //       setSmartAccountSelected(false)
-  //       setEnableCSM(true)
-  //       ownerEOA.current = null
-  //     }
-  //   } else {
-  //     setEnableCSM(false)
-  //     setSmartAccountSelected(false)
-  //   }
-  // }, [selectedAccount])
+  useEffect(() => {
+    if (aaSupportedChainIds.some(e => networkName.includes(e))) {
+      if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
+        setSmartAccountSelected(true)
+        setEnableCSM(false)
+        ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
+      }
+      else {
+        setSmartAccountSelected(false)
+        setEnableCSM(true)
+        ownerEOA.current = null
+      }
+    } else {
+      setEnableCSM(false)
+      setSmartAccountSelected(false)
+    }
+  }, [selectedAccount])
 
   useEffect(() => {
     props.setAccount('')
