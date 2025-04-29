@@ -46,6 +46,24 @@ module.exports = {
       }
     },
 
+    // at the bottom of test_settings
+    'chromeIdleTest': {
+      webdriver: {
+        // same as your other webdriver settings…
+        keep_alive: { enabled: true, keepAliveMsecs: 500 },
+        timeout_options: { timeout: 10000, retry_attempts: 0 }
+      },
+      desiredCapabilities: {
+        browserName: 'chrome',
+        'goog:chromeOptions': {
+          args: [
+            '--headless', '--disable-gpu', '--no-sandbox',
+            '--disable-dev-shm-usage', '--remote-debugging-port=9222'
+          ]
+        }
+      }
+    },
+
     'chromeDesktop': {
       desiredCapabilities: {
         'browserName': 'chrome',
