@@ -49,9 +49,7 @@ module.exports = {
     // at the bottom of test_settings
     'chromeIdleTest': {
       webdriver: {
-        // same as your other webdriver settings…
-        keep_alive: { enabled: true, keepAliveMsecs: 0 },
-        timeout_options: { timeout: 500, retry_attempts: 10 }
+        timeout_options: { timeout: 500, retry_attempts: 0 }
       },
       desiredCapabilities: {
         'browserName': 'chrome',
