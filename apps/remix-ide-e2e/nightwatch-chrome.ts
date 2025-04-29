@@ -13,7 +13,7 @@ module.exports = {
     port: 9515,
     server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
     keep_alive: { enabled: true, keepAliveMsecs: 500 },
-    timeout_options: { timeout: 10000, retry_attempts: 0 }
+    timeout_options: { timeout: 5000, retry_attempts: 0 }
 
   },
 
