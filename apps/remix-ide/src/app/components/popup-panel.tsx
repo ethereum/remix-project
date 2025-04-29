@@ -86,34 +86,34 @@ export class PopupPanel extends AbstractPanel {
   }
 
   updateComponent(state: popupPanelState, appState: Partial<AppState>) {
-    if (!this.hooks) {
-      try {
-        const markdown = document.getElementsByClassName('nlux-composer-container')
-        const button = markdown[0].getElementsByTagName('button')[0]
-        const textArea = markdown[0].getElementsByTagName('textarea')[0]
-        // only add event listeners if they are not already added
-        if (!textArea.dataset.listenerAdded) {
-          textArea.addEventListener('input', (event) => {
-            const sanitizedInput = DOMPurify.sanitize(textArea.value)
-            if (sanitizedInput !== textArea.value) {
-              textArea.value = sanitizedInput
-            }
-          })
-          textArea.dataset.listenerAdded = 'true'
-        }
+    // if (!this.hooks) {
+    //   try {
+    //     const markdown = document.getElementsByClassName('nlux-composer-container')
+    //     const button = markdown[0].getElementsByTagName('button')[0]
+    //     const textArea = markdown[0].getElementsByTagName('textarea')[0]
+    //     // only add event listeners if they are not already added
+    //     if (!textArea.dataset.listenerAdded) {
+    //       textArea.addEventListener('input', (event) => {
+    //         const sanitizedInput = DOMPurify.sanitize(textArea.value)
+    //         if (sanitizedInput !== textArea.value) {
+    //           textArea.value = sanitizedInput
+    //         }
+    //       })
+    //       textArea.dataset.listenerAdded = 'true'
+    //     }
 
-        if (!button.dataset.listenerAdded) {
-          button.dataset.listenerAdded = 'true'
-          button.addEventListener('click', (event) => {
-            const sanitizedInput = DOMPurify.sanitize(textArea.value)
-            if (sanitizedInput !== textArea.value) {
-              textArea.value = sanitizedInput
-            }
-          })
-        }
-        this.hooks = true
-      } catch (error) { this.hooks = false }
-    }
+    //     if (!button.dataset.listenerAdded) {
+    //       button.dataset.listenerAdded = 'true'
+    //       button.addEventListener('click', (event) => {
+    //         const sanitizedInput = DOMPurify.sanitize(textArea.value)
+    //         if (sanitizedInput !== textArea.value) {
+    //           textArea.value = sanitizedInput
+    //         }
+    //       })
+    //     }
+    //     this.hooks = true
+    //   } catch (error) { this.hooks = false }
+    // }
     return (
       <div
         className={`px-0 bg-light border-info ${appState?.showPopupPanel ? 'd-flex' : 'd-none'}`}
