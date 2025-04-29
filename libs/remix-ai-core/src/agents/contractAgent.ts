@@ -24,6 +24,7 @@ export class ContractAgent {
   performCompile: boolean = true
   static instance
   oldPayload: any = undefined
+  mainPrompt: string
 
   private constructor(props) {
     this.plugin = props;
@@ -82,6 +83,8 @@ export class ContractAgent {
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
+      if (this.nAttempts === 1) this.mainPrompt = userPrompt
+
       if (this.nAttempts > this.generationAttempts) {
         this.performCompile = false
         console.log('Max attempts reached, returning the result')
@@ -97,7 +100,7 @@ export class ContractAgent {
       const result:CompilationResult = await this.compilecontracts()
       console.log('compilation result', result)
       if (!result.compilationSucceeded && this.performCompile) {
-        const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${userPrompt}\n `
+        const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${this.mainPrompt}\n `
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
@@ -159,7 +162,7 @@ export class ContractAgent {
           } else {
             console.log('errorFiles else', errorFiles)
             errorFiles[error.sourceLocation.file] = {
-              content : this.contracts[error.sourceLocation.file],
+              content : this.contracts[error.sourceLocation.file].content,
               errors : [{
                 errorStart : error.sourceLocation.start,
                 errorEnd : error.sourceLocation.end,
