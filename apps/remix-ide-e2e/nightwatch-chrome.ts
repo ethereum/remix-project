@@ -54,11 +54,16 @@ module.exports = {
         timeout_options: { timeout: 10000, retry_attempts: 0 }
       },
       desiredCapabilities: {
-        browserName: 'chrome',
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: [
-            '--headless', '--disable-gpu', '--no-sandbox',
-            '--disable-dev-shm-usage', '--remote-debugging-port=9222'
+            'window-size=2560,1440',
+            '--no-sandbox',
+            '--headless=new',
+            '--verbose',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }
       }
