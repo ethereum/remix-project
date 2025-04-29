@@ -115,9 +115,9 @@ export function checkError (execResult, compiledContracts) {
                 decodedCustomErrorInputsClean = {}
                 let devdoc = {}
                 // "contract" represents the compilation result containing the NATSPEC documentation
-                let fnFragments = fn.fragments.filter(f => f.type === "function") as Array<FunctionFragment> 
+                const fnFragments = fn.fragments.filter(f => f.type === "function") as Array<FunctionFragment>
                 if (contract && fnFragments && fnFragments.length) {
-                  const functionSignature = fnFragments[0].selector
+                  const functionSignature = fnFragments[0].format()
                   // we check in the 'devdoc' if there's a developer documentation for this error
                   try {
                     devdoc = (contract.devdoc.errors && contract.devdoc.errors[functionSignature][0]) || {}

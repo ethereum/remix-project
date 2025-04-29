@@ -1,7 +1,8 @@
 /* global ethereum */
 'use strict'
+import { RLP } from '@ethereumjs/rlp'
 import { hash } from '@remix-project/remix-lib'
-import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0, BIGINT_1, equalsBytes, createAccount, PrefixedHexString } from '@ethereumjs/util'
+import { bytesToHex, hexToBytes, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0, BIGINT_1, equalsBytes, createAccount, PrefixedHexString } from '@ethereumjs/util'
 import { Address } from '@ethereumjs/util'
 import { JsonRpcProvider } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
@@ -17,7 +18,6 @@ import { Blockchain, DBSaveLookups, createBlockchain } from '@ethereumjs/blockch
 import { Block, BlockHeader, createBlock, createBlockFromRLP } from '@ethereumjs/block'
 import { TypedTransaction } from '@ethereumjs/tx'
 import { State } from './provider'
-import { hexToBytes } from 'web3-utils'
 
 /**
  * Options for constructing a {@link StateManager}.
@@ -51,7 +51,7 @@ class StateManagerCommonStorageDump extends MerkleStateManager {
     return this._trie.database().db
   }
 
-  putContractStorage (address, key, value) {
+  putStorage (address, key, value) {
     this.keyHashes[bytesToHex(hash.keccak(key))] = bytesToHex(key)
     return super.putStorage(address, key, value)
   }
@@ -79,7 +79,7 @@ class StateManagerCommonStorageDump extends MerkleStateManager {
     for (const key in values) {
       ret[key] = {
         key: this.keyHashes[key],
-        value: values[key]
+        value: bytesToHex(RLP.decode(values[key] ?? new Uint8Array(0)) as Uint8Array)
       }
     }
     return ret
@@ -88,7 +88,7 @@ class StateManagerCommonStorageDump extends MerkleStateManager {
 
 export interface CustomEthersStateManagerOpts {
   provider: string | JsonRpcProvider
-  blockTag: string,
+  blockTag: string
   /**
    * A {@link Trie} instance
    */
@@ -155,7 +155,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * corresponding to the provided address at the provided key.
    * If this does not exist an empty `Buffer` is returned.
    */
-  async getContractStorage(address: Address, key: Buffer): Promise<Uint8Array> {
+  async getStorage(address: Address, key: Buffer): Promise<Uint8Array> {
     let storage = await super.getStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
@@ -164,7 +164,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
         bytesToBigInt(key),
         this.blockTag)) as PrefixedHexString
       )
-      await super.putContractStorage(address, key, storage)
+      await super.putStorage(address, key, storage)
       return storage
     }
   }
@@ -185,7 +185,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     const verified = await verifyMerkleProof(
       address.bytes,
       proofBuf
-      //Buffer.from(keccak256(proofBuf[0])),      
+      //Buffer.from(keccak256(proofBuf[0])),
     )
     if (verified) {
       const codeHash = proof.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : proof.codeHash
@@ -437,7 +437,7 @@ export class VMContext {
     let stateManager: StateManagerInterface
     // state trie
 
-    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v as any)])) : new Map()
     const mapDb = new MapDB(db)
     const trie = await createMPT({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
 
@@ -464,7 +464,7 @@ export class VMContext {
 
     const common = new VMCommon({ chain: Mainnet, hardfork })
     const blocks = (this.rawBlocks || []).map(block => {
-      const serializedBlock = hexToBytes(block)
+      const serializedBlock = hexToBytes(block as any)
       this.serializedBlocks.push(serializedBlock)
       return createBlockFromRLP(serializedBlock, { common })
     })

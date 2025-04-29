@@ -1,8 +1,8 @@
 // @ts-ignore
-import { BrowserProvider } from "ethers"
+import { BrowserProvider, Contract, Signer } from "ethers"
+import { InterfaceAbi } from "ethers"
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
-import { SignerWithAddress } from './signer'
 import { Web3 } from "web3"
 
 const providerConfig = {
@@ -21,7 +21,7 @@ global.web3 = new Web3(global.web3Provider)
 global.web3.eth.setConfig(config)
 
 const isFactoryOptions = (signerOrOptions: any) => {
-  if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
+  if (!signerOrOptions || signerOrOptions === undefined || typeof(signerOrOptions.connect) === 'function') return false
   return true
 }
 
@@ -172,7 +172,7 @@ const resultToArtifact = (result: any) => {
   }
 }
 
-const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, bytecode?: string, signerOrOptions = null) => {
+const getContractFactory = async (contractNameOrABI: InterfaceAbi, bytecode?: string, signerOrOptions = null) => {
   if (bytecode && contractNameOrABI) {
     //@ts-ignore
     return new ethers.ContractFactory(contractNameOrABI, bytecode, signerOrOptions || web3Provider.getSigner())
@@ -181,7 +181,7 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
 
     if (contract) {
       //@ts-ignore
-      return new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || web3Provider.getSigner())
+      return new ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || web3Provider.getSigner())
     } else {
       throw new Error('Contract artifacts not found')
     }
@@ -190,7 +190,7 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
   }
 }
 
-const getContractAt = async (contractNameOrABI: ethers.ContractInterface, address: string, signer = null) => {
+const getContractAt = async (contractNameOrABI: InterfaceAbi, address: string, signer = null) => {
   //@ts-ignore
   const provider = web3Provider
 
@@ -198,12 +198,12 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
     const result = await getArtifactsByContractName(contractNameOrABI)
 
     if (result) {
-      return new ethers.Contract(address, result.abi, signer || provider.getSigner())
+      return new Contract(address, result.abi, signer || provider.getSigner())
     } else {
       throw new Error('Contract artifacts not found')
     }
   } else {
-    return new ethers.Contract(address, contractNameOrABI, signer || provider.getSigner())
+    return new Contract(address, contractNameOrABI, signer || provider.getSigner())
   }
 }
 
@@ -212,7 +212,7 @@ const getSigner = async (address: string) => {
   const provider = web3Provider
   const signer = provider.getSigner(address)
 
-  return SignerWithAddress.create(signer)
+  return signer
 }
 
 const getSigners = async () => {

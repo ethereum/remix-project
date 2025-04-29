@@ -1,8 +1,7 @@
-import { util } from '@remix-project/remix-lib'
-const { toHexPaddedString, formatMemory } = util
-import { helpers } from '@remix-project/remix-lib'
+
+import { ConsoleLogs, hash, util, helpers } from '@remix-project/remix-lib'
+const { toHexPaddedString, formatMemory, padHexToEven } = util
 const { normalizeHexAddress } = helpers.ui
-import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import { toChecksumAddress, bytesToHex, toBytes, createAddressFromString, PrefixedHexString } from '@ethereumjs/util'
 import utils, { toBigInt } from 'web3-utils'
 import { isBigInt } from 'web3-validator'
@@ -362,7 +361,7 @@ export class VmProxy {
     const txHash = bytesToHex(block.transactions[block.transactions.length - 1].hash())
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
-      const slot = bytesToHex(hash.keccak(toBytes(zeroPadValue(position, 32) as PrefixedHexString)))
+      const slot = bytesToHex(hash.keccak(toBytes(zeroPadValue(padHexToEven(position), 32) as PrefixedHexString)))
       const storage = this.storageCache['after_' + txHash][address]
       return cb(null, storage[slot].value)
     }

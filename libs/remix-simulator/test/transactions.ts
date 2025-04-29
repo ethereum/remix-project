@@ -1,6 +1,6 @@
 /* global describe, before, it */
 import { Web3 } from 'web3'
-import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
+import { createFeeMarket1559Tx } from '@ethereumjs/tx'
 import { Provider } from '../src/index'
 const web3 = new Web3()
 import * as assert from 'assert'
@@ -54,7 +54,7 @@ describe('Transactions', () => {
         data: '0x893d20e8'
       })
       assert.equal(value, '0x0000000000000000000000005B38Da6a701c568545dCfcB03FcB875f56beddC4'.toLowerCase())
-      const tx = FeeMarketEIP1559Transaction.fromTxData({
+      const tx = createFeeMarket1559Tx({
         nonce: 1,
         gasLimit: 1000000,
         maxPriorityFeePerGas: '0x01',
