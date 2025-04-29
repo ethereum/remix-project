@@ -45,10 +45,13 @@ module.exports = {
             '--no-sandbox',
             '--headless=new',
             '--verbose',
+            '--disable-dev-shm-usage',
+            '--remote-debugging-port=9222',
+            '--blink-settings=imagesEnabled=false',  // <-- turn off images entirely
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
-        }    
-        ,pageLoadStrategy: 'eager',
+        }
+        , pageLoadStrategy: 'eager',
         timeouts: { pageLoad: 30000 }  // e.g. 30 s max
       }
     },
