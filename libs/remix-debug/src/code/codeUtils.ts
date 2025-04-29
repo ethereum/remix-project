@@ -1,7 +1,6 @@
 'use strict'
 import { bytesToHex } from '@ethereumjs/util'
 import { Common, Mainnet } from '@ethereumjs/common'
-// TODO fix the import when getOpcodesForHF is exported
 import { getOpcodesForHF, paramsEVM } from '@ethereumjs/evm'
 import getOpcodes from './opcodes'
 
@@ -27,9 +26,8 @@ export function nameOpCodes (raw, hardfork) {
       const jumpNum = raw[pc] - 0x5f
       pushData = raw.slice(pc + 1, pc + jumpNum + 1)
       i += jumpNum
-    }
-
-    const hexCode = bytesToHex((pushData as any))
+    }  
+    const hexCode = pushData ? bytesToHex((pushData as any)) : ''
     // @ts-ignore
     const data = hexCode !== '' ? ' ' + hexCode : ''
 

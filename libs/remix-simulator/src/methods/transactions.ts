@@ -5,12 +5,12 @@ import { execution } from '@remix-project/remix-lib'
 import { AbiCoder } from 'ethers'
 import { VMexecutionResult } from '@remix-project/remix-lib'
 import { VMContext } from '../vm-context'
-import { Log, EvmError } from '@ethereumjs/evm'
+import { Log, EVMError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
 
 export type VMExecResult = {
-  exceptionError: EvmError
+  exceptionError: EVMError
   executionGasUsed: bigint
   gas: bigint
   gasRefund: bigint
