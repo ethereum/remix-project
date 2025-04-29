@@ -808,7 +808,7 @@ workflows:
             - build
           matrix:
             parameters:
-              browser: ["chrome"]
+              browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
