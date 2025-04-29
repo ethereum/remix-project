@@ -1,5 +1,9 @@
 'use strict'
 import { EventManager } from '../eventManager'
+/*
+ * A type that represents a `0x`-prefixed hex string.
+ */
+export type PrefixedHexString = `0x${string}`
 
 export type Transaction = {
   from: string,
