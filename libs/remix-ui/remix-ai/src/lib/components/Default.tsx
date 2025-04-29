@@ -9,6 +9,12 @@ import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
 
+// Using DOMPurify for sanitization
+import DOMPurify from 'dompurify';
+
+// Function to sanitize user input
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
+
 export let ChatApi = null
 
 export const Default = (props) => {
@@ -39,6 +45,8 @@ export const Default = (props) => {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+
+    const cleanPrompt = sanitizeInput(prompt);
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
@@ -47,14 +55,14 @@ export const Default = (props) => {
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
     } else {
-      response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
+      response = await props.plugin.call('remixAI', 'solidity_answer', cleanPrompt, GenerationParams);
     }
 
     if (GenerationParams.return_stream_response) HandleStreamResponse(response,
       (text) => {observer.next(text)},
       (result) => {
         observer.next(' ') // Add a space to flush the last message
-        ChatHistory.pushHistory(prompt, result)
+        ChatHistory.pushHistory(cleanPrompt, result)
         observer.complete()
         setTimeout(() => { setIS_streaming(false) }, 1000)
       }
