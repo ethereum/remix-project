@@ -11,6 +11,7 @@ const compilationParams = {
 interface CompilationResult {
   compilationSucceeded: boolean
   errors: string
+  errfiles?: { [key: string]: any }
 }
 
 export class ContractAgent {
@@ -96,7 +97,7 @@ export class ContractAgent {
       const result:CompilationResult = await this.compilecontracts()
       console.log('compilation result', result)
       if (!result.compilationSucceeded && this.performCompile) {
-        const newPrompt = `Payload:\n${JSON.stringify(this.contracts)}}\n\n While considering this compilation error: Here is the error message\n ${result.errors}. Try this again:${userPrompt}\n `
+        const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${userPrompt}\n `
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
@@ -143,10 +144,34 @@ export class ContractAgent {
         error = data.errors.find((error) => error.type !== 'Warning')
       }
       if (data.errors && data.errors.length && error) {
+        const errorFiles:{ [key: string]: any } = {};
+
+        for (const error of data.errors) {
+          if (error.type === 'Warning') continue
+
+          if (errorFiles[error.sourceLocation.file]) {
+            errorFiles[error.sourceLocation.file].errors.push({
+              errorStart : error.sourceLocation.start,
+              errorEnd : error.sourceLocation.end,
+              errorMessage : error.formattedMessage
+            })
+            console.log('errorFiles', errorFiles)
+          } else {
+            console.log('errorFiles else', errorFiles)
+            errorFiles[error.sourceLocation.file] = {
+              content : this.contracts[error.sourceLocation.file],
+              errors : [{
+                errorStart : error.sourceLocation.start,
+                errorEnd : error.sourceLocation.end,
+                errorMessage : error.formattedMessage
+              }]
+            }
+          }
+        }
         const msg = `
           - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
           `
-        return { compilationSucceeded: false, errors: msg }
+        return { compilationSucceeded: false, errors: msg, errfiles: errorFiles }
       }
 
       return { compilationSucceeded: true, errors: null }
