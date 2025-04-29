@@ -1,6 +1,6 @@
 'use strict'
 import { EventManager } from '../eventManager'
-import { AuthorizationList } from '@ethereumjs/common'
+import { AuthorizationList } from '@ethereumjs/tx'
 /*
  * A type that represents a `0x`-prefixed hex string.
  */

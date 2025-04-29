@@ -1,5 +1,5 @@
 import { toHex, toNumber, toBigInt } from 'web3-utils'
-import { toChecksumAddress, Address, bigIntToHex, bytesToHex } from '@ethereumjs/util'
+import { toChecksumAddress, bigIntToHex, bytesToHex, createAddressFromString } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { AbiCoder } from 'ethers'
@@ -210,7 +210,7 @@ export class Transactions {
       if (result.execResult.gasRefund) {
         gasUsed += Number(toNumber(result.execResult.gasRefund))
       }
-      gasUsed = gasUsed + Number(toNumber(value.tx.getBaseFee()))
+      gasUsed = gasUsed + Number(toNumber(value.tx.getIntrinsicGas()))
       cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
@@ -296,7 +296,7 @@ export class Transactions {
   eth_getTransactionCount (payload, cb) {
     const address = payload.params[0]
 
-    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
+    this.vmContext.vm().stateManager.getAccount(createAddressFromString(address)).then((account) => {
       const nonce = toBigInt(account.nonce).toString(10)
       cb(null, nonce)
     }).catch((error) => {
