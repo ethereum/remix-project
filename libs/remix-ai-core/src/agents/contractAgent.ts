@@ -158,9 +158,7 @@ export class ContractAgent {
               errorEnd : error.sourceLocation.end,
               errorMessage : error.formattedMessage
             })
-            console.log('errorFiles', errorFiles)
           } else {
-            console.log('errorFiles else', errorFiles)
             errorFiles[error.sourceLocation.file] = {
               content : this.contracts[error.sourceLocation.file].content,
               errors : [{
