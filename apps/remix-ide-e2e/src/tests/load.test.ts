@@ -8,7 +8,7 @@ module.exports = {
         init(browser, done)
     },
 
-    "test #flaky": function (browser: NightwatchBrowser) {
+    "test #group1": function (browser: NightwatchBrowser) {
         browser.pause(10000)
     }
 
