@@ -12,6 +12,9 @@ module.exports = {
     start_process: true,
     port: 9515,
     server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
+    keep_alive: { enabled: true, keepAliveMsecs: 500 },
+    timeout_options: { timeout: 10000, retry_attempts: 0 }
+
   },
 
   test_settings: {
@@ -48,11 +51,6 @@ module.exports = {
 
     // at the bottom of test_settings
     'chromeIdleTest': {
-      webdriver: {
-        // same as your other webdriver settings…
-        keep_alive: { enabled: true, keepAliveMsecs: 60000 },
-        timeout_options: { timeout: 60000, retry_attempts: 4 }
-      },
       desiredCapabilities: {
         'browserName': 'chrome',
         'javascriptEnabled': true,
