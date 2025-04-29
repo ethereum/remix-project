@@ -3,12 +3,12 @@ const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
-import { toChecksumAddress, bytesToHex, Address, toBytes, bigIntToHex } from '@ethereumjs/util'
+import { toChecksumAddress, bytesToHex, toBytes, createAddressFromString, PrefixedHexString } from '@ethereumjs/util'
 import utils, { toBigInt } from 'web3-utils'
 import { isBigInt } from 'web3-validator'
 import { Interface, zeroPadValue } from 'ethers'
 import { VMContext } from './vm-context'
-import type { EVMStateManagerInterface } from '@ethereumjs/common'
+import type { StateManagerInterface } from '@ethereumjs/common'
 import type { EVMResult, InterpreterStep, Message } from '@ethereumjs/evm'
 import type { AfterTxEvent, VM } from '@ethereumjs/vm'
 import type { TypedTransaction } from '@ethereumjs/tx'
@@ -43,7 +43,7 @@ export class VmProxy {
   utils
   txsMapBlock
   blocks
-  stateCopy: EVMStateManagerInterface
+  stateCopy: StateManagerInterface
   flagrecordVMSteps: boolean
   lastMemoryUpdate: Array<string>
   callIncrement: bigint
@@ -203,7 +203,7 @@ export class VmProxy {
       try {
         await (async (processingHash, processingAddress, self) => {
           try {
-            const account = Address.fromString(processingAddress)
+            const account = createAddressFromString(processingAddress)
             const storage = await self.vm.stateManager.dumpStorage(account)
             self.storageCache['after_' + processingHash][processingAddress] = storage
           } catch (e) {
@@ -305,7 +305,7 @@ export class VmProxy {
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
             (async (processingHash, processingAddress, self) => {
               try {
-                const account = Address.fromString(processingAddress)
+                const account = createAddressFromString(processingAddress)
                 const storage = await self.stateCopy.dumpStorage(account)
                 self.storageCache[processingHash][processingAddress] = storage
               } catch (e) {
@@ -331,7 +331,7 @@ export class VmProxy {
 
   getCode (address, cb) {
     address = toChecksumAddress(address)
-    this.vm.stateManager.getContractCode(Address.fromString(address)).then((result) => {
+    this.vm.stateManager.getCode(createAddressFromString(address)).then((result) => {
       cb(null, bytesToHex(result))
     }).catch((error) => {
       cb(error)
@@ -362,7 +362,7 @@ export class VmProxy {
     const txHash = bytesToHex(block.transactions[block.transactions.length - 1].hash())
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
-      const slot = bytesToHex(hash.keccak(toBytes(zeroPadValue(position, 32))))
+      const slot = bytesToHex(hash.keccak(toBytes(zeroPadValue(position, 32) as PrefixedHexString)))
       const storage = this.storageCache['after_' + txHash][address]
       return cb(null, storage[slot].value)
     }
