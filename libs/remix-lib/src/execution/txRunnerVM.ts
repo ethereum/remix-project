@@ -5,7 +5,7 @@ import { ConsensusType } from '@ethereumjs/common'
 import { LegacyTx, createLegacyTx, createFeeMarket1559Tx, createEOACode7702Tx, createLegacyTxFromRLP, createFeeMarket1559TxFromRLP } from '@ethereumjs/tx'
 import { Block, createBlock, createBlockFromRLP } from '@ethereumjs/block'
 import { bytesToHex, hexToBytes, createAddressFromString } from '@ethereumjs/util'
-import type { AddressLike, BigIntLike } from '@ethereumjs/util'
+import type { AddressLike, BigIntLike, PrefixedHexString } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
 import type { Transaction as InternalTransaction } from './txRunner'
@@ -114,9 +114,9 @@ export class TxRunnerVM {
       let tx
       if (signed) {
         if (!EIP1559) {
-          tx = createLegacyTxFromRLP(hexToBytes(data), { common: this.commonContext })
+          tx = createLegacyTxFromRLP(hexToBytes(data as PrefixedHexString), { common: this.commonContext })
         } else {
-          tx = createFeeMarket1559TxFromRLP(hexToBytes(data), { common: this.commonContext })
+          tx = createFeeMarket1559TxFromRLP(hexToBytes(data as PrefixedHexString), { common: this.commonContext })
         }
       }
       else {
@@ -137,7 +137,7 @@ export class TxRunnerVM {
             gasLimit: gasLimit,
             to: (to as AddressLike),
             value: (value as BigIntLike),
-            data: hexToBytes(data)
+            data: hexToBytes(data as PrefixedHexString)
           }, { common: this.commonContext }).sign(account.privateKey)
         } else {
           tx = createFeeMarket1559Tx({
@@ -147,7 +147,7 @@ export class TxRunnerVM {
             gasLimit: gasLimit,
             to: (to as AddressLike),
             value: (value as BigIntLike),
-            data: hexToBytes(data)
+            data: hexToBytes(data as PrefixedHexString)
           }).sign(account.privateKey)
         }
       }

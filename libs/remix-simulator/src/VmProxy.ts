@@ -9,7 +9,7 @@ import { isBigInt } from 'web3-validator'
 import { Interface, zeroPadValue } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManagerInterface } from '@ethereumjs/common'
-import type { EVMResult, InterpreterStep, Message } from '@ethereumjs/evm'
+import type { InterpreterStep } from '@ethereumjs/evm'
 import type { AfterTxEvent, VM } from '@ethereumjs/vm'
 import type { TypedTransaction } from '@ethereumjs/tx'
 
