@@ -50,7 +50,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
         </CustomTooltip>
       </RenderIf>
       <RenderIf condition={runTabState.selectExEnv === 'walletconnect'}>
-        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-walletconnect" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
           <i
             style={{ fontSize: 'medium' }}
             className={'ml-1 fa fa-wallet'}
