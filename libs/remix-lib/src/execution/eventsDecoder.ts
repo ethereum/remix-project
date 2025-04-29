@@ -41,7 +41,7 @@ export class EventsDecoder {
   _eventABI (contract): Record<string, { event, inputs, object, abi }> {
     const eventABI: Record<string, { event, inputs, object, abi }> = {}
     const abi = new Interface(contract.abi)
-    let eventFragments = abi.fragments.filter(f => f.type === "event") as Array<EventFragment> 
+    const eventFragments = abi.fragments.filter(f => f.type === "event") as Array<EventFragment>
     for (const e of eventFragments) {
       const event = abi.getEvent(e.name)
       eventABI[e.topicHash.replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }

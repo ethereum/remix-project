@@ -109,6 +109,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
 
   private async switchAway(showError: boolean, msg: string) {
     if (!this.provider) return
+    this.provider.destroy()
     if (showError) {
       this.call('terminal', 'log', { type: 'error', value: 'Error while querying the provider: ' + msg })
     }
@@ -121,7 +122,10 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         const result = await this.provider.send(data.method, data.params)
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
-        if (error && error.message && error.message.includes('SERVER_ERROR')) {
+        if (error && error.message &&
+            (error.message.includes('SERVER_ERROR') ||
+            error.message.includes('Failed to fetch') ||
+            error.message.includes('NetworkError'))) {
           try {
             // replace escaped quotes with normal quotes
             const errorString = String(error.message).replace(/\\"/g, '"');
@@ -131,10 +135,10 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
             if (messages && messages.length > 0) {
               this.switchAway(true, messages[0])
             } else {
-              this.switchAway(true, error.message ? error.message : error.error ? error.error : error)
+              this.switchAway(true, error.message ? `${error.message} ${data.method} ${data.params}` : error.error ? error.error : error)
             }
           } catch (error) {
-            this.switchAway(true, error.message ? error.message : error.error ? error.error : error)
+            this.switchAway(true, error.message ? `${error.message} ${data.method} ${data.params}` : error.error ? error.error : error)
           }
         }
         reject({ jsonrpc: '2.0', error: { message: error.message, code: -32603 }, id: data.id })
