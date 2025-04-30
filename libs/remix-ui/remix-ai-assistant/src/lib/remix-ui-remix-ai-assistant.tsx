@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 import PromptZone from '../components/promptzone'
 import ResponseZone from '../components/Responsezone'
 
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
-import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
+import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 import { highlighter } from '@nlux/highlighter'
 import '../css/color.css'
 import '@nlux/themes/unstyled.css'
 import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
+import DefaultResponseContent from '../components/DefaultResponseContent'
 
 export const user: UserPersona = {
   name: 'Remi',
@@ -89,7 +90,7 @@ export function RemixUiRemixAiAssistant(props: any) {
   const conversationStarters: ConversationStarter[] = [
     {
       prompt: 'Ask to explain a solidity contract!',
-      icon: 'fa fa-user-robot-xmarks'
+      icon: <i className="fa fa-user-robot-xmarks"></i>
     },
     { prompt: 'Ask to explain a function',
       icon: <i className="fa fa-user-robot-xmarks"></i>
@@ -108,11 +109,7 @@ export function RemixUiRemixAiAssistant(props: any) {
   ]
   const adapter = useAsStreamAdapter(send, [])
   return (
-    <div className="d-flex flex-column px-3 overflow-hidden pt-3 h-100 mx-2 w-100">
-      {/* <section className="d-flex flex-column justify-content-center align-items-center align-self-center flex-grow-1 ai-assistant-top-height">
-        <ResponseZone />
-      </section> */}
-      {/* <PromptZone /> */}
+    <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
       <AiChat
         api={ChatApi}
         adapter={ adapter }
@@ -135,9 +132,43 @@ export function RemixUiRemixAiAssistant(props: any) {
           editableUserMessages: true,
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
-          syntaxHighlighter: highlighter
+          syntaxHighlighter: highlighter,
+          promptRenderer: ({ uid, prompt, onResubmit }) => <PromptRenderer uid={uid} prompt={prompt} onResubmit={onResubmit} />,
+          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid} response={content} containerRef={containerRef} />
         }}
-      />
+      >
+        <AiChatUI.Greeting>
+          <DefaultResponseContent />
+        </AiChatUI.Greeting>
+      </AiChat>
+    </div>
+  )
+}
+
+function ResponseRenderer({ uid, response, containerRef }: { uid: string, response: string[], containerRef: RefObject<any> }) {
+  const [isLiked, setIsLiked] = useState(false)
+  const [isDisliked, setIsDisliked] = useState(false)
+  return (
+    <>
+      <div ref={containerRef} />
+      <div className="d-flex flex-row justify-content-between align-items-center mt-2">
+        <span className={!isLiked ? 'far fa-thumbs-up fa-2xl mr-3' : 'fas fa-thumbs-up fa-2xl mr-3'} onClick={() => setIsLiked(!isLiked && !isDisliked)}></span>
+        <span className={!isDisliked ? 'far fa-thumbs-down fa-2xl' : 'fas fa-thumbs-down fa-2xl'} onClick={() => setIsDisliked(!isDisliked && !isLiked)}></span>
+      </div>
+    </>
+  )
+}
+{/* <ResponseZone response={response} responseId={uid} /> */}
+
+function PromptRenderer({ uid, prompt, onResubmit }: { uid: string, prompt: string, onResubmit: (prompt: string) => void }) {
+  return (
+    <div key={uid} className="d-flex flex-row justify-content-between">
+      <span className="text-muted font-weight-bold">
+        You
+      </span>
+      <span className="">
+        {prompt}
+      </span>
     </div>
   )
 }
