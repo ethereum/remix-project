@@ -107,7 +107,7 @@ export class TxRunnerWeb3 {
     } else {
       try {
         if (tx.fromSmartAccount) {
-          const { txHash, contractAddress } = await this.sendUserOp(tx)
+          const { txHash, contractAddress } = await this.sendUserOp(tx, network.id)
           cb(null, txHash, isCreation, true, contractAddress)
         } else {
           const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
@@ -227,13 +227,27 @@ export class TxRunnerWeb3 {
     })
   }
 
-  async sendUserOp (tx) {
-    const localStorageKey = 'smartAccounts'
-    const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-    const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
-    const network = 'sepolia'
-    const chain = chains[network]
+  async sendUserOp (tx, chainId) {
+    // AA03: Add network name and public URL to support contract transactions using smart account
+    const aaSupportedNetworks = {
+      "11155111": {
+        name: "sepolia",
+        publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
+      },
+      "10200": {
+        name: "gnosisChiado",
+        publicNodeUrl: "https://rpc.chiadochain.net/"
+      }
+    }
+    const chain = chains[aaSupportedNetworks[chainId].name]
     const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
+    const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
+    const localStorageKey = 'smartAccounts'
+    // AA04: Check if this address is valid for newly added network
+    // This determiniticProxyAddress is used for replay protection during contract deployment
+    // See: https://github.com/safe-global/safe-smart-account?tab=readme-ov-file#replay-protection-eip-155
+    const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
+
 
     // Check that saOwner is there in MM addresses
     let smartAccountsObj = localStorage.getItem(localStorageKey)
@@ -250,7 +264,7 @@ export class TxRunnerWeb3 {
 
     const publicClient = createPublicClient({
       chain,
-      transport: http(PUBLIC_NODE_URL) // choose any provider here
+      transport: http(PUBLIC_NODE_URL)
     })
 
     const safeAccount = await toSafeSmartAccount({
@@ -305,7 +319,7 @@ export class TxRunnerWeb3 {
         contractAddress = expectedDeploymentAddress
       } else {
         contractAddress = undefined
-        console.error('Error in contract deployment')
+        console.error('Error in contract deployment using smart account')
       }
     } else {
       // contract interaction transaction
