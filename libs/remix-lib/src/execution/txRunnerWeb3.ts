@@ -203,8 +203,12 @@ export class TxRunnerWeb3 {
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
             return
           }
-          if (tx.fromSmartAccount && tx.value === "0" && err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1) {
-            // Do not show dialog for insufficient funds as smart account may be using paymaster
+          if (tx.fromSmartAccount && tx.value === "0" && (
+            (err && err.indexOf('gas required exceeds allowance (0)') !== -1)) || 
+            (err.error && err.error.indexOf('insufficient funds for transfer') !== -1)
+           ) {
+            // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)' 
+            // tx fees can be managed by paymaster in case of smart account tx
             // @todo If paymaster is used, check if balance/credits are available
             err = null
           }
