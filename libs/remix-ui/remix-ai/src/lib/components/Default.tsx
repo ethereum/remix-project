@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import '../remix-ai.css'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
@@ -19,6 +19,49 @@ export let ChatApi = null
 
 export const Default = (props) => {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // look at the ref when rendered
+  useEffect(() => {
+    if (containerRef.current) {
+
+      const textArea = containerRef.current?.getElementsByClassName('nlux-comp-composer')[0].getElementsByTagName('textarea')[0]
+      if (!textArea) return;
+    
+      const onInput = (e: Event) => {
+        console.log('Live input:', (e.target as HTMLTextAreaElement).value);
+        const sanitizedInput = sanitizeInput((e.target as HTMLTextAreaElement).value);
+        if (sanitizedInput !== (e.target as HTMLTextAreaElement).value) {
+          (e.target as HTMLTextAreaElement).value = sanitizedInput;
+        }
+        console.log('Sanitized input:', sanitizedInput);
+
+      };
+      
+      textArea.addEventListener('input', onInput);
+      
+      const sendButton = containerRef.current?.getElementsByClassName('nlux-comp-composer')[0].getElementsByTagName('button')[0];
+      const onClick = (e: Event) => {
+        console.log('Live click:', textArea.value);
+        if (textArea) {
+          const sanitized = sanitizeInput(textArea.value);
+          
+          if (sanitized !== textArea.value) {
+            textArea.value = sanitized;
+            console.log('Sanitized on send click:', sanitized);
+          }
+        }
+      };
+      if (sendButton) {
+        sendButton.addEventListener('click', onClick);
+      }
+
+      return () => {
+        textArea.removeEventListener('input', onInput);
+        if (sendButton) sendButton.removeEventListener('click', onClick);
+      };
+    }
+  }, [containerRef]);
 
   const HandleCopyToClipboard = () => {
     const markdown = document.getElementsByClassName('nlux-chatSegments-container')
@@ -89,6 +132,7 @@ export const Default = (props) => {
   const adapter = useAsStreamAdapter(send, []);
 
   return (
+    <span ref={containerRef}>
     <AiChat
       api={ChatApi}
       adapter={ adapter }
@@ -114,5 +158,7 @@ export const Default = (props) => {
         syntaxHighlighter: highlighter
       }}
     />
+
+    </span>
   );
 };
