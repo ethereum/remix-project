@@ -30,35 +30,61 @@ fi
 MAJORVERSION=$(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
 echo "CHROME DRIVER INSTALL $MAJORVERSION"
 
+# Determine target platform for ChromeDriver download
+case "$OS" in
+  Darwin)
+    if [[ "$(uname -m)" == "arm64" ]]; then
+      PLATFORM="mac-arm64"
+    else
+      PLATFORM="mac-x64"
+    fi
+    ;;
+  Linux)
+    PLATFORM="linux64"
+    ;;
+  *)
+    echo "Unsupported OS: $OS"; exit 1
+    ;;
+esac
+echo "Detected platform for download: $PLATFORM"
 
-
-# Determine download URL: use Chrome for Testing API for Chrome >=115
-if [ "$MAJORVERSION" -ge 115 ]; then
-  CHROME_FOR_TESTING_JSON="https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json"
-  CHROMEDRIVER_DOWNLOAD_URL=$(curl -sS "$CHROME_FOR_TESTING_JSON" \
-    | jq -r ".versions[] | select(.version==\"$MAJORVERSION\") \
-      | .downloads.chromedriver[] | select(.platform==\"$PLATFORM\").url")
-  if [ -z "$CHROMEDRIVER_DOWNLOAD_URL" ]; then
-    echo "No matching URL in Chrome for Testing JSON; falling back to storage.googleapis.com"
-    CHROMEDRIVER_DOWNLOAD_URL="https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_${PLATFORM}.zip"
-  fi
-else
+# Determine ChromeDriver version and download URL
+if [ "$MAJORVERSION" -lt 115 ]; then
+  # Chrome <115: use storage.googleapis.com
+  CHROMEDRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${MAJORVERSION}" | tr -d '\r')
   CHROMEDRIVER_DOWNLOAD_URL="https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_${PLATFORM}.zip"
+else
+  # Chrome >=115: use Chrome for Testing JSON feed
+  FEED_URL="https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json"
+  CHROMEDRIVER_VERSION=$(curl -sS "$FEED_URL" | jq -r ".milestones.\"$MAJORVERSION\".version")
+  CHROMEDRIVER_DOWNLOAD_URL=$(curl -sS "$FEED_URL" \
+    | jq -r ".milestones.\"$MAJORVERSION\".downloads.chromedriver[] \
+      | select(.platform==\"$PLATFORM\").url")
 fi
+
+echo "Matching ChromeDriver version: $CHROMEDRIVER_VERSION"
 echo "Downloading ChromeDriver from $CHROMEDRIVER_DOWNLOAD_URL"
  
 # Prepare install directory
 mkdir -p "$INSTALL_DIR"
 
-# Select platform
-PLATFORM="linux64"
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  PLATFORM="mac64"
-fi
-
 # Download and install ChromeDriver
 ZIP_PATH="${INSTALL_DIR}/chromedriver_${PLATFORM}.zip"
 curl -sS -o "$ZIP_PATH" "$CHROMEDRIVER_DOWNLOAD_URL"
 unzip -o "$ZIP_PATH" -d "$INSTALL_DIR"
-chmod +x "${INSTALL_DIR}/chromedriver"
-echo "ChromeDriver installed at ${INSTALL_DIR}/chromedriver"
+
+# Move the extracted chromedriver binary to the root of INSTALL_DIR
+EXTRACTED_DIR=$(find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 -type d | head -n1)
+if [ -f "$EXTRACTED_DIR/chromedriver" ]; then
+  mv "$EXTRACTED_DIR/chromedriver" "$INSTALL_DIR/chromedriver"
+else
+  echo "Error: chromedriver binary not found in $EXTRACTED_DIR"
+  exit 1
+fi
+
+chmod +x "$INSTALL_DIR/chromedriver"
+# Cleanup extracted directory and zip
+rm -rf "$EXTRACTED_DIR"
+rm -f "$ZIP_PATH"
+
+echo "ChromeDriver installed at $INSTALL_DIR/chromedriver"
