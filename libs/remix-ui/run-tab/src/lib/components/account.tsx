@@ -22,8 +22,8 @@ export function AccountUI(props: AccountProps) {
   const ownerEOA = useRef(null)
 
   const intl = useIntl()
-  const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
-  const aaSupportedChainIds = ["11155111", "10200"] // Sepolia, Gnosis Chiado
+  const aaSupportedChainIds = ["11155111", "10200"] // AA01: Add chain id here to show 'Create Smart Account' button in Udapp
+  const smartAccounts: string[] = aaSupportedChainIds.some(e => networkName.includes(e)) ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
