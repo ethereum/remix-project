@@ -109,6 +109,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  // AA02: Add network name and public URL to support smart account creation
   const aaSupportedNetworks = {
     "11155111": {
       name: "sepolia",
@@ -136,14 +137,11 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     chain,
     transport: custom(window.ethereum!),
   })
-  console.log('PUBLIC_NODE_URL---->', PUBLIC_NODE_URL)
 
   const publicClient = createPublicClient({
     chain,
     transport: http(PUBLIC_NODE_URL) // choose any provider here
   })
-  console.log('publicClient---->', publicClient)
-
 
   if (safeAddresses.length) {
     const lastSafeAddress: string = safeAddresses[safeAddresses.length - 1]
