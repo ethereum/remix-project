@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, parseUserInput, setProvider } from '@remix/remix-ai-core';
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, parseUserInput, setProvider } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
 import { user, assistantAvatar } from './personas';
@@ -8,12 +8,13 @@ import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
-import { set } from 'lodash';
+import { parse } from 'path';
 
 export let ChatApi = null
 
 export const Default = (props) => {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const chatCmdParser = new ChatCommandParser(props.plugin)
 
   const HandleCopyToClipboard = () => {
     const markdown = document.getElementsByClassName('nlux-chatSegments-container')
@@ -41,39 +42,18 @@ export const Default = (props) => {
     observer: StreamingAdapterObserver,
   ) => {
 
-    const command = setProvider(prompt)
-    const isProvidercmd = command[0]
-    const provider = command[1]
-    if (isProvidercmd) {
-      if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic') {
-        props.plugin.assistantProvider = provider
-        observer.next("AI Provider set to `" + provider + "` successfully! ")
-        observer.complete()
-      } else { observer.complete()}
-      return
+    const parseResult = await chatCmdParser.parse(prompt)
+    if (parseResult) {
+      observer.next(parseResult)
+      observer.complete()
     }
-
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
 
-    const userInput = parseUserInput(prompt)
-    const isGeneratePrompt = userInput[0]
-    const newprompt = userInput[1]
-
-    const wsprompt = (prompt.trimStart().startsWith('/workspace')) ? prompt.replace('/workspace', '').trimStart() : undefined
-
     let response = null
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
-    } else if (isGeneratePrompt) {
-      GenerationParams.return_stream_response = false
-      GenerationParams.stream_result = false
-      response = await props.plugin.call('remixAI', 'generate', newprompt, GenerationParams, "", true);
-    } else if (wsprompt !== undefined) {
-      GenerationParams.return_stream_response = false
-      GenerationParams.stream_result = false
-      response = await props.plugin.call('remixAI', 'generateWorkspace', wsprompt, GenerationParams);
     } else {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }
@@ -94,6 +74,7 @@ export const Default = (props) => {
       setTimeout(() => { setIS_streaming(false) }, 1000)
     }
   };
+
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
     { prompt: 'Explain what is a solidity contract!' },

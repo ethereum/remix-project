@@ -234,10 +234,8 @@ export class RemixAIPlugin extends ViewPlugin {
       }
     }
     const files = await this.workspaceAgent.getCurrentWorkspaceFiles()
-    // convert files to string
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
-    console.log('workspace --> Generating code for prompt:\n', userPrompt)
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)

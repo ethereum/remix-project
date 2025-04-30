@@ -10,9 +10,9 @@ import { buildSolgptPrompt, PromptBuilder } from './prompts/promptBuilder'
 import { RemoteInferencer } from './inferencers/remote/remoteInference'
 import { ChatHistory } from './prompts/chat'
 import { downloadLatestReleaseExecutable } from './helpers/inferenceServerReleases'
-
+import { ChatCommandParser } from './helpers/chatCommandParser'
 export {
-  IModel, IModelResponse, IModelRequest, InferenceModel,
+  IModel, IModelResponse, IModelRequest, InferenceModel, ChatCommandParser,
   ModelType, DefaultModels, ICompletions, IParams, IRemoteModel,
   getCompletionPrompt, getInsertionPrompt, IStreamResponse, buildSolgptPrompt,
   RemoteInferencer, InsertionParams, CompletionParams, GenerationParams, AssistantParams,
