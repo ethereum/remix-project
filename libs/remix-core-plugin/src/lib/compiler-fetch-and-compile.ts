@@ -191,7 +191,6 @@ export class FetchAndCompile extends Plugin {
             return cb(null, compilationTargets[path].content)
           } else {
             cb('dependency not found ' + url)
-            // await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
           }
         })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
