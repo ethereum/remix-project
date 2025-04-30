@@ -46,7 +46,7 @@ module.exports = {
             '--headless=new',
             '--verbose',
             '--disable-dev-shm-usage',
-            '--remote-debugging-port=9222',
+            '--remote-debugging-port=0',
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }

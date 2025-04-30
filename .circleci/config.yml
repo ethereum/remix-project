@@ -662,6 +662,11 @@ jobs:
         default: 1
     parallelism: << parameters.parallelism >>
     steps:
+      - run:
+          name: set env
+          command: |
+            export DBUS_SESSION_BUS_ADDRESS=/dev/null
+            export XDG_RUNTIME_DIR=/tmp
       - checkout
       - attach_workspace:
           at: .
