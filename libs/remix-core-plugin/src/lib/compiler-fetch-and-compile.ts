@@ -188,7 +188,6 @@ export class FetchAndCompile extends Plugin {
           // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
-            console.log('resolving', targetPath, url)
             return cb(null, compilationTargets[path].content)
           } else {
             cb('dependency not found ' + url)
