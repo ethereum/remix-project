@@ -697,10 +697,13 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
-                install-chromedriver: false
+                install-chromedriver: true
                 install-geckodriver: false
-            - run: yarn install_webdriver
-            - run: google-chrome --version
+            #- run: yarn install_webdriver
+            - run:
+                command: |
+                  google-chrome --version
+                  chromedriver --version
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
@@ -750,9 +753,12 @@ jobs:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
-          install-chromedriver: false
-      - run: yarn install_webdriver
-      - run: google-chrome --version
+          install-chromedriver: true
+      #- run: yarn install_webdriver
+      - run:
+          command: |
+            google-chrome --version
+            chromedriver --version
       - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
