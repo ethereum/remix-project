@@ -684,10 +684,12 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
-                install-chromedriver: false
+                install-chromedriver: true
                 install-geckodriver: false
-            - run: yarn install_webdriver
-            - run: google-chrome --version
+            - run:
+                command: |
+                  google-chrome --version
+                  chromedriver --version
       - when:
           condition:
               equal: [ "chromeMetamask", << parameters.browser >> ]
