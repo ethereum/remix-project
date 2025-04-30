@@ -2,7 +2,8 @@
 
 set -e
 
-
+export DBUS_SESSION_BUS_ADDRESS=/dev/null
+export XDG_RUNTIME_DIR=/tmp
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
