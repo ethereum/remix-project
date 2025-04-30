@@ -709,7 +709,7 @@ jobs:
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./logs/
 
   tests-passed:
     machine:
