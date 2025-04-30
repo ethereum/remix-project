@@ -19,10 +19,6 @@ const WS_URL =
     ? process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_DEV
     : process.env.REACT_APP_AZTEC_PLUGIN_WS_URL_PROD
 
-console.log(BASE_URL)
-console.log(WS_URL)
-
-
 export const Compile = () => {
   const [version] = useState('v0.85.0')
   const [projectList, setProjectList] = useState<string[]>([])
