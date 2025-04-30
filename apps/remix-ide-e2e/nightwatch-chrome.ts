@@ -11,8 +11,7 @@ module.exports = {
   webdriver: {
     start_process: true,
     port: 9515,
-    server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
-
+    server_path:  '/usr/local/bin/chromedriver' //./tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
   },
 
   test_settings: {
