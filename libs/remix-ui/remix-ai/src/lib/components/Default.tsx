@@ -27,22 +27,22 @@ export const Default = (props) => {
 
       const textArea = containerRef.current?.getElementsByClassName('nlux-comp-composer')[0].getElementsByTagName('textarea')[0]
       if (!textArea) return;
-    
+
       const onInput = (e: Event) => {
         const sanitizedInput = sanitizeInput((e.target as HTMLTextAreaElement).value);
         if (sanitizedInput !== (e.target as HTMLTextAreaElement).value) {
           (e.target as HTMLTextAreaElement).value = sanitizedInput;
         }
       };
-      
+
       textArea.addEventListener('input', onInput);
-      
+
       const sendButton = containerRef.current?.getElementsByClassName('nlux-comp-composer')[0].getElementsByTagName('button')[0];
       const onClick = (e: Event) => {
 
         if (textArea) {
           const sanitized = sanitizeInput(textArea.value);
-          
+
           if (sanitized !== textArea.value) {
             textArea.value = sanitized;
           }
@@ -128,31 +128,31 @@ export const Default = (props) => {
 
   return (
     <span ref={containerRef}>
-    <AiChat
-      api={ChatApi}
-      adapter={ adapter }
-      personaOptions={{
-        assistant: {
-          name: "RemixAI",
-          tagline: "Your Web3 AI Assistant",
-          avatar: assistantAvatar
-        },
-        user
-      }}
-      //initialConversation={initialMessages}
-      conversationOptions={{ layout: 'bubbles', conversationStarters }}
-      displayOptions={{ colorScheme: "auto", themeId: "remix_ai_theme" }}
-      composerOptions={{ placeholder: "Type your query",
-        submitShortcut: 'Enter',
-        hideStopButton: false,
-      }}
-      messageOptions={{ showCodeBlockCopyButton: true,
-        editableUserMessages: true,
-        streamingAnimationSpeed: 1,
-        waitTimeBeforeStreamCompletion: 1000,
-        syntaxHighlighter: highlighter
-      }}
-    />
+      <AiChat
+        api={ChatApi}
+        adapter={ adapter }
+        personaOptions={{
+          assistant: {
+            name: "RemixAI",
+            tagline: "Your Web3 AI Assistant",
+            avatar: assistantAvatar
+          },
+          user
+        }}
+        //initialConversation={initialMessages}
+        conversationOptions={{ layout: 'bubbles', conversationStarters }}
+        displayOptions={{ colorScheme: "auto", themeId: "remix_ai_theme" }}
+        composerOptions={{ placeholder: "Type your query",
+          submitShortcut: 'Enter',
+          hideStopButton: false,
+        }}
+        messageOptions={{ showCodeBlockCopyButton: true,
+          editableUserMessages: true,
+          streamingAnimationSpeed: 1,
+          waitTimeBeforeStreamCompletion: 1000,
+          syntaxHighlighter: highlighter
+        }}
+      />
 
     </span>
   );
