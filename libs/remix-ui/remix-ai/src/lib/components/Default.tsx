@@ -21,7 +21,7 @@ export const Default = (props) => {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // look at the ref when rendered
+  // use refs to access the DOM elements and remove event listeners when unmounting
   useEffect(() => {
     if (containerRef.current) {
 
@@ -29,26 +29,22 @@ export const Default = (props) => {
       if (!textArea) return;
     
       const onInput = (e: Event) => {
-        console.log('Live input:', (e.target as HTMLTextAreaElement).value);
         const sanitizedInput = sanitizeInput((e.target as HTMLTextAreaElement).value);
         if (sanitizedInput !== (e.target as HTMLTextAreaElement).value) {
           (e.target as HTMLTextAreaElement).value = sanitizedInput;
         }
-        console.log('Sanitized input:', sanitizedInput);
-
       };
       
       textArea.addEventListener('input', onInput);
       
       const sendButton = containerRef.current?.getElementsByClassName('nlux-comp-composer')[0].getElementsByTagName('button')[0];
       const onClick = (e: Event) => {
-        console.log('Live click:', textArea.value);
+
         if (textArea) {
           const sanitized = sanitizeInput(textArea.value);
           
           if (sanitized !== textArea.value) {
             textArea.value = sanitized;
-            console.log('Sanitized on send click:', sanitized);
           }
         }
       };
@@ -88,7 +84,6 @@ export const Default = (props) => {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
-
     const cleanPrompt = sanitizeInput(prompt);
     GenerationParams.stream_result = true
     setIS_streaming(true)
