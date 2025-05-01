@@ -15456,10 +15456,10 @@ ethers@^5.7.1, ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-"ethers@npm:ethers@beta-eip-7702":
-  version "6.13.6-beta.1"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.13.6-beta.1.tgz#73099acc2664eabe0e7002cbb7345e0cef4b6542"
-  integrity sha512-sJZklf+m7QrlzYnOFbR0qHPqgYHeevbY98VIhzvnSdzhJVN/nNV/skKc/4wjyxbWRhK9t7r6ENcwUwLPjfxTLw==
+ethers@^6.13.7:
+  version "6.13.7"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.13.7.tgz#7457fcb32413b441a3ee6e9f4cd63bf782de6226"
+  integrity sha512-qbaJ0uIrjh+huP1Lad2f2QtzW5dcqSVjIzVH6yWB4dKoMuj2WqYz5aMeeQTCNpAKgTJBM5J9vcc2cYJ23UAimQ==
   dependencies:
     "@adraffy/ens-normalize" "1.10.1"
     "@noble/curves" "1.2.0"
