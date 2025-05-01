@@ -22,7 +22,7 @@ export function AccountUI(props: AccountProps) {
   const ownerEOA = useRef(null)
 
   const intl = useIntl()
-  const aaSupportedChainIds = ["11155111", "10200"] // AA01: Add chain id here to show 'Create Smart Account' button in Udapp
+  const aaSupportedChainIds = ["11155111"] // AA01: Add chain id here to show 'Create Smart Account' button in Udapp
   const smartAccounts: string[] = aaSupportedChainIds.some(e => networkName.includes(e)) ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function AccountUI(props: AccountProps) {
     }
   }, [accounts, selectedAccount])
 
-  // Uncomment this when we want to show 'Create Smart Account' button
+  // Comment this when not to show 'Create Smart Account' button
   useEffect(() => {
     if (aaSupportedChainIds.some(e => networkName.includes(e))) {
       if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {

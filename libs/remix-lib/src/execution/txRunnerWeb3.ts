@@ -238,10 +238,10 @@ export class TxRunnerWeb3 {
         name: "sepolia",
         publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
       },
-      "10200": {
-        name: "gnosisChiado",
-        publicNodeUrl: "https://rpc.chiadochain.net/"
-      }
+      // "10200": {
+      //   name: "gnosisChiado",
+      //   publicNodeUrl: "https://rpc.chiadochain.net/"
+      // }
     }
     const chain = chains[aaSupportedNetworks[chainId].name]
     const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
