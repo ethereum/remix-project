@@ -527,7 +527,7 @@ async function installFoundry(): Promise<void> {
       server.stdout.on('data', function (data) {
         console.log(data.toString())
         if (
-          data.toString().includes("chisel")
+          data.toString().includes("use - chisel")
         ) {
           console.log('resolving')
           resolve()
