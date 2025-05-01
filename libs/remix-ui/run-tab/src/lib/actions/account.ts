@@ -120,7 +120,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     //   publicNodeUrl: "https://rpc.chiadochain.net/"
     // }
   }
-  const {chainId} = plugin.REACT_API
+  const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
   const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
