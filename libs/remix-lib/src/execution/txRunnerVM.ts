@@ -136,7 +136,7 @@ export class TxRunnerVM {
             data: hexToBytes(data as PrefixedHexString),
             authorizationList: authorizationList
           }, { common: this.commonContext }).sign(account.privateKey)
-        } if (!EIP1559) {
+        } else if (!EIP1559) {
           tx = createLegacyTx({
             nonce: useCall ? this.nextNonceForCall : res.nonce,
             gasPrice: '0x1',

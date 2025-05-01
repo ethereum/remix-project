@@ -8,7 +8,7 @@ import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { createVM, VM } from '@ethereumjs/vm'
-import { Common, ConsensusType, Mainnet } from '@ethereumjs/common'
+import { Common, ConsensusType, Mainnet, CommonOpts } from '@ethereumjs/common'
 import { MerklePatriciaTrie, createMPT, verifyMerkleProof } from '@ethereumjs/mpt'
 import { MerkleStateManager, MerkleStateManagerOpts } from '@ethereumjs/statemanager'
 import { StateManagerInterface, StorageDump } from '@ethereumjs/common'

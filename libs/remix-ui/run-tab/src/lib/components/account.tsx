@@ -52,18 +52,46 @@ export function AccountUI(props: AccountProps) {
   //   }
   // }, [selectedAccount])
 
-  /*
   useEffect(() => {
-    if (networkName.includes('Sepolia')) {
-      if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
+    const run = async () => {
+      console.log(networkName, selectedAccount, selectExEnv)
+      if (selectExEnv !== 'vm-pectra') {
         setEnableDelegationAuthorization(false)
+        ownerEOA.current = ''
+        return
       }
-      else {
-        setEnableDelegationAuthorization(true)
+      setEnableDelegationAuthorization(true)
+      if (!selectedAccount) {
+        setSmartAccountSelected(false)
+        ownerEOA.current = ''
+        return
       }
-    } else {}
-  }, [selectedAccount])
-*/
+      const web3 = props.runTabPlugin.blockchain.web3()
+      if (!web3) {
+        setSmartAccountSelected(false)
+        ownerEOA.current = ''
+        return
+      }
+      const code = await props.runTabPlugin.blockchain.web3().eth.getCode(selectedAccount)
+      const EIP7702_CODE_INDICATOR_FLAG = '0xef0100'
+      if (code && code.startsWith(EIP7702_CODE_INDICATOR_FLAG)) {
+        // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-7702.md delegation indicator
+        const address = code.replace(EIP7702_CODE_INDICATOR_FLAG)
+        if (address === '0x0000000000000000000000000000000000000000') {
+          setSmartAccountSelected(false)
+          ownerEOA.current = ''
+        } else {
+          setSmartAccountSelected(true)
+          ownerEOA.current = address
+        }
+      } else {
+        setSmartAccountSelected(false)
+        ownerEOA.current = ''
+      }
+    }
+    run()
+  }, [selectedAccount, selectExEnv])
+
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
@@ -171,7 +199,7 @@ export function AccountUI(props: AccountProps) {
       intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
       (
         <div className="w-100" data-id="createSmartAccountModal">
-          <input onChange={handleDelegationAuthorizationAddressRef} />
+          <input data-id="create-delegation-authorization-input" onChange={handleDelegationAuthorizationAddressRef} />
         </div>
       ),
       intl.formatMessage({ id: 'udapp.continue' }),
@@ -365,7 +393,7 @@ export function AccountUI(props: AccountProps) {
       </div>) : null }
       { enableDelegationAuthorization ? (<div className="mt-1">
         <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
-          <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
+          <button data-id="create-delegation-authorization" type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
             <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
             Delegation Authorization
           </button>

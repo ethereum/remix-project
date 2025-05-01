@@ -2,7 +2,7 @@ import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
-import { toChecksumAddress } from '@ethereumjs/util'
+import { toChecksumAddress, bytesToHex } from '@ethereumjs/util'
 import { SmartAccount } from "../types"
 import { BrowserProvider, BaseWallet, SigningKey } from "ethers" 
 import "viem/window"
@@ -111,7 +111,6 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 
 export const delegationAuthorization = async (contractAddress: string, plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
-  console.log(artefact)
   if (!artefact) {
     await plugin.call('notification', 'toast', `The contract with address ${contractAddress} doesn't seem to have been compiled in Remix. Please first compile and deploy a contract.`)
     return
@@ -122,20 +121,37 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
       return ret.result
     }
   }
+
+  plugin.call('notification', 'toast', 'Signing and activating delegation...')
+
   const ethersProvider = new BrowserProvider(provider)
-  const signer = await ethersProvider.getSigner()
-  const authSignerPKey = new BaseWallet(new SigningKey('0x503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb'), ethersProvider)
-  const auth = await authSignerPKey.authorize({ address: contractAddress });
-  (auth.nonce as any) = [auth.nonce]
-  const tx = await signer.sendTransaction({
-    type: 4,
-    to: plugin.REACT_API.accounts.selectedAccount,
-    authorizationList: [ auth ]
-  });
-  console.log(tx)
-  
-  const receipt = await tx.wait()
-  console.log(receipt)
+  const pKey = await ethersProvider.send('eth_getPKey', [plugin.REACT_API.accounts.selectedAccount])
+  const authSignerPKey = new BaseWallet(new SigningKey(bytesToHex(pKey)), ethersProvider)
+  const auth = await authSignerPKey.authorize({ address: contractAddress, chainId: 0 });
+
+  const signerForAuth = Object.keys(plugin.REACT_API.accounts.loadedAccounts).find((a) => a !== plugin.REACT_API.accounts.selectedAccount)
+  const signer = await ethersProvider.getSigner(signerForAuth)
+  let tx
+  try {
+    tx = await signer.sendTransaction({
+      type: 4,
+      to: plugin.REACT_API.accounts.selectedAccount,
+      authorizationList: [ auth ]
+    });
+    console.log(tx)
+  } catch (e) {
+    console.error(e)
+    return
+  }
+
+  let receipt
+  try {
+    receipt = await tx.wait()
+    console.log(receipt)
+  } catch (e) {
+    console.error(e)
+    return
+  }  
 
   const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
   const contractObject = {
@@ -149,6 +165,8 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   }
   plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
   await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
+
+  plugin.call('notification', 'toast', `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress}`)
   return { txHash: receipt.hash }
 }
 
