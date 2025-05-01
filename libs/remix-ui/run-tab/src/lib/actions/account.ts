@@ -115,10 +115,10 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       name: "sepolia",
       publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
     },
-    "10200": {
-      name: "gnosisChiado",
-      publicNodeUrl: "https://rpc.chiadochain.net/"
-    }
+    // "10200": {
+    //   name: "gnosisChiado",
+    //   publicNodeUrl: "https://rpc.chiadochain.net/"
+    // }
   }
   const {chainId} = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
@@ -160,7 +160,6 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       saltNonce: salt,
       version: "1.4.1"
     })
-    console.log('safeAccount.address--->', safeAccount.address)
 
     const paymasterClient = createPimlicoClient({
       transport: http(BUNDLER_URL),
@@ -188,10 +187,8 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       }]
     })
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
-    console.log('useropHash--->', useropHash)
 
-
-    // TO verify creation, check if there is a contract code at this address
+    // To verify creation, check if there is a contract code at this address
     const safeAddress = safeAccount.address
     const sAccount: SmartAccount = {
       address : safeAccount.address,
