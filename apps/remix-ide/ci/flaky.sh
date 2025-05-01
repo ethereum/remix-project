@@ -9,7 +9,7 @@ if [ "$1" == "chrome" ]; then
   --port=9515 \
   --host=127.0.0.1 \
   --silent > driver.log 2>&1 &
-fi
+
 
 # Save its PID so you can kill it later if needed
 echo $! > chromedriver.pid
@@ -20,6 +20,8 @@ while ! curl -s http://127.0.0.1:9515/status >/dev/null; do
 done
 
 echo "🚀 ChromeDriver is up on 127.0.0.1:9515"
+
+fi
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.flaky" | sort )
 
