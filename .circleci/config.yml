@@ -686,12 +686,6 @@ jobs:
                 install-chrome: true
                 install-chromedriver: true
                 install-geckodriver: false
-            - run:
-                command: |
-                  google-chrome --version
-                  chromedriver --version
-                  /usr/local/bin/chromedriver --port=9515 --host=127.0.0.1 &
-                  echo $! > chromedriver.pid
       - when:
           condition:
               equal: [ "chromeMetamask", << parameters.browser >> ]
