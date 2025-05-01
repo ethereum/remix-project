@@ -9,7 +9,7 @@ module.exports = {
   globals_path: '',
 
   webdriver: {
-    start_process: true,
+    start_process: false,
     port: 9515,
     server_path:  '/usr/local/bin/chromedriver' //./tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
   },

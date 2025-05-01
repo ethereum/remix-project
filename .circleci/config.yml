@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: false   
+    default: true   
   run_metamask_tests:
     type: boolean
     default: false   
@@ -690,6 +690,8 @@ jobs:
                 command: |
                   google-chrome --version
                   chromedriver --version
+                  /usr/local/bin/chromedriver --port=9515 --host=127.0.0.1 &
+                  echo $! > chromedriver.pid
       - when:
           condition:
               equal: [ "chromeMetamask", << parameters.browser >> ]
@@ -716,6 +718,9 @@ jobs:
             - run: yarn install_webdriver
             - run: firefox --version
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run:
+          name: Kill ChromeDriver
+          command: kill $(cat chromedriver.pid)
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
