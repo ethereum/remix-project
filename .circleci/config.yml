@@ -712,9 +712,6 @@ jobs:
             - run: yarn install_webdriver
             - run: firefox --version
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
-      - run:
-          name: Kill ChromeDriver
-          command: kill $(cat chromedriver.pid)
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:

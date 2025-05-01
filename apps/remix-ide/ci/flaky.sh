@@ -2,11 +2,14 @@
 
 set -e
 
+# if $1 is chrome
+if [ "$1" == "chrome" ]; then
 # 1) Start ChromeDriver in the background
 /usr/local/bin/chromedriver \
   --port=9515 \
   --host=127.0.0.1 \
   --silent > driver.log 2>&1 &
+fi
 
 # Save its PID so you can kill it later if needed
 echo $! > chromedriver.pid
