@@ -204,10 +204,10 @@ export class TxRunnerWeb3 {
             return
           }
           if (tx.fromSmartAccount && tx.value === "0" && (
-            (err && err.indexOf('gas required exceeds allowance (0)') !== -1)) || 
+            (err && err.indexOf('gas required exceeds allowance (0)') !== -1)) ||
             (err.error && err.error.indexOf('insufficient funds for transfer') !== -1)
-           ) {
-            // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)' 
+          ) {
+            // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)'
             // tx fees can be managed by paymaster in case of smart account tx
             // @todo If paymaster is used, check if balance/credits are available
             err = null
@@ -251,7 +251,6 @@ export class TxRunnerWeb3 {
     // This determiniticProxyAddress is used for replay protection during contract deployment
     // See: https://github.com/safe-global/safe-smart-account?tab=readme-ov-file#replay-protection-eip-155
     const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
-
 
     // Check that saOwner is there in MM addresses
     let smartAccountsObj = localStorage.getItem(localStorageKey)
