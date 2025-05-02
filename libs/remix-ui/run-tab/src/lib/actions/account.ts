@@ -3,6 +3,7 @@ import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
+import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, toAddress } from '@remix-project/remix-lib'
 import { SmartAccount } from "../types"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
@@ -109,23 +110,12 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  // AA02: Add network name and public URL to support smart account creation
-  const aaSupportedNetworks = {
-    "11155111": {
-      name: "sepolia",
-      publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-    },
-    // "10200": {
-    //   name: "gnosisChiado",
-    //   publicNodeUrl: "https://rpc.chiadochain.net/"
-    // }
-  }
+  
   const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
-  const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
-  const localStorageKey = 'smartAccounts'
-  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // A dummy zero value tx is made to this address to create existence of smart account
+  const BUNDLER_URL = getPimlicoBundlerURL(chainId)
+  
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   let salt
 
@@ -198,10 +188,10 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     }
     plugin.REACT_API.smartAccounts[safeAddress] = sAccount
     // Save smart accounts in local storage
-    const smartAccountsStr = localStorage.getItem(localStorageKey)
+    const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
-    localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+    localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
 
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
@@ -212,21 +202,19 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
 export const loadSmartAccounts = async (plugin) => {
   const { chainId } = plugin.REACT_API
-  const localStorageKey = 'smartAccounts'
-
-  const smartAccountsStr = localStorage.getItem(localStorageKey)
+  const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
   if (smartAccountsStr) {
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     if (smartAccountsObj[chainId]) {
       plugin.REACT_API.smartAccounts = smartAccountsObj[chainId]
     } else {
       smartAccountsObj[chainId] = {}
-      localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+      localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
     }
   } else {
     const objToStore = {}
     objToStore[chainId] = {}
-    localStorage.setItem(localStorageKey, JSON.stringify(objToStore))
+    localStorage.setItem(aaLocalStorageKey, JSON.stringify(objToStore))
   }
 }
 
