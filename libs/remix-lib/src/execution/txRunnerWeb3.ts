@@ -204,7 +204,7 @@ export class TxRunnerWeb3 {
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
             return
           }
-          if (tx.fromSmartAccount && tx.value === "0" && 
+          if (tx.fromSmartAccount && tx.value === "0" &&
             err && err.message && err.message.includes('missing revert data')
           ) {
             // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)'

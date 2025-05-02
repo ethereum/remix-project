@@ -1,19 +1,19 @@
-import { ZeroAddress} from 'ethers'
+import { ZeroAddress } from 'ethers'
 
 // AA02: Add network name and public URL to support contract transactions using smart account
 export const aaSupportedNetworks = {
-    "11155111": {
-      name: "sepolia",
-      publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-    },
-    // "10200": {
-    //   name: "gnosisChiado",
-    //   publicNodeUrl: "https://rpc.chiadochain.net/"
-    // }
-  }
+  "11155111": {
+    name: "sepolia",
+    publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
+  },
+  // "10200": {
+  //   name: "gnosisChiado",
+  //   publicNodeUrl: "https://rpc.chiadochain.net/"
+  // }
+}
 
 export const getPimlicoBundlerURL = (chainId) => {
-    return `https://pimlico.remixproject.org/api/proxy/${chainId}`
+  return `https://pimlico.remixproject.org/api/proxy/${chainId}`
 }
 
 export const aaLocalStorageKey = 'smartAccounts'
