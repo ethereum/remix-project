@@ -1,12 +1,13 @@
+import { isOllamaAvailable, listModels } from "../inferencers/local/ollama";
 import { GenerationParams } from "../types/models";
 
-type CommandHandler = (args: string, reference) => void;
+type CommandHandler = (args: string, reference: any) => void;
 
 export class ChatCommandParser {
   private commands: Map<string, CommandHandler> = new Map();
-  private props
+  private props: any
 
-  constructor(props) {
+  constructor(props: any) {
     this.registerDefaultCommands();
     this.props = props;
   }
@@ -15,6 +16,7 @@ export class ChatCommandParser {
     this.register("@generate", this.handleGenerate);
     this.register("@workspace", this.handleWorkspace);
     this.register("@setAssistant", this.handleAssistant);
+    this.register("@ollama", this.handleOllama);
     this.register("/generate", this.handleGenerate);
     this.register("/workspace", this.handleWorkspace);
     this.register("/setAssistant", this.handleAssistant);
@@ -67,12 +69,46 @@ export class ChatCommandParser {
     }
   }
 
-  private async handleAssistant(provider: string, ref) {
+  private async handleAssistant(provider: string, ref: { props: { assistantProvider: string; }; }) {
     if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic') {
       ref.props.assistantProvider = provider
       return "AI Provider set to `" + provider + "` successfully! "
     } else {
       return "Invalid AI Provider. Please use `openai`, `mistralai`, or `anthropic`."
+    }
+  }
+
+  private async handleOllama(prompt: string, ref: any) {
+    try {
+      if (prompt === "start") {
+        const available = await isOllamaAvailable();
+        if (!available) {
+          return '❌ Ollama is not available. Consider enabling the (Ollama CORS)[https://objectgraph.com/blog/ollama-cors/]'
+        }
+        const models = await listModels();
+        const res = "Available models: " + models.map((model: any) => `\`${model}\``).join("\n");
+        return res + "\n\nOllama is now set up. You can use the command `/ollama select <model>` to start a conversation with a specific model. Make sure the model is being run on your local machine. See ollama run <model> for more details.";
+      } else if (prompt.trimStart().startsWith("select")) {
+        const model = prompt.split(" ")[1];
+        if (!model) {
+          return "Please provide a model name to select.";
+        }
+        const available = await isOllamaAvailable();
+        if (!available) {
+          return '❌ Ollama is not available. Consider enabling the (Ollama CORS)[https://objectgraph.com/blog/ollama-cors/]'
+        }
+        const models = await listModels();
+        if (models.includes(model)) {
+          // initializer ollama in remixai
+          return `Model set to \`${model}\`. You can now start chatting with it.`;
+        } else {
+          return `Model \`${model}\` is not available. Please check the list of available models.`;
+        }
+      } else if (prompt === "stop") {
+        return "Ollama generation stopped.";
+      }
+    } catch (error) {
+      return "Ollama generation failed. Please try again.";
     }
   }
 }

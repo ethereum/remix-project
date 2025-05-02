@@ -53,6 +53,15 @@ export interface ICompletions{
   code_completion(context, ctxFiles, fileName, params:IParams): Promise<any>;
   code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, params:IParams): Promise<any>;
 }
+export interface IGeneration{
+  code_generation(prompt, params:IParams): Promise<any>;
+  code_explaining(prompt, context:string, params:IParams): Promise<any>;
+  error_explaining(prompt, params:IParams): Promise<any>;
+  solidity_answer(prompt, params:IParams): Promise<any>;
+  generate(prompt, params:IParams): Promise<any>;
+  generateWorkspace(prompt, params:IParams): Promise<any>;
+  vulnerability_check(prompt, params:IParams): Promise<any>;
+}
 
 export interface IParams {
   temperature?: number;

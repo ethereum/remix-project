@@ -1,4 +1,4 @@
-import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
+import { ICompletions, IGeneration, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
 import { buildSolgptPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
 
 const defaultErrorMessage = `Unable to get a response from AI server`
-export class RemoteInferencer implements ICompletions {
+export class RemoteInferencer implements ICompletions, IGeneration {
   api_url: string
   completion_url: string
   max_history = 7

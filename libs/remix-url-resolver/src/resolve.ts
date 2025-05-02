@@ -182,12 +182,15 @@ export class RemixURLResolver {
 
   async handleV4CoreGithub (url: string): Promise<HandlerResponse> {
     // e.g https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/interfaces/IExtsload.sol
-    url = url.replace('@uniswap/v4-core/src', '')
+    url = url.replace('@uniswap/v4-core/contracts/', '')
+    url = url.replace('@uniswap/v4-core/src/', '')
+    url = url.replace('@uniswap/v4-core/', '')
     url = url.replace('v4-core/src', '')
 
     // eslint-disable-next-line no-useless-catch
     try {
       const req = `https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/${url}`
+      //const req = `https://github.com/Uniswap/v4-core/blob/v4.0.0/src/${url}`
       const response: AxiosResponse = await axios.get(req, { transformResponse: []})
       return { content: response.data, cleanUrl: req }
     } catch (e) {
