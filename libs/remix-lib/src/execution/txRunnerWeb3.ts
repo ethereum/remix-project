@@ -205,7 +205,7 @@ export class TxRunnerWeb3 {
           }
           if (tx.fromSmartAccount && tx.value === "0" && (
             (err && err.indexOf('gas required exceeds allowance (0)') !== -1)) ||
-            (err.error && err.error.indexOf('insufficient funds for transfer') !== -1)
+            (err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1)
           ) {
             // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)'
             // tx fees can be managed by paymaster in case of smart account tx
