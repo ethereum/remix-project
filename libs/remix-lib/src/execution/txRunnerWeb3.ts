@@ -4,6 +4,7 @@ import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
 import { BrowserProvider } from 'ethers'
 import { normalizeHexAddress } from '../helpers/uiHelper'
+import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, aaDeterminiticProxyAddress } from '../helpers/aaConstants'
 import { toBigInt, toHex, toChecksumAddress } from 'web3-utils'
 import { randomBytes } from 'crypto'
 import "viem/window"
@@ -203,9 +204,8 @@ export class TxRunnerWeb3 {
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
             return
           }
-          if (tx.fromSmartAccount && tx.value === "0" && (
-            (err && err.indexOf('gas required exceeds allowance (0)') !== -1)) ||
-            (err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1)
+          if (tx.fromSmartAccount && tx.value === "0" && 
+            err && err.message && err.message.includes('missing revert data')
           ) {
             // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)'
             // tx fees can be managed by paymaster in case of smart account tx
@@ -232,28 +232,12 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx, chainId) {
-    // AA03: Add network name and public URL to support contract transactions using smart account
-    const aaSupportedNetworks = {
-      "11155111": {
-        name: "sepolia",
-        publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-      },
-      // "10200": {
-      //   name: "gnosisChiado",
-      //   publicNodeUrl: "https://rpc.chiadochain.net/"
-      // }
-    }
     const chain = chains[aaSupportedNetworks[chainId].name]
-    const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
     const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
-    const localStorageKey = 'smartAccounts'
-    // AA04: Check if this address is valid for newly added network
-    // This determiniticProxyAddress is used for replay protection during contract deployment
-    // See: https://github.com/safe-global/safe-smart-account?tab=readme-ov-file#replay-protection-eip-155
-    const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
+    const BUNDLER_URL = getPimlicoBundlerURL(chainId)
 
     // Check that saOwner is there in MM addresses
-    let smartAccountsObj = localStorage.getItem(localStorageKey)
+    let smartAccountsObj = localStorage.getItem(aaLocalStorageKey)
     smartAccountsObj = JSON.parse(smartAccountsObj)
     const saDetails = smartAccountsObj[chain.id][tx.from]
     const saOwner = saDetails['ownerEOA']
@@ -303,7 +287,7 @@ export class TxRunnerWeb3 {
 
     const expectedDeploymentAddress = getContractAddress({
       bytecode,
-      from: determiniticProxyAddress,
+      from: aaDeterminiticProxyAddress,
       opcode: 'CREATE2',
       salt
     })
@@ -311,7 +295,7 @@ export class TxRunnerWeb3 {
     if (!tx.to) {
       // contract deployment transaction
       txHash = await saClient.sendTransaction({
-        to:  determiniticProxyAddress,
+        to:  aaDeterminiticProxyAddress,
         data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
       })
       // check if code is deployed to expectedDeployment Address
