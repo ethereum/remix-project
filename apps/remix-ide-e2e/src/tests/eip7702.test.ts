@@ -11,12 +11,12 @@ module.exports = {
   'Should activate delegation and make a transaction to the authority address #group1': function (browser: NightwatchBrowser) {
     let addressDelegate
     browser
-      .pinGrid('vm-pectra', true)
       .clickLaunchIcon('udapp')
+      .pinGrid('vm-pectra', true)
       .switchEnvironment('vm-pectra')
       .addFile('delegate.sol', { content: delegate })
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.24+commit.e11b9ed9.js')
+      .setSolidityCompilerVersion('soljson-v0.8.28+commit.7893614a.js')
       .clickLaunchIcon('solidity')
       .verifyContracts(['TestDelegate'])
       .clickLaunchIcon('udapp')
@@ -24,12 +24,21 @@ module.exports = {
       .createContract('')
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
-          addressDelegate = delegate
+          addressDelegate = address
+          done()
         })
-      })
-      .click('*[data-id="create-delegation-authorization"]')
-      .setValue('*[data-id="create-delegation-authorization-input"]', addressDelegate)
-      .modalFooterOKClick('udapp')
+      })      
+      .perform((done) => {
+        browser
+          .click('*[data-id="create-delegation-authorization"]')
+          .waitForElementVisible('*[data-id="create-delegation-authorization-input"]')
+          .execute(() => {
+            (document.querySelector('*[data-id="create-delegation-authorization-input"]') as any).focus()
+          }, [], () => {})
+          .setValue('*[data-id="create-delegation-authorization-input"]', addressDelegate)
+          .perform(() => done())
+      })      
+      .modalFooterOKClick('udappNotify')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'This account will be running the code located at')
       .clickInstance(1)
       .clickFunction('entryPoint - call (not payable)')

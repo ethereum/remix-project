@@ -70,7 +70,7 @@ export class Blocks {
         }
       })
     }
-    
+
     const b = {
       baseFeePerGas: '0x01',
       number: bigIntToHex(block.header.number),
@@ -132,7 +132,7 @@ export class Blocks {
         }
       })
     }
-   
+
     const b = {
       baseFeePerGas: '0x01',
       number: bigIntToHex(block.header.number),

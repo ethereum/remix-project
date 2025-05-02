@@ -16,16 +16,18 @@ export function AccountUI(props: AccountProps) {
     classList: '',
     title: ''
   })
-  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(true)
+  const [contractHasDelegation, setContractHasDelegation] = useState(false)
+  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(false)
   const [enableCSM, setEnableCSM] = useState(false)
   const [smartAccountSelected, setSmartAccountSelected] = useState(false)  
 
   const messageRef = useRef('')
-  const delegationAuthorizationAddressRef = useRef('')
+  const delegationAuthorizationAddressRef = useRef(null)
   const ownerEOA = useRef(null)
 
   const intl = useIntl()
-  const smartAccounts: string[] = networkName.includes('Sepolia') ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
+  const aaSupportedChainIds = ["11155111"] // AA01: Add chain id here to show 'Create Smart Account' button in Udapp
+  const smartAccounts: string[] = aaSupportedChainIds.some(e => networkName.includes(e)) ? Object.keys(props.runTabPlugin.REACT_API.smartAccounts) : []
 
   useEffect(() => {
     if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
@@ -33,60 +35,60 @@ export function AccountUI(props: AccountProps) {
     }
   }, [accounts, selectedAccount])
 
-  // Uncomment this when we want to show 'Create Smart Account' button
-  // useEffect(() => {
-  //   if (networkName.includes('Sepolia')) {
-  //     if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
-  //       setSmartAccountSelected(true)
-  //       setEnableCSM(false)
-  //       ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
-  //     }
-  //     else {
-  //       setSmartAccountSelected(false)
-  //       setEnableCSM(true)
-  //       ownerEOA.current = null
-  //     }
-  //   } else {
-  //     setEnableCSM(false)
-  //     setSmartAccountSelected(false)
-  //   }
-  // }, [selectedAccount])
+  // Comment this when not to show 'Create Smart Account' button
+  useEffect(() => {
+    if (aaSupportedChainIds.some(e => networkName.includes(e))) {
+      if (smartAccounts.length > 0 && smartAccounts.includes(selectedAccount)) {
+        setSmartAccountSelected(true)
+        setEnableCSM(false)
+        ownerEOA.current = props.runTabPlugin.REACT_API.smartAccounts[selectedAccount].ownerEOA
+      }
+      else {
+        setSmartAccountSelected(false)
+        setEnableCSM(true)
+        ownerEOA.current = null
+      }
+    } else {
+      setEnableCSM(false)
+      setSmartAccountSelected(false)
+    }
+  }, [selectedAccount])
 
   useEffect(() => {
     const run = async () => {
       console.log(networkName, selectedAccount, selectExEnv)
       if (selectExEnv !== 'vm-pectra') {
         setEnableDelegationAuthorization(false)
-        ownerEOA.current = ''
+        delegationAuthorizationAddressRef.current = null
         return
       }
       setEnableDelegationAuthorization(true)
       if (!selectedAccount) {
-        setSmartAccountSelected(false)
-        ownerEOA.current = ''
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
         return
       }
       const web3 = props.runTabPlugin.blockchain.web3()
       if (!web3) {
-        setSmartAccountSelected(false)
-        ownerEOA.current = ''
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
         return
       }
       const code = await props.runTabPlugin.blockchain.web3().eth.getCode(selectedAccount)
       const EIP7702_CODE_INDICATOR_FLAG = '0xef0100'
       if (code && code.startsWith(EIP7702_CODE_INDICATOR_FLAG)) {
         // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-7702.md delegation indicator
-        const address = code.replace(EIP7702_CODE_INDICATOR_FLAG)
+        const address = '0x' + code.replace(EIP7702_CODE_INDICATOR_FLAG, '')
         if (address === '0x0000000000000000000000000000000000000000') {
-          setSmartAccountSelected(false)
-          ownerEOA.current = ''
+          setContractHasDelegation(false)
+          delegationAuthorizationAddressRef.current = null
         } else {
-          setSmartAccountSelected(true)
-          ownerEOA.current = address
+          setContractHasDelegation(true)
+          delegationAuthorizationAddressRef.current = address
         }
       } else {
-        setSmartAccountSelected(false)
-        ownerEOA.current = ''
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
       }
     }
     run()
@@ -203,13 +205,41 @@ export function AccountUI(props: AccountProps) {
         </div>
       ),
       intl.formatMessage({ id: 'udapp.continue' }),
-      () => {
-        props.delegationAuthorization(delegationAuthorizationAddressRef.current)
+      async () => {
+        try {
+          await props.delegationAuthorization(delegationAuthorizationAddressRef.current)
+          setContractHasDelegation(true)
+        } catch (e) {
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message})
+        }        
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
         props.setPassphrase('')
       }
+    )
+  }
+
+  const deleteDelegation = () => {
+    props.modal(
+      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      (
+        <div className="w-100">
+          Are you sure to remove the delegation?
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.continue' }),
+      async () => {
+        try {
+          await props.delegationAuthorization('0x0000000000000000000000000000000000000000')
+          delegationAuthorizationAddressRef.current = ''
+          setContractHasDelegation(false)
+        } catch (e) {
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message})
+        }
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {}
     )
   }
 
@@ -378,8 +408,18 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      { contractHasDelegation ? <span className="alert-info badge badge-secondary">
+          Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
+        <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={delegationAuthorizationAddressRef.current} direction="top" />
+        <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => deleteDelegation()}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
+            <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
+          </CustomTooltip>
+        </button>
+        </span> : null
+      }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">
-          Owner: {shortenAddress(ownerEOA.current)}
+          Owner: {shortenAddress(ownerEOA.current || '')}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
       </span> : null
       }

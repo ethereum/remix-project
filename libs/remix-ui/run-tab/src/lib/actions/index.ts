@@ -40,7 +40,7 @@ export const setExecutionEnvironment = (executionContext: { context: string, for
 export const hideToaster = () => clearPopUp(dispatch)
 export const createNewAddress = (cbMessage: JSX.Element) => createNewBlockchainAccount(plugin, dispatch, cbMessage)
 export const createNewSmartAccount = () => createSmartAccount(plugin, dispatch)
-export const internalDelegationAuthorization = (contractAddress: string) => delegationAuthorization(contractAddress, plugin, dispatch)
+export const internalDelegationAuthorization = (contractAddress: string) => delegationAuthorization(contractAddress, plugin)
 export const setPassphraseModal = (passphrase: string) => setPassphrasePrompt(dispatch, passphrase)
 export const setMatchPassphraseModal = (passphrase: string) => setMatchPassphrasePrompt(dispatch, passphrase)
 export const signMessage = (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => signMessageWithAddress(plugin, dispatch, account, message, modalContent, passphrase)
