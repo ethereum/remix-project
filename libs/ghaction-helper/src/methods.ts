@@ -1,6 +1,5 @@
 // @ts-ignore
-import { BrowserProvider, Contract, Signer } from "ethers"
-import { InterfaceAbi } from "ethers"
+import { BrowserProvider, Contract, InterfaceAbi } from "ethers"
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { Web3 } from "web3"

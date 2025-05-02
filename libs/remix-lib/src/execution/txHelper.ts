@@ -35,7 +35,6 @@ export function encodeParams (funABI, args) {
 export function encodeFunctionId (funABI) {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
   const abi = new Interface([funABI])
-  console.log('encodeFunctionId', abi.getFunction(funABI.name).selector)
   return abi.getFunction(funABI.name).selector
 }
 
