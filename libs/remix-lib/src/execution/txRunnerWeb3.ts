@@ -207,7 +207,7 @@ export class TxRunnerWeb3 {
           if (tx.fromSmartAccount && tx.value === "0" &&
             err && err.message && err.message.includes('missing revert data')
           ) {
-            // Do not show dialog for 'insufficient funds got transfer' &  'gas required exceeds allowance (0)'
+            // Do not show dialog for 'missing revert data'
             // tx fees can be managed by paymaster in case of smart account tx
             // @todo If paymaster is used, check if balance/credits are available
             err = null

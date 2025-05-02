@@ -110,12 +110,12 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  
+
   const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
   const BUNDLER_URL = getPimlicoBundlerURL(chainId)
-  
+
   const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   let salt
 
