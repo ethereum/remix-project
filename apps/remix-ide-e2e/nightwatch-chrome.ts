@@ -9,9 +9,11 @@ module.exports = {
   globals_path: '',
 
   webdriver: {
-    start_process: false,
-    port: 9515,
-    server_path:  '/usr/local/bin/chromedriver' //./tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
+    start_process: true,
+    port: 0,                               // pick a random free port
+    server_path: '/usr/local/bin/chromedriver',
+    host: '127.0.0.1',                     // bind only to IPv4
+    cli_args: ['--host=127.0.0.1']         // ensure chromedriver itself uses IPv4
   },
 
   test_settings: {
@@ -51,7 +53,6 @@ module.exports = {
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }
-        , wc3: false
         , pageLoadStrategy: 'eager',
         timeouts: { pageLoad: 30000 }  // e.g. 30 s max
       }
