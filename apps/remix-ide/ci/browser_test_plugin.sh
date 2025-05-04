@@ -2,6 +2,27 @@
 
 set -e
 
+# if $1 is chrome
+if [ "$1" == "chrome" ]; then
+# 1) Start ChromeDriver in the background
+/usr/local/bin/chromedriver \
+  --port=9515 \
+  --host=127.0.0.1 \
+  --silent > driver.log 2>&1 &
+
+
+# Save its PID so you can kill it later if needed
+echo $! > chromedriver.pid
+
+# 2) Wait until ChromeDriver is actually listening
+while ! curl -s http://127.0.0.1:9515/status >/dev/null; do
+  sleep 0.2
+done
+
+echo "🚀 ChromeDriver is up on 127.0.0.1:9515"
+
+fi
+
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
