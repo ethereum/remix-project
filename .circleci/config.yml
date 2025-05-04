@@ -125,6 +125,9 @@ jobs:
         - node/install:
             install-yarn: true
             node-version: '20.2'
+        - restore_cache:
+            keys:
+              - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
         - run: 
             command: |
                 node -v
@@ -134,10 +137,14 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
-                yarn --ignore-optional
-                yarn add @remix-project/remix-ws-templates
+                yarn add node-pty --network-timeout 600000
+                yarn --ignore-optional --network-timeout 600000
+                yarn add @remix-project/remix-ws-templates --network-timeout 600000
                 ./rundist.bash test_only
+        - save_cache:
+            key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+            paths:
+              - apps/remixdesktop/node_modules
         - run:  
             name: "Run tests"
             command: |
