@@ -14,7 +14,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .pause(10000)
     .url(url || 'http://127.0.0.1:8080')
-    .pause(5000)
+    .pause(10000)
     .switchBrowserTab(0)
     .hidePopupPanel()
     .perform((done) => {

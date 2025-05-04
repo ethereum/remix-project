@@ -32,7 +32,32 @@ npx ganache &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 
-sleep 5
+# Wait for Ganache (default port 8545) via JSON-RPC
+echo "Waiting for Ganache on port 8545 (eth_blockNumber)..."
+until curl --silent --fail \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"eth_blockNumber","params":[]}' \
+  http://127.0.0.1:8545 > /dev/null; do
+  sleep 1
+done
+
+# Wait for http-server on port 9999
+echo "Waiting for http-server on port 9999..."
+until curl --silent --fail http://127.0.0.1:9999 > /dev/null; do
+  sleep 1
+done
+
+# Wait for http-server on port 9090
+echo "Waiting for http-server on port 9090..."
+until curl --silent --fail http://127.0.0.1:9090 > /dev/null; do
+  sleep 1
+done
+
+# Wait for Remix serve:production on port 8080
+echo "Waiting for Remix server on port 8080..."
+until curl --silent --fail http://127.0.0.1:8080 > /dev/null; do
+  sleep 1
+done
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep $1 | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
