@@ -51,6 +51,7 @@ module.exports = {
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }
+        , wc3: false
         , pageLoadStrategy: 'eager',
         timeouts: { pageLoad: 30000 }  // e.g. 30 s max
       }
