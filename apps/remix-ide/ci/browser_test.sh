@@ -33,9 +33,12 @@ npx ganache &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 
-# Wait for Ganache (default port 8545)
-echo "Waiting for Ganache on port 8545..."
-until curl --silent --fail http://127.0.0.1:8545 > /dev/null; do
+# Wait for Ganache (default port 8545) via JSON-RPC
+echo "Waiting for Ganache on port 8545 (eth_blockNumber)..."
+until curl --silent --fail \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"eth_blockNumber","params":[]}' \
+  http://127.0.0.1:8545 > /dev/null; do
   sleep 1
 done
 
