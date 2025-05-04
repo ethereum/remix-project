@@ -32,7 +32,24 @@ TEST_EXITCODE=0
 npx ganache &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
-sleep 5
+
+# Wait for Ganache (default port 8545)
+echo "Waiting for Ganache on port 8545..."
+until curl --silent --fail http://127.0.0.1:8545 > /dev/null; do
+  sleep 1
+done
+
+# Wait for http-server on port 9090
+echo "Waiting for http-server on port 9090..."
+until curl --silent --fail http://127.0.0.1:9090 > /dev/null; do
+  sleep 1
+done
+
+# Wait for Remix serve:production on port 8080
+echo "Waiting for Remix server on port 8080..."
+until curl --silent --fail http://127.0.0.1:8080 > /dev/null; do
+  sleep 1
+done
 
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
 # TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[$2]" | circleci tests split --split-by=timings )

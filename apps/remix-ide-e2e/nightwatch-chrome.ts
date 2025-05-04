@@ -13,7 +13,10 @@ module.exports = {
     port: 0,                               // pick a random free port
     server_path: '/usr/local/bin/chromedriver',
     host: '127.0.0.1',                     // bind only to IPv4
-    cli_args: ['--host=127.0.0.1']         // ensure chromedriver itself uses IPv4
+    cli_args: ['--host=127.0.0.1'],         // ensure chromedriver itself uses IPv4
+    status_poll_interval: 500,   // wait 500 ms between /status checks
+    max_status_poll_tries: 60,   // try up to 60 times → 30 s total wait
+    process_create_timeout: 300000, // overall 5 min timeout for process startup
   },
 
   test_settings: {
