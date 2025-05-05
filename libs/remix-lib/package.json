@@ -17,7 +17,7 @@
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "dependencies": {
-    "@ethereumjs/util": "^10.0.0-rc.1",
+    "@ethereumjs/util": "^10.0.0",
     "async": "^2.1.2",
     "create-hash": "^1.2.0",
     "ethers": "beta-eip-7702",
