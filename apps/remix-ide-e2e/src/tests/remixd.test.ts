@@ -5,6 +5,9 @@ import { join } from 'path'
 import { ChildProcess, exec, spawn } from 'child_process'
 import { homedir } from 'os'
 import treeKill from 'tree-kill'
+import fs from 'fs'
+import path from 'path'
+
 
 let remixd: ChildProcess
 const assetsTestContract = `import "./contract.sol";
@@ -419,24 +422,49 @@ async function installRemixd(): Promise<void> {
   })
 }
 
-async function spawnRemixd(path: string): Promise<ChildProcess> {
-  console.log('spawnRemixd', path)
-  await installRemixd()
-  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
-  return new Promise((resolve, reject) => {
-    remixd.stdout.on('data', function (data) {
-      console.log(data.toString())
-      if (
-        data.toString().includes('is listening')
-        || data.toString().includes('There is already a client running')
-      ) {
+export function spawnRemixd(workspacePath: string): Promise<any> {
+  const logFile = path.resolve(process.cwd(), 'logs/remixd.log')
+  const logStream = fs.createWriteStream(logFile, { flags: 'a' }) // append mode
 
+  const remixd = spawn(
+    'chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080',
+    [`-s ${workspacePath}`],
+    { cwd: process.cwd(), shell: true, detached: true }
+  )
+
+  // Pipe stdout and stderr to log
+  remixd.stdout.on('data', (data) => {
+    const text = data.toString()
+    logStream.write(`[stdout] ${text}`)
+  })
+
+  remixd.stderr.on('data', (data) => {
+    const text = data.toString()
+    logStream.write(`[stderr] ${text}`)
+  })
+
+  // Log exit
+  remixd.on('exit', (code, signal) => {
+    logStream.write(`remixd exited with code ${code}, signal ${signal}\n`)
+    logStream.end()
+  })
+
+  // Handle startup and resolve when ready
+  return new Promise((resolve, reject) => {
+    remixd.stdout.on('data', (data) => {
+      const text = data.toString()
+      if (
+        text.includes('is listening') ||
+        text.includes('There is already a client running')
+      ) {
         resolve(remixd)
       }
     })
-    remixd.stderr.on('err', function (data) {
-      console.log(data.toString())
-      reject(data.toString())
+
+    remixd.on('error', (err) => {
+      logStream.write(`remixd error: ${err.message}\n`)
+      logStream.end()
+      reject(err)
     })
   })
 }
