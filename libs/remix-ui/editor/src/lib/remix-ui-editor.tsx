@@ -941,7 +941,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        currenFunctionNode = functionImpl
+        currentFunctionNode = functionImpl
 
         executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
