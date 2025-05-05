@@ -46,7 +46,6 @@ module.exports = {
         'goog:chromeOptions': {
           args: [
             'window-size=2560,1440',
-            '--no-sandbox',
             '--headless=new',
             '--verbose',
             '--disable-dev-shm-usage',
@@ -116,7 +115,6 @@ module.exports = {
           args: [
             `--load-extension=${metamaskExtensionPath}`,
             '--window-size=2560,1440',
-            '--no-sandbox',
             '--verbose',
             '--headless=new',
             '--disable-gpu',
