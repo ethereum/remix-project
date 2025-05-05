@@ -120,10 +120,6 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
     throw new Error(`Error while validating the provided contract address. \n ${e.message}`)
   }
   
-  const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
-  if (!artefact && !isZeroAddress(contractAddress)) {
-    throw new Error(`The contract with address ${contractAddress} doesn't seem to have been compiled in Remix. Please first compile and deploy a contract.`)
-  }
   const provider = {
     request: async (query) => {
       const ret = await plugin.call('web3Provider', 'sendAsync', query)
@@ -141,6 +137,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   const signerForAuth = Object.keys(plugin.REACT_API.accounts.loadedAccounts).find((a) => a !== plugin.REACT_API.accounts.selectedAccount)
   const signer = await ethersProvider.getSigner(signerForAuth)
   let tx
+  
   try {
     tx = await signer.sendTransaction({
       type: 4,
@@ -163,21 +160,24 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   }  
 
   if (!isZeroAddress(contractAddress)) {
-    const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
-    const contractObject = {
-      name: artefact.name,
-      abi: artefact.contract.abi,
-      compiler: data,
-      contract: {
-        file : artefact.file,
-        object: artefact.contract
+    const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
+    if (artefact && !isZeroAddress(contractAddress)) {
+      const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
+      const contractObject = {
+        name: artefact.name,
+        abi: artefact.contract.abi,
+        compiler: data,
+        contract: {
+          file : artefact.file,
+          object: artefact.contract
+        }
       }
-    }
-    plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
-    await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
+      plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
+      await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
 
-    plugin.call('terminal', 'log', { type: 'log',
-      value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
+      plugin.call('terminal', 'log', { type: 'log',
+        value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
+      }
   } else {
     plugin.call('terminal', 'log', { type: 'log',
       value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} removed.` })

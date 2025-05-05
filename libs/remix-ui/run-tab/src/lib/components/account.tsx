@@ -411,7 +411,7 @@ export function AccountUI(props: AccountProps) {
       { contractHasDelegation ? <span className="alert-info badge badge-secondary">
           Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={delegationAuthorizationAddressRef.current} direction="top" />
-        <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => deleteDelegation()}>
+        <button data-id="delete-delegation" type="button" className="btn btn-sm btn-secondary w-100" onClick={() => deleteDelegation()}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
             <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
           </CustomTooltip>
