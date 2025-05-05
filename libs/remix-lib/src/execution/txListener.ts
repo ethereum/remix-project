@@ -103,6 +103,7 @@ export class TxListener {
         addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status
+        tx.isUserOp = txResult.tx.isUserOp
         this._resolve([tx])
       }).catch(error=>console.log(error))
     })
