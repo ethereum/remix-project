@@ -12,9 +12,7 @@ type LoadPlugin = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
-    .pause(10000)
     .url(url || 'http://127.0.0.1:8080')
-    .pause(10000)
     .switchBrowserTab(0)
     .hidePopupPanel()
     .perform((done) => {
