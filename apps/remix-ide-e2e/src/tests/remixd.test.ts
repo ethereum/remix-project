@@ -5,9 +5,6 @@ import { join } from 'path'
 import { ChildProcess, exec, spawn } from 'child_process'
 import { homedir } from 'os'
 import treeKill from 'tree-kill'
-import fs from 'fs'
-import path from 'path'
-
 
 let remixd: ChildProcess
 const assetsTestContract = `import "./contract.sol";
@@ -423,8 +420,6 @@ async function installRemixd(): Promise<void> {
 }
 
 export function spawnRemixd(workspacePath: string): Promise<any> {
-  //const logFile = path.resolve(process.cwd(), 'logs/remixd.log')
-  //const logStream = fs.createWriteStream(logFile, { flags: 'a' }) // append mode
 
   const remixd = spawn(
     'chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080',
