@@ -441,7 +441,6 @@ export function spawnRemixd(workspacePath: string): Promise<any> {
   // Log exit
   remixd.on('exit', (code, signal) => {
     console.log(`remixd exited with code ${code}, signal ${signal}\n`)
-    //logStream.end()
   })
 
   // Handle startup and resolve when ready
@@ -459,7 +458,6 @@ export function spawnRemixd(workspacePath: string): Promise<any> {
 
     remixd.on('error', (err) => {
       console.log(`remixd error: ${err.message}\n`)
-      //logStream.end()
       reject(err)
     })
   })
