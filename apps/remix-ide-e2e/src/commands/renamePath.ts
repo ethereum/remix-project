@@ -39,6 +39,7 @@ function renamePath(browser: NightwatchBrowser, path: string, newFileName: strin
         .sendKeys('[data-input-path="' + path + '"]', newFileName)
         .saveScreenshot('./reports/screenshots/renamePath1.png')
         .sendKeys('[data-input-path="' + path + '"]', browser.Keys.ENTER)
+        .pause(1000)
         .saveScreenshot('./reports/screenshots/renamePath2.png')
         .waitForElementNotPresent('[data-path="' + path + '"]')
         .saveScreenshot('./reports/screenshots/renamePath3.png')
