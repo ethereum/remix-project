@@ -4,7 +4,8 @@ export const templates = (intl, plugin) => {
       name: "Generic",
       items: [
         { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
-        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' }
+        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' },
+        { value: "eip7702", displayName: 'EIP 7702', IsArtefact: true, description: 'An ethereum update allowing account to run smart contract code.' }
       ]
     },
     {

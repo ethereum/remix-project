@@ -189,5 +189,5 @@
   "udapp.sign": "Sign",
 
   "udapp.createDelegationTitle": "Authorize contract delegation",
-  "udapp.createDelegationDescription": "This operation will set contract code to the selected account. <br> Please provide the address of a contract deployed in the current chain. <a>EIP 7702</a>"
+  "udapp.createDelegationDescription": "This operation will set contract code at this address to the selected account. Please provide the address of a contract deployed in the current chain."
 }
