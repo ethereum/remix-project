@@ -22,9 +22,12 @@ elif [ "$OS" == "Linux" ]; then
     echo "Google Chrome version on Linux: $version"
   else
     echo "Google Chrome is not installed on your Linux."
+    # exit without error
+    exit 0
   fi
 else
   echo "Unsupported OS."
+  exit 0
 fi
 
 MAJORVERSION=$(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
