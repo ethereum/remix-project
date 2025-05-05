@@ -1026,8 +1026,8 @@ export class Blockchain extends Plugin {
       if (isBasicVMState || isForkedVMState || isForkedRpcState) {
         if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           try {
-            let state = await this.executionContext.getStateDetails()
             if (provider.config.statePath) {
+              let state = await this.executionContext.getStateDetails()
               const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
               if (stateFileExists) {
                 let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
@@ -1037,6 +1037,7 @@ export class Blockchain extends Plugin {
               }
               this.call('fileManager', 'writeFile', provider.config.statePath, state)
             } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
+              const state = await this.executionContext.getStateDetails()
               // in that case, we store the state only if it is a basic VM.
               const provider = this.executionContext.getProvider()
               this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)

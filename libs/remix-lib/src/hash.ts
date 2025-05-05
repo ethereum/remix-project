@@ -1,7 +1,7 @@
 import { keccak224, keccak384, keccak256 as k256, keccak512 } from 'ethereum-cryptography/keccak'
 const createHash = require('create-hash')
 import { encode, Input } from 'rlp'
-import { toBytes, setLengthLeft, isHexString } from '@ethereumjs/util'
+import { toBytes, setLengthLeft, isHexString, PrefixedHexString } from '@ethereumjs/util'
 
 /**
  * Creates Keccak hash of a Uint8Array input
@@ -54,7 +54,7 @@ export const keccakFromString = function(a: string, bits: number = 256) {
  */
 export const keccakFromHexString = function(a: string, bits: number = 256) {
   assertIsHexString(a)
-  return keccak(Buffer.from(toBytes(a)), bits)
+  return keccak(Buffer.from(toBytes(a as PrefixedHexString)), bits)
 }
 
 /**

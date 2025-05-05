@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { ethers } from 'ethers'
+import { isAddress } from 'ethers'
 
 interface ContractAddressInputProps {
   label: string | any
@@ -13,7 +13,7 @@ interface ContractAddressInputProps {
 // Chooses one contract from the compilation output.
 export const ContractAddressInput: React.FC<ContractAddressInputProps> = ({ label, id, contractAddress, setContractAddress, contractAddressError, setContractAddressError }) => {
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isValidAddress = ethers.utils.isAddress(event.target.value)
+    const isValidAddress = isAddress(event.target.value)
     setContractAddress(event.target.value)
     if (!isValidAddress) {
       setContractAddressError('Invalid contract address')

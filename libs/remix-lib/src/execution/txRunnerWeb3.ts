@@ -2,8 +2,9 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import { Web3 } from 'web3'
-import { ethers } from 'ethers'
+import { BrowserProvider } from 'ethers'
 import { normalizeHexAddress } from '../helpers/uiHelper'
+import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, aaDeterminiticProxyAddress } from '../helpers/aaConstants'
 import { toBigInt, toHex, toChecksumAddress } from 'web3-utils'
 import { randomBytes } from 'crypto'
 import "viem/window"
@@ -107,7 +108,7 @@ export class TxRunnerWeb3 {
     } else {
       try {
         if (tx.fromSmartAccount) {
-          const { txHash, contractAddress } = await this.sendUserOp(tx)
+          const { txHash, contractAddress } = await this.sendUserOp(tx, network.id)
           cb(null, txHash, isCreation, true, contractAddress)
         } else {
           const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
@@ -167,11 +168,11 @@ export class TxRunnerWeb3 {
           txCopy.gasPrice = undefined
         }
       }
-      const ethersProvider = new ethers.providers.Web3Provider(this.getWeb3().currentProvider as any)
+      const ethersProvider = new BrowserProvider(this.getWeb3().currentProvider as any)
       ethersProvider.estimateGas(txCopy)
         .then(gasEstimationBigInt => {
           gasEstimationForceSend(null, () => {
-            const gasEstimation = gasEstimationBigInt.toNumber()
+            const gasEstimation = Number(gasEstimationBigInt)
             /*
             * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
             * e.g if the gasestimate
@@ -203,8 +204,11 @@ export class TxRunnerWeb3 {
             callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
             return
           }
-          if (tx.fromSmartAccount && tx.value === "0" && err && err.error && err.error.indexOf('insufficient funds for transfer') !== -1) {
-            // Do not show dialog for insufficient funds as smart account may be using paymaster
+          if (tx.fromSmartAccount && tx.value === "0" &&
+            err && err.message && err.message.includes('missing revert data')
+          ) {
+            // Do not show dialog for 'missing revert data'
+            // tx fees can be managed by paymaster in case of smart account tx
             // @todo If paymaster is used, check if balance/credits are available
             err = null
           }
@@ -227,17 +231,13 @@ export class TxRunnerWeb3 {
     })
   }
 
-  async sendUserOp (tx) {
-    const localStorageKey = 'smartAccounts'
-    const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-    const PIMLICO_API_KEY =''
-    const BUNDLER_URL = `https://api.pimlico.io/v2/sepolia/rpc?apikey=${PIMLICO_API_KEY}`
-    const determiniticProxyAddress = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
-    const network = 'sepolia'
-    const chain = chains[network]
+  async sendUserOp (tx, chainId) {
+    const chain = chains[aaSupportedNetworks[chainId].name]
+    const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
+    const BUNDLER_URL = getPimlicoBundlerURL(chainId)
 
     // Check that saOwner is there in MM addresses
-    let smartAccountsObj = localStorage.getItem(localStorageKey)
+    let smartAccountsObj = localStorage.getItem(aaLocalStorageKey)
     smartAccountsObj = JSON.parse(smartAccountsObj)
     const saDetails = smartAccountsObj[chain.id][tx.from]
     const saOwner = saDetails['ownerEOA']
@@ -251,7 +251,7 @@ export class TxRunnerWeb3 {
 
     const publicClient = createPublicClient({
       chain,
-      transport: http(PUBLIC_NODE_URL) // choose any provider here
+      transport: http(PUBLIC_NODE_URL)
     })
 
     const safeAccount = await toSafeSmartAccount({
@@ -287,7 +287,7 @@ export class TxRunnerWeb3 {
 
     const expectedDeploymentAddress = getContractAddress({
       bytecode,
-      from: determiniticProxyAddress,
+      from: aaDeterminiticProxyAddress,
       opcode: 'CREATE2',
       salt
     })
@@ -295,7 +295,7 @@ export class TxRunnerWeb3 {
     if (!tx.to) {
       // contract deployment transaction
       txHash = await saClient.sendTransaction({
-        to:  determiniticProxyAddress,
+        to:  aaDeterminiticProxyAddress,
         data: encodePacked(["bytes32", "bytes"], [salt, bytecode])
       })
       // check if code is deployed to expectedDeployment Address
@@ -306,7 +306,7 @@ export class TxRunnerWeb3 {
         contractAddress = expectedDeploymentAddress
       } else {
         contractAddress = undefined
-        console.error('Error in contract deployment')
+        console.error('Error in contract deployment using smart account')
       }
     } else {
       // contract interaction transaction

@@ -99,8 +99,9 @@ export class ExecutionContext {
               callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
               return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
             }).catch((error) => {
-              callback && callback(error)
-              return reject(error)
+              // Rabby wallet throws an error at this point. We are in that case unable to check the genesis hash.
+              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
             })
           } else {
             callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })

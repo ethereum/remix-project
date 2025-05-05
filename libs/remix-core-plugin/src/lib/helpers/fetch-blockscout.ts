@@ -52,15 +52,13 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
   try {
     runs = parseInt(data.result[0].OptimizationRuns)
   } catch (e) { }
-  const settings = {
-    version: data.result[0].CompilerVersion.replace(/^v/, ''),
+  const config = {
     language: 'Solidity',
-    evmVersion: data.result[0].EVMVersion.toLowerCase(),
-    optimize: data.result[0].OptimizationUsed === 'true',
-    runs
+    settings: data.result[0].SourceCode?.settings
   }
   return {
-    settings,
-    compilationTargets
+    config,
+    compilationTargets,
+    version: data.result[0].CompilerVersion.replace(/^v/, '')
   }
 }

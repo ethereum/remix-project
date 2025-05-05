@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { AbiCoder, FunctionFragment } from 'ethers'
 import { getFunctionFragment } from './txHelper'
 import { Transaction } from './txRunner'
 
@@ -102,10 +102,10 @@ export function checkError (execResult, compiledContracts) {
             if (item.type === 'error') {
               // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
               // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
-              // we need here to fake the type, so the "getSighash" function works properly
+              // we need here to fake the type, so the "selector" property works properly
               const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
               if (!fn) continue
-              const sign = fn.getSighash(item.name)
+              const sign = fn.getFunction(item.name).selector
               if (!sign) continue
               if (returnDataHex === sign.replace('0x', '')) {
                 customError = item.name
@@ -115,8 +115,9 @@ export function checkError (execResult, compiledContracts) {
                 decodedCustomErrorInputsClean = {}
                 let devdoc = {}
                 // "contract" represents the compilation result containing the NATSPEC documentation
-                if (contract && fn.functions && Object.keys(fn.functions).length) {
-                  const functionSignature = Object.keys(fn.functions)[0]
+                const fnFragments = fn.fragments.filter(f => f.type === "function") as Array<FunctionFragment>
+                if (contract && fnFragments && fnFragments.length) {
+                  const functionSignature = fnFragments[0].format()
                   // we check in the 'devdoc' if there's a developer documentation for this error
                   try {
                     devdoc = (contract.devdoc.errors && contract.devdoc.errors[functionSignature][0]) || {}
@@ -160,7 +161,7 @@ export function checkError (execResult, compiledContracts) {
     if (!customError) {
       // It is the hash of Error(string)
       if (returnData && (returnDataHex === '08c379a0')) {
-        const abiCoder = new ethers.utils.AbiCoder()
+        const abiCoder = new AbiCoder()
         const reason = abiCoder.decode(['string'], '0x' + returnData.slice(10))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {

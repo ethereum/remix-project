@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { BigNumber, ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 
 import { AppContext } from '../AppContext'
 import { ContractDropdownSelection } from './ContractDropdown'
@@ -27,12 +27,12 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
 
   const decodeConstructorArgs = (value: string) => {
     try {
-      const decodedObj = ethers.utils.defaultAbiCoder.decode(
+      const decodedObj = AbiCoder.defaultAbiCoder().decode(
         constructorArgs.map((inp) => inp.type),
         value
       )
       const decoded = decodedObj.map((val) => {
-        if (val instanceof BigNumber) {
+        if (typeof val === 'bigint') {
           return val.toString()
         }
         return JSON.stringify(val)
@@ -85,7 +85,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
     }
 
     try {
-      const newAbiEncoding = ethers.utils.defaultAbiCoder.encode(types, parsedArgsValues)
+      const newAbiEncoding = AbiCoder.defaultAbiCoder().encode(types, parsedArgsValues)
       setAbiEncodedConstructorArgs(newAbiEncoding)
       setAbiEncodingError('')
     } catch (e) {

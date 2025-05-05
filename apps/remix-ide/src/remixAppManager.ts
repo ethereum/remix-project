@@ -97,7 +97,7 @@ let requiredModules = [
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp', 'noir-compiler']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'circuit-compiler', 'learneth', 'quick-dapp', 'noir-compiler']
 
 const partnerPlugins = ['cookbookdev']
 
@@ -289,7 +289,7 @@ export class RemixAppManager extends BaseRemixAppManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins = plugins.filter((plugin) => {
-        if (plugin.name === 'dgit') return false
+        if (plugin.name === 'dgit' || plugin.name === 'walletconnect') return false
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
           return plugin.targets.includes('remix')
         }
