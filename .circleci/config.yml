@@ -2,10 +2,10 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true   
+    default: false   
   run_metamask_tests:
     type: boolean
-    default: false   
+    default: true   
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -735,7 +735,7 @@ jobs:
       - store_artifacts:
           path: /home/circleci/remix-project/logs
           destination: logs
-          
+
   tests-passed:
     machine:
       image: default
