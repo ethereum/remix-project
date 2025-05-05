@@ -311,7 +311,7 @@ module.exports = {
       })
   },
 
-  'Should stay connected in the mainnet VM fork and: check the block number is advancing and is not low #group5 #flaky': function (browser: NightwatchBrowser) {
+  'Should stay connected in the mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
     /*
         Should stay connected in the mainnet VM fork and: 
     - check the block number has been set to the current mainnet block number.
