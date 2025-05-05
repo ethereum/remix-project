@@ -35,8 +35,10 @@ function renamePath(browser: NightwatchBrowser, path: string, newFileName: strin
     try {
       browser
         .click('#menuitemrename')
+        .saveScreenshot('./reports/screenshots/renamePath.png')
         .sendKeys('[data-input-path="' + path + '"]', newFileName)
         .sendKeys('[data-input-path="' + path + '"]', browser.Keys.ENTER)
+        .saveScreenshot('./reports/screenshots/renamePath2.png')
         .waitForElementNotPresent('[data-path="' + path + '"]')
         .waitForElementPresent('[data-path="' + renamedPath + '"]');
     } catch (error) {
