@@ -1,0 +1,1 @@
+contract test2 { function get () returns (uint) { return 11; }}
