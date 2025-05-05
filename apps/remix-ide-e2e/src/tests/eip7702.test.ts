@@ -41,7 +41,7 @@ module.exports = {
       .modalFooterOKClick('udappNotify')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'This account will be running the code located at')
       .clickInstance(1)
-      .clickFunction('entryPoint - call (not payable)')
+      .clickFunction('entryPoint - call')
       .verifyCallReturnValue('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', ['0:address: 0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108'])
   },
 
