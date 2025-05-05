@@ -9,14 +9,18 @@ export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
   public parser: NoirParser
   public ws: WebSocket
+  public lastCompilationDetails: {
+    error: string
+    path: string
+    id: string
+  }
+
   constructor() {
     super()
     this.methods = ['init', 'parse', 'compile']
     createClient(this)
     this.internalEvents = new EventManager()
     this.parser = new NoirParser()
-    // @ts-ignore
-    this.ws = new WebSocket(`${WS_URL}`)
     this.onload()
   }
 
@@ -30,6 +34,8 @@ export class NoirPluginClient extends PluginClient {
   }
 
   setupWebSocketEvents(): void {
+    // @ts-ignore
+    this.ws = new WebSocket(`${WS_URL}`)
     this.ws.onopen = () => {
       console.log('WebSocket connection opened')
     }
@@ -37,7 +43,11 @@ export class NoirPluginClient extends PluginClient {
       const message = JSON.parse(event.data)
 
       if (message.logMsg) {
-        this.debugFn(message.logMsg)
+        if (message.logMsg.includes('previous errors')) {
+          this.logFn(message.logMsg)
+        } else {
+          this.debugFn(message.logMsg)
+        }
       }
     }
     this.ws.onerror = (event) => {
@@ -45,6 +55,9 @@ export class NoirPluginClient extends PluginClient {
     }
     this.ws.onclose = () => {
       console.log('WebSocket connection closed')
+      // restart the websocket connection
+      this.ws = null
+      setTimeout(this.setupWebSocketEvents.bind(this), 5000)
     }
   }
 
@@ -68,6 +81,11 @@ export class NoirPluginClient extends PluginClient {
     try {
       const requestID = this.generateRequestID()
 
+      this.lastCompilationDetails = {
+        error: '',
+        path,
+        id: requestID
+      }
       if (this.ws.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify({ requestId: requestID }))
         this.internalEvents.emit('noir_compiling_start')
@@ -76,7 +94,7 @@ export class NoirPluginClient extends PluginClient {
         this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
         await this.setupNargoToml()
         // @ts-ignore
-        const zippedProject: Blob = await this.call('fileManager', 'download', '/', false)
+        const zippedProject: Blob = await this.call('fileManager', 'download', '/', false, ['build'])
         const formData = new FormData()
 
         formData.append('file', zippedProject, `${extractNameFromKey(path)}.zip`)
@@ -102,26 +120,6 @@ export class NoirPluginClient extends PluginClient {
         this.logFn('Compilation failed: WebSocket connection not open')
       }
     } catch (e) {
-      const regex = /^\s*(\/[^:]+):(\d+):/gm;
-      const pathContent = await this.call('fileManager', 'readFile', path)
-
-      const markers = Array.from(e.message.matchAll(regex), (match) => {
-        const errorPath = match[1]
-        const line = parseInt(match[2])
-        const start = { line, column: 1 }
-        const end = { line, column: pathContent.split('\n')[line - 1].length + 1 }
-
-        return {
-          message: e.message,
-          severity: 'error',
-          position: { start, end },
-          file: errorPath.slice(1)
-        }
-      })
-      // @ts-ignore
-      await this.call('editor', 'addErrorMarker', markers)
-      this.emit('statusChanged', { key: markers.length, title: e.message, type: 'error' })
-      this.internalEvents.emit('noir_compiling_errored', e)
       console.error(e)
     }
   }
@@ -149,7 +147,30 @@ export class NoirPluginClient extends PluginClient {
     }
   }
 
-  logFn(log) {
+  async logFn(log) {
+    this.lastCompilationDetails.error = log
+    //const regex = /(warning|error):\s*([^\n]+)\s*┌─\s*([^:]+):(\d+):/gm;
+    const regex = /(error):\s*([^\n]+)\s*┌─\s*([^:]+):(\d+):/gm;
+    const pathContent = await this.call('fileManager', 'readFile', this.lastCompilationDetails.path)
+    const markers = Array.from(this.lastCompilationDetails.error.matchAll(regex), (match) => {
+      const severity = match[1]
+      const message = match[2].trim()
+      const errorPath = match[3]
+      const line = parseInt(match[4])
+      const start = { line, column: 1 }
+      const end = { line, column: pathContent.split('\n')[line - 1].length + 1 }
+
+      return {
+        message: `${severity}: ${message}`,
+        severity: severity === 'error' ? 'error' : 'warning',
+        position: { start, end },
+        file: errorPath
+      }
+    })
+    // @ts-ignore
+    await this.call('editor', 'addErrorMarker', markers)
+    this.emit('statusChanged', { key: markers.length, title: this.lastCompilationDetails.error, type: 'error' })
+    this.internalEvents.emit('noir_compiling_errored', this.lastCompilationDetails.error)
     this.call('terminal', 'log', { type: 'error', value: log })
   }
 
