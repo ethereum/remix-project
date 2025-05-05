@@ -8,13 +8,15 @@ import axios from 'axios'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
   public parser: NoirParser
-
+  public ws: WebSocket
   constructor() {
     super()
     this.methods = ['init', 'parse', 'compile']
     createClient(this)
     this.internalEvents = new EventManager()
     this.parser = new NoirParser()
+    // @ts-ignore
+    this.ws = new WebSocket(`${WS_URL}`)
     this.onload()
   }
 
@@ -24,6 +26,26 @@ export class NoirPluginClient extends PluginClient {
 
   onActivation(): void {
     this.internalEvents.emit('noir_activated')
+    this.setupWebSocketEvents()
+  }
+
+  setupWebSocketEvents(): void {
+    this.ws.onopen = () => {
+      console.log('WebSocket connection opened')
+    }
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data)
+
+      if (message.logMsg) {
+        this.debugFn(message.logMsg)
+      }
+    }
+    this.ws.onerror = (event) => {
+      this.logFn('WebSocket error: ' + event)
+    }
+    this.ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
   }
 
   async setupNargoToml(): Promise<void> {
@@ -35,36 +57,49 @@ export class NoirPluginClient extends PluginClient {
     }
   }
 
+  generateRequestID(): string {
+    const timestamp = Math.floor(Date.now() / 1000)
+    const random = Math.random().toString(36).substring(2, 15)
+
+    return `req_${timestamp}_${random}`
+  }
+
   async compile(path: string): Promise<void> {
     try {
-      this.internalEvents.emit('noir_compiling_start')
-      this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Program...', type: 'info' })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-      await this.setupNargoToml()
-      // @ts-ignore
-      const zippedProject: Blob = await this.call('fileManager', 'download', '/', false)
-      const formData = new FormData()
+      const requestID = this.generateRequestID()
 
-      formData.append('file', zippedProject, `${extractNameFromKey(path)}.zip`)
-      // @ts-ignore
-      const response = await axios.post(`${BASE_URL}/compile`, formData)
+      if (this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ requestId: requestID }))
+        this.internalEvents.emit('noir_compiling_start')
+        this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Program...', type: 'info' })
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+        await this.setupNargoToml()
+        // @ts-ignore
+        const zippedProject: Blob = await this.call('fileManager', 'download', '/', false)
+        const formData = new FormData()
 
-      if (!response.data || !response.data.success) {
-        this.internalEvents.emit('noir_compiling_errored', new Error('Compilation failed'))
-        this.logFn('Compilation failed')
-        return
+        formData.append('file', zippedProject, `${extractNameFromKey(path)}.zip`)
+        // @ts-ignore
+        const response = await axios.post(`${BASE_URL}/compile?requestId=${requestID}`, formData)
+
+        if (!response.data || !response.data.success) {
+          this.internalEvents.emit('noir_compiling_errored', new Error('Compilation failed'))
+          this.logFn('Compilation failed')
+          return
+        } else {
+          const { compiledJson, proverToml } = response.data
+
+          this.call('fileManager', 'writeFile', 'build/program.json', compiledJson)
+          this.call('fileManager', 'writeFile', 'build/prover.toml', proverToml)
+          this.internalEvents.emit('noir_compiling_done')
+          this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
+          // @ts-ignore
+          await this.call('editor', 'clearErrorMarkers', [path])
+        }
       } else {
-        const { compiledJson, proverToml } = response.data
-
-        this.call('fileManager', 'writeFile', 'build/program.json', compiledJson)
-        this.call('fileManager', 'writeFile', 'build/prover.toml', proverToml)
-        this.internalEvents.emit('noir_compiling_done')
-        this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
-        // @ts-ignore
-        this.debugFn('Compiled successfully')
-        // @ts-ignore
-        await this.call('editor', 'clearErrorMarkers', [path])
+        this.internalEvents.emit('noir_compiling_errored', new Error('Compilation failed: WebSocket connection not open'))
+        this.logFn('Compilation failed: WebSocket connection not open')
       }
     } catch (e) {
       const regex = /^\s*(\/[^:]+):(\d+):/gm;
