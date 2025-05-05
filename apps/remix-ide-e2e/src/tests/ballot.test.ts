@@ -16,7 +16,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Add Ballot #flaky #group2': function (browser: NightwatchBrowser) {
+  'Add Ballot #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },

@@ -311,7 +311,7 @@ module.exports = {
       })
   },
 
-  'Should stay connected in the mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
+  'Should stay connected in the mainnet VM fork and: check the block number is advancing and is not low #group5 #flaky': function (browser: NightwatchBrowser) {
     /*
         Should stay connected in the mainnet VM fork and: 
     - check the block number has been set to the current mainnet block number.
@@ -449,6 +449,7 @@ module.exports = {
         console.log('Test Fork Mainnet', address)
         addressRef = address
       })
+      .clearConsole()
       // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 4
       .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '3'})
       .perform((done) => {
