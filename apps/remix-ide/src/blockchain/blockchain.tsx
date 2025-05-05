@@ -1029,7 +1029,6 @@ export class Blockchain extends Plugin {
       const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
-      
 
       if (isVM) {
         const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
@@ -1061,8 +1060,8 @@ export class Blockchain extends Plugin {
 
       if (!tx.useCall && this.config.get('settings/save-evm-state')) {
         await this.dumpState()
-      } 
-      
+      }
+
       if (isVM) {
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {

@@ -418,11 +418,11 @@ export function AccountUI(props: AccountProps) {
       { contractHasDelegation ? <span className="alert-info badge badge-secondary">
           Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
-        <div data-id="delete-delegation" className="btn" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
-          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
-            <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
-          </CustomTooltip>
-        </div>
+          <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
+              <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
+            </CustomTooltip>
+          </span></a>
         </span> : null
       }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">

@@ -21,7 +21,7 @@ export function createContract ({ from, data, value, gasLimit, signed, authoriza
   if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
     return finalCallback('all the callbacks must have been defined')
   }
-  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed, authorizationList}
+  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed, authorizationList }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)

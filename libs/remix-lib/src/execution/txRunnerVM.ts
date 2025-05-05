@@ -64,7 +64,7 @@ export class TxRunnerVM {
     }
   }
 
-  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {    
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
     try {
       this.runInVm(args, callback)
     } catch (e) {
