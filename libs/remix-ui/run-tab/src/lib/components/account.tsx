@@ -198,10 +198,17 @@ export function AccountUI(props: AccountProps) {
 
   const createDelegationAuthorization = () => {
     props.modal(
-      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      intl.formatMessage({ id: 'udapp.createDelegationTitle' }),
       (
         <div className="w-100" data-id="createSmartAccountModal">
-          <input data-id="create-delegation-authorization-input" onChange={handleDelegationAuthorizationAddressRef} />
+          <span>{intl.formatMessage({ id: 'udapp.createDelegationDescription' }, {
+            a: (chunks) => (
+              <a href='https://eip7702.io/' target="_blank" rel="noreferrer">
+                {chunks}
+              </a>
+            )
+          })}</span>
+          <input className='border form-control' data-id="create-delegation-authorization-input" onChange={handleDelegationAuthorizationAddressRef} />
         </div>
       ),
       intl.formatMessage({ id: 'udapp.continue' }),

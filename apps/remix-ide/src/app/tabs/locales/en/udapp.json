@@ -186,5 +186,8 @@
   "udapp.EIP712-3": "In Remix, signing typed data is possible by right clicking (right click / Sign Typed Data) on a JSON file whose content is EIP-712 compatible.",
   "udapp.EIP712-create-template": "Create a JSON compliant with EIP-712",
   "udapp.EIP712-close": "Close",
-  "udapp.sign": "Sign"
+  "udapp.sign": "Sign",
+
+  "udapp.createDelegationTitle": "Authorize contract delegation",
+  "udapp.createDelegationDescription": "This operation will set contract code to the selected account. <br> Please provide the address of a contract deployed in the current chain. <a>EIP 7702</a>"
 }
