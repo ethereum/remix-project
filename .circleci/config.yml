@@ -159,6 +159,9 @@ jobs:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
             path: ./apps/remixdesktop/reports/screenshots
+        - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
 
   build-remixdesktop-linux:
       machine:
@@ -317,6 +320,9 @@ jobs:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
 
   # to setup a new certificate:
   # 1) from https://one.digicert.com/signingmanager/dashboard in the 'get started' section, the following configuration variables can be created:
@@ -588,6 +594,9 @@ jobs:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
   
   uploadartifacts:
     docker:
