@@ -423,8 +423,8 @@ async function installRemixd(): Promise<void> {
 }
 
 export function spawnRemixd(workspacePath: string): Promise<any> {
-  const logFile = path.resolve(process.cwd(), 'logs/remixd.log')
-  const logStream = fs.createWriteStream(logFile, { flags: 'a' }) // append mode
+  //const logFile = path.resolve(process.cwd(), 'logs/remixd.log')
+  //const logStream = fs.createWriteStream(logFile, { flags: 'a' }) // append mode
 
   const remixd = spawn(
     'chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080',
@@ -435,24 +435,25 @@ export function spawnRemixd(workspacePath: string): Promise<any> {
   // Pipe stdout and stderr to log
   remixd.stdout.on('data', (data) => {
     const text = data.toString()
-    logStream.write(`[stdout] ${text}`)
+    console.log(`[stdout] ${text}`)
   })
 
   remixd.stderr.on('data', (data) => {
     const text = data.toString()
-    logStream.write(`[stderr] ${text}`)
+    console.log(`[stderr] ${text}`)
   })
 
   // Log exit
   remixd.on('exit', (code, signal) => {
-    logStream.write(`remixd exited with code ${code}, signal ${signal}\n`)
-    logStream.end()
+    console.log(`remixd exited with code ${code}, signal ${signal}\n`)
+    //logStream.end()
   })
 
   // Handle startup and resolve when ready
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', (data) => {
       const text = data.toString()
+      console.log(`[remixd] ${text}`)
       if (
         text.includes('is listening') ||
         text.includes('There is already a client running')
@@ -462,8 +463,8 @@ export function spawnRemixd(workspacePath: string): Promise<any> {
     })
 
     remixd.on('error', (err) => {
-      logStream.write(`remixd error: ${err.message}\n`)
-      logStream.end()
+      console.log(`remixd error: ${err.message}\n`)
+      //logStream.end()
       reject(err)
     })
   })
