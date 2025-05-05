@@ -22,10 +22,12 @@ export const HandleStreamResponse = async (streamResponse,
   cb: (streamText: string) => void,
   done_cb?: (result: string) => void) => {
   try {
+    console.log('streamResponse', streamResponse)
     let resultText = ''
     const parser = new JsonStreamParser();
     const reader = streamResponse.body?.getReader();
     const decoder = new TextDecoder();
+    console.log('reader', reader)
 
     // eslint-disable-next-line no-constant-condition
     while (true) {

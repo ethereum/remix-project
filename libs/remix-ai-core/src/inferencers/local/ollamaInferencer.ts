@@ -1,26 +1,28 @@
-import { ICompletions, IGeneration, IParams } from "../../types/types";
+import { AIRequestType, ICompletions, IGeneration, IParams } from "../../types/types";
 import { CompletionParams, GenerationParams } from "../../types/models";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import { isOllamaAvailable } from "./ollama";
 import axios from "axios";
+import { RemoteInferencer } from "../remote/remoteInference";
 
 const defaultErrorMessage = `Unable to get a response from Ollama server`;
 
-export class OllamaInferencer implements ICompletions {
-  api_url: string = "http://localhost:11434/api/chat";
-  models_url: string = "http://localhost:11434/api/tags";
-  model_name: string = "llama3"; // Default model
-  event: EventEmitter;
+export class OllamaInferencer extends RemoteInferencer implements ICompletions {
+  ollama_api_url: string = "http://localhost:11434/api/generate";
+  model_name: string = "llama2:13b"; // Default model
 
   constructor(modelName?: string) {
+    super();
+    this.api_url = this.ollama_api_url;
     this.model_name = modelName || this.model_name;
-    this.event = new EventEmitter();
   }
 
-  private async _makeRequest(payload: any): Promise<string> {
+  override async _makeRequest(payload: any, rType:AIRequestType): Promise<string> {
     this.event.emit("onInference");
-
+    payload['stream'] = false;
+    payload['model'] = this.model_name;
+    console.log("calling _makeRequest Ollama API URL:", this.api_url);
     try {
       const result = await axios.post(this.api_url, payload, {
         headers: { "Content-Type": "application/json" },
@@ -40,14 +42,26 @@ export class OllamaInferencer implements ICompletions {
     }
   }
 
-  private async _streamInferenceRequest(payload: any): Promise<string> {
+  override async _streamInferenceRequest(payload: any, rType:AIRequestType) {
     this.event.emit("onInference");
+    payload['model'] = this.model_name;
+    console.log("payload in stream request", payload);
+    console.log("calling _streammakeRequest Ollama API URL:", this.api_url);
 
     const response = await fetch(this.api_url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        stream: true,
+        model: this.model_name,
+        messages: [{ role: "user", content: payload.prompt }],
+      }),
     });
+
+    console.log("response in stream request", response);
+    // if (payload.return_stream_response) {
+    //   return response
+    // }
 
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
@@ -61,6 +75,7 @@ export class OllamaInferencer implements ICompletions {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
+        console.log("chunk", chunk);
         resultText += chunk;
         this.event.emit("onStreamResult", chunk);
       }
@@ -81,29 +96,31 @@ export class OllamaInferencer implements ICompletions {
     };
   }
 
-  async code_completion(context: any, ctxFiles: any, fileName: any, options: IParams = CompletionParams) {
-  }
+  // async code_completion(context: any, ctxFiles: any, fileName: any, options: IParams = CompletionParams) {
+  // }
 
-  async code_insertion(prompt: string, options: IParams = GenerationParams) {
-  }
+  // async code_insertion(prompt: string, options: IParams = GenerationParams) {
+  // }
 
-  async code_generation(prompt: string, options: IParams = GenerationParams) {
-  }
+  // async code_generation(prompt: string, options: IParams = GenerationParams) {
+  // }
 
-  async generate(userPrompt: string, options: IParams = GenerationParams): Promise<any> {
-  }
+  // async generate(userPrompt: string, options: IParams = GenerationParams): Promise<any> {
+  // }
 
-  async generateWorkspace(prompt: string, options: IParams = GenerationParams): Promise<any> {
-  }
+  // async generateWorkspace(prompt: string, options: IParams = GenerationParams): Promise<any> {
+  // }
 
-  async solidity_answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
-  }
+  // async solidity_answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
+  // }
 
-  async code_explaining(prompt: string, options: IParams = GenerationParams): Promise<any> {
-  }
+  // async code_explaining(prompt, context:string="", options:IParams=GenerationParams): Promise<any> {
+  // }
 
-  async vulnerability_check(prompt: string, options: IParams = GenerationParams): Promise<any> {
-  }
+  // async error_explaining(prompt, options:IParams=GenerationParams): Promise<any> {
 
+  // }
 
+  // async vulnerability_check(prompt: string, options: IParams = GenerationParams): Promise<any> {
+  // }
 }

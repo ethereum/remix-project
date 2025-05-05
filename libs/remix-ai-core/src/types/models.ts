@@ -70,6 +70,8 @@ const InsertionParams:IParams = {
   topP: 0.92,
   max_new_tokens: 150,
   stream_result: false,
+  stream: false,
+  model: "",
 }
 
 const GenerationParams:IParams = {
@@ -78,6 +80,8 @@ const GenerationParams:IParams = {
   topP: 0.92,
   max_new_tokens: 2000,
   stream_result: false,
+  stream: false,
+  model: "",
   repeat_penalty: 1.2,
   terminal_output: false,
 }

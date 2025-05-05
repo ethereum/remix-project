@@ -22,7 +22,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     this.event = new EventEmitter()
   }
 
-  private async _makeRequest(payload, rType:AIRequestType){
+  async _makeRequest(payload, rType:AIRequestType){
     this.event.emit("onInference")
     const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
@@ -57,7 +57,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     }
   }
 
-  private async _streamInferenceRequest(payload, rType:AIRequestType){
+  async _streamInferenceRequest(payload, rType:AIRequestType){
     let resultText = ""
     try {
       this.event.emit('onInference')

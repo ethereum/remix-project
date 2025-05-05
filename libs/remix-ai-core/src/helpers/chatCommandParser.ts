@@ -1,4 +1,5 @@
 import { isOllamaAvailable, listModels } from "../inferencers/local/ollama";
+import { OllamaInferencer } from "../inferencers/local/ollamaInferencer";
 import { GenerationParams } from "../types/models";
 
 type CommandHandler = (args: string, reference: any) => void;
@@ -32,7 +33,6 @@ export class ChatCommandParser {
     const match = input.match(commandPattern);
 
     if (!match) {
-      console.log("No command found in input.");
       return "";
     }
 
@@ -99,13 +99,22 @@ export class ChatCommandParser {
         }
         const models = await listModels();
         if (models.includes(model)) {
-          // initializer ollama in remixai
+          // instantiate ollama in remixai
+          ref.props.remoteInferencer = new OllamaInferencer()
+          ref.props.remoteInferencer.event.on('onInference', () => {
+            ref.props.isInferencing = true
+          })
+          ref.props.remoteInferencer.event.on('onInferenceDone', () => {
+            ref.props.isInferencing = false
+          })
           return `Model set to \`${model}\`. You can now start chatting with it.`;
         } else {
           return `Model \`${model}\` is not available. Please check the list of available models.`;
         }
       } else if (prompt === "stop") {
         return "Ollama generation stopped.";
+      } else {
+        return "Invalid command. Use `/ollama start` to initialize Ollama, `/ollama select <model>` to select a model, or `/ollama stop` to stop the generation.";
       }
     } catch (error) {
       return "Ollama generation failed. Please try again.";
