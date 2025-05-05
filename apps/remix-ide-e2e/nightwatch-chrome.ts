@@ -11,7 +11,7 @@ module.exports = {
   webdriver: {
     start_process: true,
     port: 0,                               // pick a random free port
-    server_path: '/usr/local/bin/chromedriver',
+    server_path: process.env.CI ? '/usr/local/bin/chromedriver' : './tmp/webdrivers/chromedriver',
     host: '127.0.0.1',                     // bind only to IPv4
     cli_args: ['--host=127.0.0.1'],         // ensure chromedriver itself uses IPv4
     status_poll_interval: 500,   // wait 500 ms between /status checks
