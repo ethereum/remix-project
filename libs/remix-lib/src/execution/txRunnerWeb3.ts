@@ -74,13 +74,13 @@ export class TxRunnerWeb3 {
           currentDateTime = new Date();
           if (isUserOp) {
             tx.isUserOp = isUserOp
-            if(contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
-            resolve({
-              receipt,
-              tx,
-              transactionHash: receipt ? receipt['transactionHash'] : null
-            })
-          } 
+            if (contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
+          }
+          resolve({
+            receipt,
+            tx,
+            transactionHash: receipt ? receipt['transactionHash'] : null
+          })
         })
       }
       listenOnResponse().then((txData) => {
