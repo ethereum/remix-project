@@ -26,7 +26,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
   const from = tx.from
   const to = tx.to
   const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
-  const options = { from, to, tx, logs: { decoded: [], raw: receipt.logs } }
+  const options = { from, to, tx, logs: { decoded: [], raw: (receipt && receipt.logs) || [] } }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>
