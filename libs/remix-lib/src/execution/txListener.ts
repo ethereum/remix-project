@@ -104,6 +104,7 @@ export class TxListener {
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status
         tx.isUserOp = txResult.tx.isUserOp
+        tx.originTo = txResult.tx.originTo
         this._resolve([tx])
       }).catch(error=>console.log(error))
     })
