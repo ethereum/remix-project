@@ -188,6 +188,7 @@
   "udapp.EIP712-close": "Close",
   "udapp.sign": "Sign",
 
+  "udapp.createDelegationAuthorization": "Create Delegation Authorization",
   "udapp.createDelegationTitle": "Authorize contract delegation",
   "udapp.createDelegationDescription": "This operation will set contract code at this address to the selected account. Please provide the address of a contract deployed in the current chain."
 }

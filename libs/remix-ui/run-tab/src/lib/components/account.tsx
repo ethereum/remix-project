@@ -415,16 +415,16 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      { contractHasDelegation ? 
-      <span className="alert-info badge badge-secondary">
-          Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
-        <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
-        <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
-          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
-            <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
-          </CustomTooltip>
-        </span></a>
-      </span> : null
+      { contractHasDelegation ?
+        <span className="alert-info badge badge-secondary">
+            Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
+          <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
+          <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
+              <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
+            </CustomTooltip>
+          </span></a>
+        </span> : null
       }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">
           Owner: {shortenAddress(ownerEOA.current || '')}
@@ -440,7 +440,7 @@ export function AccountUI(props: AccountProps) {
         </CustomTooltip>
       </div>) : null }
       { enableDelegationAuthorization ? (<div className="mt-1">
-        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createSmartAccount' })}>
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createDelegationAuthorization' })}>
           <button data-id="create-delegation-authorization" type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
             <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
             Delegation Authorization
