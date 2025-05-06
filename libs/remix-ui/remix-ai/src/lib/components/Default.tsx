@@ -48,7 +48,7 @@ export const Default = (props) => {
       observer.complete()
       return
     }
-    console.log('parseresukt', parseResult)
+
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
