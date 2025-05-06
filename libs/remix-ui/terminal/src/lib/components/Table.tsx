@@ -12,7 +12,7 @@ const showTable = (opts, showTableHash) => {
   let msg = ''
   let toHash
   const data = opts.data // opts.data = data.tx
-  if (data.to && opts.to !== data.to) {
+  if (!opts.isUserOp && data.to && opts.to !== data.to) {
     toHash = opts.to + ' ' + data.to
   } else {
     toHash = opts.to
@@ -100,7 +100,7 @@ const showTable = (opts, showTableHash) => {
               from
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>
-              {opts.from}
+              {toChecksumAddress(opts.from)}
               <CopyToClipboard content={opts.from} />
               { opts.isUserOp && opts.bundler ? (<>
                   (BUNDLER: {toChecksumAddress(opts.bundler)}) <CopyToClipboard content={opts.bundler} />
@@ -109,14 +109,18 @@ const showTable = (opts, showTableHash) => {
             </td>
           </tr>
         ) : null}
-        {opts.to ? (
+        {opts.to || (opts.isUserOp && opts.entrypoint)? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               to
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {toHash}
-              <CopyToClipboard content={data.to ? data.to : toHash} />
+              { opts.to ? <CopyToClipboard content={data.to ? data.to : toHash} /> : null }
+              { opts.isUserOp && opts.entrypoint ? (<>
+                  (ENTRYPOINT: {toChecksumAddress(opts.entrypoint)}) <CopyToClipboard content={opts.entrypoint} />
+              </>
+            ) : null }
             </td>
           </tr>
         ) : null}
