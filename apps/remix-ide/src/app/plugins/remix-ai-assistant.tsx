@@ -29,7 +29,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   onActivation() {
-
+    this.call('layout', 'maximiseSidePanel')
   }
 
   onDeactivation() {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
-import PromptZone from '../components/promptzone'
 import ResponseZone from '../components/Responsezone'
 
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
@@ -12,6 +11,7 @@ import '@nlux/themes/unstyled.css'
 import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
 import DefaultResponseContent from '../components/DefaultResponseContent'
+import PromptZone from '../components/promptzone'
 
 export const user: UserPersona = {
   name: 'Remi',
@@ -51,6 +51,10 @@ export function RemixUiRemixAiAssistant(props: any) {
     })
   }
 
+  const handleRadioSelection = (value) => {
+
+  }
+
   useEffect(() => {
     HandleCopyToClipboard()
   }, [is_streaming])
@@ -62,23 +66,26 @@ export function RemixUiRemixAiAssistant(props: any) {
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
-
+    console.log('sent', { prompt, GenerationParams })
     let response = null
-    if (await props.plugin.call('remixAI', 'isChatRequestPending')){
+    const check = await props.plugin.call('remixAI', 'isChatRequestPending')
+    if (check) {
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
     } else {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
     }
 
-    if (GenerationParams.return_stream_response) HandleStreamResponse(response,
-      (text) => {observer.next(text)},
-      (result) => {
-        observer.next(' ') // Add a space to flush the last message
-        ChatHistory.pushHistory(prompt, result)
-        observer.complete()
-        setTimeout(() => { setIS_streaming(false) }, 1000)
-      }
-    )
+    if (GenerationParams.return_stream_response) {
+      HandleStreamResponse(response,
+        (text) => {observer.next(text)},
+        (result) => {
+          observer.next(' ') // Add a space to flush the last message
+          ChatHistory.pushHistory(prompt, result)
+          observer.complete()
+          setTimeout(() => { setIS_streaming(false) }, 1000)
+        }
+      )
+    }
     else {
       observer.next(response)
       observer.complete()
@@ -121,26 +128,28 @@ export function RemixUiRemixAiAssistant(props: any) {
           },
           user
         }}
-        //initialConversation={initialMessages}
+        // initialConversation={initialMessages}
         conversationOptions={{ layout: 'bubbles', conversationStarters }}
         displayOptions={{ colorScheme: "auto", themeId: "remix_ai_theme" }}
-        composerOptions={{ placeholder: "Ask me anything, use @ to mention file...",
-          submitShortcut: 'Enter',
-          hideStopButton: false,
-        }}
+        // composerOptions={{ placeholder: "Ask me anything, start with @workspace to add context",
+        //   submitShortcut: 'Enter',
+        //   hideStopButton: false,
+        // }}
         messageOptions={{ showCodeBlockCopyButton: true,
           editableUserMessages: true,
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
           syntaxHighlighter: highlighter,
           promptRenderer: ({ uid, prompt, onResubmit }) => <PromptRenderer uid={uid} prompt={prompt} onResubmit={onResubmit} />,
-          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid} response={content} containerRef={containerRef} />
+          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
+            response={content as string[]} containerRef={containerRef} />
         }}
       >
         <AiChatUI.Greeting>
           <DefaultResponseContent />
         </AiChatUI.Greeting>
       </AiChat>
+      <PromptZone onChangeHandler={handleRadioSelection} value={''} onSubmitHandler={() => {}} />
     </div>
   )
 }
@@ -150,11 +159,11 @@ function ResponseRenderer({ uid, response, containerRef }: { uid: string, respon
   const [isDisliked, setIsDisliked] = useState(false)
   return (
     <>
-      <div ref={containerRef} />
-      <div className="d-flex flex-row justify-content-between align-items-center mt-2">
-        <span className={!isLiked ? 'far fa-thumbs-up fa-2xl mr-3' : 'fas fa-thumbs-up fa-2xl mr-3'} onClick={() => setIsLiked(!isLiked && !isDisliked)}></span>
-        <span className={!isDisliked ? 'far fa-thumbs-down fa-2xl' : 'fas fa-thumbs-down fa-2xl'} onClick={() => setIsDisliked(!isDisliked && !isLiked)}></span>
-      </div>
+      <section ref={containerRef} />
+      {<div className="d-flex flex-row justify-content-between align-items-center mt-2">
+        <span className={!isLiked ? 'far fa-thumbs-up fa-lg mr-3' : 'fas fa-thumbs-up fa-lg mr-3'} onClick={() => setIsLiked(!isLiked && !isDisliked)}></span>
+        <span className={!isDisliked ? 'far fa-thumbs-down fa-lg' : 'fas fa-thumbs-down fa-lg'} onClick={() => setIsDisliked(!isDisliked && !isLiked)}></span>
+      </div>}
     </>
   )
 }
@@ -162,7 +171,7 @@ function ResponseRenderer({ uid, response, containerRef }: { uid: string, respon
 
 function PromptRenderer({ uid, prompt, onResubmit }: { uid: string, prompt: string, onResubmit: (prompt: string) => void }) {
   return (
-    <div key={uid} className="d-flex flex-row justify-content-between">
+    <div key={uid} className="d-flex flex-column justify-content-between">
       <span className="text-muted font-weight-bold">
         You
       </span>

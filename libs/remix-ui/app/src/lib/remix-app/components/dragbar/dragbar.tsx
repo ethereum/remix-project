@@ -126,7 +126,7 @@ const DragBar = (props: IRemixDragBarUi) => {
         }, 300)
       }
     }
-
+    console.log('what is x', { data, whatisX: props.refObject.current.offsetLeft })
   }
 
   function startDrag() {

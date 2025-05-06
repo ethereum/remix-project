@@ -210,6 +210,12 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async ProcessChatRequestBuffer(params:IParams=GenerationParams){
+    // console.log("ProcessChatRequestBuffer", {
+    //   chatRequestBuffer: this.chatRequestBuffer,
+    //   params: params
+    // })
+    console.trace()
+    return
     if (this.chatRequestBuffer != null){
       const result = this[this.chatRequestBuffer.fn_name](this.chatRequestBuffer.prompt, this.chatRequestBuffer.context, params)
       this.chatRequestBuffer = null

@@ -18,6 +18,7 @@ stats.json
 release
 .env
 .env.local
+.idea/
 
 
 # compiled output
