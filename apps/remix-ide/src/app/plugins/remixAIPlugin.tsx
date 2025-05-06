@@ -6,7 +6,7 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { CodeCompletionAgent } from '@remix/remix-ai-core';
+import { CodeCompletionAgent, IContextType } from '@remix/remix-ai-core';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -16,7 +16,7 @@ type chatRequestBufferT<T> = {
 const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
-  methods: ['code_generation', 'code_completion',
+  methods: ['code_generation', 'code_completion', 'setContextFiles',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining", "vulnerability_check",
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
@@ -219,6 +219,9 @@ export class RemixAIPlugin extends ViewPlugin {
       console.log("chatRequestBuffer is empty.")
       return ""
     }
+  }
+
+  async setContextFiles(context: IContextType) {
   }
 
   isChatRequestPending(){

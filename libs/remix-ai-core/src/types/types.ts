@@ -10,6 +10,10 @@ export interface IModelRequirements{
   MinGPUVRAM: number,
 }
 
+export interface IContextType {
+  context: 'currentFile' | 'workspace'|'openedFiles'
+}
+
 export interface IModel {
   name: string;
   task: string;
