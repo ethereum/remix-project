@@ -4,6 +4,8 @@ import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
 import { shortenHexData } from '@remix-ui/helper'
 import { execution } from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
+import { toChecksumAddress } from '@ethereumjs/util'
+
 
 const showTable = (opts, showTableHash) => {
   const intl = useIntl()
@@ -100,6 +102,10 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.from}
               <CopyToClipboard content={opts.from} />
+              { opts.isUserOp && opts.bundler ? (<>
+                  (BUNDLER: {toChecksumAddress(opts.bundler)}) <CopyToClipboard content={opts.bundler} />
+                </>
+               ) : null }
             </td>
           </tr>
         ) : null}
@@ -133,6 +139,10 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.transactionCost} gas {callWarning}
               <CopyToClipboard content={opts.transactionCost} />
+              { opts.isUserOp && opts.paymaster ? (<>
+                  (PAYMASTER: {toChecksumAddress(opts.paymaster)}) <CopyToClipboard content={opts.paymaster} />
+                </>
+               ) : null }
             </td>
           </tr>
         ) : null}
