@@ -6,7 +6,6 @@ import { execution } from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
 import { toChecksumAddress } from '@ethereumjs/util'
 
-
 const showTable = (opts, showTableHash) => {
   const intl = useIntl()
   let msg = ''
@@ -104,8 +103,8 @@ const showTable = (opts, showTableHash) => {
               <CopyToClipboard content={opts.from} />
               { opts.isUserOp && opts.bundler ? (<>
                   (BUNDLER: {toChecksumAddress(opts.bundler)}) <CopyToClipboard content={opts.bundler} />
-                </>
-               ) : null }
+              </>
+              ) : null }
             </td>
           </tr>
         ) : null}
@@ -120,7 +119,7 @@ const showTable = (opts, showTableHash) => {
               { opts.isUserOp && opts.entrypoint ? (<>
                   (ENTRYPOINT: {toChecksumAddress(opts.entrypoint)}) <CopyToClipboard content={opts.entrypoint} />
               </>
-            ) : null }
+              ) : null }
             </td>
           </tr>
         ) : null}
@@ -145,8 +144,8 @@ const showTable = (opts, showTableHash) => {
               <CopyToClipboard content={opts.transactionCost} />
               { opts.isUserOp && opts.paymaster ? (<>
                   (PAYMASTER: {toChecksumAddress(opts.paymaster)}) <CopyToClipboard content={opts.paymaster} />
-                </>
-               ) : null }
+              </>
+              ) : null }
             </td>
           </tr>
         ) : null}

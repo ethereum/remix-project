@@ -41,7 +41,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
     if (tx.originTo) {
       to = tx.originTo
     }
-    
+
   }
   const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
   const options = {
@@ -71,7 +71,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
       </div>
       {showTableHash.includes(tx.hash)
         ? showTable(
-          {  
+          {
             'isUserOp': tx.isUserOp,
             'bundler': tx.bundler,
             'paymaster': tx.paymaster,
