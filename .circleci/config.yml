@@ -5,9 +5,9 @@ parameters:
     default: false   
   run_metamask_tests:
     type: boolean
-    default: false   
+    default: true   
 orbs:
-  browser-tools: circleci/browser-tools@1.5.2
+  browser-tools: circleci/browser-tools@1.5.3
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
 jobs:
@@ -706,6 +706,9 @@ jobs:
           condition:
               equal: [ "chromeMetamask", << parameters.browser >> ]
           steps:
+            - run:
+                name: Set metamask test flag
+                command: echo "METAMASK_TEST=true" >> $BASH_ENV
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true

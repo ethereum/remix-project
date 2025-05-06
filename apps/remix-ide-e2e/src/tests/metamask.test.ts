@@ -307,7 +307,8 @@ const tests = {
 }
 
 const branch = process.env.CIRCLE_BRANCH
-const runTestsConditions = branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
+const metamaskEnv = process.env.METAMASK_TEST === 'true'
+const runTestsConditions = (branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))) || metamaskEnv
 
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
