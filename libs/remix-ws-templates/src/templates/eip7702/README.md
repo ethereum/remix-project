@@ -30,8 +30,8 @@ This section explains how to run this project. We are going to assign a piece of
 ## What's next
 
 This project also contains the file `Simple7702Account.sol`,
-this imports a standard implementation of an 7702 account.
+this uses a standard implementation of an 7702 account.
 - Compile and deploy this contract (make sure you select the correct contract).
-- In the `.deps` directory. you can open the file, `github/eth-infinitism/account-abstraction/contracts/accounts/Simple7702Account.sol` and see how the functions are being implemented. Specifically the function `execute` and `executeBatch`.
+- Check how the functions are being implemented. Specifically the function `execute` and `executeBatch`.
 
 
