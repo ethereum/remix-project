@@ -112,6 +112,7 @@ module.exports = {
           args: [
             `--load-extension=${metamaskExtensionPath}`,
             '--window-size=2560,1440',
+            '--no-sandbox',
             '--verbose',
             '--disable-gpu',
           ]
