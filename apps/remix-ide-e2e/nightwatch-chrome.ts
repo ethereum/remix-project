@@ -113,7 +113,6 @@ module.exports = {
             `--load-extension=${metamaskExtensionPath}`,
             '--window-size=2560,1440',
             '--verbose',
-            '--headless=new',
             '--disable-gpu',
           ]
         }
