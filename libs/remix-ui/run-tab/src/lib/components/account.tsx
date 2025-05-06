@@ -19,7 +19,7 @@ export function AccountUI(props: AccountProps) {
   const [contractHasDelegation, setContractHasDelegation] = useState(false)
   const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(false)
   const [enableCSM, setEnableCSM] = useState(false)
-  const [smartAccountSelected, setSmartAccountSelected] = useState(false)  
+  const [smartAccountSelected, setSmartAccountSelected] = useState(false)
 
   const messageRef = useRef('')
   const delegationAuthorizationAddressRef = useRef(null)
@@ -217,8 +217,8 @@ export function AccountUI(props: AccountProps) {
           await props.delegationAuthorization(delegationAuthorizationAddressRef.current)
           setContractHasDelegation(true)
         } catch (e) {
-          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message})
-        }        
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
+        }
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
@@ -242,7 +242,7 @@ export function AccountUI(props: AccountProps) {
           delegationAuthorizationAddressRef.current = ''
           setContractHasDelegation(false)
         } catch (e) {
-          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message})
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
         }
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
@@ -418,11 +418,11 @@ export function AccountUI(props: AccountProps) {
       { contractHasDelegation ? <span className="alert-info badge badge-secondary">
           Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
-          <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
-              <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
-            </CustomTooltip>
-          </span></a>
+        <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
+            <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
+          </CustomTooltip>
+        </span></a>
         </span> : null
       }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">

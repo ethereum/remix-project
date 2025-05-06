@@ -5,7 +5,7 @@ import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest,
 import { toChecksumAddress, bytesToHex, isZeroAddress } from '@ethereumjs/util'
 import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, toAddress } from '@remix-project/remix-lib'
 import { SmartAccount } from "../types"
-import { BrowserProvider, BaseWallet, SigningKey, isAddress } from "ethers" 
+import { BrowserProvider, BaseWallet, SigningKey, isAddress } from "ethers"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import * as chains from "viem/chains"
@@ -119,7 +119,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   } catch (e) {
     throw new Error(`Error while validating the provided contract address. \n ${e.message}`)
   }
-  
+
   const provider = {
     request: async (query) => {
       const ret = await plugin.call('web3Provider', 'sendAsync', query)
@@ -137,12 +137,12 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   const signerForAuth = Object.keys(plugin.REACT_API.accounts.loadedAccounts).find((a) => a !== plugin.REACT_API.accounts.selectedAccount)
   const signer = await ethersProvider.getSigner(signerForAuth)
   let tx
-  
+
   try {
     tx = await signer.sendTransaction({
       type: 4,
       to: plugin.REACT_API.accounts.selectedAccount,
-      authorizationList: [ auth ]
+      authorizationList: [auth]
     });
     console.log(tx)
   } catch (e) {
@@ -157,7 +157,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   } catch (e) {
     console.error(e)
     throw e
-  }  
+  }
 
   if (!isZeroAddress(contractAddress)) {
     const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
@@ -177,7 +177,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
 
       plugin.call('terminal', 'log', { type: 'log',
         value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
-      }
+    }
   } else {
     plugin.call('terminal', 'log', { type: 'log',
       value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} removed.` })
