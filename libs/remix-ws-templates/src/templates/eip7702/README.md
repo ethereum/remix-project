@@ -1,15 +1,15 @@
 # EIP 7702
 
-This project present one of the update shipped on the Pectra hardfork which occured in May 2025.
+This Workspace Template present one of the updates shipped with the Pectra upgrade which occurred in May 2025.
 
 ### Basics
 
-Originally it exists 2 differents of accounts:
-- Externally Owned Account (EOA): it requires a private key and can initiate transactions.
-- Smart Contract Account. It represents code deployed in the blockchain.
+It exists 2 differents type of accounts:
+- Externally Owned Account (EOA): which require a private key and could initiate transactions.
+- Smart Contract Account: which represents code deployed in the blockchain.
 
 These two concepts are separated: e.g until now EOAs doesn't have code associated to them.
-This update allows an EOA to host code and to directly run code.
+But with the Pectra upgrade, EOA can now host code and can directly run code.
 
 For more information please see [this page](https://eip7702.io)
 
@@ -22,15 +22,16 @@ This section explains how to run this project. We are going to assign a piece of
 - Deploy the contract above (this will be deployed to the in-browser blockchain)
 - Copy the address of the contract to the clipboard.
 - Click on `Delegation Authorization`
-- In the Modal dialog, paste the contract address and validate.
-- Check in the terminal that the operation is successful.
-- Take a look at the list of deployed contracts, you will see a new instance that call the current account. This account now also execute code!
+- In the Modal dialog, paste the contract's address and validate.
+- Check in the terminal that the "Delegation" has been "activated".
+- Check the list of deployed contracts, you'll see a new instance that calls the current account. This account now also executes code!
+
 
 ## What's next
 
 This project also contains the file `Simple7702Account.sol`,
-this import a standard implementation of an 7702 account.
-You can compile this contract and [open the implementation file](https://github.com/eth-infinitism/account-abstraction/blob/v0.8.0/contracts/accounts/Simple7702Account.sol), you will see how is practically used this feature. Specifically with the function `execute` and `executeBatch`
-
+this imports a standard implementation of an 7702 account.
+- Compile and deploy this contract (make sure you select the correct contract).
+- In the `.deps` directory. you can open the file, `github/eth-infinitism/account-abstraction/contracts/accounts/Simple7702Account.sol` and see how the functions are being implemented. Specifically the function `execute` and `executeBatch`.
 
 
