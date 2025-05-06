@@ -5,6 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { shortenAddress, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { eip7702Constants } from '@remix-project/remix-lib'
 import { Dropdown } from 'react-bootstrap'
 const _paq = window._paq = window._paq || []
 
@@ -75,10 +76,9 @@ export function AccountUI(props: AccountProps) {
         return
       }
       const code = await props.runTabPlugin.blockchain.web3().eth.getCode(selectedAccount)
-      const EIP7702_CODE_INDICATOR_FLAG = '0xef0100'
-      if (code && code.startsWith(EIP7702_CODE_INDICATOR_FLAG)) {
+      if (code && code.startsWith(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG)) {
         // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-7702.md delegation indicator
-        const address = '0x' + code.replace(EIP7702_CODE_INDICATOR_FLAG, '')
+        const address = '0x' + code.replace(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG, '')
         if (address === '0x0000000000000000000000000000000000000000') {
           setContractHasDelegation(false)
           delegationAuthorizationAddressRef.current = null
@@ -415,7 +415,8 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      { contractHasDelegation ? <span className="alert-info badge badge-secondary">
+      { contractHasDelegation ? 
+      <span className="alert-info badge badge-secondary">
           Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
         <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
@@ -423,7 +424,7 @@ export function AccountUI(props: AccountProps) {
             <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
           </CustomTooltip>
         </span></a>
-        </span> : null
+      </span> : null
       }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">
           Owner: {shortenAddress(ownerEOA.current || '')}

@@ -1,0 +1,1 @@
+export const EIP7702_CODE_INDICATOR_FLAG = '0xef0100'
