@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Web3 from 'web3';
-import { ethers } from 'ethers';
+import { AbiCoder } from 'ethers';
 import BN from 'bn.js';
 import { execution } from '@remix-project/remix-lib';
 import { toBytes, addHexPrefix } from '@ethereumjs/util';
@@ -25,7 +25,7 @@ const decodeInputParams = (data: any, abi: any) => {
         : type
     );
   }
-  const abiCoder = new ethers.utils.AbiCoder();
+  const abiCoder = new AbiCoder();
   const decoded = abiCoder.decode(inputTypes, data);
   const ret: any = {};
   for (const k in abi.inputs) {

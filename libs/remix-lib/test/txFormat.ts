@@ -2,9 +2,9 @@
 import tape from 'tape'
 import * as txFormat from '../src/execution/txFormat'
 import * as txHelper from '../src/execution/txHelper'
-import { hexToIntArray } from '../src/util'
 let compiler = require('solc')
 import { compilerInput } from '../src/helpers/compilerHelper'
+import { hexToBytes, PrefixedHexString } from '@ethereumjs/util'
 const solidityVersion = 'v0.6.0+commit.26b70077'
 
 /* tape *********************************************************** */
@@ -290,7 +290,7 @@ tape('test abiEncoderV2', function (t) {
       console.log(error)
       st.equal(encoded.dataHex, functionId + encodedData.replace('0x', ''))
     })
-    const decoded = txFormat.decodeResponse(hexToIntArray(encodedData), contract.abi[0])
+    const decoded = txFormat.decodeResponse(hexToBytes(encodedData), contract.abi[0])
     console.log(decoded)
     st.equal(decoded[0], `tuple(uint256,uint256,string): ${value1},${value2},${value3}`)
   })
@@ -311,14 +311,14 @@ tape('test abiEncoderV2 array of tuple', function (t) {
     const contract = output.contracts['test.sol']['test']
     txFormat.encodeParams('[34, "test"]', contract.abi[1], (error, encoded) => {
       console.log(error)
-      const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[1])
+      const decoded = txFormat.decodeResponse(hexToBytes(('0x' + encoded.dataHex) as PrefixedHexString), contract.abi[1])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string): _strucmts 34,test')
     })
 
     txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[2], (error, encoded) => {
       console.log(error)
-      const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[2])
+      const decoded = txFormat.decodeResponse(hexToBytes(('0x' + encoded.dataHex) as PrefixedHexString), contract.abi[2])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string)[]: strucmts 34,test,123,test2')
     })

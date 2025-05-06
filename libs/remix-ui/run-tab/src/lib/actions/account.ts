@@ -3,6 +3,7 @@ import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
+import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, toAddress } from '@remix-project/remix-lib'
 import { SmartAccount } from "../types"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
@@ -109,14 +110,13 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  const localStorageKey = 'smartAccounts'
-  const PUBLIC_NODE_URL = "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
-  const toAddress = "0xAFdAC33F6F134D46bAbE74d9125F3bf8e8AB3a44" // A dummy zero value tx is made to this address to create existence of smart account
-  const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
-  const network = 'sepolia'
-  const chain = chains[network]
-  const BUNDLER_URL = `https://pimlico.remixproject.org/api/proxy/${chain.id}`
 
+  const { chainId } = plugin.REACT_API
+  const chain = chains[aaSupportedNetworks[chainId].name]
+  const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
+  const BUNDLER_URL = getPimlicoBundlerURL(chainId)
+
+  const safeAddresses: string[] = Object.keys(plugin.REACT_API.smartAccounts)
   let salt
 
   // @ts-ignore
@@ -168,6 +168,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
         estimateFeesPerGas: async () => (await paymasterClient.getUserOperationGasPrice()).fast,
       }
     })
+
     // Make a dummy tx to force smart account deployment
     const useropHash = await saClient.sendUserOperation({
       calls: [{
@@ -177,9 +178,8 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     })
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
 
-    // TO verify creation, check if there is a contract code at this address
+    // To verify creation, check if there is a contract code at this address
     const safeAddress = safeAccount.address
-
     const sAccount: SmartAccount = {
       address : safeAccount.address,
       salt,
@@ -188,10 +188,10 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     }
     plugin.REACT_API.smartAccounts[safeAddress] = sAccount
     // Save smart accounts in local storage
-    const smartAccountsStr = localStorage.getItem(localStorageKey)
+    const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
     const smartAccountsObj = JSON.parse(smartAccountsStr)
-    smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
-    localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+    smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
+    localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
 
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
@@ -202,21 +202,19 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
 export const loadSmartAccounts = async (plugin) => {
   const { chainId } = plugin.REACT_API
-  const localStorageKey = 'smartAccounts'
-
-  const smartAccountsStr = localStorage.getItem(localStorageKey)
+  const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
   if (smartAccountsStr) {
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     if (smartAccountsObj[chainId]) {
       plugin.REACT_API.smartAccounts = smartAccountsObj[chainId]
     } else {
       smartAccountsObj[chainId] = {}
-      localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+      localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
     }
   } else {
     const objToStore = {}
     objToStore[chainId] = {}
-    localStorage.setItem(localStorageKey, JSON.stringify(objToStore))
+    localStorage.setItem(aaLocalStorageKey, JSON.stringify(objToStore))
   }
 }
 

@@ -22,7 +22,8 @@ module.exports = {
       .modalFooterOKClick('ganache-provider')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//span[@class='text-danger' and contains(., 'missing response')]"
+        selector: "//span[@class='text-danger' and contains(., 'Error while querying the provider')]",
+        timeout: 10000
       })
       .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
       .pause(1000)

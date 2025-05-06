@@ -1,7 +1,7 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import { ethers } from 'ethers'
+import { JsonRpcProvider } from 'ethers'
 
 module.exports = {
   '@disabled': true,
@@ -311,7 +311,7 @@ module.exports = {
       })
   },
 
-  'Should stay connected in the mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
+  'Should stay connected to mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
     /*
         Should stay connected in the mainnet VM fork and: 
     - check the block number has been set to the current mainnet block number.
@@ -325,10 +325,15 @@ module.exports = {
     let currentBlockNumber: number
     browser
       .perform(async (done) => {
-        const provider = new ethers.providers.JsonRpcProvider('https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38')
-        currentBlockNumber = (await provider.getBlockNumber()) as number
-        console.log('getBlockNumber', currentBlockNumber)
-        done()
+        try {
+          console.log('getting the provider up..')
+          const provider = new JsonRpcProvider('https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38')
+          currentBlockNumber = (await provider.getBlockNumber()) as number
+          console.log('getBlockNumber', currentBlockNumber)
+          done()
+        } catch (e) {
+          console.error(e)
+        }        
       })
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
       .clickLaunchIcon('filePanel')

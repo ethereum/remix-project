@@ -26,7 +26,6 @@ import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
-import { providers } from 'ethers'
 const _paq = (window._paq = window._paq || [])
 
 enum MarkerSeverity {
