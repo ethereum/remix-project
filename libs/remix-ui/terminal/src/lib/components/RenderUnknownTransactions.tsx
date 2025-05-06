@@ -26,7 +26,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
   }
   let from, to
 
-  if(tx.isUserOp) {
+  if (tx.isUserOp) {
     console.log(receipt)
     const fromAddrLog = receipt.logs.find(e => e.topics[0] === "0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8")
     if (fromAddrLog) {
