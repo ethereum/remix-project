@@ -148,6 +148,7 @@ export class RunTab extends ViewPlugin {
       'vm-paris': 'Deploy to the in-browser virtual machine running the Paris fork.',
       'vm-london': 'Deploy to the in-browser virtual machine running the London fork.',
       'vm-berlin': 'Deploy to the in-browser virtual machine running the Berlin fork.',
+      'vm-pectra': 'Deploy to the in-browser virtual machine running the Prague fork.',
       'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet latest block in the in-browser virtual machine.',
       'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet latest block in the in-browser virtual machine.',
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
