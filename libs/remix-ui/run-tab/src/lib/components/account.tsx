@@ -59,6 +59,7 @@ export function AccountUI(props: AccountProps) {
     const run = async () => {
       if (selectExEnv !== 'vm-pectra' && selectExEnv !== 'vm-mainnet-fork') {
         setEnableDelegationAuthorization(false)
+        setContractHasDelegation(false)
         delegationAuthorizationAddressRef.current = null
         return
       }
