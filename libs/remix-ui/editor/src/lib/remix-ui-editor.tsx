@@ -718,15 +718,15 @@ export const EditorUI = (props: EditorUIProps) => {
               </div>
               {/* Added Checkbox section below */}
               <div className="mt-3">
-                 <label htmlFor="donotshowagain" className="text-dark">
-                   <input
-                     type="checkbox"
-                     id="donotshowagain"
-                     className="mr-2"
-                     onChange={(e) => dontShowAgainChecked = e.target.checked}
-                   />
-                   <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
-                 </label>
+                <label htmlFor="donotshowagain" className="text-dark">
+                  <input
+                    type="checkbox"
+                    id="donotshowagain"
+                    className="mr-2"
+                    onChange={(e) => dontShowAgainChecked = e.target.checked}
+                  />
+                  <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
+                </label>
               </div>
             </div>
           )
