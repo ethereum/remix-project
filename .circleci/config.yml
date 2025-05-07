@@ -710,6 +710,9 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
   tests-passed:
     machine:
