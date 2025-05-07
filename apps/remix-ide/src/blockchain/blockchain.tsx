@@ -97,7 +97,8 @@ export class Blockchain extends Plugin {
     this.txRunner = new TxRunner(web3Runner, {})
     this.networkcallid = 0
     this.registeredPluginEvents = []
-    this.defaultPinnedProviders = ['vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    // the first item in the list should be latest fork.
+    this.defaultPinnedProviders = ['vm-pectra', 'vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
     this.networkStatus = { network: { name: this.defaultPinnedProviders[0], id: ' - ' } }
     this.pinnedProviders = []
     this.setupEvents()
@@ -157,6 +158,10 @@ export class Blockchain extends Plugin {
         this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.defaultPinnedProviders))
         this.pinnedProviders = this.defaultPinnedProviders
       } else {
+        if (!providers.includes(this.defaultPinnedProviders[0])) {
+          // we force the inclusion of the latest fork in the pinned VM.
+          providers.push(this.defaultPinnedProviders[0])
+        }
         this.pinnedProviders = JSON.parse(providers)
       }
     }).catch((error) => { console.log(error) })
