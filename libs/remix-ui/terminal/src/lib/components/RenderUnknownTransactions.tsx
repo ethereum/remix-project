@@ -27,7 +27,12 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
   let to = tx.to
 
   if (tx.isUserOp) {
+    console.log(receipt)
+    // Track event with signature: ExecutionFromModuleSuccess (index_topic_1 address module)
+    // to get sender smart account address
     const fromAddrLog = receipt.logs.find(e => e.topics[0] === "0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8")
+    // Track event with signature: UserOperationSponsored (index_topic_1 bytes32 userOpHash, index_topic_2 address user, uint8 paymasterMode, address token, uint256 tokenAmountPaid, uint256 exchangeRate)
+    // to get paymaster address
     const paymasterAddrLog = receipt.logs.find(e => e.topics[0] === "0x7a270f29ae17e8e2304ff1245deb50c3b6206bca82928d904f3e284d35c5ffd2")
     if (fromAddrLog) {
       from = fromAddrLog.address
