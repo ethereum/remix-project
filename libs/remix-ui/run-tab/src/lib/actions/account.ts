@@ -2,9 +2,10 @@ import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
-import { toChecksumAddress } from '@ethereumjs/util'
+import { toChecksumAddress, bytesToHex, isZeroAddress } from '@ethereumjs/util'
 import { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, toAddress } from '@remix-project/remix-lib'
 import { SmartAccount } from "../types"
+import { BrowserProvider, BaseWallet, SigningKey, isAddress } from "ethers"
 import "viem/window"
 import { custom, createWalletClient, createPublicClient, http } from "viem"
 import * as chains from "viem/chains"
@@ -107,6 +108,83 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
       await fillAccountsList(plugin, dispatch)
     }
   )
+}
+
+export const delegationAuthorization = async (contractAddress: string, plugin: RunTab) => {
+  try {
+    if (!isAddress(toChecksumAddress(contractAddress))) {
+      await plugin.call('terminal', 'log', { type: 'info', value: `Please use an ethereum address of a contract deployed in the current chain.` })
+      return
+    }
+  } catch (e) {
+    throw new Error(`Error while validating the provided contract address. \n ${e.message}`)
+  }
+
+  const provider = {
+    request: async (query) => {
+      const ret = await plugin.call('web3Provider', 'sendAsync', query)
+      return ret.result
+    }
+  }
+
+  plugin.call('terminal', 'log', { type: 'info', value: !isZeroAddress(contractAddress) ? 'Signing and activating delegation...' : 'Removing delegation...' })
+
+  const ethersProvider = new BrowserProvider(provider)
+  const pKey = await ethersProvider.send('eth_getPKey', [plugin.REACT_API.accounts.selectedAccount])
+  const authSignerPKey = new BaseWallet(new SigningKey(bytesToHex(pKey)), ethersProvider)
+  const auth = await authSignerPKey.authorize({ address: contractAddress, chainId: 0 });
+
+  const signerForAuth = Object.keys(plugin.REACT_API.accounts.loadedAccounts).find((a) => a !== plugin.REACT_API.accounts.selectedAccount)
+  const signer = await ethersProvider.getSigner(signerForAuth)
+  let tx
+
+  try {
+    tx = await signer.sendTransaction({
+      type: 4,
+      to: plugin.REACT_API.accounts.selectedAccount,
+      authorizationList: [auth]
+    });
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+
+  let receipt
+  try {
+    receipt = await tx.wait()
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+
+  if (!isZeroAddress(contractAddress)) {
+    const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
+    if (artefact) {
+      const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
+      const contractObject = {
+        name: artefact.name,
+        abi: artefact.contract.abi,
+        compiler: data,
+        contract: {
+          file : artefact.file,
+          object: artefact.contract
+        }
+      }
+      plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
+      await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
+      plugin.call('terminal', 'log', { type: 'info',
+        value: `Contract interation with ${plugin.REACT_API.accounts.selectedAccount} has been added to the deployed contracts. Please make sure the contract is pinned.` })
+    }
+    plugin.call('terminal', 'log', { type: 'info',
+      value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
+  } else {
+    plugin.call('terminal', 'log', { type: 'info',
+      value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} removed.` })
+  }
+
+  await plugin.call('blockchain', 'dumpState')
+
+  return { txHash: receipt.hash }
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {

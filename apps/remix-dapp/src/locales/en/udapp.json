@@ -69,6 +69,7 @@
   "udapp.createSmartAccountDesc4":"Smart Account will by default have a PAYMASTER attached to it to execute GASLESS transactions, only for SEPOLIA testnet. ",
   "udapp.createSmartAccountDesc5":"Smart Account creation will require signing of an initial transaction at next step.",
   "udapp.continue": "Continue",
+  "udapp.authorize": "Authorize",
   "udapp.createNewAccount": "Create a new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
   "udapp.defaultTitle": "Unfortunately it's not possible to create an account using an external wallet ({selectExEnv}).",

@@ -5,6 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { shortenAddress, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { eip7702Constants } from '@remix-project/remix-lib'
 import { Dropdown } from 'react-bootstrap'
 const _paq = window._paq = window._paq || []
 
@@ -16,9 +17,13 @@ export function AccountUI(props: AccountProps) {
     classList: '',
     title: ''
   })
+  const [contractHasDelegation, setContractHasDelegation] = useState(false)
+  const [enableDelegationAuthorization, setEnableDelegationAuthorization] = useState(false)
   const [enableCSM, setEnableCSM] = useState(false)
   const [smartAccountSelected, setSmartAccountSelected] = useState(false)
+
   const messageRef = useRef('')
+  const delegationAuthorizationAddressRef = useRef(null)
   const ownerEOA = useRef(null)
 
   const intl = useIntl()
@@ -49,6 +54,40 @@ export function AccountUI(props: AccountProps) {
       setSmartAccountSelected(false)
     }
   }, [selectedAccount])
+
+  useEffect(() => {
+    const run = async () => {
+      if (selectExEnv !== 'vm-pectra' && selectExEnv !== 'vm-mainnet-fork') {
+        setEnableDelegationAuthorization(false)
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
+        return
+      }
+      setEnableDelegationAuthorization(true)
+      const web3 = props.runTabPlugin.blockchain.web3()
+      if (!selectedAccount || !web3) {
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
+        return
+      }
+      const code = await props.runTabPlugin.blockchain.web3().eth.getCode(selectedAccount)
+      if (code && code.startsWith(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG)) {
+        // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-7702.md delegation indicator
+        const address = '0x' + code.replace(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG, '')
+        if (address === '0x0000000000000000000000000000000000000000') {
+          setContractHasDelegation(false)
+          delegationAuthorizationAddressRef.current = null
+        } else {
+          setContractHasDelegation(true)
+          delegationAuthorizationAddressRef.current = address
+        }
+      } else {
+        setContractHasDelegation(false)
+        delegationAuthorizationAddressRef.current = null
+      }
+    }
+    run()
+  }, [selectedAccount, selectExEnv])
 
   useEffect(() => {
     props.setAccount('')
@@ -117,7 +156,7 @@ export function AccountUI(props: AccountProps) {
     }
   }, [selectExEnv, personalMode, networkName])
 
-  const createSmartAccount = () => {createSmartAccount
+  const createSmartAccount = () => {
     props.modal(
       intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
       (
@@ -140,11 +179,72 @@ export function AccountUI(props: AccountProps) {
       intl.formatMessage({ id: 'udapp.continue' }),
       () => {
         props.createNewSmartAccount()
+        _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'create'])
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
         props.setPassphrase('')
       }
+    )
+  }
+
+  const handleDelegationAuthorizationAddressRef = (e) => {
+    delegationAuthorizationAddressRef.current = e.target.value
+  }
+
+  const createDelegationAuthorization = () => {
+    props.modal(
+      intl.formatMessage({ id: 'udapp.createDelegationTitle' }),
+      (
+        <div className="w-100" data-id="createDelegationAuthorizationModal">
+          <span>{intl.formatMessage({ id: 'udapp.createDelegationDescription' }, {
+            a: (chunks) => (
+              <a href='https://eip7702.io/' target="_blank" rel="noreferrer">
+                {chunks}
+              </a>
+            )
+          })}</span>
+          <input className='border form-control' data-id="create-delegation-authorization-input" onChange={handleDelegationAuthorizationAddressRef} />
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.authorize' }),
+      async () => {
+        try {
+          await props.delegationAuthorization(delegationAuthorizationAddressRef.current)
+          setContractHasDelegation(true)
+          _paq.push(['trackEvent', 'udapp', 'contractDelegation', 'create'])
+        } catch (e) {
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
+        }
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {
+        props.setPassphrase('')
+      }
+    )
+  }
+
+  const deleteDelegation = () => {
+    props.modal(
+      intl.formatMessage({ id: 'udapp.removeDelegationTitle' }),
+      (
+        <div className="w-100">
+          Are you sure to remove the delegation?
+        </div>
+      ),
+      intl.formatMessage({ id: 'udapp.continue' }),
+      async () => {
+        try {
+          await props.delegationAuthorization('0x0000000000000000000000000000000000000000')
+          delegationAuthorizationAddressRef.current = ''
+          setContractHasDelegation(false)
+          _paq.push(['trackEvent', 'udapp', 'contractDelegation', 'remove'])
+        } catch (e) {
+          props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
+        }
+      },
+      intl.formatMessage({ id: 'udapp.cancel' }),
+      () => {}
     )
   }
 
@@ -313,8 +413,19 @@ export function AccountUI(props: AccountProps) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      { contractHasDelegation ?
+        <span className="alert-info badge badge-secondary">
+            Delegation: {shortenAddress(delegationAuthorizationAddressRef.current || "")}
+          <CopyToClipboard className="fas fa-copy ml-2 text-primary" content={delegationAuthorizationAddressRef.current} direction="top" />
+          <a><span data-id="delete-delegation" style={{ padding: 'padding: 0.15rem' }} onClick={() => deleteDelegation()}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_deleteDelegation" tooltipText="Remove delegation">
+              <i className="fas fa-close ml-2 text-primary" aria-hidden="true" onClick={() => deleteDelegation()}></i>
+            </CustomTooltip>
+          </span></a>
+        </span> : null
+      }
       { smartAccountSelected ? <span className="alert-info badge badge-secondary">
-          Owner: {shortenAddress(ownerEOA.current)}
+          Owner: {shortenAddress(ownerEOA.current || '')}
         <CopyToClipboard className="fas fa-copy ml-2 text-primary" tip={intl.formatMessage({ id: 'udapp.copyOwnerAccount' })} content={ownerEOA.current} direction="top" />
       </span> : null
       }
@@ -323,6 +434,14 @@ export function AccountUI(props: AccountProps) {
           <button type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createSmartAccount()}>
             <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
             Create Smart Account
+          </button>
+        </CustomTooltip>
+      </div>) : null }
+      { enableDelegationAuthorization ? (<div className="mt-1">
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixDelegationAuthTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createDelegationAuthorization' })}>
+          <button data-id="create-delegation-authorization" type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
+            <i id="createDelegationPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
+            Authorize Delegation
           </button>
         </CustomTooltip>
       </div>) : null }

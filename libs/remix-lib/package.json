@@ -17,10 +17,10 @@
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "dependencies": {
-    "@ethereumjs/util": "^10.0.0-rc.1",
+    "@ethereumjs/util": "^10.0.0",
     "async": "^2.1.2",
     "create-hash": "^1.2.0",
-    "ethers": "^6.13.7",
+    "ethers": "^6.14.0",
     "ethjs-util": "^0.1.6",
     "events": "^3.0.0",
     "from-exponential": "1.1.1",
