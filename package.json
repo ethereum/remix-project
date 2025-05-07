@@ -228,7 +228,9 @@
     "winston": "^3.3.3",
     "ws": "^8.17.1",
     "xterm": "^5.2.1",
-    "xterm-addon-search": "^0.12.0"
+    "xterm-addon-search": "^0.12.0",
+    "@reown/appkit": "^1.7.4",
+    "@reown/appkit-adapter-ethers": "^1.7.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
