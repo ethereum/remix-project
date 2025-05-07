@@ -185,6 +185,7 @@ export function AccountUI(props: AccountProps) {
       ),
       intl.formatMessage({ id: 'udapp.continue' }),
       () => {
+        _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createClicked'])
         props.createNewSmartAccount()
         _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'create'])
       },
