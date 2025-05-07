@@ -84,7 +84,7 @@ const tests = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`"latestBlockNumber": "0x2"`) !== -1)
         browser.assert.ok(content.indexOf(`"stateName": "forkedState_1"`) !== -1)
-        browser.assert.ok(content.indexOf(`"forkName": "cancun"`) !== -1)
+        browser.assert.ok(content.indexOf(`"forkName": "prague"`) !== -1)
         browser.assert.ok(content.indexOf(`"savingTimestamp":`) !== -1)
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
@@ -152,7 +152,7 @@ const tests = {
       .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
       .assert.textContains('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
       .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
-      .switchEnvironment('vm-cancun')
+      .switchEnvironment('vm-pectra')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -185,7 +185,7 @@ const tests = {
   },
   'Should delete state successfully #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-cancun')
+      .switchEnvironment('vm-pectra')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -202,7 +202,7 @@ const tests = {
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
-      .openFile('.states/vm-cancun')
+      .openFile('.states/vm-pectra')
       .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-pectra/state.json"]')
   }
 }

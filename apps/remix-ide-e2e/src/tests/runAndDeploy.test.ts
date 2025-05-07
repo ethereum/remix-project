@@ -30,7 +30,6 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .switchEnvironment('vm-cancun')
       .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]', 30000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
