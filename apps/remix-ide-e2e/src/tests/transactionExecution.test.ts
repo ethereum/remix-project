@@ -454,6 +454,7 @@ module.exports = {
         console.log('Test Fork Mainnet', address)
         addressRef = address
       })
+      .clearConsole()
       // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 4
       .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '3'})
       .perform((done) => {

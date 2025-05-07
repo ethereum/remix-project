@@ -10,8 +10,13 @@ module.exports = {
 
   webdriver: {
     start_process: true,
-    port: 9515,
-    server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
+    port: 0,                               // pick a random free port
+    server_path: process.env.CI ? '/usr/local/bin/chromedriver' : './tmp/webdrivers/chromedriver',
+    host: '127.0.0.1',                     // bind only to IPv4
+    cli_args: ['--host=127.0.0.1'],         // ensure chromedriver itself uses IPv4
+    status_poll_interval: 500,   // wait 500 ms between /status checks
+    max_status_poll_tries: 60,   // try up to 60 times → 30 s total wait
+    process_create_timeout: 300000, // overall 5 min timeout for process startup
   },
 
   test_settings: {
@@ -30,6 +35,10 @@ module.exports = {
     },
 
     'chrome': {
+      webdriver: {
+        "keep_alive": { "enabled": true, "keepAliveMsecs": 60000 },
+        timeout_options: { timeout: 30000, retry_attempts: 10 }
+      },
       desiredCapabilities: {
         'browserName': 'chrome',
         'javascriptEnabled': true,
@@ -37,7 +46,28 @@ module.exports = {
         'goog:chromeOptions': {
           args: [
             'window-size=2560,1440',
-            '--no-sandbox',
+            '--headless=new',
+            '--verbose',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--remote-debugging-pipe',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
+          ]
+        }
+        , pageLoadStrategy: 'eager',
+        timeouts: { pageLoad: 30000 }  // e.g. 30 s max
+      }
+    },
+
+    // at the bottom of test_settings
+    'chromeIdleTest': {
+      desiredCapabilities: {
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'goog:chromeOptions': {
+          args: [
+            'window-size=2560,1440',
             '--headless=new',
             '--verbose',
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
@@ -52,7 +82,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--verbose']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--verbose']
         }
       }
     },
@@ -66,7 +96,6 @@ module.exports = {
           args: [
             `--load-extension=${metamaskExtensionPath}`,
             '--window-size=2560,1440',
-            '--no-sandbox',
             '--verbose',
             '--disable-gpu',
           ]
@@ -85,7 +114,6 @@ module.exports = {
             '--window-size=2560,1440',
             '--no-sandbox',
             '--verbose',
-            '--headless=new',
             '--disable-gpu',
           ]
         }
@@ -98,7 +126,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose'],
+          args: ['window-size=2560,1440', 'start-fullscreen', '--headless', '--verbose'],
           extensions: []
         }
       }

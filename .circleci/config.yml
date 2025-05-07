@@ -7,7 +7,7 @@ parameters:
     type: boolean
     default: false   
 orbs:
-  browser-tools: circleci/browser-tools@1.5.2
+  browser-tools: circleci/browser-tools@1.5.3
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
 jobs:
@@ -125,6 +125,9 @@ jobs:
         - node/install:
             install-yarn: true
             node-version: '20.2'
+        - restore_cache:
+            keys:
+              - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
         - run: 
             command: |
                 node -v
@@ -134,10 +137,14 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
-                yarn --ignore-optional
-                yarn add @remix-project/remix-ws-templates
+                yarn add node-pty --network-timeout 600000
+                yarn --ignore-optional --network-timeout 600000
+                yarn add @remix-project/remix-ws-templates --network-timeout 600000
                 ./rundist.bash test_only
+        - save_cache:
+            key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+            paths:
+              - apps/remixdesktop/node_modules
         - run:  
             name: "Run tests"
             command: |
@@ -152,6 +159,9 @@ jobs:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
             path: ./apps/remixdesktop/reports/screenshots
+        - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
 
   build-remixdesktop-linux:
       machine:
@@ -310,6 +320,9 @@ jobs:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
 
   # to setup a new certificate:
   # 1) from https://one.digicert.com/signingmanager/dashboard in the 'get started' section, the following configuration variables can be created:
@@ -581,6 +594,9 @@ jobs:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+            path: /home/circleci/remix-project/logs
+            destination: logs
   
   uploadartifacts:
     docker:
@@ -662,6 +678,11 @@ jobs:
         default: 1
     parallelism: << parameters.parallelism >>
     steps:
+      - run:
+          name: set env
+          command: |
+            export DBUS_SESSION_BUS_ADDRESS=/dev/null
+            export XDG_RUNTIME_DIR=/tmp
       - checkout
       - attach_workspace:
           at: .
@@ -679,21 +700,25 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
-                install-chromedriver: false
+                install-chromedriver: true
                 install-geckodriver: false
-            - run: yarn install_webdriver
-            - run: google-chrome --version
       - when:
           condition:
               equal: [ "chromeMetamask", << parameters.browser >> ]
           steps:
+            - run:
+                name: Set metamask test flag
+                command: echo "METAMASK_TEST=true" >> $BASH_ENV
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
-                install-chromedriver: false
+                install-chromedriver: true
                 install-geckodriver: false
-            - run: yarn install_webdriver
-            - run: google-chrome --version
+            #- run: yarn install_webdriver
+            - run:
+                command: |
+                  google-chrome --version
+                  chromedriver --version
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
@@ -710,6 +735,9 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
   tests-passed:
     machine:
@@ -743,14 +771,20 @@ jobs:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
-          install-chromedriver: false
-      - run: yarn install_webdriver
-      - run: google-chrome --version
+          install-chromedriver: true
+      #- run: yarn install_webdriver
+      - run:
+          command: |
+            google-chrome --version
+            chromedriver --version
       - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
 
   predeploy:
@@ -812,7 +846,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [5]
+              parallelism: [10]
   run_metamask_tests:
     when: << pipeline.parameters.run_metamask_tests >>
     jobs:
@@ -868,6 +902,9 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-windows:
           requires:
            - build-desktop
@@ -915,8 +952,8 @@ workflows:
             parameters:
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
-              job: ["0","1","2","3","4","5","6","7","8","9"]
-              jobsize: ["10"]
+              job: ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+              jobsize: ["15"]
               parallelism: [15]
       - remix-ide-browser:
           requires:

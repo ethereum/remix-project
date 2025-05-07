@@ -419,23 +419,46 @@ async function installRemixd(): Promise<void> {
   })
 }
 
-async function spawnRemixd(path: string): Promise<ChildProcess> {
-  console.log('spawnRemixd', path)
-  await installRemixd()
-  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
-  return new Promise((resolve, reject) => {
-    remixd.stdout.on('data', function (data) {
-      if (
-        data.toString().includes('is listening')
-        || data.toString().includes('There is already a client running')
-      ) {
+export function spawnRemixd(workspacePath: string): Promise<any> {
 
+  const remixd = spawn(
+    'chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080',
+    [`-s ${workspacePath}`],
+    { cwd: process.cwd(), shell: true, detached: true }
+  )
+
+  // Pipe stdout and stderr to log
+  remixd.stdout.on('data', (data) => {
+    const text = data.toString()
+    console.log(`[stdout] ${text}`)
+  })
+
+  remixd.stderr.on('data', (data) => {
+    const text = data.toString()
+    console.log(`[stderr] ${text}`)
+  })
+
+  // Log exit
+  remixd.on('exit', (code, signal) => {
+    console.log(`remixd exited with code ${code}, signal ${signal}\n`)
+  })
+
+  // Handle startup and resolve when ready
+  return new Promise((resolve, reject) => {
+    remixd.stdout.on('data', (data) => {
+      const text = data.toString()
+      console.log(`[remixd] ${text}`)
+      if (
+        text.includes('is listening') ||
+        text.includes('There is already a client running')
+      ) {
         resolve(remixd)
       }
     })
-    remixd.stderr.on('err', function (data) {
-      console.log(data.toString())
-      reject(data.toString())
+
+    remixd.on('error', (err) => {
+      console.log(`remixd error: ${err.message}\n`)
+      reject(err)
     })
   })
 }
@@ -527,7 +550,7 @@ async function installFoundry(): Promise<void> {
       server.stdout.on('data', function (data) {
         console.log(data.toString())
         if (
-          data.toString().includes("foundryup: use - ")
+          data.toString().includes("use - chisel")
         ) {
           console.log('resolving')
           resolve()
