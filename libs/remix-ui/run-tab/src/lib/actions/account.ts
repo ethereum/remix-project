@@ -113,7 +113,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const delegationAuthorization = async (contractAddress: string, plugin: RunTab) => {
   try {
     if (!isAddress(toChecksumAddress(contractAddress))) {
-      await plugin.call('terminal', 'log', { type: 'log', value: `Please use an ethereum address of a contract deployed in the current chain.` })
+      await plugin.call('terminal', 'log', { type: 'info', value: `Please use an ethereum address of a contract deployed in the current chain.` })
       return
     }
   } catch (e) {
@@ -127,7 +127,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
     }
   }
 
-  plugin.call('terminal', 'log', { type: 'log', value: !isZeroAddress(contractAddress) ? 'Signing and activating delegation...' : 'Removing delegation...' })
+  plugin.call('terminal', 'log', { type: 'info', value: !isZeroAddress(contractAddress) ? 'Signing and activating delegation...' : 'Removing delegation...' })
 
   const ethersProvider = new BrowserProvider(provider)
   const pKey = await ethersProvider.send('eth_getPKey', [plugin.REACT_API.accounts.selectedAccount])
@@ -172,11 +172,13 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
       }
       plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
       await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
+      plugin.call('terminal', 'log', { type: 'info',
+        value: `Contract interation with ${plugin.REACT_API.accounts.selectedAccount} has been added to the deployed contracts. Please make sure the contract is pinned.` })
     }
-    plugin.call('terminal', 'log', { type: 'log',
+    plugin.call('terminal', 'log', { type: 'info',
       value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
   } else {
-    plugin.call('terminal', 'log', { type: 'log',
+    plugin.call('terminal', 'log', { type: 'info',
       value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} removed.` })
   }
 
