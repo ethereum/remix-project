@@ -191,5 +191,6 @@
 
   "udapp.createDelegationAuthorization": "Connect EOA to contract code (EIP 7702)",
   "udapp.createDelegationTitle": "Connect EOA to contract code (EIP 7702)",
+  "udapp.removeDelegationTitle": "Remove contract delegation (EIP 7702)",
   "udapp.createDelegationDescription": "Authorize a delegation between the current EOA and the contract code at the provided address. The contract must be deployed in the current chain."
 }
