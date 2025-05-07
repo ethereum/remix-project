@@ -17,7 +17,7 @@ For more information please see [this page](https://eip7702.io)
 
 This section explains how to run this project. We are going to assign a piece of code to an EOA:
 
-- Open and Comple the file `EmptyAccount.sol`.
+- Open and Comple the file `Example7702.sol`.
 - From the `Run and Deploy` module switch the `Remix VM (pectra)` provider.
 - Deploy the contract above (this will be deployed to the in-browser blockchain)
 - Copy the address of the contract to the clipboard.
@@ -29,7 +29,8 @@ This section explains how to run this project. We are going to assign a piece of
 
 ## What's next
 
-This project also contains the file `Simple7702Account.sol`,
+From the Template explorer, you can create a project using the template `Account Abstraction`:
+Open the file `contracts/accounts/Simple7702Account.sol`,
 this uses a standard implementation of an 7702 account.
 - Compile and deploy this contract (make sure you select the correct contract).
 - Check how the functions are being implemented. Specifically the function `execute` and `executeBatch`.
