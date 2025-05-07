@@ -15,7 +15,7 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-cancun"]')
+      .waitForElementVisible('*[data-id="selected-provider-vm-pectra"]', 30000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
@@ -203,7 +203,7 @@ const tests = {
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
       .openFile('.states/vm-cancun')
-      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-cancun/state.json"]')
+      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-pectra/state.json"]')
   }
 }
 

@@ -262,7 +262,7 @@ export class RunTab extends ViewPlugin {
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
-    await addProvider(1, 'vm-pectra', 'Remix VM (Pectra)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-pectra/state.json', fork: 'prague' }, 'settingsVMPectraMode', titleVM)
+    await addProvider(1, 'vm-pectra', 'Remix VM (Prague)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-pectra/state.json', fork: 'prague' }, 'settingsVMPectraMode', titleVM)
     await addProvider(2, 'vm-cancun', 'Remix VM (Cancun)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-cancun/state.json', fork: 'cancun' }, 'settingsVMCancunMode', titleVM)
     await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-shanghai/state.json', fork: 'shanghai' }, 'settingsVMShanghaiMode', titleVM)
     await addProvider(51, 'vm-paris', 'Remix VM (Paris)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-paris/state.json', fork: 'paris' }, 'settingsVMParisMode', titleVM)
