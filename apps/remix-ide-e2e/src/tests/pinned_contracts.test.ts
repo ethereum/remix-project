@@ -29,7 +29,7 @@ module.exports = {
   },
   'Test pinned contracts loading on environment change #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-shanghai')
+      .switchEnvironment('vm-cancun')
       .assert.elementPresent('*[data-id="deployedContracts"]')
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       .switchEnvironment('vm-cancun')

@@ -12,7 +12,6 @@ module.exports = {
     let addressDelegate
     browser
       .clickLaunchIcon('udapp')
-      .pinGrid('vm-pectra', true)
       .switchEnvironment('vm-pectra')
       .addFile('delegate.sol', { content: delegate })
       .clickLaunchIcon('solidity')
