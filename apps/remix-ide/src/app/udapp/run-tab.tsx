@@ -268,8 +268,8 @@ export class RunTab extends ViewPlugin {
     await addProvider(51, 'vm-paris', 'Remix VM (Paris)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-paris/state.json', fork: 'paris' }, 'settingsVMParisMode', titleVM)
     await addProvider(52, 'vm-london', 'Remix VM (London)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-london/state.json', fork: 'london' }, 'settingsVMLondonMode', titleVM)
     await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-berlin/state.json', fork: 'berlin' }, 'settingsVMBerlinMode', titleVM)
-    await addProvider(3, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'cancun' }, 'settingsVMMainnetMode', titleVM)
-    await addProvider(4, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'cancun' }, 'settingsVMSepoliaMode', titleVM)
+    await addProvider(3, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'prague' }, 'settingsVMMainnetMode', titleVM)
+    await addProvider(4, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: 'prague' }, 'settingsVMSepoliaMode', titleVM)
     await addProvider(5, 'vm-custom-fork', 'Remix VM - Custom fork', { isInjected: false, isVM: true, isVMStateForked: true, isRpcForkedState: true, fork: '' }, 'settingsVMCustomMode', titleVM)
 
     // Forked VM States
