@@ -233,7 +233,7 @@ export function AccountUI(props: AccountProps) {
 
   const deleteDelegation = () => {
     props.modal(
-      intl.formatMessage({ id: 'udapp.createDelegationTitle' }),
+      intl.formatMessage({ id: 'udapp.removeDelegationTitle' }),
       (
         <div className="w-100">
           Are you sure to remove the delegation?
