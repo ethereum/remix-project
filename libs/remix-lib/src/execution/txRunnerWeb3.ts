@@ -14,7 +14,6 @@ import { entryPoint07Address } from "viem/account-abstraction"
 const { createSmartAccountClient } = require("permissionless")
 const { toSafeSmartAccount } = require("permissionless/accounts")
 const { createPimlicoClient } = require("permissionless/clients/pimlico")
-const _paq = (window as any)._paq = (window as any)._paq || []
 
 export class TxRunnerWeb3 {
   event
@@ -236,7 +235,6 @@ export class TxRunnerWeb3 {
   }
 
   async sendUserOp (tx, chainId) {
-    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'txInitiated'])
     const chain = chains[aaSupportedNetworks[chainId].name]
     const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
     const BUNDLER_URL = getPimlicoBundlerURL(chainId)
@@ -311,7 +309,6 @@ export class TxRunnerWeb3 {
         contractAddress = expectedDeploymentAddress
       } else {
         contractAddress = undefined
-        _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'bytecodeMismatchInDeployment'])
         console.error('Error in contract deployment using smart account')
       }
     } else {
@@ -322,7 +319,6 @@ export class TxRunnerWeb3 {
         value: tx.value
       })
     }
-    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'txExecutedSuccessfully'])
     return { txHash, contractAddress }
   }
 }
