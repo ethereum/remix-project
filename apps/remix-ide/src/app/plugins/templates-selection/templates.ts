@@ -5,7 +5,8 @@ export const templates = (intl, plugin) => {
       items: [
         { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
         { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' },
-        { value: "eip7702", displayName: 'EIP 7702', IsArtefact: true, description: 'Ethereum pectra upgrade allowing externally owner accounts (EOAs) to run smart contract code.' }
+        { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owner accounts (EOAs) to run contract code.' },
+        { value: "accountAbstraction", displayName: 'Account Abstraction Template', IsArtefact: true, description: 'Experiment with Account Abstraction contracts: (ERC-4337, EIP-7702)' }
       ]
     },
     {

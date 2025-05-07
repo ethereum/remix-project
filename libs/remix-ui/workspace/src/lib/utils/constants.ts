@@ -18,6 +18,7 @@ export const TEMPLATE_NAMES = {
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
   'uniswapV4Template': 'Uniswap v4 Template',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
+  'accountAbstraction': 'Account Abstraction Template'
 }
 
 export const TEMPLATE_METADATA: Record<string, TemplateType> = {
@@ -25,6 +26,11 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
     type: 'git',
     url: 'https://github.com/Breakthrough-Labs/Uniswapv4Hooks',
     branch: 'foundry_pure'
+  },
+  'accountAbstraction': {
+    type: 'git',
+    url: 'https://github.com/eth-infinitism/account-abstraction',
+    branch: 'releases/v0.8'
   },
   'uniswapV4Template': {
     type: 'git',

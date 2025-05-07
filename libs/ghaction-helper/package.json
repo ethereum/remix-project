@@ -27,7 +27,7 @@
     "@ethereum-waffle/chai": "^3.4.4",
     "@remix-project/remix-simulator": "^0.2.68",
     "chai": "^4.3.7",
-    "ethers": "beta-eip-7702",
+    "ethers": "^6.14.0",
     "web3": "^4.1.1"
   },
   "types": "./src/index.d.ts",
