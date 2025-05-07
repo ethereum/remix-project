@@ -178,6 +178,7 @@ export function AccountUI(props: AccountProps) {
       intl.formatMessage({ id: 'udapp.continue' }),
       () => {
         props.createNewSmartAccount()
+        _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'create'])
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
@@ -210,6 +211,7 @@ export function AccountUI(props: AccountProps) {
         try {
           await props.delegationAuthorization(delegationAuthorizationAddressRef.current)
           setContractHasDelegation(true)
+          _paq.push(['trackEvent', 'udapp', 'contractDelegation', 'create'])
         } catch (e) {
           props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
         }
@@ -235,6 +237,7 @@ export function AccountUI(props: AccountProps) {
           await props.delegationAuthorization('0x0000000000000000000000000000000000000000')
           delegationAuthorizationAddressRef.current = ''
           setContractHasDelegation(false)
+          _paq.push(['trackEvent', 'udapp', 'contractDelegation', 'remove'])
         } catch (e) {
           props.runTabPlugin.call('terminal', 'log', { type: 'error', value: e.message })
         }
