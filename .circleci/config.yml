@@ -871,6 +871,9 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-windows:
           requires:
            - build-desktop
