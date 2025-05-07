@@ -23,7 +23,7 @@ web3.eth.setConfig(config)
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-pectra'
+    this.executionContext = 'vm-prague'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
@@ -37,7 +37,7 @@ export class ExecutionContext {
   }
 
   init (config) {
-    this.executionContext = 'vm-pectra'
+    this.executionContext = 'vm-prague'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
@@ -115,7 +115,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-pectra', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-prague', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
