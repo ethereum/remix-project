@@ -76,6 +76,7 @@ export function RemixUiRemixAiAssistant(props: any) {
     }
 
     if (GenerationParams.return_stream_response) {
+      console.log('stream response', { response, observer })
       HandleStreamResponse(response,
         (text) => {observer.next(text)},
         (result) => {
@@ -149,7 +150,6 @@ export function RemixUiRemixAiAssistant(props: any) {
           <DefaultResponseContent />
         </AiChatUI.Greeting>
       </AiChat>
-      <PromptZone onChangeHandler={handleRadioSelection} value={''} onSubmitHandler={() => {}} />
     </div>
   )
 }
