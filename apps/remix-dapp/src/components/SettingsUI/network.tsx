@@ -29,19 +29,19 @@ export function NetworkUI() {
           <option value={'metamask'} key={'metamask'}>
             MetaMask
           </option>
-          <option value={'walletconnect'} key={'walletconnect'}>
+          {/* <option value={'walletconnect'} key={'walletconnect'}>
             WalletConnect
-          </option>
+          </option> */}
         </select>
       </div>
       <div className="position-relative w-100" data-id="settingsNetworkEnv">
         <span className="badge badge-secondary">{networkName}</span>
       </div>
-      {provider === 'walletconnect' && (
+      {/* {provider === 'walletconnect' && (
         <div className="mt-2">
           <w3m-button />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { Plugin } from '@remixproject/engine'
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react'
+import { createAppKit, Provider } from '@reown/appkit'
+import { EthersAdapter } from '@reown/appkit-adapter-ethers'
+import { mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon } from "@reown/appkit/networks"
 import { constants } from './utils/constants'
 import { Chain, RequestArguments } from './types'
 
@@ -20,73 +22,68 @@ const profile = {
 }
 
 export class WalletConnect extends Plugin {
-  web3modal: ReturnType<typeof createWeb3Modal>
-  ethersConfig: ReturnType<typeof defaultConfig>
+  appkit: ReturnType<typeof createAppKit>
   chains: Chain[]
-  currentChain: number
+  currentChain: string | number
   currentAccount: string
 
   constructor () {
     super(profile)
-    const ethersConfig = defaultConfig({
-      metadata: constants.METADATA,
-      rpcUrl: 'https://cloudflare-eth.com'
-    })
-
-    this.web3modal = createWeb3Modal({ projectId: constants.PROJECT_ID, chains: constants.chains, metadata: constants.METADATA, ethersConfig })
-    this.ethersConfig = ethersConfig
-    this.chains = constants.chains
   }
 
   onActivation() {
-    this.subscribeToEvents()
+    if (!this.appkit) {
+      this.appkit = createAppKit({
+        adapters: [new EthersAdapter()],
+        projectId: constants.PROJECT_ID,
+        metadata: constants.METADATA,
+        networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon]
+      })
+      this.chains = constants.chains
+      this.subscribeToEvents()
+    }
   }
 
-  init() {
+  async init() {
     console.log('initializing walletconnect plugin...')
   }
 
   async openModal() {
-    if (this.isWalletConnected()) return await this.web3modal.open()
-    await this.web3modal.open()
-    this.web3modal.subscribeState(async (state) => {
+    if (this.isWalletConnected()) return await this.appkit.open()
+    await this.appkit.open()
+  }
+
+  isWalletConnected() {
+    const isConnected = this.appkit.getIsConnectedState()
+
+    return isConnected
+  }
+
+  subscribeToEvents() {
+    this.appkit.subscribeState(async (state) => {
       if (!state.open) {
         this.emit('closeModal')
         try {
-          const provider = await this.web3modal.getWalletProvider()
+          const provider = await this.appkit.getProvider(this.appkit.chainNamespaces[0])
           if (provider) {
             this.emit('connectionSuccessful')
-            provider.on('connect', () => {
-              this.emit('connectionSuccessful')
-            })
-            provider.on('disconnect', (error: { message?: string }) => {
-              this.emit('connectionFailed', error?.message || 'Connection failed')
-            })
-            provider.on('error', (error: { message?: string }) => {
-              this.emit('connectionFailed', error?.message || 'Connection error')
-            })
           }
         } catch (error) {
           this.emit('connectionFailed', error.message)
         }
       }
     })
-  }
 
-  isWalletConnected() {
-    return this.web3modal.getIsConnected()
-  }
-
-  subscribeToEvents() {
-    this.web3modal.subscribeProvider(({ address, isConnected, chainId })=>{
-      if (isConnected){
+    this.appkit.subscribeNetwork((network) => {
+      const address = this.appkit.getAddress()
+      if (this.isWalletConnected()) {
         if (address !== this.currentAccount) {
           this.currentAccount = address
           this.emit('accountsChanged', [address])
         }
-        if (this.currentChain !== chainId) {
-          this.currentChain = chainId
-          this.emit('chainChanged', chainId)
+        if (this.currentChain !== network.chainId) {
+          this.currentChain = network.chainId
+          this.emit('chainChanged', network.chainId)
         }
       } else {
         this.emit('accountsChanged', [])
@@ -94,65 +91,95 @@ export class WalletConnect extends Plugin {
         this.emit('chainChanged', 0)
         this.currentChain = 0
       }
-    },)
+    })
+
+    this.appkit.subscribeEvents((eventPayload) => {
+      if (eventPayload.data.event === 'CONNECT_SUCCESS') {
+        this.emit('connectionSuccessful', 'Connection successful')
+      } else if (eventPayload.data.event === 'CONNECT_ERROR') {
+        this.emit('connectionFailed', 'Connection failed')
+      } else if (eventPayload.data.event === 'DISCONNECT_SUCCESS') {
+        this.emit('connectionDisconnected', 'Connection disconnected')
+      }
+    })
+
     this.on('theme', 'themeChanged', (theme: any) => {
-      this.web3modal.setThemeMode(theme.quality)
+      this.appkit.setThemeMode(theme.quality)
     })
   }
 
-  async sendAsync(data: RequestArguments) {
-    const address = this.web3modal.getAddress()
-    const provider = this.web3modal.getWalletProvider()
-    if (address && provider) {
-      if (data.method === 'eth_accounts') {
-        return {
-          jsonrpc: '2.0',
-          result: [address],
-          id: data.id
-        }
-      } else {
-        //@ts-expect-error this flag does not correspond to EIP-1193 but was introduced by MetaMask
-        if (provider.isMetamask && provider.sendAsync) {
-          return new Promise((resolve) => {
-            //@ts-expect-error sendAsync is a legacy function we know MetaMask supports it
-            provider.sendAsync(data, (error, response) => {
-              if (error) {
-                if (error.data && error.data.originalError && error.data.originalError.data) {
-                  resolve({
-                    jsonrpc: '2.0',
-                    error: error.data.originalError,
-                    id: data.id
-                  })
-                } else if (error.data && error.data.message) {
-                  resolve({
-                    jsonrpc: '2.0',
-                    error: error.data && error.data,
-                    id: data.id
-                  })
-                } else {
-                  resolve({
-                    jsonrpc: '2.0',
-                    error,
-                    id: data.id
-                  })
-                }
-              }
-              return resolve(response)
-            })
-          })
-        } else {
-          try {
-            const message = await provider.request(data)
-            return { jsonrpc: '2.0', result: message, id: data.id }
-          } catch (e) {
-            return { jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id }
-          }
-        }
-      }
+  async sendAsync(data: RequestArguments): Promise<{ jsonrpc: string, result?: any, error?: any, id: number }> {
+    const providerType = this.appkit.getProviderType(this.appkit.chainNamespaces[0])
+
+    if (providerType === 'ANNOUNCED') {
+      return this.sendAnnouncedRequest(data)
+    } else if (providerType === 'WALLET_CONNECT') {
+      return this.sendWalletConnectRequest(data)
     } else {
       const err = `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
-      console.error(err)
+
       return { jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id }
+    }
+
+  }
+
+  async sendAnnouncedRequest(data: RequestArguments): Promise<{ jsonrpc: string, result?: any, error?: any, id: number }> {
+    const address = this.appkit.getAddress()
+    const provider = this.appkit.getProvider<Provider>(this.appkit.chainNamespaces[0])
+
+    if (data.method === 'eth_accounts') {
+      return {
+        jsonrpc: '2.0',
+        result: [address],
+        id: data.id
+      }
+    }
+    return new Promise((resolve) => {
+      //@ts-expect-error sendAsync is a legacy function we know MetaMask supports it
+      provider.sendAsync(data, (error, response) => {
+        if (error) {
+          if (error.data && error.data.originalError && error.data.originalError.data) {
+            resolve({
+              jsonrpc: '2.0',
+              error: error.data.originalError,
+              id: data.id
+            })
+          } else if (error.data && error.data.message) {
+            resolve({
+              jsonrpc: '2.0',
+              error: error.data && error.data,
+              id: data.id
+            })
+          } else {
+            resolve({
+              jsonrpc: '2.0',
+              error,
+              id: data.id
+            })
+          }
+        }
+        return resolve(response)
+      })
+    })
+  }
+
+  async sendWalletConnectRequest(data: RequestArguments): Promise<{ jsonrpc: string, result?: any, error?: any, id: number }> {
+    const provider = this.appkit.getProvider<Provider>(this.appkit.chainNamespaces[0])
+    const address = this.appkit.getAddress()
+
+    if (data.method === 'eth_accounts') {
+      return {
+        jsonrpc: '2.0',
+        result: [address],
+        id: data.id
+      }
+    }
+
+    try {
+      const message = await provider.request(data)
+      return { jsonrpc: '2.0', result: message, id: data.id }
+    } catch (e) {
+      return { jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id }
     }
   }
 

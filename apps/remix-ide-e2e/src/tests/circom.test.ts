@@ -2,10 +2,6 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const getFrameId = function (browser: NightwatchBrowser) {
-  return browser.options.desiredCapabilities.browserName === 'chrome' ? 0 : 1
-}
-
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -48,7 +44,7 @@ module.exports = {
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementVisible('[data-id="witness_toggler"]')
       .click('[data-id="witness_toggler"]')
       .waitForElementVisible('[data-id="compute_witness_btn"]')
@@ -68,7 +64,7 @@ module.exports = {
       .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
       .waitForElementVisible('[data-path="Semaphore - 1/circuits/simple.circom"]')
       .clickLaunchIcon('circuit-compiler')
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
       .click('button[data-id="compile_circuit_btn"]')
@@ -80,7 +76,7 @@ module.exports = {
   'Should run Groth16 setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementVisible('[data-id="setup_exports_toggler"]')
       .waitForElementPresent('[data-id="groth16ProvingScheme"]')
       .click('[data-id="groth16ProvingScheme"]')
@@ -97,7 +93,7 @@ module.exports = {
   'Should run Plonk setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementVisible('[data-id="setup_exports_toggler"]')
       .click('[data-id="setup_exports_toggler"]')
       .waitForElementPresent('[data-id="plonkProvingScheme"]')
@@ -130,7 +126,7 @@ module.exports = {
       .waitForElementVisible('[data-path="Semaphore - 1/circuits/simple.circom"]')
       .setEditorValue(warningCircuit)
       .clickLaunchIcon('circuit-compiler')
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
       .click('button[data-id="compile_circuit_btn"]')
@@ -151,7 +147,7 @@ module.exports = {
     browser
       .frameParent()
       .setEditorValue(errorCircuit)
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
       .click('button[data-id="compile_circuit_btn"]')
@@ -164,7 +160,7 @@ module.exports = {
       .click('[data-id="auto_compile_circuit_checkbox_input"]')
       .frameParent()
       .setEditorValue(validCircuit)
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementNotPresent('[data-id="circuit_feedback"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
