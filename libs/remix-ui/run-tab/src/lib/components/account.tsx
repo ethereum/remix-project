@@ -98,6 +98,13 @@ export function AccountUI(props: AccountProps) {
       })
     } else {
       switch (selectExEnv) {
+      case 'vm-pectra':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+        })
+        break
+
       case 'vm-cancun':
         setPlusOpt({
           classList: '',
