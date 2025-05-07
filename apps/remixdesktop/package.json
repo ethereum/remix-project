@@ -44,7 +44,7 @@
     "@types/express": "^4.17.21",
     "@types/lunr": "^2.3.7",
     "@types/nightwatch": "^2.3.23",
-    "chromedriver": "116",
+    "chromedriver": "135",
     "cross-env": "^7.0.3",
     "deep-equal": "^2.2.3",
     "electron": "^26.0.0",
