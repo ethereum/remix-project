@@ -30,7 +30,7 @@ else
   exit 0
 fi
 
-MAJORVERSION=$(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
+MAJORVERSION='135' # $(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
 echo "CHROME DRIVER INSTALL $MAJORVERSION"
 
 # Determine target platform for ChromeDriver download
