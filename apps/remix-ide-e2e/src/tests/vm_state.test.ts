@@ -15,7 +15,7 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-pectra"]', 30000)
+      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 30000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
@@ -152,7 +152,7 @@ const tests = {
       .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
       .assert.textContains('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
       .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
-      .switchEnvironment('vm-pectra')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -185,7 +185,7 @@ const tests = {
   },
   'Should delete state successfully #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-pectra')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -202,8 +202,8 @@ const tests = {
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
-      .openFile('.states/vm-pectra')
-      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-pectra/state.json"]')
+      .openFile('.states/vm-prague')
+      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-prague/state.json"]')
   }
 }
 

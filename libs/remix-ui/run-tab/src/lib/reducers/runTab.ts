@@ -20,7 +20,7 @@ export const runTabInitialState: RunTabState = {
   sendValue: '0',
   sendUnit: 'wei',
   gasLimit: 0,
-  selectExEnv: 'vm-pectra',
+  selectExEnv: 'vm-prague',
   personalMode: false,
   networkName: 'VM',
   chainId:'-',
@@ -164,7 +164,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     return {
       ...state,
       selectExEnv: payload,
-      networkName: state.selectExEnv === 'vm-pectra' ? 'VM' : state.networkName,
+      networkName: state.selectExEnv === 'vm-prague' ? 'VM' : state.networkName,
       displayName: state.providers.providerList.find((env) => env.name === state.selectExEnv)?.displayName,
       accounts: {
         ...state.accounts,
