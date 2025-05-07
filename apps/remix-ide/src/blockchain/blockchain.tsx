@@ -97,7 +97,7 @@ export class Blockchain extends Plugin {
     this.txRunner = new TxRunner(web3Runner, {})
     this.networkcallid = 0
     this.registeredPluginEvents = []
-    this.defaultPinnedProviders = ['vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    this.defaultPinnedProviders = ['vm-pectra', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
     this.networkStatus = { network: { name: this.defaultPinnedProviders[0], id: ' - ' } }
     this.pinnedProviders = []
     this.setupEvents()

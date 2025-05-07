@@ -242,7 +242,7 @@ export function RunTabUI(props: RunTabProps) {
       Object.entries(runTab.accounts.loadedAccounts).length === 0 &&
     runTab.accounts.selectedAccount.length > 0) {
       // switch to vm-cancum because no account is loaded from injected provider
-      const context = plugin.blockchain.defaultPinnedProviders[0] // vm-cancun
+      const context = plugin.blockchain.defaultPinnedProviders[0] // vm-pectra
       setExecutionEnvironment({ context, fork: '' })
     }
   }, [runTab.accounts.loadedAccounts])
