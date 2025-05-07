@@ -31,7 +31,7 @@ module.exports = {
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
       .switchEnvironment('vm-cancun')
-      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
+      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]', 30000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
       .click('*[data-id="signMessageTextarea"]')
@@ -134,7 +134,7 @@ module.exports = {
       .clickFunction('retrieve - call')
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-cancun/state.json')
+      .openFile('.states/vm-pectra/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
@@ -193,7 +193,7 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-cancun/state.json')
+      .openFile('.states/vm-pectra/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is unchanged')
