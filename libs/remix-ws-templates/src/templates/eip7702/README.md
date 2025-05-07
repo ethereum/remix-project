@@ -4,7 +4,7 @@ This Workspace Template present one of the updates shipped with the Pectra upgra
 
 ### Basics
 
-It exists 2 differents type of accounts:
+In the Ethereum blockchain there are two different types of accounts:
 - Externally Owned Account (EOA): which require a private key and could initiate transactions.
 - Smart Contract Account: which represents code deployed in the blockchain.
 

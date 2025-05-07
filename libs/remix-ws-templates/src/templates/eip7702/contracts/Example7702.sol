@@ -1,6 +1,6 @@
 pragma solidity ^0.8.20;
  
-contract Delegation {
+contract Example7702 {
   event Log(string message);
  
   function initialize() public payable {

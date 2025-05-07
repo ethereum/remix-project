@@ -57,20 +57,14 @@ export function AccountUI(props: AccountProps) {
 
   useEffect(() => {
     const run = async () => {
-      console.log(networkName, selectedAccount, selectExEnv)
       if (selectExEnv !== 'vm-pectra' && selectExEnv !== 'vm-mainnet-fork') {
         setEnableDelegationAuthorization(false)
         delegationAuthorizationAddressRef.current = null
         return
       }
       setEnableDelegationAuthorization(true)
-      if (!selectedAccount) {
-        setContractHasDelegation(false)
-        delegationAuthorizationAddressRef.current = null
-        return
-      }
       const web3 = props.runTabPlugin.blockchain.web3()
-      if (!web3) {
+      if (!selectedAccount || !web3) {
         setContractHasDelegation(false)
         delegationAuthorizationAddressRef.current = null
         return
@@ -200,7 +194,7 @@ export function AccountUI(props: AccountProps) {
     props.modal(
       intl.formatMessage({ id: 'udapp.createDelegationTitle' }),
       (
-        <div className="w-100" data-id="createSmartAccountModal">
+        <div className="w-100" data-id="createDelegationAuthorizationModal">
           <span>{intl.formatMessage({ id: 'udapp.createDelegationDescription' }, {
             a: (chunks) => (
               <a href='https://eip7702.io/' target="_blank" rel="noreferrer">
@@ -211,7 +205,7 @@ export function AccountUI(props: AccountProps) {
           <input className='border form-control' data-id="create-delegation-authorization-input" onChange={handleDelegationAuthorizationAddressRef} />
         </div>
       ),
-      intl.formatMessage({ id: 'udapp.continue' }),
+      intl.formatMessage({ id: 'udapp.authorize' }),
       async () => {
         try {
           await props.delegationAuthorization(delegationAuthorizationAddressRef.current)
@@ -229,7 +223,7 @@ export function AccountUI(props: AccountProps) {
 
   const deleteDelegation = () => {
     props.modal(
-      intl.formatMessage({ id: 'udapp.createSmartAccountAlpha' }),
+      intl.formatMessage({ id: 'udapp.createDelegationTitle' }),
       (
         <div className="w-100">
           Are you sure to remove the delegation?
@@ -440,10 +434,10 @@ export function AccountUI(props: AccountProps) {
         </CustomTooltip>
       </div>) : null }
       { enableDelegationAuthorization ? (<div className="mt-1">
-        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixCSMPlusTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createDelegationAuthorization' })}>
+        <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixDelegationAuthTooltip" tooltipText={intl.formatMessage({ id: 'udapp.createDelegationAuthorization' })}>
           <button data-id="create-delegation-authorization" type="button" className="btn btn-sm btn-secondary w-100" onClick={() => createDelegationAuthorization()}>
-            <i id="createSmartAccountPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
-            Delegation Authorization
+            <i id="createDelegationPlus" className="mr-1 fas fa-plus" aria-hidden="true" style={{ "color": "#fff" }}></i>
+            Authorize Delegation
           </button>
         </CustomTooltip>
       </div>) : null }

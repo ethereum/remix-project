@@ -144,7 +144,6 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
       to: plugin.REACT_API.accounts.selectedAccount,
       authorizationList: [auth]
     });
-    console.log(tx)
   } catch (e) {
     console.error(e)
     throw e
@@ -153,7 +152,6 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
   let receipt
   try {
     receipt = await tx.wait()
-    console.log(receipt)
   } catch (e) {
     console.error(e)
     throw e
@@ -161,7 +159,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
 
   if (!isZeroAddress(contractAddress)) {
     const artefact = await plugin.call('compilerArtefacts', 'getContractDataFromAddress', contractAddress)
-    if (artefact && !isZeroAddress(contractAddress)) {
+    if (artefact) {
       const data = await plugin.call('compilerArtefacts', 'getCompilerAbstract', artefact.file)
       const contractObject = {
         name: artefact.name,
