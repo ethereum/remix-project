@@ -282,7 +282,7 @@ module.exports = {
       .clickFunction('callA - transact (not payable)')
       .debugTransaction(1)
       .pause(4000)
-      .goToVMTraceStep(79)
+      .goToVMTraceStep(80)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
       .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '114 REVERT')
