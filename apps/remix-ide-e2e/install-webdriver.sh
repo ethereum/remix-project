@@ -23,7 +23,7 @@ else
   echo "Unsupported OS."
 fi
 
-MAJORVERSION=$(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
+MAJORVERSION='135.0.4' # $(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
 echo "CHROME DRIVER INSTALL $MAJORVERSION"
 
 # Specify the directory to check
