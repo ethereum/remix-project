@@ -1,5 +1,6 @@
 'use strict'
 import { nameOpCodes } from './codeUtils'
+import { eip7702Constants } from '@remix-project/remix-lib'
 
 export class CodeResolver {
   getCode
@@ -27,8 +28,10 @@ export class CodeResolver {
     if (cache) {
       return cache
     }
-
-    const code = await this.getCode(address)
+    let code = await this.getCode(address)
+    if (code && code.startsWith(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG)) {
+      code = await this.getCode('0x' + code.replace(eip7702Constants.EIP7702_CODE_INDICATOR_FLAG, ''))
+    }
     return this.cacheExecutingCode(address, code)
   }
 

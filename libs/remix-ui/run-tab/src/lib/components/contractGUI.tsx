@@ -237,7 +237,7 @@ export function ContractGUI(props: ContractGUIProps) {
       }
       const tabState = props.runTabState
       const compilerState = await props.plugin.call('solidity', 'getCompilerState')
-      const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'cancun', parseInt(tabState.chainId))
+      const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'prague', parseInt(tabState.chainId))
       if (status === 'Passed' && IsCompatible) {
         await handleDeploy()
       } else {
