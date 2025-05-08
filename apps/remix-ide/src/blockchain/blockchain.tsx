@@ -25,7 +25,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject'],
+  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject'],
 
   version: packageJson.version
 }
@@ -235,6 +235,44 @@ export class Blockchain extends Plugin {
         resolve(accounts)
       })
     })
+  }
+
+  async dumpState() {
+    const provider = this.executionContext.getProviderObject()
+
+    // a basic in-browser VM state.
+    const isBasicVMState = provider.config.isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
+    // a standard fork of an in-browser state.
+    const isForkedVMState = provider.config.isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
+    // a fork of an in-browser state which derive from a live network.
+    const isForkedRpcState = provider.config.isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
+
+    if (isBasicVMState || isForkedVMState || isForkedRpcState) {
+      if (this.config.get('settings/save-evm-state')) {
+        try {
+          let state = await this.executionContext.getStateDetails()
+          if (provider.config.statePath) {
+            const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
+            if (stateFileExists) {
+              let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
+              stateDetails = JSON.parse(stateDetails)
+              state = JSON.parse(state)
+              state['stateName'] = stateDetails.stateName
+              state['forkName'] = stateDetails.forkName
+              state['savingTimestamp'] = stateDetails.savingTimestamp
+              state = JSON.stringify(state, null, 2)
+            }
+            this.call('fileManager', 'writeFile', provider.config.statePath, state)
+          } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
+            // in that case, we store the state only if it is a basic VM.
+            const provider = this.executionContext.getProvider()
+            this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
   }
 
   deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
@@ -917,6 +955,7 @@ export class Blockchain extends Plugin {
       return new Promise(async (resolve, reject) => {
         let fromAddress
         let fromSmartAccount
+        let authorizationList
         let value
         let gasLimit
         try {
@@ -938,7 +977,8 @@ export class Blockchain extends Plugin {
           fromSmartAccount,
           value: value,
           gasLimit: gasLimit,
-          timestamp: args.data.timestamp
+          timestamp: args.data.timestamp,
+          authorizationList: args.authorizationList
         }
         const payLoad = {
           funAbi: args.data.funAbi,
@@ -991,12 +1031,6 @@ export class Blockchain extends Plugin {
       const provider = this.executionContext.getProviderObject()
       let execResult
       let returnValue = null
-      // a basic in-browser VM state.
-      const isBasicVMState = isVM && !provider.config.isVMStateForked && !provider.config.isRpcForkedState
-      // a standard fork of an in-browser state.
-      const isForkedVMState = isVM && provider.config.isVMStateForked && !provider.config.isRpcForkedState
-      // a fork of an in-browser state which derive from a live network.
-      const isForkedRpcState = isVM && provider.config.isVMStateForked && provider.config.isRpcForkedState
 
       if (isVM) {
         const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
@@ -1025,29 +1059,12 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml', finalLogs)
         }
       }
-      if (isBasicVMState || isForkedVMState || isForkedRpcState) {
-        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
-          try {
-            let state = await this.executionContext.getStateDetails()
-            if (provider.config.statePath) {
-              const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
-              if (stateFileExists) {
-                let stateDetails = await this.call('fileManager', 'readFile', provider.config.statePath)
-                stateDetails = JSON.parse(stateDetails)
-                state = JSON.parse(state)
-                state = JSON.stringify({ ...stateDetails, ...(state as any) }, null, 2)
-              }
-              this.call('fileManager', 'writeFile', provider.config.statePath, state)
-            } else if (isBasicVMState && !isForkedRpcState && !isForkedRpcState) {
-              // in that case, we store the state only if it is a basic VM.
-              const provider = this.executionContext.getProvider()
-              this.call('fileManager', 'writeFile', `.states/${provider}/state.json`, state)
-            }
-          } catch (e) {
-            console.error(e)
-          }
-        }
 
+      if (!tx.useCall && this.config.get('settings/save-evm-state')) {
+        await this.dumpState()
+      }
+
+      if (isVM) {
         execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.

@@ -1718,7 +1718,7 @@
                 "npm:ethers",
                 "npm:@ethereumjs/vm",
                 "npm:@ethereumjs/common",
-                "npm:@ethereumjs/trie",
+                "npm:@ethereumjs/binarytrie",
                 "npm:@ethereumjs/evm",
                 "npm:@ethereumjs/blockchain",
                 "npm:@ethereumjs/block",

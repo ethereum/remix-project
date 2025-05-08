@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { AbiCoder, FunctionFragment } from 'ethers'
 import { getFunctionFragment } from './txHelper'
 import { Transaction } from './txRunner'
 
@@ -17,11 +17,11 @@ import { Transaction } from './txRunner'
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function createContract ({ from, data, value, gasLimit, signed }: Transaction, txRunner, callbacks, finalCallback) {
+export function createContract ({ from, data, value, gasLimit, signed, authorizationList }: Transaction, txRunner, callbacks, finalCallback) {
   if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
     return finalCallback('all the callbacks must have been defined')
   }
-  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed }
+  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed, authorizationList }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)
@@ -43,9 +43,9 @@ export function createContract ({ from, data, value, gasLimit, signed }: Transac
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function callFunction ({ from, to, data, value, gasLimit, signed }: Transaction, funAbi , txRunner, callbacks, finalCallback) {
+export function callFunction ({ from, to, data, value, gasLimit, signed, authorizationList }: Transaction, funAbi , txRunner, callbacks, finalCallback) {
   const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure' || funAbi.constant
-  const tx = { from, to, data, useCall, value, gasLimit, signed }
+  const tx = { from, to, data, useCall, value, gasLimit, signed, authorizationList }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)
@@ -102,10 +102,10 @@ export function checkError (execResult, compiledContracts) {
             if (item.type === 'error') {
               // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
               // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
-              // we need here to fake the type, so the "getSighash" function works properly
+              // we need here to fake the type, so the "selector" property works properly
               const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
               if (!fn) continue
-              const sign = fn.getSighash(item.name)
+              const sign = fn.getFunction(item.name).selector
               if (!sign) continue
               if (returnDataHex === sign.replace('0x', '')) {
                 customError = item.name
@@ -115,8 +115,9 @@ export function checkError (execResult, compiledContracts) {
                 decodedCustomErrorInputsClean = {}
                 let devdoc = {}
                 // "contract" represents the compilation result containing the NATSPEC documentation
-                if (contract && fn.functions && Object.keys(fn.functions).length) {
-                  const functionSignature = Object.keys(fn.functions)[0]
+                const fnFragments = fn.fragments.filter(f => f.type === "function") as Array<FunctionFragment>
+                if (contract && fnFragments && fnFragments.length) {
+                  const functionSignature = fnFragments[0].format()
                   // we check in the 'devdoc' if there's a developer documentation for this error
                   try {
                     devdoc = (contract.devdoc.errors && contract.devdoc.errors[functionSignature][0]) || {}
@@ -160,7 +161,7 @@ export function checkError (execResult, compiledContracts) {
     if (!customError) {
       // It is the hash of Error(string)
       if (returnData && (returnDataHex === '08c379a0')) {
-        const abiCoder = new ethers.utils.AbiCoder()
+        const abiCoder = new AbiCoder()
         const reason = abiCoder.decode(['string'], '0x' + returnData.slice(10))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {

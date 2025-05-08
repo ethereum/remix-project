@@ -32,15 +32,9 @@ export const fetchContractFromSourcify = async (plugin, network, contractAddress
       }
     }
   }
-  const settings = {
-    version: data.metadata.compiler.version,
-    language: data.metadata.language,
-    evmVersion: data.metadata.settings.evmVersion,
-    optimize: data.metadata.settings.optimizer.enabled,
-    runs: data.metadata.settings.optimizer.runs
-  }
   return {
-    settings,
-    compilationTargets
+    config: data.metadata,
+    compilationTargets,
+    version: data.metadata.compiler.version
   }
 }

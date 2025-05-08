@@ -1,4 +1,4 @@
-import { hashMessage } from "ethers/lib/utils"
+import { hashMessage } from "ethers"
 import JSZip from "jszip"
 import { fileSystem } from "../fileSystem"
 const _paq = window._paq = window._paq || []

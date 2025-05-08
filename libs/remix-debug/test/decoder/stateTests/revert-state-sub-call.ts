@@ -10,7 +10,6 @@ import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree
 import * as vmCall from '../../vmCall'
 import { StorageResolver } from '../../../src/storage/storageResolver'
 import { StorageViewer } from '../../../src/storage/storageViewer'
-import { Address, bytesToHex } from '@ethereumjs/util'
 
 module.exports = async function testMappingStorage (st, cb) {
   const revertStateContract = require('../contracts/revert-state-sub-call.ts')

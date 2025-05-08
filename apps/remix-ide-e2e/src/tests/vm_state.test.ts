@@ -19,7 +19,8 @@ const tests = {
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
-  'Should show toaster while trying fork and delete VM state without state #group1': function (browser: NightwatchBrowser) {
+  'Should show toaster while trying fork and delete VM state without state #group1': '' + function (browser: NightwatchBrowser) {
+    // removing this test as now the state contains the created addresses and is not empty...
     browser
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .click('*[data-id="fork-state-icon"]')

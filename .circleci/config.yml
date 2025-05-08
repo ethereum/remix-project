@@ -277,9 +277,9 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
-                yarn --ignore-optional
-                yarn add @remix-project/remix-ws-templates
+                yarn add node-pty --network-timeout 600000
+                yarn --ignore-optional --network-timeout 600000
+                yarn add @remix-project/remix-ws-templates --network-timeout 600000
                 ./rundist.bash test_only
         - run:  
             name: "Run tests"
@@ -793,6 +793,9 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
   tests-passed:
     machine:
@@ -958,57 +961,60 @@ workflows:
     when: << pipeline.parameters.web >>
     jobs:
       - build
-      # - build-desktop
-      # - build-remixdesktop-mac:
-      #     requires:
-      #       - build-desktop
-      #     matrix:
-      #       parameters: 
-      #         arch: ["arm64", "x64"]
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - test-remixdesktop-mac:
-      #     requires:
-      #       - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - build-remixdesktop-windows:
-      #     requires:
-      #       - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - sign-remixdesktop-windows:
-      #     requires:
-      #       - build-remixdesktop-windows
-      # - build-remixdesktop-linux:
-      #     requires:
-      #       - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - test-remixdesktop-linux:
-      #     requires:
-      #       - build-desktop
-      # - test-remixdesktop-windows:
-      #     requires:
-      #      - build-desktop
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop.*/]
-      # - uploadartifacts:
-      #     requires:
-      #       - build-remixdesktop-mac
-      #       - build-remixdesktop-linux
-      #       - sign-remixdesktop-windows
-      #       - test-remixdesktop-windows
-      #       - test-remixdesktop-linux
-      #       - test-remixdesktop-mac
-      #     filters:
-      #       branches:
-      #         only: [/.*desktop-master.*/, /.*desktop-metamask.*/]
+      - build-desktop
+      - build-remixdesktop-mac:
+          requires:
+            - build-desktop
+          matrix:
+            parameters: 
+              arch: ["arm64", "x64"]
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - build-remixdesktop-windows:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - sign-remixdesktop-windows:
+          requires:
+            - build-remixdesktop-windows
+      - build-remixdesktop-linux:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - test-remixdesktop-linux:
+          requires:
+            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - test-remixdesktop-windows:
+          requires:
+           - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-mac
+            - build-remixdesktop-linux
+            - sign-remixdesktop-windows
+            - test-remixdesktop-windows
+            - test-remixdesktop-linux
+            - test-remixdesktop-mac
+          filters:
+            branches:
+              only: [/.*desktop-master.*/]
       - build-plugin:
           matrix:
             parameters:
