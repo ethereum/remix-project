@@ -157,6 +157,7 @@ const tests = {
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementVisible('*[data-id="unpinnedInstance0xf8e81D47203A594245E36C48e151709F0C19fBe8"]')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .click('input[data-id="modalDialogForkState"]')
