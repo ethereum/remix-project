@@ -158,11 +158,12 @@ export class Blockchain extends Plugin {
         this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.defaultPinnedProviders))
         this.pinnedProviders = this.defaultPinnedProviders
       } else {
+        providers = JSON.parse(providers)
         if (!providers.includes(this.defaultPinnedProviders[0])) {
           // we force the inclusion of the latest fork in the pinned VM.
           providers.push(this.defaultPinnedProviders[0])
         }
-        this.pinnedProviders = JSON.parse(providers)
+        this.pinnedProviders = providers
       }
     }).catch((error) => { console.log(error) })
   }
