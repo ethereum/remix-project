@@ -136,7 +136,7 @@ export class PectraVMProvider extends BasicVMProvider {
   constructor(blockchain) {
     super(
       {
-        name: 'vm-pectra',
+        name: 'vm-prague',
         displayName: 'Remix VM (Pectra)',
         kind: 'provider',
         description: 'Remix VM (Pectra)',

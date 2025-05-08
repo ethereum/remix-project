@@ -23,11 +23,11 @@ web3.eth.setConfig(config)
 export class ExecutionContext {
   constructor() {
     this.event = new EventManager()
-    this.executionContext = 'vm-cancun'
+    this.executionContext = 'vm-prague'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'cancun'
+    this.currentFork = 'prague'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -36,8 +36,8 @@ export class ExecutionContext {
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
   }
 
-  init(config) {
-    this.executionContext = 'vm-cancun'
+  init (config) {
+    this.executionContext = 'vm-prague'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
@@ -115,7 +115,7 @@ export class ExecutionContext {
 
   removeProvider(name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-cancun', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-prague', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -183,7 +183,7 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'cancun'
+          this.currentFork = 'prague'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }
