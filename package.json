@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.64.0-dev",
+  "version": "0.63.1",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
