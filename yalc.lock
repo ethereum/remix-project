@@ -1,0 +1,21 @@
+{
+  "version": "v1",
+  "packages": {
+    "@nlux/core": {
+      "signature": "d4321b8b8ea8254148c7446151090878",
+      "file": true
+    },
+    "@nlux/react": {
+      "signature": "151a4624a5eaaef94b34ebc1a95463ae",
+      "file": true
+    },
+    "@nlux/highlighter": {
+      "signature": "a00a445919e5958391bff75d8a27b1bb",
+      "file": true
+    },
+    "@nlux/themes": {
+      "signature": "520f911f893e8142202b942b70829ed3",
+      "file": true
+    }
+  }
+}

@@ -34,7 +34,9 @@ export class Layout extends Plugin {
   maximized: { [key: string]: boolean }
   constructor () {
     super(profile)
-    this.maximized = {}
+    this.maximized = {
+      'remixaiassistant': true
+    }
     this.enhanced = {
       'dgit': true,
       'LearnEth': true
