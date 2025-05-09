@@ -5,16 +5,16 @@ parameters:
     default: true   
   windows:
     type: boolean
-    default: true
+    default: false
   mac:
     type: boolean
-    default: true
+    default: false
   linux:
     type: boolean
-    default: true
+    default: false
   web:
     type: boolean
-    default: true
+    default: false
   run_metamask_tests:
     type: boolean
     default: false   
