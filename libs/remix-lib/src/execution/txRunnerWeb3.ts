@@ -320,7 +320,6 @@ export class TxRunnerWeb3 {
         value: tx.value
       })
     }
-
     return { txHash, contractAddress }
   }
 }
