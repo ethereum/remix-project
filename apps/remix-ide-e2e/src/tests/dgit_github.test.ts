@@ -31,10 +31,10 @@ module.exports = {
     'login to github #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
-            .waitForElementVisible('*[data-id="gitubUsername"]')
+            .waitForElementVisible('*[data-id="githubUsername"]')
             .setValue('*[data-id="githubToken"]', process.env.dgit_token)
             .pause(1000)
-            .setValue('*[data-id="gitubUsername"]', 'git')
+            .setValue('*[data-id="githubUsername"]', 'git')
             .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .pause(1000)
@@ -376,7 +376,7 @@ module.exports = {
             .pause(1000)
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
             .pause(1000)
-            .setValue('*[data-id="gitubUsername"]', 'git')
+            .setValue('*[data-id="githubUsername"]', 'git')
             .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .pause(1000)

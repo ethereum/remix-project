@@ -13,7 +13,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTabGetStartedremixDefault"]')
       .click('*[data-id="homeTabGetStartedremixDefault"]')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .waitForElementVisible('*[data-id="treeViewDivDraggableItemREADME.txt"')
       .click('*[data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]')
       .waitForElementPresent({
