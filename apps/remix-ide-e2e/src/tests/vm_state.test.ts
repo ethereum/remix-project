@@ -150,8 +150,8 @@ const tests = {
       .waitForElementVisible('[data-id="remixUIGSDeploy to an In-browser Forked State."]')
       .waitForElementPresent('[data-id="remixUIGSforkedState_1"]')
       .waitForElementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
-      .waitForElementNotContainsText('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
-      .waitForElementNotVisible('[data-id="remixUIGSforkedState_2"]')
+      .waitForElementContainsText('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
+      .waitForElementNotPresent('[data-id="remixUIGSforkedState_2"]')
       .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
@@ -164,7 +164,7 @@ const tests = {
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-      .waitForElementNotContainsText('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
       // check if 'forkedState_2' is selected as current environment 
       .waitForElementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in environment explorer
@@ -172,7 +172,7 @@ const tests = {
       // check if 'forkedState_2' is pinned in environment explorer
       .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
       // 'forkedState_2' should have 3 blocks
-      .waitForElementNotContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
+      .waitForElementContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
