@@ -55,7 +55,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--verbose']
+          args: ['window-size=2560,1440', 'start-fullscreen', '--verbose']
         }
       }
     },
@@ -69,7 +69,6 @@ module.exports = {
           args: [
             `--load-extension=${metamaskExtensionPath}`,
             '--window-size=2560,1440',
-            '--no-sandbox',
             '--verbose',
             '--disable-gpu',
           ]
