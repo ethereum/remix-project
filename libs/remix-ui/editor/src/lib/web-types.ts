@@ -155,17 +155,13 @@ export const loadTypes = async (monaco) => {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(ethersWordlistsDefault, `file:///node_modules/@types/@ethersproject_wordlists/index.d.ts`)
 
   // @ts-ignore
-  const versionEthers = await import('raw-loader!ethers/lib/_version.d.ts')
+  /*
+  const versionEthers = await import('raw-loader!ethers/lib.esm/_version.d.ts')
   const versionEthersDefault = versionEthers.default.replace(/@ethersproject\//g, '@ethersproject_')
   monaco.languages.typescript.typescriptDefaults.addExtraLib(versionEthersDefault, `file:///node_modules/@types/_version-ethers-lib/index.d.ts`)
 
   // @ts-ignore
-  const utilEthers = await import('raw-loader!ethers/lib/utils.d.ts')
-  const utilEthersDefault = utilEthers.default.replace(/@ethersproject\//g, '@ethersproject_')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(utilEthersDefault, `file:///node_modules/@types/utils-ethers-lib/index.d.ts`)
-
-  // @ts-ignore
-  const ethers = await import('raw-loader!ethers/lib/ethers.d.ts')
+  const ethers = await import('raw-loader!ethers/lib.esm/ethers.d.ts')
   let ethersDefault = ethers.default
   ethersDefault = ethersDefault.replace(/.\/utils/g, 'utils-ethers-lib')
   ethersDefault = ethersDefault.replace(/.\/_version/g, '_version-ethers-lib')
@@ -175,12 +171,12 @@ export const loadTypes = async (monaco) => {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(ethersDefault, `file:///node_modules/@types/ethers-lib/index.d.ts`)
 
   // @ts-ignore
-  const indexEthers = await import('raw-loader!ethers/lib/index.d.ts')
+  const indexEthers = await import('raw-loader!ethers/lib.esm/index.d.ts')
   let indexEthersDefault = indexEthers.default
   indexEthersDefault = indexEthersDefault.replace(/.\/ethers/g, 'ethers-lib')
   indexEthersDefault = indexEthersDefault.replace(/@ethersproject\//g, '@ethersproject_')
   monaco.languages.typescript.typescriptDefaults.addExtraLib(indexEthersDefault, `file:///node_modules/@types/ethers/index.d.ts`)
-
+  */
   // Web3
 
   // @ts-ignore

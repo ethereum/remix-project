@@ -272,7 +272,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const urlResponse = await axios.post(`${endpointUrls.solidityScan}/uploadFile`, { file, fileName })
 
     if (urlResponse.data.status === 'success') {
-      const ws = new WebSocket(endpointUrls.solidityScanWebSocket)
+      const ws = new WebSocket(`${endpointUrls.solidityScanWebSocket}/solidityscan`)
 
       ws.addEventListener('error', console.error);
 
@@ -314,7 +314,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
 
-          const { data: scanData } = await axios.post(`https://${endpointUrls.solidityScan}/downloadResult`, { url })
+          const { data: scanData } = await axios.post(`${endpointUrls.solidityScan}/downloadResult`, { url })
           const scanReport: ScanReport = scanData.scan_report
           if (scanReport?.multi_file_scan_details?.length) {
             for (const template of scanReport.multi_file_scan_details) {

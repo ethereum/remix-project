@@ -1,13 +1,10 @@
 {
-    "version": "v0.62.0",
+    "version": "v0.64.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Forking of Remix VM mainnet fork environment",
-    "highlight2": "Initial code suggestion for vyper and circom",
-    "highlight3": "Support for Phantom wallet & Universal profile",
+    "highlight1": "Support of 'EIP-7702: Set Code for EOAs' for Remix VM",
+    "highlight2": "Support of ERC-4337 enabled Gnosis Safe Smart Accounts for Sepolia testnet",
+    "highlight3": "New workspace templates 'Simple EIP 7702' & 'Account Abstraction'",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-62-0-9a72ac0c4f67?source=friends_link&sk=4b73921ad7f8ad1dd5bce040de854a3f"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-64-0-85e154acf9a2?source=friends_link&sk=84a191be6da7627535f104e29f311358"
   }
-
-
-  

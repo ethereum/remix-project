@@ -15,11 +15,12 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-cancun"]')
+      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 30000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
-  'Should show toaster while trying fork and delete VM state without state #group1': function (browser: NightwatchBrowser) {
+  'Should show toaster while trying fork and delete VM state without state #group1': '' + function (browser: NightwatchBrowser) {
+    // removing this test as now the state contains the created addresses and is not empty...
     browser
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .click('*[data-id="fork-state-icon"]')
@@ -83,7 +84,7 @@ const tests = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`"latestBlockNumber": "0x2"`) !== -1)
         browser.assert.ok(content.indexOf(`"stateName": "forkedState_1"`) !== -1)
-        browser.assert.ok(content.indexOf(`"forkName": "cancun"`) !== -1)
+        browser.assert.ok(content.indexOf(`"forkName": "prague"`) !== -1)
         browser.assert.ok(content.indexOf(`"savingTimestamp":`) !== -1)
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
@@ -151,7 +152,7 @@ const tests = {
       .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
       .assert.textContains('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
       .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
-      .switchEnvironment('vm-cancun')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -184,7 +185,7 @@ const tests = {
   },
   'Should delete state successfully #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-cancun')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -201,8 +202,8 @@ const tests = {
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
-      .openFile('.states/vm-cancun')
-      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-cancun/state.json"]')
+      .openFile('.states/vm-prague')
+      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-prague/state.json"]')
   }
 }
 

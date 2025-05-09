@@ -2738,10 +2738,10 @@ input[type="submit"].btn-block {
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 1rem;
-  color: var(--text);
+  color: #fff;
   text-align: left;
   list-style: none;
-  background-color: var(--text-background);
+  background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 2px;
@@ -2889,7 +2889,7 @@ input[type="submit"].btn-block {
   color: var(--text);
   text-align: inherit;
   white-space: nowrap;
-  background-color: var(--text-background);
+  background-color: transparent;
   border: 0;
 }
 .dropdown-item:focus,

@@ -17,7 +17,7 @@ export class SepoliaForkVMProvider extends BasicVMProvider {
       blockchain
     )
     this.blockchain = blockchain
-    this.fork = 'cancun'
+    this.fork = 'prague'
     this.nodeUrl = 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9'
     this.blockNumber = 'latest'
   }

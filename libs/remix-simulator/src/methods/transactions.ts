@@ -1,16 +1,16 @@
 import { toHex, toNumber, toBigInt } from 'web3-utils'
-import { toChecksumAddress, Address, bigIntToHex, bytesToHex } from '@ethereumjs/util'
+import { toChecksumAddress, bigIntToHex, bytesToHex, createAddressFromString } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
-import { ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { VMexecutionResult } from '@remix-project/remix-lib'
 import { VMContext } from '../vm-context'
-import { Log, EvmError } from '@ethereumjs/evm'
+import { Log, EVMError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
 
 export type VMExecResult = {
-  exceptionError: EvmError
+  exceptionError: EVMError
   executionGasUsed: bigint
   gas: bigint
   gasRefund: bigint
@@ -68,6 +68,7 @@ export class Transactions {
       eth_getCode: this.eth_getCode.bind(this),
       eth_call: this.eth_call.bind(this),
       eth_estimateGas: this.eth_estimateGas.bind(this),
+      eth_maxPriorityFeePerGas: this.eth_maxPriorityFeePerGas.bind(this),
       eth_getTransactionCount: this.eth_getTransactionCount.bind(this),
       eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this),
       eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
@@ -79,6 +80,10 @@ export class Transactions {
       eth_getStateDb: this.eth_getStateDb.bind(this),
       eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
+  }
+
+  eth_maxPriorityFeePerGas (payload, cb) {
+    cb (null, '0xaa')
   }
 
   eth_sendRawTransaction (payload, cb) {
@@ -191,7 +196,7 @@ export class Transactions {
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `${bytesToHex(result.execResult.returnValue) || '0x00'}`
-          const abiCoder = new ethers.utils.AbiCoder()
+          const abiCoder = new AbiCoder()
           const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
           return cb('revert ' + reason)
         } catch (e) {
@@ -205,7 +210,7 @@ export class Transactions {
       if (result.execResult.gasRefund) {
         gasUsed += Number(toNumber(result.execResult.gasRefund))
       }
-      gasUsed = gasUsed + Number(toNumber(value.tx.getBaseFee()))
+      gasUsed = gasUsed + Number(toNumber(value.tx.getIntrinsicGas()))
       cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
@@ -291,7 +296,7 @@ export class Transactions {
   eth_getTransactionCount (payload, cb) {
     const address = payload.params[0]
 
-    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
+    this.vmContext.vm().stateManager.getAccount(createAddressFromString(address)).then((account) => {
       const nonce = toBigInt(account.nonce).toString(10)
       cb(null, nonce)
     }).catch((error) => {

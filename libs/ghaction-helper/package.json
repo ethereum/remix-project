@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/ghaction-helper",
-  "version": "0.1.45",
+  "version": "0.1.51",
   "description": "Solidity Tests GitHub Action Helper",
   "main": "src/index.js",
   "scripts": {
@@ -19,17 +19,17 @@
   },
   "homepage": "https://github.com/ethereum/remix-project#readme",
   "devDependencies": {
-    "@remix-project/remix-solidity": "^0.5.51",
+    "@remix-project/remix-solidity": "^0.5.57",
     "@types/chai": "^4.3.4",
     "typescript": "^4.9.3"
   },
   "dependencies": {
     "@ethereum-waffle/chai": "^3.4.4",
-    "@remix-project/remix-simulator": "^0.2.65",
+    "@remix-project/remix-simulator": "^0.2.71",
     "chai": "^4.3.7",
-    "ethers": "^5.7.2",
+    "ethers": "^6.14.0",
     "web3": "^4.1.1"
   },
   "types": "./src/index.d.ts",
-  "gitHead": "ac6b8d4bc57398ac3677ce08c188c4f9e69123ed"
+  "gitHead": "eb0a7fcd6dce43a4942a829b4320e5de6b7d80b0"
 }

@@ -25,7 +25,6 @@ import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
-import { providers } from 'ethers'
 const _paq = (window._paq = window._paq || [])
 
 enum MarkerSeverity {
@@ -171,7 +170,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/mh9hFCKkEq\n
+  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/XvMmgehAMq\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `

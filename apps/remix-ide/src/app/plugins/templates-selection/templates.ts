@@ -4,7 +4,9 @@ export const templates = (intl, plugin) => {
       name: "Generic",
       items: [
         { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
-        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' }
+        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' },
+        { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code.' },
+        { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'Experiment with Account Abstraction contracts: (ERC-4337, EIP-7702)' }
       ]
     },
     {
@@ -14,7 +16,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc20",
           displayName: "ERC20",
           tagList: ["ERC20", "Solidity"],
-          description: 'A simple fungible token contract'
+          description: 'A customizable fungible token contract'
         },
         {
           value: "ozerc20",
@@ -49,7 +51,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
-          description: 'A simple non-fungible token (NFT) contract'
+          description: 'A customizable non-fungible token (NFT) contract'
         },
         {
           value: "ozerc721",
@@ -84,7 +86,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc1155",
           tagList: ["Solidity"],
           displayName: "ERC1155",
-          description: 'A simple multi token contract'
+          description: 'A customizable multi token contract'
         },
         {
           value: "ozerc1155",
