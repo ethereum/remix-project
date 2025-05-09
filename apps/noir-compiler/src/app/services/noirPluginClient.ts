@@ -1,24 +1,25 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
-// @ts-ignore
-import { compile_program, createFileManager } from '@noir-lang/noir_wasm/default'
-import type { FileManager } from '@noir-lang/noir_wasm/dist/node/main'
-import pathModule from 'path'
 import { DEFAULT_TOML_CONFIG } from '../actions/constants'
 import NoirParser from './noirParser'
 import { extractNameFromKey } from '@remix-ui/helper'
+import axios from 'axios'
 export class NoirPluginClient extends PluginClient {
   public internalEvents: EventManager
-  public fm: FileManager
   public parser: NoirParser
+  public ws: WebSocket
+  public lastCompilationDetails: {
+    error: string
+    path: string
+    id: string
+  }
 
   constructor() {
     super()
     this.methods = ['init', 'parse', 'compile']
     createClient(this)
     this.internalEvents = new EventManager()
-    this.fm = createFileManager('/')
     this.parser = new NoirParser()
     this.onload()
   }
@@ -29,6 +30,35 @@ export class NoirPluginClient extends PluginClient {
 
   onActivation(): void {
     this.internalEvents.emit('noir_activated')
+    this.setupWebSocketEvents()
+  }
+
+  setupWebSocketEvents(): void {
+    // @ts-ignore
+    this.ws = new WebSocket(`${WS_URL}`)
+    this.ws.onopen = () => {
+      console.log('WebSocket connection opened')
+    }
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data)
+
+      if (message.logMsg) {
+        if (message.logMsg.includes('previous errors')) {
+          this.logFn(message.logMsg)
+        } else {
+          this.debugFn(message.logMsg)
+        }
+      }
+    }
+    this.ws.onerror = (event) => {
+      this.logFn('WebSocket error: ' + event)
+    }
+    this.ws.onclose = () => {
+      console.log('WebSocket connection closed')
+      // restart the websocket connection
+      this.ws = null
+      setTimeout(this.setupWebSocketEvents.bind(this), 5000)
+    }
   }
 
   async setupNargoToml(): Promise<void> {
@@ -37,56 +67,59 @@ export class NoirPluginClient extends PluginClient {
 
     if (!nargoTomlExists) {
       await this.call('fileManager', 'writeFile', 'Nargo.toml', DEFAULT_TOML_CONFIG)
-      const fileBytes = new TextEncoder().encode(DEFAULT_TOML_CONFIG)
-
-      await this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
-    } else {
-      const nargoToml = await this.call('fileManager', 'readFile', 'Nargo.toml')
-      const fileBytes = new TextEncoder().encode(nargoToml)
-
-      await this.fm.writeFile('Nargo.toml', new Blob([fileBytes]).stream())
     }
+  }
+
+  generateRequestID(): string {
+    const timestamp = Math.floor(Date.now() / 1000)
+    const random = Math.random().toString(36).substring(2, 15)
+
+    return `req_${timestamp}_${random}`
   }
 
   async compile(path: string): Promise<void> {
     try {
-      this.internalEvents.emit('noir_compiling_start')
-      this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Program...', type: 'info' })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-      await this.setupNargoToml()
-      const program = await compile_program(this.fm, null, this.logFn.bind(this), this.debugFn.bind(this))
-      const filename = extractNameFromKey(path)
-      const outputPath = `build/${filename.replace('.nr', '.json')}`
+      const requestID = this.generateRequestID()
 
-      this.call('fileManager', 'writeFile', outputPath, JSON.stringify(program, null, 2))
-      this.internalEvents.emit('noir_compiling_done')
-      this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Compiled successfully' })
-      // @ts-ignore
-      await this.call('editor', 'clearErrorMarkers', [path])
-    } catch (e) {
-      const regex = /^\s*(\/[^:]+):(\d+):/gm;
-      const pathContent = await this.call('fileManager', 'readFile', path)
+      this.lastCompilationDetails = {
+        error: '',
+        path,
+        id: requestID
+      }
+      if (this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ requestId: requestID }))
+        this.internalEvents.emit('noir_compiling_start')
+        this.emit('statusChanged', { key: 'loading', title: 'Compiling Noir Program...', type: 'info' })
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+        await this.setupNargoToml()
+        // @ts-ignore
+        const zippedProject: Blob = await this.call('fileManager', 'download', '/', false, ['build'])
+        const formData = new FormData()
 
-      const markers = Array.from(e.message.matchAll(regex), (match) => {
-        const errorPath = match[1]
-        const line = parseInt(match[2])
-        const start = { line, column: 1 }
-        const end = { line, column: pathContent.split('\n')[line - 1].length + 1 }
+        formData.append('file', zippedProject, `${extractNameFromKey(path)}.zip`)
+        // @ts-ignore
+        const response = await axios.post(`${BASE_URL}/compile?requestId=${requestID}`, formData)
 
-        return {
-          message: e.message,
-          severity: 'error',
-          position: { start, end },
-          file: errorPath.slice(1)
+        if (!response.data || !response.data.success) {
+          this.internalEvents.emit('noir_compiling_errored', new Error('Compilation failed'))
+          this.logFn('Compilation failed')
+          return
+        } else {
+          const { compiledJson, proverToml } = response.data
+
+          this.call('fileManager', 'writeFile', 'build/program.json', compiledJson)
+          this.call('fileManager', 'writeFile', 'build/prover.toml', proverToml)
+          this.internalEvents.emit('noir_compiling_done')
+          this.emit('statusChanged', { key: 'succeed', title: 'Noir circuit compiled successfully', type: 'success' })
+          // @ts-ignore
+          await this.call('editor', 'clearErrorMarkers', [path])
         }
-      })
-      // @ts-ignore
-      await this.call('editor', 'addErrorMarker', markers)
-      this.emit('statusChanged', { key: markers.length, title: e.message, type: 'error' })
-      this.internalEvents.emit('noir_compiling_errored', e)
+      } else {
+        this.internalEvents.emit('noir_compiling_errored', new Error('Compilation failed: WebSocket connection not open'))
+        this.logFn('Compilation failed: WebSocket connection not open')
+      }
+    } catch (e) {
       console.error(e)
     }
   }
@@ -109,58 +142,35 @@ export class NoirPluginClient extends PluginClient {
       // @ts-ignore
       await this.call('editor', 'addErrorMarker', markers)
     } else {
-      await this.resolveDependencies(path, content)
-      const fileBytes = new TextEncoder().encode(content)
-
-      await this.fm.writeFile(`${path}`, new Blob([fileBytes]).stream())
       // @ts-ignore
       await this.call('editor', 'clearErrorMarkers', [path])
     }
   }
 
-  async resolveDependencies (filePath: string, fileContent: string, parentPath: string = '', visited: Record<string, string[]> = {}): Promise<void> {
-    const imports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1]);
+  async logFn(log) {
+    this.lastCompilationDetails.error = log
+    //const regex = /(warning|error):\s*([^\n]+)\s*┌─\s*([^:]+):(\d+):/gm;
+    const regex = /(error):\s*([^\n]+)\s*┌─\s*([^:]+):(\d+):/gm;
+    const pathContent = await this.call('fileManager', 'readFile', this.lastCompilationDetails.path)
+    const markers = Array.from(this.lastCompilationDetails.error.matchAll(regex), (match) => {
+      const severity = match[1]
+      const message = match[2].trim()
+      const errorPath = match[3]
+      const line = parseInt(match[4])
+      const start = { line, column: 1 }
+      const end = { line, column: pathContent.split('\n')[line - 1].length + 1 }
 
-    for (let dep of imports) {
-      if (!dep.endsWith('.nr')) dep += '.nr'
-      if (visited[filePath] && visited[filePath].includes(parentPath)) return console.log('circular dependency detected')
-      let dependencyContent = ''
-      let path = dep.replace(/(\.\.\/)+/g, '')
-
-      // @ts-ignore
-      const pathExists = await this.call('fileManager', 'exists', path)
-
-      if (pathExists) {
-        dependencyContent = await this.call('fileManager', 'readFile', path)
-      } else {
-        let relativePath = pathModule.resolve(filePath.slice(0, filePath.lastIndexOf('/')), dep)
-
-        if (relativePath.indexOf('/') === 0) relativePath = relativePath.slice(1)
-        // @ts-ignore
-        const relativePathExists = await this.call('fileManager', 'exists', relativePath)
-
-        if (relativePathExists) {
-          path = relativePath
-          dependencyContent = await this.call('fileManager', 'readFile', relativePath)
-          visited[filePath] = visited[filePath] ? [...visited[filePath], path] : [path]
-          // extract all mod imports from the dependency content
-          const depImports = Array.from(fileContent.matchAll(/mod\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(=\s*["'](.*?)["'])?\s*;/g), match => match[3] || match[1])
-
-          if (depImports.length > 0 && dependencyContent.length > 0) {
-            const fileBytes = new TextEncoder().encode(dependencyContent)
-            const writePath = parentPath ? `${filePath.replace('.nr', '')}/${dep}` : path
-
-            this.fm.writeFile(writePath, new Blob([fileBytes]).stream())
-            await this.resolveDependencies(path, dependencyContent, filePath, visited)
-          }
-        } else {
-          throw new Error(`Dependency ${dep} not found in Remix file system`)
-        }
+      return {
+        message: `${severity}: ${message}`,
+        severity: severity === 'error' ? 'error' : 'warning',
+        position: { start, end },
+        file: errorPath
       }
-    }
-  }
-
-  logFn(log) {
+    })
+    // @ts-ignore
+    await this.call('editor', 'addErrorMarker', markers)
+    this.emit('statusChanged', { key: markers.length, title: this.lastCompilationDetails.error, type: 'error' })
+    this.internalEvents.emit('noir_compiling_errored', this.lastCompilationDetails.error)
     this.call('terminal', 'log', { type: 'error', value: log })
   }
 

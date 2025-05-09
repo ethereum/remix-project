@@ -26,7 +26,7 @@ const profile = {
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
     'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff',
-    'hasGitSubmodules', 'getOpenedFiles'
+    'hasGitSubmodules', 'getOpenedFiles', 'download'
   ],
   kind: 'file-system'
 }
@@ -406,10 +406,11 @@ export default class FileManager extends Plugin {
     }
   }
 
-  async zipDir(dirPath, zip) {
+  async zipDir(dirPath, zip, ignoreDirs = []) {
+    if (ignoreDirs.includes(dirPath)) return
     const filesAndFolders = await this.readdir(dirPath)
     for (let path in filesAndFolders) {
-      if (filesAndFolders[path].isDirectory) await this.zipDir(path, zip)
+      if (filesAndFolders[path].isDirectory) await this.zipDir(path, zip, ignoreDirs)
       else {
         path = this.normalize(path)
         const content: any = await this.readFile(path)
@@ -418,18 +419,18 @@ export default class FileManager extends Plugin {
     }
   }
 
-  async download(path) {
+  async download(path, asZip = true, ignoreDirs = []) {
     try {
       const downloadFileName = helper.extractNameFromKey(path)
       if (await this.isDirectory(path)) {
         const zip = new JSZip()
-        await this.zipDir(path, zip)
+        await this.zipDir(path, zip, ignoreDirs)
         const content = await zip.generateAsync({ type: 'blob' })
-        saveAs(content, `${downloadFileName}.zip`)
+        return asZip ? saveAs(content, `${downloadFileName}.zip`) : content
       } else {
         path = this.normalize(path)
         const content: any = await this.readFile(path)
-        saveAs(new Blob([content]), downloadFileName)
+        return asZip ? saveAs(new Blob([content]), downloadFileName) : new Blob([content])
       }
     } catch (e) {
       throw new Error(e)
