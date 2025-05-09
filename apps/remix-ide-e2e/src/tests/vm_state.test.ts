@@ -140,7 +140,7 @@ const tests = {
         })
       .clickLaunchIcon('filePanel')
   },
-  'Should show fork states provider in environment explorer & make txs using forked state #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should show fork states provider in environment explorer & make txs using forked state #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
       .waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
