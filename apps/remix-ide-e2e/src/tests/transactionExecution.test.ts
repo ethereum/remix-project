@@ -317,9 +317,9 @@ module.exports = {
     - check the block number has been set to the current mainnet block number.
     - check blocknumber is advancing
     - fork and check blocknumber is advancing the forked state. The name is 'Mainnet fork 1'
-    - fork again and check blocknumber is advancing the forked state. The nmae is 'Mainnet fork 2'
+    - fork again and check blocknumber is advancing the forked state. The name is 'Mainnet fork 2'
     - switch back to Mainnet fork 1 and check we have the right number of blocks.
-    - transact agin using Mainnet fork 1
+    - transact again using Mainnet fork 1
     */
     let addressRef
     let currentBlockNumber: number
@@ -707,7 +707,7 @@ contract C {
         }
 
         contract MyResolver {
-            // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
+            // Same address for Mainnet, Ropsten, Rinkerby, Gorli and other networks;
             ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
             function resolve() public view returns(address) {
