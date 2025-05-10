@@ -1,11 +1,12 @@
 {
-    "productName": "Remix-Desktop-alpha",
+    "productName": "Remix-Desktop-Alpha",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [
-        "build/**/*"
+        "build/**/*",
+        "node_modules/node-pty/**/*"
     ],
     "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",
@@ -42,7 +43,7 @@
         "target": [
             "nsis"
         ],
-        "artifactName": "${productName}-Setup-${version}.${ext}",
+        "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
         "icon": "assets/icon.png"
     },
     "deb": {},
