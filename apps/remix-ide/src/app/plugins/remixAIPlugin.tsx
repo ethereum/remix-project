@@ -128,7 +128,10 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
-    const newPrompt = await this.codeExpAgent.chatCommand(prompt)
+    let newPrompt = await this.codeExpAgent.chatCommand(prompt)
+    // add workspace context
+    const files = this.workspaceAgent.ctxFiles === "" ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
+    newPrompt = "Using the following context: ```\n" + files + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
@@ -201,6 +204,7 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
+    // Evaluate if this function requires any context
     console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
 
     let result
@@ -233,7 +237,7 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
-    const files = await this.workspaceAgent.getCurrentWorkspaceFiles()
+    const files = this.workspaceAgent.ctxFiles === "" ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
     let result
@@ -295,6 +299,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async setContextFiles(context: IContextType) {
+    this.workspaceAgent.setCtxFiles(context)
   }
 
   isChatRequestPending(){

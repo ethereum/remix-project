@@ -1,3 +1,5 @@
+import { IContextType } from "../types/types";
+
 enum SupportedFileExtensions {
   solidity = '.sol',
   vyper = '.vy',
@@ -10,6 +12,9 @@ export class workspaceAgent {
   plugin: any
   currentWorkspace: string = ''
   static instance
+  ctxFiles:any
+  client: any;
+
   private constructor(props) {
     this.plugin = props;
   }
@@ -46,6 +51,35 @@ export class workspaceAgent {
     } catch (error) {
       console.error('Error writing generation results:', error);
       return 'No files modified'
+    }
+  }
+
+  async setCtxFiles (context: IContextType) {
+    this.ctxFiles = ""
+    switch (context.context) {
+    case 'currentFile': {
+      const file = await this.client.call('fileManager', 'getCurrentFile')
+      const content = await this.client.call('fileManager', 'readFile', file)
+      this.ctxFiles = `"${file}": ${JSON.stringify(content)}`
+      break
+    }
+    case 'workspace':
+      this.ctxFiles = this.getCurrentWorkspaceFiles()
+      break
+    case 'openedFiles': {
+      this.ctxFiles = "{\n"
+      const openedFiles = await this.client.call('fileManager', 'getOpenedFiles')
+      Object.keys(openedFiles).forEach(key => {
+        if (!Object.values(SupportedFileExtensions).some(ext => key.endsWith(ext))) return;
+        this.ctxFiles += `"${key}": ${JSON.stringify(openedFiles[key])},`
+      });
+      this.ctxFiles += "\n}"
+      break
+    }
+    default:
+      console.log('Invalid context type')
+      this.ctxFiles = ""
+      break
     }
   }
 }
