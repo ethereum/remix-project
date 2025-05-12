@@ -5320,22 +5320,21 @@
     pathval "1.1.1"
     type-detect "4.0.8"
 
-"@nlux/core@2.17.0", "@nlux/core@file:.yalc/@nlux/core":
-  version "2.17.0"
+"@nlux/core@2.17.4":
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/@nlux/core/-/core-2.17.1.tgz#18a95e21e5aafae83bf6d515651780497f0f39cc"
+  integrity sha512-hIvOnuENVqWaIg5Co4JtFmHph7Sp0Nj+QixOMdOW9Ou7CjU7HK+maB5koLoayNL64B+wHTtgPN7zBrB8NCSPXw==
 
-"@nlux/highlighter@file:.yalc/@nlux/highlighter":
-  version "2.17.0"
-  dependencies:
-    "@nlux/core" "2.17.0"
-    highlight.js "^11"
+"@nlux/core@file:.yalc/@nlux/core":
+  version "2.17.4"
 
 "@nlux/react@file:.yalc/@nlux/react":
-  version "2.17.0"
+  version "2.17.4"
   dependencies:
-    "@nlux/core" "2.17.0"
+    "@nlux/core" "2.17.4"
 
 "@nlux/themes@file:.yalc/@nlux/themes":
-  version "2.17.0"
+  version "2.17.4"
 
 "@noble/ciphers@1.3.0":
   version "1.3.0"
@@ -17891,11 +17890,6 @@ hey-listen@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.8.tgz#8e59561ff724908de1aa924ed6ecc84a56a9aa68"
   integrity sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==
-
-highlight.js@^11:
-  version "11.11.1"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.11.1.tgz#fca06fa0e5aeecf6c4d437239135fabc15213585"
-  integrity sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"

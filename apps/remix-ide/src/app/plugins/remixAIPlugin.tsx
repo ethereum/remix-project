@@ -7,6 +7,7 @@ import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, Generati
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { CodeCompletionAgent, IContextType } from '@remix/remix-ai-core';
+import { AlertModal } from '@remix-ui/app';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -210,12 +211,6 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async ProcessChatRequestBuffer(params:IParams=GenerationParams){
-    // console.log("ProcessChatRequestBuffer", {
-    //   chatRequestBuffer: this.chatRequestBuffer,
-    //   params: params
-    // })
-    console.trace()
-    return
     if (this.chatRequestBuffer != null){
       const result = this[this.chatRequestBuffer.fn_name](this.chatRequestBuffer.prompt, this.chatRequestBuffer.context, params)
       this.chatRequestBuffer = null
@@ -228,6 +223,22 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async setContextFiles(context: IContextType) {
+    const alert: AlertModal = {
+      title: 'AI Context set',
+      message: <h3>Current file context set.</h3>,
+      id: 'ai-context-set',
+    }
+    if (context.context === 'currentFile') {
+      await this.call('notification', 'alert', alert)
+    }
+    else if (context.context === 'openedFiles') {
+      alert.message = <h3>Opened files context set.</h3>
+      await this.call('notification', 'alert', alert)
+    }
+    else if (context.context === 'workspace') {
+      alert.message = <h3>Workspace context set.</h3>
+      await this.call('notification', 'alert', alert)
+    }
   }
 
   isChatRequestPending(){

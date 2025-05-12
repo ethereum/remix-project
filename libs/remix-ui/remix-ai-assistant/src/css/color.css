@@ -11,7 +11,7 @@
 .nlux-AiChat-root.nlux-theme-remix_ai_theme {
 
   .nlux-conversationStarters-container {
-    display: none !important;
+    /* display: none !important; */
   }
 }
 
@@ -26,6 +26,14 @@
 .nlux-composer-container {
   /* margin-top: 15px; */
   /* display: none !important; */
+  width: 100% !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  min-height: 10vh !important;
+  margin-bottom: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
 }
 
 .nlux-comp-composer {
@@ -39,8 +47,16 @@
   border-radius: 0px !important;
 }
 
-.nlux-comp-composer>button {
+.nlux-composer--typing {
+  height: auto !important;
+}
+
+div#composer-button {
   display: none !important;
+}
+
+.nlux-comp-composer>button {
+  /* display: none !important; */
 }
 
 .nlux-comp-chatItem--sent {
@@ -129,22 +145,32 @@
 }
 
 .nlux-comp-welcomeMessage {
-  /* border: 2px solid red !important; */
   font-size: 1rem !important;
   text-align: center !important;
-
+  justify-content: flex-end !important;
+  padding-bottom: 15px !important;
 }
 
-/* .nlux-comp-conversationStarters {
+.nlux-comp-conversationStarters {
   width: auto !important;
-  padding: 0px !important
-} */
+  padding: 0px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
 
-/* .nlux-conversationStarters-container>.nlux-comp-conversationStarters>.nlux-comp-conversationStarter {
+.nlux-conversationStarters-container>.nlux-comp-conversationStarters>.nlux-comp-conversationStarter {
   border-width: 1px !important;
   border-color: var(--text-background) !important;
-  background-color: peachpuff !important;
-} */
+  background-color: var(--secondary) !important;
+  color: #fff !important;
+  min-width: 95% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  font-size: 1rem !important;
+}
 
 .nlux-theme-remix_ai_theme {
 
@@ -180,6 +206,10 @@
   --nlux-cvStrt--brdrWd: 0;
   --nlux-cvStrt--brdClr: var(--light);
   --nlux-cvStrt--brdrWd: 'hidden';
+
+  /* Override conversation starter height */
+  --nlux-cvStrt--hg: 3 !important;
+  --nlux-cvStrt: var(--btn-lg) !important;
 
   /* Override input colors */
   --nlux-PromptInput--BackgroundColor: var(--light);

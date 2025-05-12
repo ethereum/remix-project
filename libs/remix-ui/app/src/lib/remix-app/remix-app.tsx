@@ -271,7 +271,7 @@ const RemixApp = (props: IRemixAppUi) => {
                     enhanceTrigger={enhanceRightTrigger}
                     resetTrigger={resetRightTrigger}
                     maximiseTrigger={maximiseRightTrigger}
-                    minWidth={341}
+                    minWidth={331}
                     refObject={pinnedPanelRef}
                     hidden={hidePinnedPanel}
                     setHideStatus={setHidePinnedPanel}

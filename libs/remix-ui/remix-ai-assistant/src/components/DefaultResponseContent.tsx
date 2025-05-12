@@ -5,7 +5,7 @@ export default function DefaultResponseContent() {
     <>
       <h5 className="ai-assistant-text-heading">RemixAI</h5>
       <p className="ai-assistant-text">RemixAI provides you personalized guidance as you build. It can break down concepts, answer questions about blockchain technology and assist you with your smart contracts.</p>
-      <div className="mb-3 w-100">
+      <div className="mb-3 w-75 d-flex flex-column gap-2 justify-content-center align-items-center">
         <button className="btn btn-secondary btn-block">
           <div className="d-flex flex-row justify-content-start align-items-center">
             <span className="fas fa-user-robot-xmarks"></span>

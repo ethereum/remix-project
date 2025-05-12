@@ -35,11 +35,12 @@ export class Layout extends Plugin {
   constructor () {
     super(profile)
     this.maximized = {
-      'remixaiassistant': true
+      // 'remixaiassistant': true
     }
     this.enhanced = {
       'dgit': true,
-      'LearnEth': true
+      'LearnEth': true,
+      'remixaiassistant': true
     }
     this.event = new EventEmitter()
   }

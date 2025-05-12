@@ -111,7 +111,6 @@
     "@metamask/eth-sig-util": "^7.0.2",
     "@microlink/react-json-view": "^1.23.0",
     "@nlux/core": "file:.yalc/@nlux/core",
-    "@nlux/highlighter": "file:.yalc/@nlux/highlighter",
     "@nlux/react": "file:.yalc/@nlux/react",
     "@nlux/themes": "file:.yalc/@nlux/themes",
     "@noir-lang/noir_wasm": "^1.0.0-beta.2",

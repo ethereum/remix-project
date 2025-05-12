@@ -5,22 +5,26 @@ import ResponseZone from '../components/Responsezone'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
 import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
-import { highlighter } from '@nlux/highlighter'
+// import { highlighter } from '@nlux/highlighter'
 import '../css/color.css'
 import '@nlux/themes/unstyled.css'
 import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
 import DefaultResponseContent from '../components/DefaultResponseContent'
 import PromptZone from '../components/promptzone'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { PluginNames } from 'apps/remix-ide/src/types'
+
+const _paq = (window._paq = window._paq || [])
 
 export const user: UserPersona = {
   name: 'Remi',
   avatar: 'assets/img/remix-logo-blue.png'
 }
 
-export const assistantAvatar = 'assets/img/aiLogo.svg'
+export const assistantAvatar = 'assets/img/remixai-logoDefault.webp'//'assets/img/aiLogo.svg'
 export interface RemixUiRemixAiAssistantProps {
-  makePluginCall(pluginName: string, methodName: string, payload: any): Promise<any>
+  makePluginCall(pluginName: PluginNames, methodName: string, payload?: any): Promise<any>
 }
 
 interface Message {
@@ -34,31 +38,6 @@ export let ChatApi = null
 export function RemixUiRemixAiAssistant(props: any) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
 
-  const HandleCopyToClipboard = () => {
-    const markdown = document.getElementsByClassName('nlux-chatSegments-container')
-    if (markdown.length < 1) return
-
-    const codeBlocks = markdown[0].getElementsByClassName('code-block')
-    Array.from(codeBlocks).forEach((block) => {
-      const copyButtons = block.getElementsByClassName('nlux-comp-copyButton')
-      Array.from(copyButtons).forEach((cp_btn) => {
-        const hdlr = async () => {
-          copy(block.textContent)
-        }
-        cp_btn.removeEventListener('click', async() => { hdlr() })
-        cp_btn.addEventListener('click', async () => { hdlr() })
-      })
-    })
-  }
-
-  const handleRadioSelection = (value) => {
-
-  }
-
-  useEffect(() => {
-    HandleCopyToClipboard()
-  }, [is_streaming])
-
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
@@ -66,7 +45,6 @@ export function RemixUiRemixAiAssistant(props: any) {
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
-    console.log('sent', { prompt, GenerationParams })
     let response = null
     const check = await props.plugin.call('remixAI', 'isChatRequestPending')
     if (check) {
@@ -76,7 +54,6 @@ export function RemixUiRemixAiAssistant(props: any) {
     }
 
     if (GenerationParams.return_stream_response) {
-      console.log('stream response', { response, observer })
       HandleStreamResponse(response,
         (text) => {observer.next(text)},
         (result) => {
@@ -132,24 +109,23 @@ export function RemixUiRemixAiAssistant(props: any) {
         // initialConversation={initialMessages}
         conversationOptions={{ layout: 'bubbles', conversationStarters }}
         displayOptions={{ colorScheme: "auto", themeId: "remix_ai_theme" }}
-        // composerOptions={{ placeholder: "Ask me anything, start with @workspace to add context",
-        //   submitShortcut: 'Enter',
-        //   hideStopButton: false,
-        // }}
+        composerOptions={{ placeholder: "Ask me anything, start with @workspace to add context",
+          submitShortcut: 'Enter',
+          hideStopButton: false,
+          remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+          addContextFiles: props.makePluginCall
+        }}
+        addContextFiles={props.makePluginCall}
         messageOptions={{ showCodeBlockCopyButton: true,
           editableUserMessages: true,
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
-          syntaxHighlighter: highlighter,
+          // syntaxHighlighter: highlighter,
           promptRenderer: ({ uid, prompt, onResubmit }) => <PromptRenderer uid={uid} prompt={prompt} onResubmit={onResubmit} />,
           responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
             response={content as string[]} containerRef={containerRef} />
         }}
-      >
-        <AiChatUI.Greeting>
-          <DefaultResponseContent />
-        </AiChatUI.Greeting>
-      </AiChat>
+      />
     </div>
   )
 }
@@ -157,17 +133,50 @@ export function RemixUiRemixAiAssistant(props: any) {
 function ResponseRenderer({ uid, response, containerRef }: { uid: string, response: string[], containerRef: RefObject<any> }) {
   const [isLiked, setIsLiked] = useState(false)
   const [isDisliked, setIsDisliked] = useState(false)
+  const [sentiment, setSentiment] = useState<'like' | 'dislike' | 'none'>('none')
+
+  const handleSentiment = (sentiment: string) => {
+    if (sentiment === 'like') {
+      (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'like-response'])
+      setSentiment('like')
+      console.log('like')
+    } else if (sentiment === 'dislike') {
+      (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'dislike-response'])
+      setSentiment('dislike')
+      console.log('dislike')
+    } else {
+      setSentiment('none')
+      console.log('none')
+    }
+  }
   return (
     <>
       <section ref={containerRef} />
       {<div className="d-flex flex-row justify-content-between align-items-center mt-2">
-        <span className={!isLiked ? 'far fa-thumbs-up fa-lg mr-3' : 'fas fa-thumbs-up fa-lg mr-3'} onClick={() => setIsLiked(!isLiked && !isDisliked)}></span>
-        <span className={!isDisliked ? 'far fa-thumbs-down fa-lg' : 'fas fa-thumbs-down fa-lg'} onClick={() => setIsDisliked(!isDisliked && !isLiked)}></span>
+        <span className={!isLiked ? 'far fa-thumbs-up fa-lg mr-3' : 'fas fa-thumbs-up fa-lg mr-3'} onClick={() => {
+          const newLikedState = !isLiked;
+          setIsLiked(newLikedState);
+          if (newLikedState) {
+            setIsDisliked(false);
+            handleSentiment('like');
+          } else {
+            handleSentiment('none');
+          }
+        }}></span>
+        <span className={!isDisliked ? 'far fa-thumbs-down fa-lg' : 'fas fa-thumbs-down fa-lg'} onClick={() => {
+          const newDislikedState = !isDisliked;
+          setIsDisliked(newDislikedState);
+          if (newDislikedState) {
+            setIsLiked(false);
+            handleSentiment('dislike');
+          } else {
+            handleSentiment('none');
+          }
+        }}></span>
       </div>}
     </>
   )
 }
-{/* <ResponseZone response={response} responseId={uid} /> */}
 
 function PromptRenderer({ uid, prompt, onResubmit }: { uid: string, prompt: string, onResubmit: (prompt: string) => void }) {
   return (

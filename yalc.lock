@@ -2,19 +2,15 @@
   "version": "v1",
   "packages": {
     "@nlux/core": {
-      "signature": "d4321b8b8ea8254148c7446151090878",
+      "signature": "6832e3895ffed2597d819fa36332d583",
       "file": true
     },
     "@nlux/react": {
-      "signature": "151a4624a5eaaef94b34ebc1a95463ae",
-      "file": true
-    },
-    "@nlux/highlighter": {
-      "signature": "a00a445919e5958391bff75d8a27b1bb",
+      "signature": "2d8438fb0948975e0416dc538fbea306",
       "file": true
     },
     "@nlux/themes": {
-      "signature": "520f911f893e8142202b942b70829ed3",
+      "signature": "dcd2e53a373485ee467fd1ab7e32b4e1",
       "file": true
     }
   }

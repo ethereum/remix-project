@@ -4,7 +4,7 @@ import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } fr
 import { AiChatUIOverrides, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, AiChatUI, useAsStreamAdapter, ChatItem } from '@nlux/react';
 import { user, assistantAvatar } from './personas';
-import { highlighter } from '@nlux/highlighter'
+// import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
@@ -98,12 +98,14 @@ export const Default = (props) => {
       composerOptions={{ placeholder: "Type your query",
         submitShortcut: 'Enter',
         hideStopButton: false,
+        remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+        addContextFiles: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
         streamingAnimationSpeed: 1,
         waitTimeBeforeStreamCompletion: 1000,
-        syntaxHighlighter: highlighter
+        // syntaxHighlighter: highlighter
       }}
     />
   );

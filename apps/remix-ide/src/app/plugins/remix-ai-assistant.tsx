@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUiRemixAiAssistant } from '@remix-ui/remix-ai-assistant'
-
+import { EventEmitter } from 'events'
 const profile = {
   name: 'remixaiassistant',
   displayName: 'Remix AI Assistant',
@@ -22,23 +22,38 @@ const profile = {
 export class RemixAIAssistant extends ViewPlugin {
   element: HTMLDivElement
   dispatch: React.Dispatch<any> = () => {}
+  event: any
   constructor() {
     super(profile)
+    this.event = new EventEmitter()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'remix-ai-assistant')
   }
 
-  onActivation() {
-    this.call('layout', 'maximiseSidePanel')
+  async onActivation() {
+    await this.call('sidePanel', 'pinView', profile)
+    this.on('pinnedPanel', 'pinView', async (profile) => {
+      await this.call('layout', 'maximiseSidePanel')
+    })
   }
 
   onDeactivation() {
 
   }
 
-  async makePluginCall(pluginName: string, methodName: string, payload: any) {
-    const result = await this.call(pluginName, methodName, payload)
-    return result
+  async makePluginCall (pluginName: string, methodName: string, payload: any) {
+    // await this.call('notification', 'alert', `${payload}`)
+    try {
+      const result = await this.call(pluginName, methodName, payload)
+      return result
+    } catch (error) {
+      if (pluginName === 'fileManager' && methodName === 'getCurrentFile') {
+        await this.call('notification', 'alert', 'No file is open')
+        return null
+      }
+      console.error(error)
+      return null
+    }
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
@@ -62,7 +77,7 @@ export class RemixAIAssistant extends ViewPlugin {
 
   updateComponent(state: any) {
     return (
-      <RemixUiRemixAiAssistant plugin={this} makePluginCall={this.makePluginCall} />
+      <RemixUiRemixAiAssistant plugin={this} makePluginCall={this.makePluginCall.bind(this)} />
     )
   }
 
