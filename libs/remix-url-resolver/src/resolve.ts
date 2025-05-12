@@ -189,8 +189,20 @@ export class RemixURLResolver {
 
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/${url}`
-      //const req = `https://github.com/Uniswap/v4-core/blob/v4.0.0/src/${url}`
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/main/src/${url}`
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
+      return { content: response.data, cleanUrl: req }
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async handleV4PeriphGithub (url: string): Promise<HandlerResponse> {
+    url = url.replace('v4-periphery', '')
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-periphery/main/${url}`
       const response: AxiosResponse = await axios.get(req, { transformResponse: []})
       return { content: response.data, cleanUrl: req }
     } catch (e) {
@@ -232,6 +244,15 @@ export class RemixURLResolver {
           }
         },
         handle: (match) => this.handleV4CoreGithub(match[0])
+      },
+      {
+        type: 'v4-periph-github',
+        match: (url) => {
+          if (url.startsWith('v4-periphery/')) {
+            return [url]
+          }
+        },
+        handle: (match) => this.handleV4PeriphGithub(match[0])
       },
       {
         type: 'npm',

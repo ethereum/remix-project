@@ -236,7 +236,7 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
-    const files = this.workspaceAgent.ctxFiles === "" ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
+    const files = this.workspaceAgent.ctxFiles === undefined || this.workspaceAgent.ctxFiles === "" ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
     let result
