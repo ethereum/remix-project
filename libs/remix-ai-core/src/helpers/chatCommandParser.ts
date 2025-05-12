@@ -53,7 +53,7 @@ export class ChatCommandParser {
     try {
       GenerationParams.return_stream_response = false
       GenerationParams.stream_result = false
-    	return await ref.props.call('remixAI', 'generate', prompt, GenerationParams, "", true);
+    	return await ref.props.call('remixAI', 'generate', "generate " + prompt, GenerationParams, "", true);
     } catch (error) {
       return "Generation failed. Please try again.";
     }
