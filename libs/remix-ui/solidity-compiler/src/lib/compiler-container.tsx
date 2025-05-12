@@ -259,7 +259,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (state.useFileConfiguration)
       if (state.createFileOnce) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists || state.useFileConfiguration) createNewConfigFile()
+          if (!exists) createNewConfigFile()
         })
         setState((prevState) => {
           return { ...prevState, createFileOnce: false }
