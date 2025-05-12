@@ -12,6 +12,7 @@ export interface IModelRequirements{
 
 export interface IContextType {
   context: 'currentFile' | 'workspace'|'openedFiles'
+  files?: { fileName: string; content: string }[]
 }
 
 export interface IModel {

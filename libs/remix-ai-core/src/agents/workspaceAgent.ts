@@ -71,7 +71,7 @@ export class workspaceAgent {
       const openedFiles = await this.client.call('fileManager', 'getOpenedFiles')
       Object.keys(openedFiles).forEach(key => {
         if (!Object.values(SupportedFileExtensions).some(ext => key.endsWith(ext))) return;
-        this.ctxFiles += `"${key}": ${JSON.stringify(openedFiles[key])},`
+        this.ctxFiles += `"${key}": ${JSON.stringify(openedFiles[key])},\n`
       });
       this.ctxFiles += "\n}"
       break
@@ -80,6 +80,15 @@ export class workspaceAgent {
       console.log('Invalid context type')
       this.ctxFiles = ""
       break
+    }
+
+
+    if (context.files){
+      for (const file of context.files) {
+        if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
+        this.ctxFiles += `"${file.fileName}": ${JSON.stringify(file.content)},\n`
+      }
+
     }
   }
 }
