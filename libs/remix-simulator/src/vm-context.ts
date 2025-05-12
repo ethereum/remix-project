@@ -402,7 +402,7 @@ export class VMContext {
   */
   latestBlockNumber: string
   /*
-    This is the number of block that VMContext is instanciated with.
+    This is the number of block that VMContext is instantiated with.
     The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
   */
   private blockNumber: number | 'latest'
@@ -417,7 +417,7 @@ export class VMContext {
   constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: string) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = fork || 'cancun'
+    this.currentFork = fork || 'prague'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
     this.blockNumber = blockNumber || 0

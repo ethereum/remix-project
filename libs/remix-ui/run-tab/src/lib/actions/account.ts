@@ -13,6 +13,7 @@ import { entryPoint07Address } from "viem/account-abstraction"
 const { createSmartAccountClient } = require("permissionless") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { toSafeSmartAccount } = require("permissionless/accounts") /* eslint-disable-line  @typescript-eslint/no-var-requires */
 const { createPimlicoClient } = require("permissionless/clients/pimlico") /* eslint-disable-line  @typescript-eslint/no-var-requires */
+const _paq = window._paq = window._paq || []
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -188,7 +189,6 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-
   const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
@@ -270,9 +270,10 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
-
+    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createdSuccessfully'])
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
+    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'creationFailed'])
     console.error('Failed to create safe smart account: ', error)
     return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
   }
