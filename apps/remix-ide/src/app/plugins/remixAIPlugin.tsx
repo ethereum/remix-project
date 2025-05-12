@@ -204,7 +204,7 @@ export class RemixAIPlugin extends ViewPlugin {
       }
     }
     // Evaluate if this function requires any context
-    console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+    // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
