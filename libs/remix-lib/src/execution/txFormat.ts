@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefinition } from './txHelper'
 import { eachOfSeries } from 'async'
 import { linkBytecode as linkBytecodeSolc } from 'solc/linker'
@@ -403,7 +403,7 @@ export function decodeResponse (response, fnabi) {
       }
       if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not enough data
       // decode data
-      const abiCoder = new ethers.utils.AbiCoder()
+      const abiCoder = new AbiCoder()
       const decodedObj = abiCoder.decode(outputTypes, response)
 
       const json = {}

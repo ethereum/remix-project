@@ -11,11 +11,10 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
   const val = data.value
   let hash = data.hash ? shortenHexData(data.hash) : ''
   const input = data.input ? shortenHexData(data.input) : ''
-  const logs = opts.logs && opts.logs.decoded && opts.logs.decoded.length ? opts.logs.decoded.length : 0
+  const logs = opts.logs && opts.logs.raw && opts.logs.raw.length ? opts.logs.raw.length : 0
   const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
-
   if (provider && provider.startsWith('vm')) {
     return (
       <div>

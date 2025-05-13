@@ -6,7 +6,8 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { CodeCompletionAgent } from '@remix/remix-ai-core';
+import { CodeCompletionAgent, IContextType } from '@remix/remix-ai-core';
+import { AlertModal } from '@remix-ui/app';
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -16,7 +17,7 @@ type chatRequestBufferT<T> = {
 const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
-  methods: ['code_generation', 'code_completion',
+  methods: ['code_generation', 'code_completion', 'setContextFiles',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining", "vulnerability_check",
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
@@ -218,6 +219,25 @@ export class RemixAIPlugin extends ViewPlugin {
     else {
       console.log("chatRequestBuffer is empty.")
       return ""
+    }
+  }
+
+  async setContextFiles(context: IContextType) {
+    const alert: AlertModal = {
+      title: 'AI Context set',
+      message: <h3>Current file context set.</h3>,
+      id: 'ai-context-set',
+    }
+    if (context.context === 'currentFile') {
+      await this.call('notification', 'alert', alert)
+    }
+    else if (context.context === 'openedFiles') {
+      alert.message = <h3>Opened files context set.</h3>
+      await this.call('notification', 'alert', alert)
+    }
+    else if (context.context === 'workspace') {
+      alert.message = <h3>Workspace context set.</h3>
+      await this.call('notification', 'alert', alert)
     }
   }
 

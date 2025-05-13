@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
-import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
-import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
+import { AiChatUIOverrides, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
+import { AiChat, AiChatUI, useAsStreamAdapter, ChatItem } from '@nlux/react';
 import { user, assistantAvatar } from './personas';
-import { highlighter } from '@nlux/highlighter'
+// import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
@@ -35,7 +35,7 @@ export const Default = (props) => {
     HandleCopyToClipboard();
   }, [is_streaming]);
 
-  const send: StreamSend = async (
+  const send = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
@@ -98,12 +98,14 @@ export const Default = (props) => {
       composerOptions={{ placeholder: "Type your query",
         submitShortcut: 'Enter',
         hideStopButton: false,
+        remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+        addContextFiles: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
         streamingAnimationSpeed: 1,
         waitTimeBeforeStreamCompletion: 1000,
-        syntaxHighlighter: highlighter
+        // syntaxHighlighter: highlighter
       }}
     />
   );

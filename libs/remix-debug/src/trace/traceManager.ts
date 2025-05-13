@@ -40,7 +40,7 @@ export class TraceManager {
           const networkId = await this.web3.eth.net.getId()
           this.fork = execution.forkAt(networkId, tx.blockNumber)
         } catch (e) {
-          this.fork = 'cancun'
+          this.fork = 'prague'
           console.log(`unable to detect fork, defaulting to ${this.fork}..`)
           console.error(e)
         }

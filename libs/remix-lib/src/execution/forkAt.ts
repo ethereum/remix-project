@@ -70,6 +70,10 @@ const forks = {
     {
       number: 19426587,
       name: 'cancun'
+    },
+    {
+      number: 19426587,
+      name: 'prague'
     }
   ],
   3: [

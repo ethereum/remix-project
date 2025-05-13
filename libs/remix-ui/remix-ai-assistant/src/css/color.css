@@ -11,7 +11,7 @@
 .nlux-AiChat-root.nlux-theme-remix_ai_theme {
 
   .nlux-conversationStarters-container {
-    display: none !important;
+    /* display: none !important; */
   }
 }
 
@@ -24,7 +24,16 @@
 }
 
 .nlux-composer-container {
-  margin-top: 15px;
+  /* margin-top: 15px; */
+  /* display: none !important; */
+  width: 100% !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  min-height: 10vh !important;
+  margin-bottom: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
 }
 
 .nlux-comp-composer {
@@ -38,8 +47,16 @@
   border-radius: 0px !important;
 }
 
-.nlux-comp-composer>button {
+.nlux-composer--typing {
+  height: auto !important;
+}
+
+div#composer-button {
   display: none !important;
+}
+
+.nlux-comp-composer>button {
+  /* display: none !important; */
 }
 
 .nlux-comp-chatItem--sent {
@@ -74,56 +91,85 @@
 
 .nlux-comp-chatItem--bubblesLayout {
   /* border: 2px solid blue !important; */
-  display: flex !important;
+  /* display: flex !important;
   flex-direction: column !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important; */
 }
 
 .nlux-comp-chatItem.nlux-comp-chatItem--received.nlux-comp-chatItem--bubblesLayout {
   /* border: 2px solid yellow !important; */
-  /* display: flex !important;
-  flex-direction: column !important; */
-  padding: 10px !important;
-  padding-right: 0px !important;
+  /* display: flex !important;*/
+  flex-direction: column !important;
+  /* padding: 5px !important; */
+  padding-right: 5px !important;
 
   .nlux-comp-message.nlux_msg_complete.nlux_msg_received {
-    align-self: center !important;
-    /* border: 2px solid green !important; */
-    width: 100% !important;
-    align-items: flex-start !important;
-    padding:  10px 10px 10px 10px !important;
-    margin-right: 10px !important;
+    /* align-items: center !important; */
+    /* word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
     flex-wrap: wrap !important;
-    flex: 1;
-    background-color: transparent !important;
+    border: 2px solid green !important;
+    max-width: 60% !important;
+    background-color: transparent !important; */
 
-    .nlux-markdown-container {
-      width: 55% !important;
-      flex: 1;
-    }
+    /* padding:  10px 10px 10px 10px !important; */
+    /* margin-right: 10px !important; */
+    /* flex-wrap: wrap !important; */
+
+    /* .nlux-markdown-container {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      align-self: center !important;
+    } */
+
+    /* .nlux-comp-message.nlux_msg_complete.nlux_msg_received>p {
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      flex-wrap: wrap !important;
+      width: 60% !important;
+    } */
 
     .code-block {
-      overflow-x: scroll !important;
+      width: 60% !important;
+      max-width: 90% !important;
+      flex-wrap: wrap !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      padding: 10px !important;
+      margin: 5px !important;
+      display: flex !important;
       border-radius: 5px !important;
     }
   }
 }
 
 .nlux-comp-welcomeMessage {
-  /* border: 2px solid red !important; */
   font-size: 1rem !important;
   text-align: center !important;
-
+  justify-content: flex-end !important;
+  padding-bottom: 15px !important;
 }
 
 .nlux-comp-conversationStarters {
   width: auto !important;
-  padding: 0px !important
+  padding: 0px !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .nlux-conversationStarters-container>.nlux-comp-conversationStarters>.nlux-comp-conversationStarter {
   border-width: 1px !important;
   border-color: var(--text-background) !important;
-  background-color: peachpuff !important;
+  background-color: var(--secondary) !important;
+  color: #fff !important;
+  min-width: 95% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  font-size: 1rem !important;
 }
 
 .nlux-theme-remix_ai_theme {
@@ -160,6 +206,10 @@
   --nlux-cvStrt--brdrWd: 0;
   --nlux-cvStrt--brdClr: var(--light);
   --nlux-cvStrt--brdrWd: 'hidden';
+
+  /* Override conversation starter height */
+  --nlux-cvStrt--hg: 3 !important;
+  --nlux-cvStrt: var(--btn-lg) !important;
 
   /* Override input colors */
   --nlux-PromptInput--BackgroundColor: var(--light);

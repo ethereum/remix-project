@@ -1,25 +1,22 @@
 /* global ethereum */
 'use strict'
+import { RLP } from '@ethereumjs/rlp'
 import { hash } from '@remix-project/remix-lib'
-import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0, BIGINT_1, equalsBytes } from '@ethereumjs/util'
-import { keccak256 } from 'ethereum-cryptography/keccak'
-import { Address } from '@ethereumjs/util'
-import { decode } from 'rlp'
-import { ethers } from 'ethers'
+import { bytesToHex, hexToBytes, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0, BIGINT_1, equalsBytes, createAccount, PrefixedHexString, Address } from '@ethereumjs/util'
+import { JsonRpcProvider } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
-import { VM } from '@ethereumjs/vm'
-import { Common, ConsensusType } from '@ethereumjs/common'
-import { Trie } from '@ethereumjs/trie'
-import { DefaultStateManager } from '@ethereumjs/statemanager'
-import { EVMStateManagerInterface, StorageDump } from '@ethereumjs/common'
-import { EVM } from '@ethereumjs/evm'
-import { Blockchain, DBSaveLookups } from '@ethereumjs/blockchain'
-import { Block, BlockHeader } from '@ethereumjs/block'
+import { createVM, VM } from '@ethereumjs/vm'
+import { Common, ConsensusType, Mainnet, CommonOpts } from '@ethereumjs/common'
+import { MerklePatriciaTrie, createMPT, verifyMerkleProof } from '@ethereumjs/mpt'
+import { MerkleStateManager, MerkleStateManagerOpts } from '@ethereumjs/statemanager'
+import { StateManagerInterface, StorageDump } from '@ethereumjs/common'
+import { createEVM } from '@ethereumjs/evm'
+import { Blockchain, DBSaveLookups, createBlockchain } from '@ethereumjs/blockchain'
+import { Block, BlockHeader, createBlock, createBlockFromRLP } from '@ethereumjs/block'
 import { TypedTransaction } from '@ethereumjs/tx'
 import { State } from './provider'
-import { hexToBytes } from 'web3-utils'
 
 /**
  * Options for constructing a {@link StateManager}.
@@ -28,7 +25,7 @@ export interface DefaultStateManagerOpts {
   /**
    * A {@link Trie} instance
    */
-  trie?: Trie
+  trie?: MerklePatriciaTrie
   /**
    * Option to prefix codehashes in the database. This defaults to `true`.
    * If this is disabled, note that it is possible to corrupt the trie, by deploying code
@@ -41,9 +38,9 @@ export interface DefaultStateManagerOpts {
 /*
   extend vm state manager and instantiate VM
 */
-class StateManagerCommonStorageDump extends DefaultStateManager {
+class StateManagerCommonStorageDump extends MerkleStateManager {
   keyHashes: { [key: string]: string }
-  constructor (opts: DefaultStateManagerOpts = {}) {
+  constructor (opts: MerkleStateManagerOpts = {}) {
     super(opts)
     this.keyHashes = {}
   }
@@ -53,9 +50,9 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
     return this._trie.database().db
   }
 
-  putContractStorage (address, key, value) {
+  putStorage (address, key, value) {
     this.keyHashes[bytesToHex(hash.keccak(key))] = bytesToHex(key)
-    return super.putContractStorage(address, key, value)
+    return super.putStorage(address, key, value)
   }
 
   shallowCopy(): StateManagerCommonStorageDump {
@@ -72,50 +69,40 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
     if (!account) {
       throw new Error(`dumpStorage f() can only be called for an existing account`)
     }
-    return new Promise((resolve, reject) => {
-      try {
-        const trie = this._getStorageTrie(address, account)
-        const storage = {}
-        const stream = trie.createReadStream()
+    const trie = this._getStorageTrie(address, account)
 
-        stream.on('data', (val) => {
-          const value: any = decode(val.value)
-          storage[bytesToHex(val.key)] = {
-            key: this.keyHashes[bytesToHex(val.key)],
-            value: bytesToHex(value)
-          }
-        })
-        stream.on('end', () => {
-          resolve(storage)
-        })
-        stream.on('error', (e) => {
-          reject(e)
-        })
-      } catch (e) {
-        reject(e)
-      }
+    const values = await trie.getValueMap().then((value) => {
+      return value.values
     })
+    const ret = {}
+    for (const key in values) {
+      ret[key] = {
+        key: this.keyHashes[key],
+        value: bytesToHex(RLP.decode(values[key] ?? new Uint8Array(0)) as Uint8Array)
+      }
+    }
+    return ret
   }
 }
 
 export interface CustomEthersStateManagerOpts {
-  provider: string | ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
-  blockTag: string,
+  provider: string | JsonRpcProvider
+  blockTag: string
   /**
    * A {@link Trie} instance
    */
-  trie?: Trie
+  trie?: MerklePatriciaTrie
 }
 
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
-  private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  private provider: JsonRpcProvider
   private blockTag: string
 
   constructor(opts: CustomEthersStateManagerOpts) {
     super(opts)
     if (typeof opts.provider === 'string') {
-      this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
-    } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
+      this.provider = new JsonRpcProvider(opts.provider)
+    } else if (opts.provider instanceof JsonRpcProvider) {
       this.provider = opts.provider
     } else {
       throw new Error(`valid JsonRpcProvider or url required; got ${opts.provider}`)
@@ -148,12 +135,12 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * @returns {Promise<Buffer>} - Resolves with the code corresponding to the provided address.
    * Returns an empty `Buffer` if the account has no associated code.
    */
-  async getContractCode(address: Address): Promise<Uint8Array> {
-    const code = await super.getContractCode(address)
+  async getCode(address: Address): Promise<Uint8Array> {
+    let code = await super.getCode(address)
     if (code && code.length > 0) return code
     else {
-      const code = toBytes(await this.provider.getCode(address.toString(), this.blockTag))
-      await super.putContractCode(address, code)
+      code = toBytes((await this.provider.getCode(address.toString(), this.blockTag)) as PrefixedHexString)
+      await super.putCode(address, code)
       return code
     }
   }
@@ -167,16 +154,16 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * corresponding to the provided address at the provided key.
    * If this does not exist an empty `Buffer` is returned.
    */
-  async getContractStorage(address: Address, key: Buffer): Promise<Uint8Array> {
-    let storage = await super.getContractStorage(address, key)
+  async getStorage(address: Address, key: Buffer): Promise<Uint8Array> {
+    let storage = await super.getStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
-      storage = toBytes(await this.provider.getStorageAt(
+      storage = toBytes((await this.provider.getStorage(
         address.toString(),
         bytesToBigInt(key),
-        this.blockTag)
+        this.blockTag)) as PrefixedHexString
       )
-      await super.putContractStorage(address, key, storage)
+      await super.putStorage(address, key, storage)
       return storage
     }
   }
@@ -192,17 +179,16 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     // Get merkle proof for `address` from provider
     const proof = await this.provider.send('eth_getProof', [address.toString(), [], this.blockTag])
 
-    const proofBuf = proof.accountProof.map((proofNode: string) => toBytes(proofNode))
+    const proofBuf = proof.accountProof.map((proofNode: string) => toBytes(proofNode as PrefixedHexString))
 
-    const trie = new Trie({ useKeyHashing: true })
-    const verified = await trie.verifyProof(
-      Buffer.from(keccak256(proofBuf[0])),
+    const verified = await verifyMerkleProof(
       address.bytes,
       proofBuf
+      //Buffer.from(keccak256(proofBuf[0])),
     )
     if (verified) {
       const codeHash = proof.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : proof.codeHash
-      const account = Account.fromAccountData({
+      const account = createAccount({
         balance: BigInt(proof.balance),
         nonce: BigInt(proof.nonce),
         codeHash: hexToBytes(codeHash)
@@ -232,14 +218,14 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     }
     let account
     if (!accountData) {
-      account = Account.fromAccountData({
+      account = createAccount({
         balance: BigInt(0),
         nonce: BigInt(0),
         codeHash: hexToBytes('0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470')
       })
     } else {
       const codeHash = accountData.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : accountData.codeHash
-      account = Account.fromAccountData({
+      account = createAccount({
         balance: BigInt(accountData.balance),
         nonce: BigInt(accountData.nonce),
         codeHash: hexToBytes(codeHash)
@@ -253,12 +239,16 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
 export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
-  stateManager: EVMStateManagerInterface,
+  stateManager: StateManagerInterface,
   common: Common,
   baseBlockNumber: string // hex
 }
 
 export class VMCommon extends Common {
+
+  constructor (opts: CommonOpts) {
+    super(opts)
+  }
 
   /**
     * Always return the fork set at initialization
@@ -412,7 +402,7 @@ export class VMContext {
   */
   latestBlockNumber: string
   /*
-    This is the number of block that VMContext is instanciated with.
+    This is the number of block that VMContext is instantiated with.
     The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
   */
   private blockNumber: number | 'latest'
@@ -427,7 +417,7 @@ export class VMContext {
   constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: string) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = fork || 'cancun'
+    this.currentFork = fork || 'prague'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
     this.blockNumber = blockNumber || 0
@@ -447,19 +437,19 @@ export class VMContext {
   }
 
   async createVm (hardfork) {
-    let stateManager: EVMStateManagerInterface
+    let stateManager: StateManagerInterface
     // state trie
 
-    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+    const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v as any)])) : new Map()
     const mapDb = new MapDB(db)
-    const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
+    const trie = await createMPT({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
 
     if (this.nodeUrl) {
       if (this.blockNumber !== 'latest') {
         // we already have the right value for the block number
       } else if (this.blockNumber === 'latest') {
         // resolve `latest` to the actual block number
-        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        const provider = new JsonRpcProvider(this.nodeUrl)
         this.blockNumber = await provider.getBlockNumber()
       }
 
@@ -475,13 +465,13 @@ export class VMContext {
     const consensusType = hardfork === 'berlin' || hardfork === 'london' ? ConsensusType.ProofOfWork : ConsensusType.ProofOfStake
     const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000
 
-    const common = new VMCommon({ chain: 'mainnet', hardfork })
+    const common = new VMCommon({ chain: Mainnet, hardfork })
     const blocks = (this.rawBlocks || []).map(block => {
-      const serializedBlock = hexToBytes(block)
+      const serializedBlock = hexToBytes(block as any)
       this.serializedBlocks.push(serializedBlock)
-      return Block.fromRLPSerializedBlock(serializedBlock, { common })
+      return createBlockFromRLP(serializedBlock, { common })
     })
-    const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : Block.fromBlockData({
+    const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : createBlock({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
         number: BIGINT_0,
@@ -491,12 +481,12 @@ export class VMContext {
       }
     }, { common })
 
-    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    const blockchain = await createBlockchain({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     overrideBlockchain(blockchain, this)
 
-    const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
+    const evm = await createEVM({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
 
-    const vm = await VM.create({
+    const vm = await createVM({
       common,
       activatePrecompiles: true,
       stateManager,
