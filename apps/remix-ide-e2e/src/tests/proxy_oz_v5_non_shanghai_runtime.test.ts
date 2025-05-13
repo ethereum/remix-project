@@ -171,7 +171,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by selecting #flaky a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
+  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') 
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
