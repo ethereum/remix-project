@@ -5320,30 +5320,27 @@
     pathval "1.1.1"
     type-detect "4.0.8"
 
-"@nlux/core@2.17.1", "@nlux/core@^2.17.1":
+"@nlux/core@2.17.4":
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/@nlux/core/-/core-2.17.1.tgz#18a95e21e5aafae83bf6d515651780497f0f39cc"
   integrity sha512-hIvOnuENVqWaIg5Co4JtFmHph7Sp0Nj+QixOMdOW9Ou7CjU7HK+maB5koLoayNL64B+wHTtgPN7zBrB8NCSPXw==
 
-"@nlux/highlighter@^2.17.1":
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/@nlux/highlighter/-/highlighter-2.17.1.tgz#e4d0f43b5afeff2631bc118b1cc6db80afb7e99f"
-  integrity sha512-/ETnJPbNJWY8ZQH6XAQ5zooEMPsy44Lk2tIxMfr5Ca7+0ICpkMP0mppOmAoKCQBNVsqmKe0oczFBk8blddNDaA==
+"@nlux/core@file:.yalc/@nlux/core":
+  version "2.17.4"
+
+"@nlux/highlighter@file:.yalc/@nlux/highlighter":
+  version "2.17.4"
   dependencies:
-    "@nlux/core" "2.17.1"
+    "@nlux/core" "2.17.4"
     highlight.js "^11"
 
-"@nlux/react@^2.17.1":
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/@nlux/react/-/react-2.17.1.tgz#e4668e7cbe42dd195ea86a02350c8b15cb8f48f0"
-  integrity sha512-/t6qDAHIefg1vGIthLOtkQxbI4Sh/aL7/eqVuhcoC1w/8NqnvVxwfxR0mkshcIVrKSwHI8Yjav5edZ2yeRBqMw==
+"@nlux/react@file:.yalc/@nlux/react":
+  version "2.17.4"
   dependencies:
-    "@nlux/core" "2.17.1"
+    "@nlux/core" "2.17.4"
 
-"@nlux/themes@^2.17.1":
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/@nlux/themes/-/themes-2.17.1.tgz#f991b1b5fcf9595e59d0abeb76f9997876b44784"
-  integrity sha512-spD3QJBSdkF+q45rQFFsUQcR4pTy3OEjQywEP+yc9dHcuPrxIMb0/W/whwiHn1aePGL758lKQH3E/NRHA4aSAw==
+"@nlux/themes@file:.yalc/@nlux/themes":
+  version "2.17.4"
 
 "@noble/ciphers@1.3.0":
   version "1.3.0"
@@ -17901,9 +17898,9 @@ hey-listen@^1.0.8:
   integrity sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==
 
 highlight.js@^11:
-  version "11.10.0"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.10.0.tgz#6e3600dc4b33d6dc23d5bd94fbf72405f5892b92"
-  integrity sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==
+  version "11.11.1"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.11.1.tgz#fca06fa0e5aeecf6c4d437239135fabc15213585"
+  integrity sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"
@@ -29856,6 +29853,11 @@ text-table@^0.2.0, text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+textarea-caret-ts@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/textarea-caret-ts/-/textarea-caret-ts-4.1.1.tgz#765e39507a8efe7516586a698613c4167186513b"
+  integrity sha512-kEL3aQ99r8jJR2RfB6g74LEzrt9NTXkyjPvvP3vzhNkQ+zAaXitKCq8BUEueepULWCCxtpRaRjtnYHaR45FDMg==
 
 thenify-all@^1.0.0:
   version "1.6.0"

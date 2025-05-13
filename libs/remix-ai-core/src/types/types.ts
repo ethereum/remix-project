@@ -11,7 +11,7 @@ export interface IModelRequirements{
 }
 
 export interface IContextType {
-  context: 'currentFile' | 'workspace'|'openedFiles'
+  context: 'currentFile' | 'workspace'|'openedFiles' | 'none'
   files?: { fileName: string; content: string }[]
 }
 

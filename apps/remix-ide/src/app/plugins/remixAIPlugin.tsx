@@ -6,6 +6,7 @@ import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { AlertModal } from '@remix-ui/app';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -130,7 +131,7 @@ export class RemixAIPlugin extends ViewPlugin {
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let newPrompt = await this.codeExpAgent.chatCommand(prompt)
     // add workspace context
-    newPrompt = this.workspaceAgent.ctxFiles === "" ?newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
+    newPrompt = this.workspaceAgent.ctxFiles === undefined || this.workspaceAgent.ctxFiles === "" ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
