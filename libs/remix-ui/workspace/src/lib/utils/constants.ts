@@ -18,7 +18,8 @@ export const TEMPLATE_NAMES = {
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
   'uniswapV4Template': 'Uniswap v4 Template',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
-  'accountAbstraction': 'Account Abstraction Template'
+  'accountAbstraction': 'Account Abstraction Template',
+  'fullyFledgeEIP7702': 'EIP7702 Fully Fledge Template',
 }
 
 export const TEMPLATE_METADATA: Record<string, TemplateType> = {
