@@ -2,7 +2,7 @@ import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 import ResponseZone from '../components/Responsezone'
 
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
 import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 // import { highlighter } from '@nlux/highlighter'
@@ -37,11 +37,20 @@ export let ChatApi = null
 
 export function RemixUiRemixAiAssistant(props: any) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const chatCmdParser = new ChatCommandParser(props.plugin)
 
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+
+    const parseResult = await chatCmdParser.parse(prompt)
+    if (parseResult) {
+      observer.next(parseResult)
+      observer.complete()
+      return
+    }
+
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
