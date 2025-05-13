@@ -185,7 +185,7 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.',
       'injected-metamask-linea': 'Deploy to Linea through the Metamask browser extension.'
     }
-    
+
     const addProvider = async (position: number, name: string, displayName: string, providerConfig: ProviderConfig, dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
