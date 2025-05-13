@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { AiChatUIOverrides, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, AiChatUI, useAsStreamAdapter, ChatItem } from '@nlux/react';
+import { DefaultModels, ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, parseUserInput, setProvider } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
 // import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
 import copy from 'copy-to-clipboard'
+import { parse } from 'path';
 
 export let ChatApi = null
 
 export const Default = (props) => {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const chatCmdParser = new ChatCommandParser(props.plugin)
 
   const HandleCopyToClipboard = () => {
     const markdown = document.getElementsByClassName('nlux-chatSegments-container')
@@ -39,6 +41,14 @@ export const Default = (props) => {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+
+    const parseResult = await chatCmdParser.parse(prompt)
+    if (parseResult) {
+      observer.next(parseResult)
+      observer.complete()
+      return
+    }
+
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
@@ -66,6 +76,7 @@ export const Default = (props) => {
       setTimeout(() => { setIS_streaming(false) }, 1000)
     }
   };
+
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
     { prompt: 'Explain what is a solidity contract!' },
