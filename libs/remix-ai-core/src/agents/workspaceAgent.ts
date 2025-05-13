@@ -13,7 +13,6 @@ export class workspaceAgent {
   currentWorkspace: string = ''
   static instance
   ctxFiles:any
-  client: any;
 
   private constructor(props) {
     this.plugin = props;
@@ -58,17 +57,17 @@ export class workspaceAgent {
     this.ctxFiles = ""
     switch (context.context) {
     case 'currentFile': {
-      const file = await this.client.call('fileManager', 'getCurrentFile')
-      const content = await this.client.call('fileManager', 'readFile', file)
+      const file = await this.plugin.call('fileManager', 'getCurrentFile')
+      const content = await this.plugin.call('fileManager', 'readFile', file)
       this.ctxFiles = `"${file}": ${JSON.stringify(content)}`
       break
     }
     case 'workspace':
-      this.ctxFiles = this.getCurrentWorkspaceFiles()
+      this.ctxFiles = await this.getCurrentWorkspaceFiles()
       break
     case 'openedFiles': {
       this.ctxFiles = "{\n"
-      const openedFiles = await this.client.call('fileManager', 'getOpenedFiles')
+      const openedFiles = await this.plugin.call('fileManager', 'getOpenedFiles')
       Object.keys(openedFiles).forEach(key => {
         if (!Object.values(SupportedFileExtensions).some(ext => key.endsWith(ext))) return;
         this.ctxFiles += `"${key}": ${JSON.stringify(openedFiles[key])},\n`
@@ -81,7 +80,6 @@ export class workspaceAgent {
       this.ctxFiles = ""
       break
     }
-
 
     if (context.files){
       for (const file of context.files) {

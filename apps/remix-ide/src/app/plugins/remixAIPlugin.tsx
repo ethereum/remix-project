@@ -131,7 +131,7 @@ export class RemixAIPlugin extends ViewPlugin {
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let newPrompt = await this.codeExpAgent.chatCommand(prompt)
     // add workspace context
-    newPrompt = this.workspaceAgent.ctxFiles === "" ?newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
+    newPrompt = this.workspaceAgent.ctxFiles === undefined || this.workspaceAgent.ctxFiles === "" ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
