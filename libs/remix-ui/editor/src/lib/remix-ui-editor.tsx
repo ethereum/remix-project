@@ -26,6 +26,7 @@ import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
+import monaco from '../types/monaco'
 const _paq = (window._paq = window._paq || [])
 
 // Key for localStorage
@@ -804,49 +805,55 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyH,
       ],
       run: async () => {
+        console.log('called generateDocumentation')
+        // addAIPromptWidget(editor, editor.getPosition())
         const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
+        console.log('content: ', { currenFunctionNode: currenFunctionNode.current, currentFunction: currentFunction.current })
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
 
         // do not stream this response
         const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
-        await props.plugin.call('popupPanel', 'showPopupPanel', true)
+        // await props.plugin.call('popupPanel', 'showPopupPanel', true)
         setTimeout(async () => {
         // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
-          const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
-          const natSpecCom = "\n" + extractNatspecComments(cm)
-          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currentFunctionNode)
+          const cm = await props.plugin.call('remixAI' as any, 'solidity_answer', message)
+          // const natSpecCom = "\n" + extractNatspecComments(cm)
+          console.log('cm: ', cm)
+          // console.log('natSpecCom: ', natSpecCom)
+          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
           const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
-          const lines = natSpecCom.split('\n')
-          const newNatSpecCom = []
+          console.log('range: ', range)
+          // const lines = natSpecCom.split('\n')
+          // const newNatSpecCom = []
 
-          for (let i = 0; i < lines.length; i++) {
-            let cont = false
+          // for (let i = 0; i < lines.length; i++) {
+          //   let cont = false
 
-            for (let j = 0; j < unsupportedDocTags.length; j++) {
-              if (lines[i].includes(unsupportedDocTags[j])) {
-                cont = true
-                break
-              }
-            }
-            if (cont) {continue}
+          //   for (let j = 0; j < unsupportedDocTags.length; j++) {
+          //     if (lines[i].includes(unsupportedDocTags[j])) {
+          //       cont = true
+          //       break
+          //     }
+          //   }
+          //   if (cont) {continue}
 
-            if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
-            else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
-          }
+          //   if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+          //   else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
+          // }
 
-          // TODO: activate the provider to let the user accept the documentation suggestion
-          // const provider = new RemixSolidityDocumentationProvider(natspecCom)
-          // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
+          // // TODO: activate the provider to let the user accept the documentation suggestion
+          // // const provider = new RemixSolidityDocumentationProvider(natspecCom)
+          // // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
 
-          editor.executeEdits('clipboard', [
-            {
-              range: range,
-              text: newNatSpecCom.join('\n'),
-              forceMoveMarkers: true,
-            },
-          ]);
+          // editor.executeEdits('clipboard', [
+          //   {
+          //     range: range,
+          //     text: newNatSpecCom.join('\n'),
+          //     forceMoveMarkers: true,
+          //   },
+          // ]);
 
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
         })
@@ -991,6 +998,7 @@ export const EditorUI = (props: EditorUIProps) => {
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()
       const position = args[0].target.position
+      console.log('position: ', position)
       const offset = editorRef.current.getModel().getOffsetAt(position)
       onContextMenuHandlerForFreeFunction(offset)
         .then(() => orgContextMenuMethod.apply(contextmenu, args))
@@ -1080,9 +1088,49 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(monacoRef.current)
   }
 
+  function addAIPromptWidget(editor, position) {
+    editor.addContentWidget({
+      allowEditorOverflow: true,
+      getDomNode: () => {
+        if (document.getElementById('ai_prompt_widget')) {
+          return document.getElementById('ai_prompt_widget')
+        }
+        const promptInput = document.createElement('div')
+
+        promptInput.id = 'ai_prompt_widget'
+        promptInput.classList.add(...['d-flex', 'pb-1', 'align-items-center'])
+        promptInput.innerHTML = `
+            <input type="text" placeholder="Type here..." class="border form-control border-right-0" />
+            <button class="form-control border d-flex align-items-center p-2 justify-content-center fas fa-close bg-light" style="width: 20px;"></button>
+          `
+        // Add close button handler
+        promptInput.querySelector('button').onclick = () => {
+          editor.removeContentWidget({
+            getId: () => 'ai_prompt_widget'
+          })
+        }
+        // Add input handler
+        promptInput.querySelector('input').oninput = (e: any) => {
+          // if (onChange) onChange(e.target.value)
+          console.log('input: ', e.target.value)
+        }
+
+        return promptInput
+      },
+      getId: () => {
+        return 'ai_prompt_widget';
+      },
+      getPosition: () => {
+        return {
+          position: position ? { column: 1, lineNumber: position.lineNumber } : { column: 1, lineNumber: 1 },
+          preference: [1]
+        }
+      }
+    })
+  }
+
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
-
       <DiffEditor
         originalLanguage={'remix-solidity'}
         modifiedLanguage={'remix-solidity'}
