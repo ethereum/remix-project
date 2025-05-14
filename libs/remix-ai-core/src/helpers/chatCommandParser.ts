@@ -19,7 +19,9 @@ export class ChatCommandParser {
     this.register("@setAssistant", this.handleAssistant);
     this.register("@ollama", this.handleOllama);
     this.register("/generate", this.handleGenerate);
+    this.register("/g", this.handleGenerate);
     this.register("/workspace", this.handleWorkspace);
+    this.register("/w", this.handleWorkspace);
     this.register("/setAssistant", this.handleAssistant);
     // Add more default commands as needed
   }
