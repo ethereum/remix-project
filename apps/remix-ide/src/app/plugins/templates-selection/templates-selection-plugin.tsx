@@ -94,12 +94,21 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       const gitNotSet = !username || !email
       let workspaceName = defaultName
       let initGit = false
+
+      console.log('what is the template name', { item, templateName })
       const modal: AppModal = {
         id: 'TemplatesSelection',
         title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
         message: await createModalMessage(defaultName, gitNotSet, (value) => workspaceName = value, (value) => initGit = !!value, (event) => setCheckBoxRefs(event), (event) => setRadioRefs(event), templateName),
         okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
       }
+
+      // const aiTemplateModal: AppModal = {
+      //   id: 'TemplatesSelection',
+      //   title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+      //   message: await createModalMessage(defaultName, gitNotSet, (value) => workspaceName = value, (value) => initGit = !!value, (event) => setCheckBoxRefs(event), (event) => setRadioRefs(event), templateName),
+      //   okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
+      // }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
       _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
@@ -351,6 +360,14 @@ const createModalMessage = async (
       ) : (
         <></>
       )}
+    </>
+  )
+}
+
+const aiModalTemplate = () => {
+  return (
+    <>
+      <div></div>
     </>
   )
 }
