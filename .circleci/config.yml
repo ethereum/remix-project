@@ -11,10 +11,10 @@ parameters:
     default: false
   linux:
     type: boolean
-    default: false
+    default: true
   web:
     type: boolean
-    default: true
+    default: false
   run_metamask_tests:
     type: boolean
     default: false   
@@ -916,6 +916,10 @@ workflows:
       - test-remixdesktop-mac:
           requires:
             - build-desktop
+      - uploadartifacts:
+           requires:
+             - build-remixdesktop-mac
+             - test-remixdesktop-mac
 
   linux:
     when: << pipeline.parameters.linux >>
@@ -927,6 +931,10 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-linux
+            - test-remixdesktop-linux
 
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
