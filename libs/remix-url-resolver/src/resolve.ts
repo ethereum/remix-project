@@ -199,6 +199,7 @@ export class RemixURLResolver {
 
   async handleV4PeriphGithub (url: string): Promise<HandlerResponse> {
     url = url.replace('v4-periphery', '')
+    url = url.replace('@uniswap/v4-periphery', 'src')
 
     // eslint-disable-next-line no-useless-catch
     try {
