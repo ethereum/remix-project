@@ -172,7 +172,7 @@ export class ExecutionContext {
     if (!this.isVM()) {
       try {
         const block = await web3.eth.getBlock('latest')
-        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix-project/issues/506
         this.blockGasLimit = (block && block.gasLimit) ? Math.floor(web3.utils.toNumber(block.gasLimit) - (5 * web3.utils.toNumber(block.gasLimit) / 1024)) : web3.utils.toNumber(this.blockGasLimitDefault)
         this.lastBlock = block
         try {
