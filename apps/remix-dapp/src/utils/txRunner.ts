@@ -206,7 +206,7 @@ export class TxRunner {
   async _updateChainContext() {
     try {
       const block = await web3.eth.getBlock('latest');
-      // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+      // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix-project/issues/506
       this.blockGasLimit = block?.gasLimit
         ? Math.floor(
           Number(web3.utils.toNumber(block.gasLimit)) -
