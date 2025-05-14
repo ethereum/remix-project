@@ -1,4 +1,3 @@
-
 export interface Dependency {
     version: string
     name: string
