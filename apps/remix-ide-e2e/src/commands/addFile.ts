@@ -28,6 +28,10 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
         browser.clickLaunchIcon('filePanel')
       }
     })
+    .execute(function () {
+      const container = document.querySelector('[data-test-id="virtuoso-scroller"]');
+      container.scrollTop = container.scrollHeight;
+    })
     .scrollInto(readmeSelector)
     .waitForElementVisible(readmeSelector)
     .click(readmeSelector).pause(1000) // focus on root directory

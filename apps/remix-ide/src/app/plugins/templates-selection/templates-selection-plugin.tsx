@@ -88,6 +88,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
 
     const createWorkspace = async (item, templateName: string) => {
+      if (isElectron()) {
+        await this.call('remix-templates', 'loadTemplateInNewWindow', item.value)
+        return
+      }
       const defaultName = await this.call('filePanel', 'getAvailableWorkspaceName', item.displayName)
       const username = await this.call('settings', 'get', 'settings/github-user-name')
       const email = await this.call('settings', 'get', 'settings/github-email')
@@ -196,7 +200,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                           </div>
                         </div>
-                        <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
+                        <div className={`${isElectron() ? 'w-100' : 'align-items-center justify-content-between w-100 d-flex pt- flex-row'}`}>
                           {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                             placement="auto"
                             tooltipId={`overlay-tooltip-new${item.name}`}
@@ -209,9 +213,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >
-                          Create
+                              {isElectron()?
+                                <><i className='fa fa-folder-open mr-1'></i>Create in new folder</>:'Create'}
                             </span>
                           </CustomTooltip>}
+                          {!isElectron() &&
                           <CustomTooltip
                             placement="auto"
                             tooltipId={`overlay-tooltip-add${item.name}`}
@@ -224,7 +230,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             >
                           Add to current
                             </span>
-                          </CustomTooltip>
+                          </CustomTooltip>}
                         </div>
                       </div>
                     </RemixUIGridCell>
