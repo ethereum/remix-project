@@ -902,6 +902,11 @@ workflows:
       - test-remixdesktop-windows:
           requires:
           - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-windows
+            - test-remixdesktop-windows
+            - sign-remixdesktop-windows
 
   mac:
     when: << pipeline.parameters.mac >>
