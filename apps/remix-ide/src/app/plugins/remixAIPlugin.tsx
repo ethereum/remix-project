@@ -20,7 +20,7 @@ const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion', 'setContextFiles',
-    "solidity_answer", "code_explaining", "generateWorkspace",
+    "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
   events: [],
@@ -249,6 +249,17 @@ export class RemixAIPlugin extends ViewPlugin {
     console.log('workspace --> result', result)
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
 
+  }
+
+  async fixWorspaceErrors(continueGeneration=false): Promise<any> {
+    try {
+      if (continueGeneration) {
+        return this.contractor.continueCompilation()
+      } else {
+        return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
+      }
+    } catch (error) {
+    }
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {

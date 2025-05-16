@@ -150,3 +150,9 @@ export class JsonStreamParser {
     return JSON.parse(this.buffer);
   }
 }
+
+export interface CompilationResult {
+  compilationSucceeded: boolean
+  errors: string
+  errfiles?: { [key: string]: any }
+}
