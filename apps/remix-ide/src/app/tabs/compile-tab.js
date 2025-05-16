@@ -21,7 +21,7 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/compile.html',
   version: packageJson.version,
   maintainedBy: 'Remix',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState', 'getCompilerQueryParameters', 'getCompiler']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState', 'getCompilerConfig', 'getCompilerQueryParameters', 'getCompiler']
 }
 
 // EditorApi:
@@ -112,6 +112,10 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     }
   }
 
+  async getCompilerConfig () {
+    return await super.getCompilerConfig()
+  }
+
   compile (fileName) {
     if (!isNative(this.currentRequest.from)) this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
     super.compile(fileName)
@@ -148,6 +152,7 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
 
   getCompilerQueryParameters () {
     const params = this.queryParams.get()
+    console.log('getCompilerQueryParameters', params)
     params.evmVersion = params.evmVersion === 'null' || params.evmVersion === 'undefined' ? null : params.evmVersion
     params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
     params.optimize = params.optimize === 'true' ? true : params.optimize
@@ -155,7 +160,11 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
   }
 
   setCompilerQueryParameters (params) {
+    console.log('setCompilerQueryParameters', params)
     this.queryParams.update(params)
+    try{
+      this.emit('compilerQueryParamsUpdated')
+    } catch (e) {}
   }
 
   async getAppParameter (name) {
@@ -163,7 +172,11 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
   }
 
   async setAppParameter (name, value) {
+    console.log('setAppParameter', name, value)
     await this.call('config', 'setAppParameter', name, value)
+    try{
+      this.emit('compilerQueryParamsUpdated')
+    } catch (e) {}
   }
 }
 

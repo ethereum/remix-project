@@ -73,6 +73,10 @@ export class CompileTabLogic {
     this.configFilePath = path
   }
 
+  getConfigFilePath () {
+    return this.configFilePath
+  }
+
   setRuns (runs) {
     this.runs = runs
     this.api.setCompilerQueryParameters({ runs: this.runs })
@@ -86,6 +90,7 @@ export class CompileTabLogic {
   }
 
   getCompilerState () {
+    console.log('getCompilerState', this.compiler.state)
     return this.compiler.state
   }
 
