@@ -34,6 +34,7 @@ module.exports = {
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol')
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol"]',
         timeout: 120000,
@@ -54,6 +55,8 @@ module.exports = {
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol"]',
         timeout: 120000,
       })
+      .openFile('contracts/MyToken.sol')
+      .clickLaunchIcon('udapp')
       .verifyContracts(['MyToken'])
       // deploy contract
       .clickLaunchIcon('udapp')

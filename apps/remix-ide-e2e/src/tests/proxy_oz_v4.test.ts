@@ -28,6 +28,7 @@ module.exports = {
       // because the compilatiom imports are slow and sometimes stop loading (not sure why, it's bug) we need to recompile and check to see if the files are really in de FS
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol')
       .isVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
@@ -36,6 +37,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol')
       .isVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
@@ -44,6 +46,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol')
       .waitForElementVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,

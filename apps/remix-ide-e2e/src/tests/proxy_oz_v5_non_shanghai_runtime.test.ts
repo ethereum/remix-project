@@ -47,6 +47,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol')
       .waitForElementVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
