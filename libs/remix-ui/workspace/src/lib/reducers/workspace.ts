@@ -7,6 +7,7 @@ import { ROOT_PATH } from '../utils/constants'
 import isElectron from 'is-electron'
 import { fileKeySort } from '../utils'
 import { branch } from '@remix-ui/git'
+import { current } from '@reduxjs/toolkit'
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -332,12 +333,12 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   }
 
   case 'FILE_ADDED_SUCCESS': {
-    let payload = action.payload
+    const payload = action.payload
 
-    payload = checkCurrentParentPathInView(payload, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
+    const check = checkCurrentParentPathInView(payload, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
     const fd = fileAdded(state, payload)
-    const browserExpandPath = state.mode === 'browser' && !isElectron() && payload ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' && payload ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && check.inView ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && check.inView ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
@@ -368,10 +369,12 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload)
 
-    payload.folderPath = checkCurrentParentPathInView(payload.folderPath, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
+    const check = checkCurrentParentPathInView(payload.folderPath, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
+    const inView = check.inView || check.rootViewToAdd
+    payload.folderPath = check.inView ? payload.folderPath : check.rootViewToAdd ? check.rootFolder : ''
 
-    const browserExpandPath = state.mode === 'browser' && !isElectron() && payload.folderPath ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' && payload.folderPath ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && inView ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && inView ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
@@ -1093,22 +1096,42 @@ const fetchDirectoryContent = (
 }
 
 const checkCurrentParentPathInView = (currentPath: string, expandPath: string[]) => {
-  const parent = path.dirname(currentPath)
-  if (parent === '.') {
-    if (expandPath.includes(parent)) {
-      currentPath = undefined
-    }
-  } else {
-    const root = currentPath.split('/')[0]
-    if (!expandPath.includes(parent)) {
-      if (!expandPath.includes(root)) {
-        // if parent isn't displayed we don't want to expand the current folder. But at least show the root if it's not already there.
-        currentPath = root
+  try {
+    let rootViewToAdd = false
+    let inView = false
+    let rootFolder
+    const parent = path.dirname(currentPath)
+    if (parent === '.') {
+      // this folder is at the root.
+      rootFolder = currentPath
+      if (!expandPath.includes(currentPath)) { // But at least show the root if it's not already there.
+        rootFolder = currentPath
+        rootViewToAdd = true
+      }
+    } else {
+      const root = currentPath.split('/')[0]
+      if (!expandPath.includes(parent)) { // current path is not yet displayed
+        inView = false
+        if (!expandPath.includes(root)) { // But at least show the root if it's not already there.
+          rootFolder = root
+          rootViewToAdd = true
+        }
       } else
-        currentPath = null
+        inView = true
+    }
+    return {
+      rootFolder,
+      rootViewToAdd,
+      inView
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      rootFolder:undefined,
+      rootViewToAdd: false,
+      inView: true
     }
   }
-  return currentPath
 }
 
 const fetchWorkspaceDirectoryContent = (

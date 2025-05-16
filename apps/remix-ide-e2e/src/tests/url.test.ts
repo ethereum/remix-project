@@ -187,6 +187,7 @@ module.exports = {
       .currentWorkspaceIs('code-sample')
       .openFile('contract-eaa022e37e.yul')
       .getEditorValue((content) => {
+        console.log(content)
         browser.assert.ok(content && content.indexOf(
           'object "Contract1" {') !== -1)
       })
@@ -202,6 +203,7 @@ module.exports = {
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol')
       .isVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
@@ -222,6 +224,7 @@ module.exports = {
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
       })
+      .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
