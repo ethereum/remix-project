@@ -199,6 +199,9 @@
             ],
             "@remix-endpoints-helper": [
               "libs/endpoints-helper/src/index.ts"
+            ],
+            "@remix-ui/remix-ai-assistant": [
+              "libs/remix-ui/remix-ai-assistant/src/index.ts"
             ]
         }
     }

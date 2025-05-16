@@ -1,0 +1,112 @@
+.highlighter-dark .hljs {
+    /* var(--highlight-color) */
+    color: #ffffff;
+    /* var(--highlight-bg) */
+    background: #1c1b1b;
+}
+
+.highlighter-dark .hljs-subst {
+    /* var(--highlight-color) */
+    color: #ffffff;
+}
+
+.highlighter-dark .hljs-comment {
+    /* var(--highlight-comment) */
+    color: #999999;
+}
+
+.highlighter-dark .hljs-keyword,
+.highlighter-dark .hljs-selector-tag,
+.highlighter-dark .hljs-meta .hljs-keyword,
+.highlighter-dark .hljs-doctag,
+.highlighter-dark .hljs-section {
+    /* var(--highlight-keyword) */
+    color: #88aece;
+}
+
+.highlighter-dark .hljs-attr {
+    /* var(--highlight-attribute); */
+    color: #88aece;
+}
+
+.highlighter-dark .hljs-attribute {
+    /* var(--highlight-symbol) */
+    color: #c59bc1;
+}
+
+.highlighter-dark .hljs-name,
+.highlighter-dark .hljs-type,
+.highlighter-dark .hljs-number,
+.highlighter-dark .hljs-selector-id,
+.highlighter-dark .hljs-quote,
+.highlighter-dark .hljs-template-tag {
+    /* var(--highlight-namespace) */
+    color: #f08d49;
+}
+
+.highlighter-dark .hljs-selector-class {
+    /* var(--highlight-keyword) */
+    color: #88aece;
+}
+
+.highlighter-dark .hljs-string,
+.highlighter-dark .hljs-regexp,
+.highlighter-dark .hljs-symbol,
+.highlighter-dark .hljs-variable,
+.highlighter-dark .hljs-template-variable,
+.highlighter-dark .hljs-link,
+.highlighter-dark .hljs-selector-attr {
+    /* var(--highlight-variable) */
+    color: #b5bd68;
+}
+
+.highlighter-dark .hljs-meta,
+.highlighter-dark .hljs-selector-pseudo {
+    /* var(--highlight-keyword) */
+    color: #88aece;
+}
+
+.highlighter-dark .hljs-built_in,
+.highlighter-dark .hljs-title,
+.highlighter-dark .hljs-literal {
+    /* var(--highlight-literal) */
+    color: #f08d49;
+}
+
+.highlighter-dark .hljs-bullet,
+.highlighter-dark .hljs-code {
+    /* var(--highlight-punctuation) */
+    color: #cccccc;
+}
+
+.highlighter-dark .hljs-meta .hljs-string {
+    /* var(--highlight-variable) */
+    color: #b5bd68;
+}
+
+.highlighter-dark .hljs-deletion {
+    /* var(--highlight-deletion) */
+    color: #de7176;
+}
+
+.highlighter-dark .hljs-addition {
+    /* var(--highlight-addition) */
+    color: #76c490;
+}
+
+.highlighter-dark .hljs-emphasis {
+    font-style: italic;
+}
+
+.highlighter-dark .hljs-strong {
+    font-weight: bold;
+}
+
+.highlighter-dark .hljs-formula,
+.highlighter-dark .hljs-operator,
+.highlighter-dark .hljs-params,
+.highlighter-dark .hljs-property,
+.highlighter-dark .hljs-punctuation,
+.highlighter-dark .hljs-tag {
+    /* purposely ignored */
+}

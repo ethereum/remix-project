@@ -1,0 +1,153 @@
+import { AssistantParams } from "../types/models";
+import { workspaceAgent } from "./workspaceAgent";
+import { CompilationResult } from "../types/types";
+import { compilecontracts } from "../helpers/compile";
+
+const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Remix IDE. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
+
+export class ContractAgent {
+  plugin: any;
+  readonly generationAttempts: number = 5
+  nAttempts: number = 0
+  generationThreadID: string= ''
+  workspaceName: string = ''
+  contracts: any = {}
+  performCompile: boolean = false
+  static instance
+  oldPayload: any = undefined
+  mainPrompt: string
+
+  private constructor(props) {
+    this.plugin = props;
+    AssistantParams.provider = this.plugin.assistantProvider
+  }
+
+  public static getInstance(props) {
+    if (ContractAgent.instance) return ContractAgent.instance
+    ContractAgent.instance = new ContractAgent(props)
+    return ContractAgent.instance
+  }
+
+  async writeContracts(payload, userPrompt) {
+    console.log('payload', payload)
+    const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
+
+    const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
+      await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
+      const dirCreated = []
+      for (const file of parsedResults.files) {
+        const dir = file.fileName.split('/').slice(0, -1).join('/')
+        if (!dirCreated.includes(dir) && dir) {
+          await this.plugin.call('fileManager', 'mkdir', dir)
+          dirCreated.push(dir)
+        }
+        // check if file already exists
+        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
+        await this.plugin.call('codeFormatter', 'format', file.fileName)
+      }
+      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
+    }
+
+    try {
+      if (payload === undefined) {
+        this.nAttempts += 1
+        console.log('No payload, trying again')
+        if (this.nAttempts > this.generationAttempts) {
+          this.performCompile = false
+          console.log('Max attempts reached, returning the result')
+          if (this.oldPayload) {
+            return await writeAIResults(this.oldPayload)
+          }
+          return "Max attempts reached! Please try again with a different prompt."
+        }
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
+      }
+      this.contracts = {}
+      const parsedFiles = payload
+      this.oldPayload = payload
+      this.generationThreadID = parsedFiles['threadID']
+      this.workspaceName = parsedFiles['projectName']
+
+      this.nAttempts += 1
+      if (this.nAttempts === 1) this.mainPrompt = userPrompt
+
+      if (this.nAttempts > this.generationAttempts) {
+        console.log('Max attempts reached, returning the result')
+        return await writeAIResults(parsedFiles)
+      }
+
+      for (const file of parsedFiles.files) {
+        if (file.fileName.endsWith('.sol')) {
+          this.contracts[file.fileName] = { content: file.content }
+        }
+      }
+
+      const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
+      console.log('compilation result', result)
+      if (!result.compilationSucceeded && this.performCompile) {
+        console.log('Compilation failed, trying again recursively ...')
+        const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${this.mainPrompt}\n `
+        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+      }
+
+      return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(result.errfiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
+    } catch (error) {
+      console.error('Error writing generation results:', error)
+      this.deleteWorkspace(this.workspaceName )
+      this.nAttempts = 0
+      await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
+      return "Failed to generate secure code on user prompt! Please try again with a different prompt."
+    } finally {
+      this.nAttempts = 0
+    }
+  }
+
+  async createWorkspace(workspaceName) {
+    // create random workspace surfixed with timestamp
+    const timestamp = new Date().getTime()
+    const wsp_name = workspaceName + '-' + timestamp
+    await this.plugin.call('filePanel', 'createWorkspace', wsp_name, true)
+    this.workspaceName = wsp_name
+  }
+
+  async deleteWorkspace(workspaceName) {
+    await this.plugin.call('filePanel', 'deleteWorkspace', workspaceName)
+  }
+
+  async fixWorkspaceCompilationErrors(wspAgent:workspaceAgent) {
+    try {
+
+      const wspfiles = JSON.parse(await wspAgent.getCurrentWorkspaceFiles())
+
+      // compile for getting all errors
+      const compResult:CompilationResult = await compilecontracts(wspfiles, this.plugin)
+      console.log('fix workspace Compilation result:', compResult)
+
+      if (compResult.compilationSucceeded) {
+        console.log('Compilation succeeded, no errors to fix')
+        return 'Compilation succeeded, no errors to fix'
+      }
+
+      const newPrompt = `Payload:\n${JSON.stringify(compResult.errfiles)}}\n\n Fix the compilation errors above\n`
+      return await this.plugin.generateWorkspace(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+
+    } catch (error) {
+    } finally {
+    }
+  }
+
+  async continueCompilation(){
+    try {
+      if (this.oldPayload === undefined) {
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
+      }
+
+      this.performCompile = true
+      return await this.writeContracts(this.oldPayload, this.mainPrompt)
+    } catch (error) {
+    } finally {
+      this.performCompile = false
+    }
+  }
+
+}
