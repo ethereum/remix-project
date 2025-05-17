@@ -83,13 +83,13 @@ export function RemixUiRemixAiAssistant(props: any) {
   ChatApi = useAiChatApi()
   const conversationStarters: ConversationStarter[] = [
     {
-      prompt: 'Ask to explain a solidity contract!',
+      prompt: 'Explain what a modifier is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'Ask to explain a function',
+    { prompt: 'Explain what a UniSwap hook is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'Ask to solve an error',
+    { prompt: 'What is a ZKP?',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     }
   ]
