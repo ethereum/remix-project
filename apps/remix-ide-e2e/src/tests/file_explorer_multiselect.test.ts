@@ -47,6 +47,8 @@ module.exports = {
                 .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
                 .waitForElementPresent({ selector: '[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', abortOnFailure: false })
                 .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+                .openFile('tests/1_Storage.sol')
+                .openFile('tests/2_Owner.sol')
                 .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]', abortOnFailure: false })
                 .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]', abortOnFailure: false })
                 .waitForElementNotPresent({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', abortOnFailure: false })

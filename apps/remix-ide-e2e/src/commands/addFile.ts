@@ -6,9 +6,9 @@ class AddFile extends EventEmitter {
     if(!readMeFile)
       readMeFile = 'README.txt' 
     this.api.perform((done) => {
-      addFile(this.api, name, content, readMeFile, () => {
+      addFile(this.api, name, content, readMeFile, () => {        
+        this.api.emit('complete')
         done()
-        this.emit('complete')
       })
     })
     return this

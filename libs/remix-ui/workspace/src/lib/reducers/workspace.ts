@@ -1,3 +1,4 @@
+import path from 'path'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { action, Actions, FileType, WorkspaceElement } from '../types'
 import * as _ from 'lodash'
@@ -331,11 +332,12 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   }
 
   case 'FILE_ADDED_SUCCESS': {
-    const payload = action.payload
+    let payload = action.payload
+
+    payload = checkCurrentParentPathInView(payload, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
     const fd = fileAdded(state, payload)
-    const dir = extractParentFromKey(payload)
-    const browserExpandPath = state.mode === 'browser' && !isElectron() ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && payload ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && payload ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
@@ -365,8 +367,11 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FOLDER_ADDED_SUCCESS': {
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload)
-    const browserExpandPath = state.mode === 'browser' && !isElectron() ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
+
+    payload.folderPath = checkCurrentParentPathInView(payload.folderPath, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
+
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && payload.folderPath ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && payload.folderPath ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
@@ -918,6 +923,7 @@ const fileAdded = (
 ): {[x: string]: Record<string, FileType>} => {
   let files =
     state.mode === 'browser' ? state.browser.files : state.localhost.files
+  if (!path) return files
   const _path = splitPath(state, path)
   const childPath = _path.slice(0, _path.length - 1)
 
@@ -1084,6 +1090,25 @@ const fetchDirectoryContent = (
       return files
     }
   }
+}
+
+const checkCurrentParentPathInView = (currentPath: string, expandPath: string[]) => {
+  const parent = path.dirname(currentPath)
+  if (parent === '.') {
+    if (expandPath.includes(parent)) {
+      currentPath = undefined
+    }
+  } else {
+    const root = currentPath.split('/')[0]
+    if (!expandPath.includes(parent)) {
+      if (!expandPath.includes(root)) {
+        // if parent isn't displayed we don't want to expand the current folder. But at least show the root if it's not already there.
+        currentPath = root
+      } else
+        currentPath = null
+    }
+  }
+  return currentPath
 }
 
 const fetchWorkspaceDirectoryContent = (
