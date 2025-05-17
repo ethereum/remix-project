@@ -123,9 +123,9 @@ const App = () => {
             try {
               let response: VerificationResponse
               if (receipt.isProxyReceipt) {
-                response = await verifier.checkProxyVerificationStatus(receiptId)
+                response = await verifier.checkProxyVerificationStatus(receiptId, contract.chainId)
               } else {
-                response = await verifier.checkVerificationStatus(receiptId)
+                response = await verifier.checkVerificationStatus(receiptId, contract.chainId)
               }
               const { status, message, lookupUrl } = response
               receipt.status = status

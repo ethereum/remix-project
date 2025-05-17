@@ -56,6 +56,7 @@ export class CompileTabLogic {
     if (this.language != null) {
       this.compiler.set('language', this.language)
     }
+
   }
 
   setOptimize (newOptimizeValue: boolean) {
@@ -64,9 +65,11 @@ export class CompileTabLogic {
     this.compiler.set('optimize', this.optimize)
   }
 
-  setUseFileConfiguration (useFileConfiguration: boolean) {
+  async setUseFileConfiguration (useFileConfiguration: boolean) {
     this.useFileConfiguration = useFileConfiguration
+    console.log('setUseFileConfiguration', useFileConfiguration)
     this.compiler.set('useFileConfiguration', useFileConfiguration)
+    await this.setCompilerConfigContent()
   }
 
   setConfigFilePath (path) {
@@ -89,8 +92,10 @@ export class CompileTabLogic {
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
-  getCompilerState () {
-    console.log('getCompilerState', this.compiler.state)
+  async getCompilerState () {
+    await this.setCompilerMappings()
+    await this.setCompilerConfigContent()
+    console.log('getCompilerState', this.compiler)
     return this.compiler.state
   }
 
@@ -104,6 +109,23 @@ export class CompileTabLogic {
     this.compiler.set('language', lang)
   }
 
+  async setCompilerMappings () {
+      if (await this.api.fileExists('remappings.txt')) {
+        this.api.readFile('remappings.txt').then(remappings => {
+          this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
+        })
+      } else this.compiler.set('remappings', [])
+  }
+  
+  async setCompilerConfigContent () {
+      if (this.configFilePath && this.useFileConfiguration) {
+        this.api.readFile(this.configFilePath).then(content => {
+          this.compiler.set('configFileContent', content)
+        })
+      }
+  }
+
+
   /**
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
@@ -115,16 +137,8 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        if (await this.api.fileExists('remappings.txt')) {
-          this.api.readFile('remappings.txt').then(remappings => {
-            this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
-          })
-        } else this.compiler.set('remappings', [])
-        if (this.configFilePath) {
-          this.api.readFile(this.configFilePath).then( contentConfig => {
-            this.compiler.set('configFileContent', contentConfig)
-          })
-        }
+        await this.setCompilerMappings()
+        await this.setCompilerConfigContent()
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       }).catch((error) => {
