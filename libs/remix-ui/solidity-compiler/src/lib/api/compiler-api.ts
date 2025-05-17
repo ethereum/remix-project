@@ -152,7 +152,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets: Source, settings: CompilerInputOptions) {
-    const compilerState = this.getCompilerState()
+    const compilerState = await this.getCompilerState()
     const version = settings.version || compilerState.currentVersion
     const settingsCompile: CompilerInput = JSON.parse(compilerInputFactory(null, settings))
     const res = await compile(
@@ -165,8 +165,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
 
   // This function is used for passing the compiler configuration to 'remix-tests'
-  getCurrentCompilerConfig () {
-    const compilerState = this.getCompilerState()
+  async getCurrentCompilerConfig () {
+    const compilerState = await this.getCompilerState()
     const compilerDetails: any = {
       currentVersion: compilerState.currentVersion,
       evmVersion: compilerState.evmVersion,

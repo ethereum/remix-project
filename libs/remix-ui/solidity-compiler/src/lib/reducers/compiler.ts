@@ -14,6 +14,7 @@ export const compilerInitialState = {
 }
 
 export const compilerReducer = (state = compilerInitialState, action: Action) => {
+  console.log('compilerReducer', action)
   switch (action.type) {
   case 'SET_COMPILER_MODE': {
     return {
