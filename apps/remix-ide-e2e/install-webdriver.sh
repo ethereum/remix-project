@@ -39,4 +39,4 @@ fi
 
 
 yarn init -y --cwd "$directory" || exit 1
-yarn add -D chromedriver@135.0.4 geckodriver --cwd  "$directory" ||  yarn add -D chromedriver@135.0.4 geckodriver --cwd  "$directory" || yarn add -D chromedriver geckodriver --cwd  "$directory" || exit 1
+yarn add -D chromedriver@135.0.4 geckodriver --cwd  "$directory" || yarn add -D chromedriver geckodriver --cwd  "$directory" || exit 1
