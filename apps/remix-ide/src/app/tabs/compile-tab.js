@@ -162,7 +162,6 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
 
   getCompilerQueryParameters() {
     const params = this.queryParams.get()
-    console.log('getCompilerQueryParameters', params)
     params.evmVersion = params.evmVersion === 'null' || params.evmVersion === 'undefined' ? null : params.evmVersion
     params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
     params.optimize = params.optimize === 'true' ? true : params.optimize
@@ -170,7 +169,6 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
   }
 
   setCompilerQueryParameters(params) {
-    console.log('setCompilerQueryParameters', params)
     this.queryParams.update(params)
     try {
       this.emit('compilerQueryParamsUpdated')
@@ -184,7 +182,6 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
   }
 
   async setAppParameter(name, value) {
-    console.log('setAppParameter', name, value)
     await this.call('config', 'setAppParameter', name, value)
     try {
       this.emit('compilerAppParamsUpdated')

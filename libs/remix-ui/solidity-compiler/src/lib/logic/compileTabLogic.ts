@@ -67,7 +67,6 @@ export class CompileTabLogic {
 
   async setUseFileConfiguration (useFileConfiguration: boolean) {
     this.useFileConfiguration = useFileConfiguration
-    console.log('setUseFileConfiguration', useFileConfiguration)
     this.compiler.set('useFileConfiguration', useFileConfiguration)
     await this.setCompilerConfigContent()
   }

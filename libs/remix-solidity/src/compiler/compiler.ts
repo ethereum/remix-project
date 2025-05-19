@@ -101,7 +101,6 @@ export class Compiler {
    */
 
   compile(files: Source, target: string): void {
-    console.log('Compiling', this.state)
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
     this.event.trigger('compilationStarted', [])
