@@ -122,8 +122,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  getCompilerState () {
-    return this.compileTabLogic.getCompilerState()
+  async getCompilerState () {
+    return await this.compileTabLogic.getCompilerState()
   }
 
   /**
