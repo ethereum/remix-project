@@ -141,7 +141,6 @@ export default class CodeParserCompiler {
         this.compiler.set('useFileConfiguration', true)
         this.compiler.set('compilerRetriggerMode', CompilerRetriggerMode.retrigger)
 
-
         const configFileContent =
           state.useFileConfiguration ?
             state.configFileContent :

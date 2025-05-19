@@ -95,7 +95,6 @@ export class CompileTabLogic {
   async getCompilerState () {
     await this.setCompilerMappings()
     await this.setCompilerConfigContent()
-    console.log('getCompilerState', this.compiler)
     return this.compiler.state
   }
 
