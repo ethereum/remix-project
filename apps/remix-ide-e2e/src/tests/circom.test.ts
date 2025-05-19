@@ -38,8 +38,10 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Everything went okay')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
+      .openFile('circuits/.bin/simple_js')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')  
   },
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
@@ -55,6 +57,7 @@ module.exports = {
       .click('[data-id="compute_witness_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .openFile('circuits/.bin/simple_js/simple.wtn')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
   },
@@ -70,6 +73,7 @@ module.exports = {
       .click('button[data-id="compile_circuit_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .openFile('circuits/.bin/simple_js/simple.wasm')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
@@ -88,6 +92,7 @@ module.exports = {
       .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .openFile('circuits/groth16/zk/keys/verification_key.json')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/verification_key.json"]')
   },
   'Should run Plonk setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
@@ -102,6 +107,7 @@ module.exports = {
       .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .openFile('circuits/plonk/zk/keys/verification_key.json')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/verification_key.json"]')
   },
   'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
@@ -116,6 +122,8 @@ module.exports = {
 
         return actions.keyDown(this.Keys.CONTROL).sendKeys('s')
       })
+      .pause(2000)
+      .openFile('circuits/.bin/simple_js/simple.wasm')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
@@ -164,6 +172,7 @@ module.exports = {
       .waitForElementNotPresent('[data-id="circuit_feedback"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .openFile('circuits/.bin/simple_js/simple.wasm')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
   'Should create a new workspace using hash checker template #group5 #group6': function (browser: NightwatchBrowser) {
