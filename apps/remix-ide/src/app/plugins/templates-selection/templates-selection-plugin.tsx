@@ -22,7 +22,7 @@ const profile = {
   displayName: 'Template Selection',
   description: 'templateSelection',
   location: 'mainPanel',
-  methods: [],
+  methods: ['aiWorkspaceGenerate'],
   events: [],
   maintainedBy: 'Remix',
 }
@@ -70,6 +70,57 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     this.dispatch({
       ...this,
     })
+  }
+
+  async aiWorkspaceGenerate () {
+    // await this.call('notification', 'alert', <div><h1>Hello!</h1></div>)
+    const generateAIWorkspace = async () => {
+      const okAction = async () => {
+        await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
+      }
+      const aiTemplateModal: AppModal = {
+        id: 'TemplatesSelection',
+        title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+        message: aiModalTemplate((value) => this.aiState.prompt = value),
+        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
+        okFn: okAction
+      }
+      console.log('aiTemplateModal', aiTemplateModal)
+      const modalResult = await this.call('notification', 'modal', aiTemplateModal)
+      console.log('modalResult', modalResult)
+      const alertModal: AlertModal = {
+        id: 'TemplatesSelectionAiAlert',
+        message: <div className='d-flex flex-row align-items-center'>
+          <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
+          <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
+        </div>,
+        title: 'Generating Workspace'
+      }
+      if (modalResult === undefined) {
+        await this.call('notification', 'alert', alertModal)
+      }
+    }
+
+    const aiModalTemplate = (onChangeTemplateName: (value) => void) => {
+      return (
+        <>
+          <div>
+            <label id="wsName" className="form-check-label mb-2" style={{ fontWeight: 'bolder' }}>
+              Generate Workspace
+            </label>
+            <input
+              type="text"
+              data-id="modalDialogCustomPromptTextCreate"
+              placeholder="Enter a description of the workspace you want to create"
+              className="form-control mb-3"
+              onChange={(e) => onChangeTemplateName(e.target.value)}
+              onInput={(e) => onChangeTemplateName((e.target as any).value)}
+            />
+          </div>
+        </>
+      )
+    }
+    generateAIWorkspace()
   }
 
   updateComponent() {
@@ -150,48 +201,48 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
     }
 
-    const generateAIWorkspace = async (item, templateName: string) => {
-      const okAction = async () => {
-        await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
-      }
-      const aiTemplateModal: AppModal = {
-        id: 'TemplatesSelection',
-        title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
-        message: aiModalTemplate((value) => this.aiState.prompt = value),
-        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
-        okFn: okAction
-      }
-      const modalResult = await this.call('notification', 'modal', aiTemplateModal)
-      const alertModal: AlertModal = {
-        id: 'TemplatesSelectionAiAlert',
-        message: <div className='d-flex flex-row align-items-center'>
-          <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
-          <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
-        </div>,
-        title: 'Generating Workspace'
-      }
-      await this.call('notification', 'alert', alertModal)
-    }
+    // const generateAIWorkspace = async (item, templateName: string) => {
+    //   const okAction = async () => {
+    //     await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
+    //   }
+    //   const aiTemplateModal: AppModal = {
+    //     id: 'TemplatesSelection',
+    //     title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+    //     message: aiModalTemplate((value) => this.aiState.prompt = value),
+    //     okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
+    //     okFn: okAction
+    //   }
+    //   const modalResult = await this.call('notification', 'modal', aiTemplateModal)
+    //   const alertModal: AlertModal = {
+    //     id: 'TemplatesSelectionAiAlert',
+    //     message: <div className='d-flex flex-row align-items-center'>
+    //       <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
+    //       <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
+    //     </div>,
+    //     title: 'Generating Workspace'
+    //   }
+    //   await this.call('notification', 'alert', alertModal)
+    // }
 
-    const aiModalTemplate = (onChangeTemplateName: (value) => void) => {
-      return (
-        <>
-          <div>
-            <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-              Generate Workspace
-            </label>
-            <input
-              type="text"
-              data-id="modalDialogCustomPromptTextCreate"
-              placeholder="Enter a description of the workspace you want to create"
-              className="form-control mb-3"
-              onChange={(e) => onChangeTemplateName(e.target.value)}
-              onInput={(e) => onChangeTemplateName((e.target as any).value)}
-            />
-          </div>
-        </>
-      )
-    }
+    // const aiModalTemplate = (onChangeTemplateName: (value) => void) => {
+    //   return (
+    //     <>
+    //       <div>
+    //         <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
+    //           Generate Workspace
+    //         </label>
+    //         <input
+    //           type="text"
+    //           data-id="modalDialogCustomPromptTextCreate"
+    //           placeholder="Enter a description of the workspace you want to create"
+    //           className="form-control mb-3"
+    //           onChange={(e) => onChangeTemplateName(e.target.value)}
+    //           onInput={(e) => onChangeTemplateName((e.target as any).value)}
+    //         />
+    //       </div>
+    //     </>
+    //   )
+    // }
 
     return (
       <RemixUIGridView
@@ -254,7 +305,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
                               onClick={async () => {
                                 if ((item.value as string).toLowerCase().includes('ai')) {
-                                  generateAIWorkspace(item, template.name)
+                                  this.aiWorkspaceGenerate()
                                 } else {
                                   createWorkspace(item, template.name)
                                 }

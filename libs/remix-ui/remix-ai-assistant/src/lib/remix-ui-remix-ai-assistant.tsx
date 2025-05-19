@@ -2,7 +2,7 @@ import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 import ResponseZone from '../components/Responsezone'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AssistantParams } from '@remix/remix-ai-core'
 import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 // import { highlighter } from '@nlux/highlighter'
@@ -14,6 +14,8 @@ import DefaultResponseContent from '../components/DefaultResponseContent'
 import PromptZone from '../components/promptzone'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { PluginNames } from 'apps/remix-ide/src/types'
+import { AppModal } from '@remix-ui/app'
+import isElectron from 'is-electron'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -102,6 +104,7 @@ export function RemixUiRemixAiAssistant(props: any) {
     }
   ]
   const adapter = useAsStreamAdapter(send, [])
+
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
       <AiChat
@@ -122,9 +125,9 @@ export function RemixUiRemixAiAssistant(props: any) {
           submitShortcut: 'Enter',
           hideStopButton: false,
           remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-          addContextFiles: props.makePluginCall
+          addContextFiles: props.makePluginCall,
+          pluginMethodCall: props.makePluginCall,
         }}
-        addContextFiles={props.makePluginCall}
         messageOptions={{ showCodeBlockCopyButton: true,
           editableUserMessages: true,
           streamingAnimationSpeed: 2,

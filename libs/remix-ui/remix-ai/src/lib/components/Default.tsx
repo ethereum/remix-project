@@ -110,7 +110,8 @@ export const Default = (props) => {
         submitShortcut: 'Enter',
         hideStopButton: false,
         remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-        addContextFiles: props.makePluginCall
+        addContextFiles: props.makePluginCall,
+        pluginMethodCall: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
