@@ -13,6 +13,7 @@ export class ContractAgent {
   workspaceName: string = ''
   contracts: any = {}
   performCompile: boolean = false
+  overrideWorkspace: boolean = false
   static instance
   oldPayload: any = undefined
   mainPrompt: string
@@ -29,11 +30,11 @@ export class ContractAgent {
   }
 
   async writeContracts(payload, userPrompt) {
-    console.log('payload', payload)
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
 
     const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
-      await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
+      console.log('parsedResults', parsedResults)
+      if (!this.overrideWorkspace) await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedResults.files) {
         const dir = file.fileName.split('/').slice(0, -1).join('/')
@@ -90,7 +91,7 @@ export class ContractAgent {
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
-      return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(result.errfiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
+      return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
       console.error('Error writing generation results:', error)
       this.deleteWorkspace(this.workspaceName )
@@ -143,10 +144,13 @@ export class ContractAgent {
       }
 
       this.performCompile = true
+      this.overrideWorkspace = true
       return await this.writeContracts(this.oldPayload, this.mainPrompt)
     } catch (error) {
+      return "Error during continue compilation. Please try again."
     } finally {
       this.performCompile = false
+      this.overrideWorkspace = false
     }
   }
 

@@ -54,13 +54,10 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
     }
 
     if (data.error && data.error.length) {
-      for (const error of data.error) {
-        if (error.type === 'Warning') continue
-        fillErrors(error);
-      }
-
+      errorFiles['contracts'] = contracts
+      errorFiles['error'] = data.error
       const msg = `
-					- Compilation errors: ${data.error.map((e) => e.formattedMessage)}.
+					- Compilation errors: ${data.error}.
 					`
       return { compilationSucceeded: false, errors: msg, errfiles: errorFiles }
     }
