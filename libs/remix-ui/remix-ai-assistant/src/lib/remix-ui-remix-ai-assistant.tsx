@@ -7,7 +7,7 @@ import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, us
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 // import { highlighter } from '@nlux/highlighter'
 import '../css/color.css'
-import '@nlux/themes/unstyled.css'
+import '@nlux/themes'
 import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
 import DefaultResponseContent from '../components/DefaultResponseContent'

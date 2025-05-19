@@ -6,7 +6,7 @@ import { DefaultModels, ChatCommandParser, GenerationParams, ChatHistory, Handle
 import { user, assistantAvatar } from './personas';
 // import { highlighter } from '@nlux/highlighter'
 import './color.css'
-import '@nlux/themes/unstyled.css';
+import '@nlux/themes';
 import copy from 'copy-to-clipboard'
 import { parse } from 'path';
 
