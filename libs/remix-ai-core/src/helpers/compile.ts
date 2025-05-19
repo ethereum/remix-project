@@ -10,15 +10,14 @@ const compilationParams = {
 export const compilecontracts = async (contracts, plugin): Promise<CompilationResult> => {
   // do not compile tests files
   try {
-    console.log('Compiling contracts:', contracts)
+    // console.log('Compiling contracts:', contracts)
     const result = await plugin.call('solidity' as any, 'compileWithParameters', contracts, compilationParams)
     console.log('Compilation result:', result)
     const data = result.data
     let error = false
 
-    // TODO check for data.error additionally
     if (data.errors) {
-      console.log('Compilation errors:', data.errors)
+      // console.log('Compilation errors:', data.errors)
       error = data.errors.find((error) => error.type !== 'Warning')
     }
 
@@ -64,7 +63,7 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
 
     return { compilationSucceeded: true, errors: null }
   } catch (err) {
-    console.error('Error during compilation:', err)
+    // console.error('Error during compilation:', err)
     return { compilationSucceeded: false, errors: 'An unexpected error occurred during compilation.' }
   }
 }

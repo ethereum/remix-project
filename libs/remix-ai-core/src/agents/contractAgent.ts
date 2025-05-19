@@ -33,7 +33,6 @@ export class ContractAgent {
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
 
     const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
-      console.log('parsedResults', parsedResults)
       if (!this.overrideWorkspace) await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedResults.files) {
@@ -52,10 +51,8 @@ export class ContractAgent {
     try {
       if (payload === undefined) {
         this.nAttempts += 1
-        console.log('No payload, trying again')
         if (this.nAttempts > this.generationAttempts) {
           this.performCompile = false
-          console.log('Max attempts reached, returning the result')
           if (this.oldPayload) {
             return await writeAIResults(this.oldPayload)
           }
@@ -73,7 +70,6 @@ export class ContractAgent {
       if (this.nAttempts === 1) this.mainPrompt = userPrompt
 
       if (this.nAttempts > this.generationAttempts) {
-        console.log('Max attempts reached, returning the result')
         return await writeAIResults(parsedFiles)
       }
 
@@ -84,16 +80,14 @@ export class ContractAgent {
       }
 
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
-      console.log('compilation result', result)
       if (!result.compilationSucceeded && this.performCompile) {
-        console.log('Compilation failed, trying again recursively ...')
+        // console.log('Compilation failed, trying again recursively ...')
         const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${this.mainPrompt}\n `
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
-      console.error('Error writing generation results:', error)
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
@@ -120,9 +114,8 @@ export class ContractAgent {
 
       const wspfiles = JSON.parse(await wspAgent.getCurrentWorkspaceFiles())
 
-      // compile for getting all errors
       const compResult:CompilationResult = await compilecontracts(wspfiles, this.plugin)
-      console.log('fix workspace Compilation result:', compResult)
+      // console.log('fix workspace Compilation result:', compResult)
 
       if (compResult.compilationSucceeded) {
         console.log('Compilation succeeded, no errors to fix')
@@ -130,7 +123,7 @@ export class ContractAgent {
       }
 
       const newPrompt = `Payload:\n${JSON.stringify(compResult.errfiles)}}\n\n Fix the compilation errors above\n`
-      return await this.plugin.generateWorkspace(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+      return await this.plugin.generateWorkspace(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread, pass the paylod to the diff checker
 
     } catch (error) {
     } finally {
