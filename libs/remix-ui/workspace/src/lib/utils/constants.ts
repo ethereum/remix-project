@@ -19,7 +19,7 @@ export const TEMPLATE_NAMES = {
   'uniswapV4Template': 'Uniswap v4 Template',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
   'accountAbstraction': 'Account Abstraction Template',
-  'fullyFledgeEIP7702': 'EIP7702 Fully Fledge Template',
+  'introToEIP7702': 'Intro to EIP-7702',
 }
 
 export const TEMPLATE_METADATA: Record<string, TemplateType> = {
