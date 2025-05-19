@@ -787,7 +787,7 @@ export class Blockchain extends Plugin {
     )
 
     web3Runner.event.register('transactionBroadcasted', (txhash, isUserOp) => {
-        if (isUserOp) _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `txBroadcastedFromSmartAccount`])
+      if (isUserOp) _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `txBroadcastedFromSmartAccount`])
       this.executionContext.detectNetwork(async (error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
@@ -996,7 +996,7 @@ export class Blockchain extends Plugin {
         if (!tx.timestamp) tx.timestamp = Date.now()
         const timestamp = tx.timestamp
         this._triggerEvent('initiatingTransaction', [timestamp, tx, payLoad])
-        if (fromSmartAccount)  _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `txInitiatedFromSmartAccount`])
+        if (fromSmartAccount) _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `txInitiatedFromSmartAccount`])
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb, async (error, result) => {
             if (error) {
