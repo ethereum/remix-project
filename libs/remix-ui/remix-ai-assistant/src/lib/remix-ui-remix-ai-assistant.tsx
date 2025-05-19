@@ -1,6 +1,5 @@
 import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
-import ResponseZone from '../components/Responsezone'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AssistantParams } from '@remix/remix-ai-core'
 import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
@@ -35,7 +34,7 @@ interface Message {
   role: 'user' | 'assistant'
 }
 
-export let ChatApi = null
+export let RemixAiAssistantChatApi = null
 
 export function RemixUiRemixAiAssistant(props: any) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
@@ -45,44 +44,79 @@ export function RemixUiRemixAiAssistant(props: any) {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
-
-    const parseResult = await chatCmdParser.parse(prompt)
-    if (parseResult) {
-      observer.next(parseResult)
-      observer.complete()
-      return
-    }
-
-    GenerationParams.stream_result = true
-    setIS_streaming(true)
-    GenerationParams.return_stream_response = GenerationParams.stream_result
-    let response = null
-    const check = await props.plugin.call('remixAI', 'isChatRequestPending')
-    if (check) {
-      response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
-    } else {
-      response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
-    }
-
-    if (GenerationParams.return_stream_response) {
-      HandleStreamResponse(response,
-        (text) => {observer.next(text)},
-        (result) => {
-          observer.next(' ') // Add a space to flush the last message
-          ChatHistory.pushHistory(prompt, result)
-          observer.complete()
-          setTimeout(() => { setIS_streaming(false) }, 1000)
+    try {
+      console.log('sent', prompt)
+      const templateSelectionResponse = await props.plugin.call('templateSelection', 'isGenerating')
+      // props.plugin.on('templateSelection', 'onTemplateSelectionResult', (result) => {
+      //   console.log('result from templateSelection', { result, observer })
+      //   observer.next('Generating workspace done')
+      //   console.log('result from templateSelection next')
+      //   observer.complete()
+      //   console.log('result from templateSelection complete')
+      //   return
+      // })
+      console.log('templateSelectionResponse', templateSelectionResponse)
+      if (templateSelectionResponse) {
+        console.log('templateSelectionResponse inside the if', templateSelectionResponse)
+        observer.next('Generating workspace...')
+        const checkResults = async () => {
+          const tsr = await props.plugin.call('templateSelection', 'isGenerating')
+          console.log('tsr state', tsr)
+          observer.next('Streaming... \n')
+          if (!tsr) {
+            observer.next('Generating workspace done')
+            observer.complete()
+            return
+          }
+          setTimeout(checkResults, 2000)
         }
-      )
-    }
-    else {
-      observer.next(response)
-      observer.complete()
+        await checkResults()
+        return
+      }
 
-      setTimeout(() => { setIS_streaming(false) }, 1000)
+      const parseResult = await chatCmdParser.parse(prompt)
+      if (parseResult) {
+        observer.next(parseResult)
+        observer.complete()
+        return
+      }
+      console.log('parseResult', parseResult)
+
+      GenerationParams.stream_result = true
+      setIS_streaming(true)
+      GenerationParams.return_stream_response = GenerationParams.stream_result
+      let response = null
+      const check = await props.plugin.call('remixAI', 'isChatRequestPending')
+      if (check) {
+        response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
+      } else {
+        console.log('response', response)
+        response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
+      }
+
+      if (GenerationParams.return_stream_response) {
+        HandleStreamResponse(response,
+          (text) => {observer.next(text)},
+          (result) => {
+            observer.next(' ') // Add a space to flush the last message
+            ChatHistory.pushHistory(prompt, result)
+            observer.complete()
+            setTimeout(() => { setIS_streaming(false) }, 1000)
+          }
+        )
+      }
+      else {
+        observer.next(response)
+        observer.complete()
+
+        setTimeout(() => { setIS_streaming(false) }, 1000)
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
     }
   }
-  ChatApi = useAiChatApi()
+
+  RemixAiAssistantChatApi = useAiChatApi()
   const conversationStarters: ConversationStarter[] = [
     {
       prompt: 'Explain what a modifier is',
@@ -108,7 +142,7 @@ export function RemixUiRemixAiAssistant(props: any) {
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
       <AiChat
-        api={ChatApi}
+        api={RemixAiAssistantChatApi}
         adapter={ adapter }
         personaOptions={{
           assistant: {
@@ -151,14 +185,11 @@ function ResponseRenderer({ uid, response, containerRef }: { uid: string, respon
     if (sentiment === 'like') {
       (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'like-response'])
       setSentiment('like')
-      console.log('like')
     } else if (sentiment === 'dislike') {
       (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'dislike-response'])
       setSentiment('dislike')
-      console.log('dislike')
     } else {
       setSentiment('none')
-      console.log('none')
     }
   }
   return (

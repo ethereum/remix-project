@@ -13,6 +13,7 @@ import type { TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
 import { AssistantParams } from '@remix/remix-ai-core'
+import { RemixAiAssistantChatApi } from '@remix-ui/remix-ai-assistant'
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
@@ -22,8 +23,8 @@ const profile = {
   displayName: 'Template Selection',
   description: 'templateSelection',
   location: 'mainPanel',
-  methods: ['aiWorkspaceGenerate'],
-  events: [],
+  methods: ['aiWorkspaceGenerate', 'isGenerating'],
+  events: ['onTemplateSelectionResult'],
   maintainedBy: 'Remix',
 }
 
@@ -32,6 +33,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
   dispatch: React.Dispatch<any> = () => { }
   opts: any = {}
   aiState: any = { prompt: '' }
+  workspaceIsGenerating: boolean = false
 
   constructor() {
     super(profile)
@@ -72,11 +74,19 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     })
   }
 
+  async isGenerating() {
+    return this.workspaceIsGenerating
+  }
+
   async aiWorkspaceGenerate () {
-    // await this.call('notification', 'alert', <div><h1>Hello!</h1></div>)
     const generateAIWorkspace = async () => {
+      let result
       const okAction = async () => {
-        await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
+        this.workspaceIsGenerating = true
+        RemixAiAssistantChatApi.composer.send(this.aiState.prompt)
+        result = await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
+        this.emit('onTemplateSelectionResult', result)
+        this.workspaceIsGenerating = false
       }
       const aiTemplateModal: AppModal = {
         id: 'TemplatesSelection',
@@ -85,9 +95,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
         okFn: okAction
       }
-      console.log('aiTemplateModal', aiTemplateModal)
       const modalResult = await this.call('notification', 'modal', aiTemplateModal)
-      console.log('modalResult', modalResult)
       const alertModal: AlertModal = {
         id: 'TemplatesSelectionAiAlert',
         message: <div className='d-flex flex-row align-items-center'>
@@ -97,7 +105,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         title: 'Generating Workspace'
       }
       this.on('remixAI', 'generateWorkspace', async () => {
-        console.log('generateWorkspace')
         await this.call('notification', 'alert', alertModal)
       })
       if (modalResult === undefined) {
