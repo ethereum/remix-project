@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
 import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 import { AppModal } from '@remix-ui/app'
-import { ConsoleLogs, QueryParams } from '@remix-project/remix-lib'
+import { ConsoleLogs, EventManager, QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
@@ -26,7 +26,6 @@ import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
-import monaco from '../types/monaco'
 const _paq = (window._paq = window._paq || [])
 
 // Key for localStorage
@@ -153,11 +152,12 @@ export interface EditorUIProps {
   plugin: PluginType
   editorAPI: EditorAPIType
 }
+const contextMenuEvent = new EventManager()
 export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
-  const [isDiff, setIsDiff] = useState(false)
   const [isSplit, setIsSplit] = useState(true)
+  const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -378,7 +378,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }, [props.currentFile, props.isDiff])
 
-  const inlineCompletionProvider = new RemixInLineCompletionProvider(props, monacoRef.current)
+  const inlineCompletionProvider = new RemixInLineCompletionProvider(props)
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -795,36 +795,50 @@ export const EditorUI = (props: EditorUIProps) => {
       return comments ? comments[0] : "";
     }
 
-    const executeGptGenerateDocumentationAction = {
-      id: 'generateDocumentation',
-      label: intl.formatMessage({ id: 'editor.generateDocumentation' }),
-      contextMenuOrder: 0, // choose the order
-      contextMenuGroupId: 'gtp', // create a new grouping
-      keybindings: [
+    const executeGptGenerateDocumentationAction = (functionNode) => {
+      return {
+        id: 'generateDocumentation',
+        label: intl.formatMessage({ id: 'editor.generateDocumentation' }),
+        contextMenuOrder: 0, // choose the order
+        contextMenuGroupId: 'gtp', // create a new grouping
+        keybindings: [
         // Keybinding for Ctrl + H
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyH,
-      ],
-      run: async () => {
-        console.log('called generateDocumentation')
-        // addAIPromptWidget(editor, editor.getPosition())
-        const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
-        const file = await props.plugin.call('fileManager', 'getCurrentFile')
-        const content = await props.plugin.call('fileManager', 'readFile', file)
-        console.log('content: ', { currenFunctionNode: currenFunctionNode.current, currentFunction: currentFunction.current })
-        const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
+          monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyH,
+        ],
+        run: async () => {
+          if (functionNode) {
+            const file = await props.plugin.call('fileManager', 'getCurrentFile')
+            const content = await props.plugin.call('fileManager', 'readFile', file)
+            const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
+            const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", functionNode)
+            const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
 
-        // do not stream this response
-        const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
-        // await props.plugin.call('popupPanel', 'showPopupPanel', true)
-        setTimeout(async () => {
-        // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
-          const cm = await props.plugin.call('remixAI' as any, 'solidity_answer', message)
-          // const natSpecCom = "\n" + extractNatspecComments(cm)
-          console.log('cm: ', cm)
-          // console.log('natSpecCom: ', natSpecCom)
-          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
-          const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
-          console.log('range: ', range)
+            console.log('range: ', range)
+            console.log('query: ', query)
+            console.log('cln: ', cln)
+            console.log('editor: ', editor)
+            editor.executeEdits('newLine', [
+              {
+                range: range,
+                text: '\n',
+                forceMoveMarkers: true,
+              },
+            ])
+            console.log('query: ', query)
+            inlineCompletionProvider.setGenDocsConfig(range, query, editor)
+          }
+          // setIsPromptSuggestion(true)
+          // const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
+          // const file = await props.plugin.call('fileManager', 'getCurrentFile')
+          // const content = await props.plugin.call('fileManager', 'readFile', file)
+
+          // editor.executeEdits('clipboard', [
+          //   {
+          //     range: range,
+          //     text: newNatSpecCom.join('\n'),
+          //     forceMoveMarkers: true,
+          //   },
+          // ]);
           // const lines = natSpecCom.split('\n')
           // const newNatSpecCom = []
 
@@ -856,8 +870,8 @@ export const EditorUI = (props: EditorUIProps) => {
           // ]);
 
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
-        })
-      },
+        },
+      }
     }
 
     let gptExplainFunctionAction
@@ -936,7 +950,7 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
     freeFunctionAction = editor.addAction(executeFreeFunctionAction)
-    gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
+    gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction(null))
     gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
     solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
 
@@ -980,10 +994,11 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        currentFunctionNode = functionImpl
+        currenFunctionNode = functionImpl
+        const generateDocumentationAction = executeGptGenerateDocumentationAction(functionImpl)
 
-        executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
-        gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
+        generateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
+        gptGenerateDocumentationAction = editor.addAction(generateDocumentationAction)
         executegptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunction2' }, { name: functionImpl.name })
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
         executeSolgptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunctionSol' })
@@ -1088,47 +1103,6 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(monacoRef.current)
   }
 
-  function addAIPromptWidget(editor, position) {
-    editor.addContentWidget({
-      allowEditorOverflow: true,
-      getDomNode: () => {
-        if (document.getElementById('ai_prompt_widget')) {
-          return document.getElementById('ai_prompt_widget')
-        }
-        const promptInput = document.createElement('div')
-
-        promptInput.id = 'ai_prompt_widget'
-        promptInput.classList.add(...['d-flex', 'pb-1', 'align-items-center'])
-        promptInput.innerHTML = `
-            <input type="text" placeholder="Type here..." class="border form-control border-right-0" />
-            <button class="form-control border d-flex align-items-center p-2 justify-content-center fas fa-close bg-light" style="width: 20px;"></button>
-          `
-        // Add close button handler
-        promptInput.querySelector('button').onclick = () => {
-          editor.removeContentWidget({
-            getId: () => 'ai_prompt_widget'
-          })
-        }
-        // Add input handler
-        promptInput.querySelector('input').oninput = (e: any) => {
-          // if (onChange) onChange(e.target.value)
-          console.log('input: ', e.target.value)
-        }
-
-        return promptInput
-      },
-      getId: () => {
-        return 'ai_prompt_widget';
-      },
-      getPosition: () => {
-        return {
-          position: position ? { column: 1, lineNumber: position.lineNumber } : { column: 1, lineNumber: 1 },
-          preference: [1]
-        }
-      }
-    })
-  }
-
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
       <DiffEditor
@@ -1141,7 +1115,6 @@ export const EditorUI = (props: EditorUIProps) => {
         width='100%'
         height={props.isDiff ? '100%' : '0%'}
         className={props.isDiff ? "d-block" : "d-none"}
-
       />
       <Editor
         width="100%"
@@ -1155,6 +1128,8 @@ export const EditorUI = (props: EditorUIProps) => {
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
           inlineSuggest: {
             enabled: true,
+            keepOnBlur: !isPromptSuggestion,
+            showToolbar: !isPromptSuggestion ? 'always' : undefined
           }
         }}
         defaultValue={defaultEditorValue}
