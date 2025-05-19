@@ -96,6 +96,9 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         </div>,
         title: 'Generating Workspace'
       }
+      this.on('remixAI', 'generateWorkspace', () => {
+        console.log('generateWorkspace')
+      })
       if (modalResult === undefined) {
         await this.call('notification', 'alert', alertModal)
       }
