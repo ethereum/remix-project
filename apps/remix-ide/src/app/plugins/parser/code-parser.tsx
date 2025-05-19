@@ -167,19 +167,19 @@ export class CodeParser extends Plugin {
       await this.handleChangeEvents()
     })
 
-    this.on('solidity', 'compilerQueryParamsUpdated', async (file) => {
+    this.on('solidity', 'compilerQueryParamsUpdated', async () => {
       await this.call('editor', 'discardLineTexts')
       await this.call('editor', 'clearErrorMarkers', [this.currentFile])
       await this.handleChangeEvents()
     })
 
-    this.on('solidity', 'compilerAppParamsUpdated', async (file) => {
+    this.on('solidity', 'compilerAppParamsUpdated', async () => {
       await this.call('editor', 'discardLineTexts')
       await this.call('editor', 'clearErrorMarkers', [this.currentFile])
       await this.handleChangeEvents()
     })
 
-    this.on('solidity', 'configFileChanged', async (file) => {
+    this.on('solidity', 'configFileChanged', async () => {
       await this.call('editor', 'discardLineTexts')
       await this.call('editor', 'clearErrorMarkers', [this.currentFile])
       await this.handleChangeEvents()
