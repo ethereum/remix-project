@@ -246,7 +246,6 @@ export class RemixAIPlugin extends ViewPlugin {
     } else {
       result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
     }
-    console.log('workspace --> result', result)
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
 
   }
