@@ -113,10 +113,10 @@ export default class TestTab extends ViewPlugin {
     const web3 = await this.call('blockchain', 'web3VM')
     await this.testRunner.init(web3)
     await this.createTestLibs()
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const runningTest = {}
       runningTest[path] = { content }
-      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
+      const { currentVersion, evmVersion, optimize, runs } = await this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
