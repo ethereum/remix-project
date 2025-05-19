@@ -13,7 +13,9 @@ export default async (opts) => {
     // @ts-ignore
     'scripts/run-eip7702.ts': (await import('!!raw-loader!./scripts/run-eip7702.ts')).default,
     // @ts-ignore
-    'README.md': (await import('raw-loader!./README.md')).default
+    'README.md': (await import('raw-loader!./README.md')).default,
+    // @ts-ignore
+    '.remix/script.config.json': (await import('!!raw-loader!./.remix/script.config.json')).default
   }
   return filesObj
 }
