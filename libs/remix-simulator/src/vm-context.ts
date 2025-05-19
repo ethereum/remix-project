@@ -8,7 +8,7 @@ import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { createVM, VM } from '@ethereumjs/vm'
-import { Common, ConsensusType, Mainnet } from '@ethereumjs/common'
+import { Common, ConsensusType, Mainnet, CommonOpts } from '@ethereumjs/common'
 import { MerklePatriciaTrie, createMPT, verifyMerkleProof } from '@ethereumjs/mpt'
 import { MerkleStateManager, MerkleStateManagerOpts } from '@ethereumjs/statemanager'
 import { StateManagerInterface, StorageDump } from '@ethereumjs/common'
@@ -246,6 +246,10 @@ export type CurrentVm = {
 
 export class VMCommon extends Common {
 
+  constructor (opts: CommonOpts) {
+    super(opts)
+  }
+
   /**
     * Always return the fork set at initialization
     */
@@ -398,7 +402,7 @@ export class VMContext {
   */
   latestBlockNumber: string
   /*
-    This is the number of block that VMContext is instanciated with.
+    This is the number of block that VMContext is instantiated with.
     The final amount of blocks will be `latestBlockNumber` and the value either `blockNumber` or `baseBlockNumber` + `blockNumber`
   */
   private blockNumber: number | 'latest'
@@ -413,7 +417,7 @@ export class VMContext {
   constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[], baseBlockNumber?: string) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = fork || 'cancun'
+    this.currentFork = fork || 'prague'
     this.nodeUrl = nodeUrl
     this.stateDb = stateDb
     this.blockNumber = blockNumber || 0

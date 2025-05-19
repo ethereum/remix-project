@@ -68,6 +68,7 @@ export class Transactions {
       eth_getCode: this.eth_getCode.bind(this),
       eth_call: this.eth_call.bind(this),
       eth_estimateGas: this.eth_estimateGas.bind(this),
+      eth_maxPriorityFeePerGas: this.eth_maxPriorityFeePerGas.bind(this),
       eth_getTransactionCount: this.eth_getTransactionCount.bind(this),
       eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this),
       eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
@@ -79,6 +80,10 @@ export class Transactions {
       eth_getStateDb: this.eth_getStateDb.bind(this),
       eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
+  }
+
+  eth_maxPriorityFeePerGas (payload, cb) {
+    cb (null, '0xaa')
   }
 
   eth_sendRawTransaction (payload, cb) {

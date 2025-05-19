@@ -85,12 +85,18 @@ export class Web3Accounts {
       eth_sign: this.eth_sign.bind(this),
       eth_chainId: this.eth_chainId.bind(this),
       eth_signTypedData: this.eth_signTypedData_v4.bind(this), // default call is using V4
-      eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this)
+      eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this),
+      eth_getPKey: this.eth_getPKey.bind(this),
     }
   }
 
   eth_requestAccounts (_payload, cb) {
     return cb(null, Object.keys(this.accounts))
+  }
+
+  eth_getPKey (payload, cb) {
+    const address = toChecksumAddress(payload.params[0])
+    cb(null, this.accounts[address].privateKey)
   }
 
   eth_accounts (_payload, cb) {

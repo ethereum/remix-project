@@ -15,7 +15,7 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-cancun"]')
+      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 30000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
@@ -84,7 +84,7 @@ const tests = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`"latestBlockNumber": "0x2"`) !== -1)
         browser.assert.ok(content.indexOf(`"stateName": "forkedState_1"`) !== -1)
-        browser.assert.ok(content.indexOf(`"forkName": "cancun"`) !== -1)
+        browser.assert.ok(content.indexOf(`"forkName": "prague"`) !== -1)
         browser.assert.ok(content.indexOf(`"savingTimestamp":`) !== -1)
         browser.assert.ok(content.indexOf(`"db":`) !== -1)
         browser.assert.ok(content.indexOf(`"blocks":`) !== -1)
@@ -147,31 +147,32 @@ const tests = {
       .click('[data-id="settingsSelectEnvOptions"] button')
       .waitForElementVisible(`[data-id="dropdown-item-another-chain"]`)
       .click(`[data-id="dropdown-item-another-chain"]`)
-      .assert.visible('[data-id="remixUIGSDeploy to an In-browser Forked State."]')
-      .assert.elementPresent('[data-id="remixUIGSforkedState_1"]')
-      .assert.elementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
-      .assert.textContains('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
-      .assert.not.elementPresent('[data-id="remixUIGSforkedState_2"]')
-      .switchEnvironment('vm-cancun')
+      .waitForElementVisible('[data-id="remixUIGSDeploy to an In-browser Forked State."]')
+      .waitForElementPresent('[data-id="remixUIGSforkedState_1"]')
+      .waitForElementPresent('[data-id="vm-fs-forkedState_1-pinned"]')
+      .waitForElementContainsText('[data-id="vm-fs-forkedState_1desc"]', 'Latest Block: 2')
+      .waitForElementNotPresent('[data-id="remixUIGSforkedState_2"]')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementVisible('*[data-id="unpinnedInstance0xf8e81D47203A594245E36C48e151709F0C19fBe8"]')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .click('input[data-id="modalDialogForkState"]')
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
-      .assert.textContains('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
       // check if 'forkedState_2' is selected as current environment 
-      .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
+      .waitForElementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in environment explorer
-      .assert.elementPresent('[data-id="remixUIGSforkedState_2"]')
+      .waitForElementPresent('[data-id="remixUIGSforkedState_2"]')
       // check if 'forkedState_2' is pinned in environment explorer
-      .assert.elementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
+      .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
       // 'forkedState_2' should have 3 blocks
-      .assert.textContains('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
+      .waitForElementContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
@@ -185,7 +186,7 @@ const tests = {
   },
   'Should delete state successfully #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-cancun')
+      .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .verifyContracts(['Storage'])
       .clickLaunchIcon('udapp')
@@ -202,8 +203,8 @@ const tests = {
       // check that there are no instances
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       // check if state file is deleted
-      .openFile('.states/vm-cancun')
-      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-cancun/state.json"]')
+      .openFile('.states/vm-prague')
+      .assert.not.elementPresent('*[data-id="treeViewDivDraggableItem.states/vm-prague/state.json"]')
   }
 }
 

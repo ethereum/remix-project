@@ -39,7 +39,7 @@ export function Container () {
 
   const handleViewProgramArtefact = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    noirApp.plugin.call('fileManager', 'open', `build/${extractNameFromKey(noirApp.appState.filePath).replace('.nr', '.json')}`)
+    noirApp.plugin.call('fileManager', 'open', 'build/program.json')
   }
 
   return (

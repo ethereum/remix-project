@@ -174,7 +174,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/mMNnEgsRzh\n
+  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/XvMmgehAMq\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `
@@ -186,7 +186,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
-  let currenFunctionNode = useRef('')
+  let currentFunctionNode = useRef('')
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -817,7 +817,7 @@ export const EditorUI = (props: EditorUIProps) => {
         // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
           const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
           const natSpecCom = "\n" + extractNatspecComments(cm)
-          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
+          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currentFunctionNode)
           const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
           const lines = natSpecCom.split('\n')
           const newNatSpecCom = []
@@ -974,7 +974,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        currenFunctionNode = functionImpl
+        currentFunctionNode = functionImpl
 
         executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)

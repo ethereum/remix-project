@@ -134,9 +134,9 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
-                yarn --ignore-optional
-                yarn add @remix-project/remix-ws-templates
+                yarn add node-pty --network-timeout 600000
+                yarn --ignore-optional --network-timeout 600000
+                yarn add @remix-project/remix-ws-templates --network-timeout 600000
                 ./rundist.bash test_only
         - run:  
             name: "Run tests"
@@ -710,6 +710,9 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
   tests-passed:
     machine:
@@ -868,6 +871,9 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-windows:
           requires:
            - build-desktop

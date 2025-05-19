@@ -45,6 +45,9 @@ export class TxRunnerWeb3 {
         tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
         // tx.type = '0x1'
       }
+      if (tx.authorizationList) {
+        tx.type = '0x4'
+      }
     }
 
     let currentDateTime = new Date();
@@ -58,6 +61,7 @@ export class TxRunnerWeb3 {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
+          const originTo = tx.to
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           if (isCreation && !receipt.contractAddress) {
             // if it is a isCreation, contractAddress should be defined.
@@ -72,7 +76,11 @@ export class TxRunnerWeb3 {
             }
           }
           currentDateTime = new Date();
-          if (isUserOp && contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
+          if (isUserOp) {
+            tx.isUserOp = isUserOp
+            tx.originTo = originTo
+            if (contractAddress && !receipt.contractAddress) (receipt as any).contractAddress = contractAddress
+          }
           resolve({
             receipt,
             tx,
@@ -129,12 +137,7 @@ export class TxRunnerWeb3 {
   }
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    let data = args.data
-    if (data.slice(0, 2) !== '0x') {
-      data = '0x' + data
-    }
-
-    return this.runInNode(args.from, args.fromSmartAccount, args.deployedBytecode, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
+    return this.runInNode(args.from, args.fromSmartAccount, args.deployedBytecode, args.to, args.data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
 
   runInNode (from, fromSmartAccount, deployedBytecode, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
@@ -316,7 +319,6 @@ export class TxRunnerWeb3 {
         value: tx.value
       })
     }
-
     return { txHash, contractAddress }
   }
 }

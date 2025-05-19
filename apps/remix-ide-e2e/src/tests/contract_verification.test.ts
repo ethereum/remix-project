@@ -6,10 +6,6 @@ declare global {
   interface Window { testplugin: { name: string, url: string }; }
 }
 
-const getFrameId = function (browser: NightwatchBrowser) {
-  return browser.options.desiredCapabilities.browserName === 'chrome' ? 0 : 1
-}
-
 const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -22,7 +18,7 @@ const tests = {
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtoncontract-verification"]')
       .clickLaunchIcon('contract-verification')
       .pause(5000)
-      .frame(getFrameId(browser))
+      .frame(0)
       .waitForElementVisible('*[data-id="VerifyDescription"]')
   },
 
