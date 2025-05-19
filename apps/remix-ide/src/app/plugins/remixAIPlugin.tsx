@@ -23,7 +23,7 @@ const profile = {
     "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
-  events: [],
+  events: ['generatingWorkspace', 'generateWorkspaceDone'],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
@@ -206,7 +206,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     // Evaluate if this function requires any context
     // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
-
+    this.emit('generatingWorkspace', userPrompt)
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
@@ -214,7 +214,9 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.generate(userPrompt, params)
     }
 
-    return this.contractor.writeContracts(result, userPrompt)
+    const genResult = this.contractor.writeContracts(result, userPrompt)
+    this.emit('generateWorkspaceDone', genResult)
+    return genResult
   }
 
   async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
