@@ -37,9 +37,12 @@ module.exports = {
     globals_path: '',
     test_settings: {
       default: {
+        enable_fail_fast: true,
+        selenium_port: 4444,
+        selenium_host: 'localhost',
         globals: {
           waitForConditionTimeout: 10000,
-          asyncHookTimeout: 10000000
+          asyncHookTimeout: 30000
         },
         screenshots: {
           enabled: true,
@@ -49,10 +52,10 @@ module.exports = {
         },
         webdriver: {
           start_process: true,
-          port: 9515,
-          server_path: 'node_modules/chromedriver/bin/chromedriver',
-          "keep_alive": { "enabled": true, "keepAliveMsecs": 60000 },
-          "timeout_options": { "timeout": 60000, "retry_attempts": 3 }
+          timeout_options: {
+            timeout: 60000,
+            retry_attempts: 3
+          }
         },
         desiredCapabilities: {
           browserName: 'chrome',
