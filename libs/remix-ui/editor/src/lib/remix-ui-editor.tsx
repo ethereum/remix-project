@@ -665,7 +665,7 @@ export const EditorUI = (props: EditorUIProps) => {
               localStorage.setItem(HIDE_PASTE_WARNING_KEY, 'true');
               setShowPasteWarning(false); // Update state to prevent future modals in this session
             } catch (e) {
-               console.error("Failed to write to localStorage:", e);
+              console.error("Failed to write to localStorage:", e);
             }
           }
           if (askAI) {
@@ -686,7 +686,7 @@ export const EditorUI = (props: EditorUIProps) => {
           okLabel: 'Ask RemixAI',
           cancelLabel: 'Close',
           cancelFn: () => handleClose(false), // Pass false for askAI
-          okFn: () => handleClose(true),      // Pass true for askAI
+          okFn: () => handleClose(true), // Pass true for askAI
           message: (
             <div>
               {' '}
