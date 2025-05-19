@@ -29,7 +29,7 @@ const profile = {
 // - methods: ['getCompilationResult']
 
 export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerApi
-  constructor (config, fileManager) {
+  constructor(config, fileManager) {
     super(profile)
     this.fileManager = fileManager
     this.config = config
@@ -42,11 +42,11 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     this.el.setAttribute('id', 'compileTabView')
   }
 
-  renderComponent () {
+  renderComponent() {
     // empty method, is a state update needed?
   }
 
-  onCurrentFileChanged () {
+  onCurrentFileChanged() {
     this.renderComponent()
   }
 
@@ -54,43 +54,43 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
   //   this.renderComponent()
   // }
 
-  onSetWorkspace () {
+  onSetWorkspace() {
     this.renderComponent()
   }
 
-  onFileRemoved () {
+  onFileRemoved() {
     this.renderComponent()
   }
 
-  onNoFileSelected () {
+  onNoFileSelected() {
     this.renderComponent()
   }
 
-  onFileClosed () {
+  onFileClosed() {
     this.renderComponent()
   }
 
-  onCompilationFinished () {
+  onCompilationFinished() {
     this.renderComponent()
   }
 
-  render () {
-    return <div id='compileTabView'><SolidityCompiler api={this}/></div>
+  render() {
+    return <div id='compileTabView'><SolidityCompiler api={this} /></div>
   }
 
-  async compileWithParameters (compilationTargets, settings) {
+  async compileWithParameters(compilationTargets, settings) {
     return await super.compileWithParameters(compilationTargets, settings)
   }
 
-  getCompilationResult () {
+  getCompilationResult() {
     return super.getCompilationResult()
   }
 
-  getFileManagerMode () {
+  getFileManagerMode() {
     return this.fileManager.mode
   }
 
-  isDesktop () {
+  isDesktop() {
     return Registry.getInstance().get('platform').api.isDesktop()
   }
 
@@ -99,7 +99,7 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
    * This function is used by remix-plugin compiler API.
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
-  async setCompilerConfig (settings) {
+  async setCompilerConfig(settings) {
     super.setCompilerConfig(settings)
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
@@ -108,24 +108,24 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     pluginInfo = await this.call('udapp', 'showPluginDetails')
 
     if (this.currentRequest.from === 'udapp') {
-      this.call('notification', 'toast', compilerConfigChangedToastMsg((pluginInfo ? pluginInfo.displayName : this.currentRequest.from ), value))
+      this.call('notification', 'toast', compilerConfigChangedToastMsg((pluginInfo ? pluginInfo.displayName : this.currentRequest.from), value))
     }
   }
 
-  async getCompilerConfig () {
+  async getCompilerConfig() {
     return await super.getCompilerConfig()
   }
 
-  compile (fileName) {
+  compile(fileName) {
     if (!isNative(this.currentRequest.from)) this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
     super.compile(fileName)
   }
 
-  compileFile (event) {
+  compileFile(event) {
     return super.compileFile(event)
   }
 
-  async onActivation () {
+  async onActivation() {
     super.onActivation()
     this.on('filePanel', 'workspaceInitializationCompleted', () => {
       this.call('filePanel', 'registerContextMenuItem', {
@@ -138,6 +138,16 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
         pattern: [],
         group: 6
       })
+      this.on('fileManager', 'fileSaved', async (file) => {
+        if(await this.getAppParameter('configFilePath') === file) {
+          this.emit('configFileChanged', file)
+        }
+      })
+      this.on('fileManager', 'fileAdded', async (file) => {
+        if(await this.getAppParameter('configFilePath') === file) {
+          this.emit('configFileChanged', file)
+        }
+      })
     })
     try {
       this.currentFile = await this.call('fileManager', 'file')
@@ -146,11 +156,11 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     }
   }
 
-  getCompiler () {
+  getCompiler() {
     return this.compileTabLogic.compiler
   }
 
-  getCompilerQueryParameters () {
+  getCompilerQueryParameters() {
     const params = this.queryParams.get()
     console.log('getCompilerQueryParameters', params)
     params.evmVersion = params.evmVersion === 'null' || params.evmVersion === 'undefined' ? null : params.evmVersion
@@ -159,24 +169,28 @@ export default class CompileTab extends CompilerApiMixin(ViewPlugin) { // implem
     return params
   }
 
-  setCompilerQueryParameters (params) {
+  setCompilerQueryParameters(params) {
     console.log('setCompilerQueryParameters', params)
     this.queryParams.update(params)
-    try{
+    try {
       this.emit('compilerQueryParamsUpdated')
-    } catch (e) {}
+    } catch (e) {
+      // do nothing
+    }
   }
 
-  async getAppParameter (name) {
+  async getAppParameter(name) {
     return await this.call('config', 'getAppParameter', name)
   }
 
-  async setAppParameter (name, value) {
+  async setAppParameter(name, value) {
     console.log('setAppParameter', name, value)
     await this.call('config', 'setAppParameter', name, value)
-    try{
-      this.emit('compilerQueryParamsUpdated')
-    } catch (e) {}
+    try {
+      this.emit('compilerAppParamsUpdated')
+    } catch (e) {
+      // do nothing
+    }
   }
 }
 

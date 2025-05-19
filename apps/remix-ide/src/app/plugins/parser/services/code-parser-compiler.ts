@@ -134,7 +134,6 @@ export default class CodeParserCompiler {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
       if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
         const state = await this.plugin.call('solidity', 'getCompilerState')
-        console.log('state', state)
         this.compiler.set('optimize', state.optimize)
         this.compiler.set('evmVersion', state.evmVersion)
         this.compiler.set('language', state.language)
@@ -142,31 +141,36 @@ export default class CodeParserCompiler {
         this.compiler.set('useFileConfiguration', true)
         this.compiler.set('compilerRetriggerMode', CompilerRetriggerMode.retrigger)
 
-        if (await this.plugin.call('fileManager', 'exists','remappings.txt')) {
-          const remappings = await this.plugin.call('fileManager', 'readFile','remappings.txt')
+
+        const configFileContent =
+          state.useFileConfiguration ?
+            state.configFileContent :
+
+            {
+              "language": "Solidity",
+              "settings": {
+                "optimizer": {
+                  "enabled": state.optimize,
+                  "runs": state.runs
+                },
+                "outputSelection": {
+                  "*": {
+                    "": ["ast"],
+                    "*": ["evm.gasEstimates"]
+                  }
+                },
+                "evmVersion": state.evmVersion && state.evmVersion.toString() || undefined,
+              }
+            }
+
+        this.compiler.set('configFileContent', state.useFileConfiguration? configFileContent: JSON.stringify(configFileContent))
+
+        if (await this.plugin.call('fileManager', 'exists', 'remappings.txt')) {
+          const remappings = await this.plugin.call('fileManager', 'readFile', 'remappings.txt')
           this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
         } else {
           this.compiler.set('remappings', [])
         }
-
-        const configFileContent = {
-          "language": "Solidity",
-          "settings": {
-            "optimizer": {
-              "enabled": state.optimize,
-              "runs": state.runs
-            },
-            "outputSelection": {
-              "*": {
-                "": ["ast"],
-                "*": ["evm.gasEstimates"]
-              }
-            },
-            "evmVersion": state.evmVersion && state.evmVersion.toString() || undefined,
-          }
-        }
-
-        this.compiler.set('configFileContent', JSON.stringify(configFileContent))
         const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
         const sources = { [this.plugin.currentFile]: { content } }
         this.compiler.compile(sources, this.plugin.currentFile)

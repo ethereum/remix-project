@@ -110,21 +110,20 @@ export class CompileTabLogic {
   }
 
   async setCompilerMappings () {
-      if (await this.api.fileExists('remappings.txt')) {
-        this.api.readFile('remappings.txt').then(remappings => {
-          this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
-        })
-      } else this.compiler.set('remappings', [])
-  }
-  
-  async setCompilerConfigContent () {
-      if (this.configFilePath && this.useFileConfiguration) {
-        this.api.readFile(this.configFilePath).then(content => {
-          this.compiler.set('configFileContent', content)
-        })
-      }
+    if (await this.api.fileExists('remappings.txt')) {
+      this.api.readFile('remappings.txt').then(remappings => {
+        this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
+      })
+    } else this.compiler.set('remappings', [])
   }
 
+  async setCompilerConfigContent () {
+    if (this.configFilePath && this.useFileConfiguration) {
+      this.api.readFile(this.configFilePath).then(content => {
+        this.compiler.set('configFileContent', content)
+      })
+    }
+  }
 
   /**
    * Compile a specific file of the file manager
