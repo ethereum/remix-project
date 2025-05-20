@@ -157,7 +157,6 @@ export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
   const [isSplit, setIsSplit] = useState(true)
-  const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -811,63 +810,22 @@ export const EditorUI = (props: EditorUIProps) => {
             const content = await props.plugin.call('fileManager', 'readFile', file)
             const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
             const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", functionNode)
-            const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+            const decorations = editor.createDecorationsCollection()
 
-            console.log('range: ', range)
+            decorations.set([{
+              range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column),
+              options: {
+                isWholeLine: true,
+                className: 'rightLineDecoration',
+                marginClassName: 'rightLineDecoration',
+              }
+            }])
+
+            addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
+
             console.log('query: ', query)
-            console.log('cln: ', cln)
-            console.log('editor: ', editor)
-            editor.executeEdits('newLine', [
-              {
-                range: range,
-                text: '\n',
-                forceMoveMarkers: true,
-              },
-            ])
-            console.log('query: ', query)
-            inlineCompletionProvider.setGenDocsConfig(range, query, editor)
+            // inlineCompletionProvider.setGenDocsConfig(range, query, editor)
           }
-          // setIsPromptSuggestion(true)
-          // const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
-          // const file = await props.plugin.call('fileManager', 'getCurrentFile')
-          // const content = await props.plugin.call('fileManager', 'readFile', file)
-
-          // editor.executeEdits('clipboard', [
-          //   {
-          //     range: range,
-          //     text: newNatSpecCom.join('\n'),
-          //     forceMoveMarkers: true,
-          //   },
-          // ]);
-          // const lines = natSpecCom.split('\n')
-          // const newNatSpecCom = []
-
-          // for (let i = 0; i < lines.length; i++) {
-          //   let cont = false
-
-          //   for (let j = 0; j < unsupportedDocTags.length; j++) {
-          //     if (lines[i].includes(unsupportedDocTags[j])) {
-          //       cont = true
-          //       break
-          //     }
-          //   }
-          //   if (cont) {continue}
-
-          //   if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
-          //   else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
-          // }
-
-          // // TODO: activate the provider to let the user accept the documentation suggestion
-          // // const provider = new RemixSolidityDocumentationProvider(natspecCom)
-          // // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
-
-          // editor.executeEdits('clipboard', [
-          //   {
-          //     range: range,
-          //     text: newNatSpecCom.join('\n'),
-          //     forceMoveMarkers: true,
-          //   },
-          // ]);
 
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
         },
@@ -1103,6 +1061,58 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(monacoRef.current)
   }
 
+  function addChangesOptionWidget(editor, position) {
+    editor.addContentWidget({
+      allowEditorOverflow: true,
+      getDomNode: () => {
+        if (document.getElementById('changes_option_widget')) {
+          return document.getElementById('changes_option_widget')
+        }
+        const containerElement = document.createElement('div')
+        containerElement.id = 'changes_option_widget'
+        containerElement.style.width = '100%'
+
+        const innerContainer = document.createElement('div')
+        innerContainer.style.position = 'relative'
+        innerContainer.style.left = '80%'
+
+        const acceptBtn = document.createElement('button')
+        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1', 'text-ai'])
+        acceptBtn.style.fontSize = '0.8rem'
+        acceptBtn.textContent = 'Accept'
+
+        const rejectBtn = document.createElement('button')
+        rejectBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'bg-light', 'text-dark'])
+        rejectBtn.style.fontSize = '0.8rem'
+        rejectBtn.textContent = 'Decline'
+
+        innerContainer.appendChild(acceptBtn)
+        innerContainer.appendChild(rejectBtn)
+        containerElement.appendChild(innerContainer)
+
+        // Add close button handler
+        rejectBtn.onclick = () => {
+          editor.removeContentWidget({
+            getId: () => 'changes_option_widget'
+          })
+        }
+        // Add input handler
+        return containerElement
+      },
+
+      getId: () => {
+        return 'changes_option_widget'
+      },
+
+      getPosition: () => {
+        return {
+          position: position ? { column: 1, lineNumber: position.lineNumber } : { column: 1, lineNumber: 1 },
+          preference: [1]
+        }
+      }
+    })
+  }
+
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
       <DiffEditor
@@ -1127,9 +1137,7 @@ export const EditorUI = (props: EditorUIProps) => {
           glyphMargin: true,
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
           inlineSuggest: {
-            enabled: true,
-            keepOnBlur: !isPromptSuggestion,
-            showToolbar: !isPromptSuggestion ? 'always' : undefined
+            enabled: true
           }
         }}
         defaultValue={defaultEditorValue}
