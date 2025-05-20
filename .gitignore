@@ -20,6 +20,7 @@ release
 .env.local
 .idea/
 .yalc/
+.yalc
 
 # compiled output
 /dist

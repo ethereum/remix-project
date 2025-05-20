@@ -1,19 +1,20 @@
 import React, { useState, useEffect, RefObject } from 'react'
 import '../css/remix-ai-assistant.css'
-import ResponseZone from '../components/Responsezone'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AssistantParams } from '@remix/remix-ai-core'
 import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 // import { highlighter } from '@nlux/highlighter'
 import '../css/color.css'
-import '@nlux/themes/unstyled.css'
+import '@nlux/themes'
 import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
 import DefaultResponseContent from '../components/DefaultResponseContent'
 import PromptZone from '../components/promptzone'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { PluginNames } from 'apps/remix-ide/src/types'
+import { AppModal } from '@remix-ui/app'
+import isElectron from 'is-electron'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -33,7 +34,7 @@ interface Message {
   role: 'user' | 'assistant'
 }
 
-export let ChatApi = null
+export let RemixAiAssistantChatApi = null
 
 export function RemixUiRemixAiAssistant(props: any) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
@@ -43,53 +44,59 @@ export function RemixUiRemixAiAssistant(props: any) {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+    try {
+      const parseResult = await chatCmdParser.parse(prompt)
+      if (parseResult) {
+        observer.next(parseResult)
+        observer.complete()
+        return
+      }
+      console.log('parseResult', parseResult)
 
-    const parseResult = await chatCmdParser.parse(prompt)
-    if (parseResult) {
-      observer.next(parseResult)
-      observer.complete()
-      return
-    }
+      GenerationParams.stream_result = true
+      setIS_streaming(true)
+      GenerationParams.return_stream_response = GenerationParams.stream_result
+      let response = null
+      const check = await props.plugin.call('remixAI', 'isChatRequestPending')
+      if (check) {
+        response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
+      } else {
+        console.log('response', response)
+        response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
+      }
 
-    GenerationParams.stream_result = true
-    setIS_streaming(true)
-    GenerationParams.return_stream_response = GenerationParams.stream_result
-    let response = null
-    const check = await props.plugin.call('remixAI', 'isChatRequestPending')
-    if (check) {
-      response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
-    } else {
-      response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
-    }
+      if (GenerationParams.return_stream_response) {
+        HandleStreamResponse(response,
+          (text) => {observer.next(text)},
+          (result) => {
+            observer.next(' ') // Add a space to flush the last message
+            ChatHistory.pushHistory(prompt, result)
+            observer.complete()
+            setTimeout(() => { setIS_streaming(false) }, 1000)
+          }
+        )
+      }
+      else {
+        observer.next(response)
+        observer.complete()
 
-    if (GenerationParams.return_stream_response) {
-      HandleStreamResponse(response,
-        (text) => {observer.next(text)},
-        (result) => {
-          observer.next(' ') // Add a space to flush the last message
-          ChatHistory.pushHistory(prompt, result)
-          observer.complete()
-          setTimeout(() => { setIS_streaming(false) }, 1000)
-        }
-      )
-    }
-    else {
-      observer.next(response)
-      observer.complete()
-
-      setTimeout(() => { setIS_streaming(false) }, 1000)
+        setTimeout(() => { setIS_streaming(false) }, 1000)
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
     }
   }
-  ChatApi = useAiChatApi()
+
+  RemixAiAssistantChatApi = useAiChatApi()
   const conversationStarters: ConversationStarter[] = [
     {
-      prompt: 'Ask to explain a solidity contract!',
+      prompt: 'Explain what a modifier is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'Ask to explain a function',
+    { prompt: 'Explain what a UniSwap hook is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'Ask to solve an error',
+    { prompt: 'What is a ZKP?',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     }
   ]
@@ -102,10 +109,11 @@ export function RemixUiRemixAiAssistant(props: any) {
     }
   ]
   const adapter = useAsStreamAdapter(send, [])
+
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
       <AiChat
-        api={ChatApi}
+        api={RemixAiAssistantChatApi}
         adapter={ adapter }
         personaOptions={{
           assistant: {
@@ -122,9 +130,9 @@ export function RemixUiRemixAiAssistant(props: any) {
           submitShortcut: 'Enter',
           hideStopButton: false,
           remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-          addContextFiles: props.makePluginCall
+          addContextFiles: props.makePluginCall,
+          pluginMethodCall: props.makePluginCall,
         }}
-        addContextFiles={props.makePluginCall}
         messageOptions={{ showCodeBlockCopyButton: true,
           editableUserMessages: true,
           streamingAnimationSpeed: 2,
@@ -148,14 +156,11 @@ function ResponseRenderer({ uid, response, containerRef }: { uid: string, respon
     if (sentiment === 'like') {
       (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'like-response'])
       setSentiment('like')
-      console.log('like')
     } else if (sentiment === 'dislike') {
       (window as any)._paq.push(['trackEvent', 'remixai-assistant', 'dislike-response'])
       setSentiment('dislike')
-      console.log('dislike')
     } else {
       setSentiment('none')
-      console.log('none')
     }
   }
   return (

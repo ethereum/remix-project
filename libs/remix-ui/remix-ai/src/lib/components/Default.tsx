@@ -6,7 +6,7 @@ import { DefaultModels, ChatCommandParser, GenerationParams, ChatHistory, Handle
 import { user, assistantAvatar } from './personas';
 // import { highlighter } from '@nlux/highlighter'
 import './color.css'
-import '@nlux/themes/unstyled.css';
+import '@nlux/themes';
 import copy from 'copy-to-clipboard'
 import { parse } from 'path';
 
@@ -110,7 +110,8 @@ export const Default = (props) => {
         submitShortcut: 'Enter',
         hideStopButton: false,
         remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-        addContextFiles: props.makePluginCall
+        addContextFiles: props.makePluginCall,
+        pluginMethodCall: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,

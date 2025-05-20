@@ -182,6 +182,18 @@
             "@remix/remix-ai-core": [
               "libs/remix-ai-core/src/index.ts"
             ],
+            "@nlux/core": [
+              "node_modules/@nlux/dist/prod/nlux-core"
+            ],
+            "@nlux/react": [
+              "node_modules/@nlux/dist/prod/nlux-react"
+            ],
+            "@nlux/themes": [
+              "node_modules/@nlux/dist/prod/themes"
+            ],
+            "@nlux/highlighter": [
+              "node_modules/@nlux/dist/prod/highlighter"
+            ],
             "@remix-ui/git": [
               "libs/remix-ui/git/src/index.ts"
             ],
