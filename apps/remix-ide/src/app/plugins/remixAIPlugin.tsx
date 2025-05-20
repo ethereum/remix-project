@@ -45,7 +45,7 @@ export class RemixAIPlugin extends ViewPlugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'openai'
+  assistantProvider: string = 'mistralai'
   useRemoteInferencer:boolean = false
   dispatch: any
   completionAgent: CodeCompletionAgent

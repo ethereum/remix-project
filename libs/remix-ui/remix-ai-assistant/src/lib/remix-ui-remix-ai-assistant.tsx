@@ -45,35 +45,6 @@ export function RemixUiRemixAiAssistant(props: any) {
     observer: StreamingAdapterObserver,
   ) => {
     try {
-      console.log('sent', prompt)
-      const templateSelectionResponse = await props.plugin.call('templateSelection', 'isGenerating')
-      // props.plugin.on('templateSelection', 'onTemplateSelectionResult', (result) => {
-      //   console.log('result from templateSelection', { result, observer })
-      //   observer.next('Generating workspace done')
-      //   console.log('result from templateSelection next')
-      //   observer.complete()
-      //   console.log('result from templateSelection complete')
-      //   return
-      // })
-      console.log('templateSelectionResponse', templateSelectionResponse)
-      if (templateSelectionResponse) {
-        console.log('templateSelectionResponse inside the if', templateSelectionResponse)
-        observer.next('Generating workspace...')
-        const checkResults = async () => {
-          const tsr = await props.plugin.call('templateSelection', 'isGenerating')
-          console.log('tsr state', tsr)
-          observer.next('Streaming... \n')
-          if (!tsr) {
-            observer.next('Generating workspace done')
-            observer.complete()
-            return
-          }
-          setTimeout(checkResults, 2000)
-        }
-        await checkResults()
-        return
-      }
-
       const parseResult = await chatCmdParser.parse(prompt)
       if (parseResult) {
         observer.next(parseResult)

@@ -23,7 +23,7 @@ const profile = {
   displayName: 'Template Selection',
   description: 'templateSelection',
   location: 'mainPanel',
-  methods: ['aiWorkspaceGenerate', 'isGenerating'],
+  methods: ['aiWorkspaceGenerate'],
   events: ['onTemplateSelectionResult'],
   maintainedBy: 'Remix',
 }
@@ -33,7 +33,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
   dispatch: React.Dispatch<any> = () => { }
   opts: any = {}
   aiState: any = { prompt: '' }
-  workspaceIsGenerating: boolean = false
 
   constructor() {
     super(profile)
@@ -74,19 +73,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     })
   }
 
-  async isGenerating() {
-    return this.workspaceIsGenerating
-  }
-
   async aiWorkspaceGenerate () {
     const generateAIWorkspace = async () => {
-      let result
       const okAction = async () => {
-        this.workspaceIsGenerating = true
-        RemixAiAssistantChatApi.composer.send(this.aiState.prompt)
-        result = await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
-        this.emit('onTemplateSelectionResult', result)
-        this.workspaceIsGenerating = false
+        RemixAiAssistantChatApi.composer.send( '/generate ' + this.aiState.prompt)
+        // // this.generationResult = await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
       }
       const aiTemplateModal: AppModal = {
         id: 'TemplatesSelection',
