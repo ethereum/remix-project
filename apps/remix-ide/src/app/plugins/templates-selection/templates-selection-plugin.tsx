@@ -202,49 +202,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
     }
 
-    // const generateAIWorkspace = async (item, templateName: string) => {
-    //   const okAction = async () => {
-    //     await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
-    //   }
-    //   const aiTemplateModal: AppModal = {
-    //     id: 'TemplatesSelection',
-    //     title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
-    //     message: aiModalTemplate((value) => this.aiState.prompt = value),
-    //     okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
-    //     okFn: okAction
-    //   }
-    //   const modalResult = await this.call('notification', 'modal', aiTemplateModal)
-    //   const alertModal: AlertModal = {
-    //     id: 'TemplatesSelectionAiAlert',
-    //     message: <div className='d-flex flex-row align-items-center'>
-    //       <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
-    //       <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
-    //     </div>,
-    //     title: 'Generating Workspace'
-    //   }
-    //   await this.call('notification', 'alert', alertModal)
-    // }
-
-    // const aiModalTemplate = (onChangeTemplateName: (value) => void) => {
-    //   return (
-    //     <>
-    //       <div>
-    //         <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-    //           Generate Workspace
-    //         </label>
-    //         <input
-    //           type="text"
-    //           data-id="modalDialogCustomPromptTextCreate"
-    //           placeholder="Enter a description of the workspace you want to create"
-    //           className="form-control mb-3"
-    //           onChange={(e) => onChangeTemplateName(e.target.value)}
-    //           onInput={(e) => onChangeTemplateName((e.target as any).value)}
-    //         />
-    //       </div>
-    //     </>
-    //   )
-    // }
-
     return (
       <RemixUIGridView
         plugin={this}

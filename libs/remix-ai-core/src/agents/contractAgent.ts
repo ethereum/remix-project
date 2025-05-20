@@ -29,6 +29,11 @@ export class ContractAgent {
     return ContractAgent.instance
   }
 
+  /*
+  * Write the result of the generation to the workspace. Compiles the contracts one time and creates a new workspace.
+  * @param payload - The payload containing the generated files
+  * @param userPrompt - The user prompt used to generate the files
+  */
   async writeContracts(payload, userPrompt) {
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
 
@@ -111,9 +116,7 @@ export class ContractAgent {
 
   async fixWorkspaceCompilationErrors(wspAgent:workspaceAgent) {
     try {
-
       const wspfiles = JSON.parse(await wspAgent.getCurrentWorkspaceFiles())
-
       const compResult:CompilationResult = await compilecontracts(wspfiles, this.plugin)
       // console.log('fix workspace Compilation result:', compResult)
 

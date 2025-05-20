@@ -24,7 +24,7 @@ const profile = {
     "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
-  events: ['generatingWorkspace', 'generateWorkspaceDone'],
+  events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
@@ -132,7 +132,7 @@ export class RemixAIPlugin extends ViewPlugin {
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let newPrompt = await this.codeExpAgent.chatCommand(prompt)
     // add workspace context
-    newPrompt = this.workspaceAgent.ctxFiles === undefined || this.workspaceAgent.ctxFiles === "" ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
+    newPrompt = this.workspaceAgent.ctxFiles ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
@@ -185,6 +185,10 @@ export class RemixAIPlugin extends ViewPlugin {
     return this.securityAgent.getReport(file)
   }
 
+  /**
+   * Generates a new remix IDE workspace based on the provided user prompt, optionally using Retrieval-Augmented Generation (RAG) context.
+   * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
+   */
   async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
@@ -207,7 +211,6 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     // Evaluate if this function requires any context
     // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
-    this.emit('generatingWorkspace', userPrompt)
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
@@ -216,10 +219,13 @@ export class RemixAIPlugin extends ViewPlugin {
     }
 
     const genResult = this.contractor.writeContracts(result, userPrompt)
-    this.emit('generateWorkspaceDone', genResult)
     return genResult
   }
 
+  /**
+   * Performs any user action on the entire curren workspace or updates the workspace based on a user prompt, optionally using Retrieval-Augmented Generation (RAG) for additional context.
+   *
+   */
   async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
@@ -240,7 +246,7 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
-    const files = this.workspaceAgent.ctxFiles === undefined || this.workspaceAgent.ctxFiles === "" ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
+    const files = this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
     let result
