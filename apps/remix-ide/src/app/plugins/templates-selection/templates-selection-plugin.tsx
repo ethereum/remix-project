@@ -77,7 +77,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     const generateAIWorkspace = async () => {
       const okAction = async () => {
         RemixAiAssistantChatApi.composer.send( '/generate ' + this.aiState.prompt)
-        // // this.generationResult = await this.call('remixAI', 'generate', this.aiState.prompt, AssistantParams, '', true)
       }
       const aiTemplateModal: AppModal = {
         id: 'TemplatesSelection',
