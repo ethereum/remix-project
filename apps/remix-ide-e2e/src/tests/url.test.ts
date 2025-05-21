@@ -266,7 +266,7 @@ module.exports = {
   },
 
   'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
-     browser
+    browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refreshPage()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
