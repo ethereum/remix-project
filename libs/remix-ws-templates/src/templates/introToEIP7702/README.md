@@ -1,11 +1,11 @@
 # EIP 7702
 
-This Workspace template presents EIP-7701, one of the updates that shipped with the Pectra upgrade (May 2025).
+This Workspace template presents EIP-7702, one of the updates that shipped with the Pectra upgrade (May 2025).
 
 ### Basics
 
 In the Ethereum blockchain there are two different types of accounts:
-- Externally Owned Account (EOA): which require a private key and can initiate transactions
+- Externally Owned Account (EOA): which requires a private key and can initiate transactions
 - Smart Contract Account: which represents code deployed on the blockchain
 
 Until now EOAs could not have code associated with them.
@@ -32,7 +32,7 @@ Setting up the data for the batch:
 Executing the batched transaction:
 - Go to the the deployed token's **balanceOf** function. 
 - Input the first and then the second account to check that each address' token balance has been updated.
-- The is possible because of the 7702 connection between the contract and the first EOA address.
+- This is possible because of the 7702 connection between the contract and the first EOA address.
 
 
 
