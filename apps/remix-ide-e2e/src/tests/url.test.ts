@@ -265,26 +265,26 @@ module.exports = {
       .expect.element('[data-id="contractGUIDeployWithProxy"]').to.be.selected
   },
 
-  // 'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
-  //   browser
-  //     .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
-  //     .refreshPage()
-  //     .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
-  //     .openFile('myTokenV1.sol')
-  //     .waitForElementVisible({
-  //       locateStrategy: 'xpath',
-  //       selector: "//*[contains(@class, 'view-lines') and contains(.,'ERC721Upgradeable')]"
-  //     })
-  //     .clickLaunchIcon('solidity')
-  //     .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
-  //     .click('[data-id="compilerContainerCompileBtn"]')
-  //     .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
-  //     .clickLaunchIcon('udapp')
-  //     .click('select.udapp_contractNames')
-  //     .click('select.udapp_contractNames option[value=MyToken]')
-  //     .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
-  //     .expect.element('[data-id="contractGUIUpgradeImplementation"]').to.be.selected
-  // },
+  'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
+     browser
+      .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
+      .refreshPage()
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
+      .openFile('myTokenV1.sol')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[contains(@class, 'view-lines') and contains(.,'ERC721Upgradeable')]"
+      })
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
+      .clickLaunchIcon('udapp')
+      .click('select.udapp_contractNames')
+      .click('select.udapp_contractNames option[value=MyToken]')
+      .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
+      .expect.element('[data-id="contractGUIUpgradeImplementation"]').to.be.selected
+  },
 
   'Should load using various URL compiler params #group2': function (browser: NightwatchBrowser) {
     browser
@@ -353,15 +353,15 @@ module.exports = {
       .openFile('contracts/governance/UnionGovernor.sol')
   },
 
-  // 'Should execute function call from URL parameters #group3': function (browser: NightwatchBrowser) {
-  //   browser
-  //     .switchWorkspace('default_workspace')
-  //     .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
-  //     .refreshPage()
-  //     .waitForElementVisible('*[data-shared="tooltipPopup"]')
-  //     .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...')
-  //     .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...')
-  // },
+  'Should execute function call from URL parameters #group3': function (browser: NightwatchBrowser) {
+    browser
+      .switchWorkspace('default_workspace')
+      .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
+      .refreshPage()
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...')
+  },
 
   'Import Github folder from URL params #group4': function (browser: NightwatchBrowser) {
     browser
