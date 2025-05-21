@@ -208,10 +208,10 @@ module.exports = {
     init(browser, done) // , 'http://localhost:8080', false)
   },
 ```
-- change package JSON to locally run all group tests:
+- change package JSON to locally run all group tests (point to appropriate config file depending on environment):
 
 ```
-    "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
+    "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
 ```
 
 - run the build script to build the test files if you want to run the locally
