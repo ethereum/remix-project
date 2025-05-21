@@ -1,10 +1,10 @@
 {
-    "version": "v0.64.0",
+    "version": "v0.65.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Support of 'EIP-7702: Set Code for EOAs' for Remix VM",
-    "highlight2": "Support of ERC-4337 enabled Gnosis Safe Smart Accounts for Sepolia testnet",
-    "highlight3": "New workspace templates 'Simple EIP 7702' & 'Account Abstraction'",
+    "highlight1": "New Workspace template 'Intro to EIP-7702'",
+    "highlight2": "Etherscan v2 APIs for contract verification",
+    "highlight3": "Improvement in usage of WalletConnect",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-64-0-85e154acf9a2?source=friends_link&sk=84a191be6da7627535f104e29f311358"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-65-0-a57b55df67ae?source=friends_link&sk=59e4deb73721712e4cf4ac00766bc2f3"
   }
