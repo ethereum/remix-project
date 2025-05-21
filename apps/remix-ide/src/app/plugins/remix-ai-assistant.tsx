@@ -32,17 +32,20 @@ export class RemixAIAssistant extends ViewPlugin {
 
   async onActivation() {
     await this.call('sidePanel', 'pinView', profile)
-    this.on('pinnedPanel', 'pinView', async (profile) => {
+    this.on('pinnedPanel', 'pinnedPlugin', async (profile) => {
+      if (profile.name !== 'remixaiassistant') return
       await this.call('layout', 'maximiseSidePanel')
     })
   }
 
   onDeactivation() {
-
+    this.on('pinnedPanel', 'unPinnedPlugin', async (profile) => {
+      if (profile.name !== 'remixaiassistant') return
+      await this.call('layout', 'resetSidePanel')
+    })
   }
 
   async makePluginCall (pluginName: string, methodName: string, payload: any) {
-    // await this.call('notification', 'alert', `${payload}`)
     try {
       const result = await this.call(pluginName, methodName, payload)
       return result
