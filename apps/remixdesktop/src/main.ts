@@ -165,7 +165,6 @@ ipcMain.handle('config:isE2E', async () => {
 })
 
 ipcMain.handle('config:canTrackMatomo', async (event, name: string) => {
-  return true
   console.log('config:canTrackMatomo', ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E))
   return ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E)
 })
