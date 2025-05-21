@@ -4,7 +4,7 @@ import isElectron from 'is-electron'
 import React from 'react'
 import { action, FileTree, WorkspaceTemplate } from '../types'
 import { ROOT_PATH } from '../utils/constants'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
+import { displayNotification, displayPopUp, focusElement, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
 import { addInputField, createWorkspace, populateWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, generateWorkspace } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -81,6 +81,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
       currentCheck = currentCheck + '/' + value
       await folderAdded(currentCheck)
     }
+    dispatch(focusElement([{ key: file, type: 'file' }]))
   })
 }
 

@@ -44,7 +44,7 @@ export class SolidityScript extends Plugin {
       evmVersion: params.evmVersion,
       optimizer: {
         enabled: params.optimize,
-        runs: params.run
+        runs: params.runs
       }
     }
     const compilation = await compile(

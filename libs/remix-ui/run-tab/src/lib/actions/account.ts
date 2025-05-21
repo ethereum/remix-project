@@ -76,14 +76,16 @@ const _getProviderDropdownValue = (plugin: RunTab): string => {
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  if (executionContext.context === 'walletconnect') {
-    setWalletConnectExecutionContext(plugin, dispatch, executionContext)
-  } else {
-    plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
-      plugin.call('notification', 'toast', alertMsg)
-    }, async () => {
-      setFinalContext(plugin, dispatch)
-    })
+  if (executionContext.context && executionContext.context !== plugin.REACT_API.selectExEnv) {
+    if (executionContext.context === 'walletconnect') {
+      setWalletConnectExecutionContext(plugin, dispatch, executionContext)
+    } else {
+      plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+        plugin.call('notification', 'toast', alertMsg)
+      }, async () => {
+        setFinalContext(plugin, dispatch)
+      })
+    }
   }
 }
 
@@ -273,7 +275,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createdSuccessfully'])
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
-    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'creationFailed'])
+    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `creationFailedWithError:${error.message}`])
     console.error('Failed to create safe smart account: ', error)
     return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
   }
@@ -313,28 +315,27 @@ export const addFileInternal = async (plugin: RunTab, path: string, content: str
 }
 
 const setWalletConnectExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
-  plugin.call('walletconnect', 'isWalletConnected').then((isConnected) => {
-    if (isConnected) {
-      plugin.call('walletconnect', 'openModal').then(() => {
-        plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
-          plugin.call('notification', 'toast', alertMsg)
-        }, async () => {
-          setFinalContext(plugin, dispatch)
-        })
+  plugin.call('walletconnect', 'openModal').then(() => {
+    plugin.on('walletconnect', 'connectionSuccessful', () => {
+      plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
+        plugin.call('notification', 'toast', alertMsg)
+      }, async () => {
+        setFinalContext(plugin, dispatch)
       })
-    } else {
-      plugin.call('walletconnect', 'openModal').then(() => {
-        plugin.on('walletconnect', 'connectionSuccessful', () => {
-          plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
-            plugin.call('notification', 'toast', alertMsg)
-          }, async () => {
-            setFinalContext(plugin, dispatch)
-          })
-        })
-        plugin.on('walletconnect', 'connectionFailed', () => {
-          plugin.call('notification', 'toast', 'Connection failed')
-        })
-      })
-    }
+    })
+    plugin.on('walletconnect', 'connectionFailed', (msg) => {
+      plugin.call('notification', 'toast', msg)
+      cleanupWalletConnectEvents(plugin)
+    })
+    plugin.on('walletconnect', 'connectionDisconnected', (msg) => {
+      plugin.call('notification', 'toast', msg)
+      cleanupWalletConnectEvents(plugin)
+    })
   })
+}
+
+const cleanupWalletConnectEvents = (plugin: RunTab) => {
+  plugin.off('walletconnect', 'connectionFailed')
+  plugin.off('walletconnect', 'connectionDisconnected')
+  plugin.off('walletconnect', 'connectionSuccessful')
 }

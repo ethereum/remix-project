@@ -30,8 +30,6 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
       .addFile('ks2a.sol', sources[0]['ks2a.sol'])
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
       .openFile('.deps/remix-tests/remix_tests.sol')
       // remix_test.sol should be opened in editor
       .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
@@ -48,6 +46,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
       .clickLaunchIcon('filePanel')
+      .openFile('tests/simple_storage_test.sol')
       .waitForElementPresent('*[data-path="default_workspace/tests/simple_storage_test.sol"]')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },

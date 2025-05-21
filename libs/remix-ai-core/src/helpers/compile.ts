@@ -52,7 +52,7 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
       return { compilationSucceeded: false, errors: msg, errfiles: errorFiles }
     }
 
-    if (data.error && data.error.length) {
+    if (data.error) {
       errorFiles['contracts'] = contracts
       errorFiles['error'] = data.error
       const msg = `
@@ -63,7 +63,6 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
 
     return { compilationSucceeded: true, errors: null }
   } catch (err) {
-    // console.error('Error during compilation:', err)
     return { compilationSucceeded: false, errors: 'An unexpected error occurred during compilation.' }
   }
 }

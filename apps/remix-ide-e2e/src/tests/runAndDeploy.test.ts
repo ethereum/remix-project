@@ -169,6 +169,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       .openFile('scripts/deploy_with_web3.ts')
       .click('[data-id="play-editor"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'address:')
+      .openFile('.states/vm-london/state.json')
       .waitForElementPresent('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
       .click('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
       .pause(1000)

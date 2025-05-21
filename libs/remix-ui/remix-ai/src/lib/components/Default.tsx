@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
-import { AiChatUIOverrides, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
-import { AiChat, AiChatUI, useAsStreamAdapter, ChatItem } from '@nlux/react';
-import { DefaultModels, ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, parseUserInput, setProvider } from '@remix/remix-ai-core';
+import { ConversationStarter, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
+import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
 // import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes';
 import copy from 'copy-to-clipboard'
-import { parse } from 'path';
 
 export let ChatApi = null
 

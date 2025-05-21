@@ -27,6 +27,9 @@ import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 const _paq = (window._paq = window._paq || [])
 
+// Key for localStorage
+const HIDE_PASTE_WARNING_KEY = 'remixide.hide_paste_warning';
+
 enum MarkerSeverity {
   Hint = 1,
   Info = 2,
@@ -644,25 +647,43 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste(async (e) => {
-      if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      // Only show the modal if the user hasn't opted out
+      if (showPasteWarning && !pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         // get the file name
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
+
+        // State for the checkbox inside this specific modal instance
+        let dontShowAgainChecked = false;
+
+        const handleClose = (askAI = false) => {
+          if (dontShowAgainChecked) {
+            try {
+              localStorage.setItem(HIDE_PASTE_WARNING_KEY, 'true');
+              setShowPasteWarning(false); // Update state to prevent future modals in this session
+            } catch (e) {
+              console.error("Failed to write to localStorage:", e);
+            }
+          }
+          if (askAI) {
+            // Proceed with the original okFn logic
+            (async () => {
+              await props.plugin.call('popupPanel', 'showPopupPanel', true)
+              setTimeout(async () => {
+                props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+              }, 500)
+              _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
+            })();
+          }
+        };
 
         const modalContent: AppModal = {
           id: 'newCodePasted',
           title: "New code pasted",
           okLabel: 'Ask RemixAI',
           cancelLabel: 'Close',
-          cancelFn: () => {},
-          okFn: async () => {
-            await props.plugin.call('popupPanel', 'showPopupPanel', true)
-            setTimeout(async () => {
-              props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
-            }, 500)
-            // add matamo event
-            _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
-          },
+          cancelFn: () => handleClose(false), // Pass false for askAI
+          okFn: () => handleClose(true), // Pass true for askAI
           message: (
             <div>
               {' '}
@@ -691,6 +712,18 @@ export const EditorUI = (props: EditorUIProps) => {
                     }}
                   />
                 </div>
+              </div>
+              {/* Added Checkbox section below */}
+              <div className="mt-3">
+                <label htmlFor="donotshowagain" className="text-dark">
+                  <input
+                    type="checkbox"
+                    id="donotshowagain"
+                    className="mr-2"
+                    onChange={(e) => dontShowAgainChecked = e.target.checked}
+                  />
+                  <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
+                </label>
               </div>
             </div>
           )
@@ -1037,6 +1070,15 @@ export const EditorUI = (props: EditorUIProps) => {
 
     loadTypes(monacoRef.current)
   }
+
+  const [showPasteWarning, setShowPasteWarning] = useState(() => {
+    try {
+      return localStorage.getItem(HIDE_PASTE_WARNING_KEY) !== 'true';
+    } catch (e) {
+      console.error("Failed to access localStorage:", e);
+      return true; // Default to showing the warning if localStorage fails
+    }
+  });
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">

@@ -47,7 +47,6 @@ export class EtherscanVerifier extends AbstractVerifier {
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
     const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
     const formData = new FormData()
-    formData.append('chainId', submittedContract.chainId)
     formData.append('codeformat', 'solidity-standard-json-input')
     formData.append('sourceCode', compilerAbstract.input.toString())
     formData.append('contractaddress', submittedContract.address)
@@ -56,6 +55,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs?.replace('0x', '') ?? '')
 
     const url = new URL(this.apiUrl + '/api')
+    url.searchParams.append('chainid', submittedContract.chainId)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'verifysourcecode')
     if (this.apiKey) {
@@ -98,6 +98,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     formData.append('expectedimplementation', submittedContract.address)
 
     const url = new URL(this.apiUrl + '/api')
+    url.searchParams.append('chainid', submittedContract.chainId)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'verifyproxycontract')
     if (this.apiKey) {
@@ -129,8 +130,9 @@ export class EtherscanVerifier extends AbstractVerifier {
     return { status: 'pending', receiptId: verificationResponse.result }
   }
 
-  async checkVerificationStatus(receiptId: string): Promise<VerificationResponse> {
+  async checkVerificationStatus(receiptId: string, chainId: string): Promise<VerificationResponse> {
     const url = new URL(this.apiUrl + '/api')
+    url.searchParams.append('chainid', chainId)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'checkverifystatus')
     url.searchParams.append('guid', receiptId)
@@ -173,8 +175,9 @@ export class EtherscanVerifier extends AbstractVerifier {
     return { status: 'unknown', receiptId }
   }
 
-  async checkProxyVerificationStatus(receiptId: string): Promise<VerificationResponse> {
+  async checkProxyVerificationStatus(receiptId: string, chainId: string): Promise<VerificationResponse> {
     const url = new URL(this.apiUrl + '/api')
+    url.searchParams.append('chainid', chainId)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'checkproxyverification')
     url.searchParams.append('guid', receiptId)
@@ -216,6 +219,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
     const url = new URL(this.apiUrl + '/api')
+    url.searchParams.append('chainid', chainId)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'getsourcecode')
     url.searchParams.append('address', contractAddress)
