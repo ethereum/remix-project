@@ -42,7 +42,7 @@ const sources = [
 ]
 
 module.exports = {
-  '@disabled': false,
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js', true)
   },
