@@ -44,7 +44,8 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
   const [links, setLinks] = useState<{
     Documentation: string
     CanDeactivate: boolean
-  }>({} as {Documentation: string; CanDeactivate: boolean})
+    CloseOthers: boolean
+  }>({} as {Documentation: string; CanDeactivate: boolean; CloseOthers: boolean})
   const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // @ts-ignore
   const [pageX, setPageX] = useState<number>(null)
@@ -57,9 +58,9 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = iconRecord.canbeDeactivated
     if (documentation && documentation.length > 0 && deactivationState) {
-      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState, CloseOthers: true })
     } else {
-      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState, CloseOthers: true })
     }
     setShowContext(false)
     setPageX(e.pageX)
