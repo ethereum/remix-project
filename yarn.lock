@@ -5182,9 +5182,9 @@
     pathval "1.1.1"
     type-detect "4.0.8"
 
-"@nlux@github:remix-project-org/nlux#v0.65.4":
+"@nlux@github:remix-project-org/nlux#v0.65.5":
   version "0.65.0"
-  resolved "https://codeload.github.com/remix-project-org/nlux/tar.gz/80446845bda70574007d41624847ebaf4dfad156"
+  resolved "https://codeload.github.com/remix-project-org/nlux/tar.gz/7cad7392a649cf631e629e9f1ae68caed65ab688"
 
 "@noble/ciphers@1.2.1":
   version "1.2.1"
