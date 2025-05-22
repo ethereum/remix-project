@@ -13,7 +13,7 @@ But with the Pectra upgrade, EOAs can now host and can directly run code.
 
 ### Demo of a batched transaction
 
-This demo will show an example of a batched (not botched) transaction. Before batching, sending a token required two transactions: one to allow the transfer and another to send the token.  With batching, these function calls can be done in a single transaction.
+This demo will show an example of a batched transaction. Before batching with EIP7702, sending a token required two transactions: one to allow the transfer and another to send the token.  With batching, these function calls can be done in a single transaction.
 
 Assign a piece of code to an EOA:
 
@@ -24,7 +24,11 @@ Assign a piece of code to an EOA:
 - In Deploy and Run, check the new deployed contract. It has the same address as the EOA that was assigned to SIMPLE7702ACCOUNT.
 
 Setting up the data for the batch:
-- Run the script `run-eip7702.ts`.   
+
+- Run the script `run-eip7702.ts`.  
+
+The script `run-eip7702.ts` will deploy two contracts, MyToken and Spender. It will then mint 1000000 token to the first address of the Remix VM.  Then it will encode the approval for the Spender address to spend and it will encode the call to the send function of 10000 tokens to the second account of the Remix VM.  The encodings will be logged the terminal. 
+
 - In the terminal, copy the logged data from console.log(executeBatch).
 - Back in Deploy & Run, find the DELEGATED SIMPLE7702ACCOUNT and open it up to see its functions.
 - In the **executeBatch** function, paste the data and then run the transaction.
