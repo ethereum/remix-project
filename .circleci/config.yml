@@ -354,8 +354,8 @@ jobs:
 
       - run: 
           command: |
-            nvm install 20.5
-            nvm use 20.5
+            nvm install 22.12
+            nvm use 22.12
             node -v
             npx -v
             npm install --global yarn
@@ -408,8 +408,8 @@ jobs:
 
       - run: 
           command: |
-            nvm install 20.5
-            nvm use 20.5
+            nvm install 22.12
+            nvm use 22.12
             node -v
             npx -v
             npm install --global yarn
@@ -427,7 +427,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
-              nvm use 20.5
+              nvm use 22.12
               node -v
               python -m pip install --upgrade pip
               pip install setuptools
