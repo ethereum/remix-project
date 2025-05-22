@@ -130,7 +130,6 @@ export function RemixUiRemixAiAssistant(props: any) {
           submitShortcut: 'Enter',
           hideStopButton: false,
           remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-          addContextFiles: props.makePluginCall,
           pluginMethodCall: props.makePluginCall,
         }}
         messageOptions={{ showCodeBlockCopyButton: true,

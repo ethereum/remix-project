@@ -7,7 +7,7 @@ import { EventEmitter } from 'events'
 const profile = {
   name: 'remixaiassistant',
   displayName: 'Remix AI Assistant',
-  icon: 'assets/img/aiLogoHead.webp',
+  icon: 'assets/img/remixai-logoDefault.webp',
   description: 'AI code assistant for Remix IDE',
   kind: 'remixaiassistant',
   location: 'sidePanel',
@@ -31,18 +31,15 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
-    await this.call('sidePanel', 'pinView', profile)
-    this.on('pinnedPanel', 'pinnedPlugin', async (profile) => {
-      if (profile.name !== 'remixaiassistant') return
-      await this.call('layout', 'maximiseSidePanel')
-    })
+    // await this.call('sidePanel', 'pinView', profile)
+    // this.on('pinnedPanel', 'pinnedPlugin', async (profile) => {
+    //   if (profile.name !== 'remixaiassistant') return
+    //   await this.call('layout', 'maximiseSidePanel')
+    // })
   }
 
   onDeactivation() {
-    this.on('pinnedPanel', 'unPinnedPlugin', async (profile) => {
-      if (profile.name !== 'remixaiassistant') return
-      await this.call('layout', 'resetSidePanel')
-    })
+
   }
 
   async makePluginCall (pluginName: string, methodName: string, payload: any) {

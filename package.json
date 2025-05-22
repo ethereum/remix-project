@@ -110,7 +110,7 @@
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@metamask/eth-sig-util": "^7.0.2",
     "@microlink/react-json-view": "^1.23.0",
-    "@nlux": "github:remix-project-org/nlux#v0.65.4",
+    "@nlux": "github:remix-project-org/nlux#v0.65.5",
     "@noir-lang/noir_wasm": "^1.0.0-beta.2",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/upgrades-core": "^1.30.0",
