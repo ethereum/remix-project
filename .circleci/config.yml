@@ -8,10 +8,10 @@ parameters:
     default: false
   mac:
     type: boolean
-    default: false
+    default: true
   linux:
     type: boolean
-    default: true
+    default: false
   web:
     type: boolean
     default: false
@@ -545,14 +545,14 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.5
-            nvm use 20.5
+            nvm install 22.12
+            nvm use 22.12
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.12
             cd apps/remixdesktop 
             yarn || yarn
             find ./node_modules
@@ -564,14 +564,14 @@ jobs:
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.12
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.12
             cd apps/remixdesktop
             yarn installRipGrepMacOX<< parameters.arch >>
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false ./rundist.bash --<< parameters.arch >>
@@ -616,15 +616,15 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.5
-            nvm use 20.5
+            nvm install 22.5
+            nvm use 22.5
             /usr/sbin/softwareupdate --install-rosetta --agree-to-license
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.5
             cd apps/remixdesktop 
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
@@ -634,14 +634,14 @@ jobs:
             - apps/remixdesktop/node_modules
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.5
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 20.5
+            nvm use 22.5
             cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64   
@@ -649,13 +649,13 @@ jobs:
       - run:
           name: "Run tests"
           command: |
-            nvm use 20.5
+            nvm use 22.5
             cd apps/remixdesktop
             ./run_ci_test.sh  
       - run:
           name: "Run isogit tests"
           command: |
-            nvm use 20.5
+            nvm use 22.5
             cd apps/remixdesktop
             ./run_git_ui_isogit_tests.sh
       - store_test_results:
