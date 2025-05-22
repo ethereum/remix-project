@@ -267,7 +267,7 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - node/install:
             install-yarn: true
-            node-version: '20.5'
+            node-version: '22.12'
         - run: 
             command: |
                 node -v
@@ -309,8 +309,8 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
-                nvm install 20.5
-                nvm use 20.5
+                nvm install 22.12
+                nvm use 22.12
                 node -v
                 npm install --global yarn node-gyp
                 python -m pip install --upgrade pip
