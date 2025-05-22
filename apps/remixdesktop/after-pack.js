@@ -8,7 +8,7 @@ exports.default = async function (context) {
     console.log('context outdir', context.appOutDir);
     // Copy the node-pty module to the app folder
     await fs.copy(
-        path.join('./node_modules', 'node-pty'),
-        path.join(resourcesPath, 'node_modules', 'node-pty')
+        path.join('./node_modules', 'node-pty-prebuilt-multiarch'),
+        path.join(resourcesPath, 'node_modules', 'node-pty-prebuilt-multiarch')
     );
 };
