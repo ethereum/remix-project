@@ -86,6 +86,7 @@
   "udapp.environmentDocs": "Click for docs about Environment",
   "udapp.tooltipText2": "Open chainlist.org and get the connection specs of the chain you want to interact with.",
   "udapp.tooltipText3": "Click to open a bridge for converting L1 mainnet ETH to the selected network currency.",
+  "udapp.tooltipText14": "Click to open a wallet connect modal.",
 
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
   "udapp.deployedContracts": "Deployed Contracts",

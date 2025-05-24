@@ -173,7 +173,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/XvMmgehAMq\n
+  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/XcvfUpZPsG\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `
@@ -647,20 +647,19 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste(async (e) => {
+      const shouldShowWarning = localStorage.getItem(HIDE_PASTE_WARNING_KEY) !== 'true';
       // Only show the modal if the user hasn't opted out
-      if (showPasteWarning && !pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      if (shouldShowWarning && !pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         // get the file name
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
 
         // State for the checkbox inside this specific modal instance
         let dontShowAgainChecked = false;
-
         const handleClose = (askAI = false) => {
           if (dontShowAgainChecked) {
             try {
               localStorage.setItem(HIDE_PASTE_WARNING_KEY, 'true');
-              setShowPasteWarning(false); // Update state to prevent future modals in this session
             } catch (e) {
               console.error("Failed to write to localStorage:", e);
             }
@@ -1070,15 +1069,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
     loadTypes(monacoRef.current)
   }
-
-  const [showPasteWarning, setShowPasteWarning] = useState(() => {
-    try {
-      return localStorage.getItem(HIDE_PASTE_WARNING_KEY) !== 'true';
-    } catch (e) {
-      console.error("Failed to access localStorage:", e);
-      return true; // Default to showing the warning if localStorage fails
-    }
-  });
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
