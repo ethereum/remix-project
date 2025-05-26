@@ -378,6 +378,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }, [props.currentFile, props.isDiff])
 
   const inlineCompletionProvider = new RemixInLineCompletionProvider(props)
+  const hoverProvider = new RemixHoverProvider(props)
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -813,15 +814,25 @@ export const EditorUI = (props: EditorUIProps) => {
             const decorations = editor.createDecorationsCollection()
 
             decorations.set([{
-              range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column),
+              range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line + 5, cln.start.column),
               options: {
                 isWholeLine: true,
                 className: 'rightLineDecoration',
                 marginClassName: 'rightLineDecoration',
               }
+            }, {
+              range: new monacoRef.current.Range(cln.start.line + 5, cln.start.column, cln.start.line + 10, cln.start.column),
+              options: {
+                isWholeLine: true,
+                className: 'leftLineDecoration',
+                marginClassName: 'leftLineDecoration',
+              }
             }])
 
-            addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
+            hoverProvider.addTriggerRangeAction('generateDocumentation', new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column), () => {
+              console.log('adding changes option widget')
+              addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
+            })
 
             console.log('query: ', query)
             // inlineCompletionProvider.setGenDocsConfig(range, query, editor)
@@ -1048,7 +1059,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
-    monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
+    monacoRef.current.languages.registerHoverProvider('remix-solidity', hoverProvider)
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', inlineCompletionProvider)
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
@@ -1077,7 +1088,8 @@ export const EditorUI = (props: EditorUIProps) => {
         innerContainer.style.left = '80%'
 
         const acceptBtn = document.createElement('button')
-        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1', 'text-ai'])
+        acceptBtn.style.backgroundColor = 'var(--ai)'
+        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1', 'text-dark'])
         acceptBtn.style.fontSize = '0.8rem'
         acceptBtn.textContent = 'Accept'
 
