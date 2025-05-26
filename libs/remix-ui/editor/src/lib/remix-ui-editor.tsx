@@ -26,8 +26,10 @@ import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
-import { providers } from 'ethers'
 const _paq = (window._paq = window._paq || [])
+
+// Key for localStorage
+const HIDE_PASTE_WARNING_KEY = 'remixide.hide_paste_warning';
 
 enum MarkerSeverity {
   Hint = 1,
@@ -172,7 +174,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/mMNnEgsRzh\n
+  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/XcvfUpZPsG\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `
@@ -184,7 +186,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
-  let currenFunctionNode = useRef('')
+  let currentFunctionNode = useRef('')
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -648,25 +650,42 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste(async (e) => {
-      if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      const shouldShowWarning = localStorage.getItem(HIDE_PASTE_WARNING_KEY) !== 'true';
+      // Only show the modal if the user hasn't opted out
+      if (shouldShowWarning && !pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         // get the file name
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
+
+        // State for the checkbox inside this specific modal instance
+        let dontShowAgainChecked = false;
+        const handleClose = (askAI = false) => {
+          if (dontShowAgainChecked) {
+            try {
+              localStorage.setItem(HIDE_PASTE_WARNING_KEY, 'true');
+            } catch (e) {
+              console.error("Failed to write to localStorage:", e);
+            }
+          }
+          if (askAI) {
+            // Proceed with the original okFn logic
+            (async () => {
+              await props.plugin.call('popupPanel', 'showPopupPanel', true)
+              setTimeout(async () => {
+                props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
+              }, 500)
+              _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
+            })();
+          }
+        };
 
         const modalContent: AppModal = {
           id: 'newCodePasted',
           title: "New code pasted",
           okLabel: 'Ask RemixAI',
           cancelLabel: 'Close',
-          cancelFn: () => {},
-          okFn: async () => {
-            await props.plugin.call('popupPanel', 'showPopupPanel', true)
-            setTimeout(async () => {
-              props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
-            }, 500)
-            // add matamo event
-            _paq.push(['trackEvent', 'ai', 'remixAI', 'vulnerability_check_pasted_code'])
-          },
+          cancelFn: () => handleClose(false), // Pass false for askAI
+          okFn: () => handleClose(true), // Pass true for askAI
           message: (
             <div>
               {' '}
@@ -695,6 +714,18 @@ export const EditorUI = (props: EditorUIProps) => {
                     }}
                   />
                 </div>
+              </div>
+              {/* Added Checkbox section below */}
+              <div className="mt-3">
+                <label htmlFor="donotshowagain" className="text-dark">
+                  <input
+                    type="checkbox"
+                    id="donotshowagain"
+                    className="mr-2"
+                    onChange={(e) => dontShowAgainChecked = e.target.checked}
+                  />
+                  <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
+                </label>
               </div>
             </div>
           )
@@ -785,7 +816,7 @@ export const EditorUI = (props: EditorUIProps) => {
         // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
           const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
           const natSpecCom = "\n" + extractNatspecComments(cm)
-          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
+          const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currentFunctionNode)
           const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
           const lines = natSpecCom.split('\n')
           const newNatSpecCom = []
@@ -942,7 +973,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        currenFunctionNode = functionImpl
+        currentFunctionNode = functionImpl
 
         executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)

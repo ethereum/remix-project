@@ -1,7 +1,7 @@
 import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
 import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
-import { ethers } from 'ethers'
+import { getAddress } from 'ethers'
 
 interface SourcifyVerificationRequest {
   address: string
@@ -144,7 +144,7 @@ export class SourcifyVerifier extends AbstractVerifier {
 
     for (const file of files) {
       let filePath: string
-      for (const a of [contractAddress, ethers.utils.getAddress(contractAddress)]) {
+      for (const a of [contractAddress, getAddress(contractAddress)]) {
         const matching = file.path.match(`/${a}/(.*)$`)
         if (matching) {
           filePath = matching[1]

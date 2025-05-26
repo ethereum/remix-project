@@ -203,7 +203,8 @@ export class CompilerArtefacts extends Plugin {
   }
 
   get(key) {
-    return this.compilersArtefacts[key] || this.compilersArtefacts[toChecksumAddress(key)]
+    const checksumed = (key && key.startsWith('0x')) ? toChecksumAddress(key) : key
+    return this.compilersArtefacts[key] || this.compilersArtefacts[checksumed]
   }
 
   async getContractDataFromAddress(address) {

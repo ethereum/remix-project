@@ -1,5 +1,6 @@
 import { signTypedData, SignTypedDataVersion, TypedMessage, MessageTypes } from '@metamask/eth-sig-util'
-import { privateToAddress, toChecksumAddress, isValidPrivate, Address, toBytes, bytesToHex, Account } from '@ethereumjs/util'
+import { privateToAddress, toChecksumAddress, isValidPrivate, createAddressFromString, toBytes, bytesToHex, Account } from '@ethereumjs/util'
+import type { PrefixedHexString } from '@ethereumjs/util'
 import { privateKeyToAccount } from 'web3-eth-accounts'
 import { toBigInt, toHex } from 'web3-utils'
 import * as crypto from 'crypto'
@@ -46,20 +47,20 @@ export class Web3Accounts {
 
   async _addAccount (privateKey, balance) {
     try {
-      if (typeof privateKey === 'string') privateKey = toBytes('0x' + privateKey)
+      if (typeof privateKey === 'string') privateKey = toBytes(('0x' + privateKey) as PrefixedHexString)
       const address: Uint8Array = privateToAddress(privateKey)
       const addressStr = toChecksumAddress(bytesToHex(address))
       this.accounts[addressStr] = { privateKey, nonce: 0 }
       this.accountsKeys[addressStr] = bytesToHex(privateKey)
 
       const stateManager = this.vmContext.vm().stateManager
-      const account = await stateManager.getAccount(Address.fromString(addressStr))
+      const account = await stateManager.getAccount(createAddressFromString(addressStr))
       if (!account) {
         const account = new Account(BigInt(0), toBigInt(balance || '0xf00000000000000001'))
-        await stateManager.putAccount(Address.fromString(addressStr), account)
+        await stateManager.putAccount(createAddressFromString(addressStr), account)
       } else {
         account.balance = toBigInt(balance || '0xf00000000000000001')
-        await stateManager.putAccount(Address.fromString(addressStr), account)
+        await stateManager.putAccount(createAddressFromString(addressStr), account)
       }
     } catch (e) {
       console.error(e)
@@ -84,12 +85,18 @@ export class Web3Accounts {
       eth_sign: this.eth_sign.bind(this),
       eth_chainId: this.eth_chainId.bind(this),
       eth_signTypedData: this.eth_signTypedData_v4.bind(this), // default call is using V4
-      eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this)
+      eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this),
+      eth_getPKey: this.eth_getPKey.bind(this),
     }
   }
 
   eth_requestAccounts (_payload, cb) {
     return cb(null, Object.keys(this.accounts))
+  }
+
+  eth_getPKey (payload, cb) {
+    const address = toChecksumAddress(payload.params[0])
+    cb(null, this.accounts[address].privateKey)
   }
 
   eth_accounts (_payload, cb) {
@@ -98,7 +105,7 @@ export class Web3Accounts {
 
   eth_getBalance (payload, cb) {
     const address = payload.params[0]
-    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
+    this.vmContext.vm().stateManager.getAccount(createAddressFromString(address)).then((account) => {
       if (!account) return cb(null, toBigInt(0).toString(10))
       if (!account.balance) return cb(null, toBigInt(0).toString(10))
       cb(null, toBigInt(account.balance).toString(10))

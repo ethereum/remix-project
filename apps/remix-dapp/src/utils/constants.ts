@@ -42,12 +42,11 @@ export const constants = {
     zkSync,
     zora,
   ],
-};
-
-export const PROJECT_ID = 'a4ba105e642ae64cdb5b9a86debc0a66';
-export const METADATA = {
-  name: 'Quick Dapp',
-  description: 'Quick Dapp',
-  url: window.origin,
-  icons: ['https://remix.ethereum.org/favicon.ico'],
+  PROJECT_ID: 'a4ba105e642ae64cdb5b9a86debc0a66',
+  METADATA: {
+    name: 'Quick Dapp',
+    description: 'Quick Dapp',
+    url: window.origin,
+    icons: ['https://remix.ethereum.org/favicon.ico'],
+  }
 };

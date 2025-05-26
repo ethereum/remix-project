@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { format } from 'util'
 import { Plugin } from '@remixproject/engine'
-import { compile } from '@remix-project/remix-solidity'
+import { compile, CompilerSettings } from '@remix-project/remix-solidity'
 import { Transaction } from 'web3-types'
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
@@ -40,11 +40,23 @@ export class SolidityScript extends Plugin {
     const targets = { 'script.sol': { content } }
 
     // compile
-    const compilation = await compile(targets, params, async (url, cb) => {
-      await this.call('contentImport', 'resolveAndSave', url)
-        .then((result) => cb(null, result))
-        .catch((error) => cb(error.message))
-    })
+    const settings: CompilerSettings = {
+      evmVersion: params.evmVersion,
+      optimizer: {
+        enabled: params.optimize,
+        runs: params.runs
+      }
+    }
+    const compilation = await compile(
+      targets,
+      settings,
+      params.language,
+      params.version,
+      async (url, cb) => {
+        await this.call('contentImport', 'resolveAndSave', url)
+          .then((result) => cb(null, result))
+          .catch((error) => cb(error.message))
+      })
 
     if (compilation.data.error) {
       this.call('terminal', 'log', compilation.data.error.formattedMessage)

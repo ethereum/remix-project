@@ -4765,7 +4765,7 @@ readers do not read off random characters that represent icons */
   border-width: 0; }
 
 /*!
- * Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2024 Fonticons, Inc.
  */
@@ -6375,7 +6375,7 @@ readers do not read off random characters that represent icons */
   --fa: "\f3f6"; }
 
 /*!
- * Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2024 Fonticons, Inc.
  */
@@ -6395,7 +6395,7 @@ readers do not read off random characters that represent icons */
   font-weight: 300; }
 
 /*!
- * Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2024 Fonticons, Inc.
  */
@@ -6415,7 +6415,7 @@ readers do not read off random characters that represent icons */
   font-weight: 400; }
 
 /*!
- * Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2024 Fonticons, Inc.
  */
@@ -6435,7 +6435,7 @@ readers do not read off random characters that represent icons */
   font-weight: 900; }
 
 /*!
- * Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com
+ * Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2024 Fonticons, Inc.
  */
@@ -6493,6 +6493,7 @@ readers do not read off random characters that represent icons */
 .fak.fa-fa-dock-r, .fa-kit.fa-fa-dock-r { --fa: "\e006"; --fa--fa: "\e006\e006"; }
 .fak.fa-lexon, .fa-kit.fa-lexon { --fa: "\e004"; --fa--fa: "\e004\e004"; }
 .fak.fa-noir, .fa-kit.fa-noir { --fa: "\e00a"; --fa--fa: "\e00a\e00a"; }
+.fak.fa-remixai, .fa-kit.fa-remixai { --fa: "\e00c"; --fa--fa: "\e00c\e00c"; }
 .fak.fa-solid-gear-circle-play, .fa-kit.fa-solid-gear-circle-play { --fa: "\e009"; --fa--fa: "\e009\e009"; }
 .fak.fa-solidity-mono, .fa-kit.fa-solidity-mono { --fa: "\e005"; --fa--fa: "\e005\e005"; }
 .fak.fa-ts-logo, .fa-kit.fa-ts-logo { --fa: "\e003"; --fa--fa: "\e003\e003"; }

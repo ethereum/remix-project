@@ -87,6 +87,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (workspaceName) {
       api.setAppParameter('configFilePath', defaultPath)
+      // reset 'createFileOnce' in case of new workspace creation
+      setState((prevState) => {
+        return { ...prevState, createFileOnce: true }
+      })
       if (state.useFileConfiguration) {
         api.fileExists(defaultPath).then((exists) => {
           if (!exists && state.useFileConfiguration) {
@@ -98,15 +102,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setShowFilePathInput(false)
     }
   }, [workspaceName])
-
-  useEffect(() => {
-    if (state.useFileConfiguration) {
-      api.fileExists(defaultPath).then((exists) => {
-        if (!exists) createNewConfigFile()
-      })
-      setToggleExpander(true)
-    }
-  }, [state.useFileConfiguration])
 
   useEffect(() => {
     if (online && state.onlyDownloaded){
@@ -246,7 +241,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     compileTabLogic.setUseFileConfiguration(state.useFileConfiguration)
-    if (state.useFileConfiguration) compileTabLogic.setConfigFilePath(configFilePath)
+    if (state.useFileConfiguration) {
+      compileTabLogic.setConfigFilePath(configFilePath)
+      if (state.createFileOnce && workspaceName) {
+        api.fileExists(defaultPath).then((exists) => {
+          if (!exists) createNewConfigFile()
+        })
+        setToggleExpander(true)
+        setState((prevState) => {
+          return { ...prevState, createFileOnce: false }
+        })
+      }
+    }
   }, [state.useFileConfiguration])
 
   useEffect(() => {
@@ -256,16 +262,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [configurationSettings])
 
   const toggleConfigType = () => {
-    if (state.useFileConfiguration)
-      if (state.createFileOnce) {
-        api.fileExists(defaultPath).then((exists) => {
-          if (!exists || state.useFileConfiguration) createNewConfigFile()
-        })
-        setState((prevState) => {
-          return { ...prevState, createFileOnce: false }
-        })
-      }
-
     setState((prevState) => {
       api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
       return { ...prevState, useFileConfiguration: !state.useFileConfiguration }

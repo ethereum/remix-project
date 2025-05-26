@@ -33,6 +33,7 @@ export function SettingsUI(props: SettingsProps) {
         setAccount={props.setAccount}
         createNewBlockchainAccount={props.createNewBlockchainAccount}
         createNewSmartAccount={props.createNewSmartAccount}
+        delegationAuthorization={props.delegationAuthorization}
         setPassphrase={props.setPassphrase}
         setMatchPassphrase={props.setMatchPassphrase}
         tooltip={props.tooltip}
