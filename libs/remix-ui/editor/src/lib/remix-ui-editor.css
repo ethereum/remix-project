@@ -39,8 +39,7 @@ div.monaco-list-row > span.title {
 }
 
 .rightLineDecoration {
-    background-color: #000 !important;
-    color: #000;
-    filter: opacity(0.5);
+    background-color: var(--ai) !important;
+    filter: opacity(0.1);
     font-weight: bolder;
 }

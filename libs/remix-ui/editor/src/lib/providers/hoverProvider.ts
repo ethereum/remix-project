@@ -1,17 +1,39 @@
-
-import { Monaco } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor';
 import { EditorUIProps } from '../remix-ui-editor'
 import { monacoTypes } from '@remix-ui/editor';
 export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
 
   props: EditorUIProps
-  monaco: Monaco
-  constructor(props: any, monaco: any) {
+  triggerRangeActions: {
+    id: string
+    range: monacoTypes.Range
+    action: () => void
+  }[]
+
+  constructor(props: any) {
     this.props = props
-    this.monaco = monaco
+    this.triggerRangeActions = []
   }
 
-  provideHover = async function (model: monacoTypes.editor.ITextModel, position: monacoTypes.Position): Promise<monacoTypes.languages.Hover> {
+  addTriggerRangeAction (id: string, range: monacoTypes.Range, action: () => void) {
+    this.triggerRangeActions.push({ id, range, action })
+  }
+
+  removeTriggerRangeAction (id: string) {
+    this.triggerRangeActions = this.triggerRangeActions.filter(action => action.id !== id)
+  }
+
+  async provideHover (model: monacoTypes.editor.ITextModel, position: monacoTypes.Position): Promise<monacoTypes.languages.Hover> {
+    console.log('position: ', position)
+    for (const action of this.triggerRangeActions) {
+      if (action.range.startLineNumber <= position.lineNumber &&
+          action.range.endLineNumber >= position.lineNumber &&
+          action.range.startColumn <= position.column &&
+          action.range.endColumn >= position.column) {
+        action.action()
+      }
+    }
+
     const cursorPosition = this.props.editorAPI.getHoverPosition(position)
     const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
     const contents = []
@@ -191,7 +213,7 @@ export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
     },1000)
 
     return {
-      range: new this.monaco.Range(
+      range: new monaco.Range(
         position.lineNumber,
         position.column,
         position.lineNumber,
