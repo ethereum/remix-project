@@ -19,15 +19,12 @@ const MatomoDialog = (props: MatomoDialogProps) => {
   let { settings, showMatomo, appManager } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
-  showMatomo = true // remove this before merging
 
   const message = () => {
     return (
       <>
         <p>
-          <FormattedMessage id="remixApp.matomoText1" />
-        </p>
-        <p>
+          <FormattedMessage id="remixApp.matomoText1" /><br/>
           <FormattedMessage
             id="remixApp.matomoText2"
             values={{
@@ -53,6 +50,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         okFn: handleModalOkClick,
         cancelLabel: <FormattedMessage id="remixApp.managePreferences" />,
         cancelFn: declineModal,
+        showCancelIcon: false,
         preventBlur: true
       })
     }
