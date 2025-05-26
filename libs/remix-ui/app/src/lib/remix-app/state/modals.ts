@@ -12,7 +12,8 @@ export const ModalInitialState: ModalState = {
     okLabel: '',
     okFn: () => { },
     cancelLabel: '',
-    cancelFn: () => { }
+    cancelFn: () => { },
+    showCancelIcon: true
   },
   focusToaster: { message: '', timestamp: 0 }
 }
