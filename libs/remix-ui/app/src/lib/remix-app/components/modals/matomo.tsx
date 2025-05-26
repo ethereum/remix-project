@@ -16,16 +16,20 @@ interface MatomoDialogProps {
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  const { settings, showMatomo, appManager } = useContext(AppContext)
+  let { settings, showMatomo, appManager } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
+  showMatomo = true // remove this before merging
 
   const message = () => {
     return (
       <>
         <p>
+          <FormattedMessage id="remixApp.matomoText1" />
+        </p>
+        <p>
           <FormattedMessage
-            id="remixApp.matomoText1"
+            id="remixApp.matomoText2"
             values={{
               a: (chunks) => (
                 <a href="https://matomo.org" target="_blank" rel="noreferrer">
@@ -34,30 +38,6 @@ const MatomoDialog = (props: MatomoDialogProps) => {
               ),
             }}
           />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText2" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText3" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText4" />
-        </p>
-        <p>
-          <FormattedMessage
-            id="remixApp.matomoText5"
-            values={{
-              a: (chunks) => (
-                <a href="https://medium.com/p/66ef69e14931/" target="_blank" rel="noreferrer">
-                  {chunks}
-                </a>
-              ),
-            }}
-          />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText6" />
         </p>
       </>
     )
@@ -71,7 +51,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         message: message(),
         okLabel: <FormattedMessage id="remixApp.accept" />,
         okFn: handleModalOkClick,
-        cancelLabel: <FormattedMessage id="remixApp.decline" />,
+        cancelLabel: <FormattedMessage id="remixApp.managePreferences" />,
         cancelFn: declineModal,
         preventBlur: true
       })
