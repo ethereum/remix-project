@@ -211,7 +211,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                           </div>
                         </div>
-                        <div className={`${isElectron() ? 'w-100' : 'align-items-center justify-content-between w-100 d-flex pt- flex-row'}`}>
+                        <div className={`'align-items-center justify-content-between w-100 d-flex pt- flex-row'}`}>
                           {(!template.IsArtefact || !item.IsArtefact) && <CustomTooltip
                             placement="auto"
                             tooltipId={`overlay-tooltip-new${item.name}`}
@@ -225,12 +225,12 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               className="btn btn-sm mr-2 border border-primary"
                             >
                               {isElectron() ?
-                                <><i className='fa fa-folder-open mr-1'></i>Create in new folder</> : 'Create'}
+                                <><i className='fa fa-folder-open mr-1'></i>Create</> : 'Create'}
                             </span>
                           </CustomTooltip>}
                           {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> : isElectron() ?
 
-                            <div className='w-100 mt-2'>
+                            <div className=''>
                               <CustomTooltip
                                 placement="auto"
                                 tooltipId={`overlay-tooltip-add${item.name}`}
@@ -242,7 +242,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                                   className="btn btn-sm border"
                                 >
                                   <i className="fa fa-folder-plus mr-1" aria-hidden="true"></i>
-                                  Add to current project
+                                 Add here
                                 </span>
                               </CustomTooltip>
                             </div>
