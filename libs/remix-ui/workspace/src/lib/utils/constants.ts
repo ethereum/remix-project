@@ -183,5 +183,6 @@ export type TemplateGroup = {
   onClickLabel?: string
   description?: string
   IsArtefact?: boolean
+  hasOptions?: boolean
 }
 

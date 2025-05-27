@@ -35,17 +35,20 @@ const templatesToCheck = [
     {
         value: "ozerc20",
         displayName: "ERC20",
-        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]']
+        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]'],
+        clickOk: true
     },
     {
         value: "ozerc721",
         displayName: "ERC721",
-        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]']
+        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]'],
+        clickOk: true
     },
     {
         value: "ozerc1155",
         displayName: "ERC1155",
-        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]']
+        checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]'],
+        clickOk: true
     },
     {
         value: "zeroxErc20",
@@ -119,6 +122,14 @@ const templatesToCheck = [
     }
 ]
 
+function setTemplateOptions(browser: NightwatchBrowser, opts: { [key: string]: any }) {
+    if (opts.mintable) browser.click('*[data-id="featureTypeMintable"]')
+    if (opts.burnable) browser.click('*[data-id="featureTypeBurnable"]')
+    if (opts.pausable) browser.click('*[data-id="featureTypePausable"]')
+    if (opts.upgradeability === 'transparent') browser.click('*[data-id="upgradeTypeTransparent"]')
+    if (opts.upgradeability === 'uups') browser.click('*[data-id="upgradeTypeUups"]')
+}
+
 function openTemplatesExplorer(browser: NightwatchBrowser) {
     browser
         .click('*[data-id="workspacesMenuDropdown"]')
@@ -130,9 +141,9 @@ function runTemplateChecks(
     browser: NightwatchBrowser,
     start: number,
     end: number,
-    mode: 'create' | 'add' = 'create'
+    mode: 'create' | 'add' = 'create',
 ) {
-    templatesToCheck.slice(start, end).forEach(({ value, displayName, checkSelectors }) => {
+    templatesToCheck.slice(start, end).forEach(({ value, displayName, checkSelectors, clickOk }) => {
         console.log(`Checking template: ${value} in ${mode} mode`)
         openTemplatesExplorer(browser)
 
@@ -159,6 +170,11 @@ function runTemplateChecks(
                     browser
                         .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
                         .click(`[data-id="add-${value}"]`)
+                    if (clickOk) {
+                        browser
+                            .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+                            .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+                    }
 
                     checkSelectors.forEach(selector => {
                         console.log(`Checking selector: ${selector}`)
@@ -180,6 +196,41 @@ function runTemplateChecks(
     })
 }
 
+function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add') {
+    openTemplatesExplorer(browser)
+
+    const selector = mode === 'create' ? '[data-id="create-ozerc20"]' : '[data-id="add-ozerc20"]'
+
+    browser
+        .waitForElementVisible(selector, 5000)
+        .click(selector)
+
+    browser
+        .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+
+    // Simulate user selecting options
+    setTemplateOptions(browser, { mintable: true, burnable: true, upgradeability: 'uups' })
+
+    // Confirm selection
+    browser
+        .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+
+    // Verify expected file was created
+    browser
+        .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]', 10000)
+        .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+        .pause(1000)
+        .getEditorValue(editorValue => {
+            const expected = 'contract MyToken is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, OwnableUpgradeable, ERC20PermitUpgradeable, UUPSUpgradeable'
+            if (editorValue.includes(expected)) {
+                console.log(`✅ Template with options applied successfully (${mode})`)
+                browser.assert.ok(true, `Template with options applied successfully (${mode})`)
+            } else {
+                browser.assert.fail(`❌ Template with options was not applied correctly (${mode})`)
+            }
+        })
+}
+
 module.exports = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -191,7 +242,22 @@ module.exports = {
     'Loop through templates and click create #group1': function (browser) {
         runTemplateChecks(browser, 0, templatesToCheck.length, 'create')
     },
-    'Loop through templates and click add buttons #group2': function (browser) {
+    'Loop through templates and click add buttons #group1': function (browser) {
         runTemplateChecks(browser, 0, templatesToCheck.length, 'add')
+    },
+    'Test template options with create #group2': function (browser: NightwatchBrowser) {
+        testTemplateOptions(browser, 'create')
+    },
+
+    'Test template options with add #group2': function (browser: NightwatchBrowser) {
+        openTemplatesExplorer(browser)
+        browser
+            .waitForElementVisible(`[data-id="create-remixDefault"]`, 5000)
+            .click(`[data-id="create-remixDefault"]`)
+            .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+            .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+            .pause(1000)
+
+        testTemplateOptions(browser, 'add')
     }
 }

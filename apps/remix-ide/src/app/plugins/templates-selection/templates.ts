@@ -14,6 +14,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
     },
     {
       name: "OpenZeppelin",
+      hasOptions: true,
       items: [
         {
           value: "ozerc20",
