@@ -39,6 +39,7 @@ export const GetDeviceCode = () => {
     popupRef.current = popup
 
     const messageListener = async (event: MessageEvent) => {
+      console.log('[GetDeviceCode] messageListener', event)
       if (event.origin !== window.location.origin) return
 
       if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
@@ -48,11 +49,11 @@ export const GetDeviceCode = () => {
         setAuthorized(true)
         await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
         window.removeEventListener('message', messageListener)
-        popup?.close()
+        //popup?.close()
       } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
         await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
         window.removeEventListener('message', messageListener)
-        popup?.close()
+        //popup?.close()
       }
     }
 
