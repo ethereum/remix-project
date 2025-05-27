@@ -11,7 +11,8 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 interface MatomoDialogProps {
-  okFn: () => void
+  acceptAllFn: () => void
+  managePreferencesFn: () => void
   hide: boolean
 }
 
@@ -48,9 +49,9 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         title: <FormattedMessage id="remixApp.matomoTitle" />,
         message: message(),
         okLabel: <FormattedMessage id="remixApp.accept" />,
-        okFn: handleModalOkClick,
+        okFn: handleAcceptAllClick,
         cancelLabel: <FormattedMessage id="remixApp.managePreferences" />,
-        cancelFn: declineModal,
+        cancelFn: handleManagePreferencesClick,
         showCancelIcon: true,
         preventBlur: true
       })
@@ -66,13 +67,18 @@ const MatomoDialog = (props: MatomoDialogProps) => {
     }
   }
 
-  const handleModalOkClick = async () => {
+  const handleAcceptAllClick = async () => {
 
     // user has given consent to process their data
     _paq.push(['setConsentGiven'])
     settings.updateMatomoAnalyticsChoice(true)
     setVisible(false)
-    props.okFn()
+    props.acceptAllFn()
+  }
+
+  const handleManagePreferencesClick = async () => {
+    setVisible(false)
+    props.managePreferencesFn()
   }
 
   return <></>
