@@ -142,7 +142,7 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
         // If the language used has no contract names, this field should equal to an empty string
         [contractName]: {
           // The Ethereum Contract ABI. If empty, it is represented as an empty array.
-          // See https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
+          // See https://docs.soliditylang.org/en/latest/abi-spec.html
           abi: compiledAbi,
           contractName: contractName,
           evm: {
