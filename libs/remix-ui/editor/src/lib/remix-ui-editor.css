@@ -31,15 +31,16 @@ div.monaco-list-row > span.title {
     margin-top: 12px;
 }
 
-.leftLineDecoration {
-    background-color: var(--info) !important;
+.modifiedChangesDecoration {
+    background-color: var(--danger) !important;
     color: var(--white) !important;
-    filter: opacity(0.5);
+    filter: opacity(0.1);
     font-weight: bolder;
 }
 
-.rightLineDecoration {
+.newChangesDecoration {
     background-color: var(--ai) !important;
+    color: var(--white) !important;
     filter: opacity(0.1);
     font-weight: bolder;
 }

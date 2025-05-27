@@ -157,6 +157,9 @@ export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
   const [isSplit, setIsSplit] = useState(true)
+  const [isDiff, setIsDiff] = useState(props.isDiff || false)
+  const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
+  const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -346,13 +349,12 @@ export const EditorUI = (props: EditorUIProps) => {
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => (currentUrlRef.current = url.file))
 
     const file = editorModelsState[props.currentFile]
-
-    props.isDiff && diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
-      original: editorModelsState[props.currentDiffFile].model,
-      modified: file.model
+    currentDiffFile && diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
+      original: file.model,
+      modified: editorModelsState[currentDiffFile].model
     })
 
-    props.isDiff && diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+    currentDiffFile && diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
 
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({
@@ -375,7 +377,9 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'python') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-vyper')
     }
-  }, [props.currentFile, props.isDiff])
+    // @ts-ignore
+    props.plugin.emit('addModel', editorRef.current.getModel().getValue(), 'remix-solidity', props.currentFile + '-ai', false)
+  }, [props.currentFile, isDiff, currentDiffFile])
 
   const inlineCompletionProvider = new RemixInLineCompletionProvider(props)
   const hoverProvider = new RemixHoverProvider(props)
@@ -807,37 +811,84 @@ export const EditorUI = (props: EditorUIProps) => {
         ],
         run: async () => {
           if (functionNode) {
+            const uri = currentFileRef.current + '-ai'
             const file = await props.plugin.call('fileManager', 'getCurrentFile')
             const content = await props.plugin.call('fileManager', 'readFile', file)
-            const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-            const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", functionNode)
-            const decorations = editor.createDecorationsCollection()
+            const query = `rewrite the contract below making changes only to the documentation of the function ${functionNode.name}() and your response should be only the fully updated contract. No backticks are needed, just return the complete updated contract. \`\`\`${content}\`\`\``
+            const output = await props.plugin.call('remixAI', 'code_explaining', query)
+            // @ts-ignore
+            props.plugin.emit('setValue', uri, output.trim())
+            props.plugin.on('editor', 'didChangeFile', (file) => {
+              if (file !== uri) return
+              setCurrentDiffFile(uri)
+              setTimeout(() => {
+                const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
+                const decoratorList: monacoTypes.editor.IModelDeltaDecoration[] = []
+                let totalLineDifference = 0
 
-            decorations.set([{
-              range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line + 5, cln.start.column),
-              options: {
-                isWholeLine: true,
-                className: 'rightLineDecoration',
-                marginClassName: 'rightLineDecoration',
-              }
-            }, {
-              range: new monacoRef.current.Range(cln.start.line + 5, cln.start.column, cln.start.line + 10, cln.start.column),
-              options: {
-                isWholeLine: true,
-                className: 'leftLineDecoration',
-                marginClassName: 'leftLineDecoration',
-              }
-            }])
+                lineChanges.forEach((lineChange, index) => {
+                  const line = editorModelsState[uri].model.getValueInRange(new monacoRef.current.Range(lineChange.modifiedStartLineNumber, 0, lineChange.modifiedEndLineNumber, 1000))
+                  const linesCount = line.split('\n').length
+                  const lineDifference = lineChange.originalEndLineNumber - lineChange.originalStartLineNumber
+                  const modifiedStartLine = lineChange.originalStartLineNumber + totalLineDifference
+                  const modifiedEndLine = lineChange.originalStartLineNumber - 1 + linesCount + totalLineDifference
+                  const originalStartLine = lineChange.originalStartLineNumber + linesCount + totalLineDifference
+                  const originalEndLine = lineChange.originalStartLineNumber + linesCount + lineDifference + totalLineDifference
 
-            hoverProvider.addTriggerRangeAction('generateDocumentation', new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column), () => {
-              console.log('adding changes option widget')
-              addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
+                  editor.executeEdits('lineChange' + index, [
+                    {
+                      range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedStartLine, 0),
+                      text: line + '\n',
+                    },
+                  ])
+                  decoratorList.push({
+                    range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
+                    options: {
+                      isWholeLine: true,
+                      className: 'newChangesDecoration',
+                      marginClassName: 'newChangesDecoration',
+                    }
+                  }, {
+                    range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine, 1000),
+                    options: {
+                      isWholeLine: true,
+                      className: 'modifiedChangesDecoration',
+                      marginClassName: 'modifiedChangesDecoration',
+                    }
+                  })
+                  totalLineDifference += linesCount
+                })
+                const id = editor.createDecorationsCollection(decoratorList)
+              }, 1000)
             })
-
-            console.log('query: ', query)
-            // inlineCompletionProvider.setGenDocsConfig(range, query, editor)
           }
 
+          // const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", functionNode)
+          // const decorations = editor.createDecorationsCollection()
+
+          // decorations.set([{
+          //   range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line + 5, cln.start.column),
+          //   options: {
+          //     isWholeLine: true,
+          //     className: 'rightLineDecoration',
+          //     marginClassName: 'rightLineDecoration',
+          //   }
+          // }, {
+          //   range: new monacoRef.current.Range(cln.start.line + 5, cln.start.column, cln.start.line + 10, cln.start.column),
+          //   options: {
+          //     isWholeLine: true,
+          //     className: 'leftLineDecoration',
+          //     marginClassName: 'leftLineDecoration',
+          //   }
+          // }])
+
+          // hoverProvider.addTriggerRangeAction('generateDocumentation', new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column), () => {
+          //   console.log('adding changes option widget')
+          //   addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
+          // })
+
+          // console.log('query: ', query)
+          // inlineCompletionProvider.setGenDocsConfig(range, query, editor)
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
         },
       }
@@ -982,7 +1033,6 @@ export const EditorUI = (props: EditorUIProps) => {
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()
       const position = args[0].target.position
-      console.log('position: ', position)
       const offset = editorRef.current.getModel().getOffsetAt(position)
       onContextMenuHandlerForFreeFunction(offset)
         .then(() => orgContextMenuMethod.apply(contextmenu, args))
@@ -1133,14 +1183,14 @@ export const EditorUI = (props: EditorUIProps) => {
         original={''}
         modified={''}
         onMount={handleDiffEditorDidMount}
-        options={{ readOnly: false, renderSideBySide: isSplit }}
+        options={{ readOnly: false, renderSideBySide: false, originalEditable: true, renderIndicators: true, fixedOverflowWidgets: true, lightbulb: { enabled: true } }}
         width='100%'
-        height={props.isDiff ? '100%' : '0%'}
-        className={props.isDiff ? "d-block" : "d-none"}
+        height={isDiff ? '100%' : '0%'}
+        className={isDiff ? "d-block" : "d-none"}
       />
       <Editor
         width="100%"
-        height={props.isDiff ? '0%' : '100%'}
+        height={isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -1153,7 +1203,7 @@ export const EditorUI = (props: EditorUIProps) => {
           }
         }}
         defaultValue={defaultEditorValue}
-        className={props.isDiff ? "d-none" : "d-block"}
+        className={isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
