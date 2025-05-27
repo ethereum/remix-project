@@ -15,5 +15,9 @@
   "remixApp.managePreferences": "Manage Preferences",
   "remixApp.savePreferences": "Save Preferences",
   "remixApp.declineCookies": "Decline Cookies",
-  "remixApp.decline": "Decline"
+  "remixApp.decline": "Decline",
+
+  "remixApp.mpOp1Title": "RemixAI",
+  "remixApp.mpOp1Details": "RemixAI helps by offering code suggestions and improvements",
+  "remixApp.mpOp1Link": "<a>Learn more about RemixAI Copilot</a>"
 }

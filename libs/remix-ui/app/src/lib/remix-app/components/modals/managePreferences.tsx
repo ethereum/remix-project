@@ -20,9 +20,32 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
   const message = () => {
     return (
       <>
-        <p>
-          Manage Preferences 
-        </p>
+        <div data-id="remixAI" className='justify-content-between align-items-center d-flex'>
+          <div>
+            <h6><FormattedMessage id="remixApp.mpOp1Title" /></h6>
+            <p className='form-check-label'><FormattedMessage id="remixApp.mpOp1Details" /></p>
+            <p className='mt-1'><FormattedMessage
+              id="remixApp.mpOp1Link"
+              values={{
+                a: (chunks) => (
+                  <a className="text-primary" href="https://matomo.org" target="_blank" rel="noreferrer">
+                    {chunks}
+                  </a>
+                ),
+              }}
+            /></p>
+          </div>
+          <div>
+            <button
+              data-id="remixAIswitch"
+              id='remixAIswitch'
+              className="btn text-ai"
+              onClick={() => {}}
+            >
+              <i className="fas fa-toggle-on fa-2xl"></i>
+            </button>
+          </div>
+        </div>
       </>
     )
   }
