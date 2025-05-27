@@ -13,7 +13,6 @@ import type { Template, TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
-import { TemplateType } from 'libs/remix-ui/workspace/src/lib/types'
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
@@ -112,7 +111,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         ),
         okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok' : 'filePanel.selectFolder' }),
       }
-      
+
       const modalResult = await this.call('notification', 'modal', modal)
       console.log('Creating workspace with template', item, this.opts)
       if (!modalResult) return
