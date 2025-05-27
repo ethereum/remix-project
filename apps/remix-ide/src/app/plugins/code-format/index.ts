@@ -6,7 +6,7 @@ import loc from 'prettier-plugin-solidity/src/loc.js';
 import { parse } from './parser'
 
 // https://prettier.io/docs/en/plugins.html#languages
-// https://github.com/ikatyang/linguist-languages/blob/master/data/Solidity.json
+// https://github.com/ikatyang/linguist-languages/blob/master/data/Solidity.js
 const languages = [
   {
     linguistLanguageId: 237469032,
