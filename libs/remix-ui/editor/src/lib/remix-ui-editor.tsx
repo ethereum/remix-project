@@ -821,45 +821,7 @@ export const EditorUI = (props: EditorUIProps) => {
             props.plugin.on('editor', 'didChangeFile', (file) => {
               if (file !== uri) return
               setCurrentDiffFile(uri)
-              setTimeout(() => {
-                const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
-                const decoratorList: monacoTypes.editor.IModelDeltaDecoration[] = []
-                let totalLineDifference = 0
-
-                lineChanges.forEach((lineChange, index) => {
-                  const line = editorModelsState[uri].model.getValueInRange(new monacoRef.current.Range(lineChange.modifiedStartLineNumber, 0, lineChange.modifiedEndLineNumber, 1000))
-                  const linesCount = line.split('\n').length
-                  const lineDifference = lineChange.originalEndLineNumber - lineChange.originalStartLineNumber
-                  const modifiedStartLine = lineChange.originalStartLineNumber + totalLineDifference
-                  const modifiedEndLine = lineChange.originalStartLineNumber - 1 + linesCount + totalLineDifference
-                  const originalStartLine = lineChange.originalStartLineNumber + linesCount + totalLineDifference
-                  const originalEndLine = lineChange.originalStartLineNumber + linesCount + lineDifference + totalLineDifference
-
-                  editor.executeEdits('lineChange' + index, [
-                    {
-                      range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedStartLine, 0),
-                      text: line + '\n',
-                    },
-                  ])
-                  decoratorList.push({
-                    range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
-                    options: {
-                      isWholeLine: true,
-                      className: 'newChangesDecoration',
-                      marginClassName: 'newChangesDecoration',
-                    }
-                  }, {
-                    range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine, 1000),
-                    options: {
-                      isWholeLine: true,
-                      className: 'modifiedChangesDecoration',
-                      marginClassName: 'modifiedChangesDecoration',
-                    }
-                  })
-                  totalLineDifference += linesCount
-                })
-                const id = editor.createDecorationsCollection(decoratorList)
-              }, 1000)
+              setTimeout(() => showCustomDiff(uri), 1000)
             })
           }
 
@@ -1122,26 +1084,32 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(monacoRef.current)
   }
 
-  function addChangesOptionWidget(editor, position) {
-    editor.addContentWidget({
+  function addAcceptDeclineWidget(id, editor, position, acceptHandler, rejectHandler) {
+    const widget = editor.addContentWidget({
       allowEditorOverflow: true,
       getDomNode: () => {
-        if (document.getElementById('changes_option_widget')) {
-          return document.getElementById('changes_option_widget')
+        if (document.getElementById(id)) {
+          return document.getElementById(id)
         }
         const containerElement = document.createElement('div')
-        containerElement.id = 'changes_option_widget'
+        containerElement.id = id
         containerElement.style.width = '100%'
 
         const innerContainer = document.createElement('div')
-        innerContainer.style.position = 'relative'
-        innerContainer.style.left = '80%'
+        innerContainer.style.float = 'right'
 
         const acceptBtn = document.createElement('button')
         acceptBtn.style.backgroundColor = 'var(--ai)'
         acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1', 'text-dark'])
         acceptBtn.style.fontSize = '0.8rem'
         acceptBtn.textContent = 'Accept'
+
+        acceptBtn.onclick = () => {
+          acceptHandler && acceptHandler()
+          editor.removeContentWidget({
+            getId: () => id
+          })
+        }
 
         const rejectBtn = document.createElement('button')
         rejectBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'bg-light', 'text-dark'])
@@ -1154,8 +1122,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
         // Add close button handler
         rejectBtn.onclick = () => {
+          rejectHandler && rejectHandler()
           editor.removeContentWidget({
-            getId: () => 'changes_option_widget'
+            getId: () => id
           })
         }
         // Add input handler
@@ -1163,7 +1132,7 @@ export const EditorUI = (props: EditorUIProps) => {
       },
 
       getId: () => {
-        return 'changes_option_widget'
+        return id
       },
 
       getPosition: () => {
@@ -1172,6 +1141,62 @@ export const EditorUI = (props: EditorUIProps) => {
           preference: [1]
         }
       }
+    })
+
+    return widget
+  }
+
+  function showCustomDiff (uri: string) {
+    const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
+    let totalLineDifference = 0
+
+    lineChanges.forEach((lineChange, index) => {
+      const line = editorModelsState[uri].model.getValueInRange(new monacoRef.current.Range(lineChange.modifiedStartLineNumber, 0, lineChange.modifiedEndLineNumber, 1000))
+      const linesCount = line.split('\n').length
+      const lineDifference = lineChange.originalEndLineNumber - lineChange.originalStartLineNumber
+      const modifiedStartLine = lineChange.originalStartLineNumber + totalLineDifference
+      const modifiedEndLine = lineChange.originalStartLineNumber - 1 + linesCount + totalLineDifference
+      const originalStartLine = lineChange.originalStartLineNumber + linesCount + totalLineDifference
+      const originalEndLine = lineChange.originalStartLineNumber + linesCount + lineDifference + totalLineDifference
+
+      editorRef.current.executeEdits('lineChange' + index, [
+        {
+          range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedStartLine, 0),
+          text: line + '\n',
+        },
+      ])
+      const decoratorList = editorRef.current.createDecorationsCollection([{
+        range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
+        options: {
+          isWholeLine: true,
+          className: 'newChangesDecoration',
+          marginClassName: 'newChangesDecoration',
+        }
+      }, {
+        range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine, 1000),
+        options: {
+          isWholeLine: true,
+          className: 'modifiedChangesDecoration',
+          marginClassName: 'modifiedChangesDecoration',
+        }
+      }])
+
+      console.log('decoratorList: ', decoratorList)
+      addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => {
+        console.log('accept')
+        editorRef.current.executeEdits('removeOriginal' + index, [
+          {
+            range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine + 1, 0),
+            text: null,
+          },
+        ])
+        decoratorList.clear()
+        // showCustomDiff(uri)
+      }, () => {
+        console.log('reject')
+        decoratorList.clear()
+      })
+      totalLineDifference += linesCount
     })
   }
 
@@ -1200,6 +1225,9 @@ export const EditorUI = (props: EditorUIProps) => {
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
           inlineSuggest: {
             enabled: true
+          },
+          minimap: {
+            enabled: false
           }
         }}
         defaultValue={defaultEditorValue}
