@@ -3,6 +3,8 @@ import React from 'react'
 import './index.css'
 import { ThemeModule } from './app/tabs/theme-module'
 import { Preload } from './app/components/preload'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { GitHubPopupCallback } from './app/pages/GitHubPopupCallback'
 import Config from './config'
 import { Registry } from '@remix-project/remix-lib'
 import { Storage } from '@remix-project/remix-lib'
@@ -21,6 +23,13 @@ import { createRoot } from 'react-dom/client'
   const container = document.getElementById('root');
   const root = createRoot(container)
   if (container) {
-    root.render(<Preload root={root} />);
+    root.render(
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth/github/callback" element={<GitHubPopupCallback />} />
+          <Route path="*" element={<Preload root={root} />} />
+        </Routes>
+      </BrowserRouter>
+    )
   }
 })()

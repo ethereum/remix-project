@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
-import { Card } from "react-bootstrap";
 import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
 import { endpointUrls } from "@remix-endpoints-helper";
+import { generatePKCE } from "../lib/pkce";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -14,6 +14,50 @@ export const GetDeviceCode = () => {
   const pluginActions = React.useContext(pluginActionsContext)
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
+
+  const popupRef = useRef<Window | null>(null)
+
+  // Dynamically select the GitHub OAuth client ID based on the hostname
+  const getClientId = () => {
+    const host = window.location.hostname
+    if (host === 'localhost') return 'Ov23li1dOIgMqxY9vRJS'
+    if (host.endsWith('netlify.app')) return 'YOUR_NETLIFY_CLIENT_ID'
+    return '2795b4e41e7197d6ea11'
+  }
+
+  const openPopupLogin = useCallback(async () => {
+    const { codeVerifier, codeChallenge } = await generatePKCE()
+    localStorage.setItem('pkce_verifier', codeVerifier)
+
+    const clientId = getClientId()
+    const redirectUri = `${window.location.origin}/auth/github/callback`
+    const scope = 'read:user user:email'
+
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`
+
+    const popup = window.open(url, 'GitHub Login', 'width=600,height=700')
+    popupRef.current = popup
+
+    const messageListener = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+
+      if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
+        const token = event.data.token
+        await pluginActions.saveToken(token)
+        await actions.loadGitHubUserFromToken()
+        setAuthorized(true)
+        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
+        window.removeEventListener('message', messageListener)
+        popup?.close()
+      } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
+        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
+        window.removeEventListener('message', messageListener)
+        popup?.close()
+      }
+    }
+
+    window.addEventListener('message', messageListener)
+  }, [pluginActions, actions])
 
   const getDeviceCodeFromGitHub = async () => {
     await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
@@ -43,7 +87,7 @@ export const GetDeviceCode = () => {
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
-      url:`${endpointUrls.github}/login/oauth/access_token`,
+      url: `${endpointUrls.github}/login/oauth/access_token`,
       data: {
         client_id: '2795b4e41e7197d6ea11',
         device_code: gitHubResponse.device_code,
@@ -80,6 +124,9 @@ export const GetDeviceCode = () => {
     <>
       {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
+        <button className='btn btn-secondary mt-1 w-100' onClick={openPopupLogin}>
+          <i className="fab fa-github mr-1"></i>Login with GitHub (Popup)
+        </button>
         <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
           await getDeviceCodeFromGitHub()
         }}><i className="fab fa-github mr-1"></i>Login with GitHub</button></>
