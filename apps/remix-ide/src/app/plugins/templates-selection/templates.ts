@@ -1,6 +1,6 @@
 import { Template, TemplateGroup } from "@remix-ui/workspace"
 export const templates = (intl: any, plugin: any): TemplateGroup[] => {
-  
+
   return [
     {
       name: "Generic",
@@ -272,7 +272,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
       onClickLabel: 'Open Cookbook Plugin',
       description: 'Discover more templates!',
       items: [],
-/*         {
+      /*         {
           value: "token-sale",
           displayName: 'Token Sale',
           description: "ERC20 token sale contact. Sell tokens for ETH"
@@ -318,7 +318,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
           opts: {
             burnable: true,
             pausable: true
-          }, }, 
+          }, },
       ]*/
     },
     {

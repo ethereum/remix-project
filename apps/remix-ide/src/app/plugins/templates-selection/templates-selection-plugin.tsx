@@ -175,7 +175,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             >
               {template.items.map((item, index) => {
                 item.templateType = TEMPLATE_METADATA[item.value]
-                if(item.templateType && item.templateType.disabled === true) return
+                if (item.templateType && item.templateType.disabled === true) return
                 if (!item.opts) {
                   return (
                     <RemixUIGridCell
