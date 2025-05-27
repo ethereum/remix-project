@@ -12,6 +12,7 @@ import isElectron from 'is-electron'
 import type { TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
+import { TEMPLATE_METADATA } from '@remix-ui/workspace'
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
@@ -76,7 +77,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       if (error) {
         const modal: AppModal = {
           id: 'TemplatesSelection',
-          title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+          title: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create' : 'filePanel.workspace.create.desktop' }),
           message: error.message,
           okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
           cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
@@ -96,9 +97,9 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       let initGit = false
       const modal: AppModal = {
         id: 'TemplatesSelection',
-        title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+        title: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create' : 'filePanel.workspace.create.desktop' }),
         message: await createModalMessage(defaultName, gitNotSet, (value) => workspaceName = value, (value) => initGit = !!value, (event) => setCheckBoxRefs(event), (event) => setRadioRefs(event), templateName),
-        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
+        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok' : 'filePanel.selectFolder' }),
       }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
@@ -112,7 +113,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
-            title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+            title: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create' : 'filePanel.workspace.create.desktop' }),
             message: e.message,
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
@@ -173,6 +174,8 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               hScrollable={false}
             >
               {template.items.map((item, index) => {
+                item.templateType = TEMPLATE_METADATA[item.value]
+                if(item.templateType && item.templateType.disabled === true) return
                 if (!item.opts) {
                   return (
                     <RemixUIGridCell
@@ -197,7 +200,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                           </div>
                         </div>
                         <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
-                          {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
+                          {(!template.IsArtefact || !item.IsArtefact) && <CustomTooltip
                             placement="auto"
                             tooltipId={`overlay-tooltip-new${item.name}`}
                             tooltipText="Create a new workspace"
@@ -209,29 +212,30 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >
-                          Create
+                              Create
                             </span>
                           </CustomTooltip>}
-                          <CustomTooltip
-                            placement="auto"
-                            tooltipId={`overlay-tooltip-add${item.name}`}
-                            tooltipText="Add template files to current workspace"
-                          >
-                            <span
-                              data-id={`add-${item.value}`}
-                              onClick={async () => addToCurrentWorkspace(item)}
-                              className="btn btn-sm border"
+                          {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> :
+                            <CustomTooltip
+                              placement="auto"
+                              tooltipId={`overlay-tooltip-add${item.name}`}
+                              tooltipText="Add template files to current workspace"
                             >
-                          Add to current
-                            </span>
-                          </CustomTooltip>
+                              <span
+                                data-id={`add-${item.value}`}
+                                onClick={async () => addToCurrentWorkspace(item)}
+                                className="btn btn-sm border"
+                              >
+                                Add to current
+                              </span>
+                            </CustomTooltip>}
                         </div>
                       </div>
                     </RemixUIGridCell>
                   )
                 }
               })}
-              { template.name === 'Cookbook' && <RemixUIGridCell
+              {template.name === 'Cookbook' && <RemixUIGridCell
                 plugin={this}
                 title={"More from Cookbook"}
                 key={"cookbookMore"}
@@ -241,10 +245,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 classList='TSCellStyle'
               >
                 <div className='d-flex justify-content-between h-100 flex-column'>
-                  <span className='pt-4 px-1 h6 text-dark'>{ template.description }</span>
-                  <span style={{ cursor: 'pointer' }} className='mt-2 btn btn-sm border align-items-left' onClick={() => template.onClick() }>{ template.onClickLabel }</span>
+                  <span className='pt-4 px-1 h6 text-dark'>{template.description}</span>
+                  <span style={{ cursor: 'pointer' }} className='mt-2 btn btn-sm border align-items-left' onClick={() => template.onClick()}>{template.onClickLabel}</span>
                 </div>
-              </RemixUIGridCell> }
+              </RemixUIGridCell>}
             </RemixUIGridSection>
           })}
       </RemixUIGridView>
@@ -317,7 +321,7 @@ const createModalMessage = async (
             <div className="d-flex ml-2 custom-control custom-radio">
               <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" onChange={onChangeRadioRefs} />
               <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups">
-              UUPS
+                UUPS
               </label>
             </div>
           </div>
