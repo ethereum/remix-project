@@ -13,5 +13,7 @@
   "remixApp.matomoTitle": "AI and Analytics Preferences",
   "remixApp.accept": "Accept All",
   "remixApp.managePreferences": "Manage Preferences",
+  "remixApp.savePreferences": "Save Preferences",
+  "remixApp.declineCookies": "Decline Cookies",
   "remixApp.decline": "Decline"
 }
