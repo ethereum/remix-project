@@ -15,20 +15,18 @@ export const GitHubPopupCallback = () => {
             console.log('[GitHubPopupCallback] Starting exchangeToken...')
             const params = new URLSearchParams(window.location.search)
             const code = extractCode()
-            const verifier = localStorage.getItem('pkce_verifier')
 
             console.log('[GitHubPopupCallback] code:', code)
-            console.log('[GitHubPopupCallback] verifier:', verifier)
 
-            if (!code || !verifier) {
-                console.warn('[GitHubPopupCallback] Missing code or verifier', { code, verifier })
+            if (!code) {
+                console.warn('[GitHubPopupCallback] Missing code', { code })
                 window.opener?.postMessage({ type: 'GITHUB_AUTH_FAILURE' }, window.location.origin)
                 //window.close()
                 return
             }
 
             try {
-                const response = await fetch('https://github.remixproject.org/login/oauth/access_token', {
+                const response = await fetch('http://localhost:4000/github-login-proxy/login/oauth/access_token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -37,8 +35,7 @@ export const GitHubPopupCallback = () => {
                     body: JSON.stringify({
                         client_id: 'Ov23li1dOIgMqxY9vRJS',
                         code,
-                        redirect_uri: window.location.origin + '/auth/github/callback',
-                        code_verifier: verifier
+                        redirect_uri: window.location.origin + '/auth/github/callback'
                     })
                 })
 
@@ -56,6 +53,7 @@ export const GitHubPopupCallback = () => {
                 console.error('[GitHubPopupCallback] Token exchange error:', error)
                 window.opener?.postMessage({ type: 'GITHUB_AUTH_FAILURE' }, window.location.origin)
             } finally {
+                localStorage.removeItem('pkce_verifier')
                 //window.close()
             }
 

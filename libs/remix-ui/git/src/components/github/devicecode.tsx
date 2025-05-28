@@ -31,11 +31,16 @@ export const GetDeviceCode = () => {
 
     const clientId = getClientId()
     const redirectUri = `${window.location.origin}/auth/github/callback`
-    const scope = 'read:user user:email'
+    const scope = 'repo gist user:email read:user'
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`
 
     const popup = window.open(url, 'GitHub Login', 'width=600,height=700')
+    if (!popup) {
+      console.warn('[GetDeviceCode] Popup blocked or failed to open, falling back to device code flow.')
+      await getDeviceCodeFromGitHub()
+      return
+    }
     popupRef.current = popup
 
     const messageListener = async (event: MessageEvent) => {
@@ -49,11 +54,11 @@ export const GetDeviceCode = () => {
         setAuthorized(true)
         await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
         window.removeEventListener('message', messageListener)
-        //popup?.close()
+        popup?.close()
       } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
         await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
         window.removeEventListener('message', messageListener)
-        //popup?.close()
+        popup?.close()
       }
     }
 
@@ -126,11 +131,8 @@ export const GetDeviceCode = () => {
       {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={openPopupLogin}>
-          <i className="fab fa-github mr-1"></i>Login with GitHub (Popup)
-        </button>
-        <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
-          await getDeviceCodeFromGitHub()
-        }}><i className="fab fa-github mr-1"></i>Login with GitHub</button></>
+          <i className="fab fa-github mr-1"></i>Login with GitHub
+        </button></>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
