@@ -13,7 +13,7 @@ import { vyperTokenProvider, vyperLanguageConfig } from './syntaxes/vyper'
 import { tomlLanguageConfig, tomlTokenProvider } from './syntaxes/toml'
 import { monacoTypes } from '@remix-ui/editor'
 import { loadTypes } from './web-types'
-import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { extractFunctionComments, retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
@@ -812,37 +812,24 @@ export const EditorUI = (props: EditorUIProps) => {
         run: async () => {
           if (functionNode) {
             const uri = currentFileRef.current + '-ai'
-            const file = await props.plugin.call('fileManager', 'getCurrentFile')
-            const content = await props.plugin.call('fileManager', 'readFile', file)
-            const query = `rewrite the contract below making changes only to the documentation of the function ${functionNode.name}() and your response should be only the fully updated contract. No backticks are needed, just return the complete updated contract. \`\`\`${content}\`\`\``
+            const content = editorModelsState[currentFileRef.current].model.getValue()
+            const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
+            // const query = `rewrite the contract below making changes only to the documentation of the function ${functionNode.name}()
+            // and your response should be only be the fully updated contract. No backticks are needed, just return the complete updated contract. \`\`\`${content}\`\`\``
             const output = await props.plugin.call('remixAI', 'code_explaining', query)
+            const originalFunctionComments = extractFunctionComments(content)
+            const outputFunctionComments = extractFunctionComments(output)
+
+            const modifiedContent = content.replace(originalFunctionComments[currentFunction.current], outputFunctionComments[currentFunction.current])
             // @ts-ignore
-            props.plugin.emit('setValue', uri, output.trim())
+            props.plugin.emit('setValue', uri, modifiedContent)
             props.plugin.on('editor', 'didChangeFile', (file) => {
               if (file !== uri) return
               setCurrentDiffFile(uri)
+              // setIsDiff(true)
               setTimeout(() => showCustomDiff(uri), 1000)
             })
           }
-
-          // const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", functionNode)
-          // const decorations = editor.createDecorationsCollection()
-
-          // decorations.set([{
-          //   range: new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line + 5, cln.start.column),
-          //   options: {
-          //     isWholeLine: true,
-          //     className: 'rightLineDecoration',
-          //     marginClassName: 'rightLineDecoration',
-          //   }
-          // }, {
-          //   range: new monacoRef.current.Range(cln.start.line + 5, cln.start.column, cln.start.line + 10, cln.start.column),
-          //   options: {
-          //     isWholeLine: true,
-          //     className: 'leftLineDecoration',
-          //     marginClassName: 'leftLineDecoration',
-          //   }
-          // }])
 
           // hoverProvider.addTriggerRangeAction('generateDocumentation', new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column), () => {
           //   console.log('adding changes option widget')
@@ -1094,6 +1081,7 @@ export const EditorUI = (props: EditorUIProps) => {
         const containerElement = document.createElement('div')
         containerElement.id = id
         containerElement.style.width = '100%'
+        containerElement.style.borderTop = '1px solid var(--ai)'
 
         const innerContainer = document.createElement('div')
         innerContainer.style.float = 'right'
@@ -1165,6 +1153,44 @@ export const EditorUI = (props: EditorUIProps) => {
           text: line + '\n',
         },
       ])
+      // make original line readonly
+      // editor.onDidChangeCursorPosition(function (e) {
+      //   if (e.position.lineNumber < 3) {
+      //       this.editor.setPosition({
+      //           lineNumber:3,
+      //           column: 1
+      //       });
+      //   }
+      // });
+      // create empty space
+      // monaco.editor.create(..., { find: { addExtraSpaceOnTop: false } })
+      //   editor.onMouseMove(function (e) {
+      //     var contentWidget = {
+      //         domNode: null,
+      //         getId: function () {
+      //             return 'my.content.widget';
+      //         },
+      //         getDomNode: function () {
+      //             if (!this.domNode) {
+      //                 this.domNode = document.createElement('div');
+      //                 this.domNode.innerHTML = 'My content widget';
+      //                 this.domNode.style.background = 'grey';
+      //             }
+      //             return this.domNode;
+      //         },
+      //         getPosition: function () {
+      //             return {
+      //                 position: {
+      //                     lineNumber: e.target.position.lineNumber,
+      //                     column: e.target.position.column
+      //                 },
+      //                 preference: [monaco.editor.ContentWidgetPositionPreference.ABOVE, monaco.editor.ContentWidgetPositionPreference.BELOW]
+      //             };
+      //         }
+      //     };
+      //     editor.layoutContentWidget(contentWidget)
+      // });
+
       const decoratorList = editorRef.current.createDecorationsCollection([{
         range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
         options: {
@@ -1181,19 +1207,29 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }])
 
-      console.log('decoratorList: ', decoratorList)
       addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => {
-        console.log('accept')
+        const ranges = decoratorList.getRanges()
+
+        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+        ranges[1].endColumn = 0
         editorRef.current.executeEdits('removeOriginal' + index, [
           {
-            range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine + 1, 0),
+            range: ranges[1],
             text: null,
           },
         ])
         decoratorList.clear()
-        // showCustomDiff(uri)
       }, () => {
-        console.log('reject')
+        const ranges = decoratorList.getRanges()
+
+        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+        ranges[0].endColumn = 0
+        editorRef.current.executeEdits('removeModified' + index, [
+          {
+            range: ranges[0],
+            text: null,
+          },
+        ])
         decoratorList.clear()
       })
       totalLineDifference += linesCount
