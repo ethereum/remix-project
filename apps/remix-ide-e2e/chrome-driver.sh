@@ -77,12 +77,22 @@ curl -sS -o "$ZIP_PATH" "$CHROMEDRIVER_DOWNLOAD_URL"
 unzip -o "$ZIP_PATH" -d "$INSTALL_DIR"
 
 # Move the extracted chromedriver binary to the root of INSTALL_DIR
-EXTRACTED_DIR=$(find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 -type d | head -n1)
-if [ -f "$EXTRACTED_DIR/chromedriver" ]; then
-  mv "$EXTRACTED_DIR/chromedriver" "$INSTALL_DIR/chromedriver"
+EXTRACTED_DIR="${INSTALL_DIR}/chromedriver-${PLATFORM}"
+ALT_DIR="${INSTALL_DIR}/chromedriver_${PLATFORM}"
+
+if [ -f "${EXTRACTED_DIR}/chromedriver" ]; then
+  mv "${EXTRACTED_DIR}/chromedriver" "$INSTALL_DIR/chromedriver"
+elif [ -f "${ALT_DIR}/chromedriver" ]; then
+  mv "${ALT_DIR}/chromedriver" "$INSTALL_DIR/chromedriver"
 else
-  echo "Error: chromedriver binary not found in $EXTRACTED_DIR"
-  exit 1
+  # Fallback: try to find chromedriver file inside any subdir
+  FOUND=$(find "$INSTALL_DIR" -type f -name chromedriver | head -n1)
+  if [ -n "$FOUND" ]; then
+    mv "$FOUND" "$INSTALL_DIR/chromedriver"
+  else
+    echo "Error: chromedriver binary not found"
+    exit 1
+  fi
 fi
 
 chmod +x "$INSTALL_DIR/chromedriver"
