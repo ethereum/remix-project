@@ -19,5 +19,12 @@
 
   "remixApp.mpOp1Title": "RemixAI",
   "remixApp.mpOp1Details": "RemixAI helps by offering code suggestions and improvements",
-  "remixApp.mpOp1Link": "<a>Learn more about RemixAI Copilot</a>"
+  "remixApp.mpOp1Link": "<a>Learn more about RemixAI Copilot</a>",
+
+  "remixApp.mpOp2Title": "Matomo Anonymous Analytics",
+  "remixApp.mpOp2Details": "Our use of anonymous analytics data helps us improve your experience by identifying bug and important UX improvements. This data can also be used in overall statistics on Remix use in the wider Web3 ecosystem",
+  "remixApp.mpOp2Link": "<a>Learn more about analytics</a>",
+
+  "remixApp.mpOp3Title": "Matomo Performance Analytics",
+  "remixApp.mpOp3Details": "Remix believes your privacy is of primary importance. Your help in making Remix the best possible open source public good toolset is also very important. Approval of performance analytics tracking greatly helps us refine and improve the toolset. Rest assured, we will never share this data with any third parties."
 }
