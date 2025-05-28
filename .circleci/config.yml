@@ -688,7 +688,6 @@ jobs:
               equal: [ "chromeMetamask", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
-                chrome-version: 136.0.7051.0
                 install-firefox: false
                 install-chrome: true
                 install-chromedriver: false
