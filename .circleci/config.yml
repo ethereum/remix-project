@@ -696,7 +696,7 @@ jobs:
                 name: "📦 Downgrading Chrome to version 136.0.7103.113"
                 command: |
                   echo "📦 Downgrading Chrome to version 136.0.7103.113"
-                  wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_136.0.7103.113-1_amd64.deb -O /tmp/chrome136.deb
+                  wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_135.0.7049.114-1_amd64.deb -O /tmp/chrome136.deb
                   sudo dpkg -i /tmp/chrome136.deb || true
                   sudo apt-get install -f -y
                   google-chrome --version
