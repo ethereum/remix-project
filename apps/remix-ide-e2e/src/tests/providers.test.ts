@@ -71,7 +71,7 @@ module.exports = {
         (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
       }, [], () => { })
       .clearValue('*[data-id="ganache-providerModalDialogModalBody-react"] input')
-      .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll-rpc.publicnode.com')
+      .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll.drpc.org')
       .modalFooterOKClick('ganache-provider')
       .pause(100)
       .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
@@ -98,7 +98,7 @@ const testScript = `
 // Importing necessary libraries from Ethers.js for interaction with Ethereum blockchain.
 import { ethers } from "hardhat";
 
-// https://scroll-rpc.publicnode.com
+// https://scroll.drpc.org
 async function main() {
   // Setting up provider (RPC URL) to interact with your chosen Ethereum chain, 
   const [deployer] = await ethers.getSigners();
