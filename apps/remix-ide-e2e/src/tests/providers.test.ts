@@ -61,7 +61,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   },
 
-  'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
+  'Should switch to custom provider #group2 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
@@ -78,7 +78,7 @@ module.exports = {
       .pause(1000)
   },
 
-  'execute script #group2': function (browser: NightwatchBrowser) {
+  'execute script #group2 #flaky': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('filePanel')
       .addFile('testScript.ts', { content: testScript })
       .clearConsole()
