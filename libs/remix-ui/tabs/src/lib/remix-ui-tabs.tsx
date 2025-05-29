@@ -55,7 +55,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
     return {
       ...state,
       currentExt: action.ext,
-      selectedIndex: action.payload
+      selectedIndex: action.payload,
     }
   case 'SET_FILE_DECORATIONS':
     return {
@@ -155,7 +155,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
-    getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
+    getAI().then((value) => setAI_switch(value)).catch((error) => console.log(error))
     dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
@@ -187,8 +187,31 @@ export const TabsUI = (props: TabsUIProps) => {
     else return ''
   }
 
+  const handleFileDrop = (event: React.DragEvent) => {
+    event.preventDefault()
+    if (event.dataTransfer?.files.length > 0) {
+      const files = event.dataTransfer.files
+
+      for (const file of files) {
+        const reader = new FileReader()
+        reader.readAsText(file)
+
+        reader.onload = (e) => {
+          props.plugin.call('fileManager', 'writeFile', '/tmp/' + file.name, e.target?.result)
+        }
+      }
+    }
+  }
+
   return (
-    <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
+    <div
+      className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs"
+      data-id="tabs-component"
+      onDrop={handleFileDrop}
+      onDragOver={(e) => {
+        e.preventDefault()
+      }}
+    >
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <CustomTooltip
@@ -203,9 +226,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 ) : (
                   <FormattedMessage id="remixUiTabs.tooltipText3" />
                 )}
-              </span>
-            }
-          >
+              </span>}>
             <button
               data-id="play-editor"
               className="btn text-success pr-0 py-0 d-flex"
@@ -225,8 +246,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   await props.plugin.call('noir-compiler', 'compile', path)
                 }
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }}
-            >
+              }}>
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
@@ -238,7 +258,8 @@ export const TabsUI = (props: TabsUIProps) => {
               <span>
                 <FormattedMessage id="remixUiTabs.tooltipText9" />
               </span>
-            }><button
+            }
+          ><button
               data-id="script-config"
               className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
               onClick={async () => {
@@ -247,30 +268,19 @@ export const TabsUI = (props: TabsUIProps) => {
               }}
             >
               <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button></CustomTooltip>
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-explanation"
-              tooltipText={
-                <span>
-                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText5" />
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText4" />
-                  )}
-                </span>
-              }
-            >
+            </button>
+          </CustomTooltip>
+          <div className="d-flex border-left ml-2 align-items-center" style={{ height: '3em' }}>
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-explanation" tooltipText={<span>{tabsState.currentExt === 'sol' || tabsState.currentExt === 'vy' || tabsState.currentExt === 'circom' ? <FormattedMessage id="remixUiTabs.tooltipText5" /> : <FormattedMessage id="remixUiTabs.tooltipText4" />}</span>}>
               <button
                 data-id="explain-editor"
-                id='explain_btn'
-                className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
+                id="explain_btn"
+                className="btn text-ai pl-2 pr-0 py-0"
+                disabled={!(tabsState.currentExt === 'sol' || tabsState.currentExt === 'vy' || tabsState.currentExt === 'circom') || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
                   const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
+                  if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'vy' || tabsState.currentExt === 'circom') {
                     setExplaining(true)
                     // if plugin is pinned,
                     await props.plugin.call('popupPanel', 'showPopupPanel', true)
@@ -285,24 +295,10 @@ export const TabsUI = (props: TabsUIProps) => {
                 <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
               </button>
             </CustomTooltip>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-copilot"
-              tooltipText={
-                <span>
-                  {tabsState.currentExt === 'sol' ? (
-                    !ai_switch ? (
-                      <FormattedMessage id="remixUiTabs.tooltipText6" />
-                    ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
-                  )}
-                </span>
-              }
-            >
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-copilot" tooltipText={<span>{tabsState.currentExt === 'sol' ? !ai_switch ? <FormattedMessage id="remixUiTabs.tooltipText6" /> : <FormattedMessage id="remixUiTabs.tooltipText7" /> : <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />}</span>}>
               <button
                 data-id="remix_ai_switch"
-                id='remix_ai_switch'
+                id="remix_ai_switch"
                 className="btn ai-switch text-ai pl-2 pr-0 py-0"
                 disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom') )}
                 onClick={async () => {
@@ -311,12 +307,12 @@ export const TabsUI = (props: TabsUIProps) => {
                   ai_switch ? _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_disabled'])
                 }}
               >
-                <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
+                <i className={ai_switch ? 'fas fa-toggle-on fa-lg' : 'fas fa-toggle-off fa-lg'}></i>
               </button>
             </CustomTooltip>
           </div>
 
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+          <div className="d-flex border-left ml-2 align-items-center" style={{ height: '3em' }}>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
               <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
             </CustomTooltip>
@@ -339,7 +335,7 @@ export const TabsUI = (props: TabsUIProps) => {
             dispatch({
               type: 'SELECT_INDEX',
               payload: index,
-              ext: getExt(props.tabs[currentIndexRef.current].name)
+              ext: getExt(props.tabs[currentIndexRef.current].name),
             })
           }}
         >
