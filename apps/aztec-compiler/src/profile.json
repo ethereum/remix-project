@@ -1,0 +1,17 @@
+{
+  "name": "aztec-compiler",
+  "kind": "provider",
+  "displayName": "Aztec Compiler",
+  "events": [],
+  "version": "2.0.0",
+  "methods": [],
+  "canActivate": [],
+  "url": "",
+  "description": "Enables support for aztec contract compilation",
+  "icon": "assets/img/noir-icon12.webp",
+  "location": "sidePanel",
+  "documentation": "",
+  "repo": "https://github.com/ethereum/remix-project/tree/master/apps/aztec-compiler",
+  "maintainedBy": "Remix",
+  "authorContact": ""
+}
