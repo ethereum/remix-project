@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
-import { AppModalCancelTypes } from '../../types'
 declare global {
   interface Window {
     _paq: any
@@ -13,12 +11,23 @@ const _paq = (window._paq = window._paq || [])
 interface ManagePreferencesDialogProps {
 }
 
-const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
-  const { modal } = useDialogDispatchers()
-  const [visible, setVisible] = useState<boolean>(true)
+const ManagePreferencesSwitcher = (prop: {
+  setParentState: (state: any) => void
+}) => {
+  const [remixAISwitch, setRemixAISwitch] = useState(true)
+  const [matPerfSwitch, setMatPerfSwitch] = useState(false)
+  const [matAnonSwitch, setMatAnonSwitch] = useState(false)
+  
 
-  const message = () => {
-    return (
+  useEffect(() => {
+    prop.setParentState({
+      remixAISwitch,
+      matPerfSwitch,
+      matAnonSwitch
+    })
+  }, [remixAISwitch, matPerfSwitch, matAnonSwitch])
+
+  return (
       <>
         <div data-id="remixAI" className='justify-content-between d-flex'>
           <div className='mt-2'>
@@ -40,9 +49,9 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
               data-id="remixAISwitch"
               id='remixAISwitch'
               className="btn text-ai"
-              onClick={() => {}}
+              onClick={() => setRemixAISwitch(!remixAISwitch)}
             >
-              <i className="fas fa-toggle-on fa-2xl"></i>
+              { remixAISwitch ? <i className="fas fa-toggle-on fa-2xl"></i> : <i className="fas fa-toggle-off fa-2xl"></i> }
             </button>
           </div>
         </div>
@@ -66,9 +75,9 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
               data-id="matomoAnonAnalyticsSwitch"
               id='matomoAnonAnalyticsSwitch'
               className="btn text-ai"
-              onClick={() => {}}
+              onClick={() => setMatAnonSwitch(!matAnonSwitch)}
             >
-              <i className="fas fa-toggle-off fa-2xl"></i>
+              { matAnonSwitch ? <i className="fas fa-toggle-on fa-2xl"></i> : <i className="fas fa-toggle-off fa-2xl"></i> }
             </button>
           </div>
         </div>
@@ -82,31 +91,42 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
               data-id="matomoPerfAnalyticsSwitch"
               id='matomoPerfAnalyticsSwitch'
               className="btn text-secondary"
-              onClick={() => {}}
+              onClick={() => setMatPerfSwitch(!matPerfSwitch)}
             >
-              <i className="fas fa-toggle-off fa-2xl"></i>
+              { matPerfSwitch ? <i className="fas fa-toggle-on fa-2xl"></i> : <i className="fas fa-toggle-off fa-2xl"></i> }
             </button>
           </div>
         </div>
       </>
     )
-  }
+}
+
+const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
+  const { modal } = useDialogDispatchers()
+  const [visible, setVisible] = useState<boolean>(true)
+  let switcherState = useRef<Record<string, any>>(null)
   
   useEffect(() => {
     if (visible) {
       modal({
         id: 'managePreferencesModal',
         title: <FormattedMessage id="remixApp.managePreferences" />,
-        message: message(),
-        okLabel: <FormattedMessage id="remixApp.declineCookies" />,
-        okFn: () => {},
-        cancelLabel: <FormattedMessage id="remixApp.savePreferences" />,
+        message: <ManagePreferencesSwitcher setParentState={(state)=>{
+          switcherState.current = state
+        }} />,
+        okLabel: <FormattedMessage id="remixApp.savePreferences" />,
+        okFn: savePreferences,
+        cancelLabel: <FormattedMessage id="remixApp.declineCookies" />,
         cancelFn: () => {},
         showCancelIcon: true,
         preventBlur: true
       })
     }
   }, [visible])
+
+  const savePreferences = async () => {
+    console.log('switcherState--->', switcherState.current)
+  }
 
   return <></>
 }
