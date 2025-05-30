@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import axios from "axios";
@@ -6,7 +6,6 @@ import { CopyToClipboard } from "@remix-ui/clipboard";
 import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
 import { endpointUrls } from "@remix-endpoints-helper";
-import { generatePKCE } from "../lib/pkce";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -14,6 +13,7 @@ export const GetDeviceCode = () => {
   const pluginActions = React.useContext(pluginActionsContext)
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
+  const [popupError, setPopupError] = useState(false)
 
   const popupRef = useRef<Window | null>(null)
 
@@ -26,16 +26,15 @@ export const GetDeviceCode = () => {
   }
 
   const openPopupLogin = useCallback(async () => {
-    const { codeVerifier, codeChallenge } = await generatePKCE()
-    localStorage.setItem('pkce_verifier', codeVerifier)
-
     const clientId = getClientId()
     const redirectUri = `${window.location.origin}/auth/github/callback`
     const scope = 'repo gist user:email read:user'
 
-    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
 
-    const popup = window.open(url, 'GitHub Login', 'width=600,height=700')
+    console.log('[GetDeviceCode] Opening GitHub login popup with URL:', url)
+
+    const popup = window.open(url, '_blank', 'width=600,height=700')
     if (!popup) {
       console.warn('[GetDeviceCode] Popup blocked or failed to open, falling back to device code flow.')
       await getDeviceCodeFromGitHub()
@@ -56,14 +55,14 @@ export const GetDeviceCode = () => {
         window.removeEventListener('message', messageListener)
         popup?.close()
       } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
-        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
+        setPopupError(true)
         window.removeEventListener('message', messageListener)
         popup?.close()
       }
     }
 
     window.addEventListener('message', messageListener)
-  }, [pluginActions, actions])
+  }, [actions, pluginActions])
 
   const getDeviceCodeFromGitHub = async () => {
     await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
@@ -132,8 +131,16 @@ export const GetDeviceCode = () => {
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={openPopupLogin}>
           <i className="fab fa-github mr-1"></i>Login with GitHub
-        </button></>
-      }
+        </button>
+        {popupError && !gitHubResponse && !authorized && (
+          <div className="alert alert-warning mt-2" role="alert">
+            GitHub login failed. You can continue using another method.
+            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={getDeviceCodeFromGitHub}>
+              Use another method
+            </button>
+          </div>
+        )}
+      </>}
       {gitHubResponse && !authorized &&
         <div className="pt-2">
 
