@@ -11,20 +11,20 @@
   "remixApp.matomoText1": "Remix features an AI coding assistant called RemixAI, that needs your approval to use.",
   "remixApp.matomoText2": "We also use <a>Matomo</a>, an open-source analytics platform, that helps us improve your experience.",
   "remixApp.matomoTitle": "AI and Analytics Preferences",
-  "remixApp.accept": "Accept All",
+  "remixApp.accept": "Accept",
   "remixApp.managePreferences": "Manage Preferences",
   "remixApp.savePreferences": "Save Preferences",
   "remixApp.declineCookies": "Decline Cookies",
   "remixApp.decline": "Decline",
 
-  "remixApp.mpOp1Title": "RemixAI",
-  "remixApp.mpOp1Details": "RemixAI helps by offering code suggestions and improvements",
-  "remixApp.mpOp1Link": "<a>Learn more about RemixAI Copilot</a>",
+  "remixApp.mpOp1Title": "Matomo Anonymous Analytics (Necessary)",
+  "remixApp.mpOp1Details": "Our use of anonymous analytics data helps us improve your experience by identifying bug and important UX improvements. This data can also be used in overall statistics on Remix use in the wider Web3 ecosystem",
 
-  "remixApp.mpOp2Title": "Matomo Anonymous Analytics",
-  "remixApp.mpOp2Details": "Our use of anonymous analytics data helps us improve your experience by identifying bug and important UX improvements. This data can also be used in overall statistics on Remix use in the wider Web3 ecosystem",
+  "remixApp.mpOp2Title": "Matomo Performance Analytics",
+  "remixApp.mpOp2Details": "Remix believes your privacy is of primary importance. Your help in making Remix the best possible open source public good toolset is also very important. Approval of performance analytics tracking greatly helps us refine and improve the toolset. Rest assured, we will never share this data with any third parties.",
   "remixApp.mpOp2Link": "<a>Learn more about analytics</a>",
 
-  "remixApp.mpOp3Title": "Matomo Performance Analytics",
-  "remixApp.mpOp3Details": "Remix believes your privacy is of primary importance. Your help in making Remix the best possible open source public good toolset is also very important. Approval of performance analytics tracking greatly helps us refine and improve the toolset. Rest assured, we will never share this data with any third parties."
+  "remixApp.mpOp3Title": "RemixAI",
+  "remixApp.mpOp3Details": "RemixAI helps by offering code suggestions and improvements",
+  "remixApp.mpOp3Link": "<a>Learn more about RemixAI Copilot</a>"
 }
