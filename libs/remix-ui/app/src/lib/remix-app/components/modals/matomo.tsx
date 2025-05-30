@@ -11,21 +11,24 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 interface MatomoDialogProps {
-  okFn: () => void
+  acceptAllFn: () => void
+  managePreferencesFn: () => void
   hide: boolean
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  const { settings, showMatomo, appManager } = useContext(AppContext)
+  let { settings, showMatomo, appManager } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
+  showMatomo = true // remove it before merge
 
   const message = () => {
     return (
       <>
         <p>
+          <FormattedMessage id="remixApp.matomoText1" /><br/>
           <FormattedMessage
-            id="remixApp.matomoText1"
+            id="remixApp.matomoText2"
             values={{
               a: (chunks) => (
                 <a href="https://matomo.org" target="_blank" rel="noreferrer">
@@ -34,30 +37,6 @@ const MatomoDialog = (props: MatomoDialogProps) => {
               ),
             }}
           />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText2" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText3" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText4" />
-        </p>
-        <p>
-          <FormattedMessage
-            id="remixApp.matomoText5"
-            values={{
-              a: (chunks) => (
-                <a href="https://medium.com/p/66ef69e14931/" target="_blank" rel="noreferrer">
-                  {chunks}
-                </a>
-              ),
-            }}
-          />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText6" />
         </p>
       </>
     )
@@ -70,9 +49,10 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         title: <FormattedMessage id="remixApp.matomoTitle" />,
         message: message(),
         okLabel: <FormattedMessage id="remixApp.accept" />,
-        okFn: handleModalOkClick,
-        cancelLabel: <FormattedMessage id="remixApp.decline" />,
-        cancelFn: declineModal,
+        okFn: handleAcceptAllClick,
+        cancelLabel: <FormattedMessage id="remixApp.managePreferences" />,
+        cancelFn: handleManagePreferencesClick,
+        showCancelIcon: true,
         preventBlur: true
       })
     }
@@ -87,13 +67,18 @@ const MatomoDialog = (props: MatomoDialogProps) => {
     }
   }
 
-  const handleModalOkClick = async () => {
+  const handleAcceptAllClick = async () => {
 
     // user has given consent to process their data
     _paq.push(['setConsentGiven'])
     settings.updateMatomoAnalyticsChoice(true)
     setVisible(false)
-    props.okFn()
+    props.acceptAllFn()
+  }
+
+  const handleManagePreferencesClick = async () => {
+    setVisible(false)
+    props.managePreferencesFn()
   }
 
   return <></>
