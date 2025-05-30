@@ -23,7 +23,8 @@ const profile = {
   methods: ['code_generation', 'code_completion', 'setContextFiles',
     "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
-    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
+    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending', 
+    'resetChatRequestBuffer'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -132,7 +133,7 @@ export class RemixAIPlugin extends ViewPlugin {
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let newPrompt = await this.codeExpAgent.chatCommand(prompt)
     // add workspace context
-    newPrompt = this.workspaceAgent.ctxFiles ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
+    newPrompt = !this.workspaceAgent.ctxFiles ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
@@ -246,7 +247,7 @@ export class RemixAIPlugin extends ViewPlugin {
         console.log('RAG context error:', error)
       }
     }
-    const files = this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
+    const files = !this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
     let result
@@ -256,7 +257,6 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
     }
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
-
   }
 
   async fixWorspaceErrors(continueGeneration=false): Promise<any> {
@@ -323,6 +323,10 @@ export class RemixAIPlugin extends ViewPlugin {
 
   isChatRequestPending(){
     return this.chatRequestBuffer != null
+  }
+
+  resetChatRequestBuffer() {
+    this.chatRequestBuffer = null
   }
 
   setDispatch(dispatch) {

@@ -76,7 +76,11 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(true)
   const tabs = useRef(props.tabs)
-  tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
+  tabs.current = props.tabs; // we do this to pass the tabs list to the onReady callbacks
+
+  (window as any).sendChatMessage = (content) => {
+    props.plugin.call('remixAI', 'chatPipe', 'solidity_answer', content, "", content)
+  }
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -273,7 +277,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
                     setExplaining(true)
                     // if plugin is pinned,
-                    await props.plugin.call('popupPanel', 'showPopupPanel', true)
+                    await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
                     setTimeout(async () => {
                       await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
                     }, 500)
