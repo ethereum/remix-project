@@ -61,7 +61,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   },
 
-  'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
+  'Should switch to custom provider #group2 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
@@ -71,14 +71,14 @@ module.exports = {
         (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
       }, [], () => { })
       .clearValue('*[data-id="ganache-providerModalDialogModalBody-react"] input')
-      .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll-rpc.publicnode.com')
+      .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll.drpc.org')
       .modalFooterOKClick('ganache-provider')
       .pause(100)
       .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
       .pause(1000)
   },
 
-  'execute script #group2': function (browser: NightwatchBrowser) {
+  'execute script #group2 #flaky': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('filePanel')
       .addFile('testScript.ts', { content: testScript })
       .clearConsole()
@@ -98,7 +98,7 @@ const testScript = `
 // Importing necessary libraries from Ethers.js for interaction with Ethereum blockchain.
 import { ethers } from "hardhat";
 
-// https://scroll-rpc.publicnode.com
+// https://scroll.drpc.org
 async function main() {
   // Setting up provider (RPC URL) to interact with your chosen Ethereum chain, 
   const [deployer] = await ethers.getSigners();
