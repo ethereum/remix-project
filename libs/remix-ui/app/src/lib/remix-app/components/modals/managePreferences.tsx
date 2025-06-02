@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDialogDispatchers } from '../../context/provider'
 import { CustomTooltip } from "@remix-ui/helper"
-import { useIntl } from 'react-intl';
+import { AppContext } from '../../context/context'
 declare global {
   interface Window {
     _paq: any
@@ -16,7 +16,6 @@ interface ManagePreferencesDialogProps {
 const ManagePreferencesSwitcher = (prop: {
   setParentState: (state: any) => void
 }) => {
-  const intl = useIntl()
   const [remixAISwitch, setRemixAISwitch] = useState(true)
   const [matPerfSwitch, setMatPerfSwitch] = useState(true)
   
@@ -111,6 +110,7 @@ const ManagePreferencesSwitcher = (prop: {
 
 const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
   const { modal } = useDialogDispatchers()
+  let { settings } = useContext(AppContext)
   const [visible, setVisible] = useState<boolean>(true)
   let switcherState = useRef<Record<string, any>>(null)
   
@@ -131,7 +131,8 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
   }, [visible])
 
   const savePreferences = async () => {
-    console.log('switcherState--->', switcherState.current)
+    settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
+    settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
   }
 
   return <></>
