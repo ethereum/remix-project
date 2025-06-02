@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 import '../components/styles/preload.css'
+import { endpointUrls } from "@remix-endpoints-helper"
+
 
 const extractCode = () => {
     const searchParams = new URLSearchParams(window.location.search)
@@ -39,7 +41,7 @@ export const GitHubPopupCallback = () => {
 
         try {
             console.log('fetching access token from proxy server...', { code })
-            const { data } = await axios.post(`http://localhost:4000/github-login-proxy/login/oauth/access_token?_=${Date.now()}`, {
+            const { data } = await axios.post(`${endpointUrls.gitHubLoginProxy}/login/oauth/access_token?_=${Date.now()}`, {
                 client_id: 'Ov23li1dOIgMqxY9vRJS',
                 code,
                 redirect_uri: window.location.origin + '/auth/github/callback'

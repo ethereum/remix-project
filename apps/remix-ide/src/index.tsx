@@ -8,7 +8,6 @@ import { GitHubPopupCallback } from './app/pages/GitHubPopupCallback'
 import Config from './config'
 import { Registry } from '@remix-project/remix-lib'
 import { Storage } from '@remix-project/remix-lib'
-import { WalletConnectTxt } from './app/pages/WalletConnectTxt'
 
 import { createRoot } from 'react-dom/client'
 
@@ -28,7 +27,6 @@ import { createRoot } from 'react-dom/client'
         <BrowserRouter>
           <Routes>
             <Route path="/auth/github/callback" element={<GitHubPopupCallback />} />
-            <Route path="/.well-known/walletconnect.txt" element={<WalletConnectTxt/>} />
             <Route path="*" element={<Preload root={root} />} />
           </Routes>
         </BrowserRouter>
