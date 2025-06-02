@@ -167,7 +167,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -188,9 +188,9 @@ module.exports = {
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clearTransactions()
-      .switchEnvironment('vm-london') // switch to London fork
+      .switchEnvironment('vm-london', true) // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')

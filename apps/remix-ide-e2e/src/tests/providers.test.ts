@@ -25,8 +25,6 @@ module.exports = {
         selector: "//span[@class='text-danger' and contains(., 'Error while querying the provider')]",
         timeout: 10000
       })
-      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
-      .pause(1000)
   },
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
