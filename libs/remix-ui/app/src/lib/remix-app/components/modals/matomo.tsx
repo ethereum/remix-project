@@ -26,7 +26,16 @@ const MatomoDialog = (props: MatomoDialogProps) => {
     return (
       <>
         <p>
-          <FormattedMessage id="remixApp.matomoText1" /><br/>
+          <FormattedMessage
+            id="remixApp.matomoText1"
+            values={{
+              a: (chunks) => (
+                <a href="https://remix-ide.readthedocs.io/en/latest/ai.html" target="_blank" rel="noreferrer">
+                  {chunks}
+                </a>
+              ),
+            }}
+          /><br/>
           <FormattedMessage
             id="remixApp.matomoText2"
             values={{
