@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDialogDispatchers } from '../../context/provider'
+import { CustomTooltip } from "@remix-ui/helper"
+import { useIntl } from 'react-intl';
 declare global {
   interface Window {
     _paq: any
@@ -14,6 +16,7 @@ interface ManagePreferencesDialogProps {
 const ManagePreferencesSwitcher = (prop: {
   setParentState: (state: any) => void
 }) => {
+  const intl = useIntl()
   const [remixAISwitch, setRemixAISwitch] = useState(true)
   const [matPerfSwitch, setMatPerfSwitch] = useState(true)
   
@@ -33,14 +36,21 @@ const ManagePreferencesSwitcher = (prop: {
             <p className='form-check-label text-secondary'><FormattedMessage id="remixApp.mpOp1Details" /></p>
           </div>
           <div>
-            <button
-              data-id="matomoAnonAnalyticsSwitch"
-              id='matomoAnonAnalyticsSwitch'
-              className="btn text-ai"
-              disabled
+            <CustomTooltip
+            placement={"auto"}
+            tooltipId="matomoAnonAnalyticsTooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText={<FormattedMessage id="remixApp.mpOp1Tooltip" />}
             >
-              <i className="fas fa-toggle-on fa-2xl"></i>
-            </button>
+              <button
+                data-id="matomoAnonAnalyticsSwitch"
+                id='matomoAnonAnalyticsSwitch'
+                className="btn text-ai"
+                disabled
+              >
+                <i className="fas fa-toggle-on fa-2xl"></i>
+              </button>
+            </CustomTooltip>
           </div>
         </div>
         <div data-id="matomoPerfAnalytics" className='justify-content-between d-flex'>
