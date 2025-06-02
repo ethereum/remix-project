@@ -132,6 +132,7 @@ const ManagePreferencesDialog = (props: ManagePreferencesDialogProps) => {
 
   const savePreferences = async () => {
     settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
+    settings.updateMatomoPerfAnalyticsChoice(switcherState.current.matPerfSwitch) // Enable/Disable Matomo Performance analytics
     settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
   }
 
