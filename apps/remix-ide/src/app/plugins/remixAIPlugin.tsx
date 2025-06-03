@@ -23,7 +23,7 @@ const profile = {
   methods: ['code_generation', 'code_completion', 'setContextFiles',
     "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
-    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending', 
+    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
     'resetChatRequestBuffer'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
