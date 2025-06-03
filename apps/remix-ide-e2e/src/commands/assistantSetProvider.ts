@@ -24,7 +24,7 @@ function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFu
       selector: '//*[@data-id="remix-ai-assistant" and contains(.,"AI Provider set to")]',
       timeout: 50000
     })
-  done()
+    .perform(() => done())  
 }
 
 module.exports = SetAssistantProvider
