@@ -19,7 +19,7 @@ const templatesToCheck = [
     },
     {
         value: "simpleEip7702",
-        displayName: "Simple EIP-7702",
+        displayName: "Simple EIP 7702",
         checkSelectors: ['*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]']
     },
     {
