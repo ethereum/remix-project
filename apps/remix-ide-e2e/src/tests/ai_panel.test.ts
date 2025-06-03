@@ -32,6 +32,7 @@ module.exports = {
   },
   'Should add a bad contract and explain using RemixAI': function (browser: NightwatchBrowser) {
     browser
+      .refreshPage()
       .addFile('Bad.sol', { content: 'errors' })
       .clickLaunchIcon('solidity')
       .waitForElementVisible('.ask-remix-ai-button')
@@ -45,6 +46,7 @@ module.exports = {
   },
   'Should select the AI assistant provider': function (browser: NightwatchBrowser) {
     browser
+      .refreshPage()
       .clickLaunchIcon('remixaiassistant')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .assistantSetProvider('mistralai')
