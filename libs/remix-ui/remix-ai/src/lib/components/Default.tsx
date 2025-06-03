@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
-import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
+import { ConversationStarter, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
-import { highlighter } from '@nlux/highlighter'
+// import { highlighter } from '@nlux/highlighter'
 import './color.css'
-import '@nlux/themes/unstyled.css';
+import '@nlux/themes';
 import copy from 'copy-to-clipboard'
 
 export let ChatApi = null
 
 export const Default = (props) => {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const chatCmdParser = new ChatCommandParser(props.plugin)
 
   const HandleCopyToClipboard = () => {
     const markdown = document.getElementsByClassName('nlux-chatSegments-container')
@@ -35,10 +36,18 @@ export const Default = (props) => {
     HandleCopyToClipboard();
   }, [is_streaming]);
 
-  const send: StreamSend = async (
+  const send = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+
+    const parseResult = await chatCmdParser.parse(prompt)
+    if (parseResult) {
+      observer.next(parseResult)
+      observer.complete()
+      return
+    }
+
     GenerationParams.stream_result = true
     setIS_streaming(true)
     GenerationParams.return_stream_response = GenerationParams.stream_result
@@ -66,6 +75,7 @@ export const Default = (props) => {
       setTimeout(() => { setIS_streaming(false) }, 1000)
     }
   };
+
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
     { prompt: 'Explain what is a solidity contract!' },
@@ -98,12 +108,14 @@ export const Default = (props) => {
       composerOptions={{ placeholder: "Type your query",
         submitShortcut: 'Enter',
         hideStopButton: false,
+        remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+        pluginMethodCall: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,
         streamingAnimationSpeed: 1,
         waitTimeBeforeStreamCompletion: 1000,
-        syntaxHighlighter: highlighter
+        // syntaxHighlighter: highlighter
       }}
     />
   );
