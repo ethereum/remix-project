@@ -17,7 +17,7 @@ interface MatomoDialogProps {
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  let { settings, showMatomo, appManager } = useContext(AppContext)
+  let { settings, showMatomo } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
   showMatomo = true // remove it before merge
