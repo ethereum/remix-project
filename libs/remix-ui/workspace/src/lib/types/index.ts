@@ -64,6 +64,9 @@ export type TemplateType = {
   name?: string
   endpoint?: string
   params?: any[]
+  desktopCompatible?: boolean
+  forceCreateNewWorkspace?: boolean
+  disabled?: boolean
 }
 
 export interface FilePanelType extends ViewPlugin {

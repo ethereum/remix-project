@@ -26,107 +26,134 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
   'breakthroughLabsUniswapv4Hooks': {
     type: 'git',
     url: 'https://github.com/Breakthrough-Labs/Uniswapv4Hooks',
-    branch: 'foundry_pure'
+    branch: 'foundry_pure',
+    forceCreateNewWorkspace: true
   },
   'accountAbstraction': {
     type: 'git',
     url: 'https://github.com/eth-infinitism/account-abstraction',
-    branch: 'releases/v0.8'
+    branch: 'releases/v0.8',
+    forceCreateNewWorkspace: true
   },
   'uniswapV4Template': {
     type: 'git',
     url: 'https://github.com/Breakthrough-Labs/v4-template',
-    branch: 'main'
+    branch: 'main',
+    forceCreateNewWorkspace: true
   },
   'uniswapV4HookBookMultiSigSwapHook': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openPattern',
-    params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true]
+    params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true],
+    forceCreateNewWorkspace: true,
+    desktopCompatible: false,
+    disabled: true
   },
   'token-sale': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['token-sale']
+    params: ['token-sale'],
+    desktopCompatible: false
   },
   'simple-nft-sale': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['simple-nft-sale']
+    params: ['simple-nft-sale'],
+    desktopCompatible: false
+  },
+  'Azuki-ERC721A-NFT-Sale': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['Azuki-ERC721A-NFT-Sale'],
+    desktopCompatible: false
   },
   'Azuki-ERC721A-NFT-Sale-basic': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['Azuki-ERC721A-NFT-Sale-basic']
+    params: ['Azuki-ERC721A-NFT-Sale-basic'],
+    desktopCompatible: false
   },
   'Azuki-ERC721A-ERC721A': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['Azuki-ERC721A-ERC721A']
+    params: ['Azuki-ERC721A-ERC721A'],
+    desktopCompatible: false
   },
   'token-staking-with-infinite-rewards': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['token-staking-with-infinite-rewards']
+    params: ['token-staking-with-infinite-rewards'],
+    desktopCompatible: false
   },
   'nft-staking-with-infinite-rewards': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['nft-staking-with-infinite-rewards']
+    params: ['nft-staking-with-infinite-rewards'],
+    desktopCompatible: false
   },
   'basic-dao': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['basic-dao']
+    params: ['basic-dao'],
+    desktopCompatible: false
   },
   'soulbound-nft': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['soulbound-nft']
+    params: ['soulbound-nft'],
+    desktopCompatible: false
   },
   'multi-collection-nft-with-burnable-nfts-and-pausable-transfers': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openContract',
-    params: ['multi-collection-nft-with-burnable-nfts-and-pausable-transfers']
+    params: ['multi-collection-nft-with-burnable-nfts-and-pausable-transfers'],
+    desktopCompatible: false
   },
   'OpenSea-Seaport': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openProtocol',
-    params: ['OpenSea-Seaport']
+    params: ['OpenSea-Seaport'],
+    desktopCompatible: false
   },
   'Ethereum-Name-Service': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openProtocol',
-    params: ['Ethereum-Name-Service']
+    params: ['Ethereum-Name-Service'],
+    desktopCompatible: false
   },
   'Umbra-Cash': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openProtocol',
-    params: ['Umbra-Cash']
+    params: ['Umbra-Cash'],
+    desktopCompatible: false
   },
   'Aave-V3': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openProtocol',
-    params: ['Aave-V3']
+    params: ['Aave-V3'],
+    desktopCompatible: false
   },
   'ChainLink': {
     type: 'plugin',
     name: 'cookbookdev',
     endpoint: 'openProtocol',
-    params: ['ChainLink']
+    params: ['ChainLink'],
+    desktopCompatible: false
   }
 }
 
@@ -141,10 +168,21 @@ export type Template = {
   value: string
   displayName: string
   opts?: TemplateOption
+  templateType?: TemplateType
+  tagList?: string[],
+  IsArtefact?: boolean
+  description?: string
+  name?: string
 }
 
 export type TemplateGroup = {
   name: string
   items: Array<Template>
+  tooltip?: string
+  onClick?: () => void
+  onClickLabel?: string
+  description?: string
+  IsArtefact?: boolean
+  hasOptions?: boolean
 }
 
