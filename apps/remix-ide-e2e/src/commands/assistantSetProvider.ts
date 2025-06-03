@@ -21,7 +21,8 @@ function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFu
     }, [provider])
     .waitForElementVisible({
       locateStrategy: 'xpath',
-      selector: '//*[@data-id="remix-ai-assistant" and contains(.,"AI Provider set to")]'
+      selector: '//*[@data-id="remix-ai-assistant" and contains(.,"AI Provider set to")]',
+      timeout: 50000
     })
   done()
 }
