@@ -108,6 +108,35 @@ app.on('activate', () => {
   }
 });
 
+app.setAsDefaultProtocolClient('remix')
+
+app.on('open-url', async (event, url) => {
+  event.preventDefault();
+  try {
+    console.log('Got custom URL:', url);
+    const parsedUrl = new URL(url);
+    const fullPath = `/${parsedUrl.host}${parsedUrl.pathname}`;
+    const searchParams = parsedUrl.searchParams;
+
+    switch (fullPath) {
+      case '/auth/callback': {
+        const code = searchParams.get('code');
+        if (code) {
+          githubAuthHandlerPlugin && githubAuthHandlerPlugin.exchangeCodeForToken(code)
+          console.log('Auth exchange', code);
+        }
+        break;
+      }
+
+      default:
+        console.warn('Unknown remix:// URL path:', fullPath);
+        break;
+    }
+  } catch (err) {
+    console.error('Failed to handle remix:// URL:', err);
+  }
+});
+
 const showAbout = () => {
   void dialog.showMessageBox({
     title: `About Remix`,
@@ -133,6 +162,7 @@ import HelpMenu from './menus/help';
 import { execCommand } from './menus/commands';
 import main from './menus/main';
 import { trackEvent } from './utils/matamo';
+import { githubAuthHandlerPlugin } from './engine';
 
 
 const commandKeys: Record<string, string> = {

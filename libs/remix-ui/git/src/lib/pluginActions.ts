@@ -111,3 +111,7 @@ export const sendToMatomo = async (event: gitMatomoEventTypes, args?: string[]) 
   plugin && await plugin.call('matomo', 'track', trackArgs);
 }
 
+export const loginWithGitHub = async () => {
+  plugin && await plugin.call('githubAuthHandler', 'login');
+}
+

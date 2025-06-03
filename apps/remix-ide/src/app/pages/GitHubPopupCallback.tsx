@@ -42,7 +42,6 @@ export const GitHubPopupCallback = () => {
         try {
             console.log('fetching access token from proxy server...', { code })
             const { data } = await axios.post(`${endpointUrls.gitHubLoginProxy}/login/oauth/access_token?_=${Date.now()}`, {
-                client_id: 'Ov23li1dOIgMqxY9vRJS',
                 code,
                 redirect_uri: window.location.origin + '/auth/github/callback'
             }, {

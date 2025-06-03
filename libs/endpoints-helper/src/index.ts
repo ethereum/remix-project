@@ -16,7 +16,7 @@ type EndpointUrls = {
 };
 
 const defaultUrls: EndpointUrls = {
-  corsProxy: 'http://localhost:3080',
+  corsProxy: 'https://gitproxy.api.remix.live',
   solidityScan: 'https://solidityscan.api.remix.live',
   ipfsGateway: 'https://jqgt.api.remix.live',
   commonCorsProxy: 'https://common-corsproxy.api.remix.live',

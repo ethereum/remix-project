@@ -16,6 +16,7 @@ import { FoundryPlugin } from './plugins/foundryPlugin';
 import { HardhatPlugin } from './plugins/hardhatPlugin';
 import { CircomElectronPlugin } from './plugins/circomElectronBasePlugin';
 import { isE2E } from './main';
+import { GitHubAuthHandler } from './plugins/githubAuthHandler';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -32,6 +33,7 @@ const foundryPlugin = new FoundryPlugin()
 const hardhatPlugin = new HardhatPlugin()
 const remixAIDesktopPlugin = new RemixAIDesktopPlugin()
 const circomPlugin = new CircomElectronPlugin()
+export const githubAuthHandlerPlugin  = new GitHubAuthHandler()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -47,11 +49,13 @@ engine.register(appUpdaterPlugin)
 engine.register(hardhatPlugin)
 engine.register(remixAIDesktopPlugin)
 engine.register(circomPlugin)
+engine.register(githubAuthHandlerPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
+  console.log('activatePlugin', plugin)
   return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
@@ -87,7 +91,6 @@ ipcMain.on('git:startclone', async (event) => {
 ipcMain.handle('getWebContentsID', (event, message) => {
   return event.sender.id
 })
-
 
 app.on('before-quit', async (event) => {
   await appManager.call('fs', 'removeCloseListener')
