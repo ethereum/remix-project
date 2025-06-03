@@ -28,7 +28,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the current code")]'
       })
-      .pause(10000)
+      .pause(2000)
   },
   'Should add a bad contract and explain using RemixAI': function (browser: NightwatchBrowser) {
     browser
@@ -41,7 +41,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the error")]'
       })
-      .pause(5000)
+      .pause(2000)
   },
   'Should select the AI assistant provider': function (browser: NightwatchBrowser) {
     browser
@@ -93,7 +93,6 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
       }, 60000)
-      .pause(10000)
   },
   'Should lead to Workspace generation with the AI assistant': function (browser: NightwatchBrowser) {
     browser
@@ -105,7 +104,6 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
       }, 60000)
-      .pause(5000)
   },
   'Should create a new workspace using the AI assistant button in the composer': function (browser: NightwatchBrowser) {
     browser
@@ -153,36 +151,35 @@ module.exports = {
       }, 60000)
 
   },
-  // 'Generate new workspaces code with all AI assistant providers': function (browser: NightwatchBrowser) {
-  //   init(browser, () => {})
-  //   browser
-  //     .clickLaunchIcon('remixaiassistant')
-  //     .waitForElementVisible('*[data-id="composer-textarea"]')
-  //     .assistantGenerate('a simple ERC20 contract', 'openai')
-  //     .waitForElementVisible({
-  //       locateStrategy: 'xpath',
-  //       selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-  //     }, 60000)
-  //   init(browser, () => {})
-  //   browser
-  //     .clickLaunchIcon('remixaiassistant')
-  //     .waitForElementVisible('*[data-id="composer-textarea"]')
-  //     .assistantGenerate('a simple ERC20 contract', 'mistralai')
-  //     .waitForElementVisible({
-  //       locateStrategy: 'xpath',
-  //       selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-  //     }, 60000)
+  'Generate new workspaces code with all AI assistant providers': function (browser: NightwatchBrowser) {
+    browser
+      .refreshPage()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .assistantGenerate('a simple ERC20 contract', 'openai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
+      }, 60000)
 
-  //   init(browser, () => {})
-  //   browser
-  //     .clickLaunchIcon('remixaiassistant')
-  //     .waitForElementVisible('*[data-id="composer-textarea"]')
-  //     .assistantGenerate('a simple ERC20 contract', 'anthropic')
-  //     .waitForElementVisible({
-  //       locateStrategy: 'xpath',
-  //       selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-  //     }, 60000)
-  // },
+      .refreshPage()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .assistantGenerate('a simple ERC20 contract', 'mistralai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
+      }, 60000)
+
+      .refreshPage()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .assistantGenerate('a simple ERC20 contract', 'anthropic')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
+      }, 60000)
+  },
   "Should close the AI assistant": function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
