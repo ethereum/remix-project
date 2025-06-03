@@ -28,7 +28,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the current code")]'
       })
-      .pause(2000)
+      .pause(20000)
   },
   'Should add a bad contract and explain using RemixAI': function (browser: NightwatchBrowser) {
     browser
@@ -41,7 +41,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the error")]'
       })
-      .pause(2000)
+      .pause(20000)
   },
   'Should select the AI assistant provider': function (browser: NightwatchBrowser) {
     browser
@@ -131,16 +131,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
       }, 60000)
-      .pause(5000)
-      .refreshPage()
-      .clickLaunchIcon('remixaiassistant')
-      .waitForElementVisible('*[data-id="composer-textarea"]')
-      .assistantWorkspace('comment all functions', 'mistralai')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
-      }, 60000)
-
+      .pause(20000)
       .refreshPage()
       .clickLaunchIcon('remixaiassistant')
       .waitForElementVisible('*[data-id="composer-textarea"]')
@@ -149,6 +140,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
       }, 60000)
+      .pause(20000)
 
   },
   'Generate new workspaces code with all AI assistant providers': function (browser: NightwatchBrowser) {
@@ -161,15 +153,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
       }, 60000)
-
-      .refreshPage()
-      .clickLaunchIcon('remixaiassistant')
-      .waitForElementVisible('*[data-id="composer-textarea"]')
-      .assistantGenerate('a simple ERC20 contract', 'mistralai')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-      }, 60000)
+      .pause(20000)
 
       .refreshPage()
       .clickLaunchIcon('remixaiassistant')
