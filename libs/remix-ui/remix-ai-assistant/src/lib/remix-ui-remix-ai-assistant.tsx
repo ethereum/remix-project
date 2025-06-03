@@ -49,6 +49,10 @@ export function RemixUiRemixAiAssistant(props: any) {
       if (parseResult) {
         observer.next(parseResult)
         observer.complete()
+        const check = await props.plugin.call('remixAI', 'isChatRequestPending')
+        if (check) {
+          await props.plugin.call('remixAI', 'resetChatRequestBuffer')
+        }
         return
       }
       console.log('parseResult', parseResult)
