@@ -110,19 +110,49 @@ app.on('activate', () => {
 
 app.setAsDefaultProtocolClient('remix')
 
-app.on('open-url', async (event, url) => {
-  event.preventDefault();
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, argv, workingDirectory) => {
+    // On Windows, protocol URLs are passed here
+    const urlArg = argv.find(arg => arg.startsWith('remix://'));
+    if (urlArg) {
+      handleRemixUrl(urlArg);
+    }
+  });
+
+  app.whenReady().then(() => {
+    // On app launch via protocol link (Windows only)
+    const urlArg = process.argv.find(arg => arg.startsWith('remix://'));
+    if (urlArg) {
+      handleRemixUrl(urlArg);
+    }
+  });
+}
+
+function handleRemixUrl(url: string) {
   try {
     console.log('Got custom URL:', url);
     const parsedUrl = new URL(url);
     const fullPath = `/${parsedUrl.host}${parsedUrl.pathname}`;
     const searchParams = parsedUrl.searchParams;
 
+    // Bring the frontmost window to the foreground
+    const allWindows = BrowserWindow.getAllWindows();
+    const targetWindow = allWindows.find(win => win.isVisible()) || allWindows[0];
+
+    if (targetWindow) {
+      if (targetWindow.isMinimized()) targetWindow.restore();
+      targetWindow.focus();
+    }
+
     switch (fullPath) {
       case '/auth/callback': {
         const code = searchParams.get('code');
         if (code) {
-          githubAuthHandlerPlugin && githubAuthHandlerPlugin.exchangeCodeForToken(code)
+          githubAuthHandlerPlugin?.exchangeCodeForToken(code);
           console.log('Auth exchange', code);
         }
         break;
@@ -135,6 +165,12 @@ app.on('open-url', async (event, url) => {
   } catch (err) {
     console.error('Failed to handle remix:// URL:', err);
   }
+}
+
+
+app.on('open-url', async (event, url) => {
+  event.preventDefault();
+  handleRemixUrl(url);
 });
 
 const showAbout = () => {
