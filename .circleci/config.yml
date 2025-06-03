@@ -692,6 +692,14 @@ jobs:
                 install-chrome: true
                 install-chromedriver: false
                 install-geckodriver: false
+            - run:
+                name: "📦 Downgrading Chrome to version 135"
+                command: |
+                  echo "📦 Downgrading Chrome to version 135"
+                  wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_135.0.7049.114-1_amd64.deb -O /tmp/chrome135.deb
+                  sudo dpkg -i /tmp/chrome135.deb || true
+                  sudo apt-get install -f -y
+                  google-chrome --version
             - run: yarn install_webdriver
             - run: google-chrome --version
       - when:
