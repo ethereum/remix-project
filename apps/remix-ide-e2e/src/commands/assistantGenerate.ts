@@ -17,6 +17,8 @@ function generate(browser: NightwatchBrowser, prompt: string, provider: string, 
   browser
     .click('*[data-id="composer-textarea"]')
     .waitForElementVisible('*[data-id="composer-textarea"]')
+    .assistantSetProvider(provider)
+    .pause(1000)
     .execute(function (prompt) {
       (window as any).sendChatMessage(`/generate ${prompt}`);
     }, [prompt])

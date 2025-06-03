@@ -5182,7 +5182,7 @@
     pathval "1.1.1"
     type-detect "4.0.8"
 
-"@nlux@github:remix-project-org/nlux#v0.65.11":
+"@nlux@github:remix-project-org/nlux":
   version "0.65.0"
   resolved "https://codeload.github.com/remix-project-org/nlux/tar.gz/08c31e64b04330db72347125996f9ba92ffee5b2"
 

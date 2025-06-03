@@ -17,9 +17,11 @@ function workspaceGenerate(browser: NightwatchBrowser, prompt: string, provider:
   browser
     .waitForElementVisible('*[data-id="remix-ai-assistant"]')
     .waitForElementVisible('*[data-id="composer-textarea"]')
+    .assistantSetProvider(provider)
+    .pause(1000)
     .execute(function (prompt) {
       (window as any).sendChatMessage(`/workspace ${prompt}`);
-    }, [provider, prompt])
+    }, [prompt])
   done()
 }
 
