@@ -55,7 +55,6 @@ export function RemixUiRemixAiAssistant(props: any) {
         }
         return
       }
-      console.log('parseResult', parseResult)
 
       GenerationParams.stream_result = true
       setIS_streaming(true)

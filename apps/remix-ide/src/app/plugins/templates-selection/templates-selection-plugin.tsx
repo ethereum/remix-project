@@ -292,7 +292,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                                 if ((item.value as string).toLowerCase().includes('ai')) {
                                   this.aiWorkspaceGenerate()
                                 } else {
-                                  createWorkspace(item, template.name)
+                                  createWorkspace(item, template)
                                 }
                               }}
                               className="btn btn-sm mr-2 border border-primary"
