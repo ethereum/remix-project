@@ -78,7 +78,7 @@ module.exports = {
       .pause(1000)
   },
 
-  'execute script #group2': function (browser: NightwatchBrowser) {
+  'execute script #group2': !function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('filePanel')
       .addFile('testScript.ts', { content: testScript })
       .clearConsole()
