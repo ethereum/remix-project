@@ -15,8 +15,9 @@ class AssistantGenerate extends EventEmitter {
 
 function generate(browser: NightwatchBrowser, prompt: string, provider: string, done: VoidFunction) {
   browser
-    .click('*[data-id="composer-textarea"]')
     .waitForElementVisible('*[data-id="composer-textarea"]')
+    .click('*[data-id="composer-textarea"]')
+    .pause(3000)
     .assistantSetProvider(provider)
     .pause(1000)
     .execute(function (prompt) {
