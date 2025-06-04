@@ -6,16 +6,20 @@ import { CustomTooltip } from '@remix-ui/helper'
 
 interface IToggleSwitch {
   id: string
-  onstyle?: string
-  offstyle?: string
+  onstyle?: string // text-ai, text-primary etc
+  offstyle?: string // text-ai, text-secondary etc
   size?: string // lg,xl,2xl etc
-  tooltipTextId?: string
-  classList?: string
+  tooltipTextId?: string // formatted message id like "remixApp.mpOp1Tooltip" etc
   disabled?: boolean
   initiallyOn?: boolean
 }
 export const ToggleSwitch = (props: IToggleSwitch) => {
-  const { id, onstyle, offstyle, size, tooltipTextId, disabled, initiallyOn} = props
+  let { id, onstyle, offstyle, size, tooltipTextId, disabled, initiallyOn} = props
+  size = size || 'lg'
+  onstyle = onstyle || 'text-primary'
+  offstyle = offstyle || 'text-secondary'
+  initiallyOn = initiallyOn || true
+
   const [ isOn, setIsOn] = useState(initiallyOn)
 
 
@@ -27,14 +31,15 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
             placement={"auto"}
             tooltipId="matomoAnonAnalyticsTooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="remixApp.mpOp1Tooltip" />}
+            tooltipText={<FormattedMessage id={tooltipTextId} />}
       >
         <button
-          data-id="matomoAnonAnalyticsSwitch"
-          id='matomoAnonAnalyticsSwitch'
-          className="btn text-ai"
+        data-id={ id + "Switch"}
+        id='matomoAnonAnalyticsSwitch'
+        className={`btn ${isOn ? onstyle : offstyle}`}
+        disabled = {disabled || false}
         >
-          <i className="fas fa-toggle-on fa-2xl"></i>
+          { isOn ? <i className={`fas fa-toggle-on ${size ? `fa-${size}` : "fa-lg"}`}></i> : <i className={`fas fa-toggle-off ${size ? `fa-${size}` : "fa-lg"}`}></i> }
         </button>
       </CustomTooltip>
   )
@@ -43,7 +48,7 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
       <button
         data-id={ id + "Switch"}
         id='matomoAnonAnalyticsSwitch'
-        className="btn text-ai"
+        className={`btn ${isOn ? onstyle : offstyle}`}
       >
         { isOn ? <i className={`fas fa-toggle-on ${size ? `fa-${size}` : "fa-lg"}`}></i> : <i className={`fas fa-toggle-off ${size ? `fa-${size}` : "fa-lg"}`}></i> }
       </button>

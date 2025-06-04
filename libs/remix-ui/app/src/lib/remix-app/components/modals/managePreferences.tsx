@@ -32,21 +32,12 @@ const ManagePreferencesSwitcher = (prop: {
           <p className='form-check-label text-secondary'><FormattedMessage id="remixApp.mpOp1Details" /></p>
         </div>
         <div>
-          <CustomTooltip
-            placement={"auto"}
-            tooltipId="matomoAnonAnalyticsTooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="remixApp.mpOp1Tooltip" />}
-          >
-            <button
-              data-id="matomoAnonAnalyticsSwitch"
-              id='matomoAnonAnalyticsSwitch'
-              className="btn text-ai"
-              disabled
-            >
-              <i className="fas fa-toggle-on fa-2xl"></i>
-            </button>
-          </CustomTooltip>
+          <ToggleSwitch
+            id = "matomoAnonAnalyticsSwitch"
+            size = "2xl"
+            tooltipTextId = "remixApp.mpOp1Tooltip"
+            disabled = {true}
+          ></ToggleSwitch>
         </div>
       </div>
       <div data-id="matomoPerfAnalytics" className='justify-content-between d-flex'>
@@ -87,14 +78,10 @@ const ManagePreferencesSwitcher = (prop: {
           /></p>
         </div>
         <div>
-          <button
-            data-id="remixAISwitch"
-            id='remixAISwitch'
-            className="btn text-ai"
-            onClick={() => setRemixAISwitch(!remixAISwitch)}
-          >
-            { remixAISwitch ? <i className="fas fa-toggle-on fa-2xl"></i> : <i className="fas fa-toggle-off fa-2xl"></i> }
-          </button>
+          <ToggleSwitch
+            id = "remixAISwitch"
+            size = "2xl"
+          ></ToggleSwitch>
         </div>
       </div>
     </>
