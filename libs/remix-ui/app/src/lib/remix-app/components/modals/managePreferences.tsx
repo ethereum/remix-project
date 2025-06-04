@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDialogDispatchers } from '../../context/provider'
 import { CustomTooltip } from "@remix-ui/helper"
+import { ToggleSwitch } from '@remix-ui/toggle'
 import { AppContext } from '../../context/context'
 declare global {
   interface Window {
@@ -64,14 +65,10 @@ const ManagePreferencesSwitcher = (prop: {
           /></p>
         </div>
         <div>
-          <button
-            data-id="matomoPerfAnalyticsSwitch"
-            id='matomoPerfAnalyticsSwitch'
-            className="btn text-ai mt-1"
-            onClick={() => setMatPerfSwitch(!matPerfSwitch)}
-          >
-            { matPerfSwitch ? <i className="fas fa-toggle-on fa-2xl"></i> : <i className="fas fa-toggle-off fa-2xl"></i> }
-          </button>
+          <ToggleSwitch
+            id = "matomoPerfAnalyticsSwitch"
+            size = "2xl"
+          ></ToggleSwitch>
         </div>
       </div>
       <div data-id="remixAI" className='justify-content-between d-flex'>
