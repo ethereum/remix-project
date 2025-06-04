@@ -16,6 +16,8 @@ class SetAssistantProvider extends EventEmitter {
 function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFunction) {
   browser
     .waitForElementVisible('*[data-id="composer-textarea"]')
+    .waitForElementVisible('*[data-id="composer-ai-add-context"]')
+    .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
     .pause(3000)
     .execute(function (provider) {
       (window as any).sendChatMessage(`/setAssistant ${provider}`);
