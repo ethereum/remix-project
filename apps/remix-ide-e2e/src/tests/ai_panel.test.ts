@@ -100,7 +100,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
-      }
+      })
   },
   'Should lead to Workspace generation with the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
