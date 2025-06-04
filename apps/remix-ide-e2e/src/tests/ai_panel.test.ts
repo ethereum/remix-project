@@ -98,8 +98,9 @@ module.exports = {
       .assistantGenerate('a simple ERC20 contract', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
+        timeout: 60000
+      }
   },
   'Should lead to Workspace generation with the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -110,8 +111,9 @@ module.exports = {
       .assistantWorkspace('comment all function', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
   },
   'Should create a new workspace using the AI assistant button in the composer #group1': function (browser: NightwatchBrowser) {
     browser
@@ -127,8 +129,9 @@ module.exports = {
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-      }, 6000)
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
   },
   'Workspace generation with all AI assistant provider #group1': function (browser: NightwatchBrowser) {
     browser
@@ -139,8 +142,9 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
       
       .refreshPage()
       .waitForCompilerLoaded()
@@ -149,8 +153,9 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
       
 
   },
@@ -163,8 +168,9 @@ module.exports = {
       .assistantGenerate('a simple ERC20 contract', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
       
 
       .refreshPage()
@@ -174,8 +180,9 @@ module.exports = {
       .assistantGenerate('a simple ERC20 contract', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]'
-      }, 60000)
+        selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
   },
   "Should close the AI assistant #group1": function (browser: NightwatchBrowser) {
     browser
