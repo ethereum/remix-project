@@ -76,6 +76,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: `//*[@data-id="composer-context-holder" and contains(.,"Untitled.sol")]`
       })
+      .pause(10000)
   },
   'Should add workspace as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -85,6 +86,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="composer-context-holder" and contains(.,"@workspace")]'
       })
+      .pause(10000)
   },
   'Should add opened files as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -103,6 +105,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="composer-context-holder" and contains(.,"anotherFile.sol")]'
       })
+      .pause(10000)
   },
   'Should generate new workspace contract code with the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -121,6 +124,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
       })
+      .pause(10000)
   },
   'Should lead to Workspace generation with the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -139,6 +143,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
         timeout: 60000
       })
+      .pause(10000)
   },
   'Should create a new workspace using the AI assistant button in the composer #group1': function (browser: NightwatchBrowser) {
     browser
@@ -162,6 +167,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
       })
+      .pause(10000)
   },
   'Workspace generation with all AI assistant provider #group1': function (browser: NightwatchBrowser) {
     browser
@@ -180,6 +186,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
         timeout: 60000
       })
+      .pause(10000)
 
       .refreshPage()
       .waitForCompilerLoaded()
@@ -196,8 +203,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
         timeout: 60000
       })
-
-
+      .pause(10000)
   },
   'Generate new workspaces code with all AI assistant providers #group11 #group2': function (browser: NightwatchBrowser) {
     browser
@@ -216,7 +222,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
       })
-
+      .pause(10000)
 
       .refreshPage()
       .waitForCompilerLoaded()
@@ -233,6 +239,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
       })
+      .pause(10000)
   },
   "Should close the AI assistant #group1": function (browser: NightwatchBrowser) {
     browser
