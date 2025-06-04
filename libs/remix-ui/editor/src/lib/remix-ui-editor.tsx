@@ -793,11 +793,6 @@ export const EditorUI = (props: EditorUIProps) => {
     }
 
     let gptGenerateDocumentationAction
-    const extractNatspecComments = (codeString: string): string => {
-      const natspecCommentRegex = /\/\*\*[\s\S]*?\*\//g;
-      const comments = codeString.match(natspecCommentRegex);
-      return comments ? comments[0] : "";
-    }
 
     const executeGptGenerateDocumentationAction = (functionNode) => {
       return {
@@ -814,13 +809,10 @@ export const EditorUI = (props: EditorUIProps) => {
             const uri = currentFileRef.current + '-ai'
             const content = editorModelsState[currentFileRef.current].model.getValue()
             const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-            // const query = `rewrite the contract below making changes only to the documentation of the function ${functionNode.name}()
-            // and your response should be only be the fully updated contract. No backticks are needed, just return the complete updated contract. \`\`\`${content}\`\`\``
             const output = await props.plugin.call('remixAI', 'code_explaining', query)
-            const originalFunctionComments = extractFunctionComments(content)
-            const outputFunctionComments = extractFunctionComments(output)
-
-            const modifiedContent = content.replace(originalFunctionComments[currentFunction.current], outputFunctionComments[currentFunction.current])
+            const originalFunctionComments = extractFunctionComments(content, 0, true)
+            const outputFunctionComments = extractFunctionComments(output, 1, false)
+            const modifiedContent = outputFunctionComments[currentFunction.current] ? content.replace(originalFunctionComments[currentFunction.current], outputFunctionComments[currentFunction.current]) : content
             // @ts-ignore
             props.plugin.emit('setValue', uri, modifiedContent)
             props.plugin.on('editor', 'didChangeFile', (file) => {
@@ -830,14 +822,6 @@ export const EditorUI = (props: EditorUIProps) => {
               setTimeout(() => showCustomDiff(uri), 1000)
             })
           }
-
-          // hoverProvider.addTriggerRangeAction('generateDocumentation', new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column), () => {
-          //   console.log('adding changes option widget')
-          //   addChangesOptionWidget(editor, { column: cln.start.column, lineNumber: cln.start.line + 1 })
-          // })
-
-          // console.log('query: ', query)
-          // inlineCompletionProvider.setGenDocsConfig(range, query, editor)
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
         },
       }
@@ -1071,7 +1055,7 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(monacoRef.current)
   }
 
-  function addAcceptDeclineWidget(id, editor, position, acceptHandler, rejectHandler) {
+  function addAcceptDeclineWidget(id, editor, position, acceptHandler, rejectHandler, acceptAllHandler?, rejectAllHandler?) {
     const widget = editor.addContentWidget({
       allowEditorOverflow: true,
       getDomNode: () => {
@@ -1104,10 +1088,6 @@ export const EditorUI = (props: EditorUIProps) => {
         rejectBtn.style.fontSize = '0.8rem'
         rejectBtn.textContent = 'Decline'
 
-        innerContainer.appendChild(acceptBtn)
-        innerContainer.appendChild(rejectBtn)
-        containerElement.appendChild(innerContainer)
-
         // Add close button handler
         rejectBtn.onclick = () => {
           rejectHandler && rejectHandler()
@@ -1115,6 +1095,39 @@ export const EditorUI = (props: EditorUIProps) => {
             getId: () => id
           })
         }
+
+        innerContainer.appendChild(acceptBtn)
+        innerContainer.appendChild(rejectBtn)
+
+        if (acceptAllHandler) {
+          const acceptAllBtn = document.createElement('button')
+          acceptAllBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'bg-light', 'text-dark'])
+          acceptAllBtn.style.fontSize = '0.8rem'
+          acceptAllBtn.textContent = 'Accept All'
+          acceptAllBtn.onclick = () => {
+            acceptAllHandler()
+            editor.removeContentWidget({
+              getId: () => id
+            })
+          }
+          innerContainer.appendChild(acceptAllBtn)
+        }
+
+        if (rejectAllHandler) {
+          const rejectAllBtn = document.createElement('button')
+          rejectAllBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'bg-light', 'text-dark'])
+          rejectAllBtn.style.fontSize = '0.8rem'
+          rejectAllBtn.textContent = 'Decline All'
+          rejectAllBtn.onclick = () => {
+            rejectAllHandler()
+            editor.removeContentWidget({
+              getId: () => id
+            })
+          }
+          innerContainer.appendChild(rejectAllBtn)
+        }
+
+        containerElement.appendChild(innerContainer)
         // Add input handler
         return containerElement
       },
@@ -1137,6 +1150,7 @@ export const EditorUI = (props: EditorUIProps) => {
   function showCustomDiff (uri: string) {
     const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
     let totalLineDifference = 0
+    const decoratorListCollection = []
 
     lineChanges.forEach((lineChange, index) => {
       const line = editorModelsState[uri].model.getValueInRange(new monacoRef.current.Range(lineChange.modifiedStartLineNumber, 0, lineChange.modifiedEndLineNumber, 1000))
@@ -1153,43 +1167,6 @@ export const EditorUI = (props: EditorUIProps) => {
           text: line + '\n',
         },
       ])
-      // make original line readonly
-      // editor.onDidChangeCursorPosition(function (e) {
-      //   if (e.position.lineNumber < 3) {
-      //       this.editor.setPosition({
-      //           lineNumber:3,
-      //           column: 1
-      //       });
-      //   }
-      // });
-      // create empty space
-      // monaco.editor.create(..., { find: { addExtraSpaceOnTop: false } })
-      //   editor.onMouseMove(function (e) {
-      //     var contentWidget = {
-      //         domNode: null,
-      //         getId: function () {
-      //             return 'my.content.widget';
-      //         },
-      //         getDomNode: function () {
-      //             if (!this.domNode) {
-      //                 this.domNode = document.createElement('div');
-      //                 this.domNode.innerHTML = 'My content widget';
-      //                 this.domNode.style.background = 'grey';
-      //             }
-      //             return this.domNode;
-      //         },
-      //         getPosition: function () {
-      //             return {
-      //                 position: {
-      //                     lineNumber: e.target.position.lineNumber,
-      //                     column: e.target.position.column
-      //                 },
-      //                 preference: [monaco.editor.ContentWidgetPositionPreference.ABOVE, monaco.editor.ContentWidgetPositionPreference.BELOW]
-      //             };
-      //         }
-      //     };
-      //     editor.layoutContentWidget(contentWidget)
-      // });
 
       const decoratorList = editorRef.current.createDecorationsCollection([{
         range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
@@ -1207,7 +1184,9 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }])
 
-      addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => {
+      decoratorListCollection.push(decoratorList)
+
+      const acceptHandler = (decoratorList) => {
         const ranges = decoratorList.getRanges()
 
         ranges[1].endLineNumber = ranges[1].endLineNumber + 1
@@ -1219,7 +1198,9 @@ export const EditorUI = (props: EditorUIProps) => {
           },
         ])
         decoratorList.clear()
-      }, () => {
+      }
+
+      const rejectHandler = (decoratorList) => {
         const ranges = decoratorList.getRanges()
 
         ranges[0].endLineNumber = ranges[0].endLineNumber + 1
@@ -1231,7 +1212,31 @@ export const EditorUI = (props: EditorUIProps) => {
           },
         ])
         decoratorList.clear()
-      })
+      }
+
+      const acceptAllHandler = () => {
+        decoratorListCollection.forEach((decoratorList, index) => {
+          acceptHandler(decoratorList)
+          editorRef.current.removeContentWidget({
+            getId: () => `accept_decline_widget${index}`
+          })
+        })
+      }
+
+      const rejectAllHandler = () => {
+        decoratorListCollection.forEach((decoratorList, index) => {
+          rejectHandler(decoratorList)
+          editorRef.current.removeContentWidget({
+            getId: () => `accept_decline_widget${index}`
+          })
+        })
+      }
+
+      if (index === 0) {
+        addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList), acceptAllHandler, rejectAllHandler)
+      } else {
+        addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList))
+      }
       totalLineDifference += linesCount
     })
   }
