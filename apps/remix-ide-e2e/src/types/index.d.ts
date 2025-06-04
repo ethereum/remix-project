@@ -82,6 +82,7 @@ declare module 'nightwatch' {
     enableClipBoard: () => NightwatchBrowser
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
     selectFiles: (selelectedElements: any[]) => NightwatchBrowser
+    waitForCompilerLoaded: () => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
