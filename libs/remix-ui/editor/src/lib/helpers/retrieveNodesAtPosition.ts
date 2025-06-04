@@ -34,16 +34,13 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
     functionComments[functionName] = null
   }
 
-  // Second pass: find comments for each function
   const multiLineCommentPattern = /\/\*\*[\s\S]*?\*\//g
   let commentMatch
 
-  // Find all multi-line comments in the code
+
   while ((commentMatch = multiLineCommentPattern.exec(code)) !== null) {
     const commentStart = commentMatch.index
     const commentEnd = commentStart + commentMatch[0].length
-
-    // Find the next function after this comment
     let nextFunction = null
     let minDistance = Infinity
 
@@ -54,7 +51,6 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
       }
     }
 
-    // If we found a function and there's no other function between the comment and this function
     if (nextFunction && minDistance < Infinity) {
       const betweenCommentAndFunction = code.slice(commentEnd, functionPositions.get(nextFunction).position)
       const hasOtherFunction = betweenCommentAndFunction.match(functionPattern)
@@ -65,12 +61,11 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
     }
   }
 
-  // Find single-line comments for each function
   for (const [functionName, funcInfo] of functionPositions) {
     const functionStart = funcInfo.position
     const functionStartLine = code.slice(0, functionStart).split('\n').length
     const singleLineComments = []
-    // Look for single-line comments above the function
+
     let currentLine = functionStartLine - 1
     while (currentLine > 0) {
       const lineStart = code.split('\n').slice(0, currentLine - 1).join('\n').length + (currentLine > 1 ? 1 : 0)
@@ -90,7 +85,6 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
     }
   }
 
-  // Process each function and its comments
   for (const [functionName, funcInfo] of functionPositions) {
     let processedComment = null
 
@@ -98,18 +92,14 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
       const comment = code.slice(funcInfo.commentStart, funcInfo.position).trim()
 
       if (isSolidity) {
-        // For Solidity, check if there's a contract keyword between the comment and function
         const betweenCommentAndFunction = code.slice(funcInfo.commentStart + comment.length, funcInfo.position)
         const contractKeywordPos = betweenCommentAndFunction.indexOf('contract')
 
         if (contractKeywordPos === -1) {
-          // Remove contract-level comments and any code between comment and function
           const contractCommentPattern = /\/\*\*[\s\S]*?\*\/\s*contract\s+\w+/g
           processedComment = comment
             .replace(contractCommentPattern, '')
             .trim()
-
-          // Ensure comment starts with /** and ends with */
           if (!processedComment.startsWith('/**')) {
             processedComment = '/**' + processedComment
           }
@@ -117,7 +107,6 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
             processedComment = processedComment + '*/'
           }
 
-          // Remove any code that might have been included in the comment
           processedComment = processedComment.split('\n')
             .filter(line => {
               const trimmed = line.trim()
@@ -126,29 +115,22 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
             .join('\n')
             .trim()
 
-          // Apply indentation if needed
           if (indentSize > 0) {
             processedComment = applyIndentation(processedComment, indentSize)
           }
 
-          // Only include comments that have Solidity-specific tags
           if (!processedComment.includes('@dev') && !processedComment.includes('@param') && !processedComment.includes('@return')) {
             processedComment = null
           }
         }
       } else {
-        // For non-Solidity code, just clean and apply indentation
         processedComment = comment.trim()
-
-        // Ensure comment starts with /** and ends with */
         if (!processedComment.startsWith('/**')) {
           processedComment = '/**' + processedComment
         }
         if (!processedComment.endsWith('*/')) {
           processedComment = processedComment + '*/'
         }
-
-        // Remove any code that might have been included in the comment
         processedComment = processedComment.split('\n')
           .filter(line => {
             const trimmed = line.trim()
@@ -163,13 +145,10 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
       }
     }
 
-    // If we have single-line comments and no multi-line comment, use them
     if (!processedComment && funcInfo.singleLineComments && funcInfo.singleLineComments.length > 0) {
       if (isSolidity) {
-        // For Solidity, add @dev tag to the first line
         processedComment = '/**\n * @dev ' + funcInfo.singleLineComments.join('\n * ') + '\n */'
       } else {
-        // For non-Solidity code, just join the comments
         processedComment = '/**\n * ' + funcInfo.singleLineComments.join('\n * ') + '\n */'
       }
       if (indentSize > 0) {
