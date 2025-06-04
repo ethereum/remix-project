@@ -12,10 +12,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   currentCompletion: any
   private lastRequestTime: number = 0;
   private readonly minRequestInterval: number = 200;
-  genDocsConfig: {
-    range: monacoTypes.Range
-    query: string
-  }
 
   constructor(props: any) {
     this.props = props
@@ -29,33 +25,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
   }
 
-  setGenDocsConfig(range: monacoTypes.Range, query: string, editor: any) {
-    this.genDocsConfig = {
-      range: range,
-      query: query
-    }
-    editor.trigger('remix-solidity', 'editor.action.inlineSuggest.trigger', {})
-  }
-
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
     if (!isActivate) return
-
-    // console.log('this.genDocsConfig: ', this.genDocsConfig)
-    // if (this.genDocsConfig && this.genDocsConfig.query) {
-    //   console.log('this.genDocsConfig.query: ', this.genDocsConfig.query)
-    //   const output = await this.props.plugin.call('remixAI', 'code_explaining', this.genDocsConfig.query)
-    //   console.log('output: ', output)
-
-    //   const item: monacoTypes.languages.InlineCompletion = {
-    //     insertText: output,
-    //     range: this.genDocsConfig.range
-    //   };
-    //   this.currentCompletion.text = output
-    //   this.currentCompletion.item = item
-    //   console.log('this.currentCompletion: ', { items: [item], enableForwardStability: true })
-    //   return { items: [item], enableForwardStability: true }
-    // }
 
     const currentTime = Date.now();
     const timeSinceLastRequest = currentTime - this.lastRequestTime;
