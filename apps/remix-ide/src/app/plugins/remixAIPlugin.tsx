@@ -2,7 +2,6 @@ import * as packageJson from '../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
-import { RemixAiAssistantChatApi } from '@remix-ui/remix-ai-assistant'
 import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
@@ -290,12 +289,13 @@ export class RemixAIPlugin extends ViewPlugin {
         prompt: prompt,
         context: context
       }
-      if (pipeMessage) RemixAiAssistantChatApi.composer.send(pipeMessage)
+  
+      if (pipeMessage) this.call('remixaiassistant', 'chatPipe', pipeMessage)
       else {
-        if (fn === "code_explaining") RemixAiAssistantChatApi.composer.send("Explain the current code")
-        else if (fn === "error_explaining") RemixAiAssistantChatApi.composer.send("Explain the error")
-        else if (fn === "solidity_answer") RemixAiAssistantChatApi.composer.send("Answer the following question")
-        else if (fn === "vulnerability_check") RemixAiAssistantChatApi.composer.send("Is there any vulnerability in the pasted code?")
+        if (fn === "code_explaining") this.call('remixaiassistant', 'chatPipe',"Explain the current code")
+        else if (fn === "error_explaining") this.call('remixaiassistant', 'chatPipe', "Explain the error")
+        else if (fn === "solidity_answer") this.call('remixaiassistant', 'chatPipe', "Answer the following question")
+        else if (fn === "vulnerability_check") this.call('remixaiassistant', 'chatPipe',"Is there any vulnerability in the pasted code?")
         else console.log("chatRequestBuffer function name not recognized.")
       }
     }

@@ -1,20 +1,15 @@
-import React, { useState, useEffect, RefObject } from 'react'
+import React, { useState, useEffect, RefObject, useCallback } from 'react'
 import '../css/remix-ai-assistant.css'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AssistantParams } from '@remix/remix-ai-core'
-import { AiChatUI, ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi, AiChatApi, ReadyCallback, ReadyEventDetails } from '@nlux/react'
 import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react'
 // import { highlighter } from '@nlux/highlighter'
 import '../css/color.css'
 import '@nlux/themes'
-import copy from 'copy-to-clipboard'
 import { UserPersona } from '@nlux/react'
-import DefaultResponseContent from '../components/DefaultResponseContent'
-import PromptZone from '../components/promptzone'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { PluginNames } from 'apps/remix-ide/src/types'
-import { AppModal } from '@remix-ui/app'
-import isElectron from 'is-electron'
+import { Plugin } from '@remixproject/engine'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -25,25 +20,32 @@ export const user: UserPersona = {
 
 export const assistantAvatar = 'assets/img/remixai-logoDefault.webp'//'assets/img/aiLogo.svg'
 export interface RemixUiRemixAiAssistantProps {
-  makePluginCall(pluginName: PluginNames, methodName: string, payload?: any): Promise<any>
+  plugin: Plugin,
+  onReady: (api: AiChatApi) => void,
+  makePluginCall: (pluginName: string, methodName: string, payload?: any) => Promise<any>
+  queuedMessage: { text: string, timestamp: number } | null
 }
 
-interface Message {
-  id: string
-  content: string
-  role: 'user' | 'assistant'
-}
+let RemixAiAssistantChatApi: AiChatApi = null
 
-export let RemixAiAssistantChatApi = null
-
-export function RemixUiRemixAiAssistant(props: any) {
+export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
+  const [isReady, setIsReady] = useState(false)
   const chatCmdParser = new ChatCommandParser(props.plugin)
+
+  useEffect(() => {
+    console.log('RemixUiRemixAiAssistant props.queuedMessage', props.queuedMessage)
+    if (isReady && props.queuedMessage) {
+      const { text, timestamp } = props.queuedMessage
+      RemixAiAssistantChatApi.composer.send(text)
+    }
+  }, [props.queuedMessage])
 
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
+    console.log('RemixUiRemixAiAssistant send called with prompt:', prompt)
     try {
       const parseResult = await chatCmdParser.parse(prompt)
       if (parseResult) {
@@ -56,21 +58,26 @@ export function RemixUiRemixAiAssistant(props: any) {
         return
       }
 
+      console.log('step 1')
+
       GenerationParams.stream_result = true
       setIS_streaming(true)
       GenerationParams.return_stream_response = GenerationParams.stream_result
       let response = null
       const check = await props.plugin.call('remixAI', 'isChatRequestPending')
+
+      console.log('step 2', check)
       if (check) {
         response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
       } else {
         console.log('response', response)
         response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams)
       }
+      console.log('step 3', response)
 
       if (GenerationParams.return_stream_response) {
         HandleStreamResponse(response,
-          (text) => {observer.next(text)},
+          (text) => { observer.next(text) },
           (result) => {
             observer.next(' ') // Add a space to flush the last message
             ChatHistory.pushHistory(prompt, result)
@@ -91,15 +98,18 @@ export function RemixUiRemixAiAssistant(props: any) {
   }
 
   RemixAiAssistantChatApi = useAiChatApi()
+
   const conversationStarters: ConversationStarter[] = [
     {
       prompt: 'Explain what a modifier is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'Explain what a UniSwap hook is',
+    {
+      prompt: 'Explain what a UniSwap hook is',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     },
-    { prompt: 'What is a ZKP?',
+    {
+      prompt: 'What is a ZKP?',
       icon: <i className="fa fa-user-robot-xmarks"></i>
     }
   ]
@@ -113,11 +123,35 @@ export function RemixUiRemixAiAssistant(props: any) {
   ]
   const adapter = useAsStreamAdapter(send, [])
 
+  const readyCallback = useCallback<ReadyCallback>((readyDetails: ReadyEventDetails) => {
+    console.log('Chat is ready. Props used to initialize the chat:', typeof readyDetails);
+    setIsReady(true);
+    props.onReady(RemixAiAssistantChatApi);
+    (window as any).sendChatMessage = (content) => {
+      console.log('sendChatMessage called with content:', content);
+      if (RemixAiAssistantChatApi && content && !is_streaming) {
+        console.log('Sending content:', content, RemixAiAssistantChatApi.composer);
+        RemixAiAssistantChatApi.composer.send(content);
+      } else {
+        console.warn('RemixAiAssistantChatApi is not initialized or content is empty');
+        if( is_streaming) {
+          console.warn('Cannot send message while streaming is in progress');
+        }
+      }
+    }
+  }, [/* Callback dependencies */]);
+
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
+      {isReady && (
+        <div data-id="remix-ai-assistant-ready">
+          ready
+        </div>
+      )}
       <AiChat
         api={RemixAiAssistantChatApi}
-        adapter={ adapter }
+        events={{ ready: readyCallback }}
+        adapter={adapter}
         personaOptions={{
           assistant: {
             name: "RemixAI",
@@ -129,13 +163,15 @@ export function RemixUiRemixAiAssistant(props: any) {
         // initialConversation={initialMessages}
         conversationOptions={{ layout: 'bubbles', conversationStarters }}
         displayOptions={{ colorScheme: "auto", themeId: "remix_ai_theme" }}
-        composerOptions={{ placeholder: "Ask me anything, start with @workspace to add context",
+        composerOptions={{
+          placeholder: "Ask me anything, start with @workspace to add context",
           submitShortcut: 'Enter',
           hideStopButton: false,
           remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
           pluginMethodCall: props.makePluginCall,
         }}
-        messageOptions={{ showCodeBlockCopyButton: true,
+        messageOptions={{
+          showCodeBlockCopyButton: true,
           editableUserMessages: true,
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
@@ -145,6 +181,7 @@ export function RemixUiRemixAiAssistant(props: any) {
             response={content as string[]} containerRef={containerRef} />
         }}
       />
+
     </div>
   )
 }

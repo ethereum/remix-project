@@ -4,6 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUiRemixAiAssistant } from '@remix-ui/remix-ai-assistant'
 import { EventEmitter } from 'events'
+
 const profile = {
   name: 'remixaiassistant',
   displayName: 'Remix AI Assistant',
@@ -16,12 +17,13 @@ const profile = {
   maintainedBy: 'Remix',
   permission: true,
   events: [],
-  methods: []
+  methods: ['chatPipe']
 }
 
 export class RemixAIAssistant extends ViewPlugin {
   element: HTMLDivElement
-  dispatch: React.Dispatch<any> = () => {}
+  dispatch: React.Dispatch<any> = () => { }
+  queuedMessage: { text: string, timestamp: number } | null = null
   event: any
   constructor() {
     super(profile)
@@ -31,6 +33,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
+    console.log('RemixAiAssistant onActivation')
     const currentActivePlugin = await this.call('pinnedPanel', 'currentFocus')
     if (currentActivePlugin === 'remixaiassistant') {
       await this.call('sidePanel', 'pinView', profile)
@@ -42,7 +45,7 @@ export class RemixAIAssistant extends ViewPlugin {
 
   }
 
-  async makePluginCall (pluginName: string, methodName: string, payload: any) {
+  async makePluginCall(pluginName: string, methodName: string, payload: any) {
     try {
       const result = await this.call(pluginName, methodName, payload)
       return result
@@ -63,8 +66,23 @@ export class RemixAIAssistant extends ViewPlugin {
 
   renderComponent() {
     this.dispatch({
-      ...this
+      queuedMessage: this.queuedMessage,
     })
+  }
+
+  chatPipe = (message: string) => {
+
+    this.queuedMessage = {
+      text: message,
+      timestamp: Date.now()
+    }
+
+    this.renderComponent()
+  }
+
+
+  onReady() {
+    console.log('RemixAiAssistant onReady')
   }
 
   render() {
@@ -76,9 +94,12 @@ export class RemixAIAssistant extends ViewPlugin {
     )
   }
 
-  updateComponent(state: any) {
+
+  updateComponent(state: {
+    queuedMessage: { text: string, timestamp: number } | null
+  }) {
     return (
-      <RemixUiRemixAiAssistant plugin={this} makePluginCall={this.makePluginCall.bind(this)} />
+      <RemixUiRemixAiAssistant queuedMessage={state.queuedMessage} onReady={this.onReady} plugin={this} makePluginCall={this.makePluginCall.bind(this)} />
     )
   }
 

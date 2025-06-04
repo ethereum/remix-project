@@ -29,7 +29,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the current code")]'
       })
-      
+
   },
   'Should add a bad contract and explain using RemixAI #group1': function (browser: NightwatchBrowser) {
     browser
@@ -44,13 +44,18 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"Explain the error")]'
       })
-      
+
   },
   'Should select the AI assistant provider #group1': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .assistantSetProvider('mistralai')
   },
@@ -59,6 +64,11 @@ module.exports = {
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
       .openFile('Untitled.sol')
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantAddContext('currentFile')
@@ -81,6 +91,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .addFile('anotherFile.sol', sources[0]['Untitled.sol'])
       .assistantAddContext('openedFiles')
@@ -94,6 +109,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantGenerate('a simple ERC20 contract', 'mistralai')
       .waitForElementVisible({
@@ -107,6 +127,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantWorkspace('comment all function', 'mistralai')
       .waitForElementVisible({
@@ -120,6 +145,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
       .click('*[data-id="composer-ai-workspace-generate"]')
@@ -138,6 +168,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
@@ -145,10 +180,15 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
         timeout: 60000
       })
-      
+
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
@@ -156,7 +196,7 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
         timeout: 60000
       })
-      
+
 
   },
   'Generate new workspaces code with all AI assistant providers #group11 #group2': function (browser: NightwatchBrowser) {
@@ -164,6 +204,11 @@ module.exports = {
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantGenerate('a simple ERC20 contract', 'openai')
       .waitForElementVisible({
@@ -171,11 +216,16 @@ module.exports = {
         selector: '//*[@data-id="remix-ai-assistant" and contains(.,"New workspace created:")]',
         timeout: 60000
       })
-      
+
 
       .refreshPage()
       .waitForCompilerLoaded()
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantGenerate('a simple ERC20 contract', 'anthropic')
       .waitForElementVisible({

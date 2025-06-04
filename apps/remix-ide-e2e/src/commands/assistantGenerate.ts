@@ -19,7 +19,7 @@ function generate(browser: NightwatchBrowser, prompt: string, provider: string, 
     .click('*[data-id="composer-textarea"]')
     .pause(3000)
     .assistantSetProvider(provider)
-    .pause(1000)
+    .pause(5000)
     .execute(function (prompt) {
       (window as any).sendChatMessage(`/generate ${prompt}`);
     }, [prompt])

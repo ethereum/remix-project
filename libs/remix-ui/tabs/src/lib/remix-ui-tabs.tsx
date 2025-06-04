@@ -78,10 +78,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs; // we do this to pass the tabs list to the onReady callbacks
 
-  (window as any).sendChatMessage = (content) => {
-    props.plugin.call('remixAI', 'chatPipe', 'solidity_answer', content, "", content)
-  }
-
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
       tabsRef.current[tabsState.selectedIndex].scrollIntoView({

@@ -13,7 +13,6 @@ import type { Template, TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
 import { AssistantParams } from '@remix/remix-ai-core'
-import { RemixAiAssistantChatApi } from '@remix-ui/remix-ai-assistant'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
 
 //@ts-ignore
@@ -77,7 +76,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
   async aiWorkspaceGenerate () {
     const generateAIWorkspace = async () => {
       const okAction = async () => {
-        RemixAiAssistantChatApi.composer.send( '/generate ' + this.aiState.prompt)
+        this.call('remixaiassistant', 'chatPipe', '/generate ' + this.aiState.prompt)
       }
       const aiTemplateModal: AppModal = {
         id: 'TemplatesSelection',
