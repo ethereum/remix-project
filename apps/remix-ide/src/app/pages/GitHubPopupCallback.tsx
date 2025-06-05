@@ -24,11 +24,10 @@ export const GitHubPopupCallback = () => {
   const hasRun = useRef(false)
 
   const exchangeToken = async () => {
-   
+
     const code = extractCode()
     window.history.replaceState({}, document.title, window.location.pathname)
 
-   
     if (!code) {
       console.warn('[GitHubPopupCallback] Missing code', { code })
       window.opener?.postMessage({ type: 'GITHUB_AUTH_FAILURE', error: 'missing code' }, window.location.origin)
@@ -46,7 +45,6 @@ export const GitHubPopupCallback = () => {
         }
       })
 
-   
       if (data.access_token) {
         window.opener?.postMessage({ type: 'GITHUB_AUTH_SUCCESS', token: data.access_token }, window.location.origin)
       } else {
