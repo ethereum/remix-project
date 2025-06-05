@@ -163,7 +163,7 @@ module.exports = {
         timeout: 60000
       })
   },
-  'Workspace generation with all AI assistant provider #group1': function (browser: NightwatchBrowser) {
+  'Workspace generation with all AI assistant provider #group2': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
       .waitForCompilerLoaded()
@@ -174,6 +174,7 @@ module.exports = {
         timeout: 120000
       })
       .waitForElementVisible('*[data-id="composer-textarea"]')
+      .pause(5000) // wait for the AI assistant to be ready
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -189,6 +190,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
+      .pause(5000) // wait for the AI assistant to be ready
       .waitForElementVisible('*[data-id="composer-textarea"]')
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
@@ -199,7 +201,7 @@ module.exports = {
 
 
   },
-  'Generate new workspaces code with all AI assistant providers #group11 #group2': function (browser: NightwatchBrowser) {
+  'Generate new workspaces code with all AI assistant providers #group3': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
       .waitForCompilerLoaded()
@@ -210,6 +212,7 @@ module.exports = {
         timeout: 120000
       })
       .waitForElementVisible('*[data-id="composer-textarea"]')
+ 
       .assistantGenerate('a simple ERC20 contract', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',

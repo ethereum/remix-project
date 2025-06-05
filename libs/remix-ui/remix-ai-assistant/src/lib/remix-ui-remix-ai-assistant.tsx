@@ -10,6 +10,7 @@ import '@nlux/themes'
 import { UserPersona } from '@nlux/react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { Plugin } from '@remixproject/engine'
+import { use } from 'chai'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -45,7 +46,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
-    console.log('RemixUiRemixAiAssistant send called with prompt:', prompt)
+    console.log('RemixUiRemixAiAssistant send called with prompt:', prompt, observer)
     try {
       const parseResult = await chatCmdParser.parse(prompt)
       if (parseResult) {
@@ -123,6 +124,11 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
   ]
   const adapter = useAsStreamAdapter(send, [])
 
+  // Call `api.composer.send(...)` to send a message to the chatbot
+  const onClick = useCallback((message: string) => {
+    RemixAiAssistantChatApi.composer.send(message);
+  }, [RemixAiAssistantChatApi]);
+
   const readyCallback = useCallback<ReadyCallback>((readyDetails: ReadyEventDetails) => {
     console.log('Chat is ready. Props used to initialize the chat:', typeof readyDetails);
     setIsReady(true);
@@ -130,16 +136,16 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     (window as any).sendChatMessage = (content) => {
       console.log('sendChatMessage called with content:', content);
       if (RemixAiAssistantChatApi && content && !is_streaming) {
-        console.log('Sending content:', content, RemixAiAssistantChatApi.composer);
-        RemixAiAssistantChatApi.composer.send(content);
+        console.log('Sending content:', content, (readyDetails.aiChatProps as any).api.composer);
+        onClick(content);
       } else {
         console.warn('RemixAiAssistantChatApi is not initialized or content is empty');
-        if( is_streaming) {
+        if (is_streaming) {
           console.warn('Cannot send message while streaming is in progress');
         }
       }
     }
-  }, [/* Callback dependencies */]);
+  }, [RemixAiAssistantChatApi, props, is_streaming]);
 
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
@@ -176,9 +182,9 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
           // syntaxHighlighter: highlighter,
-          promptRenderer: ({ uid, prompt, onResubmit }) => <PromptRenderer uid={uid} prompt={prompt} onResubmit={onResubmit} />,
-          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
-            response={content as string[]} containerRef={containerRef} />
+          //promptRenderer: ({ uid, prompt }) => { console.log(uid, prompt); return  (<PromptRenderer uid={uid} prompt={prompt}/>)},
+          //responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
+           // response={content as string[]} containerRef={containerRef} />
         }}
       />
 
@@ -231,7 +237,12 @@ function ResponseRenderer({ uid, response, containerRef }: { uid: string, respon
   )
 }
 
-function PromptRenderer({ uid, prompt, onResubmit }: { uid: string, prompt: string, onResubmit: (prompt: string) => void }) {
+function PromptRenderer({ uid, prompt }: { uid: string, prompt: string}) {
+
+  useEffect(() => {
+    console.log('PromptRenderer useEffect called with uid:', uid, 'prompt:', prompt);
+  }, [uid, prompt]);
+
   return (
     <div key={uid} className="d-flex flex-column justify-content-between">
       <span className="text-muted font-weight-bold">
