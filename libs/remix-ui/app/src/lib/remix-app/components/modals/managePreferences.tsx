@@ -33,7 +33,7 @@ const ManagePreferencesSwitcher = (prop: {
         </div>
         <div>
           <ToggleSwitch
-            id = "matomoAnonAnalyticsSwitch"
+            id = "matomoAnonAnalyticsToggle"
             size = "2xl"
             tooltipTextId = "remixApp.mpOp1Tooltip"
             disabled = {true}
@@ -57,7 +57,7 @@ const ManagePreferencesSwitcher = (prop: {
         </div>
         <div>
           <ToggleSwitch
-            id = "matomoPerfAnalyticsSwitch"
+            id = "matomoPerfAnalyticsToggle"
             size = "2xl"
             isOn = {matPerfSwitch}
             onClick = {() => setMatPerfSwitch(!matPerfSwitch)}
@@ -81,7 +81,7 @@ const ManagePreferencesSwitcher = (prop: {
         </div>
         <div>
           <ToggleSwitch
-            id = "remixAISwitch"
+            id = "remixAIToggle"
             size = "2xl"
             isOn = {remixAISwitch}
             onClick = {() => setRemixAISwitch(!remixAISwitch)}
