@@ -56,7 +56,7 @@ export const GetDeviceCode = () => {
 
     const popup = window.open(url, '_blank', 'width=600,height=700')
     if (!popup) {
-      console.warn('[GetDeviceCode] Popup blocked or failed to open, falling back to device code flow.')
+      console.warn('Popup blocked or failed to open, falling back to device code flow.')
       await getDeviceCodeFromGitHub()
       return
     }
