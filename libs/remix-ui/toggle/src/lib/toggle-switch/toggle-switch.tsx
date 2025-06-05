@@ -24,13 +24,13 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
   const childJSXWithTooltip = (
       <CustomTooltip
             placement={"auto"}
-            tooltipId="matomoAnonAnalyticsTooltip"
+            tooltipId={ id + "Tooltip"}
             tooltipClasses="text-nowrap"
             tooltipText={<FormattedMessage id={tooltipTextId} />}
       >
         <button
         data-id={ id + "Switch"}
-        id='matomoAnonAnalyticsSwitch'
+        id={id}
         className={`btn ${isOn ? onstyle : offstyle}`}
         onClick={() => { if(!disabled) onClick()}}
         disabled = {disabled || false}
@@ -43,7 +43,7 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
   const childJSXWithoutTooltip = (
       <button
         data-id={ id + "Switch"}
-        id='matomoAnonAnalyticsSwitch'
+        id={id}
         className={`btn ${isOn ? onstyle : offstyle}`}
         onClick={() => { if(!disabled) onClick()}}
         disabled = {disabled || false}
