@@ -32,11 +32,9 @@ export const GetDeviceCode = () => {
           'Accept': 'application/json'
         }
       })
-      console.log('[GetDeviceCode] Fetched client ID:', response.data)
       return response.data.client_id
     }
     catch (error) {
-      console.error('[GetDeviceCode] Error fetching client ID:', error)
       throw new Error('Failed to fetch GitHub client ID')
     }
 
@@ -56,8 +54,6 @@ export const GetDeviceCode = () => {
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
 
-    console.log('[GetDeviceCode] Opening GitHub login popup with URL:', url)
-
     const popup = window.open(url, '_blank', 'width=600,height=700')
     if (!popup) {
       console.warn('[GetDeviceCode] Popup blocked or failed to open, falling back to device code flow.')
@@ -67,7 +63,6 @@ export const GetDeviceCode = () => {
     popupRef.current = popup
 
     const messageListener = async (event: MessageEvent) => {
-      console.log('[GetDeviceCode] messageListener', event)
       if (event.origin !== window.location.origin) return
 
       if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
