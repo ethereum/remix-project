@@ -14,7 +14,7 @@ interface AIStatusProps {
 export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
   const appContext = useContext(AppContext)
-  
+
   useEffect(() => {
     const run = async () => {
       const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')

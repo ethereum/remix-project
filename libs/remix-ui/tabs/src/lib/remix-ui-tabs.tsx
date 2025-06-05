@@ -86,7 +86,7 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
-  // Toggle the copilot in editor when clicked to update in status bar 
+  // Toggle the copilot in editor when clicked to update in status bar
   useEffect(() => {
     const run = async () => {
       props.plugin.on('settings', 'copilotChoiceUpdated', async (isChecked) => {
