@@ -11,20 +11,15 @@ interface IToggleSwitch {
   size?: string // lg,xl,2xl etc
   tooltipTextId?: string // formatted message id like "remixApp.mpOp1Tooltip" etc
   disabled?: boolean
-  initiallyOn?: boolean
+  isOn?: boolean
+  onClick?: () => void
 }
 export const ToggleSwitch = (props: IToggleSwitch) => {
-  let { id, onstyle, offstyle, size, tooltipTextId, disabled, initiallyOn} = props
+  let { id, onstyle, offstyle, size, tooltipTextId, disabled, isOn, onClick} = props
   size = size || 'lg'
   onstyle = onstyle || 'text-primary'
   offstyle = offstyle || 'text-secondary'
-  initiallyOn = initiallyOn || true
-
-  const [ isOn, setIsOn] = useState(initiallyOn)
-
-
-  const handleClick = (e: any) => {
-  }
+  isOn = isOn === false ? isOn : true
 
   const childJSXWithTooltip = (
       <CustomTooltip
@@ -37,6 +32,7 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
         data-id={ id + "Switch"}
         id='matomoAnonAnalyticsSwitch'
         className={`btn ${isOn ? onstyle : offstyle}`}
+        onClick={() => { if(!disabled) onClick()}}
         disabled = {disabled || false}
         >
           { isOn ? <i className={`fas fa-toggle-on ${size ? `fa-${size}` : "fa-lg"}`}></i> : <i className={`fas fa-toggle-off ${size ? `fa-${size}` : "fa-lg"}`}></i> }
@@ -49,6 +45,8 @@ export const ToggleSwitch = (props: IToggleSwitch) => {
         data-id={ id + "Switch"}
         id='matomoAnonAnalyticsSwitch'
         className={`btn ${isOn ? onstyle : offstyle}`}
+        onClick={() => { if(!disabled) onClick()}}
+        disabled = {disabled || false}
       >
         { isOn ? <i className={`fas fa-toggle-on ${size ? `fa-${size}` : "fa-lg"}`}></i> : <i className={`fas fa-toggle-off ${size ? `fa-${size}` : "fa-lg"}`}></i> }
       </button>
