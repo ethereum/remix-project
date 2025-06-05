@@ -24,13 +24,11 @@ export const GitHubPopupCallback = () => {
   const hasRun = useRef(false)
 
   const exchangeToken = async () => {
-    console.log('[GitHubPopupCallback] Starting exchangeToken...')
+   
     const code = extractCode()
-    console.log('[GitHubPopupCallback] Extracted code:', code)
     window.history.replaceState({}, document.title, window.location.pathname)
 
-    console.log('[GitHubPopupCallback] code:', code)
-
+   
     if (!code) {
       console.warn('[GitHubPopupCallback] Missing code', { code })
       window.opener?.postMessage({ type: 'GITHUB_AUTH_FAILURE', error: 'missing code' }, window.location.origin)
@@ -38,7 +36,6 @@ export const GitHubPopupCallback = () => {
     }
 
     try {
-      console.log('fetching access token from proxy server...', { code })
       const { data } = await axios.post(`${endpointUrls.gitHubLoginProxy}/login/oauth/access_token?_=${Date.now()}`, {
         code,
         redirect_uri: window.location.origin + '/auth/github/callback'
@@ -49,10 +46,8 @@ export const GitHubPopupCallback = () => {
         }
       })
 
-      console.log('[GitHubPopupCallback] GitHub response:', data)
-
+   
       if (data.access_token) {
-        console.log('[GitHubPopupCallback] Posting success message')
         window.opener?.postMessage({ type: 'GITHUB_AUTH_SUCCESS', token: data.access_token }, window.location.origin)
       } else {
         console.log('[GitHubPopupCallback] Posting failure message')
