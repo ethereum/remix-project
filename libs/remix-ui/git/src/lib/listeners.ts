@@ -208,7 +208,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('githubAuthHandler', 'onLogin', async (data: { token: string }) => {
-    console.log('githubAuthHandler onLogin', data.token)
     await saveToken(data.token)
     await loadGitHubUserFromToken()
     await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
