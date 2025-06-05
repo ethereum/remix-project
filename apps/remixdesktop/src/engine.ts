@@ -55,7 +55,6 @@ appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
-  console.log('activatePlugin', plugin)
   return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
