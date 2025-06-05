@@ -40,7 +40,6 @@ export const GetDeviceCode = () => {
       throw new Error('Failed to fetch GitHub client ID')
     }
 
-
   }
 
   const openPopupLogin = useCallback(async () => {
@@ -56,7 +55,6 @@ export const GetDeviceCode = () => {
     const scope = 'repo gist user:email read:user'
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
-
 
     console.log('[GetDeviceCode] Opening GitHub login popup with URL:', url)
 
@@ -146,7 +144,7 @@ export const GetDeviceCode = () => {
   }
 
   useEffect(() => {
-    if(context.gitHubUser && context.gitHubUser.isConnected) {
+    if (context.gitHubUser && context.gitHubUser.isConnected) {
       setDesktopIsLoading(false)
     }
   },[context.gitHubUser])

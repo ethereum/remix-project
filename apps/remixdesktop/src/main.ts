@@ -190,7 +190,7 @@ Categories=Development;
 MimeType=x-scheme-handler/remix;
 `;
 
-console.log('Registering remix:// protocol handler:', desktopFilePath);
+  console.log('Registering remix:// protocol handler:', desktopFilePath);
 
   try {
     if (!fs.existsSync(applicationsDir)) {

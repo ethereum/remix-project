@@ -12,6 +12,6 @@ export class GitHubAuthHandler extends ElectronPlugin {
   }
 
   onActivation(): void {
-      console.log('[GitHubAuthHandler] Activated')
+    console.log('[GitHubAuthHandler] Activated')
   }
 }

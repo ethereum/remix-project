@@ -11,25 +11,25 @@ import { Storage } from '@remix-project/remix-lib'
 
 import { createRoot } from 'react-dom/client'
 
-  ; (async function () {
-    try {
-      const configStorage = new Storage('config-v0.8:')
-      const config = new Config(configStorage)
-      Registry.getInstance().put({ api: config, name: 'config' })
-    } catch (e) { }
-    const theme = new ThemeModule()
-    theme.initTheme()
+; (async function () {
+  try {
+    const configStorage = new Storage('config-v0.8:')
+    const config = new Config(configStorage)
+    Registry.getInstance().put({ api: config, name: 'config' })
+  } catch (e) { }
+  const theme = new ThemeModule()
+  theme.initTheme()
 
-    const container = document.getElementById('root');
-    const root = createRoot(container)
-    if (container) {
-      root.render(
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth/github/callback" element={<GitHubPopupCallback />} />
-            <Route path="*" element={<Preload root={root} />} />
-          </Routes>
-        </BrowserRouter>
-      )
-    }
-  })()
+  const container = document.getElementById('root');
+  const root = createRoot(container)
+  if (container) {
+    root.render(
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth/github/callback" element={<GitHubPopupCallback />} />
+          <Route path="*" element={<Preload root={root} />} />
+        </Routes>
+      </BrowserRouter>
+    )
+  }
+})()
