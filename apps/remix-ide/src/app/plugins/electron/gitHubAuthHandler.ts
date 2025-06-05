@@ -2,7 +2,6 @@ import { ElectronPlugin } from '@remixproject/engine-electron';
 
 export class GitHubAuthHandler extends ElectronPlugin {
   constructor() {
-    console.log('[GitHubAuthHandler] Initializing')
     super({
       displayName: 'githubAuthHandler',
       name: 'githubAuthHandler',
@@ -11,7 +10,4 @@ export class GitHubAuthHandler extends ElectronPlugin {
     this.methods = []
   }
 
-  onActivation(): void {
-    console.log('[GitHubAuthHandler] Activated')
-  }
 }
