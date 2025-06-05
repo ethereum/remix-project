@@ -59,6 +59,8 @@ const ManagePreferencesSwitcher = (prop: {
           <ToggleSwitch
             id = "matomoPerfAnalyticsSwitch"
             size = "2xl"
+            isOn = {matPerfSwitch}
+            onClick = {() => setMatPerfSwitch(!matPerfSwitch)}
           ></ToggleSwitch>
         </div>
       </div>
@@ -81,6 +83,8 @@ const ManagePreferencesSwitcher = (prop: {
           <ToggleSwitch
             id = "remixAISwitch"
             size = "2xl"
+            isOn = {remixAISwitch}
+            onClick = {() => setRemixAISwitch(!remixAISwitch)}
           ></ToggleSwitch>
         </div>
       </div>
