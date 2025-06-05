@@ -47,6 +47,10 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     observer: StreamingAdapterObserver,
   ) => {
     console.log('RemixUiRemixAiAssistant send called with prompt:', prompt, observer)
+    //observer.next(prompt)
+    //observer.complete()
+    //return
+    
     try {
       const parseResult = await chatCmdParser.parse(prompt)
       if (parseResult) {
@@ -96,6 +100,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     } catch (error) {
       console.error('Error sending message:', error)
     }
+
   }
 
   RemixAiAssistantChatApi = useAiChatApi()
@@ -133,6 +138,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     console.log('Chat is ready. Props used to initialize the chat:', typeof readyDetails);
     setIsReady(true);
     props.onReady(RemixAiAssistantChatApi);
+    onClick('RemixAI is ready! You can start chatting now.');
     (window as any).sendChatMessage = (content) => {
       console.log('sendChatMessage called with content:', content);
       if (RemixAiAssistantChatApi && content && !is_streaming) {
@@ -145,7 +151,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
         }
       }
     }
-  }, [RemixAiAssistantChatApi, props, is_streaming]);
+  }, []);
 
   return (
     <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
@@ -182,9 +188,9 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
           // syntaxHighlighter: highlighter,
-          //promptRenderer: ({ uid, prompt }) => { console.log(uid, prompt); return  (<PromptRenderer uid={uid} prompt={prompt}/>)},
-          //responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
-           // response={content as string[]} containerRef={containerRef} />
+          promptRenderer: ({ uid, prompt }) => { console.log(uid, prompt); return  (<PromptRenderer uid={uid} prompt={prompt}/>)},
+          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
+            response={content as string[]} containerRef={containerRef} />
         }}
       />
 
