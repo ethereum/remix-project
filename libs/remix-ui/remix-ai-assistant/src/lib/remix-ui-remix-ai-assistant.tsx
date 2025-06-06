@@ -10,7 +10,6 @@ import '@nlux/themes'
 import { UserPersona } from '@nlux/react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { Plugin } from '@remixproject/engine'
-import { use } from 'chai'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -27,12 +26,13 @@ export interface RemixUiRemixAiAssistantProps {
   queuedMessage: { text: string, timestamp: number } | null
 }
 
-let RemixAiAssistantChatApi: AiChatApi = null
+
 
 export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
   const [is_streaming, setIS_streaming] = useState<boolean>(false)
   const [isReady, setIsReady] = useState(false)
   const chatCmdParser = new ChatCommandParser(props.plugin)
+  const RemixAiAssistantChatApi: AiChatApi = useAiChatApi()
 
   useEffect(() => {
     console.log('RemixUiRemixAiAssistant props.queuedMessage', props.queuedMessage)
@@ -53,7 +53,9 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     
     try {
       const parseResult = await chatCmdParser.parse(prompt)
+      
       if (parseResult) {
+        console.log('RemixUiRemixAiAssistant parseResult:', parseResult)
         observer.next(parseResult)
         observer.complete()
         const check = await props.plugin.call('remixAI', 'isChatRequestPending')
@@ -103,8 +105,6 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
 
   }
 
-  RemixAiAssistantChatApi = useAiChatApi()
-
   const conversationStarters: ConversationStarter[] = [
     {
       prompt: 'Explain what a modifier is',
@@ -138,7 +138,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
     console.log('Chat is ready. Props used to initialize the chat:', typeof readyDetails);
     setIsReady(true);
     props.onReady(RemixAiAssistantChatApi);
-    onClick('RemixAI is ready! You can start chatting now.');
+    ///onClick('RemixAI is ready! You can start chatting now.');
     (window as any).sendChatMessage = (content) => {
       console.log('sendChatMessage called with content:', content);
       if (RemixAiAssistantChatApi && content && !is_streaming) {
@@ -154,7 +154,7 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
   }, []);
 
   return (
-    <div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
+    <><div className="d-flex px-2 flex-column overflow-hidden pt-3 h-100 w-100">
       {isReady && (
         <div data-id="remix-ai-assistant-ready">
           ready
@@ -179,8 +179,8 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
           placeholder: "Ask me anything, start with @workspace to add context",
           submitShortcut: 'Enter',
           hideStopButton: false,
-          remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-          pluginMethodCall: props.makePluginCall,
+          //remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+          //pluginMethodCall: props.makePluginCall,
         }}
         messageOptions={{
           showCodeBlockCopyButton: true,
@@ -188,13 +188,20 @@ export function RemixUiRemixAiAssistant(props: RemixUiRemixAiAssistantProps) {
           streamingAnimationSpeed: 2,
           waitTimeBeforeStreamCompletion: 1000,
           // syntaxHighlighter: highlighter,
-          promptRenderer: ({ uid, prompt }) => { console.log(uid, prompt); return  (<PromptRenderer uid={uid} prompt={prompt}/>)},
-          responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
-            response={content as string[]} containerRef={containerRef} />
-        }}
-      />
+          //promptRenderer: ({ uid, prompt }) => { console.log(uid, prompt); return  (<PromptRenderer uid={uid} prompt={prompt}/>)},
+          //responseRenderer: ({ uid, content, containerRef }) => <ResponseRenderer uid={uid}
+          // response={content as string[]} containerRef={containerRef} />
+        }} />
 
-    </div>
+    </div><button
+      className="btn bg-dark ml-2 btn-sm text-secondary"
+      data-id="composer-ai-workspace-generate"
+      onClick={() => {
+        if (props.plugin) {
+          props.plugin.call('templateSelection', 'aiWorkspaceGenerate', {})
+        }
+      } }
+    >{"@ Generate Workspace"}</button></>
   )
 }
 
