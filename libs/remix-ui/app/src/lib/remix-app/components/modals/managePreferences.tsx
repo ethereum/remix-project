@@ -92,7 +92,7 @@ const ManagePreferencesSwitcher = (prop: {
   )
 }
 
-const ManagePreferencesDialog = () => {
+const ManagePreferencesDialog = (props) => {
   const { modal } = useDialogDispatchers()
   const { settings } = useContext(AppContext)
   const [visible, setVisible] = useState<boolean>(true)
@@ -118,6 +118,7 @@ const ManagePreferencesDialog = () => {
     settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
     settings.updateMatomoPerfAnalyticsChoice(switcherState.current.matPerfSwitch) // Enable/Disable Matomo Performance analytics
     settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
+    props.savePreferencesFn()
   }
 
   return <></>

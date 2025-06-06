@@ -238,7 +238,7 @@ const RemixApp = (props: IRemixAppUi) => {
             <OriginWarning></OriginWarning>
             <MatomoDialog hide={!appReady} acceptAllFn={() => setShowEnterDialog(true)} managePreferencesFn={() => setShowManagePreferencesDialog(true)}></MatomoDialog>
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
-            {showManagePreferencesDialog && <ManagePreferencesDialog></ManagePreferencesDialog>}
+            {showManagePreferencesDialog && <ManagePreferencesDialog savePreferencesFn={() => setShowEnterDialog(true)}></ManagePreferencesDialog>}
             <div className='d-flex flex-column'>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
                 <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
