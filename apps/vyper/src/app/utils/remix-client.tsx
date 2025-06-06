@@ -6,11 +6,10 @@ import { Contract, compileContract } from './compiler'
 import { ExampleContract } from '../components/VyperResult'
 import EventEmitter from 'events'
 import { CustomRemixApi } from '@remix-api'
-
-export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
+import { endpointUrls } from '@remix-endpoints-helper'
 export class RemixClient extends PluginClient<any, CustomRemixApi> {
   private client = createClient<Api, Readonly<RemixApi>>(this)
-  compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
+  compilerUrl: string = endpointUrls.vyper2
   compilerOutput: any
   eventEmitter = new EventEmitter()
 
