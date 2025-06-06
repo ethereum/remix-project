@@ -36,6 +36,7 @@ export default class SettingsTab extends ViewPlugin {
   }
   element: HTMLDivElement
   public useMatomoAnalytics: any
+  public useMatomoPerfAnalytics: any
   public useCopilot: any
   dispatch: React.Dispatch<any> = () => {}
   constructor(config, editor) {
@@ -52,6 +53,7 @@ export default class SettingsTab extends ViewPlugin {
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
     this.useMatomoAnalytics = null
+    this.useMatomoPerfAnalytics = null
     this.useCopilot = this.get('settings/copilot/suggest/activate')
   }
 
@@ -117,6 +119,23 @@ export default class SettingsTab extends ViewPlugin {
       _paq.push(['forgetConsentGiven']);
     } else {
       // user has given consent to process their data
+      _paq.push(['setConsentGiven']);
+    }
+    this.dispatch({
+      ...this
+    })
+  }
+
+  updateMatomoPerfAnalyticsChoice(isChecked) {
+    this.config.set('settings/matomo-perf-analytics', isChecked)
+    // set timestamp to local storage to track when the user has given consent
+    localStorage.setItem('matomo-perf-analytics-consent', Date.now().toString())
+    this.useMatomoPerfAnalytics = isChecked
+    if (!isChecked) {
+      // revoke tracking consent , need to be updated
+      _paq.push(['forgetConsentGiven']);
+    } else {
+      // user has given consent to process their data, need to be updated
       _paq.push(['setConsentGiven']);
     }
     this.dispatch({

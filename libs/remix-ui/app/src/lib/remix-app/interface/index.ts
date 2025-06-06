@@ -25,6 +25,7 @@ export interface AppModal {
     resolve?: (value?:any) => void,
     next?: () => void,
     data?: any,
+    showCancelIcon?: boolean,
     preventBlur?: boolean
 }
 
