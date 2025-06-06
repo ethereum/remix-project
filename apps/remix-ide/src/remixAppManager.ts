@@ -91,7 +91,8 @@ let requiredModules = [
   'walletconnect',
   'popupPanel',
   'remixAI',
-  'remixAID'
+  'remixAID',
+  'githubAuthHandler'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
