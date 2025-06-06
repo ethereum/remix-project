@@ -640,6 +640,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           handleClickFolder={handleClickFolder}
           createNewFile={props.createNewFile}
           createNewFolder={props.createNewFolder}
+          plugin={plugin}
           deletePath={deletePath}
           editPath={props.editModeOn}
           fileTarget={feTarget}
