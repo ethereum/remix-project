@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
-import { AppModalCancelTypes } from '../../types'
 declare global {
   interface Window {
     _paq: any
@@ -67,20 +66,12 @@ const MatomoDialog = (props: MatomoDialogProps) => {
     }
   }, [visible])
 
-  const declineModal = async (reason: AppModalCancelTypes) => {
-    if (reason === AppModalCancelTypes.click || reason === AppModalCancelTypes.enter) {
-      settings.updateMatomoAnalyticsChoice(false)
-      // revoke tracking consent
-      _paq.push(['forgetConsentGiven'])
-      setVisible(false)
-    }
-  }
-
   const handleAcceptAllClick = async () => {
-
-    // user has given consent to process their data
+    // user has given all consent to process their data
     _paq.push(['setConsentGiven'])
-    settings.updateMatomoAnalyticsChoice(true)
+    settings.updateMatomoAnalyticsChoice(true) // Enable Matomo Anonymous analytics
+    settings.updateMatomoPerfAnalyticsChoice(true) // Enable Matomo Performance analytics
+    settings.updateCopilotChoice(true) // Enable RemixAI copilot
     setVisible(false)
     props.acceptAllFn()
   }
