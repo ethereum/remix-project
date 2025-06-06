@@ -34,6 +34,9 @@ type tabContentType = {
   eventKey: string
   version?: string
   evmVersion?: string
+  methodIdentifiers?: {
+    [method: string]: string
+  }
 }
 
 export default function VyperCompile({ result, theme, themeStyle }: VyperCompileProps) {
@@ -46,7 +49,8 @@ export default function VyperCompile({ result, theme, themeStyle }: VyperCompile
       tabButtonText: () => 'Copy ABI',
       eventKey: 'abi',
       version: result.compilerVersion,
-      evmVersion: result.evmVersion
+      evmVersion: result.evmVersion,
+      methodIdentifiers: result.methodIdentifiers
     },
     {
       tabHeadingText: 'Bytecode',
@@ -82,7 +86,7 @@ export default function VyperCompile({ result, theme, themeStyle }: VyperCompile
               {content.eventKey === 'abi' ? (
                 <div className="my-3">
                   {JSON.stringify(content?.tabPayload)?.length > 1 ? <JSONTree
-                    src={{ ...content.tabPayload as ABIDescription[], evmVersion: content.evmVersion, version: content.version } }
+                    src={{ ...content.tabPayload as ABIDescription[], evmVersion: content.evmVersion, version: content.version, methodIdentifiers: content.methodIdentifiers } }
                     theme={theme}
                     style={themeStyle}
                   /> : null}

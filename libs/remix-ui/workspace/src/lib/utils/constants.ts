@@ -18,7 +18,8 @@ export const TEMPLATE_NAMES = {
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
   'uniswapV4Template': 'Uniswap v4 Template',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
-  'accountAbstraction': 'Account Abstraction Template'
+  'accountAbstraction': 'Account Abstraction Template',
+  'introToEIP7702': 'Intro to EIP-7702',
 }
 
 export const TEMPLATE_METADATA: Record<string, TemplateType> = {
@@ -45,7 +46,9 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
     name: 'cookbookdev',
     endpoint: 'openPattern',
     params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true],
-    desktopCompatible: false
+    forceCreateNewWorkspace: true,
+    desktopCompatible: false,
+    disabled: true
   },
   'token-sale': {
     type: 'plugin',
@@ -180,5 +183,6 @@ export type TemplateGroup = {
   onClickLabel?: string
   description?: string
   IsArtefact?: boolean
+  hasOptions?: boolean
 }
 

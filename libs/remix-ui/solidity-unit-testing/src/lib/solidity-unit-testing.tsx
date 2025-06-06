@@ -180,7 +180,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       await updateForNewCurrent(file)
     })
     testTab.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
-      const { currentVersion } = testTab.compileTab.getCurrentCompilerConfig()
+      const { currentVersion } = await testTab.compileTab.getCurrentCompilerConfig()
 
       if (!semver.gt(truncateVersion(currentVersion), '0.4.12')) {
         setDisableRunButton(true)
@@ -606,7 +606,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         const runningTests: Record<string, Record<string, string>> = {}
         runningTests[testFilePath] = { content }
         filesContent[testFilePath] = { content }
-        const { currentVersion, evmVersion, optimize, runs, isUrl } = testTab.compileTab.getCurrentCompilerConfig()
+        const { currentVersion, evmVersion, optimize, runs, isUrl } = await testTab.compileTab.getCurrentCompilerConfig()
         const currentCompilerUrl = isUrl ? currentVersion : urlFromVersion(currentVersion)
         const compilerConfig = {
           currentCompilerUrl,

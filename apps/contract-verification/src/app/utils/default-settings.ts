@@ -13,12 +13,15 @@ export function mergeChainSettingsWithDefaults(chainId: string, userSettings: Co
     let defaultsForVerifier: VerifierSettings
     if (verifierId === 'Sourcify') {
       defaultsForVerifier = DEFAULT_APIS['Sourcify']
+    } else if (verifierId === 'Etherscan') {
+      const apiUrl = DEFAULT_APIS['Etherscan'].apiUrl
+      const explorerUrl = DEFAULT_APIS['Etherscan'][chainId]?.explorerUrl
+      defaultsForVerifier = { apiUrl, explorerUrl }
     } else if (verifierId === 'Routescan') {
       const routescanDefaults = DEFAULT_APIS['Routescan']
 
       if (!routescanDefaults[chainId]) {
         defaultsForVerifier = {}
-
       } else {
         const explorerUrl = routescanDefaults[chainId]?.type === 'mainnet' ? routescanDefaults.mainnetExplorerUrl : routescanDefaults.testnetExplorerUrl
         const apiUrl = routescanDefaults.apiUrl.replace('${CHAIN_TYPE}', routescanDefaults[chainId]?.type).replace('${CHAIN_ID}', chainId)

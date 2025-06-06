@@ -1,18 +1,20 @@
 import { Template, TemplateGroup } from "@remix-ui/workspace"
-
 export const templates = (intl: any, plugin: any): TemplateGroup[] => {
+
   return [
     {
       name: "Generic",
       items: [
         { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
         { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' },
-        { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code.' },
-        { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'Experiment with Account Abstraction contracts: (ERC-4337, EIP-7702)' }
-      ],
+        { value: "simpleEip7702", displayName: 'Simple EIP-7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code' },
+        { value: "introToEIP7702", displayName: 'Intro to EIP-7702', IsArtefact: true, description: 'A contract for demoing EIP-7702' },
+        { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'A repo about ERC-4337 and EIP-7702' }
+      ]
     },
     {
       name: "OpenZeppelin",
+      hasOptions: true,
       items: [
         {
           value: "ozerc20",
@@ -270,8 +272,8 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
       },
       onClickLabel: 'Open Cookbook Plugin',
       description: 'Discover more templates!',
-      items: [
-        {
+      items: [],
+      /*         {
           value: "token-sale",
           displayName: 'Token Sale',
           description: "ERC20 token sale contact. Sell tokens for ETH"
@@ -318,7 +320,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
             burnable: true,
             pausable: true
           }, },
-      ]
+      ]*/
     },
     {
       name: "0xProject",

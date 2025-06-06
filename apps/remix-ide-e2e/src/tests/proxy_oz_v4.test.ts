@@ -28,26 +28,6 @@ module.exports = {
       // because the compilatiom imports are slow and sometimes stop loading (not sure why, it's bug) we need to recompile and check to see if the files are really in de FS
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
-      .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-        suppressNotFoundErrors: true
-      })
-      .clickLaunchIcon('solidity')
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .clickLaunchIcon('filePanel')
-      .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-        suppressNotFoundErrors: true
-      })
-      .clickLaunchIcon('solidity')
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .clickLaunchIcon('filePanel')
-      .waitForElementVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-      })
       .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')

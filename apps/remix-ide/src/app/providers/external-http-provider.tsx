@@ -44,7 +44,7 @@ export class ExternalHttpProvider extends AbstractProvider {
             }}
           />
           <div className="border p-1 mt-2 mb-3">
-            geth --http --http.corsdomain="{window.origin}" --http.api web3,eth,debug,personal,net --vmdebug --datadir {thePath} --dev console
+            geth --http --http.corsdomain="{window.origin}" --http.api web3,eth,debug,net --vmdebug --datadir {thePath} --dev console
           </div>
           <div className='alert-warning p-1 mb-3 px-2'>
             <FormattedMessage id="udapp.externalHttpProviderText3" values={{ b: (chunks) => <b><p className='pt-2'>{chunks}</p></b> }} />

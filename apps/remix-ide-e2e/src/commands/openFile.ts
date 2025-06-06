@@ -6,7 +6,7 @@ class OpenFile extends EventEmitter {
     this.api.perform((done) => {
       openFile(this.api, name, () => {
         done()
-        this.emit('complete')
+        this.api.pause(2000).perform(() => this.emit('complete'))
       })
     })
     return this
@@ -31,15 +31,33 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
           done()
         })
       }
-
     })
   })
-    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
-    .click('li[data-id="treeViewLitreeViewItem' + name + '"')
-    .pause(2000)
-    .perform(() => {
-      done()
-    })
+  .perform(async () => {
+    if (await browser.isVisible({ selector: 'li[data-id="treeViewLitreeViewItem' + name + '"]', suppressNotFoundErrors: true})) {
+        browser.click('li[data-id="treeViewLitreeViewItem' + name + '"]')
+        done()
+        return
+    }
+    let it = 0
+    const split = name.split('/')
+    let current = split.splice(0, 1)
+    while (true) {
+      if (await browser.isVisible({ selector: 'li[data-id="treeViewLitreeViewItem' + current.join('/') + '"]', suppressNotFoundErrors: true }) &&
+    !await browser.isPresent({ selector: 'li[data-id="treeViewLitreeViewItem' + current.join('/') + '"] .fa-folder-open', suppressNotFoundErrors: true })) {
+        browser.click('li[data-id="treeViewLitreeViewItem' + current.join('/') + '"]')
+      }
+      if (current.join('/') === name) {
+        break
+      }      
+      current.push(split.shift())
+      it++
+      if (it > 15) {
+        browser.assert.fail(name, current.join('/'), 'cannot open file ' + name)
+      }
+    }
+    done()
+  })
 }
 
 module.exports = OpenFile

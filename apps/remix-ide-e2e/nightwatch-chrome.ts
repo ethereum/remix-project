@@ -11,9 +11,7 @@ module.exports = {
   webdriver: {
     start_process: true,
     port: 9515,
-    server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
-    "keep_alive": { "enabled": true, "keepAliveMsecs": 60000 },
-    "timeout_options": { "timeout": 60000, "retry_attempts": 3 }
+    server_path: './tmp/webdrivers/chromedriver',
   },
 
   test_settings: {

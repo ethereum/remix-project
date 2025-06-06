@@ -9,7 +9,7 @@ import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
 import isElectron from 'is-electron'
-import type { TemplateGroup } from '@remix-ui/workspace'
+import type { Template, TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
@@ -88,40 +88,82 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
 
     }
 
+<<<<<<< HEAD
     const createWorkspace = async (item, templateName: string) => {
       if (isElectron()) {
         await this.call('remix-templates', 'loadTemplateInNewWindow', item.value)
         return
       }
+=======
+    const createWorkspace = async (item: Template, templateGroup: TemplateGroup) => {
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
       const defaultName = await this.call('filePanel', 'getAvailableWorkspaceName', item.displayName)
       const username = await this.call('settings', 'get', 'settings/github-user-name')
       const email = await this.call('settings', 'get', 'settings/github-email')
       const gitNotSet = !username || !email
       let workspaceName = defaultName
       let initGit = false
+      this.opts = {}
       const modal: AppModal = {
         id: 'TemplatesSelection',
         title: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create' : 'filePanel.workspace.create.desktop' }),
+<<<<<<< HEAD
         message: await createModalMessage(defaultName, gitNotSet, (value) => workspaceName = value, (value) => initGit = !!value, (event) => setCheckBoxRefs(event), (event) => setRadioRefs(event), templateName),
+=======
+        message: await createModalMessage(
+          item,
+          templateGroup,
+          defaultName,
+          gitNotSet,
+          (value) => workspaceName = value,
+          (value) => initGit = !!value,
+          (event) => setCheckBoxRefs(event),
+          (event) => setRadioRefs(event),
+        ),
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
         okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok' : 'filePanel.selectFolder' }),
       }
+
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
       _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
       this.emit('createWorkspaceReducerEvent', workspaceName, item.value, this.opts, false, errorCallback, initGit)
     }
 
+<<<<<<< HEAD
     const addToCurrentElectronFolder = async (item: any, templateName: string) => {
       await this.call('remix-templates', 'addToCurrentElectronFolder', item.value, templateName)
     }
 
     const addToCurrentWorkspace = async (item) => {
+=======
+    const addToCurrentWorkspace = async (item: Template, templateGroup: TemplateGroup) => {
+      this.opts = {}
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
       _paq.push(['trackEvent', 'template-selection', 'addToCurrentWorkspace', item.value])
+      if (templateGroup.hasOptions) {
+        const modal: AppModal = {
+          id: 'TemplatesSelection',
+          title: window._intl.formatMessage({ id: 'filePanel.customizeTemplate' }),
+          message: createOptionsModal(
+            (event) => setCheckBoxRefs(event),
+            (event) => setRadioRefs(event),),
+          okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
+          cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
+        }
+        const modalResult = await this.call('notification', 'modal', modal)
+        if (!modalResult) return
+      }
+
       this.emit('addTemplateToWorkspaceReducerEvent', item.value, this.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
+<<<<<<< HEAD
             title: window._intl.formatMessage({ id: 'filePanel.workspace.create.desktop' }),
+=======
+            title: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create' : 'filePanel.workspace.create.desktop' }),
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
             message: e.message,
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
@@ -182,12 +224,17 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               hScrollable={false}
             >
               {template.items.map((item, index) => {
+<<<<<<< HEAD
 
                 item.templateType = TEMPLATE_METADATA[item.value]
                 console.log('item', item)
                 if (item.templateType && item.templateType.desktopCompatible === false && isElectron()) {
                   return (<></>)
                 }
+=======
+                item.templateType = TEMPLATE_METADATA[item.value]
+                if (item.templateType && item.templateType.disabled === true) return
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
                 if (!item.opts) {
                   return (
                     <RemixUIGridCell
@@ -205,13 +252,17 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             {item.description && <span className='text-dark'>{item.description}</span>}
                           </div>
                           <div className='d-flex flex-wrap mb-2'>
-                            {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
+                            {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uups') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
                             {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
                             {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>burnable</span>}
                             {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                           </div>
                         </div>
+<<<<<<< HEAD
                         <div className={`'align-items-center justify-content-between w-100 d-flex pt- flex-row'}`}>
+=======
+                        <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
                           {(!template.IsArtefact || !item.IsArtefact) && <CustomTooltip
                             placement="auto"
                             tooltipId={`overlay-tooltip-new${item.name}`}
@@ -220,10 +271,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             <span
                               data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
                               onClick={async () => {
-                                createWorkspace(item, template.name)
+                                createWorkspace(item, template)
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >
+<<<<<<< HEAD
                               {isElectron() ?
                                 <><i className='fa fa-folder-open mr-1'></i>Create</> : 'Create'}
                             </span>
@@ -247,6 +299,12 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               </CustomTooltip>
                             </div>
                             :
+=======
+                              Create
+                            </span>
+                          </CustomTooltip>}
+                          {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> :
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
                             <CustomTooltip
                               placement="auto"
                               tooltipId={`overlay-tooltip-add${item.name}`}
@@ -254,7 +312,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             >
                               <span
                                 data-id={`add-${item.value}`}
+<<<<<<< HEAD
                                 onClick={async () => addToCurrentWorkspace(item)}
+=======
+                                onClick={async () => addToCurrentWorkspace(item, template)}
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
                                 className="btn btn-sm border"
                               >
                                 Add to current
@@ -288,13 +350,14 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
 }
 
 const createModalMessage = async (
+  template: Template,
+  templateGroup: TemplateGroup,
   defaultName: string,
   gitConfigNotSet: boolean,
   onChangeTemplateName: (name: string) => void,
   onChangeInitGit: (name: string) => void,
   onChangeCheckBoxRefs: (event: any) => void,
   onChangeRadioRefs: (event: any) => void,
-  templateName?: string
 ) => {
   return (
     <>
@@ -309,6 +372,7 @@ const createModalMessage = async (
         onChange={(e) => onChangeTemplateName(e.target.value)}
         onInput={(e) => onChangeTemplateName((e.target as any).value)}
       />
+<<<<<<< HEAD
       {templateName?.includes('OpenZeppelin') ? (
         <div id="ozcustomization" data-id="ozCustomization" style={{ display: 'block' }} className="mb-2">
           <label className="form-check-label d-block mb-2" style={{ fontWeight: 'bolder' }}>
@@ -360,6 +424,9 @@ const createModalMessage = async (
       ) : (
         <></>
       )}
+=======
+      {templateGroup.hasOptions ? createOptionsModal(onChangeCheckBoxRefs, onChangeRadioRefs) : null}
+>>>>>>> 5886d4629391de3d8bbe4244a995204d1a329f8d
       <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
         <input
           id="initGitRepository"
@@ -389,4 +456,43 @@ const createModalMessage = async (
     </>
   )
 }
+
+const createOptionsModal = (
+  onChangeCheckBoxRefs: (event: any) => void,
+  onChangeRadioRefs: (event: any) => void
+) => (
+  <div id="ozcustomization" data-id="ozCustomization" style={{ display: 'block' }} className="mb-2">
+    <label className="form-check-label d-block mb-2" style={{ fontWeight: 'bolder' }}>
+      <FormattedMessage id="filePanel.customizeTemplate" />
+    </label>
+
+    <label className="form-check-label d-block mb-1">
+      <FormattedMessage id="filePanel.features" />
+    </label>
+    <div className="mb-2">
+      {['mintable', 'burnable', 'pausable'].map((feature) => (
+        <div key={feature} className="d-flex ml-2 custom-control custom-checkbox">
+          <input className="custom-control-input" type="checkbox" name="feature" value={feature} id={feature} onChange={onChangeCheckBoxRefs} />
+          <label className="form-check-label custom-control-label" htmlFor={feature} data-id={`featureType${feature.charAt(0).toUpperCase() + feature.slice(1)}`}>
+            <FormattedMessage id={`filePanel.${feature}`} />
+          </label>
+        </div>
+      ))}
+    </div>
+
+    <label className="form-check-label d-block mb-1">
+      <FormattedMessage id="filePanel.upgradeability" />
+    </label>
+    <div>
+      {['transparent', 'uups'].map((type) => (
+        <div key={type} className="d-flex ml-2 custom-control custom-radio">
+          <input className="custom-control-input" type="radio" name="upgradeability" value={type} id={type} onChange={onChangeRadioRefs} />
+          <label className="form-check-label custom-control-label" htmlFor={type} data-id={`upgradeType${type.charAt(0).toUpperCase() + type.slice(1)}`}>
+            {type.toUpperCase()}
+          </label>
+        </div>
+      ))}
+    </div>
+  </div>
+)
 
