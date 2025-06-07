@@ -24,7 +24,7 @@ declare module 'nightwatch' {
     journalLastChildIncludes(val: string): NightwatchBrowser
     executeScriptInTerminal(script: string): NightwatchBrowser
     clearEditableContent(cssSelector: string): NightwatchBrowser
-    journalChildIncludes(val: string, opts = {shouldHaveOnlyOneOccurence: boolean}): NightwatchBrowser
+    journalChildIncludes(val: string, opts = {shouldHaveOnlyOneOccurrence: boolean}): NightwatchBrowser
     debugTransaction(index: number): NightwatchBrowser
     checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser
     openFile(name: string): NightwatchBrowser
