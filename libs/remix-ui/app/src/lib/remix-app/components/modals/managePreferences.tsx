@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useDialogDispatchers } from '../../context/provider'
-import { CustomTooltip } from "@remix-ui/helper"
 import { ToggleSwitch } from '@remix-ui/toggle'
 import { AppContext } from '../../context/context'
 declare global {
@@ -115,9 +114,18 @@ const ManagePreferencesDialog = (props) => {
   }, [visible])
 
   const savePreferences = async () => {
+    _paq.push(['setConsentGiven']) // default consent to process their anonymous data
     settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
     settings.updateMatomoPerfAnalyticsChoice(switcherState.current.matPerfSwitch) // Enable/Disable Matomo Performance analytics
+    if (switcherState.current.matPerfSwitch) {
+      // user has given consent to process their performance data
+      _paq.push(['setMatomoPerfConsentGiven'])
+    } else {
+      // revoke tracking consent for performance data
+      _paq.push(['forgetMatomoPerfConsentGiven'])
+    }
     settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
+    setVisible(false)
     props.savePreferencesFn()
   }
 
