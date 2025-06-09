@@ -157,6 +157,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const [isDiff, setIsDiff] = useState(props.isDiff || false)
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
   const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
+  const [widgetIds, setWidgetIds] = useState<string[]>([])
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -374,6 +375,7 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'python') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-vyper')
     }
+
     // @ts-ignore
     props.plugin.emit('addModel', editorRef.current.getModel().getValue(), 'remix-solidity', props.currentFile + '-ai', false)
   }, [props.currentFile, isDiff, currentDiffFile])
@@ -624,6 +626,22 @@ export const EditorUI = (props: EditorUIProps) => {
         return prevState
       })
     }
+  }
+
+  props.plugin.on('fileManager', 'currentFileChanged', (file: string) => {
+    if (file + '-ai' !== currentDiffFile) {
+      removeAllWidgets()
+    }
+  })
+
+  function removeAllWidgets() {
+    if (widgetIds.length === 0) return
+    for (const widgetId of widgetIds) {
+      editorRef.current && editorRef.current.removeContentWidget({
+        getId: () => widgetId
+      })
+    }
+    setWidgetIds([])
   }
 
   function setReducerListener() {
@@ -1116,6 +1134,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function showCustomDiff (uri: string) {
+    removeAllWidgets()
     const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
     let totalLineDifference = 0
     const decoratorListCollection = []
@@ -1166,6 +1185,7 @@ export const EditorUI = (props: EditorUIProps) => {
           },
         ])
         decoratorList.clear()
+        setWidgetIds(widgetIds.filter((id) => id !== `accept_decline_widget${index}`))
       }
 
       const rejectHandler = (decoratorList) => {
@@ -1180,6 +1200,7 @@ export const EditorUI = (props: EditorUIProps) => {
           },
         ])
         decoratorList.clear()
+        setWidgetIds(widgetIds.filter((id) => id !== `accept_decline_widget${index}`))
       }
 
       const acceptAllHandler = () => {
@@ -1200,10 +1221,13 @@ export const EditorUI = (props: EditorUIProps) => {
         })
       }
 
+      const widgetId = `accept_decline_widget${index}`
+
+      setWidgetIds([...widgetIds, widgetId])
       if (index === 0) {
-        addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList), acceptAllHandler, rejectAllHandler)
+        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList), acceptAllHandler, rejectAllHandler)
       } else {
-        addAcceptDeclineWidget(`accept_decline_widget${index}`, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList))
+        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList))
       }
       totalLineDifference += linesCount
     })
