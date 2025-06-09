@@ -229,10 +229,14 @@ export const FlatTree = (props: FlatTreeProps) => {
   useEffect(() => {
     if (focusEdit && focusEdit.element) {
       const index = flatTree.findIndex((item) => item.path === focusEdit.element)
-      index && virtuoso.current.scrollIntoView({
-        index,
-        align: 'center'
-      })
+      // Skip scrollIntoView if disable-autofocus is set
+      if (index && !window.location.search.includes('disable-autofocus=true') && 
+          localStorage.getItem('disable-autofocus') !== 'true') {
+        virtuoso.current.scrollIntoView({
+          index,
+          align: 'center'
+        })
+      }
     }
   }, [focusEdit])
 

@@ -28,6 +28,8 @@
 
 :point_right: Supported browsers: Firefox v100.0.1 & Chrome v101.0.4951.64. No support for Remix's use on tablets or smartphones or telephones.
 
+**Embedding Remix IDE**: When embedding Remix IDE in other applications, you can disable autofocus behavior by using the URL parameter `?disable-autofocus=true`. See [disable-autofocus.md](./disable-autofocus.md) for details.
+
 **Remix Desktop IDE**, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
@@ -268,3 +270,4 @@ parameters:
 - Medium: https://medium.com/remix-ide
 - X: https://x.com/ethereumremix
 - Join Discord: https://discord.gg/XcvfUpZPsG
+- [Disable Autofocus Documentation](./disable-autofocus.md): How to disable automatic focus and scrolling when embedding Remix

@@ -128,6 +128,8 @@
     "@remixproject/plugin-utils": "0.3.42",
     "@remixproject/plugin-webview": "0.3.42",
     "@remixproject/plugin-ws": "0.3.42",
+    "@reown/appkit": "^1.7.4",
+    "@reown/appkit-adapter-ethers": "^1.7.4",
     "@ricarso/react-image-magnifiers": "^1.9.0",
     "@types/nightwatch": "^2.3.1",
     "ansi-gray": "^0.1.1",
@@ -228,9 +230,7 @@
     "winston": "^3.3.3",
     "ws": "^8.17.1",
     "xterm": "^5.2.1",
-    "xterm-addon-search": "^0.12.0",
-    "@reown/appkit": "^1.7.4",
-    "@reown/appkit-adapter-ethers": "^1.7.4"
+    "xterm-addon-search": "^0.12.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
@@ -407,5 +407,6 @@
     "@ethereumjs/util": "^10.0.0",
     "@ethereumjs/vm": "^10.0.0",
     "@ethereumjs/binarytree": "^10.0.0"
-  }
+  },
+  "packageManager": "yarn@4.2.2+sha512.c44e283c54e02de9d1da8687025b030078c1b9648d2895a65aab8e64225bfb7becba87e1809fc0b4b6778bbd47a1e2ab6ac647de4c5e383a53a7c17db6c3ff4b"
 }
