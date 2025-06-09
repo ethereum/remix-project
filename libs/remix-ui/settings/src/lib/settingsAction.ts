@@ -39,16 +39,16 @@ export const copilotTemperature = (config, checked, dispatch) => {
   dispatch({ type: 'copilot/suggest/temperature', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
 }
 
-export const useMatomoAnalytics = (config, checked, dispatch) => {
-  config.set('settings/matomo-analytics', checked)
-  localStorage.setItem('matomo-analytics-consent', Date.now().toString())
-  dispatch({ type: 'useMatomoAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const useMatomoPerfAnalytics = (config, checked, dispatch) => {
+  config.set('settings/matomo-perf-analytics', checked)
+  localStorage.setItem('matomo-perf-analytics-consent', Date.now().toString())
+  dispatch({ type: 'useMatomoPerfAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
   if (checked) {
-    // user has given consent to process their data
-    _paq.push(['setConsentGiven']);
+    // user has given consent to process their performance data
+    _paq.push(['setMatomoPerfConsentGiven'])
   } else {
-    // revoke tracking consent
-    _paq.push(['forgetConsentGiven']);
+    // revoke tracking consent for performance data
+    _paq.push(['forgetMatomoPerfConsentGiven'])
   }
 }
 

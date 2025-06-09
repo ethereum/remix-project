@@ -80,7 +80,7 @@ export default class SettingsTab extends ViewPlugin {
         config={state.config}
         editor={state.editor}
         _deps={state._deps}
-        useMatomoAnalytics={state.useMatomoAnalytics}
+        useMatomoPerfAnalytics={state.useMatomoPerfAnalytics}
         useCopilot={state.useCopilot}
         themeModule={state._deps.themeModule}
         localeModule={state._deps.localeModule}
@@ -132,11 +132,11 @@ export default class SettingsTab extends ViewPlugin {
     localStorage.setItem('matomo-perf-analytics-consent', Date.now().toString())
     this.useMatomoPerfAnalytics = isChecked
     if (!isChecked) {
-      // revoke tracking consent , need to be updated
-      _paq.push(['forgetConsentGiven']);
+      // revoke tracking consent for performance data
+      _paq.push(['forgetMatomoPerfConsentGiven'])
     } else {
-      // user has given consent to process their data, need to be updated
-      _paq.push(['setConsentGiven']);
+      // user has given consent to process their performance data
+      _paq.push(['setMatomoPerfConsentGiven'])
     }
     this.dispatch({
       ...this

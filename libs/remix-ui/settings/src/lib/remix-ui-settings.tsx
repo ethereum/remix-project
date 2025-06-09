@@ -14,7 +14,7 @@ import {
   copilotMaxNewToken,
   copilotTemperature,
   textWrapEventAction,
-  useMatomoAnalytics,
+  useMatomoPerfAnalytics,
   saveTokenToast,
   removeTokenToast,
   saveSwarmSettingsToast,
@@ -39,7 +39,7 @@ export interface RemixUiSettingsProps {
   config: any
   editor: any
   _deps: any
-  useMatomoAnalytics: boolean
+  useMatomoPerfAnalytics: boolean
   useCopilot: boolean
   themeModule: ThemeModule
   localeModule: LocaleModule
@@ -125,8 +125,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }, [themeName, state.message])
 
   useEffect(() => {
-    if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
-  }, [props.useMatomoAnalytics])
+    if (props.useMatomoPerfAnalytics !== null) useMatomoPerfAnalytics(props.config, props.useMatomoPerfAnalytics, dispatch)
+  }, [props.useMatomoPerfAnalytics])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
@@ -167,7 +167,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeMatomoAnalytics = (event) => {
-    useMatomoAnalytics(props.config, event.target.checked, dispatch)
+    useMatomoPerfAnalytics(props.config, event.target.checked, dispatch)
   }
 
   const onchangeUseAutoComplete = (event) => {
@@ -197,7 +197,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isMetadataChecked = props.config.get('settings/generate-contract-metadata') || false
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
-    const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
+    const isMatomoChecked = props.config.get('settings/matomo-perf-analytics') || false
 
     const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
     const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
@@ -315,25 +315,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
-            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
+            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoAnalytics">
               <span>
-                <FormattedMessage id="settings.matomoAnalytics" />
+                <FormattedMessage id="settings.matomoPerfAnalytics" />
               </span>
-              <a href="https://medium.com/remix-ide/help-us-improve-remix-ide-66ef69e14931" target="_blank">
-                {' '}
-                <FormattedMessage id="settings.analyticsInRemix" />
-              </a>{' '}
-              <span>&</span>{' '}
-              <a target="_blank" href="https://matomo.org/free-software">
-                Matomo
-              </a>
-              <CustomTooltip
-                placement="auto"
-                tooltipId="settings-tooltip-matomo"
-                tooltipText={intl.formatMessage({ id: 'settings.matomoAnalyticsTooltip' })}
-              >
-                <i className="ml-1 far fa-info-circle"></i>
-              </CustomTooltip>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">

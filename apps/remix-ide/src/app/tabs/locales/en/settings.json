@@ -10,6 +10,7 @@
   "settings.useShowGasInEditorText": "Display gas estimates in editor",
   "settings.displayErrorsText": "Display errors in editor while typing",
   "settings.matomoAnalytics": "Enable Matomo Analytics. See",
+  "settings.matomoPerfAnalytics": "Enable Matomo Performance Analytics",
   "settings.matomoAnalyticsTooltip": "We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI.",
   "settings.enablePersonalModeText": " Enable Personal Mode for web3 provider",
   "settings.enablePersonalModeTooltip": "Transaction sent over Web3 will use the web3.personal API. Be sure the endpoint is opened before enabling it.  This mode allows a user to provide a passphrase in the Remix interface without having to unlock the account. Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...). Remix never persists any passphrase",
