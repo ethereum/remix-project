@@ -160,8 +160,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const [isDiff, setIsDiff] = useState(props.isDiff || false)
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
   const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
-  const [widgetIds, setWidgetIds] = useState<string[]>([])
-  const [decoratorListCollection, setDecoratorListCollection] = useState<any[]>([])
+  const [decoratorListCollection, setDecoratorListCollection] = useState<Record<string, any>>({})
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -634,18 +633,18 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.plugin.on('fileManager', 'currentFileChanged', (file: string) => {
     if (file + '-ai' !== currentDiffFile) {
-      removeAllWidgets()
+      removeAllWidgetsAndDecorators()
     }
   })
 
-  function removeAllWidgets() {
-    if (widgetIds.length === 0) return
-    for (const widgetId of widgetIds) {
+  function removeAllWidgetsAndDecorators() {
+    if (Object.keys(decoratorListCollection).length === 0) return
+    Object.keys(decoratorListCollection).forEach((widgetId) => {
       editorRef.current && editorRef.current.removeContentWidget({
         getId: () => widgetId
       })
-    }
-    setWidgetIds([])
+    })
+    setDecoratorListCollection({})
   }
 
   function setReducerListener() {
@@ -833,6 +832,16 @@ export const EditorUI = (props: EditorUIProps) => {
             const funcRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.src })
             const newLineCount = (outputFunctionComments[currentFunction.current] || '').split('\n').length
 
+            setDecoratorListCollection(decoratorListCollection => {
+              Object.keys(decoratorListCollection).forEach((widgetId) => {
+                const decoratorList = decoratorListCollection[widgetId]
+                if (decoratorList) rejectHandler(decoratorList, widgetId)
+                editorRef.current.removeContentWidget({
+                  getId: () => widgetId
+                })
+              })
+              return {}
+            })
             if (functionNode.documentation) {
               const docsRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.documentation.src })
               const docs = editor.getModel().getValueInRange(new monacoRef.current.Range(docsRange.start.line, docsRange.start.column, funcRange.start.line, 1000))
@@ -863,7 +872,7 @@ export const EditorUI = (props: EditorUIProps) => {
               const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
 
               setCurrentDiffFile(uri)
-              setWidgetIds(widgetIds => [...widgetIds, widgetId])
+              setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
               addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: docsRange.start.line + 2 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
             } else {
               editorRef.current.executeEdits('newDocs', [
@@ -883,7 +892,7 @@ export const EditorUI = (props: EditorUIProps) => {
               const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
 
               setCurrentDiffFile(uri)
-              setWidgetIds(widgetIds => [...widgetIds, widgetId])
+              setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
               addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: funcRange.start.line + 2 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
             }
           }
@@ -1226,7 +1235,10 @@ export const EditorUI = (props: EditorUIProps) => {
       ])
     }
     decoratorList.clear()
-    setWidgetIds(widgetIds.filter((id) => id !== widgetId))
+    setDecoratorListCollection(decoratorListCollection => {
+      const { [widgetId]: _, ...rest } = decoratorListCollection
+      return rest
+    })
   }
 
   function rejectHandler(decoratorList, widgetId) {
@@ -1243,33 +1255,36 @@ export const EditorUI = (props: EditorUIProps) => {
       ])
     }
     decoratorList.clear()
-    setWidgetIds(widgetIds.filter((id) => id !== widgetId))
+    setDecoratorListCollection(decoratorListCollection => {
+      const { [widgetId]: _, ...rest } = decoratorListCollection
+      return rest
+    })
   }
 
   function acceptAllHandler() {
-    decoratorListCollection.forEach((decoratorList, index) => {
-      const widgetId = `accept_decline_widget${index}`
+    Object.keys(decoratorListCollection).forEach((widgetId) => {
+      const decoratorList = decoratorListCollection[widgetId]
 
       acceptHandler(decoratorList, widgetId)
       editorRef.current.removeContentWidget({
-        getId: () => `accept_decline_widget${index}`
+        getId: () => widgetId
       })
     })
   }
 
   function rejectAllHandler() {
-    decoratorListCollection.forEach((decoratorList, index) => {
-      const widgetId = `accept_decline_widget${index}`
+    Object.keys(decoratorListCollection).forEach((widgetId) => {
+      const decoratorList = decoratorListCollection[widgetId]
 
       rejectHandler(decoratorList, widgetId)
       editorRef.current.removeContentWidget({
-        getId: () => `accept_decline_widget${index}`
+        getId: () => widgetId
       })
     })
   }
 
   function showCustomDiff (uri: string) {
-    removeAllWidgets()
+    removeAllWidgetsAndDecorators()
     const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
     let totalLineDifference = 0
 
@@ -1304,12 +1319,9 @@ export const EditorUI = (props: EditorUIProps) => {
           marginClassName: 'modifiedChangesDecoration',
         }
       }])
-
-      setDecoratorListCollection([...decoratorListCollection, decoratorList])
-
       const widgetId = `accept_decline_widget${index}`
 
-      setWidgetIds([...widgetIds, widgetId])
+      setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
       if (index === 0) {
         addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
       } else {
