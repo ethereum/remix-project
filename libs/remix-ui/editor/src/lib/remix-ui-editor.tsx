@@ -828,7 +828,7 @@ export const EditorUI = (props: EditorUIProps) => {
                   marginClassName: 'modifiedChangesDecoration',
                 }
               }])
-              const widgetId = `accept_decline_widget_change_docs`
+              const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
 
               setCurrentDiffFile(uri)
               setWidgetIds(widgetIds => [...widgetIds, widgetId])
@@ -848,7 +848,7 @@ export const EditorUI = (props: EditorUIProps) => {
                   marginClassName: 'newChangesDecoration',
                 }
               }])
-              const widgetId = `accept_decline_widget_new_docs`
+              const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
 
               setCurrentDiffFile(uri)
               setWidgetIds(widgetIds => [...widgetIds, widgetId])
