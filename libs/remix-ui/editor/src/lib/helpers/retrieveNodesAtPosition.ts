@@ -167,7 +167,9 @@ const applyIndentation = (comment: string, indentSize: number): string => {
   const indent = '\t'.repeat(indentSize)
   return comment.split('\n').map(line => {
     if (line.trim() === '') return line
-    if (line.trim() === '*/' || line.trim() === '/*') return line
+    if (line.trim() === '*/' || line.trim() === '/*') {
+      return indent + line.trim()
+    }
     if (line.trim().startsWith('*')) {
       const content = line.trim().slice(1).trim()
       return indent + '* ' + content

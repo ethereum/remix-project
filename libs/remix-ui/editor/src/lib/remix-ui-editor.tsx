@@ -161,6 +161,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
   const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
   const [widgetIds, setWidgetIds] = useState<string[]>([])
+  const [decoratorListCollection, setDecoratorListCollection] = useState<any[]>([])
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -828,17 +829,63 @@ export const EditorUI = (props: EditorUIProps) => {
             const content = editorModelsState[currentFileRef.current].model.getValue()
             const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
             const output = await props.plugin.call('remixAI', 'code_explaining', query)
-            const originalFunctionComments = extractFunctionComments(content, 0, true)
             const outputFunctionComments = extractFunctionComments(output, 1, false)
-            const modifiedContent = outputFunctionComments[currentFunction.current] ? content.replace(originalFunctionComments[currentFunction.current], outputFunctionComments[currentFunction.current]) : content
-            // @ts-ignore
-            props.plugin.emit('setValue', uri, modifiedContent)
-            props.plugin.on('editor', 'didChangeFile', (file) => {
-              if (file !== uri) return
+            const funcRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.src })
+            const newLineCount = (outputFunctionComments[currentFunction.current] || '').split('\n').length
+
+            if (functionNode.documentation) {
+              const docsRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.documentation.src })
+              const docs = editor.getModel().getValueInRange(new monacoRef.current.Range(docsRange.start.line, docsRange.start.column, funcRange.start.line, 1000))
+              const oldLineCount = (docs || '').split('\n').length - 1
+
+              editorRef.current.executeEdits('docsChange', [
+                {
+                  range: new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + 1, 0),
+                  text: outputFunctionComments[currentFunction.current] + '\n',
+                },
+              ])
+
+              const decoratorList = editorRef.current.createDecorationsCollection([{
+                range: new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + newLineCount, 1000),
+                options: {
+                  isWholeLine: true,
+                  className: 'newChangesDecoration',
+                  marginClassName: 'newChangesDecoration',
+                }
+              }, {
+                range: new monacoRef.current.Range(docsRange.start.line + newLineCount + 1, 0, docsRange.start.line + newLineCount + oldLineCount, 1000),
+                options: {
+                  isWholeLine: true,
+                  className: 'modifiedChangesDecoration',
+                  marginClassName: 'modifiedChangesDecoration',
+                }
+              }])
+              const widgetId = `accept_decline_widget_change_docs`
+
               setCurrentDiffFile(uri)
-              // setIsDiff(true)
-              setTimeout(() => showCustomDiff(uri), 1000)
-            })
+              setWidgetIds(widgetIds => [...widgetIds, widgetId])
+              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: docsRange.start.line + 2 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+            } else {
+              editorRef.current.executeEdits('newDocs', [
+                {
+                  range: new monacoRef.current.Range(funcRange.start.line + 1, 0, funcRange.start.line + 1, 0),
+                  text: outputFunctionComments[currentFunction.current] + '\n',
+                },
+              ])
+              const decoratorList = editorRef.current.createDecorationsCollection([{
+                range: new monacoRef.current.Range(funcRange.start.line + 1, 0, funcRange.start.line + newLineCount, 1000),
+                options: {
+                  isWholeLine: true,
+                  className: 'newChangesDecoration',
+                  marginClassName: 'newChangesDecoration',
+                }
+              }])
+              const widgetId = `accept_decline_widget_new_docs`
+
+              setCurrentDiffFile(uri)
+              setWidgetIds(widgetIds => [...widgetIds, widgetId])
+              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: funcRange.start.line + 2 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+            }
           }
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
         },
@@ -1165,11 +1212,66 @@ export const EditorUI = (props: EditorUIProps) => {
     return widget
   }
 
+  function acceptHandler(decoratorList, widgetId) {
+    const ranges = decoratorList.getRanges()
+
+    if (ranges[1]) {
+      ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+      ranges[1].endColumn = 0
+      editorRef.current.executeEdits('removeOriginal', [
+        {
+          range: ranges[1],
+          text: null,
+        },
+      ])
+    }
+    decoratorList.clear()
+    setWidgetIds(widgetIds.filter((id) => id !== widgetId))
+  }
+
+  function rejectHandler(decoratorList, widgetId) {
+    const ranges = decoratorList.getRanges()
+
+    if (ranges[0]) {
+      ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+      ranges[0].endColumn = 0
+      editorRef.current.executeEdits('removeModified', [
+        {
+          range: ranges[0],
+          text: null,
+        },
+      ])
+    }
+    decoratorList.clear()
+    setWidgetIds(widgetIds.filter((id) => id !== widgetId))
+  }
+
+  function acceptAllHandler() {
+    decoratorListCollection.forEach((decoratorList, index) => {
+      const widgetId = `accept_decline_widget${index}`
+
+      acceptHandler(decoratorList, widgetId)
+      editorRef.current.removeContentWidget({
+        getId: () => `accept_decline_widget${index}`
+      })
+    })
+  }
+
+  function rejectAllHandler() {
+    decoratorListCollection.forEach((decoratorList, index) => {
+      const widgetId = `accept_decline_widget${index}`
+
+      rejectHandler(decoratorList, widgetId)
+      editorRef.current.removeContentWidget({
+        getId: () => `accept_decline_widget${index}`
+      })
+    })
+  }
+
   function showCustomDiff (uri: string) {
     removeAllWidgets()
     const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
     let totalLineDifference = 0
-    const decoratorListCollection = []
 
     lineChanges.forEach((lineChange, index) => {
       const line = editorModelsState[uri].model.getValueInRange(new monacoRef.current.Range(lineChange.modifiedStartLineNumber, 0, lineChange.modifiedEndLineNumber, 1000))
@@ -1203,63 +1305,15 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }])
 
-      decoratorListCollection.push(decoratorList)
-
-      const acceptHandler = (decoratorList) => {
-        const ranges = decoratorList.getRanges()
-
-        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
-        ranges[1].endColumn = 0
-        editorRef.current.executeEdits('removeOriginal' + index, [
-          {
-            range: ranges[1],
-            text: null,
-          },
-        ])
-        decoratorList.clear()
-        setWidgetIds(widgetIds.filter((id) => id !== `accept_decline_widget${index}`))
-      }
-
-      const rejectHandler = (decoratorList) => {
-        const ranges = decoratorList.getRanges()
-
-        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
-        ranges[0].endColumn = 0
-        editorRef.current.executeEdits('removeModified' + index, [
-          {
-            range: ranges[0],
-            text: null,
-          },
-        ])
-        decoratorList.clear()
-        setWidgetIds(widgetIds.filter((id) => id !== `accept_decline_widget${index}`))
-      }
-
-      const acceptAllHandler = () => {
-        decoratorListCollection.forEach((decoratorList, index) => {
-          acceptHandler(decoratorList)
-          editorRef.current.removeContentWidget({
-            getId: () => `accept_decline_widget${index}`
-          })
-        })
-      }
-
-      const rejectAllHandler = () => {
-        decoratorListCollection.forEach((decoratorList, index) => {
-          rejectHandler(decoratorList)
-          editorRef.current.removeContentWidget({
-            getId: () => `accept_decline_widget${index}`
-          })
-        })
-      }
+      setDecoratorListCollection([...decoratorListCollection, decoratorList])
 
       const widgetId = `accept_decline_widget${index}`
 
       setWidgetIds([...widgetIds, widgetId])
       if (index === 0) {
-        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList), acceptAllHandler, rejectAllHandler)
+        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
       } else {
-        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList), () => rejectHandler(decoratorList))
+        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: modifiedStartLine + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
       }
       totalLineDifference += linesCount
     })
