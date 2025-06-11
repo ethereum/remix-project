@@ -6,6 +6,7 @@ import '../css/remix-ai-assistant.css'
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
+import PromptZone from '../components/promptzone'
 
 const _paq = (window._paq = window._paq || [])
 const STORAGE_KEY = 'remix-ai-chat-history'
@@ -41,6 +42,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 >(function RemixUiRemixAiAssistant(props, ref) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [showContextOptions, setShowContextOptions] = useState(false)
+  const [contextChoice, setContextChoice] = useState<'current' | 'opened' | 'workspace'>(
+    'current'
+  )
+  const historyRef = useRef<HTMLDivElement | null>(null)
+  const chatCmdParser = new ChatCommandParser(props.plugin)
+
 
   // on first mount: hydrate from localStorage if available
   useEffect(() => {
@@ -69,9 +78,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [messages])
 
-  const [isStreaming, setIsStreaming] = useState(false)
-  const historyRef = useRef<HTMLDivElement | null>(null)
-  const chatCmdParser = new ChatCommandParser(props.plugin)
 
   // always scroll to bottom when messages change
   useEffect(() => {
@@ -178,6 +184,22 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     setInput('')
   }, [input, sendPrompt])
 
+  // Added handlers for special command buttons (assumed to exist)
+  const handleAddContext = useCallback(() => {
+    setShowContextOptions(prev => !prev)
+  }, [])
+  useEffect(() => {
+    if (showContextOptions) {
+      // Placeholder: react to choice changes if needed
+      console.log('Context choice set to', contextChoice)
+    }
+  }, [contextChoice, showContextOptions])
+
+  const handleGenerateWorkspace = useCallback(() => {
+    // Example placeholder for generate workspace command
+    sendPrompt('@generate_workspace')
+  }, [sendPrompt])
+
   useImperativeHandle(
     ref,
     () => ({
@@ -194,11 +216,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
     >
       <div className="chat-status small text-muted px-2">ready</div>
+
+
       <div
         ref={historyRef}
         className="ai-chat-history"
         style={{ flexGrow: 1, overflowY: 'auto' }}
       >
+
         {messages.length === 0 ? (
           <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
             <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
@@ -213,7 +238,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                 className="btn btn-secondary mb-2 w-100"
                 onClick={() => sendPrompt(s)}
               >
-                {s}
+                <i className="fa fa-user-robot-xmarks mr-2"></i>{s}
               </button>
             ))}
           </div>
@@ -292,9 +317,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       <span
                         role="button"
                         aria-label="thumbs up"
-                        className={`feedback-btn me-3 ${
-                          msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
-                        }`}
+                        className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
+                          }`}
                         onClick={() =>
                           recordFeedback(
                             msg.id,
@@ -305,11 +329,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       <span
                         role="button"
                         aria-label="thumbs down"
-                        className={`feedback-btn ml-2 ${
-                          msg.sentiment === 'dislike'
+                        className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
                             ? 'fas fa-thumbs-down'
                             : 'far fa-thumbs-down'
-                        }`}
+                          }`}
                         onClick={() =>
                           recordFeedback(
                             msg.id,
@@ -326,26 +349,93 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         )}
       </div>
 
-      <div className="ai-chat-input d-flex pt-2">
-        <input
-          style={{ flexGrow: 1 }}
-          type="text"
-          className="form-control"
-          value={input}
-          disabled={isStreaming}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !isStreaming) handleSend()
-          }}
-          placeholder="Ask Remix AI…"
-        />
-        <button
-          onClick={handleSend}
-          disabled={isStreaming}
-          className="btn btn-primary ms-2"
-        >
-          {isStreaming ? 'Streaming…' : 'Send'}
-        </button>
+      {/* Prompt + special buttons */}
+      <div className="prompt-area d-flex flex-column gap-1 pt-2">
+        {showContextOptions && (
+          <div
+            className="border rounded p-3 mb-2"
+            style={{ background: 'rgba(255,255,255,0.03)' }}
+          >
+            <h6 className="text-uppercase small mb-3">Add Context Files</h6>
+
+            <div className="form-check mb-2">
+              <input
+                className="form-check-input"
+                type="radio"
+                id="ctx-current"
+                checked={contextChoice === 'current'}
+                onChange={() => setContextChoice('current')}
+              />
+              <label className="form-check-label" htmlFor="ctx-current">
+                Current file
+              </label>
+            </div>
+
+            <div className="form-check mb-2">
+              <input
+                className="form-check-input"
+                type="radio"
+                id="ctx-opened"
+                checked={contextChoice === 'opened'}
+                onChange={() => setContextChoice('opened')}
+              />
+              <label className="form-check-label" htmlFor="ctx-opened">
+                All opened files
+              </label>
+            </div>
+
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="radio"
+                id="ctx-workspace"
+                checked={contextChoice === 'workspace'}
+                onChange={() => setContextChoice('workspace')}
+              />
+              <label className="form-check-label" htmlFor="ctx-workspace">
+                Workspace
+              </label>
+            </div>
+          </div>
+        )}
+        <div className="d-flex gap-2">
+          <button
+            onClick={handleAddContext}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
+          >
+            @ Add context
+          </button>
+          <button
+            onClick={handleGenerateWorkspace}
+            className="btn btn-dark"
+            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
+          >
+            @ Generate Workspace
+          </button>
+        </div>
+
+        <div className="ai-chat-input d-flex">
+          <input
+            style={{ flexGrow: 1 }}
+            type="text"
+            className="form-control"
+            value={input}
+            disabled={isStreaming}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !isStreaming) handleSend()
+            }}
+            placeholder="Ask Remix AI…"
+          />
+          <button
+            onClick={handleSend}
+            disabled={isStreaming}
+            className="btn btn-primary ms-2"
+          >
+            {isStreaming ? 'Streaming…' : 'Send'}
+          </button>
+        </div>
       </div>
     </div>
   )
