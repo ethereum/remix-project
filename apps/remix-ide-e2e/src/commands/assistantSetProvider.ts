@@ -15,18 +15,19 @@ class SetAssistantProvider extends EventEmitter {
 
 function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFunction) {
   browser
-    .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
-    //.waitForElementVisible('*[data-id="composer-ai-add-context"]')
-    .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
-    .pause(3000)
+    .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
     .execute(function (provider) {
-      (window as any).sendChatMessage(`/setAssistant ${provider}`);
+      (window as any).remixAIChat.current.sendChat(`/setAssistant ${provider}`);
     }, [provider])
     .waitForElementVisible({
       locateStrategy: 'xpath',
-      selector: '//*[@data-id="remix-ai-assistant" and contains(.,"AI Provider set to")]',
+      selector: `//*[contains(@class,'chat-bubble') and contains(.,'AI Provider set to')]`,
       timeout: 50000,
       abortOnFailure: true
+    })
+    .waitForElementPresent({
+      locateStrategy: 'xpath',
+      selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']",
     })
     //.pause()
     .perform(() => done())  

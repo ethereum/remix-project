@@ -6,12 +6,12 @@ import '../css/remix-ai-assistant.css'
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
-import PromptZone from '../components/promptzone'
+import { ModalTypes } from '@remix-ui/app'
+import copy from 'copy-to-clipboard'
 
 const _paq = (window._paq = window._paq || [])
-const STORAGE_KEY = 'remix-ai-chat-history'
 
-type ChatMessage = {
+export type ChatMessage = {
   id: string
   role: 'user' | 'assistant'
   content: string
@@ -26,57 +26,117 @@ const DEFAULT_SUGGESTIONS = [
   'Explain what a UniSwap hook is',
   'What is a ZKP?'
 ]
+export type ActivityType =
+  | 'typing'
+  | 'button'
+  | 'promptSend'
+  | 'streamStart'
+  | 'streamEnd'
+
 export interface RemixUiRemixAiAssistantProps {
   plugin: Plugin
-  queuedMessage: { text: string, timestamp: number } | null
+  queuedMessage: { text: string; timestamp: number } | null
+  initialMessages?: ChatMessage[]
+  onMessagesChange?: (msgs: ChatMessage[]) => void
+  /** optional callback whenever the user or AI does something */
+  onActivity?: (type: ActivityType, payload?: any) => void
 }
-
 export interface RemixUiRemixAiAssistantHandle {
   /** Programmatically send a prompt to the chat (returns after processing starts) */
   sendChat: (prompt: string) => Promise<void>
+  /** Clears local chat history (parent receives onMessagesChange([])) */
+  clearChat: () => void
+  /** Returns current chat history array */
+  getHistory: () => ChatMessage[]
 }
 
 export const RemixUiRemixAiAssistant = React.forwardRef<
   RemixUiRemixAiAssistantHandle,
   RemixUiRemixAiAssistantProps
 >(function RemixUiRemixAiAssistant(props, ref) {
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>(props.initialMessages || [])
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [showContextOptions, setShowContextOptions] = useState(false)
-  const [contextChoice, setContextChoice] = useState<'current' | 'opened' | 'workspace'>(
-    'current'
+  const [showAssistantOptions, setShowAssistantOptions] = useState(false)
+  const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
+    null
+  )
+  const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
+    'none'
   )
   const historyRef = useRef<HTMLDivElement | null>(null)
   const chatCmdParser = new ChatCommandParser(props.plugin)
 
-
-  // on first mount: hydrate from localStorage if available
-  useEffect(() => {
+  const dispatchActivity = useCallback(
+    (type: ActivityType, payload?: any) => {
+      props.onActivity?.(type, payload)
+    },
+    [props.onActivity]
+  )
+  const [contextFiles, setContextFiles] = useState<string[]>([])
+  const clearContext = () => {
+    setContextChoice('none')
+    setContextFiles([])
+    props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
+  }
+  const refreshContext = useCallback(async (choice: typeof contextChoice) => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      // comment out for now
-      /*
-      if (raw) {
-        const parsed: ChatMessage[] = JSON.parse(raw)
-        if (Array.isArray(parsed)) {
-          setMessages(parsed)
-        }
+      let files: string[] = []
+      switch (choice) {
+        case 'none':
+          await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
+          files = []
+          break
+        case 'current':
+          {
+            const f = await props.plugin.call('fileManager', 'getCurrentFile')
+            if (f) files = [f]
+            await props.plugin.call('remixAI', 'setContextFiles', { context: 'currentFile' })
+          }
+          break
+        case 'opened':
+          {
+            const res = await props.plugin.call('fileManager', 'getOpenedFiles')
+            if (Array.isArray(res)) {
+              files = res
+            } else if (res && typeof res === 'object') {
+              files = Object.values(res) as string[]
+            }
+            await props.plugin.call('remixAI', 'setContextFiles', { context: 'openedFiles' })
+          }
+          break
+        case 'workspace':
+          {
+            await props.plugin.call('remixAI', 'setContextFiles', { context: 'workspace' })
+            files = ['@workspace']
+          }
+          break
       }
-        */
+      console.log('Setting context files:', files)
+      setContextFiles(files)
     } catch (err) {
-      console.warn('Could not restore saved chat history:', err)
+      console.error('Failed to refresh context:', err)
     }
-  }, [])
+  }, [props.plugin])
 
-  // persist on every change
+
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    } catch (err) {
-      console.warn('Could not save chat history:', err)
+    const update = () => refreshContext(contextChoice)
+
+    if (contextChoice === 'current' || contextChoice === 'opened') {
+      props.plugin.on('fileManager', 'currentFileChanged', update)
+      props.plugin.on('fileManager', 'fileClosed', update)
+      return () =>
+        props.plugin.off('fileManager', 'currentFileChanged')
     }
-  }, [messages])
+  }, [contextChoice, refreshContext, props.plugin])
+
+
+  // bubble messages up to parent
+  useEffect(() => {
+    props.onMessagesChange?.(messages)
+  }, [messages, props.onMessagesChange])
 
 
   // always scroll to bottom when messages change
@@ -116,6 +176,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       const trimmed = prompt.trim()
       if (!trimmed || isStreaming) return
 
+      dispatchActivity('promptSend', trimmed)
+
       // optimistic user message
       const userMsg: ChatMessage = {
         id: crypto.randomUUID(),
@@ -133,7 +195,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
 
       try {
+        setIsStreaming(true)
         const parseResult = await chatCmdParser.parse(trimmed)
+
+        console.log('Parsed command:', parseResult)
         if (parseResult) {
           setMessages(prev => [
             ...prev,
@@ -145,12 +210,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               sentiment: 'none'
             }
           ])
+          setIsStreaming(false)
           return
         }
 
         GenerationParams.stream_result = true
         GenerationParams.return_stream_response = true
-        setIsStreaming(true)
+
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending
@@ -186,28 +252,77 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // Added handlers for special command buttons (assumed to exist)
   const handleAddContext = useCallback(() => {
+    dispatchActivity('button', 'addContext')
+    setShowAssistantOptions(false)
     setShowContextOptions(prev => !prev)
   }, [])
-  useEffect(() => {
-    if (showContextOptions) {
-      // Placeholder: react to choice changes if needed
-      console.log('Context choice set to', contextChoice)
-    }
-  }, [contextChoice, showContextOptions])
 
-  const handleGenerateWorkspace = useCallback(() => {
-    // Example placeholder for generate workspace command
-    sendPrompt('@generate_workspace')
-  }, [sendPrompt])
+  const handleSetAssistant = useCallback(() => {
+    dispatchActivity('button', 'setAssistant')
+    setShowContextOptions(false)
+    setShowAssistantOptions(prev => !prev)
+  }, [])
+
+  // Only send the /setAssistant command when the choice actually changes
+  useEffect(() => {
+    //console.log('Setting assistant to', assistantChoice)
+    if (!assistantChoice) return
+    dispatchActivity('button', 'setAssistant')
+    sendPrompt(`/setAssistant ${assistantChoice}`)
+  }, [assistantChoice])
+
+  // refresh context whenever selection changes (even if selector is closed)
+  useEffect(() => {
+    // Optionally keep the log:
+    // console.log('Context choice set to', contextChoice)
+    refreshContext(contextChoice)
+  }, [contextChoice, refreshContext])
+
+  const handleGenerateWorkspace = useCallback(async () => {
+    dispatchActivity('button', 'generateWorkspace')
+    try {
+      const description: string = await new Promise((resolve, reject) => {
+        const modalContent = {
+          id: 'generate-workspace',
+          title: 'Generate Workspace',
+          message: `
+            Describe the kind of workspace you want RemixAI to scaffold. For example:
+            ERC‑20 token with foundry tests
+            ERC‑721 NFT collection with IPFS metadata
+            Decentralized voting app with Solidity smart contracts
+            
+          `,
+          modalType: ModalTypes.prompt, // single-line text
+          okLabel: 'Generate',
+          cancelLabel: 'Cancel',
+          okFn: (value: string) => setTimeout(() => resolve(value), 0),
+          cancelFn: () => setTimeout(() => reject(new Error('Canceled')), 0),
+          hideFn: () => setTimeout(() => reject(new Error('Hide')), 0)
+        }
+        // @ts-ignore – the notification plugin's modal signature
+        props.plugin.call('notification', 'modal', modalContent)
+      })
+
+      if (description && description.trim()) {
+        sendPrompt(`/generate ${description.trim()}`)
+      }
+    } catch {
+      /* user cancelled */
+    }
+  }, [props.plugin, sendPrompt])
 
   useImperativeHandle(
     ref,
     () => ({
       sendChat: async (prompt: string) => {
         await sendPrompt(prompt)
-      }
+      },
+      clearChat: () => {
+        setMessages([])
+      },
+      getHistory: () => messages
     }),
-    [sendPrompt]
+    [sendPrompt, messages]
   )
 
   return (
@@ -215,7 +330,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       className="ai-chat-container"
       style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
     >
-      <div className="chat-status small text-muted px-2">ready</div>
+      <div data-id="remix-ai-assistant-ready"></div>
+      {/* hidden hook for E2E tests: data-streaming="true|false" */}
+      <div
+        data-id="remix-ai-streaming"
+        className='d-none'
+        data-streaming={isStreaming ? 'true' : 'false'}
+      ></div>
 
 
       <div
@@ -223,7 +344,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         className="ai-chat-history"
         style={{ flexGrow: 1, overflowY: 'auto' }}
       >
-
         {messages.length === 0 ? (
           <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
             <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
@@ -254,7 +374,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                   <img
                     src={assistantAvatar}
                     alt="AI"
-                    className="assistant-avatar me-2 flex-shrink-0"
+                    className="assistant-avatar me-2 flex-shrink-0 mr-1"
                   />
                 )}
 
@@ -292,9 +412,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                                   type="button"
                                   className="btn btn-sm btn-light position-absolute copy-btn"
                                   style={{ top: '0.25rem', right: '0.25rem' }}
-                                  onClick={() => navigator.clipboard.writeText(text)}
+                                  onClick={() =>
+                                    copy(text)
+                                  }
                                 >
-                                  Copy
+                                  <i className="fa-regular fa-copy"></i>
                                 </button>
                                 <pre className={className} {...props}>
                                   <code>{text}</code>
@@ -330,8 +452,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                         role="button"
                         aria-label="thumbs down"
                         className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
-                            ? 'fas fa-thumbs-down'
-                            : 'far fa-thumbs-down'
+                          ? 'fas fa-thumbs-down'
+                          : 'far fa-thumbs-down'
                           }`}
                         onClick={() =>
                           recordFeedback(
@@ -347,50 +469,86 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             )
           })
         )}
+        {isStreaming && (
+          <div className="text-center my-2">
+            <i className="fa fa-spinner fa-spin fa-lg text-muted"></i>
+          </div>
+        )}
       </div>
 
       {/* Prompt + special buttons */}
-      <div className="prompt-area d-flex flex-column gap-1 pt-2">
+      <div
+        className="prompt-area d-flex flex-column gap-2 p-2"
+        style={{
+          background: 'rgba(255,255,255,0.04)', // same dark tone as input row
+          borderRadius: '4px'
+        }}
+      >
         {showContextOptions && (
           <div
-            className="border rounded p-3 mb-2"
+            className="rounded p-3 mb-2"
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <h6 className="text-uppercase small mb-3">Add Context Files</h6>
-
+            <div className="form-check mb-2">
+              <input
+                className="form-check-input"
+                type="radio"
+                id="ctx-none"
+                checked={contextChoice === 'none'}
+                data-id="none-context-option"
+                onChange={() => {
+                  setContextChoice('none')
+                  setShowContextOptions(false)
+                }}
+              />
+              <label className="form-check-label" htmlFor="ctx-none">
+                None
+              </label>
+            </div>
             <div className="form-check mb-2">
               <input
                 className="form-check-input"
                 type="radio"
                 id="ctx-current"
+                data-id="currentFile-context-option"
                 checked={contextChoice === 'current'}
-                onChange={() => setContextChoice('current')}
+                onChange={() => {
+                  setContextChoice('current')
+                  setShowContextOptions(false)
+                }}
               />
               <label className="form-check-label" htmlFor="ctx-current">
                 Current file
               </label>
             </div>
-
             <div className="form-check mb-2">
               <input
                 className="form-check-input"
                 type="radio"
                 id="ctx-opened"
+                data-id="allOpenedFiles-context-option"
                 checked={contextChoice === 'opened'}
-                onChange={() => setContextChoice('opened')}
+                onChange={() => {
+                  setContextChoice('opened')
+                  setShowContextOptions(false)
+                }}
               />
               <label className="form-check-label" htmlFor="ctx-opened">
                 All opened files
               </label>
             </div>
-
             <div className="form-check">
               <input
                 className="form-check-input"
                 type="radio"
                 id="ctx-workspace"
+                data-id="workspace-context-option"
                 checked={contextChoice === 'workspace'}
-                onChange={() => setContextChoice('workspace')}
+                onChange={() => {
+                  setContextChoice('workspace')
+                  setShowContextOptions(false)
+                }}
               />
               <label className="form-check-label" htmlFor="ctx-workspace">
                 Workspace
@@ -398,44 +556,112 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             </div>
           </div>
         )}
-        <div className="d-flex gap-2">
+        {showAssistantOptions && (
+          <div
+            className="rounded p-3 mb-2"
+            style={{ background: 'rgba(255,255,255,0.03)' }}
+          >
+            <h6 className="text-uppercase small mb-3">Choose Assistant Model</h6>
+
+            {['openai', 'mistralai', 'anthropic'].map(val => (
+              <div className="form-check mb-2" key={val}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  id={`assistant-${val}`}
+                  checked={assistantChoice === val}
+                  onChange={() => {
+                    setAssistantChoice(val as any)
+                    setShowAssistantOptions(false)
+                  }}
+                />
+                <label className="form-check-label" htmlFor={`assistant-${val}`}>
+                  {val}
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="d-flex gap-2 mb-2">
           <button
             onClick={handleAddContext}
-            className="btn btn-secondary"
+            data-id="composer-ai-add-context"
+            className={`btn mr-2 ${showContextOptions ? 'btn-primary' : 'btn-dark'}`}
             style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
           >
-            @ Add context
+            @Add context&nbsp;
+            <i className={`fa fa-caret-${showContextOptions ?  'down' : 'up'}`}></i>
           </button>
+
+          <button
+            onClick={handleSetAssistant}
+            className={`btn mr-2 ${showAssistantOptions ? 'btn-primary' : 'btn-dark'}`}
+            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
+          >
+            @Set assistant&nbsp;
+            <i className={`fa fa-caret-${showAssistantOptions ? 'down' : 'up'}`}></i>
+          </button>
+
           <button
             onClick={handleGenerateWorkspace}
             className="btn btn-dark"
+            data-id="composer-ai-workspace-generate"
             style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
           >
-            @ Generate Workspace
+            @Generate Workspace
           </button>
+
+
         </div>
 
-        <div className="ai-chat-input d-flex">
+
+        <div className="ai-chat-input">
           <input
             style={{ flexGrow: 1 }}
             type="text"
             className="form-control"
             value={input}
             disabled={isStreaming}
-            onChange={e => setInput(e.target.value)}
+            onFocus={() => {
+              dispatchActivity('typing', input)
+            }}
+            onChange={e => {
+              dispatchActivity('typing', e.target.value)
+              setInput(e.target.value)
+            }}
             onKeyDown={e => {
               if (e.key === 'Enter' && !isStreaming) handleSend()
             }}
-            placeholder="Ask Remix AI…"
+            placeholder="Ask me anything, use button to add context..."
           />
-          <button
-            onClick={handleSend}
-            disabled={isStreaming}
-            className="btn btn-primary ms-2"
-          >
-            {isStreaming ? 'Streaming…' : 'Send'}
-          </button>
         </div>
+        {contextChoice !== 'none' && contextFiles.length > 0 && (
+          <div className="mt-2 d-flex flex-wrap gap-1" style={{ maxHeight: '110px', overflowY: 'auto' }}>
+            {contextFiles.slice(0, 6).map(f => {
+              const name = f.split('/').pop()
+              return (
+                <span
+                  key={f}
+                  className="badge badge-pill badge-secondary mr-1 aiContext-file"
+                  style={{ cursor: 'pointer' }}
+                  onClick={clearContext}
+                >
+                  {name}
+                  <i className="fa fa-times ms-1 ml-1" style={{ cursor: 'pointer' }}></i>
+                </span>
+              )
+            })}
+            {contextFiles.length > 6 && (
+              <span
+                className="badge badge-pill badge-secondary"
+                style={{ cursor: 'pointer' }}
+                onClick={clearContext}
+              >
+                … {contextFiles.length - 6} more <i className="fa fa-times ms-1" style={{ cursor: 'pointer' }}></i>
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

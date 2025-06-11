@@ -14,20 +14,24 @@ class AssistantGenerate extends EventEmitter {
 }
 
 function generate(browser: NightwatchBrowser, prompt: string, provider: string, done: VoidFunction) {
-  
+
   console.log('Generating with prompt:', prompt, 'and provider:', provider)
-    browser.waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
-    .click('*[data-id="remix-ai-assistant-ready"]')
-    .pause(3000)
+  browser
+    .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
     .assistantSetProvider(provider)
-    .pause(5000)
+    .waitForElementPresent({
+      locateStrategy: 'xpath',
+      selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']",
+    })
+
     .execute(function (prompt) {
-      (window as any).sendChatMessage(`/generate ${prompt}`);
+      (window as any).remixAIChat.current.sendChat(`/generate ${prompt}`);
     }, [prompt])
     .waitForElementVisible({
       locateStrategy: 'xpath',
-      selector: `//*[@data-id="remix-ai-assistant" and contains(.,"/generate ${prompt}")]`
+      selector: `//*[contains(@class,"chat-bubble") and contains(.,"/generate ${prompt}")]`
     })
+
   done()
 }
 

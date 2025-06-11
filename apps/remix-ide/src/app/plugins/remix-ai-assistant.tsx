@@ -2,7 +2,7 @@ import React, { useEffect, useRef, createRef } from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { RemixUiRemixAiAssistant, RemixUiRemixAiAssistantHandle } from '@remix-ui/remix-ai-assistant'
+import { RemixUiRemixAiAssistant, RemixUiRemixAiAssistantHandle, ChatMessage } from '@remix-ui/remix-ai-assistant'
 import { EventEmitter } from 'events'
 
 const profile = {
@@ -26,21 +26,18 @@ export class RemixAIAssistant extends ViewPlugin {
   queuedMessage: { text: string, timestamp: number } | null = null
   event: any
   chatRef: React.RefObject<RemixUiRemixAiAssistantHandle>
+  history: ChatMessage[] = []
+  
   constructor() {
     super(profile)
     this.event = new EventEmitter()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'remix-ai-assistant')
     this.chatRef = createRef<RemixUiRemixAiAssistantHandle>()
+    ;(window as any).remixAIChat = this.chatRef 
   }
 
   async onActivation() {
-    console.log('RemixAiAssistant onActivation')
-    const currentActivePlugin = await this.call('pinnedPanel', 'currentFocus')
-    if (currentActivePlugin === 'remixaiassistant') {
-      await this.call('sidePanel', 'pinView', profile)
-      await this.call('layout', 'maximiseSidePanel')
-    }
   }
 
   onDeactivation() {
@@ -101,14 +98,24 @@ export class RemixAIAssistant extends ViewPlugin {
     )
   }
 
+  async handleActivity(type: string, payload: any) {
+    console.log('RemixAiAssistant activity:', type, payload)
+    
+    await this.call('layout', 'maximisePinnedPanel')
+    
+  }
+
 
   updateComponent(state: {
     queuedMessage: { text: string, timestamp: number } | null
   }) {
     return (
       <RemixUiRemixAiAssistant
+        onActivity={this.handleActivity.bind(this)}
         ref={this.chatRef}
         plugin={this}
+        initialMessages={this.history}
+        onMessagesChange={(msgs) => { this.history = msgs }}
         queuedMessage={state.queuedMessage}
       />
     )

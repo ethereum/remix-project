@@ -79,6 +79,7 @@ declare module 'nightwatch' {
     assistantAddContext: (context: string) => NightwatchBrowser
     assistantGenerate: (prompt: string, provider: string) => NightwatchBrowser
     assistantWorkspace: (prompt: string, provider: string) => NightwatchBrowser
+    assistantClearChat: () => NightwatchBrowser
     enableClipBoard: () => NightwatchBrowser
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
     selectFiles: (selelectedElements: any[]) => NightwatchBrowser

@@ -16,12 +16,15 @@ class AssistantWorkspace extends EventEmitter {
 function workspaceGenerate(browser: NightwatchBrowser, prompt: string, provider: string, done: VoidFunction) {
   browser
     .waitForElementVisible('*[data-id="remix-ai-assistant"]')
-    .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
+    .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
     .assistantSetProvider(provider)
-    .pause(5000)
     .execute(function (prompt) {
-      (window as any).sendChatMessage(`/workspace ${prompt}`);
+      (window as any).remixAIChat.current.sendChat(`/workspace ${prompt}`);
     }, [prompt])
+    .waitForElementVisible({
+      locateStrategy: 'xpath',
+      selector: `//*[contains(@class,"chat-bubble") and contains(.,"/workspace ${prompt}")]`
+    })
   done()
 }
 
