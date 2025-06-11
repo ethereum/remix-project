@@ -92,7 +92,7 @@ let requiredModules = [
   'popupPanel',
   'remixAI',
   'remixAID',
-  'remixaiassistant'
+  'remixaiassistant',
   'githubAuthHandler'
 ]
 
