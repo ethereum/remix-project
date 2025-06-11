@@ -68,6 +68,7 @@ import { FoundryHandleDesktop } from './app/plugins/electron/foundryPlugin'
 import { HardhatHandle } from './app/files/hardhat-handle'
 import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 import { circomPlugin } from './app/plugins/electron/circomElectronPlugin'
+import { GitHubAuthHandler } from './app/plugins/electron/gitHubAuthHandler'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 import { WalletConnect } from './app/plugins/walletconnect'
@@ -472,6 +473,8 @@ class AppComponent {
       this.engine.register([appUpdater])
       const remixAIDesktop = new remixAIDesktopPlugin()
       this.engine.register([remixAIDesktop])
+      const githubAuthHandler = new GitHubAuthHandler()
+      this.engine.register([githubAuthHandler])
     }
 
     const compilerloader = isElectron() ? new compilerLoaderPluginDesktop() : new compilerLoaderPlugin()
@@ -615,7 +618,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'circom']) // 'remixAID'
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'circom', 'githubAuthHandler']) // 'remixAID'
     }
 
     this.appManager.on(
