@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect, useRef, createRef } from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { RemixUiRemixAiAssistant } from '@remix-ui/remix-ai-assistant'
+import { RemixUiRemixAiAssistant, RemixUiRemixAiAssistantHandle } from '@remix-ui/remix-ai-assistant'
 import { EventEmitter } from 'events'
 
 const profile = {
@@ -25,19 +25,21 @@ export class RemixAIAssistant extends ViewPlugin {
   dispatch: React.Dispatch<any> = () => { }
   queuedMessage: { text: string, timestamp: number } | null = null
   event: any
+  chatRef: React.RefObject<RemixUiRemixAiAssistantHandle>
   constructor() {
     super(profile)
     this.event = new EventEmitter()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'remix-ai-assistant')
+    this.chatRef = createRef<RemixUiRemixAiAssistantHandle>()
   }
 
   async onActivation() {
     console.log('RemixAiAssistant onActivation')
     const currentActivePlugin = await this.call('pinnedPanel', 'currentFocus')
     if (currentActivePlugin === 'remixaiassistant') {
-      await this.call('sidePanel', 'pinView', profile)
-      await this.call('layout', 'maximiseSidePanel')
+      //await this.call('sidePanel', 'pinView', profile)
+      //await this.call('layout', 'maximiseSidePanel')
     }
   }
 
@@ -71,12 +73,17 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   chatPipe = (message: string) => {
+    // If the inner component is mounted, call it directly
+    if (this.chatRef?.current) {
+      this.chatRef.current.sendChat(message)
+      return
+    }
 
+    // Otherwise queue it for first render
     this.queuedMessage = {
       text: message,
       timestamp: Date.now()
     }
-
     this.renderComponent()
   }
 
@@ -99,7 +106,11 @@ export class RemixAIAssistant extends ViewPlugin {
     queuedMessage: { text: string, timestamp: number } | null
   }) {
     return (
-      <RemixUiRemixAiAssistant queuedMessage={state.queuedMessage} onReady={this.onReady} plugin={this} makePluginCall={this.makePluginCall.bind(this)} />
+      <RemixUiRemixAiAssistant
+        ref={this.chatRef}
+        plugin={this}
+        queuedMessage={state.queuedMessage}
+      />
     )
   }
 

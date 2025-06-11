@@ -108,8 +108,8 @@ export const Default = (props) => {
       composerOptions={{ placeholder: "Type your query",
         submitShortcut: 'Enter',
         hideStopButton: false,
-        remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
-        pluginMethodCall: props.makePluginCall
+        ///remixMethodList: ['workspace', 'openedFiles', 'allFiles'],
+        //pluginMethodCall: props.makePluginCall
       }}
       messageOptions={{ showCodeBlockCopyButton: true,
         editableUserMessages: true,

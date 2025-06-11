@@ -16,7 +16,7 @@ class AssistantWorkspace extends EventEmitter {
 function workspaceGenerate(browser: NightwatchBrowser, prompt: string, provider: string, done: VoidFunction) {
   browser
     .waitForElementVisible('*[data-id="remix-ai-assistant"]')
-    .waitForElementVisible('*[data-id="composer-textarea"]')
+    .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
     .assistantSetProvider(provider)
     .pause(5000)
     .execute(function (prompt) {

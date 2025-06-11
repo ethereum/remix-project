@@ -16,6 +16,25 @@ module.exports = {
   '@sources': function () {
     return sources
   },
+  'Long loop #group5': function (browser: NightwatchBrowser) {
+     browser.clickLaunchIcon('remixaiassistant')
+       
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .pause(5000) // wait for the AI assistant to be ready
+      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
+    for (let i = 0; i < 100; i++) {
+      browser.
+        assistantSetProvider('mistralai')
+        .execute(function () {
+      (window as any).clearAIChat();
+      console.clear()
+    }, [])
+    }
+  },
   'Add Ballot': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
@@ -59,6 +78,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .assistantSetProvider('mistralai')
   },
+    /*
   'Should add current file as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
@@ -70,7 +90,7 @@ module.exports = {
         timeout: 120000
       })
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantAddContext('currentFile')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -79,13 +99,14 @@ module.exports = {
   },
   'Should add workspace as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantAddContext('workspace')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//*[@data-id="composer-context-holder" and contains(.,"@workspace")]'
       })
   },
+
   'Should add opened files as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
@@ -96,7 +117,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .addFile('anotherFile.sol', sources[0]['Untitled.sol'])
       .assistantAddContext('openedFiles')
       .waitForElementVisible({
@@ -104,6 +125,7 @@ module.exports = {
         selector: '//*[@data-id="composer-context-holder" and contains(.,"anotherFile.sol")]'
       })
   },
+  */
   'Should generate new workspace contract code with the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
@@ -114,7 +136,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantGenerate('a simple ERC20 contract', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -132,7 +154,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantWorkspace('comment all function', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -173,7 +195,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .pause(5000) // wait for the AI assistant to be ready
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
@@ -191,7 +213,7 @@ module.exports = {
         timeout: 120000
       })
       .pause(5000) // wait for the AI assistant to be ready
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -211,7 +233,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
  
       .assistantGenerate('a simple ERC20 contract', 'openai')
       .waitForElementVisible({
@@ -229,7 +251,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-textarea"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
       .assistantGenerate('a simple ERC20 contract', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',

@@ -15,8 +15,8 @@ class SetAssistantProvider extends EventEmitter {
 
 function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFunction) {
   browser
-    .waitForElementVisible('*[data-id="composer-textarea"]')
-    .waitForElementVisible('*[data-id="composer-ai-add-context"]')
+    .waitForElementVisible('*[data-id="remix-ai-assistant-ready"]')
+    //.waitForElementVisible('*[data-id="composer-ai-add-context"]')
     .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
     .pause(3000)
     .execute(function (provider) {
@@ -25,8 +25,10 @@ function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFu
     .waitForElementVisible({
       locateStrategy: 'xpath',
       selector: '//*[@data-id="remix-ai-assistant" and contains(.,"AI Provider set to")]',
-      timeout: 50000
+      timeout: 50000,
+      abortOnFailure: true
     })
+    //.pause()
     .perform(() => done())  
 }
 
