@@ -2,7 +2,7 @@ import React, { useEffect, useRef, createRef } from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { RemixUiRemixAiAssistant, RemixUiRemixAiAssistantHandle, ChatMessage } from '@remix-ui/remix-ai-assistant'
+import { ChatMessage, RemixUiRemixAiAssistant, RemixUiRemixAiAssistantHandle } from '@remix-ui/remix-ai-assistant'
 import { EventEmitter } from 'events'
 
 const profile = {
