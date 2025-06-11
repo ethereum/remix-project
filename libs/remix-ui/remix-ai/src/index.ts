@@ -1,1 +1,0 @@
-export { RemixAITab, ChatApi } from './lib/components/RemixAI'

@@ -1,12 +1,6 @@
 import * as packageJson from '../../../../../package.json'
-import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
-import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
-import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
-import { CustomRemixApi } from '@remix-api'
-import { PluginViewWrapper } from '@remix-ui/helper'
-import { AlertModal } from '@remix-ui/app';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -35,7 +29,7 @@ const profile = {
 }
 
 // add Plugin<any, CustomRemixApi>
-export class RemixAIPlugin extends ViewPlugin {
+export class RemixAIPlugin extends Plugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
@@ -48,7 +42,6 @@ export class RemixAIPlugin extends ViewPlugin {
   workspaceAgent: workspaceAgent
   assistantProvider: string = 'mistralai'
   useRemoteInferencer:boolean = false
-  dispatch: any
   completionAgent: CodeCompletionAgent
 
   constructor(inDesktop:boolean) {
@@ -329,33 +322,7 @@ export class RemixAIPlugin extends ViewPlugin {
     this.chatRequestBuffer = null
   }
 
-  setDispatch(dispatch) {
-    this.dispatch = dispatch
-    this.renderComponent()
-  }
 
-  renderComponent () {
-    this.dispatch({
-      plugin: this,
-    })
-  }
 
-  render() {
-    return <div
-      id='ai-view'
-      className='h-100 d-flex'
-      data-id='aichat-view'
-      style={{
-        minHeight: 'max-content',
-      }}
-    >
-      <PluginViewWrapper plugin={this} />
-    </div>
-  }
 
-  updateComponent(state) {
-    // return (
-    //   <RemixAITab plugin={state.plugin}></RemixAITab>
-    // )
-  }
 }

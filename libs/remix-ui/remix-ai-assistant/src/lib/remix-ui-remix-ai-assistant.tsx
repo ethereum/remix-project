@@ -113,7 +113,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           }
           break
       }
-      console.log('Setting context files:', files)
       setContextFiles(files)
     } catch (err) {
       console.error('Failed to refresh context:', err)
@@ -197,8 +196,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       try {
         setIsStreaming(true)
         const parseResult = await chatCmdParser.parse(trimmed)
-
-        console.log('Parsed command:', parseResult)
         if (parseResult) {
           setMessages(prev => [
             ...prev,
@@ -265,7 +262,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // Only send the /setAssistant command when the choice actually changes
   useEffect(() => {
-    //console.log('Setting assistant to', assistantChoice)
     if (!assistantChoice) return
     dispatchActivity('button', 'setAssistant')
     sendPrompt(`/setAssistant ${assistantChoice}`)
@@ -273,8 +269,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // refresh context whenever selection changes (even if selector is closed)
   useEffect(() => {
-    // Optionally keep the log:
-    // console.log('Context choice set to', contextChoice)
     refreshContext(contextChoice)
   }, [contextChoice, refreshContext])
 
@@ -369,19 +363,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 })
 
 // ChatHistory component
-function ChatHistoryComponent({
-  messages,
-  isStreaming,
-  sendPrompt,
-  recordFeedback,
-  historyRef
-}: {
+export interface ChatHistoryComponentProps {
   messages: ChatMessage[]
   isStreaming: boolean
   sendPrompt: (prompt: string) => void
   recordFeedback: (msgId: string, next: 'like' | 'dislike' | 'none') => void
   historyRef: React.RefObject<HTMLDivElement>
-}) {
+}
+
+const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
+  messages,
+  isStreaming,
+  sendPrompt,
+  recordFeedback,
+  historyRef
+}) => {
   return (
     <div
       ref={historyRef}
@@ -522,26 +518,7 @@ function ChatHistoryComponent({
 }
 
 // PromptArea component
-function PromptArea({
-  input,
-  setInput,
-  isStreaming,
-  handleSend,
-  showContextOptions,
-  setShowContextOptions,
-  showAssistantOptions,
-  setShowAssistantOptions,
-  contextChoice,
-  setContextChoice,
-  assistantChoice,
-  setAssistantChoice,
-  contextFiles,
-  clearContext,
-  handleAddContext,
-  handleSetAssistant,
-  handleGenerateWorkspace,
-  dispatchActivity
-}: {
+export interface PromptAreaProps {
   input: string
   setInput: React.Dispatch<React.SetStateAction<string>>
   isStreaming: boolean
@@ -560,7 +537,28 @@ function PromptArea({
   handleSetAssistant: () => void
   handleGenerateWorkspace: () => void
   dispatchActivity: (type: ActivityType, payload?: any) => void
-}) {
+}
+
+const PromptArea: React.FC<PromptAreaProps> = ({
+  input,
+  setInput,
+  isStreaming,
+  handleSend,
+  showContextOptions,
+  setShowContextOptions,
+  showAssistantOptions,
+  setShowAssistantOptions,
+  contextChoice,
+  setContextChoice,
+  assistantChoice,
+  setAssistantChoice,
+  contextFiles,
+  clearContext,
+  handleAddContext,
+  handleSetAssistant,
+  handleGenerateWorkspace,
+  dispatchActivity
+}) => {
   return (
     <div
       className="prompt-area d-flex flex-column gap-2 p-2"
