@@ -892,9 +892,10 @@ export const EditorUI = (props: EditorUIProps) => {
                 })
                 return { [widgetId]: decoratorList }
               })
-              const newEntryRange = decoratorList.getRange(0)
-
-              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              setTimeout(() => {
+                const newEntryRange = decoratorList.getRange(0)
+                addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              }, 150)
             } else {
               editorRef.current.executeEdits('newDocs', [
                 {
@@ -923,9 +924,11 @@ export const EditorUI = (props: EditorUIProps) => {
                 })
                 return { [widgetId]: decoratorList }
               })
-              const newEntryRange = decoratorList.getRange(0)
 
-              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              setTimeout(() => {
+                const newEntryRange = decoratorList.getRange(0)
+                addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              }, 150)
             }
           }
           _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
