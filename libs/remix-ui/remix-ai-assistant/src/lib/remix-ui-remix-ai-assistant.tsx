@@ -18,7 +18,13 @@ type ChatMessage = {
   sentiment?: 'none' | 'like' | 'dislike'
 }
 
-export const assistantAvatar = 'assets/img/remixai-logoDefault.webp'//'assets/img/aiLogo.svg'
+export const assistantAvatar = 'assets/img/remixai-logoAI.webp'//'assets/img/aiLogo.svg'
+
+const DEFAULT_SUGGESTIONS = [
+  'Explain what a modifier is',
+  'Explain what a UniSwap hook is',
+  'What is a ZKP?'
+]
 export interface RemixUiRemixAiAssistantProps {
   plugin: Plugin
   queuedMessage: { text: string, timestamp: number } | null
@@ -40,12 +46,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
+      // comment out for now
+      /*
       if (raw) {
         const parsed: ChatMessage[] = JSON.parse(raw)
         if (Array.isArray(parsed)) {
           setMessages(parsed)
         }
       }
+        */
     } catch (err) {
       console.warn('Could not restore saved chat history:', err)
     }
@@ -67,7 +76,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   // always scroll to bottom when messages change
   useEffect(() => {
     const node = historyRef.current
-    if (node) {
+    if (node && messages.length > 0) {
       node.scrollTop = node.scrollHeight
     }
   }, [messages])
@@ -190,89 +199,131 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         className="ai-chat-history"
         style={{ flexGrow: 1, overflowY: 'auto' }}
       >
-        {messages.map(msg => {
-          const bubbleClass =
-            msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-white'
+        {messages.length === 0 ? (
+          <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
+            <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
+            <h5 className="mb-2">RemixAI</h5>
+            <p className="mb-4" style={{ maxWidth: '220px' }}>
+              RemixAI provides you personalized guidance as you build. It can break down concepts,
+              answer questions about blockchain technology and assist you with your smart contracts.
+            </p>
+            {DEFAULT_SUGGESTIONS.map(s => (
+              <button
+                key={s}
+                className="btn btn-secondary mb-2 w-100"
+                onClick={() => sendPrompt(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        ) : (
+          messages.map(msg => {
+            const bubbleClass =
+              msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-light'
 
-          return (
-            <div key={msg.id} className="chat-bubble-container mb-2">
-              <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
-                {msg.role === 'assistant' ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    linkTarget="_blank"
-                    components={{
-                      code({ node, inline, className, children, ...props }) {
-                        const text = String(children).replace(/\n$/, '')
+            return (
+              <div key={msg.id} className="chat-row d-flex mb-2">
+                {/* Avatar for assistant */}
+                {msg.role === 'assistant' && (
+                  <img
+                    src={assistantAvatar}
+                    alt="AI"
+                    className="assistant-avatar me-2 flex-shrink-0"
+                  />
+                )}
 
-                        if (inline) {
-                          return (
-                            <code className={className} {...props}>
-                              {text}
-                            </code>
+                {/* Bubble */}
+                <div className="flex-grow-1">
+                  <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
+                    {msg.role === 'user' && (
+                      <small className="text-uppercase fw-bold text-secondary d-block mb-1">
+                        You
+                      </small>
+                    )}
+
+                    {msg.role === 'assistant' ? (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        linkTarget="_blank"
+                        components={{
+                          code({ node, inline, className, children, ...props }) {
+                            const text = String(children).replace(/\n$/, '')
+
+                            if (inline) {
+                              return (
+                                <code className={className} {...props}>
+                                  {text}
+                                </code>
+                              )
+                            }
+
+                            return (
+                              <div
+                                className="code-block position-relative"
+                                style={{ marginBottom: '0.5rem' }}
+                              >
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-light position-absolute copy-btn"
+                                  style={{ top: '0.25rem', right: '0.25rem' }}
+                                  onClick={() => navigator.clipboard.writeText(text)}
+                                >
+                                  Copy
+                                </button>
+                                <pre className={className} {...props}>
+                                  <code>{text}</code>
+                                </pre>
+                              </div>
+                            )
+                          }
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : (
+                      msg.content
+                    )}
+                  </div>
+
+                  {/* Feedback buttons */}
+                  {msg.role === 'assistant' && (
+                    <div className="feedback text-end mt-2 me-1">
+                      <span
+                        role="button"
+                        aria-label="thumbs up"
+                        className={`feedback-btn me-3 ${
+                          msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'like' ? 'none' : 'like'
                           )
                         }
-
-                        // block code → wrap with copy button
-                        return (
-                          <div
-                            className="code-block position-relative"
-                            style={{ marginBottom: '0.5rem' }}
-                          >
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-light position-absolute copy-btn"
-                              style={{ top: '0.25rem', right: '0.25rem' }}
-                              onClick={() => navigator.clipboard.writeText(text)}
-                            >
-                              Copy
-                            </button>
-                            <pre className={className} {...props}>
-                              <code>{text}</code>
-                            </pre>
-                          </div>
-                        )
-                      }
-                    }}
-                  >
-                    {msg.content}
-                  </ReactMarkdown>
-                ) : (
-                  msg.content
-                )}
-              </div>
-
-              {msg.role === 'assistant' && (
-                <div className="feedback text-end mt-2 me-1">
-                  <span
-                    role="button"
-                    aria-label="thumbs up"
-                    className={`fa-lg me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
-                      }`}
-                    onClick={() =>
-                      recordFeedback(
-                        msg.id,
-                        msg.sentiment === 'like' ? 'none' : 'like'
-                      )
-                    }
-                  ></span>
-                  <span
-                    role="button"
-                    aria-label="thumbs down"
-                    className={`fa-lg ${msg.sentiment === 'dislike' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down'
-                      }`}
-                    onClick={() =>
-                      recordFeedback(
-                        msg.id,
-                        msg.sentiment === 'dislike' ? 'none' : 'dislike'
-                      )
-                    }
-                  ></span>
+                      ></span>
+                      <span
+                        role="button"
+                        aria-label="thumbs down"
+                        className={`feedback-btn ml-2 ${
+                          msg.sentiment === 'dislike'
+                            ? 'fas fa-thumbs-down'
+                            : 'far fa-thumbs-down'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'dislike' ? 'none' : 'dislike'
+                          )
+                        }
+                      ></span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )
-        })}
+              </div>
+            )
+          })
+        )}
       </div>
 
       <div className="ai-chat-input d-flex pt-2">

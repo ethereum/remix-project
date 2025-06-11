@@ -189,3 +189,13 @@
   margin: 10px 0;
   color: #333;
 }
+
+/* Assistant avatar in message list */
+.assistant-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+}
