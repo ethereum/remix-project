@@ -406,7 +406,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                             return (
                               <div
                                 className="code-block position-relative"
-                                style={{ marginBottom: '0.5rem' }}
                               >
                                 <button
                                   type="button"
@@ -487,7 +486,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         {showContextOptions && (
           <div
             className="rounded p-3 mb-2"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <h6 className="text-uppercase small mb-3">Add Context Files</h6>
             <div className="form-check mb-2">
@@ -559,7 +557,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         {showAssistantOptions && (
           <div
             className="rounded p-3 mb-2"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
           >
             <h6 className="text-uppercase small mb-3">Choose Assistant Model</h6>
 
@@ -587,7 +584,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
             className={`btn mr-2 ${showContextOptions ? 'btn-primary' : 'btn-dark'}`}
-            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
           >
             @Add context&nbsp;
             <i className={`fa fa-caret-${showContextOptions ?  'down' : 'up'}`}></i>
@@ -596,7 +592,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           <button
             onClick={handleSetAssistant}
             className={`btn mr-2 ${showAssistantOptions ? 'btn-primary' : 'btn-dark'}`}
-            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
+
           >
             @Set assistant&nbsp;
             <i className={`fa fa-caret-${showAssistantOptions ? 'down' : 'up'}`}></i>
@@ -606,7 +602,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             onClick={handleGenerateWorkspace}
             className="btn btn-dark"
             data-id="composer-ai-workspace-generate"
-            style={{ fontSize: '0.85rem', padding: '0.25rem 0.5rem' }}
+
           >
             @Generate Workspace
           </button>

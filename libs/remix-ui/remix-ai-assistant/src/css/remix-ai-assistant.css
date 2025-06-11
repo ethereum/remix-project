@@ -199,3 +199,93 @@
   border-radius: 6px;
   object-fit: contain;
 }
+
+
+/* --------------------------------------------------------
+   PROMPT / COMMAND AREA PANEL
+   -------------------------------------------------------- */
+
+.prompt-area {
+  /* matches the dark tone we used inline */
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  gap: 0.5rem;                /* same as BS5 .gap-2 but column layout */
+  padding: 0.5rem;
+}
+
+/* selector panels (context + assistant) */
+.prompt-area .rounded.selector-box,
+.prompt-area .rounded.p-3 {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  padding: 1rem !important;   /* keep existing spacing */
+  margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------
+   MINI COMMAND BUTTONS
+   -------------------------------------------------------- */
+
+.prompt-area .btn-dark,
+.prompt-area .btn-secondary,
+.prompt-area .btn-primary,
+.prompt-area .btn-info {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* caret spacing */
+.prompt-area .btn i {
+  margin-left: 2px;
+}
+
+/* --------------------------------------------------------
+   CHAT INPUT FIELD
+   -------------------------------------------------------- */
+
+.ai-chat-input input.form-control {
+  flex: 1 1 auto;  /* fills the row without extra inline flexGrow */
+}
+
+/* --------------------------------------------------------
+   CODE BLOCK WRAPPER
+   -------------------------------------------------------- */
+
+.code-block {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------
+   CONTEXT BADGE LIST
+   -------------------------------------------------------- */
+
+.context-badge-list,
+.mt-2.d-flex.flex-wrap {      /* matches generated inline attrs */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-height: 110px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+.context-badge-list .badge,
+.aiContext-file,
+.badge.badge-pill.badge-secondary {
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.context-badge-list .badge i,
+.aiContext-file i {
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------
+   HIDDEN STREAMING FLAG (optional visibility tweak)
+   -------------------------------------------------------- */
+
+[data-id="remix-ai-streaming"] {
+  display: none !important;
+}
