@@ -22,7 +22,7 @@ module.exports = {
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
 
-  'Should explain the contract #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should explain the contract #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="explain-editor"]')
       .click('*[data-id="explain-editor"]')

@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true   
+    default: false   
   run_metamask_tests:
     type: boolean
     default: false   
