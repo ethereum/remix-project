@@ -281,11 +281,15 @@ export const TabsUI = (props: TabsUIProps) => {
                   const content = await props.plugin.call('fileManager', 'readFile', path)
                   if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
                     setExplaining(true)
-                    // if plugin is pinned,
-                    await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
-                    setTimeout(async () => {
-                      await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-                    }, 500)
+                    try {
+                      await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
+                    }
+                    catch (e) {
+                      // do nothing 
+                    }
+
+                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file', content])
                   }

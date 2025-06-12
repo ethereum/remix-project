@@ -38,6 +38,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
+    this.call('sidePanel', 'pinView', this.profile)
   }
 
   onDeactivation() {
