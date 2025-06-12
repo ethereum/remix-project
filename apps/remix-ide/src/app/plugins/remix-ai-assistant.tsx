@@ -27,14 +27,14 @@ export class RemixAIAssistant extends ViewPlugin {
   event: any
   chatRef: React.RefObject<RemixUiRemixAiAssistantHandle>
   history: ChatMessage[] = []
-  
+
   constructor() {
     super(profile)
     this.event = new EventEmitter()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'remix-ai-assistant')
     this.chatRef = createRef<RemixUiRemixAiAssistantHandle>()
-    ;(window as any).remixAIChat = this.chatRef 
+    ;(window as any).remixAIChat = this.chatRef
   }
 
   async onActivation() {
@@ -85,7 +85,6 @@ export class RemixAIAssistant extends ViewPlugin {
     this.renderComponent()
   }
 
-
   onReady() {
     console.log('RemixAiAssistant onReady')
   }
@@ -101,11 +100,10 @@ export class RemixAIAssistant extends ViewPlugin {
 
   async handleActivity(type: string, payload: any) {
     console.log('RemixAiAssistant activity:', type, payload)
-    
-    await this.call('layout', 'maximisePinnedPanel')
-    
-  }
 
+    await this.call('layout', 'maximisePinnedPanel')
+
+  }
 
   updateComponent(state: {
     queuedMessage: { text: string, timestamp: number } | null

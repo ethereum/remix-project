@@ -282,7 +282,7 @@ export class RemixAIPlugin extends Plugin {
         prompt: prompt,
         context: context
       }
-  
+
       if (pipeMessage) this.call('remixaiassistant', 'chatPipe', pipeMessage)
       else {
         if (fn === "code_explaining") this.call('remixaiassistant', 'chatPipe',"Explain the current code")
@@ -321,8 +321,5 @@ export class RemixAIPlugin extends Plugin {
   resetChatRequestBuffer() {
     this.chatRequestBuffer = null
   }
-
-
-
 
 }
