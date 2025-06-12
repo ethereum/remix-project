@@ -62,41 +62,40 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     try {
       let files: string[] = []
       switch (choice) {
-        case 'none':
-          await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
-          files = []
-          break
-        case 'current':
-          {
-            const f = await props.plugin.call('fileManager', 'getCurrentFile')
-            if (f) files = [f]
-            await props.plugin.call('remixAI', 'setContextFiles', { context: 'currentFile' })
+      case 'none':
+        await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
+        files = []
+        break
+      case 'current':
+        {
+          const f = await props.plugin.call('fileManager', 'getCurrentFile')
+          if (f) files = [f]
+          await props.plugin.call('remixAI', 'setContextFiles', { context: 'currentFile' })
+        }
+        break
+      case 'opened':
+        {
+          const res = await props.plugin.call('fileManager', 'getOpenedFiles')
+          if (Array.isArray(res)) {
+            files = res
+          } else if (res && typeof res === 'object') {
+            files = Object.values(res) as string[]
           }
-          break
-        case 'opened':
-          {
-            const res = await props.plugin.call('fileManager', 'getOpenedFiles')
-            if (Array.isArray(res)) {
-              files = res
-            } else if (res && typeof res === 'object') {
-              files = Object.values(res) as string[]
-            }
-            await props.plugin.call('remixAI', 'setContextFiles', { context: 'openedFiles' })
-          }
-          break
-        case 'workspace':
-          {
-            await props.plugin.call('remixAI', 'setContextFiles', { context: 'workspace' })
-            files = ['@workspace']
-          }
-          break
+          await props.plugin.call('remixAI', 'setContextFiles', { context: 'openedFiles' })
+        }
+        break
+      case 'workspace':
+        {
+          await props.plugin.call('remixAI', 'setContextFiles', { context: 'workspace' })
+          files = ['@workspace']
+        }
+        break
       }
       setContextFiles(files)
     } catch (err) {
       console.error('Failed to refresh context:', err)
     }
   }, [props.plugin])
-
 
   useEffect(() => {
     const update = () => refreshContext(contextChoice)
@@ -109,12 +108,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [contextChoice, refreshContext, props.plugin])
 
-
   // bubble messages up to parent
   useEffect(() => {
     props.onMessagesChange?.(messages)
   }, [messages, props.onMessagesChange])
-
 
   // always scroll to bottom when messages change
   useEffect(() => {
@@ -191,7 +188,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
         GenerationParams.stream_result = true
         GenerationParams.return_stream_response = true
-
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending

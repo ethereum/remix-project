@@ -127,7 +127,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       role="button"
                       aria-label="thumbs up"
                       className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
-                        }`}
+                      }`}
                       onClick={() =>
                         recordFeedback(
                           msg.id,
@@ -141,7 +141,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
                         ? 'fas fa-thumbs-down'
                         : 'far fa-thumbs-down'
-                        }`}
+                      }`}
                       onClick={() =>
                         recordFeedback(
                           msg.id,

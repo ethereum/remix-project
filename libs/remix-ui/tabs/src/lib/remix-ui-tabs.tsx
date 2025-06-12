@@ -285,7 +285,7 @@ export const TabsUI = (props: TabsUIProps) => {
                       await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
                     }
                     catch (e) {
-                      // do nothing 
+                      // do nothing
                     }
 
                     await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
