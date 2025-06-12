@@ -51,7 +51,9 @@ const DragBar = (props: IRemixDragBarUi) => {
           setDragBarPosX(offset + width)
         }, 300)
       } else if (layoutPosition === 'right') {
-        const width = coeff * window.innerWidth
+        // Use a smaller coefficient for the right panel
+        const rightCoeff = 0.25
+        const width = rightCoeff * window.innerWidth
 
         refObject.current.style.width = width + 'px'
         setTimeout(() => {
@@ -62,6 +64,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   }
 
   useEffect(() => {
+    // Only use 0.4 for left, right will use its own value in triggerWidth
     triggerWidth(props.maximiseTrigger, props.layoutPosition, props.refObject, 0.4)
   }, [props.maximiseTrigger])
 
