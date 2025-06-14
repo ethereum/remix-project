@@ -108,7 +108,7 @@ const App = () => {
   }
 
   function compilerUrl() {
-    return state.environment === 'remote' ? `${endpointUrls.vyper2}` : state.localUrl
+    return state.environment === 'remote' ? `${endpointUrls.vyper2}/` : state.localUrl
   }
 
   function resetCompilerResultState() {

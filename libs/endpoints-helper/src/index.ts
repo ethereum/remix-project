@@ -16,20 +16,20 @@ type EndpointUrls = {
 };
 
 const defaultUrls: EndpointUrls = {
-  corsProxy: 'https://gitproxy.api.remix.live/',
-  solidityScan: 'https://solidityscan.api.remix.live/',
-  ipfsGateway: 'https://jqgt.api.remix.live/',
-  commonCorsProxy: 'https://common-corsproxy.api.remix.live/',
-  github: 'https://github.api.remix.live/',
-  solcoder: 'https://solcoder.api.remix.live/',
-  ghfolderpull: 'https://ghfolderpull.api.remix.live/',
-  embedly: 'https://embedly.api.remix.live/',
-  gptChat: 'https://gpt-chat.api.remix.live/',
-  rag: 'https://rag.api.remix.live/',
-  vyper2: 'https://vyper2.api.remix.live/',
-  completion: 'https://completion.api.remix.live/',
-  solidityScanWebSocket: 'wss://solidityscan.api.remix.live/',
-  gitHubLoginProxy: 'https://github-login-proxy.api.remix.live/',
+  corsProxy: 'https://gitproxy.api.remix.live',
+  solidityScan: 'https://solidityscan.api.remix.live',
+  ipfsGateway: 'https://jqgt.api.remix.live',
+  commonCorsProxy: 'https://common-corsproxy.api.remix.live',
+  github: 'https://github.api.remix.live',
+  solcoder: 'https://solcoder.api.remix.live',
+  ghfolderpull: 'https://ghfolderpull.api.remix.live',
+  embedly: 'https://embedly.api.remix.live',
+  gptChat: 'https://gpt-chat.api.remix.live',
+  rag: 'https://rag.api.remix.live',
+  vyper2: 'https://vyper2.api.remix.live',
+  completion: 'https://completion.api.remix.live',
+  solidityScanWebSocket: 'wss://solidityscan.api.remix.live',
+  gitHubLoginProxy: 'https://github-login-proxy.api.remix.live',
 };
 
 const endpointPathMap: Record<keyof EndpointUrls, string> = {
