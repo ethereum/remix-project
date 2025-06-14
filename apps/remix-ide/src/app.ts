@@ -21,6 +21,7 @@ import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
 import { SolidityScript } from './app/plugins/solidity-script'
+import { RemixAIAssistant } from './app/plugins/remix-ai-assistant'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -315,6 +316,7 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const remixAI = new RemixAIPlugin(isElectron())
+    const remixAiAssistant = new RemixAIAssistant()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -447,6 +449,7 @@ class AppComponent {
       templateSelection,
       scriptRunnerUI,
       remixAI,
+      remixAiAssistant,
       walletConnect
     ])
 
@@ -606,7 +609,8 @@ class AppComponent {
       'contentImport',
       'gistHandler',
       'compilerloader',
-      'remixAI'
+      'remixAI',
+      'remixaiassistant'
     ])
     await this.appManager.activatePlugin(['settings'])
 
