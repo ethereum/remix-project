@@ -7,7 +7,7 @@ export type DropDownLabelProps = {
   label: string
   bridges: any
   currentProvider: any
-  chainId: string
+  envLabel: string
   runTabState: RunTabState
   setExecutionEnv: (executionContext: {
     context: string;
@@ -16,7 +16,7 @@ export type DropDownLabelProps = {
   plugin: any
 }
 
-export function DropdownLabel({ label, bridges, currentProvider, chainId, runTabState, setExecutionEnv, isL2, plugin }: DropDownLabelProps) {
+export function DropdownLabel({ label, bridges, currentProvider, envLabel, runTabState, setExecutionEnv, isL2, plugin }: DropDownLabelProps) {
 
   const [renderLabel, setRenderLabel] = useState(label)
 
@@ -32,7 +32,7 @@ export function DropdownLabel({ label, bridges, currentProvider, chainId, runTab
       }
     }
     checkEnvLabels()
-  }, [chainId])
+  }, [envLabel])
 
   return (
     <>
