@@ -45,7 +45,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
 }) => {
   return (
     <div
-      className="prompt-area d-flex flex-column gap-2 p-2"
+      className="prompt-area d-flex flex-column gap-2 p-2 mx-2"
       style={{
         background: 'rgba(255,255,255,0.04)', // same dark tone as input row
         borderRadius: '4px'
@@ -151,18 +151,18 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         <button
           onClick={handleAddContext}
           data-id="composer-ai-add-context"
-          className={`btn mr-2 ${showContextOptions ? 'btn-primary' : 'btn-dark'}`}
+          className={`btn mr-2 ${showContextOptions ? 'btn-dark' : 'btn-text'}`}
         >
-          @Add context&nbsp;
-          <i className={`fa fa-caret-${showContextOptions ? 'down' : 'up'}`}></i>
+          Add context&nbsp;
+          {/* <i className={`fa fa-caret-${showContextOptions ? 'down' : 'up'}`}></i> */}
         </button>
 
         <button
           onClick={handleSetAssistant}
-          className={`btn mr-2 ${showAssistantOptions ? 'btn-primary' : 'btn-dark'}`}
+          className={`btn mr-2 ${showAssistantOptions ? 'btn-dark' : 'btn-text'}`}
         >
           @Set assistant&nbsp;
-          <i className={`fa fa-caret-${showAssistantOptions ? 'down' : 'up'}`}></i>
+          {/* <i className={`fa fa-caret-${showAssistantOptions ? 'down' : 'up'}`}></i> */}
         </button>
 
         <button
@@ -200,7 +200,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             return (
               <span
                 key={f}
-                className="badge badge-pill badge-secondary mr-1 aiContext-file"
+                className="badge badge-info mr-1 aiContext-file text-success"
                 style={{ cursor: 'pointer' }}
                 onClick={clearContext}
               >
@@ -211,7 +211,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           })}
           {contextFiles.length > 6 && (
             <span
-              className="badge badge-pill badge-secondary"
+              className="badge badge-info"
               style={{ cursor: 'pointer' }}
               onClick={clearContext}
             >

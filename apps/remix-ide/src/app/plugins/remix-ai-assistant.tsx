@@ -38,7 +38,11 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
-    this.call('sidePanel', 'pinView', this.profile)
+    const currentActivePlugin = await this.call('pinnedPanel', 'currentFocus')
+    if (currentActivePlugin === 'remixaiassistant') {
+      this.call('sidePanel', 'pinView', this.profile)
+      await this.call('layout', 'maximiseSidePanel')
+    }
   }
 
   onDeactivation() {
