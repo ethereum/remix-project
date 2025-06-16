@@ -49,7 +49,7 @@ export const GetDeviceCode = () => {
     }
 
     const clientId = await getClientId()
-    const redirectUri = `${window.location.origin}/auth/github/callback`
+    const redirectUri = `${window.location.origin}/?source=github`
     const scope = 'repo gist user:email read:user'
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
