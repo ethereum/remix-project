@@ -896,7 +896,7 @@ export const EditorUI = (props: EditorUIProps) => {
               const docs = editorRef.current.getModel().getValueInRange(new monacoRef.current.Range(docsRange.start.line, docsRange.start.column, funcRange.start.line, 1000))
               const oldLineCount = (docs || '').split('\n').length - 1
               const ranges = [
-                new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + 1, 0),
+                new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + newLineCount, 1000),
                 new monacoRef.current.Range(docsRange.start.line + newLineCount + 1, 0, docsRange.start.line + newLineCount + oldLineCount, 1000)
               ]
 
