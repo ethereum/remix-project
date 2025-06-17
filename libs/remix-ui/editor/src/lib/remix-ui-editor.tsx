@@ -1202,7 +1202,8 @@ export const EditorUI = (props: EditorUIProps) => {
 
         const acceptBtn = document.createElement('button')
         acceptBtn.style.backgroundColor = 'var(--ai)'
-        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1', 'text-dark'])
+        acceptBtn.style.color = 'var(--vscode-editor-background)'
+        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1'])
         acceptBtn.style.fontSize = '0.8rem'
         acceptBtn.textContent = 'Accept'
 
