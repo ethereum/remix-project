@@ -37,7 +37,6 @@ export const extractFunctionComments = (code: string, indentSize: number = 0, is
   const multiLineCommentPattern = /\/\*\*[\s\S]*?\*\//g
   let commentMatch
 
-
   while ((commentMatch = multiLineCommentPattern.exec(code)) !== null) {
     const commentStart = commentMatch.index
     const commentEnd = commentStart + commentMatch[0].length
