@@ -6,7 +6,7 @@ import React from 'react'
 
 const DEFAULT_SUGGESTIONS = [
   'Explain what a modifier is',
-  'Explain what a UniSwap hook is',
+  'What is a UniSwap hook?',
   'What is a ZKP?'
 ]
 
@@ -29,24 +29,23 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   return (
     <div
       ref={historyRef}
-      className="ai-chat-history"
-      style={{ flexGrow: 1, overflowY: 'auto' }}
+      className="d-flex flex-column flex-grow-1 overflow-y-auto"
     >
       {messages.length === 0 ? (
         <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
           <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
           <h5 className="mb-2">RemixAI</h5>
-          <p className="mb-4" style={{ maxWidth: '220px' }}>
+          <p className="mb-4" style={{ fontSize: '1.1rem' }}>
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
           </p>
           {DEFAULT_SUGGESTIONS.map(s => (
             <button
               key={s}
-              className="btn btn-secondary mb-2 w-100"
+              className="btn btn-secondary mb-2 w-100 text-left"
               onClick={() => sendPrompt(s)}
             >
-              <i className="fa fa-user-robot-xmarks mr-2"></i>{s}
+              <i className="fa-kit fa-remixai mr-2"></i>{s}
             </button>
           ))}
         </div>
@@ -67,7 +66,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div className="flex-grow-1">
+              <div data-region="chat-bubble-section" className="flex-grow-1 w-25 mr-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
@@ -93,7 +92,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
 
                           return (
                             <div
-                              className="code-block position-relative"
+                              className="code-block p-2 border border-text d-flex align-items-center"
                             >
                               <button
                                 type="button"

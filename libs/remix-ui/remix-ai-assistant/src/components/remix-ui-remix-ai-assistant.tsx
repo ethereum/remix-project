@@ -258,7 +258,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             ERC‑20 token with foundry tests
             ERC‑721 NFT collection with IPFS metadata
             Decentralized voting app with Solidity smart contracts
-            
+
           `,
           modalType: ModalTypes.prompt, // single-line text
           okLabel: 'Generate',
@@ -295,8 +295,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   return (
     <div
-      className="ai-chat-container"
-      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      className="d-flex flex-column h-100 mx-3"
     >
       <div data-id="remix-ai-assistant-ready"></div>
       {/* hidden hook for E2E tests: data-streaming="true|false" */}

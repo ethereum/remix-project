@@ -44,21 +44,15 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   dispatchActivity
 }) => {
   return (
-    <div
-      className="prompt-area d-flex flex-column gap-2 p-2 mx-2"
-      style={{
-        background: 'rgba(255,255,255,0.04)', // same dark tone as input row
-        borderRadius: '4px'
-      }}
-    >
+    <>
       {showContextOptions && (
         <div
-          className="rounded p-3 mb-2"
+          className=" w-100 bg-dark p-2 border border-text border-bottom-0 rounded"
         >
-          <h6 className="text-uppercase small mb-3">Add Context Files</h6>
-          <div className="form-check mb-2">
+          <div className="text-uppercase ml-2 mb-2">Add Context Files</div>
+          <div className="d-flex ml-2 custom-control custom-radio">
             <input
-              className="form-check-input"
+              className="custom-control-input"
               type="radio"
               id="ctx-none"
               checked={contextChoice === 'none'}
@@ -68,13 +62,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label" htmlFor="ctx-none">
+            <label className="form-check-label custom-control-label" htmlFor="ctx-none">
               None
             </label>
           </div>
-          <div className="form-check mb-2">
+          <div className="d-flex ml-2 custom-control custom-radio">
             <input
-              className="form-check-input"
+              className="custom-control-input"
               type="radio"
               id="ctx-current"
               data-id="currentFile-context-option"
@@ -84,13 +78,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label" htmlFor="ctx-current">
+            <label className="form-check-label custom-control-label" htmlFor="ctx-current">
               Current file
             </label>
           </div>
-          <div className="form-check mb-2">
+          <div className="d-flex ml-2 custom-control custom-radio">
             <input
-              className="form-check-input"
+              className="custom-control-input"
               type="radio"
               id="ctx-opened"
               data-id="allOpenedFiles-context-option"
@@ -100,13 +94,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label" htmlFor="ctx-opened">
+            <label className="form-check-label custom-control-label" htmlFor="ctx-opened">
               All opened files
             </label>
           </div>
-          <div className="form-check">
+          <div className="d-flex ml-2 custom-control custom-radio">
             <input
-              className="form-check-input"
+              className="custom-control-input"
               type="radio"
               id="ctx-workspace"
               data-id="workspace-context-option"
@@ -116,110 +110,140 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label" htmlFor="ctx-workspace">
+            <label className="form-check-label custom-control-label" htmlFor="ctx-workspace">
               Workspace
             </label>
           </div>
         </div>
       )}
-      {showAssistantOptions && (
-        <div
-          className="rounded p-3 mb-2"
-        >
-          <h6 className="text-uppercase small mb-3">Choose Assistant Model</h6>
 
-          {['openai', 'mistralai', 'anthropic'].map(val => (
-            <div className="form-check mb-2" key={val}>
-              <input
-                className="form-check-input"
-                type="radio"
-                id={`assistant-${val}`}
-                checked={assistantChoice === val}
-                onChange={() => {
-                  setAssistantChoice(val as any)
-                  setShowAssistantOptions(false)
-                }}
-              />
-              <label className="form-check-label" htmlFor={`assistant-${val}`}>
-                {val}
-              </label>
-            </div>
-          ))}
-        </div>
-      )}
-      <div className="d-flex gap-2 mb-2">
-        <button
-          onClick={handleAddContext}
-          data-id="composer-ai-add-context"
-          className={`btn mr-2 ${showContextOptions ? 'btn-dark' : 'btn-text'}`}
-        >
+      <div
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3"
+      >
+        <div className="d-flex justify-content-between mb-2">
+          <button
+            onClick={handleAddContext}
+            data-id="composer-ai-add-context"
+            className="btn btn-dark btn-sm text-secondary"
+          >
           Add context&nbsp;
-          {/* <i className={`fa fa-caret-${showContextOptions ? 'down' : 'up'}`}></i> */}
-        </button>
+          </button>
 
-        <button
-          onClick={handleSetAssistant}
-          className={`btn mr-2 ${showAssistantOptions ? 'btn-dark' : 'btn-text'}`}
-        >
-          @Set assistant&nbsp;
-          {/* <i className={`fa fa-caret-${showAssistantOptions ? 'down' : 'up'}`}></i> */}
-        </button>
-
-        <button
-          onClick={handleGenerateWorkspace}
-          className="btn btn-dark"
-          data-id="composer-ai-workspace-generate"
-        >
+          <button
+            onClick={handleGenerateWorkspace}
+            className="btn btn-dark btn-sm text-secondary"
+            data-id="composer-ai-workspace-generate"
+          >
           @Generate Workspace
-        </button>
-      </div>
-      <div className="ai-chat-input">
-        <input
-          style={{ flexGrow: 1 }}
-          type="text"
-          className="form-control"
-          value={input}
-          disabled={isStreaming}
-          onFocus={() => {
-            dispatchActivity('typing', input)
-          }}
-          onChange={e => {
-            dispatchActivity('typing', e.target.value)
-            setInput(e.target.value)
-          }}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !isStreaming) handleSend()
-          }}
-          placeholder="Ask me anything, use button to add context..."
-        />
-      </div>
-      {contextChoice !== 'none' && contextFiles.length > 0 && (
-        <div className="mt-2 d-flex flex-wrap gap-1" style={{ maxHeight: '110px', overflowY: 'auto' }}>
-          {contextFiles.slice(0, 6).map(f => {
-            const name = f.split('/').pop()
-            return (
+          </button>
+        </div>
+        <div className="ai-chat-input d-flex flex-column">
+          <input
+            style={{ flexGrow: 1 }}
+            type="text"
+            className="form-control bg-light"
+            value={input}
+            disabled={isStreaming}
+            onFocus={() => {
+              dispatchActivity('typing', input)
+            }}
+            onChange={e => {
+              dispatchActivity('typing', e.target.value)
+              setInput(e.target.value)
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !isStreaming) handleSend()
+            }}
+            placeholder="Ask me anything, add workspace files..."
+          />
+          {showAssistantOptions && (
+            <div
+              className="p-3 mb-2 z-3 bg-dark border border-text position-absolute"
+              style={{ top: '79dvh', left: '85dvw', right: '0px', bottom: '15px', height: '125px', width: '220px', borderRadius: '15px' }}
+            >
+              <div className="text-uppercase ml-2 mb-2">Choose Assistant Model</div>
+              <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
+                <input
+                  className="custom-control-input"
+                  type="radio"
+                  id={`assistant-openai`}
+                  checked={assistantChoice === 'openai'}
+                  onChange={() => {
+                    setAssistantChoice('openai')
+                    setShowAssistantOptions(false)
+                  }}
+                />
+                <label className="form-check-label custom-control-label" htmlFor={`assistant-openai`}>
+                    OpenAI
+                </label>
+              </div>
+              <div className="d-flex ml-2 custom-control custom-radio" key={'mistralai'}>
+                <input
+                  className="custom-control-input"
+                  type="radio"
+                  id={`assistant-mistralai`}
+                  checked={assistantChoice === 'mistralai'}
+                  onChange={() => {
+                    setAssistantChoice('mistralai')
+                    setShowAssistantOptions(false)
+                  }}
+                />
+                <label className="form-check-label custom-control-label" htmlFor={`assistant-mistralai`}>
+                    MistralAI
+                </label>
+              </div>
+              <div className="d-flex ml-2 custom-control custom-radio" key={'anthropic'}>
+                <input
+                  className="custom-control-input"
+                  type="radio"
+                  id={`assistant-anthropic`}
+                  checked={assistantChoice === 'anthropic'}
+                  onChange={() => {
+                    setAssistantChoice('anthropic')
+                    setShowAssistantOptions(false)
+                  }}
+                />
+                <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
+                    Anthropic
+                </label>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={handleSetAssistant}
+            className="btn btn-dark btn-sm text-secondary mt-2 align-self-end"
+          >
+            Set assistant&nbsp;
+          </button>
+        </div>
+        {contextChoice !== 'none' && contextFiles.length > 0 && (
+          <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>
+            {contextFiles.slice(0, 6).map(f => {
+              const name = f.split('/').pop()
+              return (
+                <span
+                  key={f}
+                  className="badge badge-info mr-1 aiContext-file text-success"
+                  style={{ cursor: 'pointer' }}
+                  onClick={clearContext}
+                >
+                  {name}
+                  <i className="fa fa-times ms-1 ml-1" style={{ cursor: 'pointer' }}></i>
+                </span>
+              )
+            })}
+            {contextFiles.length > 6 && (
               <span
-                key={f}
-                className="badge badge-info mr-1 aiContext-file text-success"
+                className="badge badge-info"
                 style={{ cursor: 'pointer' }}
                 onClick={clearContext}
               >
-                {name}
-                <i className="fa fa-times ms-1 ml-1" style={{ cursor: 'pointer' }}></i>
-              </span>
-            )
-          })}
-          {contextFiles.length > 6 && (
-            <span
-              className="badge badge-info"
-              style={{ cursor: 'pointer' }}
-              onClick={clearContext}
-            >
               … {contextFiles.length - 6} more <i className="fa fa-times ms-1" style={{ cursor: 'pointer' }}></i>
-            </span>
-          )}
-        </div>
-      )}
-    </div>
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   )
 }

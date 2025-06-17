@@ -6,7 +6,7 @@ export type ChatMessage = {
   sentiment?: 'none' | 'like' | 'dislike'
 }
 
-export const assistantAvatar = 'assets/img/remixai-logoAI.webp'//'assets/img/aiLogo.svg'
+export const assistantAvatar = 'assets/img/remixai-logoDefault.webp'//'assets/img/aiLogo.svg'
 
 export type ActivityType =
   | 'typing'
