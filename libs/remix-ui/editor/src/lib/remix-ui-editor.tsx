@@ -362,34 +362,8 @@ export const EditorUI = (props: EditorUIProps) => {
         if (restoredWidgets) {
           Object.keys(restoredWidgets).forEach((widgetId) => {
             const ranges = restoredWidgets[widgetId]
-            let decoratorList: monacoTypes.editor.IEditorDecorationsCollection
+            const decoratorList = addDecoratorCollection(widgetId, ranges)
 
-            if (ranges.length === 1) {
-              decoratorList = editorRef.current.createDecorationsCollection([{
-                range: ranges[0],
-                options: {
-                  isWholeLine: true,
-                  className: 'newChangesDecoration',
-                  marginClassName: 'newChangesDecoration',
-                }
-              }])
-            } else {
-              decoratorList = editorRef.current.createDecorationsCollection([{
-                range: ranges[0],
-                options: {
-                  isWholeLine: true,
-                  className: 'newChangesDecoration',
-                  marginClassName: 'newChangesDecoration',
-                }
-              }, {
-                range: ranges[1],
-                options: {
-                  isWholeLine: true,
-                  className: 'modifiedChangesDecoration',
-                  marginClassName: 'modifiedChangesDecoration',
-                }
-              }])
-            }
             setTimeout(() => {
               const newEntryRange = decoratorList.getRange(0)
 
@@ -921,6 +895,10 @@ export const EditorUI = (props: EditorUIProps) => {
               const docsRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.documentation.src })
               const docs = editorRef.current.getModel().getValueInRange(new monacoRef.current.Range(docsRange.start.line, docsRange.start.column, funcRange.start.line, 1000))
               const oldLineCount = (docs || '').split('\n').length - 1
+              const ranges = [
+                new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + 1, 0),
+                new monacoRef.current.Range(docsRange.start.line + newLineCount + 1, 0, docsRange.start.line + newLineCount + oldLineCount, 1000)
+              ]
 
               editorRef.current.executeEdits('docsChange', [
                 {
@@ -928,23 +906,8 @@ export const EditorUI = (props: EditorUIProps) => {
                   text: outputFunctionComments[currentFunction.current] + '\n',
                 },
               ])
-
-              const decoratorList = editorRef.current.createDecorationsCollection([{
-                range: new monacoRef.current.Range(docsRange.start.line + 1, 0, docsRange.start.line + newLineCount, 1000),
-                options: {
-                  isWholeLine: true,
-                  className: 'newChangesDecoration',
-                  marginClassName: 'newChangesDecoration',
-                }
-              }, {
-                range: new monacoRef.current.Range(docsRange.start.line + newLineCount + 1, 0, docsRange.start.line + newLineCount + oldLineCount, 1000),
-                options: {
-                  isWholeLine: true,
-                  className: 'modifiedChangesDecoration',
-                  marginClassName: 'modifiedChangesDecoration',
-                }
-              }])
               const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
+              const decoratorList = addDecoratorCollection(widgetId, ranges)
 
               setCurrentDiffFile(uri)
               setDecoratorListCollection(decoratorListCollection => {
@@ -968,15 +931,9 @@ export const EditorUI = (props: EditorUIProps) => {
                   text: outputFunctionComments[currentFunction.current] + '\n',
                 },
               ])
-              const decoratorList = editorRef.current.createDecorationsCollection([{
-                range: new monacoRef.current.Range(funcRange.start.line + 1, 0, funcRange.start.line + newLineCount, 1000),
-                options: {
-                  isWholeLine: true,
-                  className: 'newChangesDecoration',
-                  marginClassName: 'newChangesDecoration',
-                }
-              }])
+              const ranges = [new monacoRef.current.Range(funcRange.start.line + 1, 0, funcRange.start.line + newLineCount, 1000)]
               const widgetId = `accept_decline_widget${Math.random().toString(36).substring(2, 15)}`
+              const decoratorList = addDecoratorCollection(widgetId, ranges)
 
               setCurrentDiffFile(uri)
               setDecoratorListCollection(decoratorListCollection => {
@@ -1382,6 +1339,52 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
+  function addDecoratorCollection (widgetId: string, ranges: monacoTypes.IRange[]): monacoTypes.editor.IEditorDecorationsCollection {
+    let decoratorList: monacoTypes.editor.IEditorDecorationsCollection
+    if (ranges.length === 1) {
+      decoratorList = editorRef.current.createDecorationsCollection([{
+        range: ranges[0],
+        options: {
+          isWholeLine: true,
+          className: 'newChangesDecoration',
+          marginClassName: 'newChangesDecoration',
+        }
+      }])
+    } else {
+      decoratorList = editorRef.current.createDecorationsCollection([{
+        range: ranges[0],
+        options: {
+          isWholeLine: true,
+          className: 'newChangesDecoration',
+          marginClassName: 'newChangesDecoration',
+        }
+      }, {
+        range: ranges[1],
+        options: {
+          isWholeLine: true,
+          className: 'modifiedChangesDecoration',
+          marginClassName: 'modifiedChangesDecoration',
+        }
+      }])
+    }
+
+    decoratorList.onDidChange(() => {
+      const newRanges = decoratorList.getRanges()
+
+      if (newRanges.length === 0) return
+      if (newRanges[0].startLineNumber !== ranges[0].startLineNumber && document.getElementById(widgetId)) {
+        editorRef.current.removeContentWidget({
+          getId: () => widgetId
+        })
+
+        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newRanges[0].startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+      }
+      ranges = newRanges
+    })
+
+    return decoratorList
+  }
+
   function showCustomDiff (uri: string) {
     const lineChanges: monacoTypes.editor.ILineChange[] = diffEditorRef.current.getLineChanges()
     let totalLineDifference = 0
@@ -1402,22 +1405,12 @@ export const EditorUI = (props: EditorUIProps) => {
         },
       ])
 
-      const decoratorList = editorRef.current.createDecorationsCollection([{
-        range: new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
-        options: {
-          isWholeLine: true,
-          className: 'newChangesDecoration',
-          marginClassName: 'newChangesDecoration',
-        }
-      }, {
-        range: new monacoRef.current.Range(originalStartLine, 0, originalEndLine, 1000),
-        options: {
-          isWholeLine: true,
-          className: 'modifiedChangesDecoration',
-          marginClassName: 'modifiedChangesDecoration',
-        }
-      }])
+      const ranges = [
+        new monacoRef.current.Range(modifiedStartLine, 0, modifiedEndLine, 1000),
+        new monacoRef.current.Range(originalStartLine, 0, originalEndLine, 1000)
+      ]
       const widgetId = `accept_decline_widget${index}`
+      const decoratorList = addDecoratorCollection(widgetId, ranges)
 
       setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
       if (index === 0) {
