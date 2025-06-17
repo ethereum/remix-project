@@ -190,7 +190,6 @@ export const EditorUI = (props: EditorUIProps) => {
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
-  let currentFunctionNode = useRef('')
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -1122,7 +1121,6 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        currenFunctionNode = functionImpl
         const generateDocumentationAction = executeGptGenerateDocumentationAction(functionImpl)
 
         generateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
