@@ -144,7 +144,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           try {
             data = await fetchContractFromEtherscan(plugin, endpoint, contractAddress, '', false, etherscanKey)
           } catch (error) {
-            await basicWorkspaceInit(workspaces, workspaceProvider)
+            return await basicWorkspaceInit(workspaces, workspaceProvider)
           }
           if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
           else await createWorkspaceTemplate(workspaceName, 'code-template')
