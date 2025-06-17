@@ -24,7 +24,7 @@ import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
-import { IPosition } from 'monaco-editor'
+import { IPosition, IRange } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 const _paq = (window._paq = window._paq || [])
 
@@ -159,8 +159,8 @@ export const EditorUI = (props: EditorUIProps) => {
   const [isSplit, setIsSplit] = useState(true)
   const [isDiff, setIsDiff] = useState(props.isDiff || false)
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
-  const [isPromptSuggestion, setIsPromptSuggestion] = useState(false)
-  const [decoratorListCollection, setDecoratorListCollection] = useState<Record<string, any>>({})
+  const [decoratorListCollection, setDecoratorListCollection] = useState<Record<string, monacoTypes.editor.IEditorDecorationsCollection>>({})
+  const [disposedWidgets, setDisposedWidgets] = useState<Record<string, Record<string, monacoTypes.IRange[]>>>({})
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -343,6 +343,72 @@ export const EditorUI = (props: EditorUIProps) => {
     if (!monacoRef.current) return
     defineAndSetTheme(monacoRef.current)
   })
+
+  useEffect(() => {
+    if (decoratorListCollection && currentFileRef.current && (props.currentFile === currentFileRef.current)) {
+      const widgetsToDispose = {}
+      Object.keys(decoratorListCollection).forEach((widgetId) => {
+        const ranges = decoratorListCollection[widgetId].getRanges()
+
+        widgetsToDispose[widgetId] = ranges
+      })
+      setDisposedWidgets({ ...disposedWidgets, [currentFileRef.current]: widgetsToDispose })
+    }
+  }, [decoratorListCollection])
+
+  useEffect(() => {
+    if (currentFileRef.current) {
+      if (props.currentFile !== currentFileRef.current) {
+        const restoredWidgets = disposedWidgets[props.currentFile]
+        if (restoredWidgets) {
+          Object.keys(restoredWidgets).forEach((widgetId) => {
+            const ranges = restoredWidgets[widgetId]
+            let decoratorList: monacoTypes.editor.IEditorDecorationsCollection
+
+            if (ranges.length === 1) {
+              decoratorList = editorRef.current.createDecorationsCollection([{
+                range: ranges[0],
+                options: {
+                  isWholeLine: true,
+                  className: 'newChangesDecoration',
+                  marginClassName: 'newChangesDecoration',
+                }
+              }])
+            } else {
+              decoratorList = editorRef.current.createDecorationsCollection([{
+                range: ranges[0],
+                options: {
+                  isWholeLine: true,
+                  className: 'newChangesDecoration',
+                  marginClassName: 'newChangesDecoration',
+                }
+              }, {
+                range: ranges[1],
+                options: {
+                  isWholeLine: true,
+                  className: 'modifiedChangesDecoration',
+                  marginClassName: 'modifiedChangesDecoration',
+                }
+              }])
+            }
+            setTimeout(() => {
+              const newEntryRange = decoratorList.getRange(0)
+
+              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+            }, 150)
+          })
+          setCurrentDiffFile(props.currentFile + '-ai')
+        }
+        if (disposedWidgets[currentFileRef.current]) {
+          Object.keys(disposedWidgets[currentFileRef.current]).forEach((widgetId) => {
+            editorRef.current.removeContentWidget({
+              getId: () => widgetId
+            })
+          })
+        }
+      }
+    }
+  }, [props.currentFile])
 
   useEffect(() => {
     if (!(editorRef.current || diffEditorRef.current ) || !props.currentFile) return

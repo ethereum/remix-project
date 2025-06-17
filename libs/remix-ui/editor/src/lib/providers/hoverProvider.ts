@@ -24,7 +24,6 @@ export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
   }
 
   async provideHover (model: monacoTypes.editor.ITextModel, position: monacoTypes.Position): Promise<monacoTypes.languages.Hover> {
-    console.log('position: ', position)
     for (const action of this.triggerRangeActions) {
       if (action.range.startLineNumber <= position.lineNumber &&
           action.range.endLineNumber >= position.lineNumber &&
