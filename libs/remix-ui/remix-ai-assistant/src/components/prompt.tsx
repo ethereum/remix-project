@@ -78,7 +78,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" htmlFor="ctx-current">
+            <label className="form-check-label custom-control-label" data-id="currentFile-context-option" htmlFor="ctx-current">
               Current file
             </label>
           </div>
@@ -94,7 +94,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" htmlFor="ctx-opened">
+            <label className="form-check-label custom-control-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
               All opened files
             </label>
           </div>
@@ -110,7 +110,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" htmlFor="ctx-workspace">
+            <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
               Workspace
             </label>
           </div>
@@ -126,7 +126,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             data-id="composer-ai-add-context"
             className="btn btn-dark btn-sm text-secondary"
           >
-          Add context&nbsp;
+          Add context
           </button>
 
           <button

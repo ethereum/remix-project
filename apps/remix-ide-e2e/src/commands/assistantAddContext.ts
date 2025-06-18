@@ -17,18 +17,34 @@ function selectCtx(browser: NightwatchBrowser, ctx: string, done: VoidFunction) 
   browser
     .waitForElementVisible('*[data-id="remix-ai-assistant"]')
     .waitForElementVisible('*[data-id="composer-ai-add-context"]')
-    .click('*[data-id="composer-ai-add-context"]')
-    .waitForElementVisible('*[data-id="currentFile-context-option"]')
+    .click({
+      locateStrategy: 'xpath',
+      selector: '//*[@data-id="composer-ai-add-context"]'
+    })
+    .click({
+      locateStrategy: 'xpath',
+      selector: '//*[@data-id="currentFile-context-option"]'
+    })
+    .pause()
     .perform(async ()=> {
       switch (ctx) {
       case 'currentFile':
-        browser.click('*[data-id="currentFile-context-option"]');
+        browser.click({
+          locateStrategy: 'xpath',
+          selector: '//*[@data-id="currentFile-context-option"]'
+        });
         break;
       case 'workspace':
-        browser.click('*[data-id="workspace-context-option"]');
+        browser.click({
+          locateStrategy: 'xpath',
+          selector: '//*[@data-id="workspace-context-option"]'
+        });
         break;
       case 'openedFiles':
-        browser.click('*[data-id="allOpenedFiles-context-option"]');
+        browser.click({
+          locateStrategy: 'xpath',
+          selector: '//*[@data-id="allOpenedFiles-context-option"]'
+        });
         break;
       default:
         break;

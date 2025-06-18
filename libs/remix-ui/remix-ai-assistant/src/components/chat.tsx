@@ -39,10 +39,10 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
           </p>
-          {DEFAULT_SUGGESTIONS.map(s => (
+          {DEFAULT_SUGGESTIONS.map((s, index) => (
             <button
               key={s}
-              data-id={`remix-ai-assistant-suggestion-${s.replace(/\s+/g, '-')}`}
+              data-id={`remix-ai-assistant-starter-${index}`}
               className="btn btn-secondary mb-2 w-100 text-left"
               onClick={() => sendPrompt(s)}
             >
