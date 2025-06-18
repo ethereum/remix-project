@@ -3,6 +3,10 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { JsonRpcProvider } from 'ethers'
 
+const branch = process.env.CIRCLE_BRANCH;
+const isMasterBranch = branch === 'master';
+const runMasterTests: boolean = (branch ? (isMasterBranch ? true : false) : true)
+
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -239,6 +243,9 @@ module.exports = {
   },
 
   'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
@@ -267,6 +274,9 @@ module.exports = {
   },
 
   'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
@@ -312,6 +322,9 @@ module.exports = {
   },
 
   'Should stay connected to mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     /*
         Should stay connected in the mainnet VM fork and: 
     - check the block number has been set to the current mainnet block number.
