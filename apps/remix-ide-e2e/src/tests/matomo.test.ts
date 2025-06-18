@@ -121,9 +121,9 @@ module.exports = {
             })
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
             .clickLaunchIcon('settings')
-            .pause(1000)
+            .waitForElementVisible('*[data-id="label-matomo-settings"]')
             .click('*[data-id="label-matomo-settings"]') // disable again
-            .pause(1000)
+            .pause(2000)
             .refreshPage()
     },
     'check old timestamp and reappear Matomo #group2': function (browser: NightwatchBrowser) {
