@@ -7,14 +7,16 @@ const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
+  monaco: any
   completionEnabled: boolean
   task: string = 'code_completion'
   currentCompletion: any
   private lastRequestTime: number = 0;
   private readonly minRequestInterval: number = 200;
 
-  constructor(props: any) {
+  constructor(props: any, monaco: any) {
     this.props = props
+    this.monaco = monaco
     this.completionEnabled = true
     this.currentCompletion = {
       text: '',
