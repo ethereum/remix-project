@@ -56,13 +56,12 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               type="radio"
               id="ctx-none"
               checked={contextChoice === 'none'}
-              data-id="none-context-option"
               onChange={() => {
                 setContextChoice('none')
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" htmlFor="ctx-none">
+            <label className="form-check-label custom-control-label" data-id="none-context-option" htmlFor="ctx-none">
               None
             </label>
           </div>
@@ -71,7 +70,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="custom-control-input"
               type="radio"
               id="ctx-current"
-              data-id="currentFile-context-option"
               checked={contextChoice === 'current'}
               onChange={() => {
                 setContextChoice('current')
@@ -87,7 +85,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="custom-control-input"
               type="radio"
               id="ctx-opened"
-              data-id="allOpenedFiles-context-option"
               checked={contextChoice === 'opened'}
               onChange={() => {
                 setContextChoice('opened')
@@ -103,7 +100,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="custom-control-input"
               type="radio"
               id="ctx-workspace"
-              data-id="workspace-context-option"
               checked={contextChoice === 'workspace'}
               onChange={() => {
                 setContextChoice('workspace')

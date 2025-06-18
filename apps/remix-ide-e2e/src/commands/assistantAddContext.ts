@@ -21,11 +21,7 @@ function selectCtx(browser: NightwatchBrowser, ctx: string, done: VoidFunction) 
       locateStrategy: 'xpath',
       selector: '//*[@data-id="composer-ai-add-context"]'
     })
-    .click({
-      locateStrategy: 'xpath',
-      selector: '//*[@data-id="currentFile-context-option"]'
-    })
-    .pause()
+    .waitForElementVisible('*[data-id="currentFile-context-option"]')
     .perform(async ()=> {
       switch (ctx) {
       case 'currentFile':
