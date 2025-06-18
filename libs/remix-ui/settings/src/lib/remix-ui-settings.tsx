@@ -314,8 +314,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
-            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoAnalytics">
+            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoPerfAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
+            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoPerfAnalytics">
               <span>
                 <FormattedMessage id="settings.matomoPerfAnalytics" />
               </span>
