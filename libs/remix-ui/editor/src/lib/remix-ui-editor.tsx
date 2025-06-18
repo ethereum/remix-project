@@ -423,7 +423,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }, [props.currentFile, isDiff, currentDiffFile])
 
   const inlineCompletionProvider = new RemixInLineCompletionProvider(props)
-  const hoverProvider = new RemixHoverProvider(props)
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -1172,7 +1171,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
-    monacoRef.current.languages.registerHoverProvider('remix-solidity', hoverProvider)
+    monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', inlineCompletionProvider)
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
