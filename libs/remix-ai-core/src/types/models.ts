@@ -62,6 +62,7 @@ const CompletionParams:IParams = {
   topP: 0.92,
   max_new_tokens: 15,
   stream_result: false,
+  max_tokens: 200,
 }
 
 const InsertionParams:IParams = {

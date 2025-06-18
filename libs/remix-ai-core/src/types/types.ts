@@ -71,6 +71,7 @@ export interface IGeneration{
 export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
+  max_tokens?: number;
   repetition_penalty?: number;
   repeat_penalty?:any
   no_repeat_ngram_size?: number;

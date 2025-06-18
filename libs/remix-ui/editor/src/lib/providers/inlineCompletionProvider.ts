@@ -164,15 +164,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   process_completion(data: any, word_after: any) {
-    let clean = data
+    const clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
       return ""
-    }
-
-    const text_after = word_after.split('\n')[0].trim()
-    if (clean.toLowerCase().includes(text_after.toLowerCase())){
-      clean = clean.replace(text_after, '') // apply regex to conserve the case
     }
 
     return clean

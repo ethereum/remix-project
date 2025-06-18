@@ -112,12 +112,14 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   }
 
   async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
+    options.max_tokens = 10
     const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
       'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
   async code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, options:IParams=InsertionParams): Promise<any> {
+    options.max_tokens = 100
     const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, 'ctxFiles':ctxFiles,
       'currentFileName':fileName, ...options, prompt: '' }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
