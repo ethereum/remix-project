@@ -36,7 +36,7 @@ export default class SettingsTab extends ViewPlugin {
   }
   element: HTMLDivElement
   public useMatomoAnalytics: any
-  public useMatomoPerfAnalytics: any
+  public useMatomoPerfAnalytics: boolean
   public useCopilot: any
   dispatch: React.Dispatch<any> = () => {}
   constructor(config, editor) {
