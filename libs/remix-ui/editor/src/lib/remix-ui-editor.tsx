@@ -1383,7 +1383,7 @@ export const EditorUI = (props: EditorUIProps) => {
         original={''}
         modified={''}
         onMount={handleDiffEditorDidMount}
-        options={{ readOnly: false, renderSideBySide: false, originalEditable: true, renderIndicators: true, fixedOverflowWidgets: true, lightbulb: { enabled: true } }}
+        options={{ readOnly: false, renderSideBySide: isSplit }}
         width='100%'
         height={isDiff ? '100%' : '0%'}
         className={isDiff ? "d-block" : "d-none"}
