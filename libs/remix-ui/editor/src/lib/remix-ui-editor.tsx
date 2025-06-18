@@ -378,6 +378,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
               addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
             }, 150)
+            setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
           })
           // set the current diff file, this is needed to avoid removeAllWidgets called more than once, because the currentFileChanged event is broken and fired more than once.
           setCurrentDiffFile(props.currentFile + '-ai')
