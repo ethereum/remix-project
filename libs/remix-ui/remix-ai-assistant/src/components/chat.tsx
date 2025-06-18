@@ -42,6 +42,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
           {DEFAULT_SUGGESTIONS.map(s => (
             <button
               key={s}
+              data-id={`remix-ai-assistant-suggestion-${s.replace(/\s+/g, '-')}`}
               className="btn btn-secondary mb-2 w-100 text-left"
               onClick={() => sendPrompt(s)}
             >
@@ -66,7 +67,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div data-region="chat-bubble-section" className="flex-grow-1 w-25 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 mr-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">

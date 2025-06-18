@@ -21,15 +21,15 @@ module.exports = {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
-
+  // Conversation starter button with data id 'explain-editor' doesn't exist anymore
   'Should explain the contract #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="explain-editor"]')
-      .click('*[data-id="explain-editor"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-suggestion-Explain-what-a-modifier-is"]')
+      .click('*[data-id="remix-ai-assistant-suggestion-Explain-what-a-modifier-is"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain the current code")]'
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
       })
       .waitForElementPresent({
         locateStrategy: 'xpath',
@@ -80,7 +80,6 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
       .assistantAddContext('currentFile')
       .waitForElementVisible({
@@ -171,7 +170,6 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
       .click('*[data-id="composer-ai-workspace-generate"]')
       .waitForElementVisible('*[data-id="generate-workspaceModalDialogModalBody-react"]')
@@ -229,8 +227,6 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
       })
-
-
   },
   'Generate new workspaces code with all AI assistant providers #group1': function (browser: NightwatchBrowser) {
     browser
@@ -250,8 +246,6 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
       })
-
-
       .assistantClearChat()
 
       .clickLaunchIcon('remixaiassistant')
@@ -269,7 +263,6 @@ module.exports = {
   },
   "Should close the AI assistant #group1": function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .click('*[data-id="movePluginToLeft"]')
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 5000)
