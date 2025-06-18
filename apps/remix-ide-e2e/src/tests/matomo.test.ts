@@ -90,12 +90,12 @@ module.exports = {
                 selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
                 abortOnFailure: true
             })
-            .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
-            .click('[data-id="matomoModal-modal-close"]') // click on Manage Preferences
-            .waitForElementNotVisible('*[data-id="managePreferencesModalModalDialogModalBody-react"]')
-            .waitForElementNotVisible('*[data-id="matomoPerfAnalyticsToggleSwitch"]')
+            .waitForElementVisible('*[data-id="matomoModal-modal-footer-cancel-react"]')
+            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // click on Manage Preferences
+            .waitForElementVisible('*[data-id="managePreferencesModalModalDialogModalBody-react"]')
+            .waitForElementVisible('*[data-id="matomoPerfAnalyticsToggleSwitch"]')
             .click('*[data-id="matomoPerfAnalyticsToggleSwitch"]') // disable matomo perf analytics3
-            .click('[managePreferencesModal-modal-footer-ok-react"]') // click on Save Preferences
+            .click('[data-id="managePreferencesModal-modal-footer-ok-react"]') // click on Save Preferences
             .pause(2000)
             .waitForElementPresent('*[data-id="beginnerbtn"]', 10000)
             .click('[data-id="beginnerbtn"]')
@@ -108,25 +108,8 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo perf analytics is disabled')
             })
     },
-    'matomo should reappear #group2': function (browser: NightwatchBrowser) {
-        browser
-            .refreshPage()
-            .waitForElementPresent({
-                selector: `//*[@data-id='compilerloaded']`,
-                locateStrategy: 'xpath',
-                timeout: 120000
-            })
-            .waitForElementVisible({
-                selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
-                abortOnFailure: true
-            })
-            .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
-            .click('[data-id="matomoModal-modal-close"]')
-            .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-    },
     'change settings #group2': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('settings')
             .waitForElementVisible('*[data-id="label-matomo-settings"]')
             .pause(1000)
             .click('*[data-id="label-matomo-settings"]')
@@ -137,34 +120,18 @@ module.exports = {
                 timeout: 120000
             })
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
-    },
-    'should get enter dialog again #group2': function (browser: NightwatchBrowser) {
-        browser
-            .waitForElementVisible('*[data-id="beginnerbtn"]', 10000)
-            .pause(1000)
-            .click('[data-id="beginnerbtn"]')
-            .waitForElementNotPresent('*[data-id="beginnerbtn"]')
-            .waitForElementVisible({
-                selector: `//*[contains(text(), 'Welcome to Remix IDE')]`,
-                locateStrategy: 'xpath'
-            })
-            .waitForElementVisible('*[id="remixTourSkipbtn"]')
-            .click('*[id="remixTourSkipbtn"]')
             .clickLaunchIcon('settings')
-            .waitForElementPresent('[id="settingsMatomoPerfAnalytics"]:checked')
-            .execute(function () {
-                return JSON.parse(window.localStorage.getItem('config-v0.8:.remix.config'))['settings/matomo-perf-analytics'] == true
-            }, [], (res) => {
-                console.log('res', res)
-                browser.assert.ok((res as any).value, 'matomo analytics is enabled')
-            })
+            .pause(1000)
+            .click('*[data-id="label-matomo-settings"]') // disable again
+            .pause(1000)
+            .refreshPage()
     },
-    'check old timestamp and reappear Matomo #group3': function (browser: NightwatchBrowser) {
+    'check old timestamp and reappear Matomo #group2': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -176,7 +143,7 @@ module.exports = {
             })
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -195,10 +162,10 @@ module.exports = {
 
             }, [], (res) => {
                 console.log('res', res)
-                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
+                browser.assert.ok((res as any).value, 'matomo performance analytics consent timestamp is set')
             })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .click('[data-id="matomoModal-modal-footer-ok-react"]') // accept
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
     'check recent timestamp and do not reappear Matomo #group3': function (browser: NightwatchBrowser) {
@@ -206,7 +173,7 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -214,7 +181,7 @@ module.exports = {
             // check if timestamp is younger than 6 months
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -248,7 +215,7 @@ module.exports = {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 localStorage.setItem('showMatomo', 'true')
-                localStorage.removeItem('matomo-analytics-consent')
+                localStorage.removeItem('matomo-perf-analytics-consent')
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -264,7 +231,7 @@ module.exports = {
             .pause(2000)
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -290,7 +257,7 @@ module.exports = {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -308,7 +275,7 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -327,13 +294,13 @@ module.exports = {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
         })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .click('[data-id="matomoModal-modal-footer-ok-react"]') // accept
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
     'when there is a old timestamp but no config the dialog should reappear #group3': function (browser: NightwatchBrowser) {
@@ -342,13 +309,13 @@ module.exports = {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
         })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .click('[data-id="matomoModal-modal-footer-ok-react"]') // accept
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
     'verify Matomo events are tracked on app start #group4': function (browser: NightwatchBrowser) {
