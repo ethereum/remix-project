@@ -16,10 +16,10 @@ interface MatomoDialogProps {
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  let { settings, showMatomo } = useContext(AppContext)
+  const { settings, showMatomo } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
-  
+
   const message = () => {
     return (
       <>
