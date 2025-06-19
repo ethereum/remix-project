@@ -32,8 +32,8 @@ export const ElectronMenu = (props: {
       (global.fs.browser.isSuccessfulWorkspace ? null :
         <>
           <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary mb-1'><FormattedMessage id="electron.openFolder" /></div>
-          <div data-id="openFolderButton" onClick={async () => { await props.createWorkspace() }} className='btn btn-primary mb-1'><FormattedMessage id="electron.createProject" /></div>
-          <div data-id="openFolderButton" onClick={async () => { props.clone() }} className='btn btn-primary'><FormattedMessage id="electron.gitClone" /></div>
+          <div data-id="createWorkspaceButton" onClick={async () => { await props.createWorkspace() }} className='btn btn-primary mb-1'><FormattedMessage id="electron.createProject" /></div>
+          <div data-id="cloneFromGitButton" onClick={async () => { props.clone() }} className='btn btn-primary'><FormattedMessage id="electron.gitClone" /></div>
 
           {global.fs.browser.recentFolders.length > 0 ?
             <>
