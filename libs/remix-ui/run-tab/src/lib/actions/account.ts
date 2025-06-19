@@ -55,6 +55,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
     }
   } catch (e) {
     plugin.call('notification', 'toast', `Cannot get account list: ${e}`)
+    dispatch(fetchAccountsListFailed(e.message))
   }
 }
 
@@ -78,9 +79,7 @@ export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any
     } else {
       plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
         plugin.call('notification', 'toast', alertMsg)
-      }, async () => {
-        setFinalContext(plugin, dispatch)
-      })
+      }, async () => {})
     }
   }
 }
@@ -315,9 +314,7 @@ const setWalletConnectExecutionContext = (plugin: RunTab, dispatch: React.Dispat
     plugin.on('walletconnect', 'connectionSuccessful', () => {
       plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
         plugin.call('notification', 'toast', alertMsg)
-      }, async () => {
-        setFinalContext(plugin, dispatch)
-      })
+      }, async () => {})
     })
     plugin.on('walletconnect', 'connectionFailed', (msg) => {
       plugin.call('notification', 'toast', msg)
