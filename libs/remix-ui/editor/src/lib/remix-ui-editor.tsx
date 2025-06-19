@@ -9,7 +9,6 @@ import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solid
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
-import { vyperTokenProvider, vyperLanguageConfig } from './syntaxes/vyper'
 import { tomlLanguageConfig, tomlTokenProvider } from './syntaxes/toml'
 import { monacoTypes } from '@remix-ui/editor'
 import { loadTypes } from './web-types'
@@ -427,8 +426,6 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
     } else if (file.language === 'noir') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-noir')
-    } else if (file.language === 'python') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-vyper')
     }
   }, [props.currentFile, props.isDiff])
 
@@ -1129,7 +1126,6 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
     monacoRef.current.languages.register({ id: 'remix-move' })
     monacoRef.current.languages.register({ id: 'remix-circom' })
-    monacoRef.current.languages.register({ id: 'remix-vyper' })
     monacoRef.current.languages.register({ id: 'remix-toml' })
     monacoRef.current.languages.register({ id: 'remix-noir' })
 
@@ -1154,7 +1150,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-circom', circomTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-circom', circomLanguageConfig(monacoRef.current) as any)
-    monacoRef.current.languages.registerInlineCompletionsProvider('remix-circom', inlineCompletionProvider)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-toml', tomlTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-toml', tomlLanguageConfig as any)
@@ -1169,11 +1164,6 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', inlineCompletionProvider)
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
-
-    monacoRef.current.languages.setMonarchTokensProvider('remix-vyper', vyperTokenProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-vyper', vyperLanguageConfig as any)
-    monacoRef.current.languages.registerCompletionItemProvider('remix-vyper', new RemixCompletionProvider(props, monaco))
-    monacoRef.current.languages.registerInlineCompletionsProvider('remix-vyper', inlineCompletionProvider)
 
     loadTypes(monacoRef.current)
   }

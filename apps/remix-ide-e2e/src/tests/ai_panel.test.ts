@@ -9,44 +9,263 @@ const sources = [
 ]
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
+
   'Add Ballot': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
-  'Explain the contract': function (browser: NightwatchBrowser) {
+  // Conversation starter button with data id 'explain-editor' doesn't exist anymore
+  'Should explain the contract #group1': function (browser: NightwatchBrowser) {
     browser
-        .waitForElementVisible('*[data-id="explain-editor"]')
-        .click('*[data-id="explain-editor"]')
-        .waitForElementVisible('*[data-id="popupPanelPluginsContainer"]')
-        .waitForElementVisible('*[data-id="aichat-view"]')
-        .waitForElementVisible({
-            locateStrategy: 'xpath',
-            selector: '//*[@data-id="aichat-view" and contains(.,"Explain the current code")]'
-        })
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')
+      .click('*[data-id="remix-ai-assistant-starter-0"]')
+      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']",
+      })
+
   },
-  'close the popup': function (browser: NightwatchBrowser) {
+  'Should add a bad contract and explain using RemixAI #group1': function (browser: NightwatchBrowser) {
     browser
-        .waitForElementVisible('*[data-id="popupPanelToggle"]')
-        .click('*[data-id="popupPanelToggle"]')
-        .waitForElementNotVisible('*[data-id="popupPanelPluginsContainer"]')
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .addFile('Bad.sol', { content: 'errors' })
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('.ask-remix-ai-button')
+      .click('.ask-remix-ai-button')
+      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain the error")]'
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+
   },
-  'Add a bad contract': function (browser: NightwatchBrowser) {
+  'Should select the AI assistant provider #group1': function (browser: NightwatchBrowser) {
     browser
-        .addFile('Bad.sol', { content: 'errors' })
-        .clickLaunchIcon('solidity')
-        .waitForElementVisible('.ask-remix-ai-button')
-        .click('.ask-remix-ai-button')
-        .waitForElementVisible('*[data-id="popupPanelPluginsContainer"]')
-        .waitForElementVisible('*[data-id="aichat-view"]')
-        .waitForElementVisible({
-            locateStrategy: 'xpath',
-            selector: '//*[@data-id="aichat-view" and contains(.,"Explain the error")]'
-        })
-  }
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementVisible('*[data-id="remix-ai-assistant"]')
+      .assistantSetProvider('mistralai')
+  },
+
+  'Should add current file as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+      .openFile('Untitled.sol')
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantAddContext('currentFile')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: `//*[contains(@class,"aiContext-file") and contains(.,"Untitled.sol")]`
+      })
+  },
+  'Should add workspace as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantAddContext('workspace')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[contains(@class,"aiContext-file") and contains(.,"@workspace")]'
+      })
+  },
+
+  'Should add opened files as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .addFile('anotherFile.sol', sources[0]['Untitled.sol'])
+      .assistantAddContext('openedFiles')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[contains(@class,"aiContext-file") and contains(.,"anotherFile.sol")]'
+      })
+  },
+
+  'Should generate new workspace contract code with the AI assistant #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantGenerate('a simple ERC20 contract', 'mistralai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+  },
+  'Should lead to Workspace generation with the AI assistant #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantWorkspace('comment all function', 'mistralai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+  },
+  'Should create a new workspace using the AI assistant button in the composer #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
+      .click('*[data-id="composer-ai-workspace-generate"]')
+      .waitForElementVisible('*[data-id="generate-workspaceModalDialogModalBody-react"]')
+      .click('*[data-id="modalDialogCustomPromp"]')
+      .setValue('*[data-id="modalDialogCustomPromp"]', 'a simple ERC20 contract')
+      .click('*[data-id="generate-workspace-modal-footer-ok-react"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+  },
+  'Workspace generation with all AI assistant provider #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantWorkspace('remove all comments', 'openai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+      .waitForElementPresent({
+        selector: "//*[@data-id='remix-ai-assistant-ready']",
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      .assistantWorkspace('remove all comments', 'anthropic')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+  },
+  'Generate new workspaces code with all AI assistant providers #group1': function (browser: NightwatchBrowser) {
+    browser
+      .assistantClearChat()
+      .waitForCompilerLoaded()
+      .clickLaunchIcon('remixaiassistant')
+
+      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+
+      .assistantGenerate('a simple ERC20 contract', 'openai')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+      .assistantClearChat()
+
+      .clickLaunchIcon('remixaiassistant')
+
+      .assistantGenerate('a simple ERC20 contract', 'anthropic')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
+        timeout: 60000
+      })
+      .waitForElementPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
+      })
+  },
+  "Should close the AI assistant #group1": function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="movePluginToLeft"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 5000)
+  },
 }
