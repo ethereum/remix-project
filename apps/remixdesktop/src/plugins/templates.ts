@@ -78,7 +78,14 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
 
   async addToCurrentElectronFolder(files: any) {
     let folder = await this.call('fs' as any, 'getWorkingDir')
-    if (!folder || folder === '') return
+    if (!folder || folder === '') {
+      this.call('notification' as any, 'alert', {
+        title: 'No folder selected',
+        id: 'noFolderSelected',
+        message: 'No folder is opened. Please select or open a folder first.',
+      })
+      return
+    }
     // @ts-ignore
 
     for (const file in files) {

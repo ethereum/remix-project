@@ -25,15 +25,12 @@ export class TemplatesPlugin extends Plugin {
     }
     // @ts-ignore
     const files = await templateWithContent[template](opts, this)
-    console.log('files', files)
     return files
   }
   // electron only method
 
   async addToCurrentElectronFolder(template: string, opts?: any) {
-    console.log('addToCurrentElectronFolder', template)
     const metadata = TEMPLATE_METADATA[template]
-    console.log('metadata', metadata)
     if (metadata) {
       if (metadata.type === 'git' || metadata.type === 'plugin') {
         this.call('notification', 'alert', {
@@ -49,9 +46,7 @@ export class TemplatesPlugin extends Plugin {
 
 
   async loadTemplateInNewWindow(template: string, opts?: any) {
-    console.log('loadTemplateInNewWindow', template, opts)
     const metadata = TEMPLATE_METADATA[template]
-    console.log('metadata', metadata)
     if (metadata) {
       if (metadata.type === 'git') {
 
