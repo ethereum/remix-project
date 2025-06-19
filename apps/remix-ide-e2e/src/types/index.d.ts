@@ -69,7 +69,7 @@ declare module 'nightwatch' {
     getBrowserLogs(this: NightwatchBrowser): NightwatchBrowser
     currentSelectedFileIs(name: string): NightwatchBrowser
     switchWorkspace: (workspaceName: string) => NightwatchBrowser
-    switchEnvironment: (provider: string) => NightwatchBrowser
+    switchEnvironment: (provider: string, returnWhenInitialized?: boolean) => NightwatchBrowser
     pinGrid: (provider: string, status: boolean) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser

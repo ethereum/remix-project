@@ -29,7 +29,7 @@ export class ExecutionContext {
   stopListenOnLastBlock(): void;
   // eslint-disable-next-line no-undef
   listenOnLastBlockId: NodeJS.Timer;
-  _updateChainContext(): Promise<void>;
+  _updateChainContext(): Promise<boolean>;
   listenOnLastBlock(): void;
   txDetailsLink(network: any, hash: any): any;
   getStateDetails(): Promise<string>
