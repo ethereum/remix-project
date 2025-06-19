@@ -16,6 +16,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
 import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper, VyperCompilationError } from './utils/types'
+import { endpointUrls } from '@remix-endpoints-helper'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -107,7 +108,7 @@ const App = () => {
   }
 
   function compilerUrl() {
-    return state.environment === 'remote' ? 'https://vyper2.remixproject.org/' : state.localUrl
+    return state.environment === 'remote' ? `${endpointUrls.vyper2}/` : state.localUrl
   }
 
   function resetCompilerResultState() {

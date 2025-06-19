@@ -49,10 +49,6 @@ export class ExecutionContext {
     return this.customNetWorks[this.executionContext]
   }
 
-  getSelectedAddress () {
-    return injectedProvider ? injectedProvider.selectedAddress : null
-  }
-
   getCurrentFork () {
     return this.currentFork
   }

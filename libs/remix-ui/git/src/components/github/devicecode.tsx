@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
-import { Card } from "react-bootstrap";
 import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
 import { endpointUrls } from "@remix-endpoints-helper";
+import isElectron from "is-electron";
+import { set } from "lodash";
+import { use } from "chai";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -14,8 +16,76 @@ export const GetDeviceCode = () => {
   const pluginActions = React.useContext(pluginActionsContext)
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
+  const [popupError, setPopupError] = useState(false)
+  const [desktopIsLoading, setDesktopIsLoading] = React.useState<boolean>(false)
+
+  const popupRef = useRef<Window | null>(null)
+
+  // Dynamically select the GitHub OAuth client ID based on the hostname
+  const getClientId = async () => {
+    const host = isElectron() ? 'desktop' : window.location.hostname
+    // fetch it with axios from `${endpointUrls.gitHubLoginProxy}/client-id?host=${host}`
+    try {
+      const response = await axios.get(`${endpointUrls.gitHubLoginProxy}/client/${host}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      })
+      return response.data.client_id
+    }
+    catch (error) {
+      throw new Error('Failed to fetch GitHub client ID')
+    }
+
+  }
+
+  const openPopupLogin = useCallback(async () => {
+
+    if (isElectron()) {
+      setDesktopIsLoading(true)
+      pluginActions.loginWithGitHub()
+      return
+    }
+
+    const clientId = await getClientId()
+    const redirectUri = `${window.location.origin}/?source=github`
+    const scope = 'repo gist user:email read:user'
+
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
+
+    const popup = window.open(url, '_blank', 'width=600,height=700')
+    if (!popup) {
+      console.warn('Popup blocked or failed to open, falling back to device code flow.')
+      await getDeviceCodeFromGitHub()
+      return
+    }
+    popupRef.current = popup
+
+    const messageListener = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+
+      if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
+        const token = event.data.token
+        await pluginActions.saveToken(token)
+        await actions.loadGitHubUserFromToken()
+        setAuthorized(true)
+        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
+        window.removeEventListener('message', messageListener)
+        popup?.close()
+      } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
+        setPopupError(true)
+        window.removeEventListener('message', messageListener)
+        popup?.close()
+      }
+    }
+
+    window.addEventListener('message', messageListener)
+  }, [actions, pluginActions])
 
   const getDeviceCodeFromGitHub = async () => {
+    setDesktopIsLoading(false)
+    setPopupError(false)
     await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
     setAuthorized(false)
     // Send a POST request
@@ -43,7 +113,7 @@ export const GetDeviceCode = () => {
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
-      url:`${endpointUrls.github}/login/oauth/access_token`,
+      url: `${endpointUrls.github}/login/oauth/access_token`,
       data: {
         client_id: '2795b4e41e7197d6ea11',
         device_code: gitHubResponse.device_code,
@@ -68,6 +138,12 @@ export const GetDeviceCode = () => {
     }
   }
 
+  useEffect(() => {
+    if (context.gitHubUser && context.gitHubUser.isConnected) {
+      setDesktopIsLoading(false)
+    }
+  },[context.gitHubUser])
+
   const disconnect = async () => {
     await sendToMatomo(gitMatomoEventTypes.DISCONNECTFROMGITHUB)
     setAuthorized(false)
@@ -80,10 +156,28 @@ export const GetDeviceCode = () => {
     <>
       {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
-        <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
-          await getDeviceCodeFromGitHub()
-        }}><i className="fab fa-github mr-1"></i>Login with GitHub</button></>
-      }
+        <button className='btn btn-secondary mt-1 w-100' onClick={openPopupLogin}>
+          <i className="fab fa-github mr-1"></i>Login with GitHub
+        </button>
+        {popupError && !gitHubResponse && !authorized && (
+          <div className="alert alert-warning mt-2" role="alert">
+            GitHub login failed. You can continue using another method.
+            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={getDeviceCodeFromGitHub}>
+              Use another method
+            </button>
+          </div>
+        )}
+        {desktopIsLoading && <div className="text-center mt-2">
+          <i className="fas fa-spinner fa-spin fa-2x mt-1"></i>
+          <div className="alert alert-warning mt-2" role="alert">
+            In case of issues, you can try another method.
+            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={getDeviceCodeFromGitHub}>
+              Use another method
+            </button>
+          </div>
+        </div>
+        }
+      </>}
       {gitHubResponse && !authorized &&
         <div className="pt-2">
 

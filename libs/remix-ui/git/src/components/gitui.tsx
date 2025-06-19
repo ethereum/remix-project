@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState, useContext } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog, setStateGitLogCount } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, openFolderInSameWindow, sendToMatomo, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, openFolderInSameWindow, sendToMatomo, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged, loginWithGitHub } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { IGitUi, defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
@@ -177,7 +177,8 @@ export const GitUI = (props: IGitUi) => {
     saveGitHubCredentials,
     getGitHubCredentialsFromLocalStorage,
     showAlert,
-    openFolderInSameWindow
+    openFolderInSameWindow,
+    loginWithGitHub
   }
 
   return (

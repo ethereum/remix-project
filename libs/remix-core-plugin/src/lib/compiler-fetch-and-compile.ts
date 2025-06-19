@@ -176,6 +176,21 @@ export class FetchAndCompile extends Plugin {
       }
     }
     const { config, compilationTargets, version } = data
+    /*
+    * If the remappings are defined in the config, we need to update them to point to the targetPath
+    * it's beeing disabled for the moment.
+    */
+    /*if (config && config.settings && config.settings.remappings) {
+      console.log(config.settings.remappings)
+      config.settings.remappings = config.settings.remappings.map((remapping) => {
+        let [virtual, path] = remapping.split('=')
+        if (virtual.includes(':')) {
+          let [scope, path] = virtual.split(':')
+          virtual = `${targetPath}/${scope}:${path}`
+        }
+        return `${virtual}=${targetPath}/${path}`
+      })
+    }*/
 
     try {
       setTimeout(_ => this.emit('compiling', config.settings), 0)

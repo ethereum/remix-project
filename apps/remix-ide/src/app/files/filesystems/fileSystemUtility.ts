@@ -173,9 +173,9 @@ export const migrationTestData = {
               '.workspaces/workspace_test/test_contracts/1_Storage.sol': {
                 content: 'testing'
               },
-              '.workspaces/workspace_test/test_contracts/artifacts': {
+              '.workspaces/workspace_test/artifacts': {
                 children: {
-                  '.workspaces/workspace_test/test_contracts/artifacts/Storage_metadata.json': {
+                  '.workspaces/workspace_test/artifacts/Storage_metadata.json': {
                     content: '{ "test": "data" }'
                   }
                 }

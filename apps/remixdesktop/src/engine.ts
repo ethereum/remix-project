@@ -17,6 +17,7 @@ import { HardhatPlugin } from './plugins/hardhatPlugin';
 import { CircomElectronPlugin } from './plugins/circomElectronBasePlugin';
 import { isE2E } from './main';
 import { DesktopHostPlugin } from './plugins/desktopHost';
+import { GitHubAuthHandler } from './plugins/githubAuthHandler';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -34,6 +35,7 @@ const hardhatPlugin = new HardhatPlugin()
 const remixAIDesktopPlugin = new RemixAIDesktopPlugin()
 const circomPlugin = new CircomElectronPlugin()
 const desktopHostPlugin = new DesktopHostPlugin()
+export const githubAuthHandlerPlugin  = new GitHubAuthHandler()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -50,6 +52,7 @@ engine.register(hardhatPlugin)
 engine.register(remixAIDesktopPlugin)
 engine.register(circomPlugin)
 engine.register(desktopHostPlugin)
+engine.register(githubAuthHandlerPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
@@ -90,7 +93,6 @@ ipcMain.on('git:startclone', async (event) => {
 ipcMain.handle('getWebContentsID', (event, message) => {
   return event.sender.id
 })
-
 
 app.on('before-quit', async (event) => {
   await appManager.call('fs', 'removeCloseListener')

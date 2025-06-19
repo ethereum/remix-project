@@ -82,7 +82,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
       [contractName] : { content : contract.content }
     }
   }
-
+console.log('compilePackage', `${url}compile`)
   let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
