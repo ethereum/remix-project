@@ -110,6 +110,8 @@ module.exports = {
     },
     'change settings #group2': function (browser: NightwatchBrowser) {
         browser
+            .waitForElementVisible('*[id="remixTourSkipbtn"]')
+            .click('*[id="remixTourSkipbtn"]')
             .waitForElementVisible('*[data-id="label-matomo-settings"]')
             .pause(1000)
             .click('*[data-id="label-matomo-settings"]')
