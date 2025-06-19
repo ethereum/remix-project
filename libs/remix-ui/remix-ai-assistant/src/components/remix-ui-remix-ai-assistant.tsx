@@ -186,8 +186,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           return
         }
 
-        GenerationParams.stream_result = true
-        GenerationParams.return_stream_response = true
+        GenerationParams.stream_result = false
+        GenerationParams.return_stream_response = false
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending

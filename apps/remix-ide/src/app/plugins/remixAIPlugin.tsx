@@ -40,7 +40,7 @@ export class RemixAIPlugin extends Plugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'mistralai'
+  assistantProvider: string = 'openai'
   useRemoteInferencer:boolean = false
   completionAgent: CodeCompletionAgent
 
@@ -151,7 +151,7 @@ export class RemixAIPlugin extends Plugin {
     return result
   }
 
-  async error_explaining(prompt: string, context: string="", params: IParams=GenerationParams): Promise<any> {
+  async error_explaining(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)

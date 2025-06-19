@@ -23,7 +23,9 @@ export const HandleStreamResponse = async (streamResponse, cb: (streamText: stri
 
     // Check for missing body in the streamResponse
     if (!reader) {
-      console.error('Stream response body is missing.');
+      // most likely no stream response, so we can just return the result
+      cb(streamResponse.result)
+      done_cb?.("");
       return;
     }
 
