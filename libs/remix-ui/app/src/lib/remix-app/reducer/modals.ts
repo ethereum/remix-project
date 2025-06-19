@@ -24,6 +24,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       resolve: action.payload.resolve,
       next: action.payload.next,
       data: action.payload.data,
+      showCancelIcon: action.payload.showCancelIcon,
       preventBlur: action.payload.preventBlur
     }
 

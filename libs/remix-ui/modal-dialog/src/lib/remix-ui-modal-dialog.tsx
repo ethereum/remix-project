@@ -12,6 +12,7 @@ declare global {
 }
 
 export const ModalDialog = (props: ModalDialogProps) => {
+
   const [state, setState] = useState({
     toggleBtn: true
   })

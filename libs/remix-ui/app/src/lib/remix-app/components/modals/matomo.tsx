@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
-import { AppModalCancelTypes } from '../../types'
 declare global {
   interface Window {
     _paq: any
@@ -11,12 +10,13 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 interface MatomoDialogProps {
-  okFn: () => void
+  acceptAllFn: () => void
+  managePreferencesFn: () => void
   hide: boolean
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  const { settings, showMatomo, appManager } = useContext(AppContext)
+  const { settings, showMatomo } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
 
@@ -28,36 +28,22 @@ const MatomoDialog = (props: MatomoDialogProps) => {
             id="remixApp.matomoText1"
             values={{
               a: (chunks) => (
+                <a href="https://remix-ide.readthedocs.io/en/latest/ai.html" target="_blank" rel="noreferrer">
+                  {chunks}
+                </a>
+              ),
+            }}
+          /><br/>
+          <FormattedMessage
+            id="remixApp.matomoText2"
+            values={{
+              a: (chunks) => (
                 <a href="https://matomo.org" target="_blank" rel="noreferrer">
                   {chunks}
                 </a>
               ),
             }}
           />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText2" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText3" />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText4" />
-        </p>
-        <p>
-          <FormattedMessage
-            id="remixApp.matomoText5"
-            values={{
-              a: (chunks) => (
-                <a href="https://medium.com/p/66ef69e14931/" target="_blank" rel="noreferrer">
-                  {chunks}
-                </a>
-              ),
-            }}
-          />
-        </p>
-        <p>
-          <FormattedMessage id="remixApp.matomoText6" />
         </p>
       </>
     )
@@ -70,30 +56,28 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         title: <FormattedMessage id="remixApp.matomoTitle" />,
         message: message(),
         okLabel: <FormattedMessage id="remixApp.accept" />,
-        okFn: handleModalOkClick,
-        cancelLabel: <FormattedMessage id="remixApp.decline" />,
-        cancelFn: declineModal,
+        okFn: handleAcceptAllClick,
+        cancelLabel: <FormattedMessage id="remixApp.managePreferences" />,
+        cancelFn: handleManagePreferencesClick,
+        showCancelIcon: true,
         preventBlur: true
       })
     }
   }, [visible])
 
-  const declineModal = async (reason: AppModalCancelTypes) => {
-    if (reason === AppModalCancelTypes.click || reason === AppModalCancelTypes.enter) {
-      settings.updateMatomoAnalyticsChoice(false)
-      // revoke tracking consent
-      _paq.push(['forgetConsentGiven'])
-      setVisible(false)
-    }
+  const handleAcceptAllClick = async () => {
+    _paq.push(['setConsentGiven']) // default consent to process their anonymous data
+    _paq.push(['setMatomoPerfConsentGiven']) // user has given consent to process their performance data
+    settings.updateMatomoAnalyticsChoice(true) // Enable Matomo Anonymous analytics
+    settings.updateMatomoPerfAnalyticsChoice(true) // Enable Matomo Performance analytics
+    settings.updateCopilotChoice(true) // Enable RemixAI copilot
+    setVisible(false)
+    props.acceptAllFn()
   }
 
-  const handleModalOkClick = async () => {
-
-    // user has given consent to process their data
-    _paq.push(['setConsentGiven'])
-    settings.updateMatomoAnalyticsChoice(true)
+  const handleManagePreferencesClick = async () => {
     setVisible(false)
-    props.okFn()
+    props.managePreferencesFn()
   }
 
   return <></>
