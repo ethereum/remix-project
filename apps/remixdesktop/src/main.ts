@@ -92,7 +92,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 app.on('ready', async () => {
   trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
-  registerLinuxProtocolHandler();
+  //registerLinuxProtocolHandler();
   require('./engine')
 });
 
@@ -112,7 +112,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
+/*
 app.setAsDefaultProtocolClient('remix')
 // windows only
 const gotTheLock = app.requestSingleInstanceLock();
@@ -216,6 +216,8 @@ app.on('open-url', async (event, url) => {
   event.preventDefault();
   handleRemixUrl(url);
 });
+
+*/
 
 const showAbout = () => {
   void dialog.showMessageBox({
