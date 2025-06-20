@@ -14,13 +14,20 @@ export class NodeProvider {
   }
 
   getAccounts (cb) {
-    if (this.config.get('settings/personal-mode')) {
-      return this.executionContext.web3().eth.personal.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
+    if (!this.executionContext.isConnected) {
+      return cb('Not connected to a node')
     }
-    return this.executionContext.web3().eth.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
+    if (this.config.get('settings/personal-mode')) {
+      this.executionContext.web3().eth.personal.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
+      return
+    }
+    this.executionContext.web3().eth.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
   }
 
   newAccount (passwordPromptCb, cb) {
+    if (!this.executionContext.isConnected) {
+      return cb('Not connected to a node')
+    }
     if (!this.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
@@ -44,6 +51,9 @@ export class NodeProvider {
   }
 
   signMessage (message, account, passphrase, cb) {
+    if (!this.executionContext.isConnected) {
+      return cb('Not connected to a node')
+    }
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)

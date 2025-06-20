@@ -8,6 +8,7 @@ interface ModalWrapperProps extends ModalDialogProps {
 }
 
 const ModalWrapper = (props: ModalWrapperProps) => {
+
   const [state, setState] = useState<ModalDialogProps>()
   const ref = useRef()
   const formRef = useRef()
@@ -155,6 +156,6 @@ const ModalWrapper = (props: ModalWrapperProps) => {
 
   if (!props.id || props.id === '') return null
 
-  return <ModalDialog id={props.id} {...state} handleHide={handleHide} />
+  return <ModalDialog id={props.id} {...state} handleHide={handleHide} showCancelIcon={props.showCancelIcon} />
 }
 export default ModalWrapper

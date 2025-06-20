@@ -34,6 +34,7 @@ export class ExecutionContext {
     this.latestBlockNumber = 0
     this.txs = {}
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
+    this.isConnected = false
   }
 
   init (config) {
@@ -143,15 +144,17 @@ export class ExecutionContext {
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
+      this.isConnected = false
       var network = this.customNetWorks[context]
-      try{
+      try {
         await network.init()
         this.currentFork = network.config.fork
-        this.executionContext = context
         // injected
         web3.setProvider(network.provider)
-        await this._updateChainContext()
+        this.executionContext = context
+        this.isConnected = await this._updateChainContext()
         this.event.trigger('contextChanged', [context])
+        cb()
         cb()
       } catch (e) {
         console.error(e)
@@ -186,8 +189,10 @@ export class ExecutionContext {
       } catch (e) {
         console.error(e)
         this.blockGasLimit = this.blockGasLimitDefault
+        return false
       }
     }
+    return true
   }
 
   listenOnLastBlock () {

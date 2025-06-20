@@ -8,13 +8,24 @@
   "remixApp.enterText4": "Prototyping - trying out concepts and techniques",
   "remixApp.enterText5": "Developing  projects - Remix as your main dev tool",
   "remixApp.enterText6": "Production - only deployments",
-  "remixApp.matomoText1": "An Opt-in version of <a>Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.",
-  "remixApp.matomoText2": "We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.",
-  "remixApp.matomoText3": "All data collected through Matomo is stored on our own server - no data is ever given to third parties.",
-  "remixApp.matomoText4": "We do not collect nor store any personally identifiable information (PII).",
-  "remixApp.matomoText5": "For more info, see: <a>Matomo Analytics on Remix iDE</a>.",
-  "remixApp.matomoText6": "You can change your choice in the Settings panel anytime.",
-  "remixApp.matomoTitle": "Help us to improve Remix IDE",
+  "remixApp.matomoText1": "Remix features an AI coding assistant called <a>RemixAI</a>, that needs your approval to use.",
+  "remixApp.matomoText2": "We also use <a>Matomo</a>, an open-source analytics platform, that helps us improve your experience.",
+  "remixApp.matomoTitle": "AI and Analytics Preferences",
   "remixApp.accept": "Accept",
-  "remixApp.decline": "Decline"
+  "remixApp.managePreferences": "Manage Preferences",
+  "remixApp.savePreferences": "Save Preferences",
+  "remixApp.declineCookies": "Decline Cookies",
+  "remixApp.decline": "Decline",
+
+  "remixApp.mpOp1Title": "Matomo Anonymous Analytics (Necessary)",
+  "remixApp.mpOp1Details": "Our use of anonymous analytics data helps us improve your experience by identifying bug and important UX improvements. This data can also be used in overall statistics on Remix use in the wider Web3 ecosystem",
+  "remixApp.mpOp1Tooltip": "This is a necessary selection for a better experience of Remix IDE",
+
+  "remixApp.mpOp2Title": "Matomo Performance Analytics",
+  "remixApp.mpOp2Details": "Remix believes your privacy is of primary importance. Your help in making Remix the best possible open source public good toolset is also very important. Approval of performance analytics tracking greatly helps us refine and improve the toolset. Rest assured, we will never share this data with any third parties.",
+  "remixApp.mpOp2Link": "<a>Learn more about analytics</a>",
+
+  "remixApp.mpOp3Title": "RemixAI",
+  "remixApp.mpOp3Details": "RemixAI helps by offering code suggestions and improvements",
+  "remixApp.mpOp3Link": "<a>Learn more about RemixAI Copilot</a>"
 }
