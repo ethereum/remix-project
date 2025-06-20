@@ -78,9 +78,18 @@ export class ScriptRunnerBridgePlugin extends Plugin {
       this.renderComponent()
     })
 
-    this.plugin.on('fileManager', 'fileSaved', async (file: string) => {
-      if (file === configFileName && this.enableCustomScriptRunner) {
+    this.plugin.on('fileManager', 'fileAdded', async (file: string) => {
+      if (file === configFileName && file) {
         await this.loadCustomConfig()
+        await this.loadConfigurations()
+        this.renderComponent()
+      }
+    })
+
+    this.plugin.on('fileManager', 'fileSaved', async (file: string) => {
+      if (file === configFileName && file) {
+        await this.loadCustomConfig()
+        await this.loadConfigurations()
         this.renderComponent()
       }
     })
