@@ -1,8 +1,8 @@
-import { BaseWindow, BrowserWindow, MenuItemConstructorOptions, app, ipcMain } from 'electron';
+import { BrowserWindow, MenuItemConstructorOptions, app, ipcMain } from 'electron';
 
 export default (
   commandKeys: Record<string, string>,
-  execCommand: (command: string, focusedWindow?: BaseWindow) => void
+  execCommand: (command: string, focusedWindow?: BrowserWindow) => void
 ): MenuItemConstructorOptions => {
   const isMac = process.platform === 'darwin';
 
