@@ -42,11 +42,9 @@ const tests = {
             .click('[data-id="play-editor"]')
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
-            .openFile('circuits/.bin/simple_js')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
-            .openFile('circuits/.bin/simple_js/simple.wasm')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
     },
     'Should run setup script for simple circuit': function (browser: NightwatchBrowser) {

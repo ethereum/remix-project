@@ -118,6 +118,17 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           message: createForm({ valid: true })
         })
         break
+      case ModalTypes.fixed:
+        setState({
+          ...props,
+          okFn: null,
+          cancelFn: null,
+          okLabel: null,
+          cancelLabel: null,
+          preventBlur: true,
+          showCancelIcon: false,
+        })
+        break
       default:
         setState({
           ...props,

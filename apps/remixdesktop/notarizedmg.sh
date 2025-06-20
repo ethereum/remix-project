@@ -4,7 +4,7 @@
 JSON_FILE="dmgs.json"
 
 # Read the DMGs array from the JSON file
-DMG_PATHS=$(jq -r '.dmgs[]' "$JSON_FILE")
+MG_PATHS=$(grep -o '"[^"]*.dmg"' "$JSON_FILE" | sed 's/"//g')
 
 echo $DMG_PATHS
 

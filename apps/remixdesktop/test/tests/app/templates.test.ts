@@ -8,13 +8,10 @@ module.exports = {
   'open default template': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
-      .click('button[data-id="landingPageImportFromTemplate"]')
+      .waitForElementVisible('*[data-id="createWorkspaceButton"]')
+      .click('*[data-id="createWorkspaceButton"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementPresent('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
-      .click('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
@@ -30,6 +27,15 @@ module.exports = {
           browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
         })
       })
-      .end()
+  },
+  'open template explorer and add template to current': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]', 10000)
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacecreate.desktop"]')
+      .click('*[data-id="workspacecreate.desktop"]')
+      .waitForElementVisible('*[data-id="add-simpleEip7702"]')
+      .scrollAndClick('*[data-id="add-simpleEip7702"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcontracts/Example7702.sol"]')
   }
 }

@@ -6,7 +6,7 @@
     "icon": "assets",
     "files": [
         "build/**/*",
-        "node_modules/node-pty/**/*"
+        "node_modules/node-pty-prebuilt-multiarch/**/*"
     ],
     "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",
