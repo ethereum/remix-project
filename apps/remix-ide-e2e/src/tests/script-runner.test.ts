@@ -28,11 +28,11 @@ const tests = {
       .click('button[data-id="script-config"]')
       .waitForElementVisible('[data-id="sr-loaded-default"]')
       .waitForElementVisible('[data-id="dependency-ethers-^5"]')
-      .waitForElementVisible('[data-id="sr-load-ethers6"]')
+      .waitForElementVisible('[data-id="sr-notloaded-ethers6"]')
   },
   'Should load script runner ethers6': function (browser: NightwatchBrowser) {
     browser
-      .click('[data-id="sr-load-ethers6"]')
+      .click('[data-id="sr-notloaded-ethers6"]')
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
       .waitForElementPresent('[data-id="dependency-ethers-^6"]')
   },
@@ -74,6 +74,7 @@ const tests = {
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
       .modalFooterOKClick('TemplatesSelection')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
@@ -82,9 +83,37 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
       })
-      .waitForElementVisible('[data-id="sr-load-default"]')
+      .waitForElementVisible('[data-id="sr-loaded-default"]')
       .waitForElementVisible('[data-id="dependency-ethers-^5"]')
-      .waitForElementVisible('[data-id="sr-load-zksyncv6"]')
+      .waitForElementVisible('[data-id="sr-notloaded-zksyncv6"]')
+  },
+  'open template that sets a config': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-introToEIP7702"]')
+      .scrollAndClick('*[data-id="create-introToEIP7702"]')
+      .modalFooterOKClick('TemplatesSelection')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .click({
+        locateStrategy: 'xpath',
+        selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
+      })
+      .waitForElementVisible('[data-id="sr-notloaded-default"]')
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+  },
+  'reset to default after template': function (browser: NightwatchBrowser) {
+    browser
+      .refreshPage()
+      .waitForElementVisible('button[data-id="script-config"]')
+      .click('button[data-id="script-config"]')
+      .waitForElementVisible('[data-id="sr-notloaded-default"]')
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
   },
   'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
     browser
@@ -99,7 +128,9 @@ const tests = {
       })
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
       .waitForElementPresent('[data-id="dependency-ethers-^6"]')
-  }
+  },
+
+
 }
 
 module.exports = tests
