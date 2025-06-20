@@ -99,7 +99,7 @@ export class RemixAIPlugin extends Plugin {
         this.isInferencing = false
       })
     }
-
+    this.setAssistantProvider(this.assistantProvider) // propagate the provider to the remote inferencer
     this.aiIsActivated = true
     return true
   }
@@ -114,7 +114,6 @@ export class RemixAIPlugin extends Plugin {
 
   async code_completion(prompt: string, promptAfter: string, params:IParams=CompletionParams): Promise<any> {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
-
     const currentFileName = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(prompt)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
@@ -265,16 +264,16 @@ export class RemixAIPlugin extends Plugin {
     }
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
+  async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=CompletionParams): Promise<any> {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     const currentFileName = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(msg_pfx)
 
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx, contextfiles, currentFileName)
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx, contextfiles, currentFileName, params)
     } else {
-      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFileName)
+      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFileName, params)
     }
   }
 

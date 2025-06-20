@@ -92,6 +92,7 @@ export interface IParams {
   provider?: string;
   stream?: boolean;
   model?: string;
+  stop?: string[];
 }
 
 export enum AIRequestType {
