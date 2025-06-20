@@ -1,0 +1,67 @@
+{
+    "name": "aztec-compiler",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/aztec-compiler/src",
+    "projectType": "application",
+    "implicitDependencies": [],
+    "targets": {
+      "build": {
+        "executor": "@nrwl/webpack:webpack",
+        "outputs": ["{options.outputPath}"],
+        "defaultConfiguration": "development",
+        "options": {
+          "compiler": "babel",
+          "outputPath": "dist/apps/aztec-compiler",
+          "index": "apps/aztec-compiler/src/index.html",
+          "baseHref": "./",
+          "main": "apps/aztec-compiler/src/main.tsx",
+          "polyfills": "apps/aztec-compiler/src/polyfills.ts",
+          "tsConfig": "apps/aztec-compiler/tsconfig.app.json",
+          "assets": ["apps/aztec-compiler/src/profile.json"],
+          "styles": ["apps/aztec-compiler/src/css/app.css"],
+          "scripts": [],
+          "webpackConfig": "apps/aztec-compiler/webpack.config.js"          
+        },
+        "configurations": {
+          "development": {
+          },
+          "production": {
+            "fileReplacements": [
+              {
+                "replace": "apps/aztec-compiler/src/environments/environment.ts",
+                "with": "apps/aztec-compiler/src/environments/environment.prod.ts"
+              }
+            ]
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nrwl/linter:eslint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "lintFilePatterns": ["apps/aztec-compiler/**/*.ts"],
+          "eslintConfig": "apps/aztec-compiler/.eslintrc"
+        }
+      },
+      "serve": {
+        "executor": "@nrwl/webpack:dev-server",
+        "defaultConfiguration": "development",
+        "options": {
+          "buildTarget": "aztec-compiler:build",
+          "hmr": true,
+          "baseHref": "/"
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "aztec-compiler:build:development",
+            "port": 2023
+          },
+          "production": {
+            "buildTarget": "aztec-compiler:build:production"
+          }
+        }
+      }
+    },
+    "tags": []
+  }
+  
