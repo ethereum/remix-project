@@ -79,7 +79,7 @@ export class ScriptRunnerBridgePlugin extends Plugin {
     })
 
     this.plugin.on('fileManager', 'fileAdded', async (file: string) => {
-      if (file === configFileName && file) {
+      if (file && file === configFileName) {
         await this.loadCustomConfig()
         await this.loadConfigurations()
         this.renderComponent()
@@ -87,7 +87,7 @@ export class ScriptRunnerBridgePlugin extends Plugin {
     })
 
     this.plugin.on('fileManager', 'fileSaved', async (file: string) => {
-      if (file === configFileName && file) {
+      if (file && file === configFileName) {
         await this.loadCustomConfig()
         await this.loadConfigurations()
         this.renderComponent()
