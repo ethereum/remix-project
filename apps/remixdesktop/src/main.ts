@@ -92,7 +92,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 app.on('ready', async () => {
   trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
-  //registerLinuxProtocolHandler();
+  if (!isE2E && !isE2ELocal) registerLinuxProtocolHandler();
   require('./engine')
 });
 
@@ -112,31 +112,33 @@ app.on('activate', () => {
     createWindow();
   }
 });
-/*
-app.setAsDefaultProtocolClient('remix')
-// windows only
-const gotTheLock = app.requestSingleInstanceLock();
+if (!isE2E && !isE2ELocal) {
+  app.setAsDefaultProtocolClient('remix')
+  // windows only
+  const gotTheLock = app.requestSingleInstanceLock();
 
-if (!gotTheLock) {
-  app.quit();
-} else {
-  app.on('second-instance', (event, argv, workingDirectory) => {
-    // On Windows, protocol URLs are passed here
-    console.log('Second instance detected:', argv, workingDirectory);
-    const urlArg = argv.find(arg => arg.startsWith('remix://'));
-    if (urlArg) {
-      handleRemixUrl(urlArg);
-    }
-  });
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', (event, argv, workingDirectory) => {
+      // On Windows, protocol URLs are passed here
+      console.log('Second instance detected:', argv, workingDirectory);
+      const urlArg = argv.find(arg => arg.startsWith('remix://'));
+      if (urlArg) {
+        handleRemixUrl(urlArg);
+      }
+    });
 
-  app.whenReady().then(() => {
-    // On app launch via protocol link (Windows only)
-    console.log('App is ready, checking for remix:// URL');
-    const urlArg = process.argv.find(arg => arg.startsWith('remix://'));
-    if (urlArg) {
-      handleRemixUrl(urlArg);
-    }
-  });
+    app.whenReady().then(() => {
+      // On app launch via protocol link (Windows only)
+      console.log('App is ready, checking for remix:// URL');
+      const urlArg = process.argv.find(arg => arg.startsWith('remix://'));
+      if (urlArg) {
+        handleRemixUrl(urlArg);
+      }
+    });
+  }
+
 }
 
 function handleRemixUrl(url: string) {
@@ -217,7 +219,7 @@ app.on('open-url', async (event, url) => {
   handleRemixUrl(url);
 });
 
-*/
+
 
 const showAbout = () => {
   void dialog.showMessageBox({
