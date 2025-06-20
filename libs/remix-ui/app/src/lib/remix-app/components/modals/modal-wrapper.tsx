@@ -126,7 +126,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           okLabel: null,
           cancelLabel: null,
           preventBlur: true,
-          hideCancelIcon: true,
+          showCancelIcon: false,
         })
         break
       default:
