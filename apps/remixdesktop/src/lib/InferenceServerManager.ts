@@ -506,7 +506,7 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async solidity_answer(userPrompt: string, params:IParams=GenerationParams): Promise<any> {
+  async answer(userPrompt: string, params:IParams=GenerationParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
@@ -520,9 +520,9 @@ export class InferenceManager implements ICompletions {
     const prompt = buildSolgptPrompt(userPrompt, modelOP)
 
     if (params.stream_result) {
-      return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
+      return this._streamInferenceRequest('answer', { prompt, ...params })
     } else {
-      return this._makeInferenceRequest('solidity_answer', { prompt, ...params }, AIRequestType.GENERAL)
+      return this._makeInferenceRequest('answer', { prompt, ...params }, AIRequestType.GENERAL)
     }
   }
 

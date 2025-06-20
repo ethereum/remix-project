@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine';
-import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -14,10 +14,11 @@ const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion', 'setContextFiles',
-    "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
+    "answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
-    'resetChatRequestBuffer'],
+    'resetChatRequestBuffer', 'setAssistantThrId',
+    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -41,6 +42,7 @@ export class RemixAIPlugin extends Plugin {
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
   assistantProvider: string = 'openai'
+  assistantThreadId: string = ''
   useRemoteInferencer:boolean = false
   completionAgent: CodeCompletionAgent
 
@@ -102,36 +104,37 @@ export class RemixAIPlugin extends Plugin {
     return true
   }
 
-  async code_generation(prompt: string): Promise<any> {
+  async code_generation(prompt: string, params: IParams=CompletionParams): Promise<any> {
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_generation', prompt)
+      return await this.call(this.remixDesktopPluginName, 'code_generation', prompt, params)
     } else {
-      return await this.remoteInferencer.code_generation(prompt)
+      return await this.remoteInferencer.code_generation(prompt, params)
     }
   }
 
-  async code_completion(prompt: string, promptAfter: string): Promise<any> {
+  async code_completion(prompt: string, promptAfter: string, params:IParams=CompletionParams): Promise<any> {
     if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     const currentFileName = await this.call('fileManager', 'getCurrentFile')
     const contextfiles = await this.completionAgent.getContextFiles(prompt)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter, contextfiles, currentFileName)
+      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter, contextfiles, currentFileName, params)
     } else {
-      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFileName)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFileName, params)
     }
   }
 
-  async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
+  async answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
+
     let newPrompt = await this.codeExpAgent.chatCommand(prompt)
     // add workspace context
     newPrompt = !this.workspaceAgent.ctxFiles ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      result = await this.call(this.remixDesktopPluginName, 'solidity_answer', newPrompt)
+      result = await this.call(this.remixDesktopPluginName, 'answer', newPrompt)
     } else {
-      result = await this.remoteInferencer.solidity_answer(newPrompt)
+      result = await this.remoteInferencer.answer(newPrompt)
     }
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
 
@@ -287,7 +290,7 @@ export class RemixAIPlugin extends Plugin {
       else {
         if (fn === "code_explaining") this.call('remixaiassistant', 'chatPipe',"Explain the current code")
         else if (fn === "error_explaining") this.call('remixaiassistant', 'chatPipe', "Explain the error")
-        else if (fn === "solidity_answer") this.call('remixaiassistant', 'chatPipe', "Answer the following question")
+        else if (fn === "answer") this.call('remixaiassistant', 'chatPipe', "Answer the following question")
         else if (fn === "vulnerability_check") this.call('remixaiassistant', 'chatPipe',"Is there any vulnerability in the pasted code?")
         else console.log("chatRequestBuffer function name not recognized.")
       }
@@ -312,6 +315,40 @@ export class RemixAIPlugin extends Plugin {
 
   async setContextFiles(context: IContextType) {
     this.workspaceAgent.setCtxFiles(context)
+  }
+
+  async setAssistantThrId(newThrId: string){
+    this.assistantThreadId = newThrId
+    AssistantParams.threadId = newThrId
+    GenerationParams.threadId = newThrId
+    CompletionParams.threadId = newThrId
+  }
+
+  async getAssistantThrId(){
+    return this.assistantThreadId
+  }
+
+  async getAssistantProvider(){
+    return this.assistantProvider
+  }
+
+  async setAssistantProvider(provider: string) {
+    if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic') {
+      GenerationParams.provider = provider
+      CompletionParams.provider = provider
+      AssistantParams.provider = provider
+
+      if (this.assistantProvider !== provider){
+        // clear the threadDds
+        this.assistantThreadId = ''
+        GenerationParams.threadId = ''
+        CompletionParams.threadId = ''
+        AssistantParams.threadId = ''
+      }
+      this.assistantProvider = provider
+    } else {
+      console.error(`Unknown assistant provider: ${provider}`)
+    }
   }
 
   isChatRequestPending(){

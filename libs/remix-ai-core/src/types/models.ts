@@ -88,6 +88,6 @@ const GenerationParams:IParams = {
 }
 
 const AssistantParams:IParams = GenerationParams
-AssistantParams.provider = 'openai'
+AssistantParams.provider = 'openai' // default provider
 
 export { DefaultModels, CompletionParams, InsertionParams, GenerationParams, AssistantParams }

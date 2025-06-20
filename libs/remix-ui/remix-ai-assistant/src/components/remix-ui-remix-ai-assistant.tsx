@@ -2,12 +2,15 @@ import React, { useState, useEffect, useCallback, useRef, useImperativeHandle } 
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { HandleOpenAIResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
 import { ModalTypes } from '@remix-ui/app'
 import { PromptArea } from './prompt'
 import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
+import { ResponsiveEmbed } from 'react-bootstrap'
+import { stream } from 'winston'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -38,7 +41,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    null
+    'openai'
   )
   const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
     'none'
@@ -107,6 +110,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         props.plugin.off('fileManager', 'currentFileChanged')
     }
   }, [contextChoice, refreshContext, props.plugin])
+
+  // useEffect(() => {
+  //   const fetchAssistantChoice = async () => {
+  //     console.log('Fetching assistant choice from plugin')
+  //     const choice = await props.plugin.call('remixAI', 'getAssistantProvider')
+  //     setAssistantChoice(choice || 'openai')
+  //   }
+  //   fetchAssistantChoice()
+  // }, [props.plugin])
 
   // bubble messages up to parent
   useEffect(() => {
@@ -186,13 +198,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           return
         }
 
-        GenerationParams.stream_result = false
-        GenerationParams.return_stream_response = false
+        GenerationParams.stream_result = true
+        GenerationParams.return_stream_response = true
+        GenerationParams.threadId = await props.plugin.call('remixAI', 'getAssistantThrId') || ""
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending
           ? await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
-          : await props.plugin.call('remixAI', 'solidity_answer', trimmed, GenerationParams)
+          : await props.plugin.call('remixAI', 'answer', trimmed, GenerationParams)
 
         const assistantId = crypto.randomUUID()
         setMessages(prev => [
@@ -200,17 +213,53 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), sentiment: 'none' }
         ])
 
-        HandleStreamResponse(
-          response,
-          (chunk: string) => appendAssistantChunk(assistantId, chunk),
-          (finalText: string) => {
-            ChatHistory.pushHistory(trimmed, finalText)
-            setIsStreaming(false)
-          }
-        )
-      } catch (err) {
-        console.error('AI request failed:', err)
+        switch (assistantChoice) {
+        case 'openai':
+          console.log('Handling OpenAI response')
+          HandleOpenAIResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string, threadId) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+              props.plugin.call('remixAI', 'setAssistantThrId', threadId)
+            }
+          )
+          break;
+        case 'mistralai':
+          console.log('Handling MistralAI response')
+          // Add MistralAI handler here if available
+          break;
+        case 'anthropic':
+          console.log('Handling Anthropic response')
+          // Add Anthropic handler here if available
+          break;
+        default:
+          HandleStreamResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+            }
+          )
+        }
         setIsStreaming(false)
+      }
+      catch (error) {
+        console.error('Error sending prompt:', error)
+        setIsStreaming(false)
+        // Add error message to chat history
+        setMessages(prev => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: `Error: ${error.message}`,
+            timestamp: Date.now(),
+            sentiment: 'none'
+          }
+        ])
       }
     },
     [isStreaming, props.plugin]
@@ -236,9 +285,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // Only send the /setAssistant command when the choice actually changes
   useEffect(() => {
-    if (!assistantChoice) return
-    dispatchActivity('button', 'setAssistant')
-    sendPrompt(`/setAssistant ${assistantChoice}`)
+    const fetchAssistantChoice = async () => {
+      const choiceSetting = await props.plugin.call('remixAI', 'getAssistantProvider')
+      if (choiceSetting !== assistantChoice) {
+        dispatchActivity('button', 'setAssistant')
+        sendPrompt(`/setAssistant ${assistantChoice}`)
+        setAssistantChoice(assistantChoice || 'openai')
+      }
+    }
+    fetchAssistantChoice()
   }, [assistantChoice])
 
   // refresh context whenever selection changes (even if selector is closed)

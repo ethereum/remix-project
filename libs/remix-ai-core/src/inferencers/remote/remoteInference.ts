@@ -131,9 +131,9 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     else return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
-  async solidity_answer(prompt, options:IParams=GenerationParams): Promise<any> {
-    const main_prompt = buildSolgptPrompt(prompt, this.model_op)
-    const payload = { 'prompt': main_prompt, "endpoint":"solidity_answer", ...options }
+  async answer(prompt, options:IParams=GenerationParams): Promise<any> {
+    const main_prompt = prompt //buildSolgptPrompt(prompt, this.model_op)
+    const payload = { 'prompt': main_prompt, "endpoint":"answer", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }

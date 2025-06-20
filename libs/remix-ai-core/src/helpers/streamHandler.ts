@@ -56,6 +56,65 @@ export const HandleStreamResponse = async (streamResponse, cb: (streamText: stri
   }
 };
 
+export const HandleOpenAIResponse = async (streamResponse, cb: (streamText: string) => void, done_cb?: (result: string, thrID:string) => void) => {
+  const reader = streamResponse.body?.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+  let threadId
+
+  if (!reader) { // normal response, not a stream
+    cb(streamResponse.result)
+    done_cb?.("", streamResponse?.threadId || "");
+    return;
+  }
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
+
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const jsonStr = line.replace(/^data: /, "").trim();
+        if (jsonStr === "[DONE]") {
+          done_cb?.("", threadId);
+          return;
+        }
+        try {
+          const json = JSON.parse(jsonStr);
+          threadId = json?.thread_id;
+
+          // Handle OpenAI "thread.message.delta" format
+          if (json.object === "thread.message.delta" && json.delta?.content) {
+            for (const contentItem of json.delta.content) {
+              if (
+                contentItem.type === "text" &&
+                contentItem.text &&
+                typeof contentItem.text.value === "string"
+              ) {
+                cb(contentItem.text.value);
+              }
+            }
+          } else if (json.delta?.content) {
+            // fallback for other formats
+            const content = json.delta.content;
+            if (typeof content === "string") {
+              cb(content);
+            }
+          }
+        } catch (e) {
+          console.error("⚠️ OpenAI Stream parse error:", e);
+        }
+      }
+    }
+  }
+}
+
 export const UpdateChatHistory = (userPrompt: string, AIAnswer: string) => {
   ChatHistory.pushHistory(userPrompt, AIAnswer);
 };
