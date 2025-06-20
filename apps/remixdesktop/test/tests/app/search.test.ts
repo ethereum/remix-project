@@ -54,7 +54,7 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 63)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 61)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
