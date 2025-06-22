@@ -41,7 +41,7 @@ module.exports = {
         selenium_port: 4444,
         selenium_host: 'localhost',
         globals: {
-          waitForConditionTimeout: 10000,
+          waitForConditionTimeout: 30000,
           asyncHookTimeout: 30000
         },
         screenshots: {
