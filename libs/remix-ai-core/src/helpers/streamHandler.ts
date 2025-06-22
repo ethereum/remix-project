@@ -182,7 +182,6 @@ export const HandleAnthropicResponse = async (streamResponse, cb: (streamText: s
     if (done) break;
 
     buffer += decoder.decode(value, { stream: true });
-    console.log("Anthropic Stream buffer:", buffer);
 
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
