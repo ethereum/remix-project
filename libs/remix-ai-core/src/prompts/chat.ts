@@ -6,6 +6,7 @@ export abstract class ChatHistory{
   static queueSize:number = 7 // change the queue size wrt the GPU size
 
   public static pushHistory(prompt, result){
+    console.log("Pushing to chat history", prompt, result)
     const chat:ChatEntry = [prompt, result]
     this.chatEntries.push(chat)
     if (this.chatEntries.length > this.queueSize){this.chatEntries.shift()}

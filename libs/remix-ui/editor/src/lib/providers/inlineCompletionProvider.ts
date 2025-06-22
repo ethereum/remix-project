@@ -106,7 +106,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (word.replace(/ +$/, '').endsWith('\n')){
       // Code insertion
       try {
-        CompletionParams.stop = ['\n\n']
+        CompletionParams.stop = ['\n\n', '```']
         const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after, CompletionParams)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
         const generatedText = output // no need to clean it. should already be
@@ -132,7 +132,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       // Code completion
-      CompletionParams.stop = ['\n']
+      CompletionParams.stop = ['\n', '```']
       this.task = 'code_completion'
       const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after, CompletionParams)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])

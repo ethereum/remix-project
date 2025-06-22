@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useImperativeHandle } 
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
-import { HandleOpenAIResponse, HandleMistralAIResponse } from '@remix/remix-ai-core'
+import { HandleOpenAIResponse, HandleMistralAIResponse, HandleAnthropicResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
 import { ModalTypes } from '@remix-ui/app'
@@ -241,6 +241,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           break;
         case 'anthropic':
           console.log('Handling Anthropic response')
+          HandleAnthropicResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string, threadId) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+              props.plugin.call('remixAI', 'setAssistantThrId', threadId)
+            }
+          )
           // Add Anthropic handler here if available
           break;
         default:

@@ -1,6 +1,6 @@
 import { ICompletions, IGeneration, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
-import { buildSolgptPrompt } from "../../prompts/promptBuilder";
+import { buildChatPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
@@ -41,7 +41,6 @@ export class RemoteInferencer implements ICompletions, IGeneration {
         if (result.statusText === "OK") {
           if (result.data?.error) return result.data?.error
           const resultText = result.data.generatedText
-          ChatHistory.pushHistory(payload.prompt, resultText)
           return resultText
         } else {
           return defaultErrorMessage
@@ -132,8 +131,8 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   }
 
   async answer(prompt, options:IParams=GenerationParams): Promise<any> {
-    const main_prompt = prompt //buildSolgptPrompt(prompt, this.model_op)
-    const payload = { 'prompt': main_prompt, "endpoint":"answer", ...options }
+    options.chatHistory = options.provider === 'anthropic' ? buildChatPrompt(prompt) : []
+    const payload = { 'prompt': prompt, "endpoint":"answer", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }

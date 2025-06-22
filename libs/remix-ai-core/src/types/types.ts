@@ -93,6 +93,7 @@ export interface IParams {
   stream?: boolean;
   model?: string;
   stop?: string[];
+  chatHistory?: any[];
 }
 
 export enum AIRequestType {
