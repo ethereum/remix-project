@@ -77,8 +77,8 @@ module.exports = {
             if(useIsoGit) args = [...args, '--use-isogit'];
             if(useOffline) args = [...args, '--use-offline'];
 
-            // add '--remote-debugging-port=9223'
-            args = [...args, '--remote-debugging-port=9223', '--disable-gpu', '--disable-dev-shm-usage'];
+            // add '--remote-debugging-pipe'
+            args = [...args, '--remote-debugging-pipe', '--disable-gpu', '--disable-dev-shm-usage'];
 
             // Set display size
             const windowSize = "--window-size=1000,1000";
