@@ -48,6 +48,7 @@ interface FlatTreeProps {
   deletePath?: (path: string | string[]) => void | Promise<void>
   editPath?: (path: string, type: string, isNew?: boolean) => void
   warnMovingItems: (srcs: string[], dests: string) => Promise<void>
+  plugin: any
 }
 
 let mouseTimer: any = {
@@ -143,12 +144,13 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }
 
-  const onDragStart = async (event: SyntheticEvent) => {
+  const onDragStart = async (event: React.DragEvent<HTMLDivElement>) => {
     const target = await getEventTarget(event)
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
     buildMultiSelectedItemProfiles(target)
     setFilesSelected(selectedItems.map((item) => item.path))
+    event.dataTransfer.setData('text/plain', target.path)
   }
 
   useEffect(() => {
@@ -252,6 +254,11 @@ export const FlatTree = (props: FlatTreeProps) => {
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
+
+    if (file.path.startsWith("tmp")){
+      return <div style={{ display:'none' }}>Temp File</div>
+    }
+
     return (
       <li
         className={`${labelClass(file)} li_tv`}
@@ -308,6 +315,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         expandPath={expandPath}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
+        plugin={props.plugin}
       >
         <div data-id="treeViewUltreeViewMenu"
           className='d-flex h-100 w-100 pb-2'
