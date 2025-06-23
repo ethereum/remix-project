@@ -74,7 +74,7 @@ export const HandleOpenAIResponse = async (streamResponse, cb: (streamText: stri
     const { done, value } = await reader.read();
     if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
+    buffer = decoder.decode(value, { stream: true });
 
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
@@ -136,7 +136,7 @@ export const HandleMistralAIResponse = async (streamResponse, cb: (streamText: s
     const { done, value } = await reader.read();
     if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
+    buffer = decoder.decode(value, { stream: true });
 
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
@@ -181,8 +181,7 @@ export const HandleAnthropicResponse = async (streamResponse, cb: (streamText: s
     const { done, value } = await reader.read();
     if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
-
+    buffer = decoder.decode(value, { stream: true });
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
     for (const line of lines) {

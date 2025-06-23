@@ -245,6 +245,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
             (finalText: string, threadId) => {
+              console.log('Anthropic final text:', finalText)
               ChatHistory.pushHistory(trimmed, finalText)
               setIsStreaming(false)
               props.plugin.call('remixAI', 'setAssistantThrId', threadId)
