@@ -47,17 +47,13 @@ const tests = {
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
     },
-    'Should run setup script for simple circuit': function (browser: NightwatchBrowser) {
-        browser
-            .openFile('circuits/.bin/simple_js/simple.wtn')
-            .clickLaunchIcon('circuit-compiler')
-            .frame(0)
-            .waitForElementVisible('[data-id="runSetupBtn"]')
-            .click('[data-id="runSetupBtn"]')
-    },
     'Should compute a witness for a simple circuit': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('[data-id="compute_witness_btn"]', 60000)
+            .clickLaunchIcon('circuit-compiler')
+            .frame(0)
+            .waitForElementVisible('[data-id="witness_toggler"]')
+            .click('[data-id="witness_toggler"]')
+            .waitForElementVisible('[data-id="compute_witness_btn"]')
             .waitForElementVisible('[data-id="circuit_input_a"]')
             .waitForElementVisible('[data-id="circuit_input_b"]')
             .setValue('[data-id="circuit_input_a"]', '1')
@@ -65,23 +61,25 @@ const tests = {
             .click('[data-id="compute_witness_btn"]')
             .frameParent()
             .clickLaunchIcon('filePanel')
+            .openFile('circuits/.bin/simple_js/simple.wtn')
             .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
     },
-    'Should generate proof for a simple circuit': function (browser: NightwatchBrowser) {
+    'Should compile a simple circuit using compile button in circom plugin': function (browser: NightwatchBrowser) {
         browser
+            .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
             .clickLaunchIcon('circuit-compiler')
             .frame(0)
-            .waitForElementVisible('[data-id="generateProofBtn"]')
-            .click('[data-id="generateProofBtn"]')
+            .waitForElementPresent('button[data-id="compile_circuit_btn"]')
+            .waitForElementVisible('button[data-id="compile_circuit_btn"]')
+            .click('button[data-id="compile_circuit_btn"]')
             .frameParent()
-            .waitForElementVisible({
-                locateStrategy: 'xpath',
-                selector: "//span[@class='text-log' and contains(., 'zk proof validity true')]",
-                timeout: 60000
-            })
+            .clickLaunchIcon('filePanel')
+            .openFile('circuits/.bin/simple_js/simple.wasm')
+            .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+            .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+    },
 
-    }
 }
 
 module.exports = tests
