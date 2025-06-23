@@ -53,9 +53,15 @@ module.exports = {
         webdriver: {
           start_process: true,
           timeout_options: {
-            timeout: 60000,
-            retry_attempts: 3
-          }
+            timeout: 90000,
+            retry_attempts: 5
+          },
+          connection_retry_attempts: 3,
+          connection_retry_timeout: 10000
+        },
+        retries: {
+          attempts: 2,
+          retry_on_failure: true
         },
         desiredCapabilities: {
           browserName: 'chrome',
@@ -72,7 +78,7 @@ module.exports = {
             if(useOffline) args = [...args, '--use-offline'];
 
             // add '--remote-debugging-port=9223'
-            args = [...args, '--remote-debugging-port=9223'];
+            args = [...args, '--remote-debugging-port=9223', '--disable-gpu', '--disable-dev-shm-usage'];
 
             // Set display size
             const windowSize = "--window-size=1000,1000";
