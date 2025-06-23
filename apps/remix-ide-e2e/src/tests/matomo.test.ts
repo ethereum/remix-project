@@ -99,6 +99,12 @@ module.exports = {
             .pause(2000)
             .waitForElementPresent('*[data-id="beginnerbtn"]', 10000)
             .click('[data-id="beginnerbtn"]')
+            .waitForElementVisible({
+                selector: `//*[contains(text(), 'Welcome to Remix IDE')]`,
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible('*[id="remixTourSkipbtn"]')
+            .click('*[id="remixTourSkipbtn"]')
             .clickLaunchIcon('settings')
             .waitForElementNotPresent('[id="settingsMatomoPerfAnalytics"]:checked')
             .execute(function () {
@@ -110,8 +116,6 @@ module.exports = {
     },
     'change settings #group2': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('*[id="remixTourSkipbtn"]')
-            .click('*[id="remixTourSkipbtn"]')
             .waitForElementVisible('*[data-id="label-matomo-settings"]')
             .pause(1000)
             .click('*[data-id="label-matomo-settings"]')
