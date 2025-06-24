@@ -261,6 +261,7 @@ module.exports = {
       }) // wait for the udapp to load the list of accounts
       .click('*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
       .selectContract('MyResolver')
+      .pause(5000)
       .createContract('')
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {

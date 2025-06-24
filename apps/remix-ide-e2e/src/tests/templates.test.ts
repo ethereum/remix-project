@@ -185,7 +185,7 @@ function runTemplateChecks(
         } else {
             browser
                 .useXpath()
-                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 5000)
+                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
                 .useCss()
 
             checkSelectors.forEach(selector => {

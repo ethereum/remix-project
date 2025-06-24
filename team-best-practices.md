@@ -20,7 +20,7 @@ Related links:
  - Remix-debug NPM module: https://www.npmjs.com/package/@remix-project/remix-debug
  - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-tests
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
- - Discord: https://discord.gg/XcvfUpZPsG
+ - Discord: https://discord.gg/7RvvZ4KX9P
  
 ---
 
