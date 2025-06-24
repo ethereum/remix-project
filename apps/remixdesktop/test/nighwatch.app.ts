@@ -78,7 +78,7 @@ module.exports = {
             if(useOffline) args = [...args, '--use-offline'];
 
             // add '--remote-debugging-pipe'
-            args = [...args, '--remote-debugging-pipe', '--disable-gpu', '--disable-dev-shm-usage'];
+            args = [...args, '--remote-debugging-pipe', '--disable-gpu', '--disable-dev-shm-usage', '--inspect'];
 
             // Set display size
             const windowSize = "--window-size=1000,1000";

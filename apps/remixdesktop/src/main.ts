@@ -185,11 +185,14 @@ function handleRemixUrl(url: string) {
 
 // linux only
 function registerLinuxProtocolHandler() {
+  console.log('Registering remix:// protocol handler');
   if (process.platform !== 'linux') return;
 
   const execPath = app.getPath('exe');
   const applicationsDir = path.join(os.homedir(), '.local', 'share', 'applications');
   const desktopFilePath = path.join(applicationsDir, 'remix.desktop');
+
+  console.log('Executable path:', execPath);
 
   const desktopEntry = `[Desktop Entry]
 Name=Remix IDE
@@ -223,6 +226,7 @@ MimeType=x-scheme-handler/remix;
 if (!isE2E) {
   // macos only
   app.on('open-url', async (event, url) => {
+    console.log('open-url', url);
     event.preventDefault();
     handleRemixUrl(url);
   });
