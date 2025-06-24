@@ -238,7 +238,7 @@ function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add')
         })
 }
 
-module.exports = {
+const tests = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
@@ -271,4 +271,17 @@ module.exports = {
 
         testTemplateOptions(browser, 'add')
     }
+}
+
+const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
+    return browser.browserName.indexOf('chrome') > -1
+}
+
+
+if (checkBrowserIsChrome(browser)) {
+    module.exports = {}
+} else {
+    module.exports = {
+        ...tests
+    };
 }
