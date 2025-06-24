@@ -130,11 +130,19 @@ function setTemplateOptions(browser: NightwatchBrowser, opts: { [key: string]: a
     if (opts.upgradeability === 'uups') browser.click('*[data-id="upgradeTypeUups"]')
 }
 
-function openTemplatesExplorer(browser: NightwatchBrowser) {
-    browser
-        .click('*[data-id="workspacesMenuDropdown"]')
-        .click('*[data-id="workspacecreate"]')
-        .waitForElementPresent('*[data-id="create-remixDefault"]')
+function openTemplatesExplorer(browser: NightwatchBrowser): Promise<void> {
+    return new Promise(resolve => {
+        browser.perform(done => {
+            browser
+                .click('*[data-id="workspacesMenuDropdown"]')
+                .click('*[data-id="workspacecreate"]')
+                .waitForElementPresent('*[data-id="create-remixDefault"]')
+                .perform(() => {
+                    done()
+                    resolve()
+                })
+        })
+    })
 }
 
 async function runTemplateChecks(
@@ -147,7 +155,8 @@ async function runTemplateChecks(
     const slicedTemplates = templatesToCheck.slice(start, end)
     for (const { value, displayName, checkSelectors, clickOk } of slicedTemplates) {
         console.log(`Checking template: ${value} in ${mode} mode`)
-        openTemplatesExplorer(browser)
+        await openTemplatesExplorer(browser)
+        console.log(`Opening templates explorer for ${value} in ${mode} mode`)
 
         if (mode === 'create') {
             browser
@@ -179,34 +188,43 @@ async function runTemplateChecks(
                                 .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
                         }
 
-                        checkSelectors.forEach(selector => {
-                            browser.perform(done => {
-                                console.log(`Checking selector: ${selector}`)
-                                browser.waitForElementVisible(selector, 30000, 1000, true, () => {
-                                    console.log(`Selector ${selector} is visible`)
-                                    done()
+                        (async () => {
+                            for (const selector of checkSelectors) {
+                                await new Promise(resolve => {
+                                    console.log(`Checking selector: ${selector}`)
+                                    browser.waitForElementVisible(selector, 30000)
+                                    .perform(() => {
+                                        console.log(`Selector ${selector} is visible`)
+                                        resolve(true)
+                                    })
                                 })
-                            })
-                        })
+                            }
+                        })()
                     }
                     resolve(true)
                 })
             })
         } else {
+            console.log(`Checking create: ${displayName} in ${mode} mode`)
             browser
                 .useXpath()
-                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
-                .useCss();
-
-            checkSelectors.forEach(selector => {
-                browser.perform(done => {
-                    console.log(`Checking selector: ${selector}`)
-                    browser.waitForElementVisible(selector, 30000, 1000, true, () => {
-                        console.log(`Selector ${selector} is visible`)
+                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 30000)
+                .useCss()
+                .perform(async (done) => {
+                    await (async () => {
+                        for (const selector of checkSelectors) {
+                            await new Promise(resolve => {
+                                console.log(`Checking selector: ${selector}`)
+                                browser.waitForElementVisible(selector, 60000)
+                                .perform(() => {
+                                    console.log(`Selector ${selector} is visible`)
+                                    resolve(true)
+                                })
+                            })
+                        }
                         done()
-                    })
+                    })()
                 })
-            })
 
         }
 
@@ -262,7 +280,7 @@ module.exports = {
             console.log(`Finished checking: ${value}`)
         })
     },
-    'Loop through templates and click add buttons #group1': async function (browser) {
+    'Loop through templates and click add buttons #group3': async function (browser) {
         await runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
             console.log(`Finished checking: ${value}`)
         })
