@@ -43,6 +43,7 @@ const homeDir = app.getPath('userData')
 
 const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
+  await app.whenReady(); 
   // reize factor
   let resizeFactor = 0.8
   // if the window is too small the size is 100%
@@ -119,7 +120,7 @@ app.on('activate', () => {
 });
 
 if (!isE2E) {
-  /*
+  
   app.setAsDefaultProtocolClient('remix')
   // windows only
   const gotTheLock = app.requestSingleInstanceLock();
@@ -145,7 +146,7 @@ if (!isE2E) {
       }
     });
   }
-  */
+  
 }
 
 function handleRemixUrl(url: string) {
