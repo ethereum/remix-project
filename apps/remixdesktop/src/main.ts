@@ -92,7 +92,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 app.on('ready', async () => {
   trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
-  //if (!process.env.CIRCLECI) registerLinuxProtocolHandler();
+  if (!isE2E) registerLinuxProtocolHandler();
   require('./engine')
 });
 
@@ -113,7 +113,8 @@ app.on('activate', () => {
   }
 });
 
-if (!process.env.CIRCLECI) {
+if (!isE2E) {
+  /*
   app.setAsDefaultProtocolClient('remix')
   // windows only
   const gotTheLock = app.requestSingleInstanceLock();
@@ -139,7 +140,7 @@ if (!process.env.CIRCLECI) {
       }
     });
   }
-
+  */
 }
 
 function handleRemixUrl(url: string) {
@@ -214,7 +215,7 @@ MimeType=x-scheme-handler/remix;
     console.error('Error setting up remix:// protocol handler:', e);
   }
 }
-if (!process.env.CIRCLECI) {
+if (!isE2E) {
   // macos only
   app.on('open-url', async (event, url) => {
     event.preventDefault();
