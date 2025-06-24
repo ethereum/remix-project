@@ -290,20 +290,23 @@ jobs:
             command: |
               cd apps/remixdesktop/
               ./run_git_ui_isogit_tests.sh
+       
+
         - store_test_results:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
             path: ./apps/remixdesktop/reports/screenshots
-        - run:
-            name: "Copy Electron console logs to artifacts"
-            command: |
-              mkdir -p /home/circleci/remix-project/apps/remixdesktop/logs/
-              cp /tmp/remix-desktop.log /home/circleci/remix-project/apps/remixdesktop/logs/remix-desktop.log || true
-              cp /tmp/remix-desktop.error.log /home/circleci/remix-project/apps/remixdesktop/logs/remix-desktop.error.log || true
         - store_artifacts:
             path: /home/circleci/remix-project/apps/remixdesktop/logs/
             destination: logs
-        
+        - store_artifacts:
+            path: /tmp/remix-desktop.log
+            destination: remix-desktop.log
+        - store_artifacts:
+            path: /tmp/remix-desktop.error.log
+            destination: remix-desktop.error.log
+
+          
 
   build-remixdesktop-linux:
       machine:
