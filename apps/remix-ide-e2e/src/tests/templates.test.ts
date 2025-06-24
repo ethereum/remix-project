@@ -143,7 +143,7 @@ async function runTemplateChecks(
     end: number,
     mode: 'create' | 'add' = 'create',
     doneCallback?: (value: string) => void
-) {
+): Promise<void> {
     const slicedTemplates = templatesToCheck.slice(start, end)
     for (const { value, displayName, checkSelectors, clickOk } of slicedTemplates) {
         console.log(`Checking template: ${value} in ${mode} mode`)
@@ -246,13 +246,13 @@ module.exports = {
     openFilePanel: function (browser: NightwatchBrowser) {
         browser.clickLaunchIcon('filePanel')
     },
-    'Loop through templates and click create #flaky #group1': function (browser) {
-        runTemplateChecks(browser, 0, templatesToCheck.length, 'create', (value) => {
+    'Loop through templates and click create #flaky #group1': async function (browser) {
+        await runTemplateChecks(browser, 0, templatesToCheck.length, 'create', (value) => {
             console.log(`Finished checking: ${value}`)
         })
     },
-    'Loop through templates and click add buttons #group1': function (browser) {
-        runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
+    'Loop through templates and click add buttons #group1': async function (browser) {
+        await runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
             console.log(`Finished checking: ${value}`)
         })
     },
