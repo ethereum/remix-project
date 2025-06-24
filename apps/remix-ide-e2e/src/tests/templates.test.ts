@@ -179,17 +179,15 @@ async function runTemplateChecks(
                                 .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
                         }
 
-                        (async () => {
-                            for (const selector of checkSelectors) {
-                                await new Promise(resolve => {
-                                    console.log(`Checking selector: ${selector}`)
-                                    browser.waitForElementVisible(selector, 30000, 1000, true, () => {
-                                        console.log(`Selector ${selector} is visible`)
-                                        resolve(true)
-                                    })
+                        checkSelectors.forEach(selector => {
+                            browser.perform(done => {
+                                console.log(`Checking selector: ${selector}`)
+                                browser.waitForElementVisible(selector, 30000, 1000, true, () => {
+                                    console.log(`Selector ${selector} is visible`)
+                                    done()
                                 })
-                            }
-                        })()
+                            })
+                        })
                     }
                     resolve(true)
                 })
@@ -198,17 +196,18 @@ async function runTemplateChecks(
             browser
                 .useXpath()
                 .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
-                .useCss()
+                .useCss();
 
-            for (const selector of checkSelectors) {
-                await new Promise(resolve => {
+            checkSelectors.forEach(selector => {
+                browser.perform(done => {
                     console.log(`Checking selector: ${selector}`)
                     browser.waitForElementVisible(selector, 30000, 1000, true, () => {
                         console.log(`Selector ${selector} is visible`)
-                        resolve(true)
+                        done()
                     })
                 })
-            }
+            })
+
         }
 
         if (doneCallback) doneCallback(value)
