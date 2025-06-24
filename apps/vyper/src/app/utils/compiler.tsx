@@ -82,8 +82,12 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
       [contractName] : { content : contract.content }
     }
   }
-console.log('compilePackage', `${url}compile`)
-  let response = await axios.post(`${url}compile`, compilePackage )
+  let response
+  if (url.endsWith('/')) {
+    response = await axios.post(`${url}compile`, compilePackage )
+  } else {
+    response = await axios.post(`${url}/compile`, compilePackage )
+  }
 
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
@@ -97,17 +101,17 @@ console.log('compilePackage', `${url}compile`)
   response = null
   let result: any
 
-  const status = await (await axios.get(url + 'status/' + compileCode , {
+  const status = await (await axios.get(url + '/status/' + compileCode , {
     method: 'Get'
   })).data
   if (status === 'SUCCESS') {
-    result = await(await axios.get(url + 'artifacts/' + compileCode , {
+    result = await(await axios.get(url + '/artifacts/' + compileCode , {
       method: 'Get'
     })).data
 
     return result
   } else if (status === 'FAILED') {
-    const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
+    const intermediate = await(await axios.get(url + '/exceptions/' + compileCode , {
       method: 'Get'
     })).data
     return intermediate
@@ -189,7 +193,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       title: 'Compiling'
     })
     // try {
-    let output = await compile(compilerUrl, _contract)
+    const output = await compile(compilerUrl, _contract)
     if (output && output[0] && output[0].status === 'failed') {
       remixClient.changeStatus({
         key: 'failed',
