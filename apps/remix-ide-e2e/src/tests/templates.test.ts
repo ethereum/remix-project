@@ -179,10 +179,17 @@ async function runTemplateChecks(
                                 .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
                         }
 
-                        checkSelectors.forEach(selector => {
-                            console.log(`Checking selector: ${selector}`)
-                            browser.waitForElementVisible(selector, 30000)
-                        })
+                        (async () => {
+                            for (const selector of checkSelectors) {
+                                await new Promise(resolve => {
+                                    console.log(`Checking selector: ${selector}`)
+                                    browser.waitForElementVisible(selector, 30000, 1000, true, () => {
+                                        console.log(`Selector ${selector} is visible`)
+                                        resolve(true)
+                                    })
+                                })
+                            }
+                        })()
                     }
                     resolve(true)
                 })
@@ -193,10 +200,15 @@ async function runTemplateChecks(
                 .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
                 .useCss()
 
-            checkSelectors.forEach(selector => {
-                console.log(`Checking selector: ${selector}`)
-                browser.waitForElementVisible(selector, 30000)
-            })
+            for (const selector of checkSelectors) {
+                await new Promise(resolve => {
+                    console.log(`Checking selector: ${selector}`)
+                    browser.waitForElementVisible(selector, 30000, 1000, true, () => {
+                        console.log(`Selector ${selector} is visible`)
+                        resolve(true)
+                    })
+                })
+            }
         }
 
         if (doneCallback) doneCallback(value)
