@@ -5,6 +5,11 @@ import os from 'os';
 import fs from 'fs';
 import { exec } from 'child_process';
 
+const logFile = fs.createWriteStream('/tmp/remix-desktop.log', { flags: 'a' });
+const errorLogFile = fs.createWriteStream('/tmp/remix-desktop.error.log', { flags: 'a' });
+
+process.stdout.write = logFile.write.bind(logFile);
+process.stderr.write = errorLogFile.write.bind(errorLogFile);
 
 export let isPackaged = false;
 export const version = app.getVersion();

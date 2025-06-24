@@ -99,6 +99,9 @@ module.exports = {
             }
             
             console.log('binaryPath', binaryPath);
+            console.log('[CI DEBUG] Launching Remix Desktop with the following parameters:');
+            console.log('Binary Path:', binaryPath);
+            console.log('Arguments:', args);
             return {
               binary: binaryPath,
               args: args
