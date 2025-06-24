@@ -243,9 +243,9 @@ module.exports = {
   },
 
   'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
-    if (!runMasterTests) {
-      return
-    }
+    // if (!runMasterTests) {
+    //   return
+    // }
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
