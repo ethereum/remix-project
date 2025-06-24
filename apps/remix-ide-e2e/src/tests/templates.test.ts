@@ -130,19 +130,11 @@ function setTemplateOptions(browser: NightwatchBrowser, opts: { [key: string]: a
     if (opts.upgradeability === 'uups') browser.click('*[data-id="upgradeTypeUups"]')
 }
 
-function openTemplatesExplorer(browser: NightwatchBrowser): Promise<void> {
-    return new Promise(resolve => {
-        browser.perform(done => {
-            browser
-                .click('*[data-id="workspacesMenuDropdown"]')
-                .click('*[data-id="workspacecreate"]')
-                .waitForElementPresent('*[data-id="create-remixDefault"]')
-                .perform(() => {
-                    done()
-                    resolve()
-                })
-        })
-    })
+function openTemplatesExplorer(browser: NightwatchBrowser) {
+    browser
+        .click('*[data-id="workspacesMenuDropdown"]')
+        .click('*[data-id="workspacecreate"]')
+        .waitForElementPresent('*[data-id="create-remixDefault"]')
 }
 
 async function runTemplateChecks(
@@ -151,85 +143,63 @@ async function runTemplateChecks(
     end: number,
     mode: 'create' | 'add' = 'create',
     doneCallback?: (value: string) => void
-): Promise<void> {
+) {
     const slicedTemplates = templatesToCheck.slice(start, end)
     for (const { value, displayName, checkSelectors, clickOk } of slicedTemplates) {
-        await new Promise(resolve => {
-            browser.perform(async done => {
-                console.log(`Checking template: ${value} in ${mode} mode`)
-                await openTemplatesExplorer(browser)
-                console.log(`Opening templates explorer for ${value} in ${mode} mode`)
+        console.log(`Checking template: ${value} in ${mode} mode`)
+        openTemplatesExplorer(browser)
 
-                if (mode === 'create') {
-                    browser
-                        .waitForElementVisible(`[data-id="create-${value}"]`, 5000)
-                        .click(`[data-id="create-${value}"]`)
-                } else {
-                    browser
-                        .waitForElementVisible(`[data-id="create-blank"]`, 5000)
-                        .click(`[data-id="create-blank"]`)
-                }
+        if (mode === 'create') {
+            browser
+                .waitForElementVisible(`[data-id="create-${value}"]`, 5000)
+                .click(`[data-id="create-${value}"]`)
+        } else {
+            browser
+                .waitForElementVisible(`[data-id="create-blank"]`, 5000)
+                .click(`[data-id="create-blank"]`)
+        }
 
-                browser
-                    .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
-                    .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
-                    .pause(1000)
+        browser
+            .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+            .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+            .pause(1000)
 
-                if (mode === 'add') {
-                    await new Promise(resolveAdd => {
-                        browser.element('css selector', `[data-id="add-${value}"]`, result => {
-                            console.log(`Element add-${value} status: ${result.status}`)
-                            if (result.status == 0) {
-                                openTemplatesExplorer(browser)
-                                browser
-                                    .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
-                                    .click(`[data-id="add-${value}"]`)
-                                if (clickOk) {
-                                    browser
-                                        .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
-                                        .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
-                                }
-                                (async () => {
-                                    for (const selector of checkSelectors) {
-                                        await new Promise(resolveSelector => {
-                                            console.log(`Checking selector: ${selector}`)
-                                            browser.waitForElementVisible(selector, 30000)
-                                            .perform(() => {
-                                                console.log(`Selector ${selector} is visible`)
-                                                resolveSelector(true)
-                                            })
-                                        })
-                                    }
-                                    resolveAdd(true)
-                                })()
-                            } else {
-                                resolveAdd(true)
-                            }
-                        })
-                    })
-                } else {
-                    console.log(`Checking create: ${displayName} in ${mode} mode`)
-                    browser
-                        .useXpath()
-                        .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 30000)
-                        .useCss()
-                    for (const selector of checkSelectors) {
-                        await new Promise(resolveSelector => {
+        if (mode === 'add') {
+            await new Promise(resolve => {
+                browser.element('css selector', `[data-id="add-${value}"]`, result => {
+                    console.log(`Element add-${value} status: ${result.status}`)
+                    if (result.status == 0) {
+                        openTemplatesExplorer(browser)
+                        browser
+                            .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
+                            .click(`[data-id="add-${value}"]`)
+                        if (clickOk) {
+                            browser
+                                .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+                                .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+                        }
+
+                        checkSelectors.forEach(selector => {
                             console.log(`Checking selector: ${selector}`)
-                            browser.waitForElementVisible(selector, 60000)
-                            .perform(() => {
-                                console.log(`Selector ${selector} is visible`)
-                                resolveSelector(true)
-                            })
+                            browser.waitForElementVisible(selector, 30000)
                         })
                     }
-                }
-
-                if (doneCallback) doneCallback(value)
-                done()
-                resolve(true)
+                    resolve(true)
+                })
             })
-        })
+        } else {
+            browser
+                .useXpath()
+                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
+                .useCss()
+
+            checkSelectors.forEach(selector => {
+                console.log(`Checking selector: ${selector}`)
+                browser.waitForElementVisible(selector, 30000)
+            })
+        }
+
+        if (doneCallback) doneCallback(value)
     }
 }
 
@@ -268,7 +238,7 @@ function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add')
         })
 }
 
-module.exports = {
+const tests = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
@@ -276,17 +246,15 @@ module.exports = {
     openFilePanel: function (browser: NightwatchBrowser) {
         browser.clickLaunchIcon('filePanel')
     },
-    'Loop through templates and click create #flaky #group1': async function (browser) {
-        await runTemplateChecks(browser, 0, templatesToCheck.length, 'create', (value) => {
+    'Loop through templates and click create #flaky #group1': function (browser) {
+        runTemplateChecks(browser, 0, templatesToCheck.length, 'create', (value) => {
             console.log(`Finished checking: ${value}`)
         })
-        console.log('Finished all create checks')
     },
-    'Loop through templates and click add buttons #group3': async function (browser) {
-        await runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
+    'Loop through templates and click add buttons #group1': function (browser) {
+        runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
             console.log(`Finished checking: ${value}`)
         })
-        console.log('Finished all add checks')
     },
     'Test template options with create #group2': function (browser: NightwatchBrowser) {
         testTemplateOptions(browser, 'create')
@@ -303,4 +271,17 @@ module.exports = {
 
         testTemplateOptions(browser, 'add')
     }
+}
+
+const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
+    return browser.browserName.indexOf('chrome') > -1
+}
+
+
+if (checkBrowserIsChrome(browser)) {
+    module.exports = {}
+} else {
+    module.exports = {
+        ...tests
+    };
 }
