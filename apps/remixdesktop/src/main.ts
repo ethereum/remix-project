@@ -92,7 +92,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 app.on('ready', async () => {
   trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
-  if (!process.env.CIRCLECI) registerLinuxProtocolHandler();
+  //if (!process.env.CIRCLECI) registerLinuxProtocolHandler();
   require('./engine')
 });
 
