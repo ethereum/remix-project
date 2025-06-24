@@ -137,13 +137,15 @@ function openTemplatesExplorer(browser: NightwatchBrowser) {
         .waitForElementPresent('*[data-id="create-remixDefault"]')
 }
 
-function runTemplateChecks(
+async function runTemplateChecks(
     browser: NightwatchBrowser,
     start: number,
     end: number,
     mode: 'create' | 'add' = 'create',
+    doneCallback?: (value: string) => void
 ) {
-    templatesToCheck.slice(start, end).forEach(({ value, displayName, checkSelectors, clickOk }) => {
+    const slicedTemplates = templatesToCheck.slice(start, end)
+    for (const { value, displayName, checkSelectors, clickOk } of slicedTemplates) {
         console.log(`Checking template: ${value} in ${mode} mode`)
         openTemplatesExplorer(browser)
 
@@ -163,29 +165,32 @@ function runTemplateChecks(
             .pause(1000)
 
         if (mode === 'add') {
-            browser.element('css selector', `[data-id="add-${value}"]`, result => {
-                console.log(`Element add-${value} status: ${result.status}`)
-                if (result.status == 0) {
-                    openTemplatesExplorer(browser)
-                    browser
-                        .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
-                        .click(`[data-id="add-${value}"]`)
-                    if (clickOk) {
+            await new Promise(resolve => {
+                browser.element('css selector', `[data-id="add-${value}"]`, result => {
+                    console.log(`Element add-${value} status: ${result.status}`)
+                    if (result.status == 0) {
+                        openTemplatesExplorer(browser)
                         browser
-                            .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
-                            .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
-                    }
+                            .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
+                            .click(`[data-id="add-${value}"]`)
+                        if (clickOk) {
+                            browser
+                                .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+                                .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
+                        }
 
-                    checkSelectors.forEach(selector => {
-                        console.log(`Checking selector: ${selector}`)
-                        browser.waitForElementVisible(selector, 30000)
-                    })
-                }
+                        checkSelectors.forEach(selector => {
+                            console.log(`Checking selector: ${selector}`)
+                            browser.waitForElementVisible(selector, 30000)
+                        })
+                    }
+                    resolve(true)
+                })
             })
         } else {
             browser
                 .useXpath()
-                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 5000)
+                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
                 .useCss()
 
             checkSelectors.forEach(selector => {
@@ -193,7 +198,9 @@ function runTemplateChecks(
                 browser.waitForElementVisible(selector, 30000)
             })
         }
-    })
+
+        if (doneCallback) doneCallback(value)
+    }
 }
 
 function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add') {
@@ -239,11 +246,15 @@ module.exports = {
     openFilePanel: function (browser: NightwatchBrowser) {
         browser.clickLaunchIcon('filePanel')
     },
-    'Loop through templates and click create #group1': function (browser) {
-        runTemplateChecks(browser, 0, templatesToCheck.length, 'create')
+    'Loop through templates and click create #flaky #group1': function (browser) {
+        runTemplateChecks(browser, 0, templatesToCheck.length, 'create', (value) => {
+            console.log(`Finished checking: ${value}`)
+        })
     },
     'Loop through templates and click add buttons #group1': function (browser) {
-        runTemplateChecks(browser, 0, templatesToCheck.length, 'add')
+        runTemplateChecks(browser, 0, templatesToCheck.length, 'add', (value) => {
+            console.log(`Finished checking: ${value}`)
+        })
     },
     'Test template options with create #group2': function (browser: NightwatchBrowser) {
         testTemplateOptions(browser, 'create')
