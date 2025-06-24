@@ -1,10 +1,10 @@
 {
-    "version": "v0.65.0",
+    "version": "v0.66.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "New Workspace template 'Intro to EIP-7702'",
-    "highlight2": "Etherscan v2 APIs for contract verification",
-    "highlight3": "Improvement in usage of WalletConnect",
+    "highlight1": "Login with GitHub OAuth now available",
+    "highlight2": "Vyper Compilation Details now contain method identifiers",
+    "highlight3": "Templates Explorer updated for Git based templates",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-65-0-a57b55df67ae?source=friends_link&sk=59e4deb73721712e4cf4ac00766bc2f3"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-66-0-23b64fddc13b?source=friends_link&sk=7ed7e6fe93b747a76aeec137ec80f13c"
   }
