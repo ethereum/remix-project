@@ -268,7 +268,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
       tooltip: "Cookbook is a Smart Contract Search Tool. Click here to open Cookbook and browse Contracts.",
       onClick: async () => {
         await plugin.call('manager', 'activatePlugin', 'cookbookdev')
-        await plugin.call('menuicons', 'showContent', 'cookbookdev')
+        await plugin.call('sidePanel', 'focus', 'cookbookdev')
       },
       onClickLabel: 'Open Cookbook Plugin',
       description: 'Discover more templates!',
