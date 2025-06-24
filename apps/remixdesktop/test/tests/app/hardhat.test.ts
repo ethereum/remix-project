@@ -71,7 +71,13 @@ async function compileHardhatProject(): Promise<void> {
 async function setupHardhatProject(): Promise<void> {
     console.log('setup hardhat project', dir)
     try {
-        const server = spawn(`git clone https://github.com/NomicFoundation/hardhat-boilerplate ${dir} && cd ${dir} && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"`, [], { cwd: '/tmp/', shell: true, detached: true })
+        const server = spawn(`git clone https://github.com/NomicFoundation/hardhat-boilerplate ${dir} && cd ${dir} && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"`, [], { cwd: '/tmp/', shell: true, detached: true, stdio: 'inherit' })
+        server.on('error', function (err) {
+            console.error('Failed to start process:', err);
+        });
+        server.on('close', function (code) {
+            console.log(`Process closed with code ${code}`);
+        });
         return new Promise((resolve, reject) => {
             server.on('exit', function (exitCode) {
                 console.log("Child exited with code: " + exitCode);
