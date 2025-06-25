@@ -5,7 +5,8 @@
     "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [
-        "build/**/*"
+        "build/**/*",
+        "node_modules/node-pty-prebuilt-multiarch/**/*"
     ],
     "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",
@@ -25,7 +26,8 @@
         "hardenedRuntime": true,
         "gatekeeperAssess": false,
         "entitlements": "entitlements.mac.plist",
-        "entitlementsInherit": "entitlements.mac.plist"
+        "entitlementsInherit": "entitlements.mac.plist",
+        "extendInfo": "Info.plist"
     },
     "dmg": {
         "writeUpdateInfo": true,
@@ -42,7 +44,7 @@
         "target": [
             "nsis"
         ],
-        "artifactName": "${productName}-Setup-${version}.${ext}",
+        "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
         "icon": "assets/icon.png"
     },
     "deb": {},
@@ -57,5 +59,13 @@
     },
     "directories": {
         "output": "release"
-    }
+    },
+    "protocols": [
+        {
+            "name": "Remix",
+            "schemes": [
+                "remix"
+            ]
+        }
+    ]
 }
