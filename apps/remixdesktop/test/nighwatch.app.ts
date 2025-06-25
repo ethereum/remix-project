@@ -86,12 +86,12 @@ module.exports = {
 
             switch (type) {
               case 'Windows_NT':
-                binaryPath = `./release/win-unpacked/Remix-Desktop-${channel}.exe`;
+                binaryPath = `./release/win-unpacked/Remix-Desktop${channel ? '-' + channel : ''}.exe`;
                 break;
               case 'Darwin':
                 binaryPath = arch === 'x64' ? 
-                  `release/mac/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}` :
-                  `release/mac-arm64/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}`;
+                  `release/mac/Remix-Desktop${channel ? '-' + channel : ''}.app/Contents/MacOS/Remix-Desktop${channel ? '-' + channel : ''}` :
+                  `release/mac-arm64/Remix-Desktop${channel ? '-' + channel : ''}.app/Contents/MacOS/Remix-Desktop${channel ? '-' + channel : ''}`;
                 break;
               case 'Linux':
                 binaryPath = "release/linux-unpacked/remixdesktop";
