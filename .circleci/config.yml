@@ -430,13 +430,7 @@ jobs:
             npm install --global yarn
             npm install --global node-gyp
             yarn -v 
-      - run:
-          name: start selenium
-          command: |
-            cd "apps/remixdesktop/"
-            yarn -v
-          shell: powershell.exe      
-
+     
       - run: 
           command: |
               mkdir apps/remixdesktop/build
@@ -448,19 +442,12 @@ jobs:
               pip install setuptools
               yarn
               ./rundist.bash
-      - run:
-          name: Ensure chromedriver binary exists
-          command: |
-            node -e "console.log(require('chromedriver').path)"
-            if (!(Test-Path $(node -e "console.log(require('chromedriver').path)"))) {
-              echo "Chromedriver binary missing! Forcing reinstall."
-              yarn add chromedriver@124 --force
-            }
-          shell: powershell.exe
+
       - run:
           name: run tests
           command: |
             cd "apps/remixdesktop/"
+            yarn add chromedriver@124 --force
             yarn -v
             sleep 15
             ./run_ci_test.sh  
