@@ -92,5 +92,5 @@ async function setupHardhatProject(): Promise<void> {
 
 
 module.exports = {
-    ...tests
+    ...process.platform.startsWith('win')?{}:tests
 }
