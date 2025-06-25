@@ -117,13 +117,6 @@ const ManagePreferencesDialog = (props) => {
     _paq.push(['setConsentGiven']) // default consent to process their anonymous data
     settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
     settings.updateMatomoPerfAnalyticsChoice(switcherState.current.matPerfSwitch) // Enable/Disable Matomo Performance analytics
-    if (switcherState.current.matPerfSwitch) {
-      // user has given consent to process their performance data
-      _paq.push(['setMatomoPerfConsentGiven'])
-    } else {
-      // revoke tracking consent for performance data
-      _paq.push(['forgetMatomoPerfConsentGiven'])
-    }
     settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
     setVisible(false)
     props.savePreferencesFn()
