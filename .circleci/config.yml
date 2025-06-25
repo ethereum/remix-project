@@ -5,13 +5,13 @@ parameters:
     default: false   
   windows:
     type: boolean
-    default: false
+    default: true
   mac:
     type: boolean
-    default: true
+    default: false
   linux:
     type: boolean
-    default: true
+    default: false
   web:
     type: boolean
     default: false
@@ -401,7 +401,9 @@ jobs:
     steps:
       - run:
           name: Restart local mstsc
-          command: psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
+          command: |
+            Start-Sleep -Seconds 2
+            psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
           background: true
           shell: powershell.exe
       - run: 
