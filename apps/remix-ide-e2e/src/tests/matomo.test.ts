@@ -76,7 +76,7 @@ module.exports = {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 localStorage.setItem('showMatomo', 'true')
-                localStorage.removeItem('matomo-perf-analytics-consent')
+                localStorage.removeItem('matomo-analytics-consent')
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -137,7 +137,7 @@ module.exports = {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -149,7 +149,7 @@ module.exports = {
             })
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -179,7 +179,7 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -187,7 +187,7 @@ module.exports = {
             // check if timestamp is younger than 6 months
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -221,7 +221,7 @@ module.exports = {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 localStorage.setItem('showMatomo', 'true')
-                localStorage.removeItem('matomo-perf-analytics-consent')
+                localStorage.removeItem('matomo-analytics-consent')
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -237,7 +237,7 @@ module.exports = {
             .pause(2000)
             .execute(function () {
 
-                const timestamp = window.localStorage.getItem('matomo-perf-analytics-consent');
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
                 if (timestamp) {
 
                     const consentDate = new Date(Number(timestamp));
@@ -263,7 +263,7 @@ module.exports = {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -281,7 +281,7 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -300,7 +300,7 @@ module.exports = {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-perf-analytics-consent', recentTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
@@ -315,7 +315,7 @@ module.exports = {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-perf-analytics-consent', oldTimestamp.getTime().toString())
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .refreshPage()
                 .perform(done())
