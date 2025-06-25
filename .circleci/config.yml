@@ -678,6 +678,12 @@ jobs:
       - store_artifacts:
           path: /home/circleci/remix-project/apps/remixdesktop/logs/
           destination: logs
+      - store_artifacts:
+            path: /tmp/remix-desktop.log
+            destination: remix-desktop.log
+      - store_artifacts:
+            path: /tmp/remix-desktop.error.log
+            destination: remix-desktop.error.log
   
   uploadartifacts:
     docker:
