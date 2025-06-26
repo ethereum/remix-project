@@ -1,5 +1,6 @@
 import { ActivityType } from "../lib/types"
 import React from 'react'
+import ContextOptMenu from "./contextOptMenu"
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -47,10 +48,12 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     <>
       {showContextOptions && (
         <div
-          className=" w-100 bg-dark p-2 border border-text border-bottom-0 rounded"
+          className=" w-90 bg-light mb-1 p-2 border border-text"
+          style={{ borderRadius: '8px'
+          }}
         >
-          <div className="text-uppercase ml-2 mb-2">Add Context Files</div>
-          <div className="d-flex ml-2 custom-control custom-radio">
+          <div className="text-uppercase ml-2 mb-2">Context</div>
+          {/* <div className="d-flex ml-2 custom-control custom-radio">
             <input
               className="custom-control-input"
               type="radio"
@@ -109,7 +112,12 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
               Workspace
             </label>
-          </div>
+          </div> */}
+          <ContextOptMenu
+            setContextChoice={setContextChoice}
+            setShowContextOptions={setShowContextOptions}
+            contextChoice={contextChoice}
+          />
         </div>
       )}
 
@@ -120,18 +128,17 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dark btn-sm text-secondary"
+            className="btn btn-text btn-sm text-secondary small"
           >
-          Add context
+          @Add context
           </button>
 
-          <button
-            onClick={handleGenerateWorkspace}
-            className="btn btn-dark btn-sm text-secondary"
+          <span
+            className="bg-info p-1 text-ai small"
             data-id="composer-ai-workspace-generate"
           >
-          @Generate Workspace
-          </button>
+          Ai Beta
+          </span>
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <input
