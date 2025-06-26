@@ -823,7 +823,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [5]
+              parallelism: [1]
   run_metamask_tests:
     when: << pipeline.parameters.run_metamask_tests >>
     jobs:

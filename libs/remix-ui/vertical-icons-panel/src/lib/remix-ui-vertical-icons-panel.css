@@ -45,6 +45,12 @@
     filter: invert(0.5);
   }
 
+  .remixui_icon_ai img {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+
   .remixui_icon .selected-dark {
     filter: invert(1) grayscale(1);
   }

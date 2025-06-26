@@ -283,7 +283,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 }
                 <div>{props.app.hiddenPanel.render()}</div>
               </div>
-              <div>{props.app.popupPanel.render()}</div>
+              {/* <div>{props.app.popupPanel.render()}</div> */}
               <div className="statusBar fixed-bottom">
                 {props.app.statusBar.render()}
               </div>
