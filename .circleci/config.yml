@@ -5,7 +5,7 @@ parameters:
     default: false   
   windows:
     type: boolean
-    default: true
+    default: false
   mac:
     type: boolean
     default: false
@@ -14,7 +14,7 @@ parameters:
     default: false
   web:
     type: boolean
-    default: false
+    default: true
   run_metamask_tests:
     type: boolean
     default: false   
