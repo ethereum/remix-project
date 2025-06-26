@@ -155,7 +155,6 @@ export class ExecutionContext {
         this.isConnected = await this._updateChainContext()
         this.event.trigger('contextChanged', [context])
         cb()
-        cb()
       } catch (e) {
         console.error(e)
         cb(false)
