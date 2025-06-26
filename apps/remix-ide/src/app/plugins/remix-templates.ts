@@ -44,7 +44,6 @@ export class TemplatesPlugin extends Plugin {
     this.call('electronTemplates', 'addToCurrentElectronFolder', files)
   }
 
-
   async loadTemplateInNewWindow(template: string, opts?: any) {
     const metadata = TEMPLATE_METADATA[template]
     if (metadata) {

@@ -73,7 +73,7 @@ export class ElectronProvider extends FileProvider {
     }
   }
 
-    /**
+  /**
    * copy the folder recursively (internal use)
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
