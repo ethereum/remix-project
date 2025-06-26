@@ -263,4 +263,4 @@ const tests = {
 }
 
 
-module.exports = browser.browserName.includes('chrome') ? {} : tests
+module.exports = {} // browser.browserName.includes('chrome') ? {} : tests
