@@ -295,7 +295,7 @@ export const TabsUI = (props: TabsUIProps) => {
                       await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
                     }, 500)
                     setExplaining(false)
-                    _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file', content])
+                    _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }
                 }}
               >

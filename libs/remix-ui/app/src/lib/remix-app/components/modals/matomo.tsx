@@ -66,8 +66,6 @@ const MatomoDialog = (props: MatomoDialogProps) => {
   }, [visible])
 
   const handleAcceptAllClick = async () => {
-    _paq.push(['setConsentGiven']) // default consent to process their anonymous data
-    _paq.push(['setMatomoPerfConsentGiven']) // user has given consent to process their performance data
     settings.updateMatomoAnalyticsChoice(true) // Enable Matomo Anonymous analytics
     settings.updateMatomoPerfAnalyticsChoice(true) // Enable Matomo Performance analytics
     settings.updateCopilotChoice(true) // Enable RemixAI copilot

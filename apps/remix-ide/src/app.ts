@@ -232,7 +232,7 @@ class AppComponent {
 
     const electronTracking = (window as any).electronAPI ? await (window as any).electronAPI.canTrackMatomo() : false
 
-    const lastMatomoCheck = window.localStorage.getItem('matomo-perf-analytics-consent')
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
