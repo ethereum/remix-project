@@ -204,6 +204,10 @@ export const createWorkspace = async (
   return promise
 }
 
+export const generateWorkspace = async () => {
+  await plugin.call('notification', 'alert', 'Your request is being processed. Please wait while I generate the workspace for you. It won\'t be long.')
+}
+
 export const populateWorkspace = async (
   workspaceTemplateName: WorkspaceTemplate,
   opts = null,

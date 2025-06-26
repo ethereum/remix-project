@@ -1,8 +1,8 @@
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { CustomTooltip } from "@remix-ui/helper"
-import { AppModal } from '@remix-ui/app'
+import { AlertModal, AppModal } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
@@ -12,6 +12,7 @@ import isElectron from 'is-electron'
 import type { Template, TemplateGroup } from '@remix-ui/workspace'
 import './templates-selection-plugin.css'
 import { templates } from './templates'
+import { AssistantParams } from '@remix/remix-ai-core'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
 
 //@ts-ignore
@@ -22,8 +23,8 @@ const profile = {
   displayName: 'Template Selection',
   description: 'templateSelection',
   location: 'mainPanel',
-  methods: [],
-  events: [],
+  methods: ['aiWorkspaceGenerate'],
+  events: ['onTemplateSelectionResult'],
   maintainedBy: 'Remix',
 }
 
@@ -31,6 +32,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
   templates: Array<TemplateGroup>
   dispatch: React.Dispatch<any> = () => { }
   opts: any = {}
+  aiState: any = { prompt: '' }
 
   constructor() {
     super(profile)
@@ -71,6 +73,56 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     })
   }
 
+  async aiWorkspaceGenerate () {
+    const generateAIWorkspace = async () => {
+      const okAction = async () => {
+        this.call('remixaiassistant', 'chatPipe', '/generate ' + this.aiState.prompt)
+      }
+      const aiTemplateModal: AppModal = {
+        id: 'TemplatesSelection',
+        title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
+        message: aiModalTemplate((value) => this.aiState.prompt = value),
+        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
+        okFn: okAction
+      }
+      const modalResult = await this.call('notification', 'modal', aiTemplateModal)
+      const alertModal: AlertModal = {
+        id: 'TemplatesSelectionAiAlert',
+        message: <div className='d-flex flex-row align-items-center'>
+          <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
+          <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
+        </div>,
+        title: 'Generating Workspace'
+      }
+      this.on('remixAI', 'generateWorkspace', async () => {
+        await this.call('notification', 'alert', alertModal)
+      })
+      if (modalResult === undefined) {
+      }
+    }
+
+    const aiModalTemplate = (onChangeTemplateName: (value) => void) => {
+      return (
+        <>
+          <div>
+            <label id="wsName" className="form-check-label mb-2" style={{ fontWeight: 'bolder' }}>
+              Generate Workspace
+            </label>
+            <input
+              type="text"
+              data-id="modalDialogCustomPromptTextCreate"
+              placeholder="Enter a description of the workspace you want to create"
+              className="form-control mb-3"
+              onChange={(e) => onChangeTemplateName(e.target.value)}
+              onInput={(e) => onChangeTemplateName((e.target as any).value)}
+            />
+          </div>
+        </>
+      )
+    }
+    generateAIWorkspace()
+  }
+
   updateComponent() {
 
     const errorCallback = async (error, data) => {
@@ -99,6 +151,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       const gitNotSet = !username || !email
       let workspaceName = defaultName
       let initGit = false
+
       this.opts = {}
       const modal: AppModal = {
         id: 'TemplatesSelection',
@@ -117,6 +170,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
 
       const modalResult = await this.call('notification', 'modal', modal)
+      console.log('modalResult', modalResult)
       if (!modalResult) return
       _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
       this.emit('createWorkspaceReducerEvent', workspaceName, item.value, this.opts, false, errorCallback, initGit)
@@ -248,7 +302,11 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                             <span
                               data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
                               onClick={async () => {
-                                createWorkspace(item, template)
+                                if ((item.value as string).toLowerCase().includes('ai')) {
+                                  this.aiWorkspaceGenerate()
+                                } else {
+                                  createWorkspace(item, template)
+                                }
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >

@@ -92,6 +92,7 @@ let requiredModules = [
   'popupPanel',
   'remixAI',
   'remixAID',
+  'remixaiassistant',
   'githubAuthHandler'
 ]
 
@@ -155,7 +156,8 @@ export function isNative(name) {
     'popupPanel',
     'desktopClient',
     'LearnEth',
-    'noir-compiler'
+    'noir-compiler',
+    'remixaiassistant'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }

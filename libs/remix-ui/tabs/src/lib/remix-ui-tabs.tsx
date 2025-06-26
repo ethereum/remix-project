@@ -289,11 +289,15 @@ export const TabsUI = (props: TabsUIProps) => {
                   const content = await props.plugin.call('fileManager', 'readFile', path)
                   if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
                     setExplaining(true)
-                    // if plugin is pinned,
-                    await props.plugin.call('popupPanel', 'showPopupPanel', true)
-                    setTimeout(async () => {
-                      await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-                    }, 500)
+                    try {
+                      await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
+                    }
+                    catch (e) {
+                      // do nothing
+                    }
+
+                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }
@@ -321,7 +325,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="remix_ai_switch"
                 id='remix_ai_switch'
                 className="btn ai-switch text-ai pl-2 pr-0 py-0"
-                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom') )}
+                disabled={!(tabsState.currentExt === 'sol')}
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                   setAI_switch(!ai_switch)

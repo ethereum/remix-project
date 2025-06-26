@@ -77,7 +77,7 @@ export default function AIStatus(props: AIStatusProps) {
           color: 'var(--ai)',
           alignItems: 'self-end',
         }}>
-          { visible &&
+          {/* { visible &&
             <span className='p-1 text-info alert alert-secondary' style={{
               boxShadow: "0 1px 7px var(--secondary)",
               zIndex: '200',
@@ -86,8 +86,8 @@ export default function AIStatus(props: AIStatusProps) {
             }}>
                 👋 I'm here to help you!
             </span>
-          }
-          <button
+          } */}
+          {/* <button
             style={{
               backgroundColor: 'var(--brand-dark-blue)',
               height: '3rem',
@@ -106,7 +106,7 @@ export default function AIStatus(props: AIStatusProps) {
             }}
           >
             <img className="align-self-start" src="assets/img/aiLogoHead.webp" alt="" style={{ height: "2rem" }}></img>
-          </button>
+          </button> */}
         </div>
         }
       </div>
