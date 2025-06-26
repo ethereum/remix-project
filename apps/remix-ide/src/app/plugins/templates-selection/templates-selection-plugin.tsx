@@ -141,6 +141,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
 
     const createWorkspace = async (item: Template, templateGroup: TemplateGroup) => {
+      if (isElectron()) {
+        await this.call('remix-templates', 'loadTemplateInNewWindow', item.value)
+        return
+      }
       const defaultName = await this.call('filePanel', 'getAvailableWorkspaceName', item.displayName)
       const username = await this.call('settings', 'get', 'settings/github-user-name')
       const email = await this.call('settings', 'get', 'settings/github-email')
@@ -170,6 +174,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       if (!modalResult) return
       _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
       this.emit('createWorkspaceReducerEvent', workspaceName, item.value, this.opts, false, errorCallback, initGit)
+    }
+
+    const addToCurrentElectronFolder = async (item: any, templateName: string) => {
+      await this.call('remix-templates', 'addToCurrentElectronFolder', item.value, templateName)
     }
 
     const addToCurrentWorkspace = async (item: Template, templateGroup: TemplateGroup) => {
@@ -254,7 +262,13 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               hScrollable={false}
             >
               {template.items.map((item, index) => {
+
                 item.templateType = TEMPLATE_METADATA[item.value]
+
+                if (item.templateType && item.templateType.desktopCompatible === false && isElectron()) {
+                  return (<></>)
+                }
+
                 if (item.templateType && item.templateType.disabled === true) return
                 if (!item.opts) {
                   return (
@@ -296,10 +310,29 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               }}
                               className="btn btn-sm mr-2 border border-primary"
                             >
-                              Create
+                              {isElectron() ?
+                                <><i className='fa fa-folder-open mr-1'></i>Create</> : 'Create'}
                             </span>
                           </CustomTooltip>}
-                          {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> :
+                          {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> : isElectron() ?
+
+                            <div className=''>
+                              <CustomTooltip
+                                placement="auto"
+                                tooltipId={`overlay-tooltip-add${item.name}`}
+                                tooltipText="Add template files to current workspace"
+                              >
+                                <span
+                                  data-id={`add-${item.value}`}
+                                  onClick={async () => addToCurrentElectronFolder(item, template.name)}
+                                  className="btn btn-sm border"
+                                >
+                                  <i className="fa fa-folder-plus mr-1" aria-hidden="true"></i>
+                                 Add here
+                                </span>
+                              </CustomTooltip>
+                            </div>
+                            :
                             <CustomTooltip
                               placement="auto"
                               tooltipId={`overlay-tooltip-add${item.name}`}

@@ -16,6 +16,7 @@ import { FoundryPlugin } from './plugins/foundryPlugin';
 import { HardhatPlugin } from './plugins/hardhatPlugin';
 import { CircomElectronPlugin } from './plugins/circomElectronBasePlugin';
 import { isE2E } from './main';
+import { DesktopHostPlugin } from './plugins/desktopHost';
 import { GitHubAuthHandler } from './plugins/githubAuthHandler';
 
 const engine = new Engine()
@@ -33,6 +34,7 @@ const foundryPlugin = new FoundryPlugin()
 const hardhatPlugin = new HardhatPlugin()
 const remixAIDesktopPlugin = new RemixAIDesktopPlugin()
 const circomPlugin = new CircomElectronPlugin()
+const desktopHostPlugin = new DesktopHostPlugin()
 export const githubAuthHandlerPlugin  = new GitHubAuthHandler()
 
 engine.register(appManager)
@@ -49,6 +51,7 @@ engine.register(appUpdaterPlugin)
 engine.register(hardhatPlugin)
 engine.register(remixAIDesktopPlugin)
 engine.register(circomPlugin)
+engine.register(desktopHostPlugin)
 engine.register(githubAuthHandlerPlugin)
 
 appManager.activatePlugin('electronconfig')

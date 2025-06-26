@@ -95,6 +95,16 @@ export const setupEvents = (plugin: RunTab) => {
 
   plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
 
+  plugin.on('desktopHost', 'chainChanged', (context) => {
+    //console.log('desktopHost chainChanged', context)
+    fillAccountsList(plugin, dispatch)
+    updateInstanceBalance(plugin, dispatch)
+  })
+
+  plugin.on('desktopHost', 'disconnected', () => {
+    setExecutionContext(plugin, dispatch, { context: 'vm-cancun', fork: '' })
+  })
+
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(plugin, dispatch, env)

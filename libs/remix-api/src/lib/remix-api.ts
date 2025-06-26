@@ -18,6 +18,7 @@ import { IRemixAID } from "./plugins/remixAIDesktop-api"
 import { IMenuIconsApi } from "./plugins/menuicons-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
 import { IPopupPanelAPI } from "./plugins/popuppanel-api"
+import { IDesktopClient } from "./plugins/desktop-client"
 import { IGitHubAuthHandlerApi } from "./plugins/githubAuthHandler-api"
 
 export interface ICustomRemixApi extends IRemixApi {
@@ -40,6 +41,7 @@ export interface ICustomRemixApi extends IRemixApi {
   menuicons: IMenuIconsApi
   remixAI: IRemixAI,
   remixAID: IRemixAID
+  desktopClient: IDesktopClient
   githubAuthHandler: IGitHubAuthHandlerApi
 }
 
