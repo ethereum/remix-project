@@ -17,6 +17,7 @@ export function RemixUiVyperCompileDetails({ payload, theme, themeStyle }: Remix
   const abi= compileResult.abi
   const compilerVersion = compileResult?.version ?? ''
   const emvVersion = compileResult?.evmVersion ?? ''
+
   return (
     <>
       <VyperCompile

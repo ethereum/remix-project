@@ -195,7 +195,7 @@ module.exports = {
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurrence: true })
   },
 
-  'Emit 2 similar events and check the filtering is done properly #group4': function (browser: NightwatchBrowser) {
+  'Emit 2 similar events and check the filtering is done properly #group11': function (browser: NightwatchBrowser) {
     let addressRef: string
     browser
       .addFile('contracts/contract_with_event.sol', { content: contract_with_event })
@@ -204,7 +204,6 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('Example')
       .createContract('')
       .getAddressAtPosition(0, (address) => {
@@ -523,7 +522,7 @@ const deployWithEthersJs = `
 
         // Note that the script needs the ABI which is generated from the compilation artifact.
         // Make sure contract is compiled and artifacts are generated
-        const artifactsPath = 'contracts/artifacts/Owner.json' // Change this for different path
+        const artifactsPath = 'artifacts/Owner.json' // Change this for different path
 
         const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
         // 'web3Provider' is a remix global variable object
@@ -556,7 +555,7 @@ const { expect } = require("chai");
 describe("Storage with lib", function () {
   it("test initial value", async function () {
     // Make sure contract is compiled and artifacts are generated
-    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
@@ -566,7 +565,7 @@ describe("Storage with lib", function () {
   });
 
   it("test updating and retrieving updated value", async function () {
-    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
@@ -577,7 +576,7 @@ describe("Storage with lib", function () {
   });
 
   it("fail test updating and retrieving updated value", async function () {
-    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
+    const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
@@ -634,7 +633,7 @@ const { ethers } = require("hardhat");
 
 describe("Storage", function () {
     it("test library integration by calling a lib method", async function () {
-        const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Lib.json'))
+        const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'artifacts/Lib.json'))
         console.log('deploying lib:')
         const artifactLib  = {
             contractName: 'Lib',
@@ -651,7 +650,7 @@ describe("Storage", function () {
         const lib = await factoryLib.deploy();
         await lib.deployed()
 
-        const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/StorageWithLib.json'))
+        const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'artifacts/StorageWithLib.json'))
         const artifact  = {
             contractName: 'StorageWithLib',
             sourceName: 'contracts/StorageWithLib.sol',
@@ -787,7 +786,7 @@ const scriptAutoExec = {
 
           // function getContractFactoryFromArtifact(artifact: Artifact, factoryOptions: FactoryOptions): Promise<ethers.ContractFactory>;
 
-          const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/lib.json'))
+          const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'artifacts/lib.json'))
           console.log('deploying lib:')
 
           const artifactLib  = {
@@ -809,7 +808,7 @@ const scriptAutoExec = {
 
           console.log('lib deployed', lib.address)
 
-          const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Storage.json'))
+          const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'artifacts/Storage.json'))
           const artifact  = {
               contractName: 'Storage',
               sourceName: 'contracts/1_Storage.sol',

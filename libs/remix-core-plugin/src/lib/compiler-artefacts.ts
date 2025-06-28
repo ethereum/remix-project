@@ -2,6 +2,7 @@
 import { Plugin } from '@remixproject/engine'
 import { util } from '@remix-project/remix-lib'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { toChecksumAddress } from '@ethereumjs/util'
 
 const profile = {
   name: 'compilerArtefacts',
@@ -202,7 +203,8 @@ export class CompilerArtefacts extends Plugin {
   }
 
   get(key) {
-    return this.compilersArtefacts[key]
+    const checksumed = (key && key.startsWith('0x')) ? toChecksumAddress(key) : key
+    return this.compilersArtefacts[key] || this.compilersArtefacts[checksumed]
   }
 
   async getContractDataFromAddress(address) {

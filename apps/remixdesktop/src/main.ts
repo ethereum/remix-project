@@ -1,6 +1,15 @@
 import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain, protocol } from 'electron';
 import path from 'path';
+import "./utils/log"
+import os from 'os';
+import fs from 'fs';
+import { exec } from 'child_process';
 
+const logFile = fs.createWriteStream('/tmp/remix-desktop.log', { flags: 'a' });
+const errorLogFile = fs.createWriteStream('/tmp/remix-desktop.error.log', { flags: 'a' });
+
+process.stdout.write = logFile.write.bind(logFile);
+process.stderr.write = errorLogFile.write.bind(errorLogFile);
 
 export let isPackaged = false;
 export const version = app.getVersion();
@@ -34,10 +43,11 @@ const homeDir = app.getPath('userData')
 
 const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
+  await app.whenReady(); 
   // reize factor
   let resizeFactor = 0.8
   // if the window is too small the size is 100%
-  if( screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
+  if (screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
     resizeFactor = 1
   }
   const width = screen.getPrimaryDisplay().size.width * resizeFactor
@@ -88,6 +98,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 app.on('ready', async () => {
   trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
+  if (!isE2E) registerLinuxProtocolHandler();
   require('./engine')
 });
 
@@ -107,6 +118,122 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+if (!isE2E) {
+  
+  app.setAsDefaultProtocolClient('remix')
+  // windows only
+  const gotTheLock = app.requestSingleInstanceLock();
+
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', (event, argv, workingDirectory) => {
+      // On Windows, protocol URLs are passed here
+      console.log('Second instance detected:', argv, workingDirectory);
+      const urlArg = argv.find(arg => arg.startsWith('remix://'));
+      if (urlArg) {
+        handleRemixUrl(urlArg);
+      }
+    });
+
+    app.whenReady().then(() => {
+      // On app launch via protocol link (Windows only)
+      console.log('App is ready, checking for remix:// URL');
+      const urlArg = process.argv.find(arg => arg.startsWith('remix://'));
+      if (urlArg) {
+        handleRemixUrl(urlArg);
+      }
+    });
+  }
+  
+}
+
+function handleRemixUrl(url: string) {
+  try {
+    console.log('Got custom URL:', url);
+    const parsedUrl = new URL(url);
+    const fullPath = `/${parsedUrl.host}${parsedUrl.pathname}`;
+    const searchParams = parsedUrl.searchParams;
+
+    // Bring the frontmost window to the foreground
+    const allWindows = BrowserWindow.getAllWindows();
+    const targetWindow = allWindows.find(win => win.isVisible()) || allWindows[0];
+
+    if (targetWindow) {
+      if (targetWindow.isMinimized()) targetWindow.restore();
+      targetWindow.focus();
+    }
+
+    switch (fullPath) {
+      case '/auth/callback': {
+        const code = searchParams.get('code');
+        if (code) {
+          githubAuthHandlerPlugin?.exchangeCodeForToken(code);
+          console.log('Auth exchange', code);
+        }
+        break;
+      }
+
+      default:
+        console.warn('Unknown remix:// URL path:', fullPath);
+        break;
+    }
+  } catch (err) {
+    console.error('Failed to handle remix:// URL:', err);
+  }
+}
+
+// linux only
+function registerLinuxProtocolHandler() {
+  console.log('Registering remix:// protocol handler');
+  if (process.platform !== 'linux') return;
+
+  const execPath = app.getPath('exe');
+  const applicationsDir = path.join(os.homedir(), '.local', 'share', 'applications');
+  const desktopFilePath = path.join(applicationsDir, 'remix.desktop');
+
+  console.log('Executable path:', execPath);
+
+  const desktopEntry = `[Desktop Entry]
+Name=Remix IDE
+Exec=${execPath} %u
+Type=Application
+Terminal=false
+Categories=Development;
+MimeType=x-scheme-handler/remix;
+`;
+
+  console.log('Registering remix:// protocol handler:', desktopFilePath);
+
+  try {
+    if (!fs.existsSync(applicationsDir)) {
+      fs.mkdirSync(applicationsDir, { recursive: true });
+    }
+
+    fs.writeFileSync(desktopFilePath, desktopEntry);
+
+    exec(`xdg-mime default remix.desktop x-scheme-handler/remix`, (err, stdout, stderr) => {
+      if (err) {
+        console.error('Failed to register remix:// protocol handler:', err);
+      } else {
+        console.log('remix:// protocol handler registered successfully.', desktopFilePath);
+      }
+    });
+  } catch (e) {
+    console.error('Error setting up remix:// protocol handler:', e);
+  }
+}
+if (!isE2E) {
+  // macos only
+  app.on('open-url', async (event, url) => {
+    console.log('open-url', url);
+    event.preventDefault();
+    handleRemixUrl(url);
+  });
+}
+
+
 
 const showAbout = () => {
   void dialog.showMessageBox({
@@ -133,6 +260,7 @@ import HelpMenu from './menus/help';
 import { execCommand } from './menus/commands';
 import main from './menus/main';
 import { trackEvent } from './utils/matamo';
+import { githubAuthHandlerPlugin } from './engine';
 
 
 const commandKeys: Record<string, string> = {
@@ -175,18 +303,16 @@ ipcMain.handle('matomo:trackEvent', async (event, data) => {
   }
 })
 
-ipcMain.on('focus-window', (event, windowId) => {
+ipcMain.on('focus-window', (windowId: any) => {
   console.log('focus-window', windowId)
   windowSet.forEach((win: BrowserWindow) => {
-    //if (win.id === windowId) {
-      if(win.isMinimized()) {
+    console.log('win', win.webContents.id)
+    if (win.webContents.id === windowId) {
+      if (win.isMinimized()) {
         win.restore()
       }
       win.show()
       win.focus()
-   // }
+    }
   })
 })
-
-
-

@@ -45,7 +45,7 @@ Options:
   -v, --verbose <level>       set verbosity level (0 to 5)
   -f, --fork <string>         set hard fork (e.g: istanbul, berlin etc. See
                               full list of hard forks here:
-                              https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks)
+                              https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks.ts)
   -n, --nodeUrl <string>      set node url (e.g:
                               https://mainnet.infura.io/v3/your-api-key)
   -b, --blockNumber <string>  set block number (e.g: 123456)

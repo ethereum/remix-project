@@ -103,8 +103,8 @@ module.exports = {
   },
   'Should have an artifacts file with JSON test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
-      .click('*[data-id="treeViewLitreeViewItemtest_contracts/artifacts"]')
-      .openFile('test_contracts/artifacts/Storage_metadata.json')
+      .click('*[data-id="treeViewLitreeViewItemartifacts"]')
+      .openFile('artifacts/Storage_metadata.json')
       .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         const metadata = JSON.parse(content)

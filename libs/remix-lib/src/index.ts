@@ -16,7 +16,9 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
+import * as eip7702Constants from './helpers/eip7702Constants'
 export { ConsoleLogs } from './helpers/hhconsoleSigs'
+export { aaSupportedNetworks, aaLocalStorageKey, getPimlicoBundlerURL, aaDeterminiticProxyAddress, toAddress } from './helpers/aaConstants'
 export { ICompilerApi, ConfigurationSettings, iSolJsonBinData, iSolJsonBinDataBuild } from './types/ICompilerApi'
 export { QueryParams } from './query-params'
 export { VMexecutionResult } from './execution/txRunnerVM'
@@ -41,4 +43,4 @@ const execution = {
   LogsManager,
   forkAt
 }
-export { EventManager, helpers, Storage, util, execution, hash }
+export { EventManager, helpers, Storage, util, execution, hash, eip7702Constants }

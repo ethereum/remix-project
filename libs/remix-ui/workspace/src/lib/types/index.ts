@@ -20,7 +20,7 @@ export interface JSONStandardInput {
   }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Template' | 'uniswapV4HookBookMultiSigSwapHook'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Template' | 'uniswapV4HookBookMultiSigSwapHook' | 'multNr' | 'stealthDropNr'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -64,6 +64,9 @@ export type TemplateType = {
   name?: string
   endpoint?: string
   params?: any[]
+  desktopCompatible?: boolean
+  forceCreateNewWorkspace?: boolean
+  disabled?: boolean
 }
 
 export interface FilePanelType extends ViewPlugin {

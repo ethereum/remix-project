@@ -41,7 +41,7 @@ module.exports = {
         selenium_port: 4444,
         selenium_host: 'localhost',
         globals: {
-          waitForConditionTimeout: 10000,
+          waitForConditionTimeout: 30000,
           asyncHookTimeout: 30000
         },
         screenshots: {
@@ -53,9 +53,15 @@ module.exports = {
         webdriver: {
           start_process: true,
           timeout_options: {
-            timeout: 60000,
-            retry_attempts: 3
-          }
+            timeout: 90000,
+            retry_attempts: 5
+          },
+          connection_retry_attempts: 3,
+          connection_retry_timeout: 10000
+        },
+        retries: {
+          attempts: 2,
+          retry_on_failure: true
         },
         desiredCapabilities: {
           browserName: 'chrome',
@@ -71,18 +77,21 @@ module.exports = {
             if(useIsoGit) args = [...args, '--use-isogit'];
             if(useOffline) args = [...args, '--use-offline'];
 
+            // add '--remote-debugging-pipe'
+            args = [...args, '--remote-debugging-pipe', '--disable-gpu', '--disable-dev-shm-usage', '--inspect'];
+
             // Set display size
             const windowSize = "--window-size=1000,1000";
             args = [...args];
 
             switch (type) {
               case 'Windows_NT':
-                binaryPath = `./release/win-unpacked/Remix-Desktop-${channel}.exe`;
+                binaryPath = `./release/win-unpacked/Remix-Desktop${channel ? '-' + channel : ''}.exe`;
                 break;
               case 'Darwin':
                 binaryPath = arch === 'x64' ? 
-                  `release/mac/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}` :
-                  `release/mac-arm64/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}`;
+                  `release/mac/Remix-Desktop${channel ? '-' + channel : ''}.app/Contents/MacOS/Remix-Desktop${channel ? '-' + channel : ''}` :
+                  `release/mac-arm64/Remix-Desktop${channel ? '-' + channel : ''}.app/Contents/MacOS/Remix-Desktop${channel ? '-' + channel : ''}`;
                 break;
               case 'Linux':
                 binaryPath = "release/linux-unpacked/remixdesktop";
@@ -90,6 +99,9 @@ module.exports = {
             }
             
             console.log('binaryPath', binaryPath);
+            console.log('[CI DEBUG] Launching Remix Desktop with the following parameters:');
+            console.log('Binary Path:', binaryPath);
+            console.log('Arguments:', args);
             return {
               binary: binaryPath,
               args: args

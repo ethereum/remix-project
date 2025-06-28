@@ -21,7 +21,11 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
     return null
   }
 
-  if (data.result[0].FileName === '') {
+  if (data.result[0].FileName === '.sol' && data.result[0].ContractName) {
+    const fileName = `${targetPath}/${data.result[0].ContractName}.sol`
+    if (shouldSetFile) await plugin.call('fileManager', 'setFile', fileName, data.result[0].SourceCode)
+    compilationTargets[fileName] = { content: data.result[0].SourceCode }
+  } else if (data.result[0].FileName === '') {
     const fileName = `${targetPath}/${data.result[0].ContractName}.sol`
     if (shouldSetFile) await plugin.call('fileManager', 'setFile', fileName, data.result[0].SourceCode)
     compilationTargets[fileName] = { content: data.result[0].SourceCode }
@@ -52,15 +56,13 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
   try {
     runs = parseInt(data.result[0].OptimizationRuns)
   } catch (e) { }
-  const settings = {
-    version: data.result[0].CompilerVersion.replace(/^v/, ''),
+  const config = {
     language: 'Solidity',
-    evmVersion: data.result[0].EVMVersion.toLowerCase(),
-    optimize: data.result[0].OptimizationUsed === 'true',
-    runs
+    settings: data.result[0].SourceCode?.settings
   }
   return {
-    settings,
-    compilationTargets
+    config,
+    compilationTargets,
+    version: data.result[0].CompilerVersion.replace(/^v/, '')
   }
 }

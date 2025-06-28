@@ -21,7 +21,7 @@ export class ExternalHttpProvider extends AbstractProvider {
     const thePath = '<path/to/local/folder/for/test/chain>'
     return (
       <>
-        <div className="">
+        <div className="pr-1">
           <FormattedMessage
             id="udapp.externalHttpProviderText1"
             values={{
@@ -32,8 +32,7 @@ export class ExternalHttpProvider extends AbstractProvider {
               )
             }}
           />
-          <div className="border p-1">geth --http --http.corsdomain https://remix.ethereum.org</div>
-          <br />
+          <div className="border p-1 mt-2 mb-3">geth --http --http.corsdomain https://remix.ethereum.org</div>
           <FormattedMessage
             id="udapp.externalHttpProviderText2"
             values={{
@@ -44,14 +43,12 @@ export class ExternalHttpProvider extends AbstractProvider {
               )
             }}
           />
-          <div className="border p-1">
-            geth --http --http.corsdomain="{window.origin}" --http.api web3,eth,debug,personal,net --vmdebug --datadir {thePath} --dev console
+          <div className="border p-1 mt-2 mb-3">
+            geth --http --http.corsdomain="{window.origin}" --http.api web3,eth,debug,net --vmdebug --datadir {thePath} --dev console
           </div>
-          <br />
-          <br />
-          <FormattedMessage id="udapp.externalHttpProviderText3" values={{ b: (chunks) => <b><>{chunks}</></b> }} />
-          <br />
-          <br />
+          <div className='alert-warning p-1 mb-3 px-2'>
+            <FormattedMessage id="udapp.externalHttpProviderText3" values={{ b: (chunks) => <b><p className='pt-2'>{chunks}</p></b> }} />
+          </div>
           <FormattedMessage
             id="udapp.externalHttpProviderText4"
             values={{
@@ -62,9 +59,9 @@ export class ExternalHttpProvider extends AbstractProvider {
               )
             }}
           />
-          <br />
-          <br />
-          External HTTP Provider Endpoint
+          <label className='pt-4 mb-0'>
+            External HTTP Provider Endpoint
+          </label>
         </div>
       </>
     )

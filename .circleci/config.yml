@@ -1,14 +1,159 @@
-
 version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
+    default: false   
+  windows:
+    type: boolean
     default: false
+  mac:
+    type: boolean
+    default: false
+  linux:
+    type: boolean
+    default: false
+  web:
+    type: boolean
+    default: true
+  run_metamask_tests:
+    type: boolean
+    default: false   
 orbs:
-  browser-tools: circleci/browser-tools@1.4.4
+  browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
   node: circleci/node@7.0.0
+
+commands:
+  setup-windows-clienttools:
+    steps:
+      - run:
+          name: "Certificate-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            Write-Host "🔐 Decoding and setting up client certificate..."
+            New-Item -ItemType File -Path C:\CERT_FILE.p12.b64 -Force
+            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            certutil -decode C:\CERT_FILE.p12.b64 C:\Certificate_pkcs12.p12
+      - run:
+          name: "Client-Tool-Download"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (Test-Path 'c:\smtools-windows-x64.msi') {              
+              echo 'File exists, skipping download...'
+            } else {
+              echo 'Downloading smtools-windows-x64.msi ...'
+              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+
+  sign-windows-command:
+    steps:
+      - setup-windows-clienttools
+      - run:
+          name: "Client-Tool-Setup"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            . .\SetEnvVars.ps1
+            dir Env:
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+            & (Join-Path $env:SSM "smctl.exe") -h
+            & (Join-Path $env:SSM "smksp_cert_sync.exe") --verbose
+            & (Join-Path $env:SSM "smksp_registrar.exe") list
+            & (Join-Path $env:SSM "smctl.exe") keypair ls
+            & (Join-Path $env:SSM "smctl.exe") healthcheck
+
+            # --- Begin certificate and keypair selection block ---
+            Write-Host "🔍 Parsing ACTIVE certificates..."
+            $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
+            $activeCerts = @()
+            foreach ($line in $certLines) {
+              write-host $line
+              if ($line -match '^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\bACTIVE\b') {
+                $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
+              }
+            }
+            if ($activeCerts.Count -eq 0) {
+              Write-Host "❌ No ACTIVE certificates found. Failing."
+              exit 1
+            }
+            # Select the first ACTIVE certificate
+            $chosen = $activeCerts[0]
+            Write-Host "✅ Selected ACTIVE certificate ID $($chosen.id), alias $($chosen.alias)"
+
+            Write-Host "🔍 Finding keypair alias for the selected cert..."
+            $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
+            $keyAlias = $null
+            foreach ($line in $keyLines) {
+              Write-Host $line
+              $cells = $line -split '\s+'
+              # The certificate ID is in the last column; alias is the third column
+              if ($cells[-1] -eq $chosen.id) {
+                $keyAlias = $cells[2]
+                break
+              }
+            }
+            if (-not $keyAlias) {
+              Write-Host "❌ No keypair found for certificate ID $($chosen.id). Failing."
+              exit 1
+            }
+            Write-Host "✅ Using keypair alias $keyAlias"
+
+            # Export variables for later use
+            $env:SELECTED_CERT_ID = $chosen.id
+            $env:SELECTED_CERT_ALIAS = $chosen.alias
+            $env:SELECTED_KEYPAIR_ALIAS = $keyAlias
+            # --- End certificate and keypair selection block ---
+
+            & "$env:SSM\smctl.exe" windows certsync --keypair-alias=$env:SELECTED_KEYPAIR_ALIAS
+
+            Write-Host "📄 Listing CurrentUser\My certificates..."
+            Get-ChildItem Cert:\CurrentUser\My | Format-List Subject, Thumbprint, NotAfter, HasPrivateKey, EnhancedKeyUsageList
+
+            Write-Host "🔍 Verifying code signing capability in the Windows store..."
+            $expectedThumbprint = $env:SM_CODE_SIGNING_CERT_SHA1_HASH.ToUpper().Replace(" ", "")
+            Write-Host "Expected thumbprint: $expectedThumbprint"
+            $storeCert = Get-ChildItem Cert:\CurrentUser\My |
+              Where-Object {
+                $_.HasPrivateKey -and
+                ($_.EnhancedKeyUsageList | Where-Object { $_.FriendlyName -eq "Code Signing" }) -and
+                $_.Thumbprint -eq $expectedThumbprint
+              }
+            if (-not $storeCert) {
+              Write-Host "❌ No code signing certificate with private key found matching thumbprint $expectedThumbprint. Failing."
+              exit 1
+            }
+            Write-Host "✅ Code signing certificate with private key ($expectedThumbprint) is present in CurrentUser\My."
+
+            Write-Host "🌩️ Attempting cloud-based signing $($EXECUTABLE) using smctl sign..."
+            
+            Write-Host "🔧 Adding Signtool to PATH..."
+            $env:PATH += ";C:\Program Files (x86)\Windows Kits\10\App Certification Kit"
+            Write-Host "✅ Signtool added to PATH"
+            
+            & "$env:SSM\smctl.exe" sign --keypair-alias $env:SELECTED_KEYPAIR_ALIAS --input $EXECUTABLE --verbose
+            signtool verify /pa /v $EXECUTABLE
 jobs:
+
+
+  check-signing-readiness-windows:
+    executor: win/default
+    environment:
+      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
+      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
+      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
+    steps:
+      - run:
+          name: "Create Dummy EXE"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            Copy-Item "C:\Windows\System32\notepad.exe" dummy.exe
+            "Set-Variable -Name 'EXECUTABLE' -Value 'dummy.exe' -Scope Global" > SetEnvVars.ps1
+      - sign-windows-command
+            
+            
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -122,19 +267,18 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - node/install:
             install-yarn: true
-            node-version: '20.2'
+            node-version: '22.12'
         - run: 
             command: |
                 node -v
-                yarn global add node-gyp@10.2.0
+                npm install -g node-gyp@10.2.0
                 python -m pip install --upgrade pip
                 pip install setuptools
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
-                yarn --ignore-optional
-                yarn add @remix-project/remix-ws-templates
+                yarn --ignore-optional --network-timeout 600000
+                yarn add @remix-project/remix-ws-templates --network-timeout 600000
                 ./rundist.bash test_only
         - run:  
             name: "Run tests"
@@ -146,10 +290,23 @@ jobs:
             command: |
               cd apps/remixdesktop/
               ./run_git_ui_isogit_tests.sh
+       
+
         - store_test_results:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
             path: ./apps/remixdesktop/reports/screenshots
+        - store_artifacts:
+            path: /home/circleci/remix-project/apps/remixdesktop/logs/
+            destination: logs
+        - store_artifacts:
+            path: /tmp/remix-desktop.log
+            destination: remix-desktop.log
+        - store_artifacts:
+            path: /tmp/remix-desktop.error.log
+            destination: remix-desktop.error.log
+
+          
 
   build-remixdesktop-linux:
       machine:
@@ -165,8 +322,8 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
-                nvm install 20.2
-                nvm use 20.2
+                nvm install 22.12
+                nvm use 22.12
                 node -v
                 npm install --global yarn node-gyp
                 python -m pip install --upgrade pip
@@ -174,7 +331,6 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
-                yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
                 ./rundist.bash
@@ -211,8 +367,8 @@ jobs:
 
       - run: 
           command: |
-            nvm install 20.2
-            nvm use 20.2
+            nvm install 22.12
+            nvm use 22.12
             node -v
             npx -v
             npm install --global yarn
@@ -245,7 +401,9 @@ jobs:
     steps:
       - run:
           name: Restart local mstsc
-          command: psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
+          command: |
+            Start-Sleep -Seconds 2
+            psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
           background: true
           shell: powershell.exe
       - run: 
@@ -265,35 +423,31 @@ jobs:
 
       - run: 
           command: |
-            nvm install 20.2
-            nvm use 20.2
+            nvm install 22.12
+            nvm use 22.12
             node -v
             npx -v
             npm install --global yarn
             npm install --global node-gyp
             yarn -v 
-      - run:
-          name: start selenium
-          command: |
-            cd "apps/remixdesktop/"
-            yarn -v
-          shell: powershell.exe      
-
+     
       - run: 
           command: |
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
-              nvm use 20.2
+              nvm use 22.12
               node -v
               python -m pip install --upgrade pip
               pip install setuptools
               yarn
               ./rundist.bash
+
       - run:
           name: run tests
           command: |
             cd "apps/remixdesktop/"
+            yarn add chromedriver@124 --force
             yarn -v
             sleep 15
             ./run_ci_test.sh  
@@ -308,8 +462,20 @@ jobs:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/apps/remixdesktop/logs/
+          destination: logs
 
-  # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
+  # to setup a new certificate:
+  # 1) from https://one.digicert.com/signingmanager/dashboard in the 'get started' section, the following configuration variables can be created:
+  #    - SM_API_KEY
+  #    - SM_CLIENT_CERT_PASSWORD
+  #    - SM_CLIENT_CERT_FILE_B64: first download the certificate, then convert it to base 64 using the command: `base64 path/to/your/certificate.crt`
+  # 2) SM_HOST see https://docs.digicert.com/en/digicert-keylocker/overview/requirements.html#host-environment-488570
+  # 3) SM_CODE_SIGNING_CERT_SHA1_HASH: from the digicert one interface, see https://docs.digicert.com/en/digicert-keylocker/certificates/locate-certificate-fingerprint-thumbprint.html
+  # 4) Adding a Signer: from the digicert one interface, see: https://docs.digicert.com/en/digicert-keylocker/certificates/add-signer.html
+
+  # see https://docs.digicert.com/en/digicert-keylocker/ci-cd-integrations/scripts/circleci/scripts-for-signing-using-ksp-library-on-circleci.html
   sign-remixdesktop-windows:
     executor: win/default # executor type
     working_directory: ~/remix-project
@@ -318,50 +484,10 @@ jobs:
       - attach_workspace:
          at: .
       - run:
-          name: "Certificate-Setup"
-          shell: powershell.exe
-          command: |
-            cd C:\
-            New-Item C:\CERT_FILE.p12.b64
-            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
-            certutil -decode CERT_FILE.p12.b64 Certificate_pkcs12.p12
-            cat Certificate_pkcs12.p12
-      - restore_cache:
-          name: Restore smtools-windows-x64.msi
-          keys:
-            - dl-smtools-windows-x64.msi
-      - run:
-          name: "Client-Tool-Download"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            if (Test-Path 'c:\smtools-windows-x64.msi') {              
-              echo 'File exists, skipping download...'
-            } else {
-              echo 'Downloading smtools-windows-x64.msi ...'
-              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            }
-      - save_cache:
-          key: dl-smtools-windows-x64.msi
-          paths:
-            - c:\smtools-windows-x64.msi
-      - run:
-          name: "Client-Tool-Setup"
-          shell: powershell.exe 
-          command: |
-            cd C:\
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & $env:SSM\smksp_cert_sync.exe
-            & $env:SSM\smctl.exe healthcheck
-      - run:
-          name: "Find Signtool"
-          shell: powershell.exe
-          command: |
-            Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit' -Filter signtool.exe -Recurse
-      - run:
           name: read env
           shell: powershell.exe
           command: |
+            cd C:\
             # Specify the path to your package.json file
             $packageJsonPath = "C:\Users\circleci\remix-project\apps\remixdesktop\package.json"
 
@@ -375,33 +501,16 @@ jobs:
                     # Store the version value in an environment variable
                     $version = $packageJsonContent.version
                     $file = "C:\Users\circleci\remix-project\release\Remix-Desktop-Setup-$($version).exe" 
-                    Write-Host "Version $(file) stored in PACKAGE_VERSION environment variable."
-                    "Set-Variable -Name 'PACKAGE_VERSION' -Value '$file' -Scope Global" > SetEnvVars.ps1
-                    dir Env:
+                    Write-Host "Version $($file) stored in EXECUTABLE environment variable."
+                    "Set-Variable -Name 'EXECUTABLE' -Value '$file' -Scope Global" > SetEnvVars.ps1
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
                 }
             } else {
                 Write-Host "Error: package.json file not found at $packageJsonPath."
             }
-      - run:
-          name: "Signtool-Signing"
-          shell: powershell.exe
-          command: | 
-            . .\SetEnvVars.ps1
-            dir Env:
-            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
-      - run:
-          name: "Signtool-Verification"
-          shell: powershell.exe
-          command: |
-            . .\SetEnvVars.ps1
-            $verify_output = $(& $env:Signtool verify /v /pa $PACKAGE_VERSION)
-            echo ${verify_output}
-            if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
-              echo 'Verification failed'
-              exit 1
-            }
+      - sign-windows-command
+          
       - run:
           name: "remove unnecessary files"
           shell: bash.exe
@@ -416,7 +525,7 @@ jobs:
           paths:
             - "release"
     environment:
-      SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
+      SM_CODE_SIGNING_CERT_SHA1_HASH: 'aca70d1617c89ac5720753cd1f1cc499d108b53f'
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
         
@@ -424,7 +533,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parameters:
       arch:
@@ -450,14 +559,14 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.2
-            nvm use 20.2
+            nvm install 22.12
+            nvm use 22.12
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop 
             yarn || yarn
             find ./node_modules
@@ -469,14 +578,14 @@ jobs:
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop
             yarn installRipGrepMacOX<< parameters.arch >>
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false ./rundist.bash --<< parameters.arch >>
@@ -488,8 +597,8 @@ jobs:
       - run:
           name: Notarize the app
           command: |
-            brew install jq
             cd apps/remixdesktop
+            security unlock-keychain -p ci-password build.keychain
             zsh notarizedmg.sh
       - run:
           name: "remove unnecessary files"
@@ -509,7 +618,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.m1.large.gen1
+        m2pro.medium
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -520,15 +629,15 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.2
-            nvm use 20.2
+            nvm install 22.12
+            nvm use 22.12
             /usr/sbin/softwareupdate --install-rosetta --agree-to-license
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop 
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
@@ -538,14 +647,14 @@ jobs:
             - apps/remixdesktop/node_modules
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64   
@@ -553,19 +662,28 @@ jobs:
       - run:
           name: "Run tests"
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop
             ./run_ci_test.sh  
       - run:
           name: "Run isogit tests"
           command: |
-            nvm use 20.2
+            nvm use 22.12
             cd apps/remixdesktop
             ./run_git_ui_isogit_tests.sh
       - store_test_results:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
           path: ./apps/remixdesktop/reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/apps/remixdesktop/logs/
+          destination: logs
+      - store_artifacts:
+            path: /tmp/remix-desktop.log
+            destination: remix-desktop.log
+      - store_artifacts:
+            path: /tmp/remix-desktop.error.log
+            destination: remix-desktop.error.log
   
   uploadartifacts:
     docker:
@@ -629,7 +747,7 @@ jobs:
 
   remix-ide-browser:
     docker:
-      - image: cimg/node:20.17.0-browsers
+      - image: cimg/node:20.18.3-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -670,6 +788,25 @@ jobs:
             - run: google-chrome --version
       - when:
           condition:
+              equal: [ "chromeMetamask", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-browser-tools:
+                install-firefox: false
+                install-chrome: true
+                install-chromedriver: false
+                install-geckodriver: false
+            - run:
+                name: "📦 Downgrading Chrome to version 135"
+                command: |
+                  echo "📦 Downgrading Chrome to version 135"
+                  wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_135.0.7049.114-1_amd64.deb -O /tmp/chrome135.deb
+                  sudo dpkg -i /tmp/chrome135.deb || true
+                  sudo apt-get install -f -y
+                  google-chrome --version
+            - run: yarn install_webdriver
+            - run: google-chrome --version
+      - when:
+          condition:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
@@ -684,6 +821,9 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+      - store_artifacts:
+          path: /home/circleci/remix-project/logs
+          destination: logs
 
   tests-passed:
     machine:
@@ -773,6 +913,62 @@ jobs:
       - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
     
 workflows:
+  windows:
+    when: << pipeline.parameters.windows >>
+    jobs:
+      - check-signing-readiness-windows
+      - build-desktop:
+          requires:
+            - check-signing-readiness-windows
+      - build-remixdesktop-windows:
+          requires:
+            - build-desktop
+      - sign-remixdesktop-windows:
+          requires:
+            - build-remixdesktop-windows
+            - test-remixdesktop-windows
+      - test-remixdesktop-windows:
+          requires:
+          - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-windows
+            - test-remixdesktop-windows
+            - sign-remixdesktop-windows
+
+  mac:
+    when: << pipeline.parameters.mac >>
+    jobs:
+      - build-desktop
+      - build-remixdesktop-mac:
+          requires:
+            - build-desktop
+          matrix:
+            parameters: 
+              arch: ["arm64", "x64"]
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
+      - uploadartifacts:
+           requires:
+             - build-remixdesktop-mac
+             - test-remixdesktop-mac
+
+  linux:
+    when: << pipeline.parameters.linux >>
+    jobs:
+      - build-desktop
+      - build-remixdesktop-linux:
+          requires:
+            - build-desktop
+      - test-remixdesktop-linux:
+          requires:
+            - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-linux
+            - test-remixdesktop-linux
+
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -786,62 +982,26 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
-              parallelism: [1]
-  build_all:
-    unless: << pipeline.parameters.run_flaky_tests >>
+              parallelism: [5]
+
+  run_metamask_tests:
+    when: << pipeline.parameters.run_metamask_tests >>
     jobs:
       - build
-      - build-desktop
-      - build-remixdesktop-mac:
+      - remix-ide-browser:
           requires:
-            - build-desktop
+            - build
           matrix:
-            parameters: 
-              arch: ["arm64", "x64"]
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - test-remixdesktop-mac:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - build-remixdesktop-windows:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - sign-remixdesktop-windows:
-          requires:
-            - build-remixdesktop-windows
-      - build-remixdesktop-linux:
-          requires:
-            - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - test-remixdesktop-linux:
-          requires:
-            - build-desktop
-      - test-remixdesktop-windows:
-          requires:
-           - build-desktop
-          filters:
-            branches:
-              only: [/.*desktop.*/]
-      - uploadartifacts:
-          requires:
-            - build-remixdesktop-mac
-            - build-remixdesktop-linux
-            - sign-remixdesktop-windows
-            - test-remixdesktop-windows
-            - test-remixdesktop-linux
-            - test-remixdesktop-mac
-          filters:
-            branches:
-              only: [/.*desktop-master.*/]
+            parameters:
+              browser: ["chromeMetamask"]
+              script: ["metamask.sh"]
+              job: ["0"]
+              jobsize: ["1"]
+              parallelism: [1]
+  web:
+    when: << pipeline.parameters.web >>
+    jobs:
+      - build
       - build-plugin:
           matrix:
             parameters:
@@ -881,7 +1041,7 @@ workflows:
           matrix:
             alias: metamask
             parameters:
-              browser: ["chrome"]
+              browser: ["chromeMetamask"]
               script: ["metamask.sh"]
               job: ["0"]
               jobsize: ["10"]

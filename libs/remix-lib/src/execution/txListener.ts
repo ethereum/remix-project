@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { toBytes, addHexPrefix } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { compareByteCode, getinputParameters } from '../util'
@@ -103,6 +103,8 @@ export class TxListener {
         addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status
+        tx.isUserOp = txResult.tx.isUserOp
+        tx.originTo = txResult.tx.originTo
         this._resolve([tx])
       }).catch(error=>console.log(error))
     })
@@ -382,7 +384,7 @@ export class TxListener {
       const type = abi.inputs[i].type
       inputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(abi.inputs[i]) : type)
     }
-    const abiCoder = new ethers.utils.AbiCoder()
+    const abiCoder = new AbiCoder()
     const decoded = abiCoder.decode(inputTypes, data)
     const ret = {}
     for (const k in abi.inputs) {

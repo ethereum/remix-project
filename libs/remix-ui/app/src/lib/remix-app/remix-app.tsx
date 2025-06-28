@@ -3,6 +3,7 @@ import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
 import EnterDialog from './components/modals/enter'
+import ManagePreferencesDialog from './components/modals/managePreferences'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
@@ -29,6 +30,7 @@ interface IRemixAppUi {
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
+  const [showManagePreferencesDialog, setShowManagePreferencesDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
@@ -243,8 +245,9 @@ const RemixApp = (props: IRemixAppUi) => {
         <onLineContext.Provider value={online}>
           <AppProvider value={value}>
             <OriginWarning></OriginWarning>
-            <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
+            <MatomoDialog hide={!appReady} acceptAllFn={() => setShowEnterDialog(true)} managePreferencesFn={() => setShowManagePreferencesDialog(true)}></MatomoDialog>
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
+            {showManagePreferencesDialog && <ManagePreferencesDialog savePreferencesFn={() => setShowEnterDialog(true)}></ManagePreferencesDialog>}
             <div className='d-flex flex-column'>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
                 <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
@@ -289,7 +292,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 }
                 <div>{props.app.hiddenPanel.render()}</div>
               </div>
-              <div>{props.app.popupPanel.render()}</div>
+              {/* <div>{props.app.popupPanel.render()}</div> */}
               <div className="statusBar fixed-bottom">
                 {props.app.statusBar.render()}
               </div>

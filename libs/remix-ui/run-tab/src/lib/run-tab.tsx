@@ -22,6 +22,8 @@ import {
   createNewAddress,
   setPassphraseModal,
   setMatchPassphraseModal,
+  createNewSmartAccount,
+  internalDelegationAuthorization,
   signMessage,
   fetchSelectedContract,
   createNewInstance,
@@ -134,7 +136,7 @@ export function RunTabUI(props: RunTabProps) {
     // if no contract file is open, don't do anything
     if (compilerState.target !== null) {
       const targetChainId = runTab.chainId
-      const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'cancun'
+      const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'prague'
       const IsCompatible = isChainCompatible(ideDefault, targetChainId)
       const chain = await returnCompatibleChain(ideDefault, targetChainId)
       if (chain === undefined) {
@@ -373,12 +375,16 @@ export function RunTabUI(props: RunTabProps) {
             runTabPlugin={plugin}
             setExecutionContext={setExecutionEnvironment}
             createNewBlockchainAccount={createNewAddress}
+            createNewSmartAccount={createNewSmartAccount}
+            delegationAuthorization={internalDelegationAuthorization}
             setPassphrase={setPassphraseModal}
             setMatchPassphrase={setMatchPassphraseModal}
             modal={modal}
             tooltip={toast}
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
+            udappState={runTab}
+            envLabel={runTab.selectExEnv}
           />
           <ContractDropdownUI
             selectedAccount={runTab.accounts.selectedAccount}

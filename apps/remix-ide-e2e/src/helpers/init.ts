@@ -8,13 +8,13 @@ type LoadPlugin = {
   url: string
 }
 
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
     .switchBrowserTab(0)
-    .hidePopupPanel()
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -52,12 +52,28 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         (console as any).browserLog = console.log;
         (console as any).browserError = console.error
         console.log = function () {
-          (window as any).logs.push(JSON.stringify(arguments));
-          (console as any).browserLog(...arguments)
+          try {
+            (window as any).logs.push(JSON.stringify(arguments))
+          } catch (e) {
+            (window as any).logs.push(e.message)
+          }
+          try {
+            (console as any).browserLog(...arguments)
+          } catch (e) {
+            (console as any).browserLog(e.message)
+          }
         }
         console.error = function () {
-          (window as any).logs.push(JSON.stringify(arguments));
-          (console as any).browserError(...arguments)
+          try {
+            (window as any).logs.push(JSON.stringify(arguments))
+          } catch (e) {
+            (window as any).logs.push(e.message)
+          }
+          try {
+            (console as any).browserError(...arguments)
+          } catch (e) {
+            (console as any).browserError(e.message)
+          }
         }
       })
     })

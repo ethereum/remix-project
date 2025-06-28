@@ -32,7 +32,7 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
-  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer']
+  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer', 'generate']
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
@@ -82,13 +82,13 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     return true
   }
 
-  async code_completion(prompt: string, promptAfter: string) {
+  async code_completion(prompt: string, promptAfter: string, ctxFiles=[], fileName: string="") {
     // use general purpose model
-    return this.desktopInferencer.code_completion(prompt, promptAfter)
+    return this.desktopInferencer.code_completion(prompt, promptAfter, ctxFiles, fileName)
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string) {
-    return this.desktopInferencer.code_insertion(msg_pfx, msg_sfx)
+  async code_insertion(msg_pfx: string, msg_sfx: string, ctxFiles=[], fileName: string="") {
+    return this.desktopInferencer.code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName)
   }
 
   async code_generation(prompt: string) {
@@ -105,6 +105,10 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async solidity_answer(prompt: string) {
     return this.desktopInferencer.solidity_answer(prompt)
+  }
+
+  async generate(userPrompt): Promise<any> {
+    return this.desktopInferencer.generate(userPrompt)
   }
 
   changemodel(newModel: any){

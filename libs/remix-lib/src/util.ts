@@ -1,6 +1,6 @@
 'use strict'
 import { hash } from '@remix-project/remix-lib'
-import { bytesToHex, setLengthLeft, toBytes, addHexPrefix } from '@ethereumjs/util'
+import { setLengthLeft, toBytes, addHexPrefix } from '@ethereumjs/util'
 import stringSimilarity from 'string-similarity'
 import { BN } from 'bn.js'
 import { isBigInt } from 'web3-validator'
@@ -54,6 +54,26 @@ export function toHexPaddedString(v: bigint | string): string {
   }
   else
     return '0x' + '0'.padStart(64, '0')
+}
+
+const hexByByte = Array.from({ length: 256 }, (v, i) => i.toString(16).padStart(2, '0'))
+export function bytesToHex (bytes: Uint8Array): any {
+  let hex = `0x`
+  if (bytes === undefined || bytes.length === 0) return hex
+  for (const byte of bytes) {
+    hex = `${hex}${hexByByte[byte]}`
+  }
+  return hex
+}
+
+export function padHexToEven(hex: string): string {
+  hex = hex.replace('0x', '')
+  // Check if the length of the hex string is odd
+  if (hex.length % 2 !== 0) {
+    // Add a leading zero
+    hex = '0' + hex;
+  }
+  return '0x' + hex;
 }
 
 /*
@@ -194,7 +214,7 @@ export function swarmHashExtractionPOC32 () {
 
 /**
   * return a regex which extract the cbor encoded metadata : {"ipfs": <IPFS hash>, "solc": <compiler version>} from the bytecode.
-  * ref https://solidity.readthedocs.io/en/v0.6.6/metadata.html?highlight=ipfs#encoding-of-the-metadata-hash-in-the-bytecode
+  * ref https://docs.soliditylang.org/en/v0.6.6/metadata.html?highlight=ipfs#encoding-of-the-metadata-hash-in-the-bytecode
   * @return {RegEx}
   */
 export function cborEncodedValueExtraction () {

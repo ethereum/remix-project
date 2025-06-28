@@ -29,6 +29,7 @@ export type UrlParametersType = {
   opendir: string,
   blockscout: string,
   ghfolder: string
+  endpoint: string
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -136,35 +137,25 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         try {
           let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
           if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
-          const networks = [
-            { id: 1, name: 'mainnet' },
-            { id: 11155111, name: 'sepolia' }
-          ]
-          let found = false
           const workspaceName = 'code-sample'
           let filePath
           const foundOnNetworks = []
-          for (const network of networks) {
-            const target = `/${network.name}/${contractAddress}`
-            try {
-              data = await fetchContractFromEtherscan(plugin, network, contractAddress, target, false, etherscanKey)
-            } catch (error) {
-              if ((error.message.startsWith('contract not verified on Etherscan') || error.message.startsWith('unable to retrieve contract data')) && network.id !== 5)
-                continue
-              else {
-                if (!found) await basicWorkspaceInit(workspaces, workspaceProvider)
-                break
-              }
-            }
-            found = true
-            foundOnNetworks.push(network.name)
-            if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
-            else await createWorkspaceTemplate(workspaceName, 'code-template')
-            plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
-            dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
-            count = count + (Object.keys(data.compilationTargets)).length
-            for (filePath in data.compilationTargets)
-              await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+          const endpoint = params.endpoint || 'api.etherscan.io'
+          try {
+            data = await fetchContractFromEtherscan(plugin, endpoint, contractAddress, '', false, etherscanKey)
+          } catch (error) {
+            return await basicWorkspaceInit(workspaces, workspaceProvider)
+          }
+          if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
+          else await createWorkspaceTemplate(workspaceName, 'code-template')
+          plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+          dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
+          count = count + (Object.keys(data.compilationTargets)).length
+          for (filePath in data.compilationTargets)
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+
+          if (data.config) {
+            await workspaceProvider.set('compiler_config.json', JSON.stringify(data.config, null, '\t'))
           }
 
           plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {

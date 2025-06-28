@@ -41,7 +41,6 @@ export class Blockchain extends Plugin<any, any> {
   changeExecutionContext(context: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
   detectNetwork(cb: any): void;
   getProvider(): any;
-  getInjectedWeb3Address(): any;
   /**
      * return the fork name applied to the current environment
      * @return {String} - fork name

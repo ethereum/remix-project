@@ -6,12 +6,10 @@ import { Contract, compileContract } from './compiler'
 import { ExampleContract } from '../components/VyperResult'
 import EventEmitter from 'events'
 import { CustomRemixApi } from '@remix-api'
-
-
-export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
+import { endpointUrls } from '@remix-endpoints-helper'
 export class RemixClient extends PluginClient<any, CustomRemixApi> {
   private client = createClient<Api, Readonly<RemixApi>>(this)
-  compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
+  compilerUrl: string = endpointUrls.vyper2
   compilerOutput: any
   eventEmitter = new EventEmitter()
 
@@ -93,15 +91,15 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
         { url: 'https://github.com/vyperlang/vyper', token: null, branch: 'master', singleBranch: false, workspaceName: 'vyper' },
       )
 
-      // await this.call(
-      //   'dgitApi',
-      //   'checkout',
-      //   {
-      //     ref:'v0.0.5',
-      //     force: true,
-      //     refresh: true,
-      //   }
-      // )
+      await this.call(
+        'dgitApi',
+        'checkout',
+        {
+          ref:'v0.4.0',
+          force: true,
+          refresh: true,
+        }
+      )
 
       this.call(
         // @ts-ignore

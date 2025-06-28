@@ -21,6 +21,7 @@ import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
 import { SolidityScript } from './app/plugins/solidity-script'
+import { RemixAIAssistant } from './app/plugins/remix-ai-assistant'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -32,7 +33,7 @@ import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain'
-import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider } from './app/providers/vm-provider'
+import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider, PectraVMProvider } from './app/providers/vm-provider'
 import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
 import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
 import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
@@ -67,11 +68,13 @@ import { FoundryHandleDesktop } from './app/plugins/electron/foundryPlugin'
 import { HardhatHandle } from './app/files/hardhat-handle'
 import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 import { circomPlugin } from './app/plugins/electron/circomElectronPlugin'
+import { GitHubAuthHandler } from './app/plugins/electron/gitHubAuthHandler'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 import { DesktopClient } from './app/plugins/desktop-client'
 import { DesktopHost } from './app/plugins/electron/desktopHostPlugin'
 import { VSCodeSync } from './app/plugins/electron/vsCodeSync'
+import { WalletConnect } from './app/plugins/walletconnect'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -81,7 +84,7 @@ import * as remixLib from '@remix-project/remix-lib'
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
-import { ScriptRunnerUIPlugin } from './app/tabs/script-runner-ui'
+import { ScriptRunnerBridgePlugin } from './app/plugins/script-runner-bridge'
 import { ElectronProvider } from './app/files/electronProvider'
 
 const Storage = remixLib.Storage
@@ -95,7 +98,7 @@ import { appPlatformTypes } from '@remix-ui/app'
 import DGitProvider from './app/files/dgitProvider'
 import WorkspaceFileProvider from './app/files/workspaceFileProvider'
 
-import PluginManagerComponent from './app/components/plugin-manager-component'
+import { PluginManagerComponent } from './app/components/plugin-manager-component'
 
 import CompileTab from './app/tabs/compile-tab'
 import SettingsTab from './app/tabs/settings-tab'
@@ -106,6 +109,7 @@ import Filepanel from './app/panels/file-panel'
 import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
+import { Plugin } from '@remixproject/engine'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -152,7 +156,7 @@ class AppComponent {
   popupPanel: PopupPanel
   statusBar: StatusBar
   settings: SettingsTab
-  params: { activate?: string, deactivate?: string, code?: string, call?: string, calls?: string }
+  params: any
   desktopClientMode: boolean
   constructor() {
     const PlatFormAPi = new platformApi()
@@ -209,6 +213,11 @@ class AppComponent {
     const pluginLoader = this.appManager.pluginLoader
     this.panels = {}
     this.workspace = pluginLoader.get()
+    if (pluginLoader.current === 'queryParams') {
+      this.workspace.map((workspace) => {
+        _paq.push(['trackEvent', 'App', 'queryParams-activated', workspace])
+      })
+    }
     this.engine = new RemixEngine()
     this.engine.register(appManager)
 
@@ -220,8 +229,8 @@ class AppComponent {
     }
 
     _paq.push(['trackEvent', 'App', 'load']);
-    this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
-    this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
+    this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-perf-analytics')
+    this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-perf-analytics')
 
     const electronTracking = (window as any).electronAPI ? await (window as any).electronAPI.canTrackMatomo() : false
 
@@ -288,7 +297,7 @@ class AppComponent {
     const search = new SearchPlugin()
 
     //---------------- Script Runner UI Plugin -------------------------
-    const scriptRunnerUI = new ScriptRunnerUIPlugin(this.engine)
+    const scriptRunnerUI = new ScriptRunnerBridgePlugin(this.engine)
 
     //---- templates
     const templates = new TemplatesPlugin()
@@ -314,6 +323,7 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const remixAI = new RemixAIPlugin(isElectron())
+    const remixAiAssistant = new RemixAIAssistant()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -341,6 +351,7 @@ class AppComponent {
     const vmProviderGoerliFork = new GoerliForkVMProvider(blockchain)
     const vmProviderShanghai = new ShanghaiVMProvider(blockchain)
     const vmProviderCancun = new CancunVMProvider(blockchain)
+    const vmProviderPectra = new PectraVMProvider(blockchain)
     const vmProviderMerge = new MergeVMProvider(blockchain)
     const vmProviderBerlin = new BerlinVMProvider(blockchain)
     const vmProviderLondon = new LondonVMProvider(blockchain)
@@ -388,6 +399,8 @@ class AppComponent {
 
     const templateSelection = new TemplatesSelectionPlugin()
 
+    const walletConnect = new WalletConnect()
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -415,6 +428,7 @@ class AppComponent {
       storagePlugin,
       vmProviderShanghai,
       vmProviderCancun,
+      vmProviderPectra,
       vmProviderMerge,
       vmProviderBerlin,
       vmProviderLondon,
@@ -441,7 +455,9 @@ class AppComponent {
       matomo,
       templateSelection,
       scriptRunnerUI,
-      remixAI
+      remixAI,
+      remixAiAssistant,
+      walletConnect
     ])
 
     //---- fs plugin
@@ -468,7 +484,9 @@ class AppComponent {
       this.engine.register([desktopHost])
       const VSCodeSyncPlugin = new VSCodeSync()
       this.engine.register([VSCodeSyncPlugin])
-    } else{
+      const githubAuthHandler = new GitHubAuthHandler()
+      this.engine.register([githubAuthHandler])
+    } else {
       //---- desktop client
       const desktopClient = new DesktopClient(blockchain)
       this.engine.register([desktopClient])
@@ -604,7 +622,8 @@ class AppComponent {
       'contentImport',
       'gistHandler',
       'compilerloader',
-      'remixAI'
+      'remixAI',
+      'remixaiassistant'
     ])
     await this.appManager.activatePlugin(['settings'])
 
@@ -612,7 +631,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'circom']) // 'remixAID'
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'circom', 'githubAuthHandler']) // 'remixAID'
     }
 
     this.appManager.on(
@@ -659,6 +678,7 @@ class AppComponent {
               if (callDetails.length > 1) {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', this.params.call])
                 //@ts-ignore
                 await this.appManager.call(...callDetails).catch(console.error)
               }
@@ -669,6 +689,7 @@ class AppComponent {
 
               // call all functions in the list, one after the other
               for (const call of calls) {
+                _paq.push(['trackEvent', 'App', 'queryParams-calls', call])
                 const callDetails = call.split('//')
                 if (callDetails.length > 1) {
                   this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
@@ -690,7 +711,9 @@ class AppComponent {
               this.appManager.call('sidePanel', 'pinView', JSON.parse(lastPinned))
             }
           })
-          .catch(console.error)
+          .catch((e) => {
+            console.error(e)
+          })
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')

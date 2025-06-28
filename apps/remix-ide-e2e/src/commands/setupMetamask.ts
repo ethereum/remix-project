@@ -15,10 +15,12 @@ class MetaMask extends EventEmitter {
 }
 
 function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
+  //passphrase = 'asset chalk glimpse inch wall tomorrow fatal major crater omit tiny sun'
   const words = passphrase.split(' ')
   console.log('setup metamask')
   browser
-    .switchBrowserTab(1)
+    .switchBrowserTab('MetaMask')
+    .saveScreenshot('./reports/screenshots/metamask_setup.png')
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
     .click('input[data-testid="onboarding-terms-checkbox"]')
     .waitForElementVisible('button[data-testid="onboarding-import-wallet"]')
@@ -50,31 +52,32 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
-    .perform((done) => {
-      browser.execute(function () {
-        function addStyle(styleString) {
-          const style = document.createElement('style')
-          style.textContent = styleString
-          document.head.append(style)
-        }
-        addStyle(`
-          #popover-content {
-            display:none !important
-          } 
-          .popover-container {
-            display:none !important;
-          }
-        `)
-      }, [], done())
-    })
-
+    .pause(10000)
     .saveScreenshot('./reports/screenshots/metamask.png')
+    .waitForElementVisible('[data-testid="network-display"]') 
+    .saveScreenshot('./reports/screenshots/metamask_3.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
+    .waitForElementVisible('div[data-testid="Sepolia"]')
     .click('div[data-testid="Sepolia"]') // switch to sepolia
+    .waitForElementVisible({
+      selector: '//*[@data-testid="network-display" and contains(., "Sepolia")]',
+      locateStrategy: 'xpath'
+    })
+    .waitForElementVisible({
+      selector: '//*[@class="eth-overview__balance" and contains(., "SepoliaETH")]',
+      locateStrategy: 'xpath'
+    })
+    .saveScreenshot('./reports/screenshots/metamask_4.png')
     .perform(() => {
       console.log('MetaMask setup complete')
-      done()
+      browser.getCurrentUrl((url) => {
+        console.log('MetaMask URL:', url)
+        browser.globals.extensionUrl = url.value
+        console.log(browser.globals)
+        browser.closeWindow()
+        done()
+      })
     })
 }
 

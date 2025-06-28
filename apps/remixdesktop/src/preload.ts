@@ -5,8 +5,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 console.log('preload.ts', new Date().toLocaleTimeString())
 
 /* preload script needs statically defined API for each plugin */
-
-const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'slither', 'foundry', 'hardhat', 'remixAID', 'circom', 'desktopHost', 'VSCodeSync']	
+const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'slither', 'foundry', 'hardhat', 'remixAID', 'circom', 'desktopHost', 'githubAuthHandler', 'VSCodeSync']
 
 let webContentsId: number | undefined
 

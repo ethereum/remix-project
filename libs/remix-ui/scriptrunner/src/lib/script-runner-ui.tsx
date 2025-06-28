@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Button } from "react-bootstrap";
 import { customScriptRunnerConfig, ProjectConfiguration } from "../types";
-import { faCaretDown, faCaretRight, faCheck, faExclamationCircle, faRedoAlt, faToggleOn } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomScriptRunner } from "./custom-script-runner";
-import { CustomTooltip } from "@remix-ui/helper";
+import ConfigSection from "./components/config-section";
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 export interface ScriptRunnerUIProps {
   loadScriptRunner: (config: ProjectConfiguration) => void;
@@ -22,73 +20,34 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const [activeKey, setActiveKey] = useState('default');
 
   useEffect(() => {
-    if (activeConfig) {
+    if (activeConfig && !activeConfig.errorStatus) {
       setActiveKey(activeConfig.name)
     }
   },[activeConfig])
 
   if (!configurations) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
-    <div className="px-1">
-      <Accordion activeKey={activeKey} defaultActiveKey="default">
+    <div className="px-5">
+      <div className="d-flex flex-column justify-content-between mt-4">
+        <div className="text-uppercase mb-3 text-dark h2" style={{ fontSize: 'x-large' }}>script configuration</div>
+        <div className="text-uppercase text-dark h3" style={{ fontSize: 'large' }}>choose a specific configuration for your script</div>
+      </div>
+      <div className="mt-3 d-flex flex-column gap-3 mb-4">
         {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
-          <div key={index}>
-            <div className="d-flex align-items-baseline justify-content-between">
-              <Accordion.Toggle as={Button} variant="link" eventKey={config.name}
-                style={{
-                  overflowX: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-                onClick={() => setActiveKey(activeKey === config.name ? '' : config.name)}
-              >
-                <div className="d-flex">
-                  {activeKey === config.name ?
-                    <FontAwesomeIcon icon={faCaretDown}></FontAwesomeIcon> :
-                    <FontAwesomeIcon icon={faCaretRight}></FontAwesomeIcon>}
-                  <div data-id={`sr-list-${config.name}`} className="pl-2">{config.title || config.name}</div>
-                </div>
-              </Accordion.Toggle>
-              <div className="d-flex align-items-baseline">
-                {config.isLoading && <div className="">
-                  <i className="fas fa-spinner fa-spin mr-1"></i>
-                </div>}
-                {config.errorStatus && config.error && <div className="text-danger">
-                  <CustomTooltip tooltipText={config.error}>
-                    <FontAwesomeIcon data-id={`sr-error-${config.name}`} icon={faExclamationCircle}></FontAwesomeIcon>
-                  </CustomTooltip>
-
-                </div>}
-                {!config.isLoading && config.errorStatus && config.error &&
-                  <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
-                    <FontAwesomeIcon data-id={`sr-reload-${config.name}`} icon={faRedoAlt}></FontAwesomeIcon>
-                  </div>}
-                {!config.isLoading && !config.errorStatus && !config.error &&
-                  <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
-                    {activeConfig && activeConfig.name !== config.name ?
-                      <FontAwesomeIcon data-id={`sr-toggle-${config.name}`} icon={faToggleOn}></FontAwesomeIcon> :
-                      <FontAwesomeIcon data-id={`sr-loaded-${config.name}`} className="text-success" icon={faCheck}></FontAwesomeIcon>
-                    }
-                  </div>
-                }
-              </div>
-            </div>
-
-            <Accordion.Collapse className="px-4" eventKey={config.name}>
-              <>
-                <p><strong>Description: </strong>{config.description}</p>
-                <p><strong>Dependencies:</strong></p>
-                <ul>
-                  {config.dependencies.map((dep, depIndex) => (
-                    <li data-id={`dependency-${dep.name}-${dep.version}`} key={depIndex}>
-                      <strong>{dep.name}</strong> (v{dep.version})
-                    </li>
-                  ))}
-                </ul></>
-            </Accordion.Collapse></div>))}
-      </Accordion>
+          <ConfigSection
+            activeKey={activeKey}
+            setActiveKey={setActiveKey}
+            config={config}
+            key={index}
+            loadScriptRunner={loadScriptRunner}
+            _paq={_paq}
+            activeConfig={activeConfig}
+          />
+        ))}
+      </div>
       {enableCustomScriptRunner &&
         <CustomScriptRunner
           customConfig={props.customConfig}
@@ -96,8 +55,9 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
           saveCustomConfig={props.saveCustomConfig}
           openCustomConfig={props.openCustomConfig}
           publishedConfigurations={configurations.filter((config) => config.publish)}
-        />}
+        />
+      }
     </div>
-  );
-};
+  )
+}
 

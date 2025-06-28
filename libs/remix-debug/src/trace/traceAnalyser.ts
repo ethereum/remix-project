@@ -1,6 +1,6 @@
 'use strict'
 import { util } from '@remix-project/remix-lib'
-import { bytesToHex } from '@ethereumjs/util'
+// import { bytesToHex } from '@ethereumjs/util'
 const { toHexPaddedString } = util
 import * as traceHelper from './traceHelper'
 
@@ -86,7 +86,7 @@ export class TraceAnalyser {
         offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 4]), 16)
         size = 2 * parseInt(toHexPaddedString(stack[stack.length - 5]), 16)
       }
-      calldata = bytesToHex(memory).replace('0x', '').substring(offset, offset + size)
+      calldata = util.bytesToHex(memory).replace('0x', '').substring(offset, offset + size)
       this.traceCache.pushCallDataChanges(index + 1, calldata)
     }
   }
@@ -113,7 +113,6 @@ export class TraceAnalyser {
       this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
     } else if (traceHelper.isRevertInstruction(step)) {
       context.storageContext.pop()
-      this.traceCache.resetStoreChanges()
     }
     return context
   }

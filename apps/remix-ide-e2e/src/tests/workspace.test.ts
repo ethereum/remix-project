@@ -320,9 +320,15 @@ module.exports = {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
-      .waitForElementPresent(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
-      .scrollAndClick(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
+      // .waitForElementPresent(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
+      // .scrollAndClick(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
+      .waitForElementPresent('*[data-id="create-ozerc1155"]')
+      .scrollAndClick('*[data-id="create-ozerc1155"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .click('*[data-id="featureTypeMintable"]')
+      .click('*[data-id="featureTypeBurnable"]')
+      .click('*[data-id="featureTypePausable"]')
+      .click('*[data-id="upgradeTypeUups"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
@@ -407,6 +413,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
           'Incorrect content')

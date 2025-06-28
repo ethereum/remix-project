@@ -23,21 +23,22 @@ web3.eth.setConfig(config)
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-cancun'
+    this.executionContext = 'vm-prague'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'cancun'
+    this.currentFork = 'prague'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
     this.latestBlockNumber = 0
     this.txs = {}
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
+    this.isConnected = false
   }
 
   init (config) {
-    this.executionContext = 'vm-cancun'
+    this.executionContext = 'vm-prague'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
@@ -47,10 +48,6 @@ export class ExecutionContext {
 
   getProviderObject () {
     return this.customNetWorks[this.executionContext]
-  }
-
-  getSelectedAddress () {
-    return injectedProvider ? injectedProvider.selectedAddress : null
   }
 
   getCurrentFork () {
@@ -99,8 +96,9 @@ export class ExecutionContext {
               callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
               return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
             }).catch((error) => {
-              callback && callback(error)
-              return reject(error)
+              // Rabby wallet throws an error at this point. We are in that case unable to check the genesis hash.
+              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
             })
           } else {
             callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
@@ -114,7 +112,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-cancun', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-prague', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -146,15 +144,21 @@ export class ExecutionContext {
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
+      this.isConnected = false
       var network = this.customNetWorks[context]
-      await network.init()
-      this.currentFork = network.fork
-      this.executionContext = context
-      // injected
-      web3.setProvider(network.provider)
-      await this._updateChainContext()
-      this.event.trigger('contextChanged', [context])
-      cb()
+      try {
+        await network.init()
+        this.currentFork = network.config.fork
+        // injected
+        web3.setProvider(network.provider)
+        this.executionContext = context
+        this.isConnected = await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        cb()
+      } catch (e) {
+        console.error(e)
+        cb(false)
+      }
     }
   }
 
@@ -177,15 +181,17 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'cancun'
+          this.currentFork = 'prague'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }
       } catch (e) {
         console.error(e)
         this.blockGasLimit = this.blockGasLimitDefault
+        return false
       }
     }
+    return true
   }
 
   listenOnLastBlock () {
@@ -215,7 +221,8 @@ export class ExecutionContext {
     const state = {
       db: Object.fromEntries(stateDb.db._database),
       blocks: blocksData.blocks,
-      latestBlockNumber: blocksData.latestBlockNumber
+      latestBlockNumber: blocksData.latestBlockNumber,
+      baseBlockNumber: blocksData.baseBlockNumber
     }
     const stringifyed = JSON.stringify(state, (key, value) => {
       if (key === 'db') {

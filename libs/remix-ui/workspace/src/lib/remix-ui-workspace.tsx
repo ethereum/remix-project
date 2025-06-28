@@ -521,6 +521,7 @@ export function Workspace() {
     try {
       await global.dispatchSwitchToWorkspace(name)
       global.dispatchHandleExpandPath([])
+      _paq.push(['trackEvent', 'Workspace', 'switchWorkspace', name])
     } catch (e) {
       global.modal(
         intl.formatMessage({ id: 'filePanel.workspace.switch' }),
@@ -1022,7 +1023,7 @@ export function Workspace() {
             <header>
               <div className="mx-2 my-2 d-flex flex-column">
                 <div className="mx-2 d-flex">
-                  { currentWorkspace !== LOCALHOST ? (
+                  {(platform === appPlatformTypes.desktop && !global.fs.browser.isSuccessfulWorkspace ) ? null : currentWorkspace !== LOCALHOST ? (
                     <span className="remixui_topmenu d-flex">
                       <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                         <Dropdown.Toggle
@@ -1116,21 +1117,6 @@ export function Workspace() {
                         {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                        <Dropdown.Item
-                          onClick={() => {
-                            switchWorkspace(LOCALHOST)
-                          }}
-                        >
-                          {currentWorkspace === LOCALHOST ? (
-                            <span>&#10003; Connected to Local Filesystem </span>
-                          ) : (
-                            // <span className="pl-3">
-                            //   {' '}
-                            //   <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
-                            // </span>
-                            null
-                          )}
-                        </Dropdown.Item>
                         <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
                           <Dropdown.Item
@@ -1148,7 +1134,7 @@ export function Workspace() {
               </div>
             </header>
           </div>
-          <ElectronMenu></ElectronMenu>
+          <ElectronMenu createWorkspace={createWorkspace} clone={cloneGitRepository}></ElectronMenu>
           <div
             className="h-100 remixui_fileExplorerTree"
             onFocus={() => {

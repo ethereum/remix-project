@@ -4,14 +4,17 @@
 JSON_FILE="dmgs.json"
 
 # Read the DMGs array from the JSON file
-DMG_PATHS=$(jq -r '.dmgs[]' "$JSON_FILE")
+MG_PATHS=$(grep -o '"[^"]*.dmg"' "$JSON_FILE" | sed 's/"//g')
 
 echo $DMG_PATHS
 
 xcrun notarytool store-credentials "notarytool-password" \
-               --apple-id ${APPLE_ID} \
-               --team-id ${APPLE_TEAM_ID} \
-               --password ${APPLE_ID_PASSWORD} || exit 1
+    --apple-id ${APPLE_ID} \
+    --team-id ${APPLE_TEAM_ID} \
+    --password ${APPLE_ID_PASSWORD} \
+    --keychain /Users/distiller/Library/Keychains/build.keychain-db || exit 1
+
+xcrun notarytool list-keychain-credentials --keychain /Users/distiller/Library/Keychains/build.keychain-db
 
 # Use jq to parse the DMGs array and read each line
 while IFS= read -r DMG_PATH; do
@@ -22,7 +25,10 @@ while IFS= read -r DMG_PATH; do
 
     # Replace `your-app-specific-args` with the actual arguments for your app
     # Ensure your notarytool command and arguments are correct for your application
-    xcrun notarytool submit "$DMG_PATH_CLEANED" --keychain-profile "notarytool-password" --wait
+xcrun notarytool submit "$DMG_PATH_CLEANED" \
+    --keychain /Users/distiller/Library/Keychains/build.keychain-db \
+    --keychain-profile "notarytool-password" \
+    --wait
 
     # Check the command's success
     if [ $? -eq 0 ]; then

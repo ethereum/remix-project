@@ -25,6 +25,7 @@ export interface AppModal {
     resolve?: (value?:any) => void,
     next?: () => void,
     data?: any,
+    showCancelIcon?: boolean,
     preventBlur?: boolean
 }
 
@@ -54,5 +55,6 @@ export interface AppState {
     canUseGit: boolean
     showPopupPanel: boolean
     connectedToDesktop: desktopConnection
+    desktopClientConnected: desktopConnection
 }
 

@@ -2,6 +2,7 @@
 import axios, { AxiosResponse } from 'axios'
 import semver from 'semver'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
+import { endpointUrls } from '.';
 
 export interface Imported {
   content: string;
@@ -122,7 +123,7 @@ export class RemixURLResolver {
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://jqgt.remixproject.org/' + url
+      const req = `${endpointUrls.ipfsGateway}/${url}`
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: []})
@@ -136,7 +137,6 @@ export class RemixURLResolver {
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
-
   async handleNpmImport(url: string): Promise<HandlerResponse> {
     if (!url) throw new Error('url is empty')
     let fetchUrl = url
@@ -144,45 +144,16 @@ export class RemixURLResolver {
     if (this.getDependencies && !isVersioned) {
       try {
         const { deps, yarnLock, packageLock } = await this.getDependencies()
-        let matchLength = 0
-        let pkg
         if (deps) {
-          Object.keys(deps).map((dep) => {
-            const reg = new RegExp(dep + '/', 'g')
-            const match = url.match(reg)
-            if (match && match.length > 0 && matchLength < match[0].length) {
-              matchLength = match[0].length
-              pkg = dep
-            }
-          })
-          if (pkg) {
-            let version
-            if (yarnLock) {
-              // yarn.lock
-              const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
-              const yarnVersion = regex.exec(yarnLock)
-              if (yarnVersion && yarnVersion.length > 1) {
-                version = yarnVersion[1]
-              }
-            }
-            if (!version && packageLock && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
-              // package-lock.json
-              version = packageLock['dependencies'][pkg]['version']
-            }
-            if (!version) {
-              // package.json
-              version = deps[pkg]
-            }
-            if (version) {
-              // If the entry is pointing to a github repo, redirect to correct handler instead of continuing
-              if (version.startsWith("github:")) {
-                const [, repo, tag] = version.match(/github:([^#]+)#(.+)/);
-                const filePath = url.replace(/^[^/]+\//, '');
-                return this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
-              }
-              const versionSemver = semver.minVersion(version)
-              fetchUrl = url.replace(pkg, `${pkg}@${versionSemver.version}`)
-            }
+          // Packages have usually a slash in the name which make it difficult to distinguish them from a path.
+          // we first try to resolve the path with a slash. packages like @openzepplin/contracts will be resolved in that case.
+          let transformedUrl = getPkg(fetchUrl.split('/')[0] + '/' + fetchUrl.split('/')[1], yarnLock, packageLock, deps, url, fetchUrl)
+          if (!transformedUrl) {
+            // then we fallback to the case where the package doesn't have a slash in its name.
+            transformedUrl = getPkg(fetchUrl.split('/')[0], yarnLock, packageLock, deps, url, fetchUrl)
+          }
+          if (transformedUrl) {
+            fetchUrl = transformedUrl
           }
         }
       } catch (e) {
@@ -209,6 +180,36 @@ export class RemixURLResolver {
     return { content, cleanUrl: url }
   }
 
+  async handleV4CoreGithub (url: string): Promise<HandlerResponse> {
+    // e.g https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/interfaces/IExtsload.sol
+    url = url.replace('@uniswap/v4-core/contracts/', '')
+    url = url.replace('@uniswap/v4-core/src/', '')
+    url = url.replace('@uniswap/v4-core/', '')
+    url = url.replace('v4-core/src', '')
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/main/src/${url}`
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
+      return { content: response.data, cleanUrl: req }
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async handleV4PeriphGithub (url: string): Promise<HandlerResponse> {
+    url = url.replace('@uniswap/v4-periphery', '')
+    url = url.replace('v4-periphery', '')
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-periphery/main/${url}`
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
+      return { content: response.data, cleanUrl: req }
+    } catch (e) {
+      throw e
+    }
+  }
   getHandlers (): Handler[] {
     return [
       {
@@ -235,6 +236,24 @@ export class RemixURLResolver {
         type: 'ipfs',
         match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
         handle: (match) => this.handleIPFS(match[1])
+      },
+      {
+        type: 'v4-core-github',
+        match: (url) => {
+          if (url.startsWith('v4-core/') || url.startsWith('@uniswap/v4-core')) {
+            return [url]
+          }
+        },
+        handle: (match) => this.handleV4CoreGithub(match[0])
+      },
+      {
+        type: 'v4-periph-github',
+        match: (url) => {
+          if (url.startsWith('v4-periphery/') || url.startsWith('@uniswap/v4-periphery')) {
+            return [url]
+          }
+        },
+        handle: (match) => this.handleV4PeriphGithub(match[0])
       },
       {
         type: 'npm',
@@ -268,4 +287,45 @@ export class RemixURLResolver {
 // see npm semver-regex
 function semverRegex() {
   return /(?<=^v?|\sv?)(?:(?:0|[1-9]\d{0,9}?)\.){2}(?:0|[1-9]\d{0,9})(?:-(?:--+)?(?:0|[1-9]\d*|\d*[a-z]+\d*)){0,100}(?=$| |\+|\.)(?:(?<=-\S+)(?:\.(?:--?|[\da-z-]*[a-z-]\d*|0|[1-9]\d*)){1,100}?)?(?!\.)(?:\+(?:[\da-z]\.?-?){1,100}?(?!\w))?(?!\+)/gi;
+}
+
+function getPkg(pkg, yarnLock, packageLock, deps, url, fetchUrl) {
+  let version
+  if (yarnLock) {
+    // yarn.lock
+    const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
+    const yarnVersion = regex.exec(yarnLock)
+    if (yarnVersion && yarnVersion.length > 1) {
+      version = yarnVersion[1]
+    }
+  }
+  if (!version && packageLock && packageLock['packages'] && packageLock['packages']['node_modules/' + pkg] && packageLock['packages']['node_modules/' + pkg]['version']) {
+    // package-lock.json version 3
+    version = packageLock['packages']['node_modules/' + pkg]['version']
+  }
+  if (!version && packageLock && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
+    // package-lock.json version 2
+    version = packageLock['dependencies'][pkg]['version']
+  }
+  // package.json
+  if (deps[pkg]) {
+    version = deps[pkg]
+  }
+  if (version) {
+    // If the entry is pointing to a github repo, redirect to correct handler instead of continuing
+    if (version.startsWith("github:")) {
+      const [, repo, tag] = version.match(/github:([^#]+)#(.+)/);
+      const filePath = url.replace(/^[^/]+\//, '');
+      return this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
+    }
+    if (version.startsWith('npm:')) {
+      fetchUrl = url.replace(pkg, version.replace('npm:', ''))
+      return fetchUrl
+    } else {
+      // const versionSemver = semver.minVersion(version)
+      fetchUrl = url.replace(pkg, `${pkg}@${version}`)
+      return fetchUrl
+    }
+  }
+  return null
 }

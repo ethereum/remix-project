@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import { compile } from '@remix-project/remix-solidity'
+import { compile, Language } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from '@ethereumjs/util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
@@ -58,8 +58,6 @@ export class FetchAndCompile extends Plugin {
 
     if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
       const settings = {
-        version: UUPSCompilerVersion,
-        language: UUPSLanguage,
         evmVersion: UUPSEvmVersion,
         optimize: UUPSOptimize,
         runs: UUPSRuns
@@ -71,6 +69,8 @@ export class FetchAndCompile extends Plugin {
       const compData = await compile(
         compilationTargets,
         settings,
+        UUPSLanguage,
+        UUPSCompilerVersion,
         async (url, cb) => {
           // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
@@ -86,8 +86,6 @@ export class FetchAndCompile extends Plugin {
 
     if (codeAtAddress === '0x' + UUPSDeployedByteCodeV5) { // proxy
       const settings = {
-        version: UUPSCompilerVersionV5,
-        language: UUPSLanguage,
         evmVersion: UUPSEvmVersionv5,
         optimize: UUPSOptimizev5,
         runs: UUPSRuns
@@ -99,6 +97,8 @@ export class FetchAndCompile extends Plugin {
       const compData = await compile(
         compilationTargets,
         settings,
+        UUPSLanguage,
+        UUPSCompilerVersionV5,
         async (url, cb) => {
           // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
@@ -175,20 +175,37 @@ export class FetchAndCompile extends Plugin {
         }
       }
     }
-    const { settings, compilationTargets } = data
+    const { config, compilationTargets, version } = data
+    /*
+    * If the remappings are defined in the config, we need to update them to point to the targetPath
+    * it's beeing disabled for the moment.
+    */
+    /*if (config && config.settings && config.settings.remappings) {
+      console.log(config.settings.remappings)
+      config.settings.remappings = config.settings.remappings.map((remapping) => {
+        let [virtual, path] = remapping.split('=')
+        if (virtual.includes(':')) {
+          let [scope, path] = virtual.split(':')
+          virtual = `${targetPath}/${scope}:${path}`
+        }
+        return `${virtual}=${targetPath}/${path}`
+      })
+    }*/
 
     try {
-      setTimeout(_ => this.emit('compiling', settings), 0)
+      setTimeout(_ => this.emit('compiling', config.settings), 0)
       const compData = await compile(
         compilationTargets,
-        settings,
+        config.settings,
+        config.language as Language,
+        version as string,
         async (url, cb) => {
           // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)
           } else {
-            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+            cb('dependency not found ' + url)
           }
         })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)

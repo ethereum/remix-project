@@ -527,7 +527,7 @@ async function installFoundry(): Promise<void> {
       server.stdout.on('data', function (data) {
         console.log(data.toString())
         if (
-          data.toString().includes("foundryup: done!")
+          data.toString().includes("foundryup: use - ")
         ) {
           console.log('resolving')
           resolve()

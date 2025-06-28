@@ -87,6 +87,29 @@ export class EnvironmentExplorer extends ViewPlugin {
     } else this.call('notification', 'toast', 'Cannot delete the current selected environment')
   }
 
+  async showPinnedContracts (provider) {
+    if (await this.call('fileManager', 'exists', `.deploys/pinned-contracts/${provider.name}`)) {
+      const files = await this.call('fileManager', 'readdir', `.deploys/pinned-contracts/${provider.name}`)
+      if (!files) {
+        await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
+        return
+      }
+      if (!Object.keys(files).length) {
+        await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
+        return
+      }
+      for (const file in files) {
+        if (file.endsWith('.json')) {
+          const content = JSON.parse(await this.call('fileManager', 'readFile', file))
+          const msg = `Contract ${content.name} (${content.filePath}) deployed at ${content.address} on ${new Date(content.pinnedAt).toString()}`
+          await this.call('terminal', 'log', { type: 'info', value: msg })
+        }
+      }
+    } else {
+      await this.call('terminal', 'log', { type: 'info', value: 'No pinned contract.' })
+    }
+  }
+
   renderComponent() {
     this.dispatch({
       ...this.state
@@ -98,6 +121,7 @@ export class EnvironmentExplorer extends ViewPlugin {
       <EnvironmentExplorerUI
         pinStateCallback={this.pinStateCallback.bind(this)}
         deleteForkedState={this.deleteForkedState.bind(this)}
+        showPinnedContracts={this.showPinnedContracts.bind(this)}
         profile={profile}
         state={state}
       />

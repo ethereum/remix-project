@@ -1,12 +1,13 @@
-import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
+import { ICompletions, IGeneration, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
 import { buildSolgptPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
+import { endpointUrls } from "@remix-endpoints-helper"
 
 const defaultErrorMessage = `Unable to get a response from AI server`
-export class RemoteInferencer implements ICompletions {
+export class RemoteInferencer implements ICompletions, IGeneration {
   api_url: string
   completion_url: string
   max_history = 7
@@ -16,12 +17,12 @@ export class RemoteInferencer implements ICompletions {
   test_url="http://solcodertest.org"
 
   constructor(apiUrl?:string, completionUrl?:string) {
-    this.api_url = apiUrl!==undefined ? apiUrl: this.test_env? this.test_url : "https://solcoder.remixproject.org"
-    this.completion_url = completionUrl!==undefined ? completionUrl : this.test_env? this.test_url : "https://completion.remixproject.org"
+    this.api_url = apiUrl!==undefined ? apiUrl: this.test_env? this.test_url : endpointUrls.solcoder
+    this.completion_url = completionUrl!==undefined ? completionUrl : this.test_env? this.test_url : endpointUrls.completion
     this.event = new EventEmitter()
   }
 
-  private async _makeRequest(payload, rType:AIRequestType){
+  async _makeRequest(payload, rType:AIRequestType){
     this.event.emit("onInference")
     const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
@@ -56,7 +57,7 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  private async _streamInferenceRequest(payload, rType:AIRequestType){
+  async _streamInferenceRequest(payload, rType:AIRequestType){
     let resultText = ""
     try {
       this.event.emit('onInference')
@@ -110,13 +111,15 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  async code_completion(prompt, promptAfter, options:IParams=CompletionParams): Promise<any> {
-    const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion", ...options }
+  async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
+    const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
+      'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
-  async code_insertion(msg_pfx, msg_sfx, options:IParams=InsertionParams): Promise<any> {
-    const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, ...options, prompt: '' }
+  async code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, options:IParams=InsertionParams): Promise<any> {
+    const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, 'ctxFiles':ctxFiles,
+      'currentFileName':fileName, ...options, prompt: '' }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
@@ -147,6 +150,18 @@ export class RemoteInferencer implements ICompletions {
 
   async vulnerability_check(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"vulnerability_check", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
+
+  async generate(userPrompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt: userPrompt, "endpoint":"generate", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
+
+  async generateWorkspace(userPrompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt: userPrompt, "endpoint":"workspace", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }

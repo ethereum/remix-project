@@ -1,5 +1,5 @@
 import React from 'react';
-import { compile, helper } from '@remix-project/remix-solidity'
+import { compile, helper, Source, CompilerInputOptions, compilerInputFactory, CompilerInput } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
 
@@ -122,8 +122,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  getCompilerState () {
-    return this.compileTabLogic.getCompilerState()
+  async getCompilerState () {
+    return await this.compileTabLogic.getCompilerState()
   }
 
   /**
@@ -151,16 +151,22 @@ export const CompilerApiMixin = (Base) => class extends Base {
    * @param {object} map of source files.
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
-  async compileWithParameters (compilationTargets, settings) {
-    const compilerState = this.getCompilerState()
-    settings.version = settings.version || compilerState.currentVersion
-    const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+  async compileWithParameters (compilationTargets: Source, settings: CompilerInputOptions) {
+    const compilerState = await this.getCompilerState()
+    const version = settings.version || compilerState.currentVersion
+    const settingsCompile: CompilerInput = JSON.parse(compilerInputFactory(null, settings))
+    const res = await compile(
+      compilationTargets,
+      settingsCompile.settings,
+      settings.language,
+      version,
+      (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     return res
   }
 
   // This function is used for passing the compiler configuration to 'remix-tests'
-  getCurrentCompilerConfig () {
-    const compilerState = this.getCompilerState()
+  async getCurrentCompilerConfig () {
+    const compilerState = await this.getCompilerState()
     const compilerDetails: any = {
       currentVersion: compilerState.currentVersion,
       evmVersion: compilerState.evmVersion,

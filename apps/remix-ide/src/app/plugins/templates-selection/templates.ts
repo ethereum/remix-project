@@ -1,20 +1,27 @@
-export const templates = (intl, plugin) => {
+import { Template, TemplateGroup } from "@remix-ui/workspace"
+export const templates = (intl: any, plugin: any): TemplateGroup[] => {
+
   return [
     {
       name: "Generic",
       items: [
         { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
-        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' }
+        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' },
+        { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code.' },
+        { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'A repo about ERC-4337 and EIP-7702' },
+        { value: 'remixAiTemplate', tagList: ['AI'], displayName: 'RemixAI Template Generation', IsArtefact: true, description: 'AI generated workspace. Workspace gets generated with a user prompt.' },
+        { value: "introToEIP7702", displayName: 'Intro to EIP-7702', IsArtefact: true, description: 'A contract for demoing EIP-7702' },
       ]
     },
     {
       name: "OpenZeppelin",
+      hasOptions: true,
       items: [
         {
           value: "ozerc20",
           displayName: "ERC20",
           tagList: ["ERC20", "Solidity"],
-          description: 'A simple fungible token contract'
+          description: 'A customizable fungible token contract'
         },
         {
           value: "ozerc20",
@@ -49,7 +56,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
-          description: 'A simple non-fungible token (NFT) contract'
+          description: 'A customizable non-fungible token (NFT) contract'
         },
         {
           value: "ozerc721",
@@ -84,7 +91,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc1155",
           tagList: ["Solidity"],
           displayName: "ERC1155",
-          description: 'A simple multi token contract'
+          description: 'A customizable multi token contract'
         },
         {
           value: "ozerc1155",
@@ -262,12 +269,12 @@ export const templates = (intl, plugin) => {
       tooltip: "Cookbook is a Smart Contract Search Tool. Click here to open Cookbook and browse Contracts.",
       onClick: async () => {
         await plugin.call('manager', 'activatePlugin', 'cookbookdev')
-        plugin.call('menuicons', 'showContent', 'cookbookdev')
+        await plugin.call('sidePanel', 'focus', 'cookbookdev')
       },
       onClickLabel: 'Open Cookbook Plugin',
       description: 'Discover more templates!',
-      items: [
-        {
+      items: [],
+      /*         {
           value: "token-sale",
           displayName: 'Token Sale',
           description: "ERC20 token sale contact. Sell tokens for ETH"
@@ -314,7 +321,7 @@ export const templates = (intl, plugin) => {
             burnable: true,
             pausable: true
           }, },
-      ]
+      ]*/
     },
     {
       name: "0xProject",
@@ -331,9 +338,16 @@ export const templates = (intl, plugin) => {
     {
       name: "Circom ZKP",
       items: [
-        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Semaphore protocol for casting a message as a provable group member' },
-        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Hash checker Circom circuit' },
-        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Rate Limiting Nullifier Circom circuit' }
+        { value: "semaphore", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Semaphore protocol for casting a message as a provable group member' },
+        { value: "hashchecker", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Hash checker Circom circuit' },
+        { value: "rln", tagList: ["ZKP", "Circom"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Rate Limiting Nullifier Circom circuit' }
+      ]
+    },
+    {
+      name: "Noir ZKP",
+      items: [
+        { value: "multNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.multNr' }), description: 'A simple multiplier circuit' }
+        // { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementaion built in Noir' }
       ]
     },
     {

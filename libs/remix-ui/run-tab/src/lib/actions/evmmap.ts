@@ -10,6 +10,7 @@ export type ChainCompatibleInfo = {
 }
 
 export type HardFork =
+  | 'prague'
   | 'cancun'
   | 'shanghai'
   | 'paris'
@@ -24,6 +25,15 @@ export type HardFork =
   | 'homestead'
 
 export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: string }> = new Map([
+  ['prague', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" },
+      { id: 100, name: "Gnosis Chain" },
+      { id: 11155111, name: "Sepolia" }
+    ],
+    minCompilerVersion: "0.8.24+commit.e11b9ed9",
+    evmVersion: 'prague'
+  }],
   ['cancun', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
@@ -37,6 +47,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 42161, name: "Arbitrum One" },
       { id: 42170, name: "Arbitrum Nova" },
       { id: 43114, name: "Avalanche C-Chain" },
+      { id: 42220, name: "Celo Mainnet" },
       { id: 44787, name: "Celo Alfajores Testnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
@@ -69,6 +80,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 2000, name: "Dogechain Mainnet" },
       { id: 42161, name: "Arbitrum One" },
       { id: 42170, name: "Arbitrum Nova" },
+      { id: 42220, name: "Celo Mainnet" },
       { id: 44787, name: "Celo Alfajores Testnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },

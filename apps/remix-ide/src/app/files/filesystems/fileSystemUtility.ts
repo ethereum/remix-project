@@ -1,4 +1,4 @@
-import { hashMessage } from "ethers/lib/utils"
+import { hashMessage } from "ethers"
 import JSZip from "jszip"
 import { fileSystem } from "../fileSystem"
 const _paq = window._paq = window._paq || []
@@ -173,9 +173,9 @@ export const migrationTestData = {
               '.workspaces/workspace_test/test_contracts/1_Storage.sol': {
                 content: 'testing'
               },
-              '.workspaces/workspace_test/test_contracts/artifacts': {
+              '.workspaces/workspace_test/artifacts': {
                 children: {
-                  '.workspaces/workspace_test/test_contracts/artifacts/Storage_metadata.json': {
+                  '.workspaces/workspace_test/artifacts/Storage_metadata.json': {
                     content: '{ "test": "data" }'
                   }
                 }

@@ -1,18 +1,26 @@
-export const fetchContractFromEtherscan = async (plugin, network, contractAddress, targetPath, shouldSetFile = true, etherscanKey?) => {
+
+export type Network = {
+  id: number
+  name: string
+}
+
+export const fetchContractFromEtherscan = async (plugin, endpoint: string | Network, contractAddress, targetPath, shouldSetFile = true, etherscanKey?) => {
   let data
   const compilationTargets = {}
   if (!etherscanKey) etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
   if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
 
   if (etherscanKey) {
-    const endpoint = network.id == 1 ? 'api.etherscan.io' : 'api-' + network.name + '.etherscan.io'
+    if (typeof endpoint === 'object' && endpoint !== null && 'id' in endpoint && 'name' in endpoint) {
+      endpoint = endpoint.id == 1 ? 'api.etherscan.io' : 'api-' + endpoint.name + '.etherscan.io'
+    }
     try {
       data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address=' + contractAddress + '&apikey=' + etherscanKey)
       data = await data.json()
       // etherscan api doc https://docs.etherscan.io/api-endpoints/contracts
       if (data.message === 'OK' && data.status === "1") {
         if (data.result.length) {
-          if (data.result[0].SourceCode === '') throw new Error(`contract not verified on Etherscan ${network.name} network`)
+          if (data.result[0].SourceCode === '') throw new Error(`contract not verified on Etherscan ${endpoint}`)
           if (data.result[0].SourceCode.startsWith('{')) {
             data.result[0].SourceCode = JSON.parse(data.result[0].SourceCode.replace(/(?:\r\n|\r|\n)/g, '').replace(/^{{/, '{').replace(/}}$/, '}'))
           }
@@ -50,15 +58,13 @@ export const fetchContractFromEtherscan = async (plugin, network, contractAddres
   try {
     runs = parseInt(data.result[0].Runs)
   } catch (e) { }
-  const settings = {
-    version: data.result[0].CompilerVersion.replace(/^v/, ''),
+  const config = {
     language: 'Solidity',
-    evmVersion: data.result[0].EVMVersion.toLowerCase(),
-    optimize: data.result[0].OptimizationUsed === '1',
-    runs
+    settings: data.result[0].SourceCode?.settings
   }
   return {
-    settings,
-    compilationTargets
+    config,
+    compilationTargets,
+    version: data.result[0].CompilerVersion.replace(/^v/, '')
   }
 }

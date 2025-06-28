@@ -11,9 +11,6 @@ const tests = {
       .click('button[data-id="landingPageImportFromTemplate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementPresent('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
-      .click('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
@@ -54,7 +51,6 @@ const tests = {
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
       .clickFunction('retrieve - call')
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
-      .pause()
   },
 }
 

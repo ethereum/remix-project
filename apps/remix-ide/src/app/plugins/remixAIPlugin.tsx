@@ -1,11 +1,9 @@
 import * as packageJson from '../../../../../package.json'
-import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
-import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
-import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
-import { CustomRemixApi } from '@remix-api'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent } from '@remix/remix-ai-core';
+import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
+import axios from 'axios';
+import { endpointUrls } from "@remix-endpoints-helper"
 const _paq = (window._paq = window._paq || [])
 
 type chatRequestBufferT<T> = {
@@ -15,10 +13,11 @@ type chatRequestBufferT<T> = {
 const profile = {
   name: 'remixAI',
   displayName: 'RemixAI',
-  methods: ['code_generation', 'code_completion',
-    "solidity_answer", "code_explaining",
-    "code_insertion", "error_explaining", "vulnerability_check",
-    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
+  methods: ['code_generation', 'code_completion', 'setContextFiles',
+    "solidity_answer", "code_explaining", "generateWorkspace", "fixWorspaceErrors",
+    "code_insertion", "error_explaining", "vulnerability_check", 'generate',
+    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
+    'resetChatRequestBuffer'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -30,7 +29,7 @@ const profile = {
 }
 
 // add Plugin<any, CustomRemixApi>
-export class RemixAIPlugin extends ViewPlugin {
+export class RemixAIPlugin extends Plugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
@@ -39,13 +38,15 @@ export class RemixAIPlugin extends ViewPlugin {
   chatRequestBuffer: chatRequestBufferT<any> = null
   codeExpAgent: CodeExplainAgent
   securityAgent: SecurityAgent
+  contractor: ContractAgent
+  workspaceAgent: workspaceAgent
+  assistantProvider: string = 'mistralai'
   useRemoteInferencer:boolean = false
-  dispatch: any
+  completionAgent: CodeCompletionAgent
 
   constructor(inDesktop:boolean) {
     super(profile)
     this.isOnDesktop = inDesktop
-    this.codeExpAgent = new CodeExplainAgent(this)
     // user machine dont use ressource for remote inferencing
   }
 
@@ -62,8 +63,11 @@ export class RemixAIPlugin extends ViewPlugin {
       this.useRemoteInferencer = true
       this.initialize()
     }
-
+    this.completionAgent = new CodeCompletionAgent(this)
     this.securityAgent = new SecurityAgent(this)
+    this.codeExpAgent = new CodeExplainAgent(this)
+    this.contractor = ContractAgent.getInstance(this)
+    this.workspaceAgent = workspaceAgent.getInstance(this)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -107,15 +111,21 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_completion(prompt: string, promptAfter: string): Promise<any> {
+    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
+
+    const currentFileName = await this.call('fileManager', 'getCurrentFile')
+    const contextfiles = await this.completionAgent.getContextFiles(prompt)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
+      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter, contextfiles, currentFileName)
     } else {
-      return await this.remoteInferencer.code_completion(prompt, promptAfter)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter, contextfiles, currentFileName)
     }
   }
 
   async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
-    const newPrompt = await this.codeExpAgent.chatCommand(prompt)
+    let newPrompt = await this.codeExpAgent.chatCommand(prompt)
+    // add workspace context
+    newPrompt = !this.workspaceAgent.ctxFiles ? newPrompt : "Using the following context: ```\n" + this.workspaceAgent.ctxFiles + "```\n\n" + newPrompt
 
     let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
@@ -168,11 +178,100 @@ export class RemixAIPlugin extends ViewPlugin {
     return this.securityAgent.getReport(file)
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
+  /**
+   * Generates a new remix IDE workspace based on the provided user prompt, optionally using Retrieval-Augmented Generation (RAG) context.
+   * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
+   */
+  async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+    params.stream_result = false // enforce no stream result
+    params.threadId = newThreadID
+    params.provider = this.assistantProvider
+
+    if (useRag) {
+      try {
+        let ragContext = ""
+        const options = { headers: { 'Content-Type': 'application/json', } }
+        const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
+        if (response.data) {
+          ragContext = response.data.response
+          userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
+        } else {
+          console.log('Invalid response from RAG context API:', response.data)
+        }
+      } catch (error) {
+        console.log('RAG context error:', error)
+      }
+    }
+    // Evaluate if this function requires any context
+    // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+    let result
     if (this.isOnDesktop && !this.useRemoteInferencer) {
-      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
+      result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
     } else {
-      return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx)
+      result = await this.remoteInferencer.generate(userPrompt, params)
+    }
+
+    const genResult = this.contractor.writeContracts(result, userPrompt)
+    return genResult
+  }
+
+  /**
+   * Performs any user action on the entire curren workspace or updates the workspace based on a user prompt, optionally using Retrieval-Augmented Generation (RAG) for additional context.
+   *
+   */
+  async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+    params.stream_result = false // enforce no stream result
+    params.threadId = newThreadID
+    params.provider = this.assistantProvider
+    if (useRag) {
+      try {
+        let ragContext = ""
+        const options = { headers: { 'Content-Type': 'application/json', } }
+        const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
+        if (response.data) {
+          ragContext = response.data.response
+          userPrompt = "Using the following context: ```\n\n" + ragContext + "```\n\n" + userPrompt
+        }
+        else {
+          console.log('Invalid response from RAG context API:', response.data)
+        }
+      } catch (error) {
+        console.log('RAG context error:', error)
+      }
+    }
+    const files = !this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
+    userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
+
+    let result
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)
+    } else {
+      result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
+    }
+    return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
+  }
+
+  async fixWorspaceErrors(continueGeneration=false): Promise<any> {
+    try {
+      if (continueGeneration) {
+        return this.contractor.continueCompilation()
+      } else {
+        return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
+      }
+    } catch (error) {
+    }
+  }
+
+  async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
+    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
+
+    const currentFileName = await this.call('fileManager', 'getCurrentFile')
+    const contextfiles = await this.completionAgent.getContextFiles(msg_pfx)
+
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx, contextfiles, currentFileName)
+    } else {
+      return await this.remoteInferencer.code_insertion( msg_pfx, msg_sfx, contextfiles, currentFileName)
     }
   }
 
@@ -183,19 +282,20 @@ export class RemixAIPlugin extends ViewPlugin {
         prompt: prompt,
         context: context
       }
-      if (pipeMessage) ChatApi.composer.send(pipeMessage)
+
+      if (pipeMessage) this.call('remixaiassistant', 'chatPipe', pipeMessage)
       else {
-        if (fn === "code_explaining") ChatApi.composer.send("Explain the current code")
-        else if (fn === "error_explaining") ChatApi.composer.send("Explain the error")
-        else if (fn === "solidity_answer") ChatApi.composer.send("Answer the following question")
-        else if (fn === "vulnerability_check") ChatApi.composer.send("Is there any vulnerability in the pasted code?")
+        if (fn === "code_explaining") this.call('remixaiassistant', 'chatPipe',"Explain the current code")
+        else if (fn === "error_explaining") this.call('remixaiassistant', 'chatPipe', "Explain the error")
+        else if (fn === "solidity_answer") this.call('remixaiassistant', 'chatPipe', "Answer the following question")
+        else if (fn === "vulnerability_check") this.call('remixaiassistant', 'chatPipe',"Is there any vulnerability in the pasted code?")
         else console.log("chatRequestBuffer function name not recognized.")
       }
     }
     else {
       console.log("chatRequestBuffer is not empty. First process the last request.", this.chatRequestBuffer)
     }
-    _paq.push(['trackEvent', 'ai', 'remixAI_chat', 'askFromTerminal'])
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'remixAI_chat'])
   }
 
   async ProcessChatRequestBuffer(params:IParams=GenerationParams){
@@ -210,37 +310,16 @@ export class RemixAIPlugin extends ViewPlugin {
     }
   }
 
+  async setContextFiles(context: IContextType) {
+    this.workspaceAgent.setCtxFiles(context)
+  }
+
   isChatRequestPending(){
     return this.chatRequestBuffer != null
   }
 
-  setDispatch(dispatch) {
-    this.dispatch = dispatch
-    this.renderComponent()
+  resetChatRequestBuffer() {
+    this.chatRequestBuffer = null
   }
 
-  renderComponent () {
-    this.dispatch({
-      plugin: this,
-    })
-  }
-
-  render() {
-    return <div
-      id='ai-view'
-      className='h-100 d-flex'
-      data-id='aichat-view'
-      style={{
-        minHeight: 'max-content',
-      }}
-    >
-      <PluginViewWrapper plugin={this} />
-    </div>
-  }
-
-  updateComponent(state) {
-    return (
-      <RemixAITab plugin={state.plugin}></RemixAITab>
-    )
-  }
 }

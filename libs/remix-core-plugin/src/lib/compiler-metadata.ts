@@ -22,11 +22,11 @@ export class CompilerMetadata extends Plugin {
   }
 
   _JSONFileName (path, contractName) {
-    return this.joinPath(path, this.innerPath, contractName + '.json')
+    return this.joinPath(this.innerPath, contractName + '.json')
   }
 
   _MetadataFileName (path, contractName) {
-    return this.joinPath(path, this.innerPath, contractName + '_metadata.json')
+    return this.joinPath(this.innerPath, contractName + '_metadata.json')
   }
 
   onActivation () {
@@ -53,7 +53,7 @@ export class CompilerMetadata extends Plugin {
   // Access each file in build-info, check the input sources
   // If they are all same as in current compiled file and sources includes the path of compiled file, remove old build file
   async removeStoredBuildInfo (currentInput, path, filePath) {
-    const buildDir = this.joinPath(path, this.innerPath, 'build-info/')
+    const buildDir = this.joinPath(this.innerPath, 'build-info/')
     if (await this.call('fileManager', 'exists', buildDir)) {
       const allBuildFiles = await this.call('fileManager', 'fileList', buildDir)
       const currentInputFileNames = Object.keys(currentInput.sources)
@@ -79,7 +79,7 @@ export class CompilerMetadata extends Plugin {
       input
     })
     const id = createHash('md5').update(Buffer.from(json)).digest().toString('hex')
-    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' + id + '.json')
+    const buildFilename = this.joinPath(this.innerPath, 'build-info/' + id + '.json')
     // If there are no file in buildInfoNames,it means compilation is running first time after loading Remix
     if (!this.buildInfoNames[filePath]) {
       // Check the existing build-info and delete all the previous build files for compiled file
@@ -88,7 +88,8 @@ export class CompilerMetadata extends Plugin {
       const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
-      await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
+      if (await this.call('fileManager', 'exists', this.buildInfoNames[filePath]))
+        await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
       this.buildInfoNames[filePath] = buildFilename
       const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))

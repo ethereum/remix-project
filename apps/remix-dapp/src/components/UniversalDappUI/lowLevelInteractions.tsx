@@ -141,7 +141,7 @@ export function LowLevelInteractions(props: any) {
                   // receive method added to solidity v0.6.x. use this as diff.
                   instance.solcVersion.canReceive === false ? (
                     <a
-                      href={`https://solidity.readthedocs.io/en/v${instance.solcVersion.version}/contracts.html`}
+                      href={`https://docs.soliditylang.org/en/v${instance.solcVersion.version}/contracts.html`}
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -152,7 +152,7 @@ export function LowLevelInteractions(props: any) {
                     </a>
                   ) : (
                     <a
-                      href={`https://solidity.readthedocs.io/en/v${instance.solcVersion.version}/contracts.html#receive-ether-function`}
+                      href={`https://docs.soliditylang.org/en/v${instance.solcVersion.version}/contracts.html#receive-ether-function`}
                       target="_blank"
                       rel="noreferrer"
                     >

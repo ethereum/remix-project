@@ -54,7 +54,11 @@ export class ThemeModule extends Plugin {
     themes.map((theme) => {
       this.themes[theme.name.toLocaleLowerCase()] = {
         ...theme,
-        url: isElectron() ? theme.url : window.location.origin + (window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname) + theme.url
+        url: isElectron()
+          ? theme.url
+          : window.location.pathname.startsWith('/auth')
+            ? window.location.origin + '/' + theme.url
+            : window.location.origin + (window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname) + theme.url
       }
     })
     this._paq = _paq
@@ -118,10 +122,12 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active // Name
     if (next === this.active) return // --> exit out of this method
-    _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
+    _paq.push(['trackEvent', 'themeModule', 'switchThemeTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link') ? document.getElementById('theme-link').remove() : null
+
+    
 
     const theme = document.createElement('link')
     theme.setAttribute('rel', 'stylesheet')

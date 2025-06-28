@@ -35,14 +35,13 @@ const App = () => {
   const [abiEncodingError, setAbiEncodingError] = useState<string>('')
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
     code: 'en',
-    messages: {}
+    messages: {},
   })
 
   const timer = useRef(null)
 
   useEffect(() => {
     plugin.internalEvents.on('verification_activated', () => {
-
       // @ts-ignore
       plugin.call('locale', 'currentLocale').then((locale: any) => {
         setLocale(locale)
@@ -61,13 +60,13 @@ const App = () => {
       plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
         setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
       })
-
-      // Fetch chains.json and update state
-      fetch('https://chainid.network/chains.json')
-        .then((response) => response.json())
-        .then((data) => setChains(data))
-        .catch((error) => console.error('Failed to fetch chains.json:', error))
     })
+
+    // Fetch chains.json and update state
+    fetch('https://chainid.network/chains.json')
+      .then((response) => response.json())
+      .then((data) => setChains(data))
+      .catch((error) => console.error('Failed to fetch chains.json:', error))
 
     // Clean up on unmount
     return () => {
@@ -107,7 +106,7 @@ const App = () => {
         const changedSubmittedContracts = { ...submittedContracts }
 
         for (const receipt of pendingReceipts) {
-          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceed.
+          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceeding.
 
           const { verifierInfo, receiptId } = receipt
           if (receiptId) {
@@ -124,9 +123,9 @@ const App = () => {
             try {
               let response: VerificationResponse
               if (receipt.isProxyReceipt) {
-                response = await verifier.checkProxyVerificationStatus(receiptId)
+                response = await verifier.checkProxyVerificationStatus(receiptId, contract.chainId)
               } else {
-                response = await verifier.checkVerificationStatus(receiptId)
+                response = await verifier.checkVerificationStatus(receiptId, contract.chainId)
               }
               const { status, message, lookupUrl } = response
               receipt.status = status

@@ -1,5 +1,5 @@
 'use strict'
-import { ethers } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefinition } from './txHelper'
 import { eachOfSeries } from 'async'
 import { linkBytecode as linkBytecodeSolc } from 'solc/linker'
@@ -230,9 +230,11 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
       dataHex = data.slice(2)
     }
   }
-  let contractBytecode
+  let contractBytecode, contractDeployedBytecode
   if (isConstructor) {
     contractBytecode = contract.evm.bytecode.object
+    // yul contract doesn't have deployedBytecode
+    if (contract.evm.deployedBytecode && contract.evm.deployedBytecode.object) contractDeployedBytecode = contract.evm.deployedBytecode.object
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       linkBytecode(contract, contracts, (err, bytecode) => {
@@ -250,7 +252,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
   } else {
     dataHex = encodeFunctionId(funAbi) + dataHex
   }
-  callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
+  callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractDeployedBytecode, contractName: contractName })
 }
 
 export function atAddress () {}
@@ -401,7 +403,7 @@ export function decodeResponse (response, fnabi) {
       }
       if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not enough data
       // decode data
-      const abiCoder = new ethers.utils.AbiCoder()
+      const abiCoder = new AbiCoder()
       const decodedObj = abiCoder.decode(outputTypes, response)
 
       const json = {}

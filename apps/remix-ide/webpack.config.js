@@ -7,6 +7,7 @@ const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const path = require('path')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const versionData = {
   version: version,
@@ -125,6 +126,14 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
       process: 'process/browser'
+    })
+    //,new BundleAnalyzerPlugin()
+  )
+
+  // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID)
     })
   )
 

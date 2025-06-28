@@ -1,6 +1,6 @@
 'use strict'
 import { extendWeb3 } from '../src/init'
-import { Address } from '@ethereumjs/util'
+import { createAddressFromPrivateKey } from '@ethereumjs/util'
 import { Web3 } from 'web3';
 const { Provider } = require('@remix-project/remix-simulator')
 
@@ -17,7 +17,7 @@ async function sendTx (web3, from, to, value, data, cb) {
   try {
     cb = cb || (() => {})
     const receipt = await web3.eth.sendTransaction({
-      from: Address.fromPrivateKey(from.privateKey).toString(),
+      from: createAddressFromPrivateKey(from.privateKey).toString(),
       to,
       value,
       data,

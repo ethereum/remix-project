@@ -11,7 +11,8 @@ const profile = {
   description: '',
   methods: [],
   events: ['connected'],
-  maintainedBy: 'Remix'
+  maintainedBy: 'Remix',
+  kind: 'provider'
 }
 
 export class DesktopHost extends ElectronPlugin {

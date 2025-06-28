@@ -204,6 +204,10 @@ export const createWorkspace = async (
   return promise
 }
 
+export const generateWorkspace = async () => {
+  await plugin.call('notification', 'alert', 'Your request is being processed. Please wait while I generate the workspace for you. It won\'t be long.')
+}
+
 export const populateWorkspace = async (
   workspaceTemplateName: WorkspaceTemplate,
   opts = null,
@@ -236,6 +240,11 @@ export const populateWorkspace = async (
     if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
     _paq.push(['trackEvent', 'circuit-compiler', 'template', 'create', workspaceTemplateName])
   }
+  if (workspaceTemplateName === 'multNr' || workspaceTemplateName === 'stealthDropNr') {
+    const isNoirActive = await plugin.call('manager', 'isActive', 'noir-compiler')
+    if (!isNoirActive) await plugin.call('manager', 'activatePlugin', 'noir-compiler')
+    _paq.push(['trackEvent', 'noir-compiler', 'template', 'create', workspaceTemplateName])
+  }
 }
 
 export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault', metadata?: TemplateType) => {
@@ -261,6 +270,23 @@ export type UrlParametersType = {
   ghfolder: string
 }
 
+/**
+ * Decode a base64‑encoded string that was produced by
+ * percent‑escaping UTF‑8 bytes and then encoded with btoa().
+ *
+ * @param {string} b64Payload  The base64 payload you got from params.code
+ * @returns {string}            The original UTF‑8 string
+ */
+export const decodePercentEscapedBase64 = (b64Payload: string) => {
+  const rawByteString = atob(b64Payload);
+
+  const percentEscapedString = rawByteString.split('')
+    .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+    .join('')
+
+  return decodeURIComponent(percentEscapedString);
+}
+
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const electronProvider = plugin.fileProviders.electron
@@ -278,7 +304,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         const hashed = bytesToHex(hash.keccakFromString(params.code))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
-        content = atob(decodeURIComponent(params.code))
+        content = decodePercentEscapedBase64(params.code)
         await workspaceProvider.set(path, content)
       }
       if (params.shareCode) {
@@ -581,7 +607,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   // the files module. Please ask the user here if they want to overwrite
   // a file and then just use `files.add`. The file explorer will
   // pick that up via the 'fileAdded' event from the files module.
-  ;[...target.files].forEach(async (file) => {
+  [...target.files].forEach(async (file) => {
     const workspaceProvider = plugin.fileProviders.workspace
     const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 

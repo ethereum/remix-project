@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import axios, { AxiosResponse } from 'axios'
+import { endpointUrls } from '.'
 
 export type GithubItem = {
   name: string
@@ -42,7 +43,7 @@ export const githubFolderResolver = async (url, obj = {}, maxDepth, depth?, root
 }
 
 const pullFolder = async (url) => {
-  const response = await axios.get('https://ghfolderpull.remixproject.org', { params: { ghfolder: url } });
+  const response = await axios.get(endpointUrls.ghfolderpull, { params: { ghfolder: url } });
   const data: Array<GithubItem> = await response.data;
   return data
 }

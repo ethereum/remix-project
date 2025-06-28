@@ -1,10 +1,10 @@
 {
-    "version": "v0.60.0",
+    "version": "v0.66.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Delete forked state environments",
-    "highlight2": "Scan code pasted into editor using AI",
-    "highlight3": "Added Linea chain deployment environment",
+    "highlight1": "Login with GitHub OAuth now available",
+    "highlight2": "Vyper Compilation Details now contain method identifiers",
+    "highlight3": "Templates Explorer updated for Git based templates",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-60-0-a86fb7649d62?source=friends_link&sk=63c8c24be0b818dbd855947f2804aad2"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-66-0-23b64fddc13b?source=friends_link&sk=7ed7e6fe93b747a76aeec137ec80f13c"
   }

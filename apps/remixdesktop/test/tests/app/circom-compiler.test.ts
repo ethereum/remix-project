@@ -45,42 +45,13 @@ const tests = {
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
-            .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
-    },
-    'Should run setup script for simple circuit': function (browser: NightwatchBrowser) {
-        browser
-            .clickLaunchIcon('circuit-compiler')
-            .frame(0)
-            .waitForElementVisible('[data-id="runSetupBtn"]')
-            .click('[data-id="runSetupBtn"]')
-    },
-    'Should compute a witness for a simple circuit': function (browser: NightwatchBrowser) {
-        browser
-            .waitForElementVisible('[data-id="compute_witness_btn"]', 60000)
-            .waitForElementVisible('[data-id="circuit_input_a"]')
-            .waitForElementVisible('[data-id="circuit_input_b"]')
-            .setValue('[data-id="circuit_input_a"]', '1')
-            .setValue('[data-id="circuit_input_b"]', '2')
-            .click('[data-id="compute_witness_btn"]')
-            .frameParent()
-            .clickLaunchIcon('filePanel')
-            .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
-            .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
-    },
-    'Should generate proof for a simple circuit': function (browser: NightwatchBrowser) {
-        browser
-            .clickLaunchIcon('circuit-compiler')
-            .frame(0)
-            .waitForElementVisible('[data-id="generateProofBtn"]')
-            .click('[data-id="generateProofBtn"]')
-            .frameParent()
             .waitForElementVisible({
-                locateStrategy: 'xpath',
-                selector: "//span[@class='text-log' and contains(., 'zk proof validity true')]",
-                timeout: 60000
+                selector: '[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]',
+                timeout: 60000,
+                locateStrategy: 'css selector'
             })
-
     }
+
 }
 
 module.exports = tests

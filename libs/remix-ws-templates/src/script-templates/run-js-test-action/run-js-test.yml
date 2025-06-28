@@ -7,9 +7,9 @@ jobs:
     name: A job to run mocha and chai tests for solidity on github actions CI
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Environment Setup
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 20.0.0
     - name: Run Mocha Chai Unit Test Action

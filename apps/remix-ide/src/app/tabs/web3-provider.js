@@ -47,6 +47,11 @@ export class Web3ProviderModule extends Plugin {
                   return reject(errorData)
                 }
               }
+              if (message && message.error) {
+                const errorMsg = message.error?.message || message.error
+                this.call('terminal', 'log', { value: errorMsg, type: 'error' } )
+                return reject(errorMsg)
+              }
               if (payload.method === 'eth_sendTransaction') {
                 if (payload.params.length && !payload.params[0].to && message.result) {
                   setTimeout(async () => {
@@ -72,13 +77,7 @@ export class Web3ProviderModule extends Plugin {
                       await this.call('compilerArtefacts', 'addResolvedContract', contractAddressStr, data)
                     }
                   }, 50)
-                  const isVM = this.blockchain.executionContext.isVM()
-    
-                  if (isVM && this.blockchain.config.get('settings/save-evm-state')) {
-                    await this.blockchain.executionContext.getStateDetails().then((state) => {
-                      this.call('fileManager', 'writeFile', `.states/${this.blockchain.executionContext.getProvider()}/state.json`, state)
-                    })
-                  }
+                  await this.call('blockchain', 'dumpState')
                 }
               }
               resolve(message)

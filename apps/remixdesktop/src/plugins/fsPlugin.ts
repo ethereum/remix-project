@@ -453,7 +453,9 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   fixPath(path: string): string {
-    if (this.workingDir === '') throw new Error('workingDir is not set')
+    if (this.workingDir === '') {
+      throw new Error('workingDir is not set')
+    }
     if (path) {
       if (path.startsWith('/')) {
         path = path.slice(1)

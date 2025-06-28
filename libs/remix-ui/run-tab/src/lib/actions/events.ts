@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId, setExecEnv } from "./actions"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess, fetchAccountsListRequest } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
@@ -39,10 +39,7 @@ export const setupEvents = (plugin: RunTab) => {
 
   plugin.blockchain.event.register('contextChanged', async (context) => {
     dispatch(resetProxyDeployments())
-    if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
-    if (context !== 'walletconnect') {
-      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
-    }
+    getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
     // 'contextChanged' & 'networkStatus' both are triggered on workspace & network change
@@ -97,6 +94,16 @@ export const setupEvents = (plugin: RunTab) => {
   plugin.on('foundry', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('foundry', plugin, dispatch, file, source, languageVersion, data))
 
   plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
+
+  plugin.on('desktopHost', 'chainChanged', (context) => {
+    //console.log('desktopHost chainChanged', context)
+    fillAccountsList(plugin, dispatch)
+    updateInstanceBalance(plugin, dispatch)
+  })
+
+  plugin.on('desktopHost', 'disconnected', () => {
+    setExecutionContext(plugin, dispatch, { context: 'vm-cancun', fork: '' })
+  })
 
   plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
@@ -183,11 +190,23 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
     try {
       const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
       const filePaths = Object.keys(list)
+      let codeError = false
       for (const file of filePaths) {
         const pinnedContract = await plugin.call('fileManager', 'readFile', file)
         const pinnedContractObj = JSON.parse(pinnedContract)
-        pinnedContractObj.isPinned = true
-        if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
+        const code = await plugin.call('blockchain', 'getCode', pinnedContractObj.address)
+        if (code === '0x') {
+          codeError = true
+          const msg = `Cannot load pinned contract at ${pinnedContractObj.address}: Contract not found at that address.`
+          await plugin.call('terminal', 'log', { type: 'error', value: msg })
+        } else {
+          pinnedContractObj.isPinned = true
+          if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
+        }
+      }
+      if (codeError) {
+        const msg = `Some pinned contracts cannot be loaded.\nCotracts deployed to a (Mainnet, Custom, Sepolia) fork are not persisted unless there were already on chain.\nDirectly forking one of these forks will enable you to use the pinned contracts feature.`
+        await plugin.call('terminal', 'log', { type: 'log', value: msg })
       }
     } catch (err) {
       console.log(err)
@@ -281,6 +300,11 @@ export const resetAndInit = (plugin: RunTab) => {
       } catch (e) {
         cb(e.message)
       }
+    },
+    isSmartAccount: (address) => {
+      const smartAddresses = Object.keys(plugin.REACT_API.smartAccounts)
+      if (smartAddresses && smartAddresses.includes(address)) return true
+      else return false
     }
   })
 }

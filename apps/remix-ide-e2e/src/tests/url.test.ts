@@ -97,10 +97,8 @@ module.exports = {
       .refreshPage()
       .pause(2000)
       .currentWorkspaceIs('code-sample')
-      .waitForElementVisible('*[data-id=treeViewLitreeViewItemmainnet]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
-      .click('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemTetherToken.sol"]')
+      .click('*[data-id="treeViewLitreeViewItemTetherToken.sol"]')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
@@ -114,8 +112,7 @@ module.exports = {
       .refreshPage()
       .pause(7000)
       .currentWorkspaceIs('code-sample')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0xdAC17F958D2ee523a2206206994597C13D831ec7"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemTetherToken.sol"]')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
@@ -129,18 +126,16 @@ module.exports = {
       .refreshPage()
       .pause(7000)
       .currentWorkspaceIs('code-sample')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Address.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseAdminUpgradeabilityProxy.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseUpgradeabilityProxy.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableUpgradeabilityProxy.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Proxy.sol"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/UpgradeabilityProxy.sol"]')
-      .openFile('eth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/Address.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/BaseAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/BaseUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/InitializableUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/Proxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemcontracts/open-zeppelin/UpgradeabilityProxy.sol"]')
+      .openFile('open-zeppelin/InitializableAdminUpgradeabilityProxy.sol')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract InitializableAdminUpgradeabilityProxy is BaseAdminUpgradeabilityProxy, InitializableUpgradeabilityProxy {') !== -1)
@@ -175,6 +170,37 @@ module.exports = {
       })
   },
 
+  'Should load the code from URL & code params with special character #group1': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#code=Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IE1JVAovLyBDb21wYXRpYmxlIHdpdGggT3BlblplcHBlbGluIENvbnRyYWN0cyBeNS4wLjAKcHJhZ21hIHNvbGlkaXR5IF4wLjguMjc7CgppbXBvcnQge0VSQzIwfSBmcm9tICJAb3BlbnplcHBlbGluL2NvbnRyYWN0c0A1LjMuMC90b2tlbi9FUkMyMC9FUkMyMC5zb2wiOwppbXBvcnQge0VSQzIwUGVybWl0fSBmcm9tICJAb3BlbnplcHBlbGluL2NvbnRyYWN0c0A1LjMuMC90b2tlbi9FUkMyMC9leHRlbnNpb25zL0VSQzIwUGVybWl0LnNvbCI7Cgpjb250cmFjdCBDTXlUb2tlbiBpcyBFUkMyMCwgRVJDMjBQZXJtaXQgewogICAgY29uc3RydWN0b3IoKQogICAgICAgIEVSQzIwKHVuaWNvZGUi4biJTXlUb2tlbvCfjLsiLCAiTVRLIikKICAgICAgICBFUkMyMFBlcm1pdCh1bmljb2RlIuG4iU15VG9rZW7wn4y7IikKICAgIHt9Cn0K&lang=en&optimize=false&runs=200&evmVersion=null&version=soljson-v0.8.30+commit.73712a01.js')
+      .refreshPage() // we do one reload for making sure we already have the default workspace
+
+      .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: `//li[@data-id="treeViewLitreeViewItemcontract-89b91e9381.sol"]`,
+        locateStrategy: 'xpath'
+      })
+      .currentWorkspaceIs('code-sample')
+      .waitForElementVisible({
+        selector: '//*[@id="editorView"]',
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          '"ḉMyToken🌻"') !== -1,
+        'code has been loaded')
+      })
+      .url('http://127.0.0.1:8080') // refresh without loading the code sample
+      .pause(2000)
+      .currentWorkspaceIs('default_workspace')
+      .execute(() => {
+        return document.querySelector('[data-id="dropdown-item-code-sample"]') === null
+      }, [], (result) => {
+        browser.assert.ok((result as any).value, 'sample template has not be persisted.') // code-sample should not be kept.
+      })
+  },
+
   'Should load the code from language & code params #group1': function (browser: NightwatchBrowser) {
     browser
 
@@ -187,6 +213,7 @@ module.exports = {
       .currentWorkspaceIs('code-sample')
       .openFile('contract-eaa022e37e.yul')
       .getEditorValue((content) => {
+        console.log(content)
         browser.assert.ok(content && content.indexOf(
           'object "Contract1" {') !== -1)
       })
@@ -202,6 +229,7 @@ module.exports = {
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .openFile('.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol')
       .isVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
@@ -222,6 +250,7 @@ module.exports = {
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
       })
+      .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
@@ -339,7 +368,7 @@ module.exports = {
       .openFile('contracts/Lock.sol')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Lock {') !== -1, 'content does contain "contract Lock {"')
-      })      
+      })
   },
 
   'Load remix with an iframe plugin #group4': function (browser: NightwatchBrowser) {
@@ -352,5 +381,5 @@ module.exports = {
           locateStrategy: 'xpath'
         }
       )
-    }
+  }
 }

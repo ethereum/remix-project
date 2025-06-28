@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20.0.0
       - run: yarn install
@@ -17,7 +17,7 @@ jobs:
       - run: pwd
       - run: yarn run build:production
       - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs' ${{ secrets.IPFS_PROJET_ID }} ${{ secrets.IPFS_PROJECT_SECRET }})" >> $GITHUB_ENV
-      - uses: mshick/add-pr-comment@v1
+      - uses: mshick/add-pr-comment@v2
         with:
           message: |
             ipfs://${{ env.action_state }}

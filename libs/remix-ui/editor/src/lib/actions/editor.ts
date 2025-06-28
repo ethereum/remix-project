@@ -38,7 +38,7 @@ export const reducerActions = (models = initialState, action: Action) => {
     const model = models[uri]?.model
     if (model) model.dispose()
     delete models[uri]
-    return models
+    return { ...models }
   }
   case 'ADD_DIFF': {
     if (!editors) return models

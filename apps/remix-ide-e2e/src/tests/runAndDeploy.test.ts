@@ -30,10 +30,8 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .switchEnvironment('vm-paris')
-      .pause(2000)
+      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]', 30000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
-      .pause(2000)
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
       .click('*[data-id="signMessageTextarea"]')
       .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
@@ -110,7 +108,7 @@ module.exports = {
       // Consider adding tests to check return value of contract call
       // See: https://github.com/ethereum/remix-project/pull/1229
       .end()
-  },  
+  },
 
   'Should ensure that save environment state is checked by default #group4 #group5': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
@@ -135,7 +133,7 @@ module.exports = {
       .clickFunction('retrieve - call')
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-cancun/state.json')
+      .openFile('.states/vm-prague/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
@@ -171,6 +169,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       .openFile('scripts/deploy_with_web3.ts')
       .click('[data-id="play-editor"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'address:')
+      .openFile('.states/vm-london/state.json')
       .waitForElementPresent('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
       .click('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
       .pause(1000)
@@ -194,7 +194,7 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-cancun/state.json')
+      .openFile('.states/vm-prague/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is unchanged')
@@ -211,11 +211,11 @@ const sources = [
       pragma solidity ^0.8.0;
       contract HelloWorld {
           string public message;
-          
+
           fallback () external {
               message = 'Hello World!';
           }
-          
+
           function greet(string memory _message) public {
               message = _message;
           }
@@ -229,7 +229,7 @@ const sources = [
         function sendSomeEther(uint256 num) public {
             payable(msg.sender).transfer(num);
         }
-    
+
     }`
     }
   }

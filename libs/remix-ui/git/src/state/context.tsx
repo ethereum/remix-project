@@ -57,6 +57,7 @@ export interface pluginActions {
     }>
     showAlert({ title, message }:{title: string, message: string}): Promise<void>
     openFolderInSameWindow(path: string): Promise<void>
+    loginWithGitHub(): Promise<void>
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

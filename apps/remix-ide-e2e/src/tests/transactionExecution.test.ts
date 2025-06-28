@@ -1,6 +1,11 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
+import { JsonRpcProvider } from 'ethers'
+
+const branch = process.env.CIRCLE_BRANCH;
+const isMasterBranch = branch === 'master';
+const runMasterTests: boolean = (branch ? (isMasterBranch ? true : false) : true)
 
 module.exports = {
   '@disabled': true,
@@ -162,7 +167,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -183,9 +188,9 @@ module.exports = {
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clearTransactions()
-      .switchEnvironment('vm-london') // switch to London fork
+      .switchEnvironment('vm-london', true) // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -238,6 +243,9 @@ module.exports = {
   },
 
   'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
@@ -253,6 +261,7 @@ module.exports = {
       }) // wait for the udapp to load the list of accounts
       .click('*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
       .selectContract('MyResolver')
+      .pause(5000)
       .createContract('')
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
@@ -266,6 +275,9 @@ module.exports = {
   },
 
   'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
@@ -308,7 +320,176 @@ module.exports = {
         browser.verifyCallReturnValue(addressRef, ['0:uint256: 3'])
           .perform(() => done())
       })
-  }
+  },
+
+  'Should stay connected to mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
+    /*
+        Should stay connected in the mainnet VM fork and: 
+    - check the block number has been set to the current mainnet block number.
+    - check blocknumber is advancing
+    - fork and check blocknumber is advancing the forked state. The name is 'Mainnet fork 1'
+    - fork again and check blocknumber is advancing the forked state. The name is 'Mainnet fork 2'
+    - switch back to Mainnet fork 1 and check we have the right number of blocks.
+    - transact again using Mainnet fork 1
+    */
+    let addressRef
+    let currentBlockNumber: number
+    browser
+      .perform(async (done) => {
+        try {
+          console.log('getting the provider up..')
+          const provider = new JsonRpcProvider('https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38')
+          currentBlockNumber = (await provider.getBlockNumber()) as number
+          console.log('getBlockNumber', currentBlockNumber)
+          done()
+        } catch (e) {
+          console.error(e)
+        }        
+      })
+      .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
+      .clickLaunchIcon('filePanel')
+      .testContracts('MainnetBlockNumberContract.sol', sources[10]['MainnetBlockNumberContract.sol'], ['MainnetBlockNumberContract'])
+      .clickLaunchIcon('udapp')
+      .selectContract('MainnetBlockNumberContract')
+      .perform((done) => {
+        browser.createContract((currentBlockNumber) + '')
+        .waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+        .perform(() => {
+          done()
+        })
+      })
+      .clickInstance(0)
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      // Should fork the mainnet VM fork and execute some transaction
+      .click('*[data-id="fork-state-icon"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
+      .click('input[data-id="modalDialogForkState"]')
+      .setValue('input[data-id="modalDialogForkState"]', 'Mainnet fork 1')
+      .modalFooterOKClick('udappNotify')
+      // check toaster for forked state
+      .waitForElementVisible(
+        {
+          selector: '//*[@data-shared="tooltipPopup" and contains(.,"New environment \'Mainnet fork 1\' created with forked state.")]',
+          locateStrategy: 'xpath'
+        }
+      )
+      .pause(2000)
+      .perform((done) => {
+        browser.createContract((currentBlockNumber) + '')
+        .waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+        .perform(() => {
+          done()
+        })
+      })
+      .clickInstance(0)
+      .click('*[data-id="universalDappUiUdappPin"]') // pin the contract for later use by a forked state.
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      // Should fork the mainnet VM fork again and execute some transaction
+      .click('*[data-id="fork-state-icon"]')  
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
+      .click('input[data-id="modalDialogForkState"]')
+      .setValue('input[data-id="modalDialogForkState"]', 'Mainnet fork 2')
+      .modalFooterOKClick('udappNotify')
+      // check toaster for forked state
+      .waitForElementVisible(
+        {
+          selector: '//*[@data-shared="tooltipPopup" and contains(.,"New environment \'Mainnet fork 2\' created with forked state.")]',
+          locateStrategy: 'xpath'
+        }
+      )
+      .pause(2000)
+      .clickInstance(0)
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .clickFunction('checkBlockNumberIsAdvancing - transact (not payable)')
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      .clickFunction('getB - call')
+      .getAddressAtPosition(0, (address) => {
+        console.log('Test Fork Mainnet', address)
+        addressRef = address
+      })
+      // from Mainnet fork 2, check that block number is at `currentBlockNumber` + 4
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '3'})
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+      // switch back to Mainnet fork 1 and check that block number is at `currentBlockNumber` + 2
+      .switchEnvironment('vm-fs-Mainnet fork 1')
+      .pause(2000)
+      .clickInstance(0)
+      .clickFunction('checkOrigin - transact (not payable)', { types: 'uint256 incr', values: '1'})
+      .perform((done) => {
+        browser.testFunction('last',
+          {
+            status: '0x1 Transaction mined and execution succeed',
+            'decoded output': { '0':'bool: true' }
+          }).perform(() => done())
+      })
+    }
 }
 
 // @TODO test: bytes8[3][] type as input
@@ -540,7 +721,7 @@ contract C {
         }
 
         contract MyResolver {
-            // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
+            // Same address for Mainnet, Ropsten, Rinkerby, Gorli and other networks;
             ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
             function resolve() public view returns(address) {
@@ -582,6 +763,35 @@ contract C {
           }
       }
         `
+    }
+  }, {
+    'MainnetBlockNumberContract.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.8.2 <0.9.0;
+
+      contract MainnetBlockNumberContract {
+      uint b;
+      uint orgB;
+      constructor(uint blockNumber) {
+          b = blockNumber;
+      }
+      function checkBlockNumberIsAdvancing()  public returns (bool) {
+          if (orgB == 0) orgB = block.number;
+          bool ret = b < block.number;
+          b = block.number;
+          return ret;
+      }
+      function getB() view public returns(uint) {
+          return b;
+      }
+      function checkOrigin(uint incr) public returns (bool) {
+        bool ret = orgB + incr == b;
+        return ret;
+      }
+  }
+`
     }
   }
 ]

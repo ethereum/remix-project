@@ -5,13 +5,14 @@ import { execution } from '@remix-project/remix-lib';
 import SurgeClient from '@drafish/surge-client';
 import remixClient from '../remix-client';
 import { themeMap } from '../components/DeployPanel/theme';
+import { endpointUrls } from "@remix-endpoints-helper"
 
 const { encodeFunctionId } = execution.txHelper;
 
 const surgeClient = new SurgeClient({
   // surge backend doesn't support cross-domain, that's why the proxy goes
   // here is the codebase of proxy: https://github.com/remix-project-org/remix-wildcard/blob/master/src/hosts/common-corsproxy.ts
-  proxy: 'https://common-corsproxy.remixproject.org/',
+  proxy: endpointUrls.commonCorsProxy,
   onError: (err: Error) => {
     console.log(err);
   },

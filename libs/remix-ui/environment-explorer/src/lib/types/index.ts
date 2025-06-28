@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { Profile } from '@remixproject/plugin-utils'
 
-export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs' | 'Forked States'
+export type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Forked States'
 
 export type environmentExplorerUIProps = {
   state: {
@@ -9,6 +9,7 @@ export type environmentExplorerUIProps = {
     pinnedProviders: string[]
   }
   deleteForkedState (provider: Provider): Promise<void>
+  showPinnedContracts (provider: Provider): Promise<void>
   pinStateCallback (provider: Provider, pinned: boolean): Promise<void>
   profile: Profile
 }
@@ -26,22 +27,38 @@ export type environmentExplorerUIGridSections = {
   [key in ProvidersSection]: environmentExplorerUIGridSection
 }
 
+export type ProviderConfig = {
+  isVM: boolean
+  isInjected: boolean
+  isRpcForkedState?: boolean
+  isVMStateForked?: boolean
+  fork: string
+  statePath?: string,
+  blockNumber?: string
+  nodeUrl?: string
+  baseBlockNumber?: string
+}
+
 export type Provider = {
+  position: number
   options: { [key: string]: string }
   dataId: string
   name: string
   displayName: string
   logo?: string,
   logos?: string[],
-  fork: string
   description?: string
-  isInjected: boolean
-  isVM: boolean
-  isForkedState: boolean
-  isForkedVM: boolean
+  config: ProviderConfig
   title: string
   init: () => Promise<void>
-  provider: {
+  provider:{
     sendAsync: (payload: any) => Promise<void>
+    udapp?: {
+      REACT_API: {
+        chainId: number,
+        accounts: any,
+        selectExEnv: string
+      }
+    }
   }
 }

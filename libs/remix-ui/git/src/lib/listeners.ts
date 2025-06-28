@@ -1,12 +1,12 @@
 
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setTimestamp, setDesktopWorkingDir, setVersion } from "../state/gitpayload";
-import { gitActionDispatch, gitUIPanels, storage } from "../types";
+import { gitActionDispatch, gitMatomoEventTypes, gitUIPanels, storage } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin, setStorage, init } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
-import { statusChanged } from "./pluginActions";
+import { saveToken, sendToMatomo, statusChanged } from "./pluginActions";
 import { appPlatformTypes } from "@remix-ui/app";
 import { AppAction } from "@remix-ui/app";
 
@@ -205,6 +205,12 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 
   plugin.on('dgit' as any, 'init', async () => {
     init()
+  })
+
+  plugin.on('githubAuthHandler', 'onLogin', async (data: { token: string }) => {
+    await saveToken(data.token)
+    await loadGitHubUserFromToken()
+    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
   })
 
   callBackEnabled = true;

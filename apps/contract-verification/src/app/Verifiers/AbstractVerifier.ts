@@ -4,8 +4,8 @@ import type { LookupResponse, SubmittedContract, VerificationResponse } from '..
 // Optional function definitions
 export interface AbstractVerifier {
   verifyProxy?(submittedContract: SubmittedContract): Promise<VerificationResponse>
-  checkVerificationStatus?(receiptId: string): Promise<VerificationResponse>
-  checkProxyVerificationStatus?(receiptId: string): Promise<VerificationResponse>
+  checkVerificationStatus?(receiptId: string, chainId: string): Promise<VerificationResponse>
+  checkProxyVerificationStatus?(receiptId: string, chainId: string): Promise<VerificationResponse>
 }
 
 export abstract class AbstractVerifier {

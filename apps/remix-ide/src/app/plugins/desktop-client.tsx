@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import React from 'react'
 import { desktopConnection, desktopConnectionType } from '@remix-api'
-import { Blockchain, Provider } from '../../blockchain/blockchain'
+import { Blockchain } from '../../blockchain/blockchain'
 import { AppAction, AppModal, ModalTypes } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -10,6 +10,7 @@ import cbor from 'cbor'
 import isElectron from 'is-electron'
 import DesktopClientUI from '../components/DesktopClientUI' // Import the UI component
 import JSONbig from 'json-bigint'
+import { Provider } from '@remix-ui/environment-explorer'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -33,7 +34,7 @@ interface DesktopClientState {
 export class DesktopClient extends ViewPlugin {
   blockchain: Blockchain
   ws: WebSocket
-  dispatch: React.Dispatch<any> = () => {}
+  dispatch: React.Dispatch<any> = () => { }
   state: DesktopClientState
   appStateDispatch: React.Dispatch<AppAction>
   queryParams: QueryParams
@@ -80,7 +81,7 @@ export class DesktopClient extends ViewPlugin {
     console.log('contextChanged handled', context)
   }
 
-  onDeactivation() {}
+  onDeactivation() { }
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
@@ -102,11 +103,14 @@ export class DesktopClient extends ViewPlugin {
     console.log('handleProviderConnect', provider)
     this.state.disableconnect = true
     this.renderComponent()
-    this.blockchain.changeExecutionContext({ context: provider.name, fork: '' }, null, null, () => {
-      console.log('setFinalContext')
-      this.state.disableconnect = false
-      this.renderComponent()
-    })
+    try {
+      this.blockchain.changeExecutionContext({ context: provider.name, fork: '' }, null, null, () => {
+        this.state.disableconnect = false
+        this.renderComponent()
+      })
+    } catch (e) {
+      console.error('Error connecting to provider', e)
+    }
   }
 
   setConnectionState = (state: desktopConnection) => {
@@ -138,6 +142,12 @@ export class DesktopClient extends ViewPlugin {
       console.log('NOT Connected to server')
       this.connectToWebSocket()
     }
+  }
+
+  async isInjected() {
+    const executionContext = this.blockchain.executionContext.executionContext
+    const currentProvider = this.state.providers.find((provider) => provider.name === executionContext)
+    this.ws.send(stringifyWithBigInt({ type: 'isInjected', payload: currentProvider && currentProvider.config && currentProvider.config.isInjected }))
   }
 
   async openDesktopApp() {
@@ -183,7 +193,7 @@ export class DesktopClient extends ViewPlugin {
 
     this.ws.onmessage = async (event) => {
       const parsed = JSON.parse(event.data)
-      console.log('Message from server:', parsed.method)
+      console.log('Message from server:', parsed.method, parsed.id)
       if (parsed && parsed.type === 'error') {
         if (parsed.payload === 'ALREADY_CONNECTED') {
           console.log('ALREADY_CONNECTED')
@@ -210,7 +220,6 @@ export class DesktopClient extends ViewPlugin {
         console.log('Sending message to web3:', parsed)
       }
 
-
       if (parsed.method === 'eth_getTransactionReceipt') {
         console.log('Getting receipt for', parsed.params)
         let receipt = await this.tryTillReceiptAvailable(parsed.params[0])
@@ -228,23 +237,27 @@ export class DesktopClient extends ViewPlugin {
           })
         )
       } else {
-        const provider = this.blockchain.web3().currentProvider
-        let result = await provider.sendAsync(parsed)
-        if (parsed.method === 'eth_sendTransaction') {
-          console.log('Sending result back to server', result)
-        }
-        if (parsed.method === 'net_version' && result.result === 1337) {
-          console.log('Sending result back to server', result, this.blockchain.executionContext)
-          console.log(this.state.providers)
-          if(this.state.providers.length === 0) { // if no providers are available, send the VM context
-            this.ws.send(stringifyWithBigInt(result))
-          }
+        await this.isInjected()
+        try {
+          const provider = this.blockchain.web3().currentProvider
 
-        }else{
+          let result = await provider.sendAsync(parsed)
+
+          console.log('Sending result back to server', result)
           this.ws.send(stringifyWithBigInt(result))
+
+        } catch (e) {
+
+          console.log('No provider...', parsed)
+          this.ws.send(stringifyWithBigInt({
+            jsonrpc: '2.0',
+            result: 'error',
+            id: parsed.id,
+          }))
+          return
+
         }
-        
-        
+
       }
     }
 
@@ -263,9 +276,9 @@ export class DesktopClient extends ViewPlugin {
     }
   }
 
-  async init() {}
+  async init() { }
 
-  async sendAsync(payload: any) {}
+  async sendAsync(payload: any) { }
 
   async tryTillReceiptAvailable(txhash) {
     try {
