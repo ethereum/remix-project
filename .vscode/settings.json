@@ -1,0 +1,12 @@
+{
+  // stop VS Code from watching folders webpack already handles
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/tmp/**": true,
+    "**/logs/**": true
+  },
+  // optional: if you rely on .gitignore, let that drive search/watching
+  "search.useIgnoreFiles": true
+}
