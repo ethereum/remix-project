@@ -108,7 +108,6 @@ export class ContractAgent {
     } catch (error) {
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
-      console.error('Error writing contracts:', error)
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
       return "Failed to generate secure code on user prompt! Please try again with a different prompt."
     } finally {
