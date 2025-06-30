@@ -15,6 +15,7 @@ export default function GroupListMenu(props: GroupListMenuProps) {
       {props.groupList.map((item, index) => (
         <button
           className="btn btn-light"
+          data-id={item.dataId}
           onClick={() => {
             props.setChoice(item.stateValue)
             props.setShowOptions(false)

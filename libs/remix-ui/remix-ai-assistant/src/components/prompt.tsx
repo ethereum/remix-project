@@ -51,25 +51,29 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       label: 'None',
       bodyText: 'Assistant will automatically decide the context',
       icon: 'fa-solid fa-check',
-      stateValue: 'none'
+      stateValue: 'none',
+      dataId: 'composer-ai-context-none'
     },
     {
       label: 'Current file',
       bodyText: 'Add the current file in the editor as context',
       icon: 'fa-solid fa-check',
-      stateValue: 'current'
+      stateValue: 'current',
+      dataId: 'currentFile-context-option'
     },
     {
       label: 'All opened files',
       bodyText: 'Adds all files opened in the editor as context',
       icon: 'fa-solid fa-check',
-      stateValue: 'opened'
+      stateValue: 'opened',
+      dataId: 'allOpenedFiles-context-option'
     },
     {
       label: 'Workspace',
       bodyText: 'Uses the current workspace as context',
       icon: 'fa-solid fa-check',
-      stateValue: 'workspace'
+      stateValue: 'workspace',
+      dataId: 'workspace-context-option'
     }
   ]
 
@@ -78,19 +82,22 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       label: 'OpenAI',
       bodyText: 'Better for general purpose coding tasks',
       icon: 'fa-solid fa-check',
-      stateValue: 'openai'
+      stateValue: 'openai',
+      dataId: 'composer-ai-assistant-openai'
     },
     {
       label: 'MistralAI',
       bodyText: 'Better for more complex coding tasks with solidity, typescript and more',
       icon: 'fa-solid fa-check',
-      stateValue: 'mistralai'
+      stateValue: 'mistralai',
+      dataId: 'composer-ai-assistant-mistralai'
     },
     {
       label: 'Anthropic',
       bodyText: 'Best for complex coding tasks but most demanding on resources',
       icon: 'fa-solid fa-check',
-      stateValue: 'anthropic'
+      stateValue: 'anthropic',
+      dataId: 'composer-ai-assistant-anthropic'
     }
   ]
 
