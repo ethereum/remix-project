@@ -102,66 +102,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           style={{ borderRadius: '8px', zIndex: 99999, left: '76dvw', right: '0px', bottom: '177px', height: '300px', width: '300px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
-          {/* <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-none"
-              checked={contextChoice === 'none'}
-              onChange={() => {
-                setContextChoice('none')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="none-context-option" htmlFor="ctx-none">
-              None
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-current"
-              checked={contextChoice === 'current'}
-              onChange={() => {
-                setContextChoice('current')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="currentFile-context-option" htmlFor="ctx-current">
-              Current file
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-opened"
-              checked={contextChoice === 'opened'}
-              onChange={() => {
-                setContextChoice('opened')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
-              All opened files
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-workspace"
-              checked={contextChoice === 'workspace'}
-              onChange={() => {
-                setContextChoice('workspace')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
-              Workspace
-            </label>
-          </div> */}
           <GroupListMenu
             setChoice={setContextChoice}
             setShowOptions={setShowContextOptions}
@@ -174,7 +114,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       <div
         className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text"
       >
-        <div className="d-flex justify-content-between mb-2 border border-right-0 border-left-0 border-top-0 border-bottom">
+        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
@@ -215,51 +155,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               style={{ left: '76dvw', right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
             >
               <div className="text-uppercase ml-2 mb-2 small">AI Assistant Model</div>
-              {/* <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-openai`}
-                  checked={assistantChoice === 'openai'}
-                  onChange={() => {
-                    setAssistantChoice('openai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-openai`}>
-                    OpenAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'mistralai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-mistralai`}
-                  checked={assistantChoice === 'mistralai'}
-                  onChange={() => {
-                    setAssistantChoice('mistralai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-mistralai`}>
-                    MistralAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'anthropic'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-anthropic`}
-                  checked={assistantChoice === 'anthropic'}
-                  onChange={() => {
-                    setAssistantChoice('anthropic')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
-                    Anthropic
-                </label>
-              </div> */}
               <GroupListMenu
                 setChoice={setAssistantChoice}
                 setShowOptions={setShowAssistantOptions}
@@ -273,7 +168,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               onClick={handleSetAssistant}
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
             >
-              {'Model'}
+              {'Provider'}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}
@@ -281,10 +176,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
             </button>
             <button
-              className="btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end"
+              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
+              style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
               onClick={handleSend}
             >
-              <span className="fa fa-arrow-up"></span>
+              <span className="fa fa-arrow-up text-light"></span>
             </button>
           </div>
         </div>
