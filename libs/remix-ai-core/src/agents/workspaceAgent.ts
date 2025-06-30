@@ -27,11 +27,15 @@ export class workspaceAgent {
   async getCurrentWorkspaceFiles() {
     try {
       let files = '{\n'
-      const jsonDirsContracts = await this.plugin.call('fileManager', 'copyFolderToJson', '/').then((res) => res.contracts);
-      for (const file in jsonDirsContracts.children) {
-        if (!Object.values(SupportedFileExtensions).some(ext => file.endsWith(ext))) continue;
+      const jsonDirsContracts = await this.plugin.call('fileManager', 'copyFolderToJson', '/');
+      for (const dirs in jsonDirsContracts) {
+        if (dirs.startsWith('.') || dirs.startsWith('node_modules') || dirs.startsWith('/.')) continue;
+        for (const file in jsonDirsContracts[dirs].children) {
+          if (file.startsWith('.')) continue;
+          if (!Object.values(SupportedFileExtensions).some(ext => file.endsWith(ext))) continue;
 
-        files += `"${file}": ${JSON.stringify(jsonDirsContracts.children[file].content)}},`
+          files += `"${file}": ${JSON.stringify(jsonDirsContracts[dirs].children[file].content)}},`
+        }
       }
       return files + '\n}'
     } catch (error) { console.error('Error getting current workspace files:', error); }
@@ -39,7 +43,7 @@ export class workspaceAgent {
 
   async writeGenerationResults(payload) {
     try {
-      let modifiedFilesMarkdown = 'Modified Files\n'
+      let modifiedFilesMarkdown = '## Modified Files\n'
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content);
@@ -76,6 +80,7 @@ export class workspaceAgent {
       break
     }
     default:
+      console.log('Invalid context type', context)
       this.ctxFiles = ""
       break
     }
