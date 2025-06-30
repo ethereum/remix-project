@@ -183,12 +183,19 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
             </button>
             <button
+              data-id="composer-ai-generate-workspace"
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
+              onClick={handleGenerateWorkspace}
+            >
+              {'@Generate'}
+            </button>
+            {/* <button
               className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
               style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
               onClick={handleSend}
             >
               <span className="fa fa-arrow-up text-light"></span>
-            </button>
+            </button> */}
           </div>
         </div>
         {contextChoice !== 'none' && contextFiles.length > 0 && (
