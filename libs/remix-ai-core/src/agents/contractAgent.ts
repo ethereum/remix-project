@@ -37,7 +37,20 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt) {
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
 
-    const writeAIResults = async (parsedResults) => {await this.createWorkspace(this.workspaceName)
+    const writeAIResults = async (parsedResults) => {
+      if (this.plugin.isOnDesktop) {
+        console.log('Writing AI results to desktop workspace:', parsedResults.files)
+        // Transform parsedResults.files into an object: { [fileName]: content }
+        const files = parsedResults.files.reduce((acc, file) => {
+          acc[file.fileName] = file.content
+          return acc
+        }, {})
+        await this.plugin.call('electronTemplates', 'loadTemplateInNewWindow', files)
+        //return "Feature not only available in the browser version of Remix IDE. Please use the browser version to generate secure code."
+        return "## New workspace created!  \nNavigate to the new window!"
+      }
+
+      await this.createWorkspace(this.workspaceName)
       if (!this.overrideWorkspace) await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedResults.files) {
@@ -49,8 +62,8 @@ export class ContractAgent {
         // check if file already exists
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
+        return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
       }
-      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
     }
 
     try {
@@ -104,10 +117,14 @@ export class ContractAgent {
 
   async createWorkspace(workspaceName) {
     // create random workspace surfixed with timestamp
-    const timestamp = new Date().getTime()
-    const wsp_name = workspaceName + '-' + timestamp
-    await this.plugin.call('filePanel', 'createWorkspace', wsp_name, true)
-    this.workspaceName = wsp_name
+    try {
+      const timestamp = new Date().getTime()
+      const wsp_name = workspaceName + '-' + timestamp
+      await this.plugin.call('filePanel', 'createWorkspace', wsp_name, true)
+      this.workspaceName = wsp_name
+    } catch (error) {
+      console.error('Error creating workspace:', error)
+    }
   }
 
   async deleteWorkspace(workspaceName) {

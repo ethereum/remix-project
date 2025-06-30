@@ -12,9 +12,7 @@ module.exports = {
             .click('button[data-id="landingPageImportFromTemplate"]')
             .waitForElementPresent('*[data-id="create-remixDefault"]')
             .scrollAndClick('*[data-id="create-remixDefault"]')
-            .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-            .waitForElementPresent('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
-            .click('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
+
             .pause(3000)
             .windowHandles(function (result) {
                 console.log(result.value)
@@ -56,11 +54,11 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 63)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 61)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 56)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 54)
             })
             .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
             .clearValue('*[id="search_exclude"]').setValue('*[id="search_exclude"]', '.*/**/*')

@@ -60,6 +60,7 @@ export class TxRunnerWeb3 {
       const listenOnResponse = () => {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
+          console.log('waiting for receipt from IDE')
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           const originTo = tx.to
           tx = await tryTillTxAvailable(resp, this.getWeb3())

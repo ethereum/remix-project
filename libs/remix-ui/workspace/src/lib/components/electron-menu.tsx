@@ -5,7 +5,10 @@ import { FormattedMessage } from "react-intl"
 import '../css/electron-menu.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
-export const ElectronMenu = () => {
+export const ElectronMenu = (props: {
+  clone: () => void,
+  createWorkspace: () => void,
+ }) => {
   const platform = useContext(platformContext)
   const global = useContext(FileSystemContext)
 
@@ -28,7 +31,10 @@ export const ElectronMenu = () => {
     (platform !== appPlatformTypes.desktop) ? null :
       (global.fs.browser.isSuccessfulWorkspace ? null :
         <>
-          <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>
+          <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary mb-1'><FormattedMessage id="electron.openFolder" /></div>
+          <div data-id="createWorkspaceButton" onClick={async () => { await props.createWorkspace() }} className='btn btn-primary mb-1'><FormattedMessage id="electron.createProject" /></div>
+          <div data-id="cloneFromGitButton" onClick={async () => { props.clone() }} className='btn btn-primary'><FormattedMessage id="electron.gitClone" /></div>
+
           {global.fs.browser.recentFolders.length > 0 ?
             <>
               <label className="py-2 pt-3 align-self-center m-0">

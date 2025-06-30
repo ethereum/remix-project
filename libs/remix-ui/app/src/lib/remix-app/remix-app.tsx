@@ -3,6 +3,7 @@ import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
 import EnterDialog from './components/modals/enter'
+import ManagePreferencesDialog from './components/modals/managePreferences'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
@@ -14,6 +15,7 @@ import { UsageTypes } from './types'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
+import { desktopConnectionType } from '@remix-api'
 
 declare global {
   interface Window {
@@ -28,6 +30,7 @@ interface IRemixAppUi {
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
+  const [showManagePreferencesDialog, setShowManagePreferencesDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
@@ -44,12 +47,18 @@ const RemixApp = (props: IRemixAppUi) => {
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
 
+  //console.log('RemixApp props', props)
+
   const [appState, appStateDispatch] = useReducer(appReducer, {
     ...appInitialState,
-    showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron()
+    showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron(),
+    connectedToDesktop: props.app.desktopClientMode ? desktopConnectionType .disconnected : desktopConnectionType .disabled
   })
 
   useEffect(() => {
+    if (props.app.params && props.app.params.activate && props.app.params.activate.split(',').includes('desktopClient')){
+      setHideSidePanel(true)
+    }
     async function activateApp() {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
@@ -112,27 +121,29 @@ const RemixApp = (props: IRemixAppUi) => {
   },[appState.showPopupPanel])
 
   function setListeners() {
-    props.app.sidePanel.events.on('toggle', () => {
-      setHideSidePanel((prev) => {
-        return !prev
+    if (!props.app.desktopClientMode){
+      props.app.sidePanel.events.on('toggle', () => {
+        setHideSidePanel((prev) => {
+          return !prev
+        })
       })
-    })
-    props.app.sidePanel.events.on('showing', () => {
-      setHideSidePanel(false)
-    })
-
-    props.app.layout.event.on('minimizesidepanel', () => {
-      // the 'showing' event always fires from sidepanel, so delay this a bit
-      setTimeout(() => {
-        setHideSidePanel(true)
-      }, 1000)
-    })
-
-    props.app.layout.event.on('maximisesidepanel', () => {
-      setMaximiseLeftTrigger((prev) => {
-        return prev + 1
+      props.app.sidePanel.events.on('showing', () => {
+        setHideSidePanel(false)
       })
-    })
+
+      props.app.layout.event.on('minimizesidepanel', () => {
+        // the 'showing' event always fires from sidepanel, so delay this a bit
+        setTimeout(() => {
+          setHideSidePanel(true)
+        }, 1000)
+      })
+
+      props.app.layout.event.on('maximisesidepanel', () => {
+        setMaximiseLeftTrigger((prev) => {
+          return prev + 1
+        })
+      })
+    }
 
     props.app.layout.event.on('enhancesidepanel', () => {
       setEnhanceLeftTrigger((prev) => {
@@ -234,8 +245,9 @@ const RemixApp = (props: IRemixAppUi) => {
         <onLineContext.Provider value={online}>
           <AppProvider value={value}>
             <OriginWarning></OriginWarning>
-            <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
+            <MatomoDialog hide={!appReady} acceptAllFn={() => setShowEnterDialog(true)} managePreferencesFn={() => setShowManagePreferencesDialog(true)}></MatomoDialog>
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
+            {showManagePreferencesDialog && <ManagePreferencesDialog savePreferencesFn={() => setShowEnterDialog(true)}></ManagePreferencesDialog>}
             <div className='d-flex flex-column'>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
                 <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
