@@ -1,8 +1,8 @@
 {
   "name": "remix-project",
-  "version": "0.66.0-dev",
+  "version": "0.67.0-dev",
   "license": "MIT",
-  "description": "Ethereum Remix Monorepo",
+  "description": "Remix Project Monorepo",
   "main": "index.js",
   "defaultVersion": "soljson-v0.8.30+commit.73712a01.js",
   "keywords": [
