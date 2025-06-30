@@ -74,6 +74,44 @@ export class ElectronProvider extends FileProvider {
   }
 
   /**
+   * copy the folder recursively (internal use)
+   * @param {string} path is the folder to be copied over
+   * @param {Function} visitFile is a function called for each visited files
+   * @param {Function} visitFolder is a function called for each visited folders
+   */
+  async _copyFolderToJsonInternal (path, visitFile, visitFolder) {
+    visitFile = visitFile || function () { /* do nothing. */ }
+    visitFolder = visitFolder || function () { /* do nothing. */ }
+
+    const json = {}
+    path = this.removePrefix(path)
+    if (await window.remixFileSystem.exists(path)) {
+      try {
+        const items = await window.remixFileSystem.readdir(path)
+        visitFolder({ path })
+        if (items.length !== 0) {
+          for (const item of items) {
+            const file: any = {}
+            const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item.file}`
+            if (item.isDirectory) {
+              file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
+            } else {
+              file.content = await window.remixFileSystem.readFile(curPath, 'utf8')
+              visitFile({ path: curPath, content: file.content })
+            }
+            json[curPath] = file
+          }
+        }
+      } catch (e) {
+        console.log(e)
+        throw new Error(e)
+      }
+    }
+    console.log('json', json)
+    return json
+  }
+
+  /**
  * Removes the folder recursively
  * @param {*} path is the folder to be removed
  */

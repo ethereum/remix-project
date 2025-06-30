@@ -154,6 +154,7 @@ export function isNative(name) {
     'walletconnect',
     'contract-verification',
     'popupPanel',
+    'desktopClient',
     'LearnEth',
     'noir-compiler',
     'remixaiassistant'

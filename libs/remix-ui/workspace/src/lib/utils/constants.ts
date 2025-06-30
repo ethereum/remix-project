@@ -161,7 +161,7 @@ export type TemplateOption = {
   mintable?: boolean
   burnable?: boolean
   pausable?: boolean
-  upgradeable?: 'uups' | 'transparent'
+  upgradeable?: 'uups' | 'transparent' | 'uupds'
 }
 
 export type Template = {
