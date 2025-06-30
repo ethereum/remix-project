@@ -154,7 +154,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="pt-2 mb-2 z-3 bg-light border border-text position-absolute"
               style={{ left: '76dvw', right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
             >
-              <div className="text-uppercase ml-2 mb-2 small">AI Assistant Model</div>
+              <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
               <GroupListMenu
                 setChoice={setAssistantChoice}
                 setShowOptions={setShowAssistantOptions}
