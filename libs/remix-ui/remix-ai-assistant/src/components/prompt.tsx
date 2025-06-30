@@ -48,9 +48,8 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     <>
       {showContextOptions && (
         <div
-          className=" w-90 bg-light mb-1 p-2 border border-text"
-          style={{ borderRadius: '8px'
-          }}
+          className="bg-light mb-1 p-2 border border-text position-absolute"
+          style={{ borderRadius: '8px', zIndex: 99999, left: '76dvw', right: '0px', bottom: '177px', height: '300px', width: '300px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
           {/* <div className="d-flex ml-2 custom-control custom-radio">
@@ -122,19 +121,19 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text"
       >
-        <div className="d-flex justify-content-between mb-2">
+        <div className="d-flex justify-content-between mb-2 border border-right-0 border-left-0 border-top-0 border-bottom">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-text btn-sm text-secondary small"
+            className="btn btn-dim btn-sm text-light small font-weight-light"
           >
           @Add context
           </button>
 
           <span
-            className="bg-info p-1 text-ai small"
+            className="badge align-self-center badge-info text-ai font-weight-light"
             data-id="composer-ai-workspace-generate"
           >
           Ai Beta
@@ -212,12 +211,19 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               </div>
             </div>
           )}
-          <button
-            onClick={handleSetAssistant}
-            className="btn btn-dark btn-sm text-secondary mt-2 align-self-end"
-          >
-            Set assistant&nbsp;
-          </button>
+          <div className="d-flex justify-content-between">
+            <button
+              onClick={handleSetAssistant}
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
+            >
+            Model
+            </button>
+            <button
+              className="btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end"
+            >
+              <span className="fa fa-arrow-up rounded-sm"></span>
+            </button>
+          </div>
         </div>
         {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>

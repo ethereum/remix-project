@@ -36,7 +36,7 @@ export default function ContextOptMenu(props: ContextOptMenuProps) {
   ]
 
   return (
-    <div className="btn-group-vertical w-100">
+    <div className="btn-group-vertical">
       {groupList.map((item, index) => (
         <button
           className="btn btn-light"
@@ -47,8 +47,8 @@ export default function ContextOptMenu(props: ContextOptMenuProps) {
         >
           <div className="d-flex flex-column small text-left">
             <span className="font-semibold text-white mb-1">{item.label}</span>
-            <div className="w-100">
-              <span className="text-light mr-2">{item.bodyText}</span>{ props.contextChoice === item.stateValue && <span className={item.icon}></span> }
+            <div className="d-flex justify-content-between">
+              <span className="text-light mr-2 text-wrap">{item.bodyText}</span>{ props.contextChoice === item.stateValue && <span className={item.icon}></span> }
             </div>
           </div>
         </button>
