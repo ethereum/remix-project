@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class switchEnvironment extends EventEmitter {
-  command (this: NightwatchBrowser, provider: string): NightwatchBrowser {
+  command (this: NightwatchBrowser, provider: string, returnWhenInitialized?: boolean): NightwatchBrowser {
     this.api.useCss().waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
       .perform((done) => {
         this.api.isPresent({ selector: `[data-id="selected-provider-${provider}"]`, suppressNotFoundErrors: true, timeout: 5000 }, (result) => {
@@ -20,11 +20,25 @@ class switchEnvironment extends EventEmitter {
                       .click('[data-id="settingsSelectEnvOptions"] button')
                       .waitForElementVisible(`[data-id="dropdown-item-${provider}"]`)
                       .click(`[data-id="dropdown-item-${provider}"]`)
+                      .perform((done) => {
+                        if (returnWhenInitialized) {
+                          browser.waitForElementVisible(`[data-id="selected-provider-${provider}"]`).perform(() => done())
+                        } else {
+                          done()
+                        }
+                      })
                       .perform(() => done())
                   } else {
                     browser.click('[data-id="settingsSelectEnvOptions"] button')
                       .waitForElementVisible(`[data-id="dropdown-item-${provider}"]`)
                       .click(`[data-id="dropdown-item-${provider}"]`)
+                      .perform((done) => {
+                        if (returnWhenInitialized) {
+                          browser.waitForElementVisible(`[data-id="selected-provider-${provider}"]`).perform(() => done())
+                        } else {
+                          done()
+                        }
+                      })
                       .perform(() => done())
                   }
                 })

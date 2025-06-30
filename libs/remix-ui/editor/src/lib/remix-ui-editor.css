@@ -30,3 +30,17 @@
 div.monaco-list-row > span.title {
     margin-top: 12px;
 }
+
+.modifiedChangesDecoration {
+    background-color: var(--danger) !important;
+    color: var(--white) !important;
+    filter: opacity(0.1);
+    font-weight: bolder;
+}
+
+.newChangesDecoration {
+    background-color: var(--ai) !important;
+    color: var(--white) !important;
+    filter: opacity(0.1);
+    font-weight: bolder;
+}

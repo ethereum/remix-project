@@ -91,7 +91,9 @@ let requiredModules = [
   'walletconnect',
   'popupPanel',
   'remixAI',
-  'remixAID'
+  'remixAID',
+  'remixaiassistant',
+  'githubAuthHandler'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -152,8 +154,10 @@ export function isNative(name) {
     'walletconnect',
     'contract-verification',
     'popupPanel',
+    'desktopClient',
     'LearnEth',
-    'noir-compiler'
+    'noir-compiler',
+    'remixaiassistant'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }

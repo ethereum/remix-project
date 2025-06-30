@@ -27,8 +27,8 @@ module.exports = {
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(3000)
       .click('*[data-id="verticalIconsKindfilePanel"]')
-      .openFile('contracts/artifacts/Ballot.json')
-      .openFile('contracts/artifacts/Ballot_metadata.json')
+      .openFile('artifacts/Ballot.json')
+      .openFile('artifacts/Ballot_metadata.json')
       .getEditorValue((content) => {
         const metadata = JSON.parse(content)
         browser.assert.equal(metadata.language, 'Solidity')

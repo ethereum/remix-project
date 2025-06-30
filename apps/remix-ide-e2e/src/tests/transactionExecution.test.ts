@@ -3,6 +3,10 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { JsonRpcProvider } from 'ethers'
 
+const branch = process.env.CIRCLE_BRANCH;
+const isMasterBranch = branch === 'master';
+const runMasterTests: boolean = (branch ? (isMasterBranch ? true : false) : true)
+
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -163,7 +167,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -184,9 +188,9 @@ module.exports = {
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clearTransactions()
-      .switchEnvironment('vm-london') // switch to London fork
+      .switchEnvironment('vm-london', true) // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > div')
+      .createContract('')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -239,6 +243,9 @@ module.exports = {
   },
 
   'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
@@ -254,6 +261,7 @@ module.exports = {
       }) // wait for the udapp to load the list of accounts
       .click('*[data-id="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
       .selectContract('MyResolver')
+      .pause(5000)
       .createContract('')
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
@@ -267,6 +275,9 @@ module.exports = {
   },
 
   'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     let addressRef
     browser
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
@@ -312,6 +323,9 @@ module.exports = {
   },
 
   'Should stay connected to mainnet VM fork and: check the block number is advancing and is not low #group5': function (browser: NightwatchBrowser) {
+    if (!runMasterTests) {
+      return
+    }
     /*
         Should stay connected in the mainnet VM fork and: 
     - check the block number has been set to the current mainnet block number.

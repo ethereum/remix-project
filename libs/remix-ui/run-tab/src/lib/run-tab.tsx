@@ -384,7 +384,7 @@ export function RunTabUI(props: RunTabProps) {
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
             udappState={runTab}
-            envLabel={runTab.chainId}
+            envLabel={runTab.selectExEnv}
           />
           <ContractDropdownUI
             selectedAccount={runTab.accounts.selectedAccount}

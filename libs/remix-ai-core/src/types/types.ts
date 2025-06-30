@@ -11,7 +11,8 @@ export interface IModelRequirements{
 }
 
 export interface IContextType {
-  context: 'currentFile' | 'workspace'|'openedFiles'
+  context: 'currentFile' | 'workspace'|'openedFiles' | 'none'
+  files?: { fileName: string; content: string }[]
 }
 
 export interface IModel {
@@ -57,6 +58,15 @@ export interface ICompletions{
   code_completion(context, ctxFiles, fileName, params:IParams): Promise<any>;
   code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, params:IParams): Promise<any>;
 }
+export interface IGeneration{
+  code_generation(prompt, params:IParams): Promise<any>;
+  code_explaining(prompt, context:string, params:IParams): Promise<any>;
+  error_explaining(prompt, params:IParams): Promise<any>;
+  solidity_answer(prompt, params:IParams): Promise<any>;
+  generate(prompt, params:IParams): Promise<any>;
+  generateWorkspace(prompt, params:IParams): Promise<any>;
+  vulnerability_check(prompt, params:IParams): Promise<any>;
+}
 
 export interface IParams {
   temperature?: number;
@@ -77,6 +87,10 @@ export interface IParams {
   temp?: number;
   return_stream_response?: boolean;
   terminal_output?: boolean;
+  threadId?: string;
+  provider?: string;
+  stream?: boolean;
+  model?: string;
 }
 
 export enum AIRequestType {
@@ -135,4 +149,10 @@ export class JsonStreamParser {
   safeJsonParseSingle<T>(chunk: string): T[] | null {
     return JSON.parse(this.buffer);
   }
+}
+
+export interface CompilationResult {
+  compilationSucceeded: boolean
+  errors: string
+  errfiles?: { [key: string]: any }
 }

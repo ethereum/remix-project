@@ -98,7 +98,7 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.registeredPluginEvents = []
     // the first item in the list should be latest fork.
-    this.defaultPinnedProviders = ['vm-prague', 'vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    this.defaultPinnedProviders = ['vm-prague', 'vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider', 'desktopHost']
     this.networkStatus = { network: { name: this.defaultPinnedProviders[0], id: ' - ' } }
     this.pinnedProviders = []
     this.setupEvents()
@@ -114,13 +114,15 @@ export class Blockchain extends Plugin {
   onActivation() {
     this.active = true
     this.on('manager', 'pluginActivated', (plugin) => {
-      if (plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) {
+      if ((plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) || plugin.name === 'desktopHost') {
         this.registeredPluginEvents.push(plugin.name)
         this.on(plugin.name, 'chainChanged', () => {
-          this.detectNetwork((error, network) => {
-            this.networkStatus = { network, error }
-            this._triggerEvent('networkStatus', [this.networkStatus])
-          })
+          if (plugin.name === this.executionContext.executionContext) {
+            this.detectNetwork((error, network) => {
+              this.networkStatus = { network, error }
+              this._triggerEvent('networkStatus', [this.networkStatus])
+            })
+          }
         })
       }
     })
@@ -621,10 +623,6 @@ export class Blockchain extends Plugin {
 
   getProviderObject() {
     return this.executionContext.getProviderObject()
-  }
-
-  getInjectedWeb3Address() {
-    return this.executionContext.getSelectedAddress()
   }
 
   /**

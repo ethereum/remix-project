@@ -1,6 +1,6 @@
 // Merge custom command types with nightwatch types
 /* eslint-disable no-use-before-define */
-import {NightwatchBrowser} from 'nightwatch' // eslint-disable-line @typescript-eslint/no-unused-vars
+import { NightwatchBrowser } from 'nightwatch' // eslint-disable-line @typescript-eslint/no-unused-vars
 export type callbackCheckVerifyCallReturnValue = (values: string[]) => {message: string; pass: boolean}
 
 declare module 'nightwatch' {
@@ -25,7 +25,7 @@ declare module 'nightwatch' {
     journalLastChildIncludes(val: string): NightwatchBrowser
     executeScriptInTerminal(script: string): NightwatchBrowser
     clearEditableContent(cssSelector: string): NightwatchBrowser
-    journalChildIncludes(val: string, opts = {shouldHaveOnlyOneOccurrence: boolean}): NightwatchBrowser
+    journalChildIncludes(val: string, opts = { shouldHaveOnlyOneOccurrence: boolean }): NightwatchBrowser
     debugTransaction(index: number): NightwatchBrowser
     checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser
     openFile(name: string): NightwatchBrowser
@@ -69,15 +69,21 @@ declare module 'nightwatch' {
     getBrowserLogs(this: NightwatchBrowser): NightwatchBrowser
     currentSelectedFileIs(name: string): NightwatchBrowser
     switchWorkspace: (workspaceName: string) => NightwatchBrowser
-    switchEnvironment: (provider: string) => NightwatchBrowser
+    switchEnvironment: (provider: string, returnWhenInitialized?: boolean) => NightwatchBrowser
     pinGrid: (provider: string, status: boolean) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
     hideToolTips: (this: NightwatchBrowser) => NightwatchBrowser
-    hidePopupPanel: (this: NightwatchBrowser) => NightwatchBrowser
+    // hidePopupPanel: (this: NightwatchBrowser) => NightwatchBrowser
+    assistantSetProvider: (provider: string) => NightwatchBrowser
+    assistantAddContext: (context: string) => NightwatchBrowser
+    assistantGenerate: (prompt: string, provider: string) => NightwatchBrowser
+    assistantWorkspace: (prompt: string, provider: string) => NightwatchBrowser
+    assistantClearChat: () => NightwatchBrowser
     enableClipBoard: () => NightwatchBrowser
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
     selectFiles: (selelectedElements: any[]) => NightwatchBrowser
+    waitForCompilerLoaded: () => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
