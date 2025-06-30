@@ -1,6 +1,8 @@
 import { ActivityType } from "../lib/types"
 import React from 'react'
-import ContextOptMenu from "./contextOptMenu"
+import GroupListMenu from "./contextOptMenu"
+import { AiContextType, groupListType } from '../types/componentTypes'
+import { AiAssistantType } from '../types/componentTypes'
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -12,10 +14,10 @@ export interface PromptAreaProps {
   setShowContextOptions: React.Dispatch<React.SetStateAction<boolean>>
   showAssistantOptions: boolean
   setShowAssistantOptions: React.Dispatch<React.SetStateAction<boolean>>
-  contextChoice: 'none' | 'current' | 'opened' | 'workspace'
-  setContextChoice: React.Dispatch<React.SetStateAction<'none' | 'current' | 'opened' | 'workspace'>>
-  assistantChoice: 'openai' | 'mistralai' | 'anthropic'
-  setAssistantChoice: React.Dispatch<React.SetStateAction<'openai' | 'mistralai' | 'anthropic'>>
+  contextChoice: AiContextType
+  setContextChoice: React.Dispatch<React.SetStateAction<AiContextType>>
+  assistantChoice: AiAssistantType
+  setAssistantChoice: React.Dispatch<React.SetStateAction<AiAssistantType>>
   contextFiles: string[]
   clearContext: () => void
   handleAddContext: () => void
@@ -44,6 +46,54 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   handleGenerateWorkspace,
   dispatchActivity
 }) => {
+  const aiContextGroupList: groupListType[] = [
+    {
+      label: 'None',
+      bodyText: 'Assistant will automatically decide the context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'none'
+    },
+    {
+      label: 'Current file',
+      bodyText: 'Add the current file in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'current'
+    },
+    {
+      label: 'All opened files',
+      bodyText: 'Adds all files opened in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'opened'
+    },
+    {
+      label: 'Workspace',
+      bodyText: 'Uses the current workspace as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'workspace'
+    }
+  ]
+
+  const aiAssistantGroupList: groupListType[] = [
+    {
+      label: 'OpenAI',
+      bodyText: 'Better for general purpose coding tasks',
+      icon: 'fa-solid fa-check',
+      stateValue: 'openai'
+    },
+    {
+      label: 'MistralAI',
+      bodyText: 'Better for more complex coding tasks with solidity, typescript and more',
+      icon: 'fa-solid fa-check',
+      stateValue: 'mistralai'
+    },
+    {
+      label: 'Anthropic',
+      bodyText: 'Best for complex coding tasks but most demanding on resources',
+      icon: 'fa-solid fa-check',
+      stateValue: 'anthropic'
+    }
+  ]
+
   return (
     <>
       {showContextOptions && (
@@ -112,10 +162,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               Workspace
             </label>
           </div> */}
-          <ContextOptMenu
-            setContextChoice={setContextChoice}
-            setShowContextOptions={setShowContextOptions}
-            contextChoice={contextChoice}
+          <GroupListMenu
+            setChoice={setContextChoice}
+            setShowOptions={setShowContextOptions}
+            choice={contextChoice}
+            groupList={aiContextGroupList}
           />
         </div>
       )}
@@ -160,11 +211,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           />
           {showAssistantOptions && (
             <div
-              className="p-3 mb-2 z-3 bg-dark border border-text position-absolute"
-              style={{ top: '79dvh', left: '85dvw', right: '0px', bottom: '15px', height: '125px', width: '220px', borderRadius: '15px' }}
+              className="pt-2 mb-2 z-3 bg-light border border-text position-absolute"
+              style={{ left: '76dvw', right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
             >
-              <div className="text-uppercase ml-2 mb-2">Choose Assistant Model</div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
+              <div className="text-uppercase ml-2 mb-2 small">AI Assistant Model</div>
+              {/* <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
                 <input
                   className="custom-control-input"
                   type="radio"
@@ -208,7 +259,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
                     Anthropic
                 </label>
-              </div>
+              </div> */}
+              <GroupListMenu
+                setChoice={setAssistantChoice}
+                setShowOptions={setShowAssistantOptions}
+                choice={assistantChoice}
+                groupList={aiAssistantGroupList}
+              />
             </div>
           )}
           <div className="d-flex justify-content-between">
@@ -216,12 +273,18 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               onClick={handleSetAssistant}
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
             >
-            Model
+              {'Model'}
+              {assistantChoice === 'openai' && ' OpenAI'}
+              {assistantChoice === 'mistralai' && ' MistralAI'}
+              {assistantChoice === 'anthropic' && ' Anthropic'}
+              {'  '}
+              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
             </button>
             <button
               className="btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end"
+              onClick={handleSend}
             >
-              <span className="fa fa-arrow-up rounded-sm"></span>
+              <span className="fa fa-arrow-up"></span>
             </button>
           </div>
         </div>
