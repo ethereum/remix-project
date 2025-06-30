@@ -41,7 +41,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    'openai'
+    'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
     'none'
@@ -245,7 +245,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
             (finalText: string, threadId) => {
-              console.log('Anthropic final text:', finalText)
               ChatHistory.pushHistory(trimmed, finalText)
               setIsStreaming(false)
               props.plugin.call('remixAI', 'setAssistantThrId', threadId)

@@ -41,7 +41,7 @@ export class RemixAIPlugin extends Plugin {
   securityAgent: SecurityAgent
   contractor: ContractAgent
   workspaceAgent: workspaceAgent
-  assistantProvider: string = 'openai'
+  assistantProvider: string = 'mistralai' // default provider
   assistantThreadId: string = ''
   useRemoteInferencer:boolean = false
   completionAgent: CodeCompletionAgent
