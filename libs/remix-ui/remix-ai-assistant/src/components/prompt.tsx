@@ -183,7 +183,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
             </button>
             <button
-              data-id="composer-ai-generate-workspace"
+              data-id="remix-ai-generate-workspace"
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
               onClick={handleGenerateWorkspace}
             >
