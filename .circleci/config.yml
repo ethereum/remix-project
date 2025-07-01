@@ -1,5 +1,14 @@
 version: 2.1
 parameters:
+  run_all_tests:
+    type: boolean
+    default: false
+  run_pr_tests:
+    type: boolean
+    default: false
+  run_metamask_tests:
+    type: boolean
+    default: false  
   run_flaky_tests:
     type: boolean
     default: false   
@@ -12,12 +21,7 @@ parameters:
   linux:
     type: boolean
     default: false
-  web:
-    type: boolean
-    default: true
-  run_metamask_tests:
-    type: boolean
-    default: false   
+
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   win: circleci/windows@5.0
@@ -756,6 +760,8 @@ jobs:
         type: string
       script:
         type: string
+      scriptparameter:
+        type: string
       job:
         type: string
       jobsize:
@@ -816,7 +822,7 @@ jobs:
                 install-chromedriver: false
             - run: yarn install_webdriver
             - run: firefox --version
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << parameters.scriptparameter >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -969,6 +975,22 @@ workflows:
             - build-remixdesktop-linux
             - test-remixdesktop-linux
 
+  run_pr_tests:
+    when: << pipeline.parameters.run_pr_tests >>
+    jobs:
+      - build
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chrome"]
+              script: ["singletest"]
+              job: ["nogroup"]
+              jobsize: ["1"]
+              parallelism: [1]
+              scriptparameter: ["pr"]
+
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -979,10 +1001,11 @@ workflows:
           matrix:
             parameters:
               browser: ["chrome", "firefox"]
-              script: ["flaky.sh"]
+              script: ["singletest"]
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
+              scriptparameter: ["flaky"]
 
   run_metamask_tests:
     when: << pipeline.parameters.run_metamask_tests >>
@@ -999,7 +1022,7 @@ workflows:
               jobsize: ["1"]
               parallelism: [1]
   web:
-    when: << pipeline.parameters.web >>
+    when: << pipeline.parameters.run_all_tests >>
     jobs:
       - build
       - build-plugin:
