@@ -763,9 +763,14 @@ jobs:
       - run:
           name: Check for enabled tests matching tag
           command: |
-            echo "🔍 Searching for enabled tests with .$<< parameters.tag >> extension..."
-            if grep -IRiL "'@disabled': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${<< parameters.tag >>}"; then
-              echo "✅ Found enabled .$<< parameters.tag >> tests."
+            TAG="<< parameters.tag >>"
+            if [ -z "$TAG" ]; then
+              echo "❌ Tag parameter is empty!"
+              exit 2
+            fi
+            echo "🔍 Searching for enabled tests with .$TAG extension..."
+            if grep -IRiL "'@disabled': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${TAG}"; then
+              echo "✅ Found enabled .$TAG tests."
               exit 0
             else
               echo "⚠️ No enabled .$<< parameters.tag >> tests found. Skipping workflow."
