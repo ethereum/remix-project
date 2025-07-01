@@ -24,13 +24,6 @@ for TESTFILE in $TESTFILES; do
 done
 
 echo "$TEST_EXITCODE"
-echo "==== DEBUG INFO ===="
-echo "CIRCLE_WORKFLOW_ID=$CIRCLE_WORKFLOW_ID"
-echo "CIRCLE_BUILD_NUM=$CIRCLE_BUILD_NUM"
-echo "CIRCLE_JOB=$CIRCLE_JOB"
-echo "CIRCLE_BRANCH=$CIRCLE_BRANCH"
-echo "FAIL_FAST_TOKEN=$FAIL_FAST_TOKEN"
-echo "======================"
 # Fail the test early and cancel the workflow
 if [ "$TEST_EXITCODE" -eq 1 ]; then
   echo "❌ Test failed. Attempting to cancel the workflow..."
