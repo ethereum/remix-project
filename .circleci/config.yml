@@ -773,8 +773,9 @@ jobs:
               echo "✅ Found enabled .$TAG tests."
               exit 0
             else
-              echo "⚠️ No enabled .$<< parameters.tag >> tests found. Skipping workflow."
+              echo "⚠️ No enabled .$TAG tests found. Skipping workflow."
               exit 1
+            fi   
 
   remix-ide-browser:
     docker:
