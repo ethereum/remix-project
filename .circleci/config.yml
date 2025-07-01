@@ -985,7 +985,7 @@ workflows:
           matrix:
             parameters:
               browser: ["chrome"]
-              script: ["singletest"]
+              script: ["singletest.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [1]
@@ -1001,7 +1001,7 @@ workflows:
           matrix:
             parameters:
               browser: ["chrome", "firefox"]
-              script: ["singletest"]
+              script: ["singletest.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
