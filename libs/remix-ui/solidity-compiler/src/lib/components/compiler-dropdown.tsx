@@ -51,7 +51,7 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
             onClick={() => {}}
           >
             <div className='d-flex w-100 justify-content-between'>
-              {selectedVersion === defaultVersion ? <span className='fas fa-check text-success mr-2'></span> : null}
+              {selectedVersion === defaultVersion ? <span className='fas fa-check text-success me-2'></span> : null}
               <div style={{ flexGrow: 1, overflow: 'hidden' }}>
                 <div className="text-truncate">
                   {defaultVersion}
@@ -67,7 +67,7 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
             onClick={() => {}}
           >
             <div className='d-flex w-100 justify-content-between'>
-              {selectedVersion === "builtin" ? <span className='fas fa-check text-success mr-2'></span> : null}
+              {selectedVersion === "builtin" ? <span className='fas fa-check text-success me-2'></span> : null}
               <div style={{ flexGrow: 1, overflow: 'hidden' }}>
                 <div className="text-truncate">
                   builtin
@@ -83,7 +83,7 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
             onClick={() => handleLoadVersion(url)}
           >
             <div className='d-flex w-100 justify-content-between'>
-              {selectedVersion === url ? <span className='fas fa-check text-success mr-2'></span> : null}
+              {selectedVersion === url ? <span className='fas fa-check text-success me-2'></span> : null}
               <div style={{ flexGrow: 1, overflow: 'hidden' }}>
                 <div className="text-truncate">
                   custom: {url}
@@ -101,13 +101,13 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
               onClick={() => handleLoadVersion(build.path)}
             >
               <div className='d-flex w-100 justify-content-between'>
-                {selectedVersion === build.path ? <span className='fas fa-check text-success mr-2'></span> : null}
+                {selectedVersion === build.path ? <span className='fas fa-check text-success me-2'></span> : null}
                 <div style={{ flexGrow: 1, overflow: 'hidden' }}>
                   <div className="text-truncate">
                     {build.longVersion}
                   </div>
                 </div>
-                {platform == appPlatformTypes.desktop ? (build.isDownloaded ? <div className='fas fa-arrow-circle-down text-success ml-auto'></div> : <div className='far fa-arrow-circle-down'></div>) : null}
+                {platform == appPlatformTypes.desktop ? (build.isDownloaded ? <div className='fas fa-arrow-circle-down text-success ms-auto'></div> : <div className='far fa-arrow-circle-down'></div>) : null}
               </div>
             </Dropdown.Item>
           ) : null

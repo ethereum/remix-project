@@ -157,7 +157,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
               </div>
             )
           })}
-          <div className='d-flex flex-column border-left xterm-panel-left'>
+          <div className='d-flex flex-column border-start xterm-panel-left'>
             {terminals.map((xtermState, index) => {
               return (<button
                 key={index}

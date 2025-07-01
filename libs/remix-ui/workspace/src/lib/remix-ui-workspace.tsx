@@ -931,11 +931,11 @@ export function Workspace() {
       <>
         {props.isGitRepo ? (
           <div className="d-flex justify-content-between">
-            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-3">{props.mName}</span>}</span>
             <i className="fas fa-code-branch pt-1"></i>
           </div>
         ) : (
-          <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+          <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-3">{props.mName}</span>}</span>
         )}
       </>
     )
@@ -1059,7 +1059,7 @@ export function Workspace() {
                   ) : null}
                   <div className='d-flex w-100 justify-content-between'>
                     <span className="d-flex">
-                      <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
+                      <label className="ps-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
                         {(platform == appPlatformTypes.desktop) ? (
                           null
                         ) : <FormattedMessage id='filePanel.workspace' />}
@@ -1074,7 +1074,7 @@ export function Workspace() {
                       </CustomTooltip>}
 
                       {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
-                        <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
+                        <i className="remixui_copyIcon ms-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
                       </CopyToClipboard>
                       }
                     </span>
@@ -1099,7 +1099,7 @@ export function Workspace() {
                           tooltipClasses="text-nowrap"
                           tooltipText={appContext.appState.gitHubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: appContext.appState.gitHubUser.login }) || ''}
                         >
-                          <img width={20} height={20} data-id={`filepanel-connected-img-${appContext.appState.gitHubUser && appContext.appState.gitHubUser.login}`} src={appContext.appState.gitHubUser && appContext.appState.gitHubUser.avatar_url} className="remixui_avatar_user ml-2" />
+                          <img width={20} height={20} data-id={`filepanel-connected-img-${appContext.appState.gitHubUser && appContext.appState.gitHubUser.login}`} src={appContext.appState.gitHubUser && appContext.appState.gitHubUser.avatar_url} className="remixui_avatar_user ms-2" />
                         </CustomTooltip>
                       }
                     </span>
@@ -1124,7 +1124,7 @@ export function Workspace() {
                               switchWorkspace(NO_WORKSPACE)
                             }}
                           >
-                            {<span className="pl-3">NO_WORKSPACE</span>}
+                            {<span className="ps-3">NO_WORKSPACE</span>}
                           </Dropdown.Item>
                         )}
                       </Dropdown.Menu>
@@ -1303,7 +1303,7 @@ export function Workspace() {
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
 
-              <div className="pr-1">
+              <div className="pe-1">
                 { global.fs.browser.isRequestingCloning ?
                   <CustomTooltip
                     placement="top"
@@ -1312,7 +1312,7 @@ export function Workspace() {
                     tooltipText={"Updating submodules"}
                   >
                     <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                      <i className="fad fa-spinner fa-spin mr-2"></i>
+                      <i className="fad fa-spinner fa-spin me-2"></i>
                         Updating...
                     </button>
                   </CustomTooltip> :
@@ -1336,12 +1336,12 @@ export function Workspace() {
               tooltipClasses="text-nowrap"
               tooltipText={'Current branch: ' + (currentBranch && currentBranch.name) || 'Branches'}
             >
-              <div className="pt-0 mr-2" data-id="workspaceGitBranchesDropdown">
+              <div className="pt-0 me-2" data-id="workspaceGitBranchesDropdown">
                 <Dropdown style={{ height: 30, maxWidth: "6rem", minWidth: "6rem" }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                   <Dropdown.Toggle
                     as={CustomToggle}
                     id="dropdown-custom-components"
-                    className="btn btn-sm btn-light d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark"
+                    className="btn btn-sm btn-light d-inline-block border border-dark form-control h-100 p-0 ps-2 pe-2 text-dark"
                     icon={null}
                   >
                     {global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : (currentBranch && currentBranch.name) || '-none-'}
@@ -1349,11 +1349,11 @@ export function Workspace() {
                   <Dropdown.Menu as={CustomMenu} className="custom-dropdown-items branches-dropdown">
                     <div data-id="custom-dropdown-menu">
                       <div className="d-flex text-dark" style={{ fontSize: 14, fontWeight: 'bold' }}>
-                        <span className="mt-2 ml-2 mr-auto">
+                        <span className="mt-2 ms-2 me-auto">
                           <FormattedMessage id="filePanel.switchBranches" />
                         </span>
                         <div
-                          className="pt-2 pr-2"
+                          className="pt-2 pe-2"
                           onClick={() => {
                             toggleBranches(false)
                           }}
@@ -1387,12 +1387,12 @@ export function Workspace() {
                                   {currentBranch && currentBranch.name === branch.name && !branch.remote ? (
                                     <span>
                                       &#10003; <i className="far fa-code-branch"></i>
-                                      <span className="pl-1">{branch.name}</span>
+                                      <span className="ps-1">{branch.name}</span>
                                     </span>
                                   ) : (
-                                    <span className="pl-3">
+                                    <span className="ps-3">
                                       <i className={`far ${branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i>
-                                      <span className="pl-1">{branch.remote ? `${branch.remote.name}/${branch.name}` : branch.name}</span>
+                                      <span className="ps-1">{branch.remote ? `${branch.remote.name}/${branch.name}` : branch.name}</span>
                                     </span>
                                   )}
                                 </div>
@@ -1401,8 +1401,8 @@ export function Workspace() {
                           })
                         ) : (
                           <Dropdown.Item onClick={switchToNewBranch}>
-                            <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
-                              <i className="fas fa-code-branch pr-2"></i>
+                            <div className="ps-1 pe-1" data-id="workspaceGitCreateNewBranch">
+                              <i className="fas fa-code-branch pe-2"></i>
                               <span>
                                 <FormattedMessage id="filePanel.createBranch" />: {branchFilter} from '{currentBranch && currentBranch.name}'
                               </span>
@@ -1466,7 +1466,7 @@ export function Workspace() {
             </>
           )}
           <div className="d-flex flex-row">
-            {modalState.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
+            {modalState.modalInfo.prefix && <span className="text-nowrap align-self-center me-2">ipfs://</span>}
             <input
               ref={inputValue}
               type="text"

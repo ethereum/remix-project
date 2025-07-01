@@ -17,11 +17,11 @@ export const CustomCheckbox = (props: CustomCheckboxProps) => {
 
   return (
     <div id={textColor + props.label}
-      className="h-80 mx-1 align-items-center custom-control custom-checkbox"
+      className="h-80 mx-1 align-items-center form-check"
       style={{ minWidth: '4rem' }}
     >
       <input
-        className="custom-control-input"
+        className="form-check-input"
         id={"GVCheckbox" + props.label}
         defaultChecked={defChecked}
         onChange={e => {

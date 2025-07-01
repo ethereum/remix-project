@@ -20,11 +20,11 @@ export const createModalMessage = async (
         onChange={(e) => onChangeTemplateName(e.target.value)}
         onInput={(e) => onChangeTemplateName((e.target as any).value)}
       />
-      <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
+      <div className="d-flex py-2 align-items-center form-check">
         <input
           id="initGitRepository"
           data-id="initGitRepository"
-          className="form-check-input custom-control-input"
+          className="form-check-input form-check-input"
           type="checkbox"
           disabled={gitConfigNotSet}
           onChange={(e) => onChangeInitGit(e.target.value)}
@@ -33,7 +33,7 @@ export const createModalMessage = async (
         <label
           htmlFor="initGitRepository"
           data-id="initGitRepositoryLabel"
-          className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+          className="m-0 form-check-label form-check-label udapp_checkboxAlign"
           title={window._intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
         >
           <FormattedMessage id="filePanel.initGitRepositoryLabel" />

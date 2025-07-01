@@ -14,11 +14,11 @@ export function FeedbackAlert ({ message, askGPT }: FeedbackAlertProps) {
     <RenderIf condition={showAlert}>
       <>
         <span> { message } </span>
-        <div className="close" data-id="renderer" onClick={handleCloseAlert}>
+        <div className="btn-close" data-id="renderer" onClick={handleCloseAlert}>
           <i className="fas fa-times"></i>
         </div>
         <div className="d-flex pt-1 flex-row-reverse">
-          <span className="ml-3 pt-1 py-1" >
+          <span className="ms-3 pt-1 py-1" >
             <CopyToClipboard content={message} className="p-0 m-0 far fa-copy error" direction={'top'} />
           </span>
           <span className="border border-success text-success btn-sm" onClick={(e) => {

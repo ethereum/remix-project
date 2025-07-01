@@ -89,7 +89,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   }
 
   return (
-    <div className="pl-2 w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
+    <div className="ps-2 w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
       <label className="" style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.featuredPlugins" />
       </label>
