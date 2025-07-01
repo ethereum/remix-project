@@ -365,6 +365,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install Spectre mitigated libraries
+          shell: powershell.exe
+          command: |
+            & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --quiet --norestart --wait
       - run: unzip ./persist/desktopbuild.zip
 
       - run: 
@@ -422,6 +427,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install Spectre mitigated libraries
+          shell: powershell.exe
+          command: |
+            & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --quiet --norestart --wait
       - run: unzip ./persist/desktopbuild.zip
 
       - run: 
@@ -537,7 +547,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        m2pro.medium
+        m4pro.medium
     working_directory: ~/remix-project
     parameters:
       arch:
@@ -623,7 +633,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        m2pro.medium
+        m4pro.medium
     working_directory: ~/remix-project
     parallelism: 10
     steps:

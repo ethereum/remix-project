@@ -45,7 +45,7 @@
     "chromedriver": "124",
     "cross-env": "^7.0.3",
     "deep-equal": "^2.2.3",
-    "electron": "^29",
+    "electron": "^30",
     "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^4",
     "esbuild": "^0.23.1",
