@@ -21,7 +21,11 @@ for TESTFILE in $TESTFILES; do
 done
 
 echo "$TEST_EXITCODE"
-if [ "$TEST_EXITCODE" -eq 1 ]
-then
+# Fail the test early and cancel the workflow
+if [ "$TEST_EXITCODE" -eq 1 ]; then
+  echo "❌ Test failed. Attempting to cancel the workflow..."
+  curl -s -X POST "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel" \
+    -H "Circle-Token: $CIRCLECI_TOKEN" \
+    -H "Content-Type: application/json"
   exit 1
 fi
