@@ -26,8 +26,8 @@ parameters:
     default: false
   resource_class:
     type: enum
-    enum: ["medium", "large", "xlarge", "2xlarge"]
-    default: "xlarge"
+    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge"]
+    default: "medium"
 
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
