@@ -752,7 +752,7 @@ jobs:
 
   check-flaky-or-pr-tests:
     docker:
-      - image: cimg/node
+      - image: cimg/node:24.3.0
     working_directory: ~/remix-project
     parameters:
       tag:
