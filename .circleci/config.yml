@@ -749,6 +749,32 @@ jobs:
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: yarn run test:libs
 
+
+  check-flaky-or-pr-tests:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+    working_directory: ~/remix-project
+    parameters:
+      tag:
+        type: string
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - run: yarn run build:e2e
+      - run:
+          name: Check for enabled tests matching tag
+          command: |
+            echo "🔍 Searching for enabled tests with .$<< parameters.tag >> extension..."
+            if grep -IRiL "'@disabled': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${<< parameters.tag >>}"; then
+              echo "✅ Found enabled .$<< parameters.tag >> tests."
+              exit 0
+            else
+              echo "⚠️ No enabled .$<< parameters.tag >> tests found. Skipping workflow."
+              exit 1
+
   remix-ide-browser:
     docker:
       - image: cimg/node:20.18.3-browsers
@@ -978,7 +1004,11 @@ workflows:
   run_pr_tests:
     when: << pipeline.parameters.run_pr_tests >>
     jobs:
-      - build
+      - check-flaky-or-pr-tests:
+          tag: "pr"
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
       - remix-ide-browser:
           requires:
             - build
@@ -994,7 +1024,10 @@ workflows:
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - build
+      - check-flaky-or-pr-tests
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
       - remix-ide-browser:
           requires:
             - build
