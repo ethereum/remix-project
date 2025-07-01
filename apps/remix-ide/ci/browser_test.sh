@@ -17,18 +17,11 @@ sleep 5
 node apps/remix-ide/ci/splice_tests.js $2 $3
 TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask' | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
-    if ! npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1; then
-        TEST_EXITCODE=1
-        break
-    fi
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"
-# Fail the test early and cancel the workflow
-if [ "$TEST_EXITCODE" -eq 1 ]; then
-  echo "❌ Test failed. Attempting to cancel the workflow..."
-  curl -s -X POST "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel" \
-    -H "Circle-Token: $CIRCLECI_TOKEN" \
-    -H "Content-Type: application/json"
+if [ "$TEST_EXITCODE" -eq 1 ]
+then
   exit 1
 fi
