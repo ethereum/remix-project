@@ -17,7 +17,10 @@ sleep 5
 node apps/remix-ide/ci/splice_tests.js $2 $3
 TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | grep -v 'metamask' | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || TEST_EXITCODE=1
+    if ! npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1; then
+        TEST_EXITCODE=1
+        break
+    fi
 done
 
 echo "$TEST_EXITCODE"
