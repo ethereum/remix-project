@@ -302,7 +302,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (withoutLabel) {
       const contractCard: ReactElement = (
         <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
-          <span className="font-weight-bold">
+          <span className="fw-bold">
             {contract ? contract : ''} ({filename})
           </span>
         </div>
@@ -334,7 +334,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     const ContractCard: ReactElement = (
       <div id={runningTestFileName} data-id="testTabSolidityUnitTestsOutputheader" className="pt-1">
         {label}
-        <span className="font-weight-bold">
+        <span className="fw-bold">
           {contract} ({filename})
         </span>
       </div>
@@ -357,7 +357,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         if (test.debugTxHash) {
           const { web3, debugTxHash } = test
           debugBtn = (
-            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
+            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ms-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
               <CustomTooltip
                 placement={'top-start'}
                 tooltipClasses="text-nowrap"
@@ -435,7 +435,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                   <span>
                     <FormattedMessage id="solidityUnitTesting.expectedValueShouldBe" />
                   </span>
-                  <div className="mx-1 font-weight-bold">{method}</div>
+                  <div className="mx-1 fw-bold">{method}</div>
                   <div>
                     {preposition} {expected}
                   </div>
@@ -501,7 +501,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       if (testSummary && testSummary.filename && !testSummary.rendered) {
         const summaryCard: ReactElement = (
           <div className="d-flex alert-secondary mb-3 p-3 flex-column">
-            <span className="font-weight-bold">
+            <span className="fw-bold">
               <FormattedMessage id="solidityUnitTesting.resultFor" /> {testSummary.filename}
             </span>
             <span className="text-success">
@@ -766,7 +766,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             >
               <input
                 list="utPathList"
-                className="inputFolder custom-select"
+                className="inputFolder form-select"
                 id="utPath"
                 data-id="uiPathInput"
                 name="utPath"
@@ -787,7 +787,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
               tooltipId="uiPathInputButtontooltip"
               tooltipText={<FormattedMessage id="solidityUnitTesting.uiPathInputButtonTooltip" />}
             >
-              <button className="btn border ml-2" data-id="testTabGenerateTestFolder" disabled={disableCreateButton} onClick={handleCreateFolder}>
+              <button className="btn border ms-2" data-id="testTabGenerateTestFolder" disabled={disableCreateButton} onClick={handleCreateFolder}>
                 <FormattedMessage id="solidityUnitTesting.create" />
               </button>
             </CustomTooltip>
@@ -822,8 +822,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             tooltipText={<FormattedMessage id="solidityUnitTesting.generateTestsLinkTooltip" />}
             placement={'top'}
           >
-            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
-              <label className="btn p-1 ml-2 m-0">
+            <a className="btn border text-decoration-none pe-0 d-flex w-50 ms-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+              <label className="btn p-1 ms-2 m-0">
                 <FormattedMessage id="solidityUnitTesting.howToUse" />
               </label>
             </a>
@@ -832,8 +832,8 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         <div className="d-flex p-2">
           <CustomTooltip placement={'top'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={runButtonTitle}>
             <button id="runTestsTabRunAction" data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
-              <span className="fas fa-play ml-2"></span>
-              <span className="labelOnBtn p-1 ml-2 m-0">
+              <span className="fas fa-play ms-2"></span>
+              <span className="labelOnBtn p-1 ms-2 m-0">
                 <FormattedMessage id="solidityUnitTesting.run" />
               </span>
             </button>
@@ -844,20 +844,20 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             tooltipId="info-recorder"
             tooltipText={<FormattedMessage id="solidityUnitTesting.runTestsTabStopActionTooltip" />}
           >
-            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 ps-2 ms-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
               <span>
-                <span className="fas fa-stop ml-2"></span>
-                <span className="labelOnBtn p-1 ml-2 m-0" id="runTestsTabStopActionLabel">
+                <span className="fas fa-stop ms-2"></span>
+                <span className="labelOnBtn p-1 ms-2 m-0" id="runTestsTabStopActionLabel">
                   {stopButtonLabel}
                 </span>
               </span>
             </button>
           </CustomTooltip>
         </div>
-        <div className="d-flex align-items-center ml-1 mr-3 pl-1  pb-2 mt-2 border-bottom custom-control custom-checkbox">
+        <div className="d-flex align-items-center ms-1 me-3 ps-1  pb-2 mt-2 border-bottom form-check">
           <input
             id="checkAllTests"
-            className="custom-control-input"
+            className="form-check-input"
             type="checkbox"
             onClick={checkAll}
             checked={checkSelectAll}
@@ -866,21 +866,21 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           <label
             data-id="testTabCheckAllTests"
             htmlFor="checkAllTests"
-            className="form-check-label mb-0 ml-4 custom-control-label text-nowrap"
+            className="form-check-label mb-0 ms-4 form-check-label text-nowrap"
             style={{ paddingTop: '0.125rem' }}
           >
             {' '}
             <FormattedMessage id="solidityUnitTesting.selectAll" />{' '}
           </label>
         </div>
-        <div className="testList ml-1 pr-2 mt-0 border-bottom py-2">
+        <div className="testList ms-1 pe-2 mt-0 border-bottom py-2">
           {testFiles.length
             ? testFiles.map((testFileObj: TestObject, index) => {
               const elemId = `singleTest${testFileObj.fileName}`
               return (
-                <div className="d-flex align-items-center pl-1 custom-control custom-checkbox" key={index}>
+                <div className="d-flex align-items-center ps-1 form-check" key={index}>
                   <input
-                    className="singleTest custom-control-input"
+                    className="singleTest form-check-input"
                     id={elemId}
                     onChange={(e) => toggleCheckbox(e.target.checked, index)}
                     type="checkbox"
@@ -889,7 +889,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                   <label
                     data-id="singleTest"
                     id={"id" + elemId}
-                    className="singleTestLabel text-nowrap mb-0 form-check-label ml-4 custom-control-label text-nowrap"
+                    className="singleTestLabel text-nowrap mb-0 form-check-label ms-4 form-check-label text-nowrap"
                     htmlFor={elemId}
                     style={{ paddingTop: '0.125rem' }}
                   >

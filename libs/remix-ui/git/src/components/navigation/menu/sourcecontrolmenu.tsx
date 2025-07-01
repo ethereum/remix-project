@@ -39,7 +39,7 @@ export const SourceControlMenu = () => {
                 className='fab fa-github pl-2'
               >
               </span>
-              <span className="pl-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
+              <span className="ps-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
             </div>
           </CustomTooltip>
         </Dropdown.Item>

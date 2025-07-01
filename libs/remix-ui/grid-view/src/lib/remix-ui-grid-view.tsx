@@ -100,12 +100,12 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
         <div className="d-flex flex-column w-100 remixui_grid_view">
           <div className='d-flex p-4 bg-light flex-column  remixui_grid_view_titlebar'>
             <div className='d-flex flex-row align-items-center mb-2'>
-              { props.logo && <img className='remixui_grid_view_logo mr-2' src={props.logo} /> }
+              { props.logo && <img className='remixui_grid_view_logo me-2' src={props.logo} /> }
               { props.title && <h3 className='mb-0'>{ props.title }</h3> }
             </div>
             { props.description && <div className='pb-3 remixui_grid_view_title'>{ props.description }</div> }
             { props.enableFilter && <div className='d-flex flex-row'>
-              <div className="d-flex flex-row pr-2 pb-1 align-items-center justify-content-between">
+              <div className="d-flex flex-row pe-2 pb-1 align-items-center justify-content-between">
                 <div className='d-flex' id="GVFilter">
                   <button
                     disabled={state.searchDisable}
@@ -119,7 +119,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
                     ref={searchInputRef}
                     type="text"
                     style={{ minWidth: '100px' }}
-                    className="border form-control mr-4"
+                    className="border form-control me-4"
                     id="GVFilterInput"
                     placeholder={"Filter the list"}
                     data-id="RemixGVFilterInput"

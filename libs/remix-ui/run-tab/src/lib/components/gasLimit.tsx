@@ -36,10 +36,10 @@ export function GasLimitUI(props: GasPriceProps) {
       <label className="udapp_settingsLabel">
         <FormattedMessage id="udapp.gasLimit" />
       </label>
-      <div className='pl-0 custom-control custom-checkbox udapp_col2 udapp_gasNval'>
-        <div className="d-flex pb-1 custom-control custom-radio">
+      <div className='ps-0 form-check udapp_col2 udapp_gasNval'>
+        <div className="d-flex pb-1 form-check">
           <input
-            className="custom-control-input"
+            className="form-check-input"
             type="radio"
             name="gasLimitRadio"
             value="auto"
@@ -47,13 +47,13 @@ export function GasLimitUI(props: GasPriceProps) {
             checked={gasLimitAuto}
             id="glAutoConfig"
           />
-          <label className="form-check-label custom-control-label" htmlFor="glAutoConfig" data-id="glAutoConfiguration">
+          <label className="form-check-label form-check-label" htmlFor="glAutoConfig" data-id="glAutoConfiguration">
             <FormattedMessage id="udapp.gasLimitAuto" />
           </label>
         </div>
-        <div className="d-flex custom-control custom-radio align-items-baseline">
+        <div className="d-flex form-check align-items-baseline">
           <input
-            className="custom-control-input"
+            className="form-check-input"
             type="radio"
             name="gasLimitRadio"
             value="manual"
@@ -61,7 +61,7 @@ export function GasLimitUI(props: GasPriceProps) {
             checked={!gasLimitAuto}
             id="glManualConfig"
           />
-          <label className="mb-1 w-50 form-check-label custom-control-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
+          <label className="mb-1 w-50 form-check-label form-check-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
             <FormattedMessage id="udapp.gasLimitManual" />
           </label>
           <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>
@@ -69,7 +69,7 @@ export function GasLimitUI(props: GasPriceProps) {
               type="number"
               ref={inputComponent}
               disabled={gasLimitAuto}
-              className="form-control w-100 float-right"
+              className="form-control w-100 float-end"
               id="gasLimit"
               value={props.gasLimit === 0 ? currentGasLimit.current : props.gasLimit}
               onChange={handleGasLimit}

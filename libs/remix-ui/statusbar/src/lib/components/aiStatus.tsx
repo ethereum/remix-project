@@ -60,7 +60,7 @@ export default function AIStatus(props: AIStatusProps) {
           {copilotActive === false ? 'RemixAI Copilot (disabled)' : 'RemixAI Copilot (enabled)'}
         </span>
       </CustomTooltip>
-      <div className="d-flex text-sm flex-row pr-2 text-white justify-content-center align-items-center">
+      <div className="d-flex text-sm flex-row pe-2 text-white justify-content-center align-items-center">
         <style>{`
           button.aiButton:focus {
             outline: none;

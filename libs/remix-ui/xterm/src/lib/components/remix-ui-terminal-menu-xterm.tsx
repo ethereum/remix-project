@@ -46,7 +46,7 @@ export const RemixUIXtermMenu = (props: RemixUiTerminalProps) => {
       </div>
       <div data-id="closeTerminalButton" className="mx-2" onClick={onCloseTerminal}>
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
-          <i className="far fa-trash border-0 ml-1"></i>
+          <i className="far fa-trash border-0 ms-1"></i>
         </CustomTooltip>
       </div>
       <div data-id="clearTerminalButton" className="mx-2" onClick={async () => onClearTerminal()}>

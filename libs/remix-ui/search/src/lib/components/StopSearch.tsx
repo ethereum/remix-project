@@ -9,7 +9,7 @@ export const StopSearch = () => {
     await cancelSearch(false)
   }
   return (
-    <a className="badge badge-danger search_plugin_stop" onClick={async () => await cancel()}>
+    <a className="badge text-bg-danger search_plugin_stop" onClick={async () => await cancel()}>
       <FormattedMessage id="search.stop" />
     </a>
   )

@@ -53,7 +53,7 @@ export const CompilerMenuToggle = React.forwardRef(
       <div className="d-flex">
         {children}
         {icon && (
-          <div className="pr-1">
+          <div className="pe-1">
             <i className={`${icon} pr-1`}></i>
           </div>
         )}

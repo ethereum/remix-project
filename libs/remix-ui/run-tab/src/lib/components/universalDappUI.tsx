@@ -222,7 +222,7 @@ export function UniversalDappUI(props: UdappProps) {
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
+        <label className="small fw-bold mb-0 pe-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )
@@ -381,10 +381,10 @@ export function UniversalDappUI(props: UdappProps) {
               { // receive method added to solidity v0.6.x. use this as diff.
                 props.solcVersion.canReceive === false ? (
                   <a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
-                    <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                    <i aria-hidden="true" className="fas fa-info my-2 me-1"></i>
                   </a>
                 ) :<a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-                  <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                  <i aria-hidden="true" className="fas fa-info my-2 me-1"></i>
                 </a>
               }
             </CustomTooltip>

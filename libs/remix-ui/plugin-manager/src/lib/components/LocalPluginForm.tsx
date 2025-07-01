@@ -127,7 +127,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
         cancelFn={closeModal}
       >
         <form id="local-plugin-form">
-          <div className="form-group">
+          <div className="mb-3">
             <label htmlFor="plugin-name">
               <FormattedMessage id="pluginManager.localForm.pluginName" />
               &nbsp;
@@ -146,7 +146,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
               })}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-3">
             <label htmlFor="plugin-displayname">
               <FormattedMessage id="pluginManager.localForm.displayName" />
             </label>
@@ -161,7 +161,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
               })}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-3">
             <label htmlFor="plugin-methods">
               Api&nbsp; (
               <FormattedMessage id="pluginManager.localForm.commaSeparatedMethod" />)
@@ -175,7 +175,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
               placeholder={intl.formatMessage({ id: 'pluginManager.localForm.methods' })}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-3">
             <label htmlFor="plugin-methods">
               <FormattedMessage id="pluginManager.localForm.pluginsItCanActivate" />
               &nbsp; (
@@ -191,7 +191,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
             />
           </div>
 
-          <div className="form-group">
+          <div className="mb-3">
             <label htmlFor="plugin-url">
               Url&nbsp;
               <small>
@@ -214,7 +214,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
               (<FormattedMessage id="pluginManager.localForm.required" />)
             </small>
           </h6>
-          <div className="form-check form-group">
+          <div className="form-check mb-3">
             <div className="radio">
               <input
                 className="form-check-input"
@@ -253,7 +253,7 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
               (<FormattedMessage id="pluginManager.localForm.required" />)
             </small>
           </h6>
-          <div className="form-check form-group">
+          <div className="form-check mb-3">
             <div className="radio">
               <input
                 className="form-check-input"

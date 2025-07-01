@@ -77,7 +77,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     (!global.fs.browser.isSuccessfulWorkspace ? null :
       <>
 
-        <span data-id="spanContaining" className="pl-0 pb-1 w-50">
+        <span data-id="spanContaining" className="ps-0 pb-1 w-50">
           {state.menuItems.map(({ action, title, icon, placement, platforms }, index) => {
             if (platforms && !platforms.includes(platform)) return null
             if (action === 'uploadFile') {

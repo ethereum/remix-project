@@ -46,7 +46,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="recordedTransactionsCounttooltip"
             tooltipText={<FormattedMessage id="udapp.transactionsCountTooltip" />}
           >
-            <div className="ml-2 badge badge-pill badge-primary text-center" style={{ cursor:"default" }} data-title="The number of recorded transactions">
+            <div className="ms-2 badge rounded-pill text-bg-primary text-center" style={{ cursor:"default" }} data-bs-title="The number of recorded transactions">
               {props.count}
             </div>
           </CustomTooltip>
@@ -73,8 +73,8 @@ export function RecorderUI(props: RecorderProps) {
         </div>
       </div>
       { toggleExpander && <div className={`pb-2 flex-column d-flex`} data-id='remixRecorderExpanded'>
-        <div className="mb-1 mt-1 custom-control custom-checkbox mb-1" id='udappRecorderUseLatest'>
-          <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode" />
+        <div className="mb-1 mt-1 form-check mb-1" id='udappRecorderUseLatest'>
+          <input ref={inputLive} type="checkbox" id="livemode-recorder" className="form-check-input form-select" name="input-livemode" />
           <CustomTooltip
             placement={'auto-end'}
             tooltipClasses="text-wrap"
@@ -85,7 +85,7 @@ export function RecorderUI(props: RecorderProps) {
               </span>
             }
           >
-            <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">
+            <label className="form-check-label form-check-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">
               <FormattedMessage id="udapp.livemodeRecorderLabel" />
             </label>
           </CustomTooltip>

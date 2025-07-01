@@ -64,7 +64,7 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
               tooltipId="genUMLzoomin"
               placement="top"
             >
-              <button data-id="umlZoominbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomIn()}>
+              <button data-id="umlZoominbtn" className="badge text-bg-secondary remixui_no-shadow p-2 rounded-circle me-2" onClick={() => zoomIn()}>
                 <i className="far fa-plus uml-btn-icon"></i>
               </button>
             </CustomTooltip>
@@ -73,7 +73,7 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
               tooltipId="genUMLzoomout"
               placement="top"
             >
-              <button data-id="umlZoomoutbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomOut()}>
+              <button data-id="umlZoomoutbtn" className="badge text-bg-secondary remixui_no-shadow p-2 rounded-circle me-2" onClick={() => zoomOut()}>
                 <i className="far fa-minus uml-btn-icon"></i>
               </button>
             </CustomTooltip>
@@ -82,7 +82,7 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
               tooltipId="genUMLundo"
               placement="top"
             >
-              <button data-id="umlResetbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => resetTransform()}>
+              <button data-id="umlResetbtn" className="badge text-bg-secondary remixui_no-shadow p-2 rounded-circle me-2" onClick={() => resetTransform()}>
                 <i className="far fa-undo uml-btn-icon"></i>
               </button>
             </CustomTooltip>
@@ -93,13 +93,13 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
   }
 
   const DefaultInfo = () => (
-    <div className="d-flex flex-column justify-content-center align-items-center mt-5 ml-5">
+    <div className="d-flex flex-column justify-content-center align-items-center mt-5 ms-5">
       <h3 className="h3 align-self-start text-dark">
         <p>
           <FormattedMessage id="solUmlGen.text1" />
         </p>
       </h3>
-      <ul className="ml-3 justify-content-start align-self-start">
+      <ul className="ms-3 justify-content-start align-self-start">
         <li>
           <h5 className="h5 align-self-start text-dark">
             <p>

@@ -151,7 +151,7 @@ export const AssemblyItems = ({ registerEvent }) => {
               <FormattedMessage id="debugger.noDataAvailable" />
             </div>
           )}
-          <div className="pl-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
+          <div className="ps-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
             {assemblyItems.display.map((item, i) => {
               return (
                 <div

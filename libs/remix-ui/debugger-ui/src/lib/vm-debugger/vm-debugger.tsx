@@ -62,7 +62,7 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
   return (
     <div id="vmdebugger" className="d-flex">
       <div
-        className="d-flex flex-column px-2 pr-2"
+        className="d-flex flex-column px-2 pe-2"
         style={{
           flex: 1,
           overflow: 'hidden',
@@ -77,7 +77,7 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
         <GlobalVariables className="pb-1" block={currentBlock} receipt={currentReceipt} tx={currentTransaction} />
       </div>
       <div
-        className="d-flex flex-column px-2 pl-2"
+        className="d-flex flex-column px-2 ps-2"
         style={{
           flex: 1,
           overflow: 'hidden',

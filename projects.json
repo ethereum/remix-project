@@ -5715,33 +5715,13 @@
               "hash": "5c16277d2ea9a5b713bee624477320d639f82399"
             },
             {
-              "file": "apps/remix-ide/src/assets/css/themes/remix-candy_ikhg4m.css",
-              "hash": "73574f8f5fc2b66144d6ba1c83bfddc0cce32e0a"
-            },
-            {
               "file": "apps/remix-ide/src/assets/css/themes/remix-dark_tvx1s2.css",
               "hash": "f512a127c8830002d4ad0aa143d9625e53784cbb"
             },
             {
-              "file": "apps/remix-ide/src/assets/css/themes/remix-hacker_owl.css",
-              "hash": "0ef4225d57514e1a78918fe571ce23a857c298fa"
-            },
-            {
               "file": "apps/remix-ide/src/assets/css/themes/remix-light_powaqg.css",
               "hash": "3217df2899a0acf615bdd7e061d7eb17a151fa74"
-            },
-            {
-              "file": "apps/remix-ide/src/assets/css/themes/remix-midcentury_hrzph3.css",
-              "hash": "f64bc8d01bcc2c082d47d12b7999a9721c0e4d8f"
-            },
-            {
-              "file": "apps/remix-ide/src/assets/css/themes/remix-unicorn.css",
-              "hash": "ebf508ff83ea1748e4042ec26d298c01a4930e2b"
-            },
-            {
-              "file": "apps/remix-ide/src/assets/css/themes/remix-violet.css",
-              "hash": "275d0f0907ed9bf4582d2816aa1b11d6a32f5148"
-            },
+            },            
             {
               "file": "apps/remix-ide/src/assets/fonts/fontawesome-webfont.eot",
               "hash": "e9f60ca953f93e35eab4108bd414bc02ddcf3928"

@@ -126,7 +126,7 @@ export const ResultItem = (props: ResultItemProps) => {
             </button>{' '}
             <ResultFileName file={props.file} />
             <div className="search_plugin_result_count">
-              <div className="search_plugin_result_count_number badge badge-pill badge-secondary">{props.file.count}</div>
+              <div className="search_plugin_result_count_number badge rounded-pill text-bg-secondary">{props.file.count}</div>
             </div>
           </div>
           {loading ? (

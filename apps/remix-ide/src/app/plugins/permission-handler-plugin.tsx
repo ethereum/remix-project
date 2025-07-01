@@ -99,7 +99,7 @@ export class PermissionHandlerPlugin extends Plugin {
             <span onClick={()=>{}}>To change the permission go to </span>
             <span className='px-2' style={{ fontWeight: 'bolder' }}>Plugin Manager</span>
             <img alt="" id="permissionModalImagesFrom" src="assets/img/pluginManager.webp" style={{ height: '1rem', width: '1rem' }} />
-            <span className='pl-1' style={{ fontWeight: 'bolder' }}> / Permissions</span>
+            <span className='ps-1' style={{ fontWeight: 'bolder' }}> / Permissions</span>
           </div>
         </div>
         this.call('notification', 'toast', warnEl)

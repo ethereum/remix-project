@@ -24,10 +24,10 @@ export default function ConfigSection(props: ConfigSectionProps) {
 
   const SectionHeader = () => {
     return (
-      <section className="text-nowrap mr-1">
-        <div className="custom-control custom-radio">
+      <section className="text-nowrap me-1">
+        <div className="form-check">
           <input
-            className="custom-control-input"
+            className="form-check-input"
             type="radio"
             name="scriptrunner-config-radio"
             value={props.config.name}
@@ -41,9 +41,9 @@ export default function ConfigSection(props: ConfigSectionProps) {
             }}
             checked={(props.activeConfig && props.activeConfig.name === props.config.name)}
           />
-          <label className="pointer form-check-label custom-control-label" htmlFor={`${props.config.title || props.config.name}`}
+          <label className="pointer form-check-label form-check-label" htmlFor={`${props.config.title || props.config.name}`}
             data-id={`sr-${(props.activeConfig && props.activeConfig.name === props.config.name)?'loaded':'notloaded'}-${props.config.name}`}>
-            <div className="pl-2">{props.config.title || props.config.name}</div>
+            <div className="ps-2">{props.config.title || props.config.name}</div>
           </label>
         </div>
       </section>
@@ -73,7 +73,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
               }}
             >
               {showAll ? 'Show less' : 'Show more'}
-              <FontAwesomeIcon icon={showAll ? faCaretUp : faCaretDown} className="ml-1" />
+              <FontAwesomeIcon icon={showAll ? faCaretUp : faCaretDown} className="ms-1" />
             </a>
           </li>
         )}
@@ -91,7 +91,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
             <div onClick={() => props.loadScriptRunner(props.config)} className="pointer px-2 pb-1 mb-0 pb-0">
               { props.activeConfig && props.activeConfig.name === props.config.name &&
                 <div className="d-flex flex-row mt-1">
-                  <FontAwesomeIcon data-id={`sr-loaded-${props.config.name}`} className="text-success ml-3" icon={faCheck}></FontAwesomeIcon>
+                  <FontAwesomeIcon data-id={`sr-loaded-${props.config.name}`} className="text-success ms-3" icon={faCheck}></FontAwesomeIcon>
                   {isVisible && <span onAnimationEnd={handleAnimationEnd} className="text-success px-3 mb-0 pb-0" style={{ animation: 'fadeOut 5s forwards', animationFillMode: 'forwards' }}>Config loaded</span>}
                 </div>
               }
@@ -100,10 +100,10 @@ export default function ConfigSection(props: ConfigSectionProps) {
           </div>
           {props.config.isLoading && <div className="d-flex flex-row mx-4">
             <div className="d-flex flex-row pb-1 align-items-center justify-content-center">
-              <i className="fas fa-spinner fa-spin"></i><span className='pl-3'>Loading config</span>
+              <i className="fas fa-spinner fa-spin"></i><span className='ps-3'>Loading config</span>
             </div>
           </div>}
-          <div className="ml-4 d-flex" id="errorSection">
+          <div className="ms-4 d-flex" id="errorSection">
             {!props.config.isLoading && props.config.errorStatus && props.config.error &&
               <div
                 onClick={() => {
@@ -113,9 +113,9 @@ export default function ConfigSection(props: ConfigSectionProps) {
                 className="pointer text-danger d-flex flex-row"
               >
                 <CustomTooltip tooltipText={props.config.error}>
-                  <FontAwesomeIcon className="mt-1 pr-4" data-id={`sr-error-${props.config.name}`} icon={faTimes}></FontAwesomeIcon>
+                  <FontAwesomeIcon className="mt-1 pe-4" data-id={`sr-error-${props.config.name}`} icon={faTimes}></FontAwesomeIcon>
                 </CustomTooltip>
-                <span className="pr-2 mt-1 text-nowrap text-danger font-weight-bold">Loading error.</span>
+                <span className="pe-2 mt-1 text-nowrap text-danger fw-bold">Loading error.</span>
                 <span className="text-danger mt-1 ">We are not able to load your requested configuration for now, please try again later.</span>
               </div>
             }
@@ -125,7 +125,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
 
       <section className="d-flex flex-column w-100">
         <div className="mt-2 mb-4 bg-dark p-3 ">
-          <p className="text-dark text-monospace">{props.config.description}</p>
+          <p className="text-dark font-monospace">{props.config.description}</p>
           <p className="text-dark">Dependencies</p>
           <ul className="list-unstyled m-0">
             <Dependencies />

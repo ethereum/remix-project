@@ -90,7 +90,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         id: 'TemplatesSelectionAiAlert',
         message: <div className='d-flex flex-row align-items-center'>
           <span><img src="../../../assets/img/remixai-logoDefault.webp" style={{ width: '50px', height: '50px' }} alt="Ai alert" /></span>
-          <p className='ml-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
+          <p className='ms-2' style={{ fontSize: '1.1rem' }}>Your request is being processed. Please wait while I generate the workspace for you. It won't be long.</p>
         </div>,
         title: 'Generating Workspace'
       }
@@ -310,7 +310,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                               className="btn btn-sm mr-2 border border-primary"
                             >
                               {isElectron() ?
-                                <><i className='fa fa-folder-open mr-1'></i>Create</> : 'Create'}
+                                <><i className='fa fa-folder-open me-1'></i>Create</> : 'Create'}
                             </span>
                           </CustomTooltip>}
                           {item.templateType && item.templateType.forceCreateNewWorkspace ? <></> : isElectron() ?
@@ -326,7 +326,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                                   onClick={async () => addToCurrentElectronFolder(item, template.name)}
                                   className="btn btn-sm border"
                                 >
-                                  <i className="fa fa-folder-plus mr-1" aria-hidden="true"></i>
+                                  <i className="fa fa-folder-plus me-1" aria-hidden="true"></i>
                                  Add here
                                 </span>
                               </CustomTooltip>
@@ -396,11 +396,11 @@ const createModalMessage = async (
         onInput={(e) => onChangeTemplateName((e.target as any).value)}
       />
       {templateGroup.hasOptions ? createOptionsModal(onChangeCheckBoxRefs, onChangeRadioRefs) : null}
-      <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
+      <div className="d-flex py-2 align-items-center form-check">
         <input
           id="initGitRepository"
           data-id="initGitRepository"
-          className="form-check-input custom-control-input"
+          className="form-check-input form-check-input"
           type="checkbox"
           disabled={gitConfigNotSet}
           onChange={(e) => onChangeInitGit(e.target.value)}
@@ -409,7 +409,7 @@ const createModalMessage = async (
         <label
           htmlFor="initGitRepository"
           data-id="initGitRepositoryLabel"
-          className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+          className="m-0 form-check-label form-check-label udapp_checkboxAlign"
           title={window._intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
         >
           <FormattedMessage id="filePanel.initGitRepositoryLabel" />
@@ -440,9 +440,9 @@ const createOptionsModal = (
     </label>
     <div className="mb-2">
       {['mintable', 'burnable', 'pausable'].map((feature) => (
-        <div key={feature} className="d-flex ml-2 custom-control custom-checkbox">
-          <input className="custom-control-input" type="checkbox" name="feature" value={feature} id={feature} onChange={onChangeCheckBoxRefs} />
-          <label className="form-check-label custom-control-label" htmlFor={feature} data-id={`featureType${feature.charAt(0).toUpperCase() + feature.slice(1)}`}>
+        <div key={feature} className="d-flex ms-2 form-check">
+          <input className="form-check-input" type="checkbox" name="feature" value={feature} id={feature} onChange={onChangeCheckBoxRefs} />
+          <label className="form-check-label form-check-label" htmlFor={feature} data-id={`featureType${feature.charAt(0).toUpperCase() + feature.slice(1)}`}>
             <FormattedMessage id={`filePanel.${feature}`} />
           </label>
         </div>
@@ -454,9 +454,9 @@ const createOptionsModal = (
     </label>
     <div>
       {['transparent', 'uups'].map((type) => (
-        <div key={type} className="d-flex ml-2 custom-control custom-radio">
-          <input className="custom-control-input" type="radio" name="upgradeability" value={type} id={type} onChange={onChangeRadioRefs} />
-          <label className="form-check-label custom-control-label" htmlFor={type} data-id={`upgradeType${type.charAt(0).toUpperCase() + type.slice(1)}`}>
+        <div key={type} className="d-flex ms-2 form-check">
+          <input className="form-check-input" type="radio" name="upgradeability" value={type} id={type} onChange={onChangeRadioRefs} />
+          <label className="form-check-label form-check-label" htmlFor={type} data-id={`upgradeType${type.charAt(0).toUpperCase() + type.slice(1)}`}>
             {type.toUpperCase()}
           </label>
         </div>

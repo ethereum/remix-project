@@ -67,7 +67,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           })
         }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
         <GitUIButton data-id={`remote-rm-${remote.name}`} className="btn btn-sm" onClick={() => actions.removeRemote(remote)}><FontAwesomeIcon className='text-danger' icon={faTrash} ></FontAwesomeIcon></GitUIButton>
-        {remote?.url && <GitUIButton tooltip="open on remote" className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
+        {remote?.url && <GitUIButton tooltip="open on remote" className="btn btn-sm pe-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
       </div>
     </>
   );

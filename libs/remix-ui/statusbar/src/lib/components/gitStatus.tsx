@@ -30,11 +30,11 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
       tooltipText={`${appContext.appState.needsGitInit ? 'Initialize as git repo' : 'Current branch: ' + appContext.appState.currentBranch.name}`}
     >
       <div
-        className="d-flex flex-row pl-3 small text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
+        className="d-flex flex-row ps-3 small text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
         onClick={async () => await openDgit()}
       >
-        {!appContext.appState.needsGitInit ? <span className="fa-regular fa-code-branch ml-1"></span>
-          : <span className=" ml-1" onClick={initializeNewGitRepo}>Initialize as git repo</span>}
+        {!appContext.appState.needsGitInit ? <span className="fa-regular fa-code-branch ms-1"></span>
+          : <span className=" ms-1" onClick={initializeNewGitRepo}>Initialize as git repo</span>}
         {!appContext.appState.needsGitInit && appContext.appState.currentBranch &&
           <span onClick={async () => await openDgit()} className="ml-1">{appContext.appState.currentBranch.name}</span>
         }

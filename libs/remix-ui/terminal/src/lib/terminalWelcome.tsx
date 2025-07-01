@@ -16,7 +16,7 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
       <div>
         <FormattedMessage id="terminal.welcomeText3" />:{' '}
       </div>
-      <ul className="ml-0 mr-4">
+      <ul className="ms-0 me-4">
         <li key="details-and-debug">
           <FormattedMessage id="terminal.welcomeText4" />.
         </li>
@@ -43,7 +43,7 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
       <div>
         <FormattedMessage id="terminal.welcomeText9" />:
       </div>
-      <ul className="ml-0 mr-4">
+      <ul className="ms-0 me-4">
         <li key="web3-152">
           <a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">
             web3.js

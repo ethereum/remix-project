@@ -118,15 +118,15 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
               <span>{messageText}</span>
             </pre>
           )}
-          <div className="close" data-id="renderer" onClick={handleClose}>
+          <div className="btn-close" data-id="renderer" onClick={handleClose}>
             <i className="fas fa-times"></i>
           </div>
           <div className="d-flex pt-1 flex-row-reverse">
-            <span className="ml-3 pt-1 py-1" >
+            <span className="ms-3 pt-1 py-1" >
               <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
             </span>
             <span
-              className="position-relative text-ai text-sm pl-0 pr-2"
+              className="position-relative text-ai text-sm ps-0 pe-2"
               style={{ fontSize: "x-small", alignSelf: "end" }}
             >
             </span>
