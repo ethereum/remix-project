@@ -772,7 +772,7 @@ jobs:
               exit 2
             fi
             echo "🔍 Searching for enabled tests with .$PATTERN extension..."
-            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "${PATTEN}"; then
+            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "${PATTERN}"; then
               echo "✅ Found enabled .$PATTERN tests."
               exit 0
             else
