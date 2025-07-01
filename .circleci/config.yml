@@ -24,6 +24,10 @@ parameters:
   linux:
     type: boolean
     default: false
+  resource_class:
+    type: enum
+    enum: ["medium", "large", "xlarge", "2xlarge"]
+    default: "xlarge"
 
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
@@ -164,9 +168,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
-
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - run: sudo apt update && sudo apt install zstd
@@ -208,9 +210,7 @@ jobs:
   build-desktop:
     docker:
       - image: cimg/node:20.0.0-browsers
-
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -235,8 +235,7 @@ jobs:
   build-plugin:
       docker:
       - image: cimg/node:20.0.0-browsers
-      resource_class:
-        xlarge
+      resource_class: << pipeline.parameters.resource_class >>
       working_directory: ~/remix-project
       parameters:
         plugin:
@@ -261,8 +260,7 @@ jobs:
   test-remixdesktop-linux:
     machine:
       image: ubuntu-2204:current
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parallelism: 15
     steps:
@@ -624,8 +622,7 @@ jobs:
   test-remixdesktop-mac:
     macos:
       xcode: 14.2.0
-    resource_class:
-        m2pro.medium
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -695,8 +692,7 @@ jobs:
   uploadartifacts:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -712,10 +708,8 @@ jobs:
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
-
     steps:
       - checkout
       - restore_cache:
@@ -729,10 +723,8 @@ jobs:
   remix-libs:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
-
     steps:
       - checkout
       - attach_workspace:
@@ -783,8 +775,7 @@ jobs:
   remix-ide-browser:
     docker:
       - image: cimg/node:20.18.3-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parameters:
       browser:
@@ -871,8 +862,7 @@ jobs:
   remix-test-plugins:
     docker:
       - image: cimg/node:20.17.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parameters:
       plugin:
@@ -907,8 +897,7 @@ jobs:
   predeploy:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - checkout
