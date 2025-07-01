@@ -24,7 +24,7 @@ module.exports = {
   // Conversation starter button with data id 'explain-editor' doesn't exist anymore
   'Should explain the contract #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('remixaiassistant')
+      .clickLaunchIcon('remixaiassistanteeee')
       .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')
       .click('*[data-id="remix-ai-assistant-starter-0"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
