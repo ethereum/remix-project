@@ -760,6 +760,7 @@ jobs:
     steps:
       - checkout
       - run: node apps/remix-ide-e2e/src/buildGroupTests.js
+      -
       - run:
           name: Check for enabled tests matching tag
           command: |
@@ -769,7 +770,7 @@ jobs:
               exit 2
             fi
             echo "🔍 Searching for enabled tests with .$TAG extension..."
-            if grep -IRiL "'@disabled': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${TAG}"; then
+            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "\.${TAG}"; then
               echo "✅ Found enabled .$TAG tests."
               exit 0
             else
