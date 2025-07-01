@@ -5,10 +5,10 @@ parameters:
     default: false
   run_pr_tests:
     type: boolean
-    default: ""
+    default: false
   run_file_tests:
     type: string
-    default: false  
+    default: ""  
   run_metamask_tests:
     type: boolean
     default: false  
