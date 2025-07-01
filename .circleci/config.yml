@@ -759,10 +759,6 @@ jobs:
         type: string
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
       - run: yarn run build:e2e
       - run:
           name: Check for enabled tests matching tag
