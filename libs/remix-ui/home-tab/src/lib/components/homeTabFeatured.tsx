@@ -24,7 +24,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
     await props.plugin.call('tabs', 'focus', 'remixGuide')
   }
   return (
-    <div className="pt-1 pl-2" id="hTFeaturedeSection">
+    <div className="pt-1 ps-2" id="hTFeaturedeSection">
       <div className="mb-2 remix_ui-carousel-container">
         <div className="w-100 d-flex flex-column rounded-3 remix_ui-carouselbox">
           <ThemeContext.Provider value={themeFilter}>
@@ -56,7 +56,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                 <a href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/" target="__blank">
                   <img className="remixui_carouselImage" src={'/assets/img/solSurvey2024.webp'} alt=""></img>
                 </a>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
+                <div className="h6 w-50 p-2 ps-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                   The Solidity Developer Survey 2024 is live!
                   </h5>
@@ -84,11 +84,11 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   </p>
                 </div>
               </div> }
-              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+              <div className="me-1 pe-1 d-flex align-items-center justify-content-center h-100">
                 <a href={releaseDetails.moreLink} target="__blank">
                   <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
-                <div className="h6 w-50 p-2 pl-4 align-self-center" style={{ flex: '1' }}>
+                <div className="h6 w-50 p-2 ps-4 align-self-center" style={{ flex: '1' }}>
                   <h5>{releaseDetails.version} {releaseDetails.title}</h5>
                   <div style={{ fontSize: '0.8rem' }} className="mb-3">
                     <ul>
@@ -108,11 +108,11 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   </a>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+              <div className="me-1 pe-1 d-flex align-items-center justify-content-center h-100">
                 <button className='btn' onClick={()=>handleStartLearneth()}>
                   <img src={'assets/img/remi-prof.webp'} className="remixui_carouselImage" alt=""></img>
                 </button>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
+                <div className="h6 w-50 p-2 ps-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.learnEthPromoTitle" />
                   </h5>
@@ -127,11 +127,11 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   </button>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+              <div className="me-1 pe-1 d-flex align-items-center justify-content-center h-100">
                 <button className="btn" onClick={() => handleStartRemixGuide()}>
                   <img src={'assets/img/YouTubeLogo.webp'} className="remixui_carouselImage" alt=""></img>
                 </button>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
+                <div className="h6 w-50 p-2 ps-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.remixYouTube" />
                   </h5>

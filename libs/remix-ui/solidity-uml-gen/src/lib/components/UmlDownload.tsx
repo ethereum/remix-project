@@ -73,7 +73,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
         placement="top"
       >
         <Dropdown id="solUmlMenuDropdown">
-          <Dropdown.Toggle icon="far fa-arrow-to-bottom uml-btn-icon" as={Markup} className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"></Dropdown.Toggle>
+          <Dropdown.Toggle icon="far fa-arrow-to-bottom uml-btn-icon" as={Markup} className="badge text-bg-info remixui_no-shadow p-2 rounded-circle me-2"></Dropdown.Toggle>
           <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
             <Dropdown.Item
               onClick={() => {
@@ -89,8 +89,8 @@ export default function UmlDownload(props: UmlDownloadProps) {
                 tooltipText={<FormattedMessage id="solUmlGen.pngDownloadTooltip" />}
               >
                 <div data-id="umlPngDownload">
-                  <span id="umlPngDownloadBtn" data-id="umlPngDownload" className="far fa-image pl-2"></span>
-                  <span className="pl-1">
+                  <span id="umlPngDownloadBtn" data-id="umlPngDownload" className="far fa-image ps-2"></span>
+                  <span className="ps-1">
                     <FormattedMessage id="solUmlGen.pngDownload" />
                   </span>
                 </div>
@@ -111,8 +111,8 @@ export default function UmlDownload(props: UmlDownloadProps) {
                 tooltipText={<FormattedMessage id="solUmlGen.pdfDownloadTooltip" />}
               >
                 <div data-id="umlPdfDownload">
-                  <span id="umlPdfDownloadBtn" data-id="umlPdfDownload" className="far fa-file-pdf pl-2"></span>
-                  <span className="pl-2">
+                  <span id="umlPdfDownloadBtn" data-id="umlPdfDownload" className="far fa-file-pdf ps-2"></span>
+                  <span className="ps-2">
                     <FormattedMessage id="solUmlGen.pdfDownload" />
                   </span>
                 </div>

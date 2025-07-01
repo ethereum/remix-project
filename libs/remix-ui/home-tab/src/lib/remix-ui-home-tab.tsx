@@ -82,7 +82,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={state.themeQuality}>
         <div className="d-flex flex-row w-100 custom_home_bg">
-          <div className="px-2 pl-3 justify-content-start border-right d-flex flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
+          <div className="px-2 ps-3 justify-content-start border-end d-flex flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
             <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
             {!(platform === appPlatformTypes.desktop) ?
@@ -90,7 +90,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
             {/* <HomeTabLearn plugin={plugin} /> */}
           </div>
-          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: `${carouselWidth}%` }} id="remixUIHTRight">
+          <div className="ps-2 pe-3 justify-content-start d-flex flex-column" style={{ width: `${carouselWidth}%` }} id="remixUIHTRight">
             <LanguageOptions plugin={plugin}/>
             <HomeTabFeatured plugin={plugin}></HomeTabFeatured>
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>

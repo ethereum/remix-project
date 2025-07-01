@@ -72,14 +72,14 @@ export default function VyperCompile({ result, theme, themeStyle }: VyperCompile
     <div className='w-100 h-100 d-flex flex-row'>
       <Tabs className="flex-column" style={{ height: "fit-content", backgroundColor: 'var(--body-bg)' }} id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
         {tabContent.map((content, index) => (
-          <Tab className="border-top border-left p-4 bg-light" style={{ width: '50rem', height: 'fit-content', minHeight: '25rem' }} eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
+          <Tab className="border-top border-start p-4 bg-light" style={{ width: '50rem', height: 'fit-content', minHeight: '25rem' }} eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
             <div className="d-flex flex-column w-90 justify-content-center mx-auto rounded-2">
               <CopyToClipboard getContent={() => (content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(result['abi']))}>
                 <Button
-                  className="copy ml-2 btn btn-sm btn-secondary"
+                  className="copy ms-2 btn btn-sm btn-secondary"
                   data-id={content.eventKey === 'abi' ? 'copy-abi' : ''}
                 >
-                  <span className="far fa-copy mr-2"></span>
+                  <span className="far fa-copy me-2"></span>
                   {content.tabButtonText()}
                 </Button>
               </CopyToClipboard>

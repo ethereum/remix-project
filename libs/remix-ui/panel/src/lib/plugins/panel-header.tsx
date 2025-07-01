@@ -80,7 +80,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                   <RenderIfNot condition={plugin.pinned}>
                     <div className='d-flex' data-id="movePluginToRight" onClick={pinPlugin}>
                       <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
-                        <i aria-hidden="true" className="mt-1 px-1 pl-2 fak fa-fa-dock-r"></i>
+                        <i aria-hidden="true" className="mt-1 px-1 ps-2 fak fa-fa-dock-r"></i>
                       </CustomTooltip>
                     </div>
                   </RenderIfNot>
@@ -93,7 +93,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
         {plugin?.profile?.author && (
           <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
+            <label className="mb-0 pe-2">
               <FormattedMessage id="panel.author" />:
             </label>
             <span> {plugin?.profile.author} </span>
@@ -101,7 +101,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         )}
         {plugin?.profile?.maintainedBy && (
           <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
+            <label className="mb-0 pe-2">
               <FormattedMessage id="panel.maintainedBy" />:
             </label>
             <span> {plugin?.profile.maintainedBy} </span>
@@ -109,7 +109,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         )}
         {plugin?.profile?.documentation && (
           <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
+            <label className="mb-0 pe-2">
               <FormattedMessage id="panel.documentation" />:
             </label>
             <span>
@@ -123,7 +123,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         )}
         {plugin?.profile?.description && (
           <span className="d-flex flex-row align-items-baseline">
-            <label className="mb-0 pr-2">
+            <label className="mb-0 pe-2">
               <FormattedMessage id="panel.description" />:
             </label>
             <span> {plugin?.profile.description} </span>

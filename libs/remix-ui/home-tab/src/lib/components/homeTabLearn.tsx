@@ -87,11 +87,11 @@ function HomeTabLearn({ plugin }: HomeTabLearnProps) {
             })
           }
         >
-          <label className="card-title align-self-start m-0 float-left" style={{ fontSize: '1rem' }}>
+          <label className="card-title align-self-start m-0 float-start" style={{ fontSize: '1rem' }}>
             <FormattedMessage id="home.learnEth1" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Basics && (
-            <div className="pt-2 d-flex flex-column text-left">
+            <div className="pt-2 d-flex flex-column text-start">
               <span className="py-1" style={{ fontSize: '0.8rem' }}>
                 <FormattedMessage id="home.learnEth1Desc" />
               </span>
@@ -112,11 +112,11 @@ function HomeTabLearn({ plugin }: HomeTabLearnProps) {
             })
           }
         >
-          <label className="card-title align-self-start m-0 float-left" style={{ fontSize: '1rem' }}>
+          <label className="card-title align-self-start m-0 float-start" style={{ fontSize: '1rem' }}>
             <FormattedMessage id="home.learnEth2" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Intermediate && (
-            <div className="pt-2 d-flex flex-column text-left">
+            <div className="pt-2 d-flex flex-column text-start">
               <span className="py-1" style={{ fontSize: '0.8rem' }}>
                 <FormattedMessage id="home.learnEth2Desc" />
               </span>
@@ -134,11 +134,11 @@ function HomeTabLearn({ plugin }: HomeTabLearnProps) {
             })
           }
         >
-          <label className="card-title align-self-start m-0 float-left" style={{ fontSize: '1rem' }}>
+          <label className="card-title align-self-start m-0 float-start" style={{ fontSize: '1rem' }}>
             <FormattedMessage id="home.remixAdvanced" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Advanced && (
-            <div className="pt-2 d-flex flex-column text-left">
+            <div className="pt-2 d-flex flex-column text-start">
               <span className="py-1" style={{ fontSize: '0.8rem' }}>
                 <FormattedMessage id="home.remixAdvancedDesc" />
               </span>

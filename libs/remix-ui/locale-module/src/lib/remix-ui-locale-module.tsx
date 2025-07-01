@@ -23,7 +23,7 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
         <div className="card-text locales-container">
           {localeModule.getLocales()
             ? localeModule.getLocales().map((locale, idx) => (
-              <div className="radio custom-control custom-radio mb-1 form-check" key={idx}>
+              <div className="radio form-check mb-1 form-check" key={idx}>
                 <input
                   type="radio"
                   onChange={(event) => {
@@ -36,7 +36,7 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
                   data-id={`settingsTabLocale${locale.code}`}
                   checked={localeModule.active === locale.code.toLocaleLowerCase()}
                 />
-                <label className="form-check-label custom-control-label" data-id={`settingsTabLocaleLabel${locale.code}`} htmlFor={locale.code}>
+                <label className="form-check-label form-check-label" data-id={`settingsTabLocaleLabel${locale.code}`} htmlFor={locale.code}>
                   {locale.name.toLocaleUpperCase()}-{locale.localeName}
                 </label>
               </div>

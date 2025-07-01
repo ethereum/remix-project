@@ -42,10 +42,10 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
 
     return (<>
 
-      {status && status.indexOf("modified") === -1 ? <></> : <span className="pl-2">M</span>}
-      {status && status.indexOf("deleted") === -1 ? <></> : <span className="pl-2">D</span>}
-      {status && status.indexOf("added") === -1 ? <></> : <span className="pl-2">A</span>}
-      {status && status.indexOf("untracked") === -1 ? <></> : <span className="pl-2">U</span>}
+      {status && status.indexOf("modified") === -1 ? <></> : <span className="ps-2">M</span>}
+      {status && status.indexOf("deleted") === -1 ? <></> : <span className="ps-2">D</span>}
+      {status && status.indexOf("added") === -1 ? <></> : <span className="ps-2">A</span>}
+      {status && status.indexOf("untracked") === -1 ? <></> : <span className="ps-2">U</span>}
     </>)
   }
 
@@ -54,10 +54,10 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
   return (<>
     <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center">
       <div className='pointer gitfile long-and-truncated' onClick={async () => await fileClick(file)}>
-        <span className='font-weight-bold long-and-truncated'>{path.basename(file.filename)}</span>
+        <span className='fw-bold long-and-truncated'>{path.basename(file.filename)}</span>
         <div className='text-secondary long-and-truncated'> {file.filename}</div>
       </div>
-      <div className="d-flex align-items-center ml-1 px-2">
+      <div className="d-flex align-items-center ms-1 px-2">
         <SourceControlItemButtons group={group} file={file}></SourceControlItemButtons>
         <FunctionStatusIcons></FunctionStatusIcons>
       </div>

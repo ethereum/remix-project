@@ -19,7 +19,7 @@ function PluginButton({ imgPath, envID, envText, callback, l2, description, main
   return (
     <div className="d-flex remixui_home_envButton">
       <button
-        className="btn border-secondary d-flex flex-column  pb-2 text-nowrap justify-content-center align-items-center mr-2 remixui_home_envButton"
+        className="btn border-secondary d-flex flex-column  pb-2 text-nowrap justify-content-center align-items-center me-2 remixui_home_envButton"
         data-id={'landingPageStart' + envText}
         onClick={() => callback()}
       >

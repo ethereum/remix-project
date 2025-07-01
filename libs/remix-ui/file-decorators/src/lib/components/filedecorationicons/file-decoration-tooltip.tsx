@@ -8,7 +8,7 @@ const FileDecorationTooltip = (props: {fileDecoration: fileDecoration; icon: JSX
       const comments = Array.isArray(fileDecoration.comment) ? fileDecoration.comment : [fileDecoration.comment]
       return comments.map((comment, index) => {
         return (
-          <div className="bg-secondary text-left p-1 mx-1 my-0" key={index}>
+          <div className="bg-secondary text-start p-1 mx-1 my-0" key={index}>
             {comment}
           </div>
         )

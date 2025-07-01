@@ -135,7 +135,7 @@ export const Preload = (props: any) => {
           </div>
         ) : null}
         {error ? (
-          <div className="preload-info-container alert alert-danger text-left">
+          <div className="preload-info-container alert alert-danger text-start">
             An unknown error has occurred while loading the application.
             <br></br>
             Doing a hard refresh might fix this issue:<br></br>
