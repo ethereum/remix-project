@@ -572,6 +572,7 @@ jobs:
           command: |
             nvm use 22.12
             cd apps/remixdesktop 
+            yarn add node-pty --network-timeout 600000
             yarn || yarn
             find ./node_modules
             yarn add @remix-project/remix-ws-templates
@@ -642,7 +643,8 @@ jobs:
       - run: 
           command: |
             nvm use 22.12
-            cd apps/remixdesktop 
+            cd apps/remixdesktop
+            yarn add node-pty --network-timeout 600000 
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
       - save_cache:
