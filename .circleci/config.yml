@@ -759,7 +759,7 @@ jobs:
         type: string
     steps:
       - checkout
-      - run: yarn run build:e2e
+      - run: node apps/remix-ide-e2e/src/buildGroupTests.js && npx tsc -p apps/remix-ide-e2e/tsconfig.e2e.json
       - run:
           name: Check for enabled tests matching tag
           command: |
