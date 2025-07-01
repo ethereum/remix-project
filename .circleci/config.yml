@@ -760,7 +760,6 @@ jobs:
     steps:
       - checkout
       - run: node apps/remix-ide-e2e/src/buildGroupTests.js
-      -
       - run:
           name: Check for enabled tests matching tag
           command: |
