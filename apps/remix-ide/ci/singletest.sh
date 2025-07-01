@@ -2,10 +2,10 @@
 
 set -e
 
-TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${4}" | sort )
+TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "${4}" | sort )
 
 # count test files
-fileCount=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.${4}" | wc -l )
+fileCount=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "${4}" | wc -l )
 # if fileCount is 0
 if [ $fileCount -eq 0 ]
 then

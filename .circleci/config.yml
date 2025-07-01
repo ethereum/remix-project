@@ -758,7 +758,7 @@ jobs:
       - image: cimg/node:24.3.0
     working_directory: ~/remix-project
     parameters:
-      tag:
+      pattern:
         type: string
     steps:
       - checkout
@@ -766,17 +766,17 @@ jobs:
       - run:
           name: Check for enabled tests matching tag
           command: |
-            TAG="<< parameters.tag >>"
-            if [ -z "$TAG" ]; then
+            PATTERN="<< parameters.pattern >>"
+            if [ -z "$PATTERN" ]; then
               echo "❌ Tag parameter is empty!"
               exit 2
             fi
-            echo "🔍 Searching for enabled tests with .$TAG extension..."
-            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "\.${TAG}"; then
-              echo "✅ Found enabled .$TAG tests."
+            echo "🔍 Searching for enabled tests with .$PATTERN extension..."
+            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "${PATTEN}"; then
+              echo "✅ Found enabled .$PATTERN tests."
               exit 0
             else
-              echo "⚠️ No enabled .$TAG tests found. Skipping workflow."
+              echo "⚠️ No enabled .$PATTERN tests found. Skipping workflow."
               exit 1
             fi   
 
@@ -1006,11 +1006,11 @@ workflows:
             - build-remixdesktop-linux
             - test-remixdesktop-linux
 
-  run_pr_tests:
-    when: << pipeline.parameters.run_pr_tests >>
+  run_file_tests:
+    when: << pipeline.parameters.run_file_tests >>
     jobs:
       - check-flaky-or-pr-tests:
-          tag: "pr"
+          pattern: << pipeline.parameters.run_file_tests >>
       - build:
           requires:
             - check-flaky-or-pr-tests
@@ -1024,13 +1024,33 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [1]
-              scriptparameter: ["pr"]
+              scriptparameter: [<< pipeline.parameters.run_file_tests >>]
+
+  run_pr_tests:
+    when: << pipeline.parameters.run_pr_tests >>
+    jobs:
+      - check-flaky-or-pr-tests:
+          pattern: "\\.pr"
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chrome"]
+              script: ["singletest.sh"]
+              job: ["nogroup"]
+              jobsize: ["1"]
+              parallelism: [1]
+              scriptparameter: ["\\.pr"]
 
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - check-flaky-or-pr-tests:
-          tag: "flaky"
+          pattern: "\\.flaky"
       - build:
           requires:
             - check-flaky-or-pr-tests
@@ -1044,7 +1064,7 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
-              scriptparameter: ["flaky"]
+              scriptparameter: ["\\.flaky"]
 
   run_metamask_tests:
     when: << pipeline.parameters.run_metamask_tests >>
