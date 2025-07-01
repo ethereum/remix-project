@@ -30,7 +30,7 @@ export const Undo = () => {
           onClick={async () => await undo()}
           className="undo-button btn btn-secondary btn-block my-3"
         >
-          <div className="fas fa-undo mr-2"></div>
+          <div className="fas fa-undo me-2"></div>
           <FormattedMessage id="search.undoChanges" values={{ path: path.basename(state.undoBuffer[`${state.workspace}/${state.currentFile}`].path) }} />
         </button>
       ) : null}

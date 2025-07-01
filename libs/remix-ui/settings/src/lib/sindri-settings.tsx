@@ -55,16 +55,16 @@ export function SindriSettings(props: SindriSettingsProps) {
           <div className="input-group text-secondary mb-0 h6">
             <input id="sindriaccesstoken" data-id="settingsTabSindriAccessToken" type="password" className="form-control" onChange={(e) => handleChangeTokenState(e)} value={sindriToken} />
             <div className="input-group-append">
-              <CopyToClipboard tip={intl.formatMessage({ id: 'settings.copy' })} content={sindriToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
+              <CopyToClipboard tip={intl.formatMessage({ id: 'settings.copy' })} content={sindriToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ms-1 p-2 mt-1" direction={'top'} />
             </div>
           </div>
         </div>
         <div>
           <div className="text-secondary mb-0 h6">
             <div className="d-flex justify-content-end pt-2">
-              <input className="btn btn-sm btn-primary ml-2" id="savesindritoken" data-id="settingsTabSaveSindriToken" onClick={saveSindriToken} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
+              <input className="btn btn-sm btn-primary ms-2" id="savesindritoken" data-id="settingsTabSaveSindriToken" onClick={saveSindriToken} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
               <CustomTooltip tooltipText={<FormattedMessage id="settings.deleteSindriCredentials" />} tooltipClasses="text-nowrap" tooltipId="removesindritokenTooltip" placement="top-start">
-                <button className="btn btn-sm btn-secondary ml-2" id="removesindritoken" data-id="settingsTabRemoveSindriToken" onClick={removeToken}>
+                <button className="btn btn-sm btn-secondary ms-2" id="removesindritoken" data-id="settingsTabRemoveSindriToken" onClick={removeToken}>
                   <FormattedMessage id="settings.remove" />
                 </button>
               </CustomTooltip>

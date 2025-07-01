@@ -787,7 +787,7 @@ export const EditorUI = (props: EditorUIProps) => {
           message: (
             <div>
               {' '}
-              <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+              <i className="fas fa-exclamation-triangle text-danger me-1"></i>
               <FormattedMessage id="editor.title1.message1" />
               <div>
                 <FormattedMessage id="editor.title1.message2" />
@@ -819,7 +819,7 @@ export const EditorUI = (props: EditorUIProps) => {
                   <input
                     type="checkbox"
                     id="donotshowagain"
-                    className="mr-2"
+                    className="me-2"
                     onChange={(e) => dontShowAgainChecked = e.target.checked}
                   />
                   <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
@@ -1499,7 +1499,7 @@ export const EditorUI = (props: EditorUIProps) => {
         className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
-        <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
+        <span className="ps-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
           <i className="fas fa-lock-alt p-2"></i>
           <FormattedMessage
             id="editor.text"

@@ -47,8 +47,8 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          {ahead? <FontAwesomeIcon className='ml-1' icon={faCloudArrowUp}></FontAwesomeIcon> : null}
-          {behind? <FontAwesomeIcon className='ml-1' icon={faCloudArrowDown}></FontAwesomeIcon> : null}
+          {ahead? <FontAwesomeIcon className='ms-1' icon={faCloudArrowUp}></FontAwesomeIcon> : null}
+          {behind? <FontAwesomeIcon className='ms-1' icon={faCloudArrowDown}></FontAwesomeIcon> : null}
           <label className={`pl-2 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
