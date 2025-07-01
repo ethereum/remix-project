@@ -1,0 +1,71 @@
+name: Stage 2 - Validate NPM Package contents
+run-name: Stage 2 - Validate against ${{ github.ref_name }}
+
+on:
+  push:
+    branches: [latest, beta-*.*.*, beta, alpha-*.*.*, alpha]
+  pull_request:
+    branches: [latest, beta-*.*.*, beta]
+    types: [review_requested, ready_for_review]
+  workflow_dispatch:
+
+jobs:
+  # Validate that node-pty can be installed and ran across all platforms
+  determine_tag:
+    name: Determine Tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+    - name: Tag
+      id: tag
+      run: |
+        if [[ ${{ github.ref_name }} == *"beta"* ]]; then
+          TAG="beta"
+        else
+          TAG="latest"
+        fi
+        echo "Using TAG: $TAG"
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        echo "::notice::Using TAG: $TAG"
+
+  validate_service_starts:
+    name: Validate
+    needs: determine_tag
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x, 20.x, 22.x, 23.x]
+        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04, macos-latest, macos-15, macos-14, macos-13, windows-latest, windows-2025, windows-2022, windows-2019]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - if: runner.os == 'Linux'
+        run: cat /etc/os-release
+        
+      - if: runner.os == 'Windows'
+        run: systeminfo
+
+      - if: runner.os == 'macOS'
+        run: sw_vers
+
+      - run: npm install @homebridge/node-pty-prebuilt-multiarch@${{ needs.determine_tag.outputs.tag }}
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - run: |
+          cd ./node_modules/@homebridge/node-pty-prebuilt-multiarch
+          npm run validate
+
+      - run: |
+          cd ./node_modules/@homebridge/node-pty-prebuilt-multiarch
+          npm run postinstall
+
+      - run: |
+          echo "::notice::Successfully tested ${{ github.ref_name }} on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}"
+     

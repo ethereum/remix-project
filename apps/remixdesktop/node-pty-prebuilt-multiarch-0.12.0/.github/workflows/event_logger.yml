@@ -1,0 +1,25 @@
+name: "Event Logger"
+
+on:
+  release:
+  workflow_run:
+    workflows: ["Stage 2 - Validate", "Stage 1 - Run prebuild's and Create GitHub and NPM release"]
+    types: 
+      - completed
+      - requested
+      - in_progress
+
+jobs:
+  release_logger:
+    # allows for both the workflow_dispatch and push events to trigger this job
+    runs-on: ubuntu-latest
+    steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
+    - name: Variables
+      run: |
+        echo "::notice:: event_name: ${{ github.event_name }}"
+        echo "::notice:: event_action: ${{ github.event.action }}"

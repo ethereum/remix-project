@@ -1,0 +1,110 @@
+name: "Build and Test"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [
+          alpine-x86_64,
+          alpine-arm32v6,
+          alpine-arm64v8,
+          debian-x86_64,
+          debian-i386,
+          debian-arm32v6,
+          debian-arm64v8,
+          darwin-x86_64,
+          windows-x86_64,
+        ]
+        include:
+          - name: alpine-x86_64
+            os: ubuntu-latest
+            BASE_IMAGE: library/node:16-alpine
+            DOCKERFILE: Dockerfile.alpine
+            QEMU_ARCH: x86_64
+
+          - name: alpine-arm32v6
+            os: ubuntu-latest
+            BASE_IMAGE: arm32v6/node:16-alpine
+            DOCKERFILE: Dockerfile.alpine
+            QEMU_ARCH: arm
+
+          - name: alpine-arm64v8
+            os: ubuntu-latest
+            BASE_IMAGE: arm64v8/node:16-alpine
+            DOCKERFILE: Dockerfile.alpine
+            QEMU_ARCH: aarch64
+
+          - name: debian-x86_64
+            os: ubuntu-latest
+            BASE_IMAGE: library/debian:11.7-slim
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: x86_64
+
+          - name: debian-i386
+            os: ubuntu-latest
+            BASE_IMAGE: i386/debian:11.7-slim
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: i386
+
+          - name: debian-arm32v6
+            os: ubuntu-latest
+            BASE_IMAGE: balenalib/raspberry-pi-debian:bullseye
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: arm
+
+          - name: debian-arm64v8
+            os: ubuntu-latest
+            BASE_IMAGE: arm64v8/debian:11.7-slim
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: aarch64
+
+          - name: darwin-x86_64
+            os: macOS-latest
+
+          - name: windows-x86_64
+            os: windows-2019
+
+    steps: 
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts
+
+    - name: Linux - Setup Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+    - name: Linux - Build Docker Image
+      if: runner.os == 'Linux'
+      run: |
+        docker build -f .prebuild/${{ matrix.DOCKERFILE }} --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t multiarch-build .
+
+    - name: Linux - Build and Run Tests
+      if: runner.os == 'Linux'
+      run: |
+        docker run --rm -v $(pwd):/node-pty multiarch-build npm ci 
+        docker run --rm -v $(pwd):/node-pty multiarch-build npm run build
+        docker run --rm -v $(pwd):/node-pty multiarch-build npm run test
+
+    - name: macOS - Prebuild Binaries
+      if: runner.os == 'macOS'
+      run: |
+        npm ci
+        npm run build
+        npm run test
+
+    - name: Windows - Prebuild Binaries
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        npm ci
+        npm run build
+        npm run test

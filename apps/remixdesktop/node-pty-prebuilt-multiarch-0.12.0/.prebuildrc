@@ -1,0 +1,3 @@
+{
+  "include-regex": "(\\.node$|spawn-helper|conpty|conpty_console_list)"
+}

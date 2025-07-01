@@ -1,0 +1,7 @@
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#example-of-a-codeowners-file
+
+* @NorthernMan54
+
+# Only a collaborator can review / approve changes to this list
+
+/.github/CODEOWNERS @homebridge/collaborators
