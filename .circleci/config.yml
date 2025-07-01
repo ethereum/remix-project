@@ -752,14 +752,14 @@ jobs:
 
   check-flaky-or-pr-tests:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node
     working_directory: ~/remix-project
     parameters:
       tag:
         type: string
     steps:
       - checkout
-      - run: node apps/remix-ide-e2e/src/buildGroupTests.js && npx tsc -p apps/remix-ide-e2e/tsconfig.e2e.json
+      - run: node apps/remix-ide-e2e/src/buildGroupTests.js
       - run:
           name: Check for enabled tests matching tag
           command: |
