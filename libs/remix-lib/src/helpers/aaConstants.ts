@@ -6,10 +6,10 @@ export const aaSupportedNetworks = {
     name: "sepolia",
     publicNodeUrl: "https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9"
   },
-  // "10200": {
-  //   name: "gnosisChiado",
-  //   publicNodeUrl: "https://rpc.chiadochain.net/"
-  // }
+  "100": {
+    name: "gnosis",
+    publicNodeUrl: "https://gnosis.drpc.org"
+  }
 }
 
 export const getPimlicoBundlerURL = (chainId) => {
