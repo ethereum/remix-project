@@ -8,7 +8,7 @@ export const aaSupportedNetworks = {
   },
   "100": {
     name: "gnosis",
-    publicNodeUrl: "https://gnosis.drpc.org"
+    publicNodeUrl: "https://rpc.gnosischain.com"
   }
 }
 
