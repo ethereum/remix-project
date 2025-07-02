@@ -189,7 +189,7 @@ export class RemixURLResolver {
 
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/main/src/${url}`
+      const req = `https://raw.githubusercontent.com/Uniswap/v4-core/refs/tags/v4.0.0/src/${url}`
       const response: AxiosResponse = await axios.get(req, { transformResponse: []})
       return { content: response.data, cleanUrl: req }
     } catch (e) {
