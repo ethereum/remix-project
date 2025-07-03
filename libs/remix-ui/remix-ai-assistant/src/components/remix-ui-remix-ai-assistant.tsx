@@ -307,8 +307,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       const choiceSetting = await props.plugin.call('remixAI', 'getAssistantProvider')
       if (choiceSetting !== assistantChoice) {
         dispatchActivity('button', 'setAssistant')
+        setMessages([])
         sendPrompt(`/setAssistant ${assistantChoice}`)
-        setAssistantChoice(assistantChoice || 'openai')
+        setAssistantChoice(assistantChoice || 'mistralai')
       }
     }
     fetchAssistantChoice()

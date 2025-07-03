@@ -2,13 +2,12 @@
 // create a function getModels returning a list of all supported models
 // create a function getModel returning a model by its name
 
-import { IModel, IParams, RemoteBackendOPModel } from './types';
+import { IModel, IParams } from './types';
 import { ModelType } from './constants';
 
 const DefaultModels = (): IModel[] => {
   const model1:IModel = {
     name: 'DeepSeek',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-6.7b-instruct-q4.gguf',
     downloadUrl: 'https://drive.usercontent.google.com/download?id=13sz7lnEhpQ6EslABpAKl2HWZdtX3d9Nh&confirm=xxx',
@@ -17,7 +16,6 @@ const DefaultModels = (): IModel[] => {
   };
   const model2: IModel = {
     name: 'DeepSeek',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-1.3b-base-q4.gguf',
     downloadUrl: 'https://drive.usercontent.google.com/download?id=13UNJuB908kP0pWexrT5n8i2LrhFaWo92&confirm=xxx',
@@ -27,7 +25,6 @@ const DefaultModels = (): IModel[] => {
 
   const model3: IModel = {
     name: 'llama3.1_8B',
-    modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
     modelName: 'llama3_1_8B-q4_0.gguf',
     downloadUrl: 'https://drive.usercontent.google.com/download?id=1I376pl8uORDnUIjfNuqhExK4NCiH3F12&confirm=xxx',
@@ -37,7 +34,6 @@ const DefaultModels = (): IModel[] => {
 
   const model4: IModel = {
     name: 'llama3.1_8B_instruct',
-    modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
     modelName: 'llama3_1_8B-q4_0_instruct.gguf',
     downloadUrl: 'https://drive.usercontent.google.com/download?id=1P-MEH7cPxaR20v7W1qbOEPBzgiY2RDLx&confirm=xxx',

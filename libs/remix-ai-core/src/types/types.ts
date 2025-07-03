@@ -23,8 +23,7 @@ export interface IModel {
   modelType: ModelType;
   modelReqs: IModelRequirements;
   downloadPath?: string;
-  modelOP?: RemoteBackendOPModel;
-
+  provider?: string;
 }
 export interface IRemoteModel {
   completionUrl: string;
@@ -36,22 +35,6 @@ export interface IModelResponse {
   error: string;
   success: boolean;
   model: IModel;
-}
-
-export interface IStreamResponse {
-  generatedText: string;
-  isGenerating: boolean;
-}
-
-export interface IModelRequest {
-  input: string;
-  model: IModel;
-}
-
-export interface InferenceModel {
-  model: IModel;
-  location: string;
-  isRemote: boolean;
 }
 
 export interface ICompletions{
@@ -102,12 +85,6 @@ export enum AIRequestType {
 }
 
 export type ChatEntry = [string, string];
-
-export enum RemoteBackendOPModel{
-  DEEPSEEK,
-  CODELLAMA,
-  MISTRAL
-}
 
 interface GeneratedTextObject {
   generatedText: string;

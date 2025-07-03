@@ -1,4 +1,4 @@
-import { ICompletions, IGeneration, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
+import { ICompletions, IGeneration, IParams, AIRequestType, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
 import { buildChatPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
@@ -11,7 +11,6 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   api_url: string
   completion_url: string
   max_history = 7
-  model_op = RemoteBackendOPModel.CODELLAMA // default model operation change this to llama if necessary
   event: EventEmitter
   test_env=false
   test_url="http://solcodertest.org"
