@@ -42,8 +42,8 @@ export class workspaceAgent {
       let modifiedFilesMarkdown = 'Modified Files\n'
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
-        await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content);
-        // await this.plugin.call('codeFormatter', 'format', fileName);
+        // const fileContent = await this.plugin.call('codeFormatter', 'format', file.fileName, file.content, true);
+        await this.plugin.call('editor', 'showCustomDiff', file.fileName, file.content)
         modifiedFilesMarkdown += `- ${file.fileName}\n`
       }
       return modifiedFilesMarkdown

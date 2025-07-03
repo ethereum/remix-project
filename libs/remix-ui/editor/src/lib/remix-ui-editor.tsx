@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
+import { diffLines } from 'diff'
 import { isArray } from 'lodash'
 import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 import { AppModal } from '@remix-ui/app'
@@ -13,6 +14,7 @@ import { tomlLanguageConfig, tomlTokenProvider } from './syntaxes/toml'
 import { monacoTypes } from '@remix-ui/editor'
 import { loadTypes } from './web-types'
 import { extractFunctionComments, retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { showCustomDiff, extractLineNumberRangesWithText } from './helpers/showCustomDiff'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
@@ -132,6 +134,7 @@ export type EditorAPIType = {
   addErrorMarker: (errors: errorMarker[], from: string) => void
   clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
   getPositionAt: (offset: number) => monacoTypes.IPosition
+  showCustomDiff: (file: string, content: string) => Promise<void>
 }
 
 /* eslint-disable-next-line */
@@ -380,8 +383,8 @@ export const EditorUI = (props: EditorUIProps) => {
             setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
           })
           // set the current diff file, this is needed to avoid removeAllWidgets called more than once, because the currentFileChanged event is broken and fired more than once.
-          setCurrentDiffFile(props.currentFile + '-ai')
         }
+        setCurrentDiffFile(props.currentFile + '-ai')
         // remove widgets from the previous file, this is needed to avoid widgets from the previous file to be shown when the new file is loaded.
         if (disposedWidgets[currentFileRef.current]) {
           Object.keys(disposedWidgets[currentFileRef.current]).forEach((widgetId) => {
@@ -676,11 +679,26 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  props.editorAPI.showCustomDiff = async (file: string, content: string) => {
+    const currentContent = await props.plugin.call('fileManager', 'readFile', file)
+    const diff = diffLines(currentContent, content)
+    console.log('diff', diff, currentContent, content)
+    console.log(diff)
+    const changes = extractLineNumberRangesWithText(diff)
+    console.log(changes)
+    showCustomDiff(changes, file, editorRef.current, monacoRef.current, addDecoratorCollection, addAcceptDeclineWidget, setDecoratorListCollection, acceptHandler, rejectHandler, setCurrentDiffFile)    
+  }
+
   props.plugin.on('fileManager', 'currentFileChanged', (file: string) => {
     if (file + '-ai' !== currentDiffFile) {
       removeAllWidgets()
     }
   })
+
+  
+
+  props.plugin.on('remixAI', 'writeGenerationResults', async (file: string, content: string) => {
+   })
 
   function removeAllWidgets() {
     const widgetIds = Object.keys(decoratorListCollection)
@@ -1258,19 +1276,32 @@ export const EditorUI = (props: EditorUIProps) => {
     return widget
   }
 
-  function acceptHandler(decoratorList, widgetId) {
+  function acceptHandler(decoratorList, widgetId, lineChangeType?: 'modified' | 'added' | 'removed' | null | undefined) {
     const ranges = decoratorList.getRanges()
-
-    if (ranges[1]) {
-      ranges[1].endLineNumber = ranges[1].endLineNumber + 1
-      ranges[1].endColumn = 0
-      editorRef.current.executeEdits('removeOriginal', [
-        {
-          range: ranges[1],
-          text: null,
-        },
-      ])
+    if (lineChangeType === 'modified' || lineChangeType === 'added' || !lineChangeType) {
+      if (ranges[1]) {
+        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+        ranges[1].endColumn = 0
+        editorRef.current.executeEdits('removeOriginal', [
+          {
+            range: ranges[1],
+            text: null,
+          },
+        ])
+      }
+    } else {
+      if (ranges[0]) {
+        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+        ranges[0].endColumn = 0
+        editorRef.current.executeEdits('removeModified', [
+          {
+            range: ranges[0],
+            text: null,
+          },
+        ])
+      }
     }
+    
     decoratorList.clear()
     setDecoratorListCollection(decoratorListCollection => {
       const { [widgetId]: _, ...rest } = decoratorListCollection
@@ -1278,19 +1309,32 @@ export const EditorUI = (props: EditorUIProps) => {
     })
   }
 
-  function rejectHandler(decoratorList, widgetId) {
+  function rejectHandler(decoratorList, widgetId, lineChangeType?: 'modified' | 'added' | 'removed') {
     const ranges = decoratorList.getRanges()
-
-    if (ranges[0]) {
-      ranges[0].endLineNumber = ranges[0].endLineNumber + 1
-      ranges[0].endColumn = 0
-      editorRef.current.executeEdits('removeModified', [
-        {
-          range: ranges[0],
-          text: null,
-        },
-      ])
+    if (lineChangeType === 'modified' || lineChangeType === 'added' || !lineChangeType) {
+      if (ranges[0]) {
+        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+        ranges[0].endColumn = 0
+        editorRef.current.executeEdits('removeModified', [
+          {
+            range: ranges[0],
+            text: null,
+          },
+        ])
+      }
+    } else {
+      if (ranges[1]) {
+        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+        ranges[1].endColumn = 0
+        editorRef.current.executeEdits('removeOriginal', [
+          {
+            range: ranges[1],
+            text: null,
+          },
+        ])
+      }
     }
+    
     decoratorList.clear()
     setDecoratorListCollection(decoratorListCollection => {
       const { [widgetId]: _, ...rest } = decoratorListCollection
@@ -1332,26 +1376,37 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }])
     } else {
-      decoratorList = editorRef.current.createDecorationsCollection([{
-        range: ranges[0],
-        options: {
-          isWholeLine: true,
-          className: 'newChangesDecoration',
-          marginClassName: 'newChangesDecoration',
-        }
-      }, {
-        range: ranges[1],
-        options: {
-          isWholeLine: true,
-          className: 'modifiedChangesDecoration',
-          marginClassName: 'modifiedChangesDecoration',
-        }
-      }])
+      if (ranges[0] !== null) {
+        decoratorList = editorRef.current.createDecorationsCollection([{
+          range: ranges[0],
+          options: {
+            isWholeLine: true,
+            className: 'newChangesDecoration',
+            marginClassName: 'newChangesDecoration',
+          }
+        }, {
+          range: ranges[1],
+          options: {
+            isWholeLine: true,
+            className: 'modifiedChangesDecoration',
+            marginClassName: 'modifiedChangesDecoration',
+          }
+        }])
+      } else {
+        decoratorList = editorRef.current.createDecorationsCollection([{
+          range: ranges[1],
+          options: {
+            isWholeLine: true,
+            className: 'modifiedChangesDecoration',
+            marginClassName: 'modifiedChangesDecoration',
+          }
+        }])
+      }      
     }
 
     decoratorList.onDidChange(() => {
       const newRanges = decoratorList.getRanges()
-
+      if (ranges[0] === null) return
       if (newRanges.length === 0) return
       if (newRanges[0].startLineNumber !== ranges[0].startLineNumber && document.getElementById(widgetId)) {
         editorRef.current.removeContentWidget({
