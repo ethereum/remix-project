@@ -267,13 +267,11 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - node/install:
             install-yarn: true
-            node-version: '22.12'
+            node-version: '20.16'
         - run: 
             command: |
                 node -v
-                npm install -g node-gyp@10.2.0
-                python -m pip install --upgrade pip
-                pip install setuptools
+
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
@@ -322,12 +320,10 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
-                nvm install 22.12
-                nvm use 22.12
+                nvm install 20.16
+                nvm use 20.16
                 node -v
-                npm install --global yarn node-gyp
-                python -m pip install --upgrade pip
-                pip install setuptools
+
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
@@ -363,16 +359,20 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install Spectre mitigated libraries
+          shell: powershell.exe
+          command: |
+            & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.VC.SpectreMitigation --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --quiet --norestart --wait
       - run: unzip ./persist/desktopbuild.zip
 
       - run: 
           command: |
-            nvm install 22.12
-            nvm use 22.12
+            nvm install 20.16
+            nvm use 20.16
             node -v
             npx -v
             npm install --global yarn
-            npm install --global node-gyp
             yarn -v 
 
       - run: 
@@ -419,16 +419,21 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install Spectre mitigated libraries
+          shell: powershell.exe
+          command: |
+            & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.VC.SpectreMitigation --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --quiet --norestart --wait
       - run: unzip ./persist/desktopbuild.zip
 
       - run: 
           command: |
-            nvm install 22.12
-            nvm use 22.12
+            nvm install 20.16
+            nvm use 20.16
             node -v
             npx -v
             npm install --global yarn
-            npm install --global node-gyp
+
             yarn -v 
      
       - run: 
@@ -436,7 +441,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
-              nvm use 22.12
+              nvm use 20.16
               node -v
               python -m pip install --upgrade pip
               pip install setuptools
@@ -533,7 +538,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        m2pro.medium
+        m4pro.medium
     working_directory: ~/remix-project
     parameters:
       arch:
@@ -559,14 +564,14 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 22.12
-            nvm use 22.12
+            nvm install 20.16
+            nvm use 20.16
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 22.12
+            nvm use 20.16
             cd apps/remixdesktop 
             yarn || yarn
             find ./node_modules
@@ -578,14 +583,14 @@ jobs:
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
-            nvm use 22.12
+            nvm use 20.16
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 22.12
+            nvm use 20.16
             cd apps/remixdesktop
             yarn installRipGrepMacOX<< parameters.arch >>
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false ./rundist.bash --<< parameters.arch >>
@@ -618,7 +623,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        m2pro.medium
+        m4pro.medium
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -629,16 +634,16 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 22.12
-            nvm use 22.12
+            nvm install 20.16
+            nvm use 20.16
             /usr/sbin/softwareupdate --install-rosetta --agree-to-license
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 22.12
-            cd apps/remixdesktop 
+            nvm use 20.16
+            cd apps/remixdesktop
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
       - save_cache:
@@ -647,14 +652,14 @@ jobs:
             - apps/remixdesktop/node_modules
       - run: 
           command: |
-            nvm use 22.12
+            nvm use 20.16
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
       - run: 
           command: |
-            nvm use 22.12
+            nvm use 20.16
             cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64   
@@ -662,13 +667,13 @@ jobs:
       - run:
           name: "Run tests"
           command: |
-            nvm use 22.12
+            nvm use 20.16
             cd apps/remixdesktop
             ./run_ci_test.sh  
       - run:
           name: "Run isogit tests"
           command: |
-            nvm use 22.12
+            nvm use 20.16
             cd apps/remixdesktop
             ./run_git_ui_isogit_tests.sh
       - store_test_results:

@@ -2,6 +2,7 @@
     "productName": "Remix-Desktop",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
+    "npmRebuild": false,
     "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [

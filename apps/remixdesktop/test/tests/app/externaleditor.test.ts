@@ -2,6 +2,7 @@ import {NightwatchBrowser} from 'nightwatch'
 
 const testsBash = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hideToolTips()
     done()
   },
   open: function (browser: NightwatchBrowser) {
