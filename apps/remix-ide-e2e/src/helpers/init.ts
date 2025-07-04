@@ -8,7 +8,6 @@ type LoadPlugin = {
   url: string
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser

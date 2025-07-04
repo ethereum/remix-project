@@ -8,6 +8,7 @@ import { ModalTypes } from '@remix-ui/app'
 import { PromptArea } from './prompt'
 import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
+import { AiContextType } from '../types/componentTypes'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -40,7 +41,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
     null
   )
-  const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
+  const [contextChoice, setContextChoice] = useState<AiContextType>(
     'none'
   )
   const historyRef = useRef<HTMLDivElement | null>(null)

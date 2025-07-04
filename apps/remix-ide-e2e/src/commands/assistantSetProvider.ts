@@ -30,7 +30,7 @@ function setAssistant(browser: NightwatchBrowser, provider: string, done: VoidFu
       selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']",
     })
     //.pause()
-    .perform(() => done())  
+    .perform(() => done())
 }
 
 module.exports = SetAssistantProvider
