@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { gitActionsContext, pluginActionsContext } from '../../state/context'
 import { gitPluginContext } from '../gitui'
 import { sourceControlGroup } from '../../types'
-import { SourceControGroup } from './sourcecontrol/sourcecontrolgroup'
+import { SourceControlGroup } from './sourcecontrol/sourcecontrolgroup'
 
 export const SourceControl = () => {
   const context = React.useContext(gitPluginContext)
@@ -25,7 +25,7 @@ export const SourceControl = () => {
       {
         groups.map((ob: sourceControlGroup, index: number) => {
           return (
-            <SourceControGroup key={index} group={ob}></SourceControGroup>
+            <SourceControlGroup key={index} group={ob}></SourceControlGroup>
           )
         })
       }
