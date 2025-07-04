@@ -146,17 +146,17 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 Recent Workspaces
               </label>
               {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[0])}>
+                <a className="cursor-pointer mb-1 ms-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[0])}>
                   {state.recentWorkspaces[0]}
                 </a>
               )}
               {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[1])}>
+                <a className="cursor-pointer mb-1 ms-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[1])}>
                   {state.recentWorkspaces[1]}
                 </a>
               )}
               {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
-                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[2])}>
+                <a className="cursor-pointer ms-2" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, state.recentWorkspaces[2])}>
                   {state.recentWorkspaces[2]}
                 </a>
               )}
@@ -169,19 +169,19 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
           </label>
           <div className="d-flex flex-row flex-wrap">
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <button className="btn text-nowrap p-2 mr-2 border my-1 mb-2" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
+              <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'newFile'])
                 await plugin.call('menuicons', 'select', 'filePanel')
                 await plugin.call('filePanel', 'createNewFile')
               }}>
-                <i className="far fa-file pl-1 pr-2"></i>
+                <i className="far fa-file ps-1 pe-2"></i>
                 <FormattedMessage id="home.newFile" />
               </button>
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
               <span>
-                <label className="btn text-nowrap p-2 mr-2 border my-1 mb-2" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
-                  <i className="far fa-upload pl-1 pr-2"></i>
+                <label className="btn text-nowrap p-2 me-2 border my-1 mb-2" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
+                  <i className="far fa-upload ps-1 pe-2"></i>
                   <FormattedMessage id="home.openFile" />
                 </label>
                 <input
@@ -199,24 +199,24 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
             >
-              <button className="btn text-nowrap p-2 mr-2 border my-1 mb-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-                <i className="fab fa-github pl-1 pr-2"></i>
+              <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+                <i className="fab fa-github ps-1 pe-2"></i>
                 Gist
               </button>
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
             >
-              <button className="btn text-nowrap p-2 mr-2 border my-1 mb-2" data-id="landingPageImportFromGitHubButton" onClick={async () => {
+              <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="landingPageImportFromGitHubButton" onClick={async () => {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
                 await plugin.call('filePanel', 'clone')
               }}>
-                <i className="fa-brands fa-github-alt pl-1 pr-2"></i>
+                <i className="fa-brands fa-github-alt ps-1 pe-2"></i>
                 Clone
               </button>
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
               <button className="btn text-nowrap p-2 border my-1 mb-2" onClick={() => connectToLocalhost()}>
-                <i className="fa-regular fa-desktop pr-2"></i>
+                <i className="fa-regular fa-desktop pe-2"></i>
                 <FormattedMessage id="home.accessFileSystem" />
               </button>
             </CustomTooltip>

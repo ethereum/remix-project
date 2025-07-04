@@ -137,7 +137,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 me-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -225,7 +225,7 @@ export const TabsUI = (props: TabsUIProps) => {
           >
             <button
               data-id="play-editor"
-              className="btn text-success pr-0 py-0 d-flex"
+              className="btn text-success pe-0 py-0 d-flex"
               disabled={!(PlayExtList.includes(tabsState.currentExt))}
               onClick={async () => {
                 const path = active().substr(active().indexOf('/') + 1, active().length)
@@ -257,7 +257,7 @@ export const TabsUI = (props: TabsUIProps) => {
               </span>
             }><button
               data-id="script-config"
-              className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
+              className="btn text-dark border-start ms-2 pe-0 py-0 d-flex"
               onClick={async () => {
                 await props.plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
                 await props.plugin.call('tabs', 'focus', 'UIScriptRunner')
@@ -265,7 +265,7 @@ export const TabsUI = (props: TabsUIProps) => {
             >
               <i className="fa-kit fa-solid-gear-circle-play"></i>
             </button></CustomTooltip>
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+          <div className="d-flex border-start ms-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-explanation"
@@ -282,7 +282,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <button
                 data-id="explain-editor"
                 id='explain_btn'
-                className='btn text-ai pl-2 pr-0 py-0'
+                className='btn text-ai ps-2 pe-0 py-0'
                 disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
@@ -324,7 +324,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <button
                 data-id="remix_ai_switch"
                 id='remix_ai_switch'
-                className="btn ai-switch text-ai pl-2 pr-0 py-0"
+                className="btn ai-switch text-ai ps-2 pe-0 py-0"
                 disabled={!(tabsState.currentExt === 'sol')}
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
@@ -337,12 +337,12 @@ export const TabsUI = (props: TabsUIProps) => {
             </CustomTooltip>
           </div>
 
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+          <div className="d-flex border-start ms-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
-              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
+              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
             </CustomTooltip>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
-              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
+              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
             </CustomTooltip>
           </div>
         </div>

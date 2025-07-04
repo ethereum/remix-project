@@ -7,16 +7,16 @@ import { extractNameFromKey } from './remix-ui-helper'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div>
-    <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+    <i className="fas fa-exclamation-triangle text-danger me-1"></i>
     <span>
-      {from} <span className="font-weight-bold text-warning">is modifying</span> {path}
+      {from} <span className="fw-bold text-warning">is modifying</span> {path}
     </span>
   </div>
 )
 
 export const compilerConfigChangedToastMsg = (from: string, value: string) => (
   <div>
-    <b>{from}</b> is updating the <b>Solidity compiler configuration</b>.<pre className="text-left">{value}</pre>
+    <b>{from}</b> is updating the <b>Solidity compiler configuration</b>.<pre className="text-start">{value}</pre>
   </div>
 )
 
@@ -29,7 +29,7 @@ export const compileToastMsg = (from: string, fileName: string) => (
 export const compilingToastMsg = (settings: string) => (
   <div>
     <b>Recompiling and debugging with params</b>
-    <pre className="text-left">{settings}</pre>
+    <pre className="text-start">{settings}</pre>
   </div>
 )
 
@@ -59,18 +59,18 @@ export const sourceVerificationNotAvailableToastMsg = () => (
 
 export const envChangeNotification = (env: {context: string; fork: string}, from: string) => (
   <div>
-    <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+    <i className="fas fa-exclamation-triangle text-danger me-1"></i>
     <span>
       {from + ' '}
-      <span className="font-weight-bold text-warning">set your environment to</span> {env && env.context}
+      <span className="fw-bold text-warning">set your environment to</span> {env && env.context}
     </span>
   </div>
 )
 
 export const storageFullMessage = () => (
   <div>
-    <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
-    <span className="font-weight-bold">
+    <i className="fas fa-exclamation-triangle text-danger me-1"></i>
+    <span className="fw-bold">
       <span>Cannot save this file due to full LocalStorage. Backup existing files and free up some space.</span>
     </span>
   </div>
@@ -97,7 +97,7 @@ export const cancelUpgradeMsg = () => (
 export const deployWithProxyMsg = () => (
   <div>
     <b>Deploy with Proxy</b> will initiate two (2) transactions:
-    <ol className="pl-3">
+    <ol className="ps-3">
       <li key="impl-contract">Deploying the implementation contract</li>
       <li key="proxy-contract">Deploying an ERC1967 proxy contract</li>
     </ol>
@@ -107,7 +107,7 @@ export const deployWithProxyMsg = () => (
 export const upgradeWithProxyMsg = () => (
   <div>
     <b>Upgrade with Proxy</b> will initiate two (2) transactions:
-    <ol className="pl-3">
+    <ol className="ps-3">
       <li key="new-impl-contract">Deploying the new implementation contract</li>
       <li key="update-proxy-contract">Updating the proxy contract with the address of the new implementation contract</li>
     </ol>
@@ -125,17 +125,17 @@ export const unavailableProxyLayoutMsg = () => (
 
 export const upgradeReportMsg = (report: LayoutCompatibilityReport) => (
   <div>
-    <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex">
-      <span className="align-self-center pl-4 mt-1">
-        <i className="pr-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }}></i>
+    <div className="py-2 ms-2 mb-1 align-self-end mb-2 d-flex">
+      <span className="align-self-center ps-4 mt-1">
+        <i className="pe-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }}></i>
       </span>
       <div className="d-flex flex-column">
-        <span className="pl-4 mt-1">The storage layout of new implementation is NOT</span>
-        <span className="pl-4 mt-1">compatible with the previous implementation.</span>
-        <span className="pl-4 mt-1">Your contract's storage may be partially or fully erased!</span>
+        <span className="ps-4 mt-1">The storage layout of new implementation is NOT</span>
+        <span className="ps-4 mt-1">compatible with the previous implementation.</span>
+        <span className="ps-4 mt-1">Your contract's storage may be partially or fully erased!</span>
       </div>
     </div>
-    <div className="pl-4 text-danger">{report.explain()}</div>
+    <div className="ps-4 text-danger">{report.explain()}</div>
   </div>
 )
 
@@ -150,29 +150,29 @@ export function RenderIfNot({ condition, children }: { condition: boolean, child
 export const CompileOptions = ({ autoCompile, hideWarnings, setCircuitAutoCompile, setCircuitHideWarnings }: CompileOptionsProps) => (
 
   <div>
-    <div className="mt-2 custom-control custom-checkbox">
+    <div className="mt-2 form-check">
       <input
-        className="custom-control-input"
+        className="form-check-input"
         type="checkbox"
         onChange={(e) => setCircuitAutoCompile(e.target.checked)}
         title="Auto compile"
         checked={autoCompile}
         id="autoCompileCircuit"
       />
-      <label className="form-check-label custom-control-label" htmlFor="autoCompileCircuit" data-id="auto_compile_circuit_checkbox_input">
+      <label className="form-check-label form-check-label" htmlFor="autoCompileCircuit" data-id="auto_compile_circuit_checkbox_input">
         <FormattedMessage id="circuit.autoCompile" />
       </label>
     </div>
-    <div className="mt-1 mb-2 circuit_warnings_box custom-control custom-checkbox">
+    <div className="mt-1 mb-2 circuit_warnings_box form-check">
       <input
-        className="custom-control-input"
+        className="form-check-input"
         onChange={(e) => setCircuitHideWarnings(e.target.checked)}
         id="hideCircuitWarnings"
         type="checkbox"
         title="Hide warnings"
         checked={hideWarnings}
       />
-      <label className="form-check-label custom-control-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
+      <label className="form-check-label form-check-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
         <FormattedMessage id="solidity.hideWarnings" />
       </label>
     </div>
@@ -184,7 +184,7 @@ export const CompileBtn = ({ plugin, appState, id, compileAction }: { plugin: an
     placement="auto"
     tooltipId="overlay-tooltip-compile"
     tooltipText={
-      <div className="text-left">
+      <div className="text-start">
         <div>
           <b>Ctrl+S</b> to compile {appState.filePath}
         </div>
@@ -199,13 +199,13 @@ export const CompileBtn = ({ plugin, appState, id, compileAction }: { plugin: an
     >
       <div className="d-flex align-items-center justify-content-center">
         <RenderIf condition={appState.status === 'compiling'}>
-          <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+          <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
         </RenderIf>
         <div className="text-truncate overflow-hidden text-nowrap">
           <span>
             <FormattedMessage id="circuit.compile" />
           </span>
-          <span className="ml-1 text-nowrap">
+          <span className="ms-1 text-nowrap">
             <RenderIf condition={appState.filePath === ""}>
               <FormattedMessage id="circuit.noFileSelected" />
             </RenderIf>

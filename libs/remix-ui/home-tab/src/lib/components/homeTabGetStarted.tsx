@@ -151,7 +151,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
   }
 
   return (
-    <div className="pl-2" id="hTGetStartedSection">
+    <div className="ps-2" id="hTGetStartedSection">
       <label className="pt-3" style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.projectTemplates" />
       </label>

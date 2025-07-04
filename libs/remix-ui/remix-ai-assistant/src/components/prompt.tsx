@@ -49,10 +49,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         <div
           className=" w-100 bg-dark p-2 border border-text border-bottom-0 rounded"
         >
-          <div className="text-uppercase ml-2 mb-2">Add Context Files</div>
-          <div className="d-flex ml-2 custom-control custom-radio">
+          <div className="text-uppercase ms-2 mb-2">Add Context Files</div>
+          <div className="d-flex ms-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="radio"
               id="ctx-none"
               checked={contextChoice === 'none'}
@@ -61,13 +61,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" data-id="none-context-option" htmlFor="ctx-none">
+            <label className="form-check-label form-check-label" data-id="none-context-option" htmlFor="ctx-none">
               None
             </label>
           </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
+          <div className="d-flex ms-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="radio"
               id="ctx-current"
               checked={contextChoice === 'current'}
@@ -76,13 +76,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" data-id="currentFile-context-option" htmlFor="ctx-current">
+            <label className="form-check-label form-check-label" data-id="currentFile-context-option" htmlFor="ctx-current">
               Current file
             </label>
           </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
+          <div className="d-flex ms-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="radio"
               id="ctx-opened"
               checked={contextChoice === 'opened'}
@@ -91,13 +91,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
+            <label className="form-check-label form-check-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
               All opened files
             </label>
           </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
+          <div className="d-flex ms-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="radio"
               id="ctx-workspace"
               checked={contextChoice === 'workspace'}
@@ -106,7 +106,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 setShowContextOptions(false)
               }}
             />
-            <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
+            <label className="form-check-label form-check-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
               Workspace
             </label>
           </div>
@@ -157,10 +157,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="p-3 mb-2 z-3 bg-dark border border-text position-absolute"
               style={{ top: '79dvh', left: '85dvw', right: '0px', bottom: '15px', height: '125px', width: '220px', borderRadius: '15px' }}
             >
-              <div className="text-uppercase ml-2 mb-2">Choose Assistant Model</div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
+              <div className="text-uppercase ms-2 mb-2">Choose Assistant Model</div>
+              <div className="d-flex ms-2 form-check" key={'openai'}>
                 <input
-                  className="custom-control-input"
+                  className="form-check-input"
                   type="radio"
                   id={`assistant-openai`}
                   checked={assistantChoice === 'openai'}
@@ -169,13 +169,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     setShowAssistantOptions(false)
                   }}
                 />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-openai`}>
+                <label className="form-check-label form-check-label" htmlFor={`assistant-openai`}>
                     OpenAI
                 </label>
               </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'mistralai'}>
+              <div className="d-flex ms-2 form-check" key={'mistralai'}>
                 <input
-                  className="custom-control-input"
+                  className="form-check-input"
                   type="radio"
                   id={`assistant-mistralai`}
                   checked={assistantChoice === 'mistralai'}
@@ -184,13 +184,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     setShowAssistantOptions(false)
                   }}
                 />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-mistralai`}>
+                <label className="form-check-label form-check-label" htmlFor={`assistant-mistralai`}>
                     MistralAI
                 </label>
               </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'anthropic'}>
+              <div className="d-flex ms-2 form-check" key={'anthropic'}>
                 <input
-                  className="custom-control-input"
+                  className="form-check-input"
                   type="radio"
                   id={`assistant-anthropic`}
                   checked={assistantChoice === 'anthropic'}
@@ -199,7 +199,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     setShowAssistantOptions(false)
                   }}
                 />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
+                <label className="form-check-label form-check-label" htmlFor={`assistant-anthropic`}>
                     Anthropic
                 </label>
               </div>
@@ -219,18 +219,18 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               return (
                 <span
                   key={f}
-                  className="badge badge-info mr-1 aiContext-file text-success"
+                  className="badge text-bg-info me-1 aiContext-file text-success"
                   style={{ cursor: 'pointer' }}
                   onClick={clearContext}
                 >
                   {name}
-                  <i className="fa fa-times ms-1 ml-1" style={{ cursor: 'pointer' }}></i>
+                  <i className="fa fa-times ms-1 ms-1" style={{ cursor: 'pointer' }}></i>
                 </span>
               )
             })}
             {contextFiles.length > 6 && (
               <span
-                className="badge badge-info"
+                className="badge text-bg-info"
                 style={{ cursor: 'pointer' }}
                 onClick={clearContext}
               >

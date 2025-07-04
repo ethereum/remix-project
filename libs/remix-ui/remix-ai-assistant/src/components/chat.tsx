@@ -43,10 +43,10 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
             <button
               key={s}
               data-id={`remix-ai-assistant-starter-${index}`}
-              className="btn btn-secondary mb-2 w-100 text-left"
+              className="btn btn-secondary mb-2 w-100 text-start"
               onClick={() => sendPrompt(s)}
             >
-              <i className="fa-kit fa-remixai mr-2"></i>{s}
+              <i className="fa-kit fa-remixai me-2"></i>{s}
             </button>
           ))}
         </div>
@@ -62,12 +62,12 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                 <img
                   src={assistantAvatar}
                   alt="AI"
-                  className="assistant-avatar me-2 flex-shrink-0 mr-1"
+                  className="assistant-avatar me-2 flex-shrink-0 me-1"
                 />
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 me-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">

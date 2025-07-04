@@ -83,19 +83,19 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
         props.handleExpand(!expand)
       else return
     }}>
-      { anyEnabled && <div className='mr-2 mt-3 pb-1 d-flex flex-column'>
+      { anyEnabled && <div className='me-2 mt-3 pb-1 d-flex flex-column'>
         <div className='d-flex flex-grid'>
           <div className={ `${pinned ? "" : "border-dark "}` + "d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell w-100 space-between justify-content-between flex-column">
               { !props.hideTitle && <div className='d-flex flex-row pb-1 my-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
                 { props.logo ? props.logoURL !== '' ?
                   <a href={props.logoURL} target="__blank">
-                    <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/>
+                    <img className='remixui_grid_view_logo me-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/>
                   </a> :
-                  <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> :
+                  <img className='remixui_grid_view_logo me-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> :
                   <></>
                 }
-                { props.logos && props.logos.map((logo, index) => <img key={index} className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
+                { props.logos && props.logos.map((logo, index) => <img key={index} className='remixui_grid_view_logo me-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title &&
                   <CustomTooltip
                     placement="top"
@@ -103,7 +103,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                     tooltipText={ props.titleTooltip ? props.titleTooltip : props.title }
                   >
                     <label
-                      className='m-0 p-0 text-uppercase align-items-left font-weight-bold text-truncate overflow-hidden whitespace-nowrap'
+                      className='m-0 p-0 text-uppercase align-items-left fw-bold text-truncate overflow-hidden whitespace-nowrap'
                     >{ props.title }
                     </label>
                   </CustomTooltip>

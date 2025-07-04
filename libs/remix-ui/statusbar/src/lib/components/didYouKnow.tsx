@@ -26,8 +26,8 @@ export default function DidYouKnow () {
   return (
     <CustomTooltip tooltipText={tip}>
       <div className="remixui_statusbar_didyouknow text-white small d-flex align-items-center">
-        <span className="pr-2 text-success fa-solid fa-lightbulb"></span>
-        <div className="mr-2" style={{ fontWeight: "bold" }}>Did you know?</div>
+        <span className="pe-2 text-success fa-solid fa-lightbulb"></span>
+        <div className="me-2" style={{ fontWeight: "bold" }}>Did you know?</div>
         { tip && tip.length > 0 ? <div>{tip}</div> : null }
       </div>
     </CustomTooltip>

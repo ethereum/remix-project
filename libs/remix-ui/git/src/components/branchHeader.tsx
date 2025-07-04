@@ -72,7 +72,7 @@ export const BranchHeader = () => {
             }
             {context.currentBranch && context.currentBranch.name ?
               <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
-                <i className="fa fa-code-branch mr-1"></i>{context.currentBranch && context.currentBranch.name}{changed?'*':''}
+                <i className="fa fa-code-branch me-1"></i>{context.currentBranch && context.currentBranch.name}{changed?'*':''}
               </span> : null}
             {(latestCommit && latestCommit.commit && latestCommit.commit.message) ?
               <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
@@ -83,7 +83,7 @@ export const BranchHeader = () => {
             {isDetached ?
               <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
                 {isDetached ?
-                  <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1"></i></> : null}
+                  <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle me-1"></i></> : null}
               </span>
               : null}
             {context.storage.enabled ?

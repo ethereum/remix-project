@@ -205,9 +205,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isSaveEvmStateChecked = props.config.get('settings/save-evm-state') || false
     return (
       <div className="$border-top">
-        <div className="d-flex justify-content-end pr-4">
+        <div className="d-flex justify-content-end pe-4">
           <button
-            className="btn btn-sm btn-secondary ml-2"
+            className="btn btn-sm btn-secondary ms-2"
             onClick={() => {
               try {
                 if ((window as any).remixFileSystem.name === 'indexedDB') {
@@ -233,13 +233,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <h6 className="card-title">
             <FormattedMessage id="settings.general" />
           </h6>
-          <div className="mt-2 custom-control custom-checkbox mb-1">
+          <div className="mt-2 form-check mb-1">
             <input
               onChange={onchangeGenerateContractMetadata}
               id="generatecontractmetadata"
               data-id="settingsTabGenerateContractMetadata"
               type="checkbox"
-              className="custom-control-input"
+              className="form-check-input"
               name="contractMetadata"
               checked={isMetadataChecked}
             />
@@ -254,18 +254,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 tooltipId="settings-tooltip-metadata"
                 tooltipText={intl.formatMessage({ id: 'settings.generateContractMetadataTooltip' })}
               >
-                <i className="ml-1 far fa-info-circle"></i>
+                <i className="ms-1 far fa-info-circle"></i>
               </CustomTooltip>
             </label>
           </div>
-          <div className="mt-2 custom-control custom-checkbox mb-1">
-            <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
+          <div className="mt-2 form-check mb-1">
+            <input id="editorWrap" className="form-check-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
               <FormattedMessage id="settings.wordWrapText" />
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="form-check-input" checked={isAutoCompleteChecked} />
             <label
               className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`}
               data-id="settingsAutoCompleteLabel"
@@ -276,8 +276,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               </span>
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="form-check-input" checked={isShowGasInEditorChecked} />
             <label
               className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`}
               data-id="settingsShowGasLabel"
@@ -288,8 +288,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               </span>
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="form-check-input" checked={displayErrorsChecked} />
             <label
               className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}
               data-id="displayErrorsLabel"
@@ -300,8 +300,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               </span>
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangePersonal} id="personal" type="checkbox" className="form-check-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <FormattedMessage id="settings.enablePersonalModeText" />
               <CustomTooltip
@@ -309,20 +309,20 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 tooltipId="settings-tooltip-personalMode"
                 tooltipText={intl.formatMessage({ id: 'settings.enablePersonalModeTooltip' })}
               >
-                <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                <i className="ms-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               </CustomTooltip>
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoPerfAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangeMatomoAnalytics} id="settingsMatomoPerfAnalytics" type="checkbox" className="form-check-input" checked={isMatomoChecked} />
             <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoPerfAnalytics">
               <span>
                 <FormattedMessage id="settings.matomoPerfAnalytics" />
               </span>
             </label>
           </div>
-          <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" data-id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEvmStateChecked} />
+          <div className="form-check mb-1">
+            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" data-id="settingsEnableSaveEnvState" type="checkbox" className="form-check-input" checked={isSaveEvmStateChecked} />
             <label
               className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
               data-id="settingsEnableSaveEnvStateLabel"
@@ -382,7 +382,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
         <div className="d-flex justify-content-end pt-2">
           <input
-            className="btn btn-sm btn-primary ml-2"
+            className="btn btn-sm btn-primary ms-2"
             id="saveswarmsettings"
             data-id="settingsTabSaveSwarmSettings"
             onClick={() => saveSwarmSettings()}
@@ -458,7 +458,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <span
             data-id="remix_ai_docs"
             id="remix_ai_docs"
-            className="btn pl-2 pr-0 py-0 d-inline ai-docs text-dark"
+            className="btn ps-2 pe-0 py-0 d-inline ai-docs text-dark"
             role='link'
             onClick={()=>{
               window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
@@ -476,7 +476,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
                 </label>
-                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />
+                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="form-range" />
               </div>
             </div>
           </div>
@@ -489,7 +489,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
                 </label>
-                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />
+                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="form-range" />
               </div>
             </div>
           </div>
@@ -561,7 +561,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
         <div className="d-flex justify-content-end pt-2">
           <input
-            className="btn btn-sm btn-primary ml-2"
+            className="btn btn-sm btn-primary ms-2"
             id="saveIpfssettings"
             data-id="settingsTabSaveIpfsSettings"
             onClick={() => saveIpfsSettings()}
