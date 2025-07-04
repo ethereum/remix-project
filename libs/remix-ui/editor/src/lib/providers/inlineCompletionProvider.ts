@@ -1,6 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
-import { JsonStreamParser } from '@remix/remix-ai-core';
+import { JsonStreamParser, CompletionParams } from '@remix/remix-ai-core';
 import * as monaco from 'monaco-editor';
 
 const _paq = (window._paq = window._paq || [])
@@ -106,7 +106,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (word.replace(/ +$/, '').endsWith('\n')){
       // Code insertion
       try {
-        const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+        CompletionParams.stop = ['\n\n', '```']
+        const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after, CompletionParams)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
         const generatedText = output // no need to clean it. should already be
 
@@ -131,8 +132,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       // Code completion
+      CompletionParams.stop = ['\n', '```']
       this.task = 'code_completion'
-      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after)
+      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after, CompletionParams)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])
       const generatedText = output
       let clean = generatedText
@@ -164,15 +166,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   process_completion(data: any, word_after: any) {
-    let clean = data
+    const clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
       return ""
-    }
-
-    const text_after = word_after.split('\n')[0].trim()
-    if (clean.toLowerCase().includes(text_after.toLowerCase())){
-      clean = clean.replace(text_after, '') // apply regex to conserve the case
     }
 
     return clean

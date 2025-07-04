@@ -111,7 +111,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions {
   // async generateWorkspace(prompt: string, options: IParams = GenerationParams): Promise<any> {
   // }
 
-  // async solidity_answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
+  // async answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
   // }
 
   // async code_explaining(prompt, context:string="", options:IParams=GenerationParams): Promise<any> {

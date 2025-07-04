@@ -237,7 +237,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         // await this.call('git', 'execute', script) code might be used in the future
       } else if (script.trim().startsWith('gpt') || script.trim().startsWith('sol-gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('remixAI', 'solidity_answer', script) // No streaming supported in terminal
+        await call('remixAI', 'answer', script) // No streaming supported in terminal
         _paq.push(['trackEvent', 'ai', 'remixAI', 'askFromTerminal'])
       } else {
         await call('scriptRunnerBridge', 'execute', script)

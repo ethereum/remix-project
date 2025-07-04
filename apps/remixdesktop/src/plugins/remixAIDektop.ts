@@ -32,7 +32,7 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
-  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer', 'generate']
+  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'answer', 'generate']
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
@@ -103,8 +103,8 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     return this.desktopInferencer.error_explaining(prompt)
   }
 
-  async solidity_answer(prompt: string) {
-    return this.desktopInferencer.solidity_answer(prompt)
+  async answer(prompt: string) {
+    return this.desktopInferencer.answer(prompt)
   }
 
   async generate(userPrompt): Promise<any> {

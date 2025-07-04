@@ -15,7 +15,7 @@ export interface IRemixAID {
     code_generation(prompt: string, params?): Promise<string | null>,
     code_explaining(code: string, context?: string, params?): Promise<string | null>,
     error_explaining(prompt: string, context?: string, params?): Promise<string | null>,
-    solidity_answer(prompt: string, params?): Promise<string | null>,
+    answer(prompt: string, params?): Promise<string | null>,
     initializeModelBackend(local: boolean, generalModel?, completionModel?): Promise<void>,
   }
 }
