@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useContext } from 'react'
+import React, { useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import PluginButton from './pluginButton'
 import { ThemeContext } from '../themeContext'
-import Carousel from 'react-multi-carousel'
-import 'react-multi-carousel/lib/styles.css'
-import CustomNavButtons from './customNavButtons'
-const itemsToShow = 5
+import { ToggleSwitch } from '@remix-ui/toggle'
 declare global {
   interface Window {
     _paq: any
@@ -17,45 +13,59 @@ interface HomeTabFeaturedPluginsProps {
   plugin: any
 }
 
+interface PluginInfo {
+  imgPath: string
+  envID: string
+  envText: string
+  descriptionId: string
+  maintainedBy: string
+  documentationUrl: string,
+  iconClass: string
+}
+
+const featuredPlugins: PluginInfo[] = [
+  {
+    imgPath: 'assets/img/contractVerification.webp',
+    envID: 'contractVerificationLogo',
+    envText: 'Contract Verification',
+    descriptionId: 'home.contractVerificationDesc',
+    maintainedBy: 'Remix',
+    documentationUrl: 'https://remix-ide.readthedocs.io/en/latest/contract_verification.html',
+    iconClass: 'fa-solid fa-file-contract'
+  },
+  {
+    imgPath: 'assets/img/learnEthLogo.webp',
+    envID: 'learnEthLogo',
+    envText: 'LearnEth Tutorials',
+    descriptionId: 'home.learnEthPluginDesc',
+    maintainedBy: 'Remix',
+    documentationUrl: 'https://remix-ide.readthedocs.io/en/latest/learneth.html',
+    iconClass: 'fa-solid fa-book'
+  },
+  {
+    imgPath: 'assets/img/staticAnalysis.webp',
+    envID: 'staticAnalysisLogo',
+    envText: 'Solidity Analyzers',
+    descriptionId: 'home.codeAnalyizerPluginDesc',
+    maintainedBy: 'Remix',
+    documentationUrl: 'https://remix-ide.readthedocs.io/en/latest/solidity_analyzers.html',
+    iconClass: 'fa-solid fa-file-code'
+  },
+  {
+    imgPath: 'assets/img/cookbook.webp',
+    envID: 'cookbookLogo',
+    envText: 'Cookbook',
+    descriptionId: 'home.cookbookDesc',
+    maintainedBy: 'Cookbook',
+    documentationUrl: 'https://remix-ide.readthedocs.io/en/latest/cookbook.html',
+    iconClass: 'fa-solid fa-book'
+  }
+]
+
 function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
-  const themeFilter = useContext(ThemeContext)
-  const carouselRef = useRef<any>({})
-  const carouselRefDiv = useRef(null)
   const intl = useIntl()
-
-  useEffect(() => {
-    document.addEventListener('wheel', handleScroll)
-    return () => {
-      document.removeEventListener('wheel', handleScroll)
-    }
-  }, [])
-
-  function isDescendant(parent, child) {
-    let node = child.parentNode
-    while (node != null) {
-      if (node === parent) {
-        return true
-      }
-      node = node.parentNode
-    }
-    return false
-  }
-
-  const handleScroll = (e) => {
-    if (isDescendant(carouselRefDiv.current, e.target)) {
-      e.stopPropagation()
-      let nextSlide = 0
-      if (e.wheelDelta < 0) {
-        nextSlide = carouselRef.current.state.currentSlide + 1
-        if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
-        carouselRef.current.goToSlide(nextSlide)
-      } else {
-        nextSlide = carouselRef.current.state.currentSlide - 1
-        if (nextSlide < 0) nextSlide = 0
-        carouselRef.current.goToSlide(nextSlide)
-      }
-    }
-  }
+  const theme = useContext(ThemeContext)
+  const isDark = theme.name === 'dark'
 
   const startSolidity = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
@@ -88,94 +98,37 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'contract-verification'])
   }
 
+  function PluginCard(pluginInfo: PluginInfo) {
+    return (
+      <div className="card mb-3">
+        <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
+          <div className='d-flex align-items-center'>
+            <i className={`${pluginInfo.iconClass} mr-2`}></i>
+            <span className="fw-bold" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.envText}</span>
+          </div>
+          <ToggleSwitch id={pluginInfo.envID} isOn={true} />
+        </div>
+        <div className="p-2">
+          <div className={`text-${pluginInfo.maintainedBy === 'Remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedBy}</div>
+          <div className="small">Description</div>
+          <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{intl.formatMessage({ id: pluginInfo.descriptionId })}</div>
+          <a href={pluginInfo.documentationUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm w-100 text-decoration-none"><i className="fa-solid fa-book mr-1"></i>Open documentation</a>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="pl-2 w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
-      <label className="" style={{ fontSize: '1.2rem' }}>
-        <FormattedMessage id="home.featuredPlugins" />
-      </label>
-      <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
-        <ThemeContext.Provider value={themeFilter}>
-          <Carousel
-            ref={carouselRef}
-            focusOnSelect={true}
-            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
-            arrows={false}
-            swipeable={false}
-            draggable={true}
-            showDots={false}
-            responsive={{
-              superLargeDesktop: {
-                breakpoint: { max: 4000, min: 3000 },
-                items: itemsToShow
-              },
-              desktop: {
-                breakpoint: { max: 3000, min: 1024 },
-                items: itemsToShow
-              }
-            }}
-            renderButtonGroupOutside={true}
-            ssr={false} // means to render carousel on server-side.
-            keyBoardControl={true}
-            containerClass="carousel-container"
-            deviceType={'desktop'}
-            itemClass="w-100"
-          >
-            <PluginButton
-              imgPath="assets/img/contractVerification.webp"
-              envID="contractVerificationLogo"
-              envText="Contract Verification"
-              description={intl.formatMessage({
-                id: 'home.contractVerificationDesc',
-              })}
-              maintainedBy="Remix"
-              callback={() => startContractVerification()}
-            />
-            <PluginButton
-              imgPath="assets/img/learnEthLogo.webp"
-              envID="learnEthLogo"
-              envText="LearnEth Tutorials"
-              description={intl.formatMessage({
-                id: 'home.learnEthPluginDesc'
-              })}
-              maintainedBy='Remix'
-              callback={() => startLearnEth()}
-            />
-            <PluginButton
-              imgPath="assets/img/staticAnalysis.webp"
-              envID="staticAnalysisLogo"
-              envText="Solidity Analyzers"
-              description={intl.formatMessage({
-                id: 'home.codeAnalyizerPluginDesc'
-              })}
-              maintainedBy='Remix'
-              callback={() => startCodeAnalyzer()}
-            />
-            <PluginButton
-              imgPath="assets/img/cookbook.webp"
-              envID="cookbookLogo"
-              envText="Cookbook"
-              description={intl.formatMessage({ id: 'home.cookbookDesc' })}
-              maintainedBy="Cookbook"
-              callback={() => startCookbook()}
-            />
-            <PluginButton
-              imgPath="assets/img/solidityLogo.webp"
-              envID="solidityLogo"
-              envText="Solidity"
-              description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
-              maintainedBy='Remix'
-              callback={() => startSolidity()}
-            />
-            <PluginButton
-              imgPath="assets/img/unitTesting.webp"
-              envID="sUTLogo"
-              envText="Solidity unit testing"
-              description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
-              maintainedBy='Remix'
-              callback={() => startSolidityUnitTesting()}
-            />
-          </Carousel>
-        </ThemeContext.Provider>
+    <div className="w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <h6 style={{ color: isDark ? 'white' : 'black' }}>Most used plugins</h6>
+        <button className="btn btn-secondary btn-sm">Explore all plugins</button>
+      </div>
+      <div className="row">
+        {
+          featuredPlugins.map((pluginInfo) => (
+            <div className="col-md-6">{ PluginCard(pluginInfo) }</div>
+          ))}
       </div>
     </div>
   )

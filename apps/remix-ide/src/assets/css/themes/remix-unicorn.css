@@ -9529,9 +9529,6 @@ a.text-dark:focus {
   border-image-slice: 1;
   border-image-outset: 2px;
 }
-.custom_home_bg {
-  background: linear-gradient(45deg, #ff00004d, #fca80f3b, #ffff004a, #00800033, #0000ff29, #4b00822e, #ee82ee4a, #ff000057);
-}
 
 .plugins-list-header {
   background: transparent !important;

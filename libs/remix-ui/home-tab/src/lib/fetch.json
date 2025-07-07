@@ -1,0 +1,46 @@
+[{
+    "badge": "RemixAI Assistant",
+    "title": "RemixAI Assistant",
+    "description": "RemixAI Assistant is a tool that helps you write code faster and easier.",
+    "icon": "https://remix-ui.org/assets/remix-ai-assistant.png",
+    "action": {
+        "type": "methodCall",
+        "label": "Build with AI",
+        "pluginName": "remixAIAssistant",
+        "pluginMethod": "activatePlugin"
+    }
+},
+{
+    "badge": "v0.59.0 Release",
+    "title": "v0.59.0 Release",
+    "description": "RemixUI v0.59.0 is now available. This release includes new features and improvements.",
+    "icon": "https://remix-ui.org/assets/remix-ui-logo.png",
+    "action": {
+        "type": "link",
+        "label": "Read more",
+        "url": "https://remix-ui.org/releases/v0.59.0"
+    }
+},
+{
+    "badge": "RemixUI v0.59.0 Release",
+    "title": "RemixUI v0.59.0 Release",
+    "description": "RemixUI v0.59.0 is now available. This release includes new features and improvements.",
+    "icon": "https://remix-ui.org/assets/remix-ui-logo.png",
+    "action": {
+        "type": "link",
+        "label": "Read more",
+        "url": "https://remix-ui.org/releases/v0.59.0"
+    }
+},
+{
+    "badge": "v0.59.0 Release",
+    "title": "v0.59.0 Release",
+    "description": "RemixUI v0.59.0 is now available. This release includes new features and improvements.",
+    "icon": "https://remix-ui.org/assets/remix-ui-logo.png",
+    "action": {
+        "type": "link",
+        "label": "Read more",
+        "url": "https://remix-ui.org/releases/v0.59.0"
+    }
+}
+]
