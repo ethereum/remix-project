@@ -64,6 +64,31 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
+    const workspaceFiles = await plugin.call('fileManager', 'readdir', '/')
+
+    if (workspaceFiles['contracts'] && workspaceFiles['contracts'].isDirectory) {
+      const contractFiles = await plugin.call('fileManager', 'readdir', '/contracts')
+      const contractFilesArray = Object.keys(contractFiles)
+      const contractFile = contractFilesArray[0]
+
+      !contractFiles[contractFile].isDirectory && await plugin.call('fileManager', 'open', contractFile)
+    } else if (workspaceFiles['circuits'] && workspaceFiles['circuits'].isDirectory) {
+      const circuitFiles = await plugin.call('fileManager', 'readdir', '/circuits')
+      const circuitFilesArray = Object.keys(circuitFiles)
+      const circuitFile = circuitFilesArray[0]
+
+      !circuitFiles[circuitFile].isDirectory && await plugin.call('fileManager', 'open', circuitFile)
+    } else if (workspaceFiles['src'] && workspaceFiles['src'].isDirectory) {
+      const srcFiles = await plugin.call('fileManager', 'readdir', '/src')
+      const srcFilesArray = Object.keys(srcFiles)
+      const srcFile = srcFilesArray[0]
+
+      !srcFiles[srcFile].isDirectory && await plugin.call('fileManager', 'open', srcFile)
+    } else if (workspaceFiles['README.txt'] && !workspaceFiles['README.txt'].isDirectory) {
+      await plugin.call('fileManager', 'open', '/README.txt')
+    } else if (workspaceFiles['README.md'] && !workspaceFiles['README.md'].isDirectory) {
+      await plugin.call('fileManager', 'open', '/README.md')
+    }
   }
 
   return (
