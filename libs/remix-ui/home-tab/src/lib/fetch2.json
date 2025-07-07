@@ -1,7 +1,7 @@
 {
     "caption": "Most used plugins",
     "plugins": [{
-        "pluginId": "contractVerification",
+        "pluginId": "contract-verification",
         "pluginTitle": "Contract Verification",
         "action": {
             "type": "link",
@@ -13,7 +13,7 @@
         "description": "Verify your contracts on multiple services at the same time."
     },
     {   
-        "pluginId": "learnEth",
+        "pluginId": "LearnEth",
         "pluginTitle": "LearnEth Tutorials",
         "action": {
             "type": "methodCall",
@@ -25,7 +25,7 @@
         "description": "Learn about Remix, Solidity, and other Web3 projects."
     },
     {
-        "pluginId": "staticAnalysis",
+        "pluginId": "solidityStaticAnalysis",
         "pluginTitle": "Solidity Analyzers",
         "action": {
             "type": "link",
@@ -37,7 +37,7 @@
         "description": "Analyze your code using Remix, Solhint and Slither."
     },
     {
-        "pluginId": "cookbook",
+        "pluginId": "cookbookdev",
         "pluginTitle": "Cookbook",
         "action": {
             "type": "link",
