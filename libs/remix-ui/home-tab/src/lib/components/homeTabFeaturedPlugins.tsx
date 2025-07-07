@@ -122,7 +122,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     <div className="w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h6 style={{ color: isDark ? 'white' : 'black' }}>Most used plugins</h6>
-        <button className="btn btn-secondary btn-sm">Explore all plugins</button>
+        <button className="btn btn-secondary btn-sm" onClick={() => plugin.call('menuicons', 'select', 'pluginManager')} >Explore all plugins</button>
       </div>
       <div className="row">
         {

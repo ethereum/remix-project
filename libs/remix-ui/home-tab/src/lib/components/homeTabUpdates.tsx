@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
 import { ThemeContext } from '../themeContext'
 import fetchResults from '../fetch.json'
 import { RenderIf } from '@remix-ui/helper'
@@ -25,11 +24,11 @@ interface UpdateInfo {
     url?: string
     pluginName?: string
     pluginMethod?: string
-  }
+  },
+  theme: string
 }
 
 function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
-  const intl = useIntl()
   const theme = useContext(ThemeContext)
   const isDark = theme.name === 'dark'
 
@@ -37,17 +36,21 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
     return (
       <div className="card mb-3">
         <div className="d-flex align-items-center p-3 overflow-hidden justify-content-between" style={{ height: '80px', backgroundColor: 'var(--body-bg)' }}>
-          <span className="badge bg-info me-2 bg-transparent border p-2 rounded-pill text-ai" style={{ fontWeight: 'light', border: '1px solid var(--ai)' }}>{updateInfo.title}</span>
+          <span className={`badge bg-info me-2 bg-transparent border p-2 rounded-pill text-${updateInfo.theme}`} style={{ fontWeight: 'light', border: `1px solid var(--${updateInfo.theme})` }}>{updateInfo.badge}</span>
           <img src={'assets/img/in-app-marketing-card-illustration.svg'} alt="RemixAI Assistant" className="me-2" style={{ height: '150px', width: '150px' }} />
         </div>
         <div className="p-3" style={{ fontSize: '1rem', zIndex: 1 }}>
-          <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>{updateInfo.badge}</span>
-          <div className="mb-2 small">{updateInfo.description}</div>
+          <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>
+            {updateInfo.title.length > 35 ? `${updateInfo.title.substring(0, 52)}...` : updateInfo.title}
+          </span>
+          <div className="mb-2 small">
+            {updateInfo.description.length > 120 ? `${updateInfo.description.substring(0, 130)}...` : updateInfo.description}
+          </div>
           <RenderIf condition={updateInfo.action.type === 'link'}>
-            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm w-100 text-ai text-decoration-none">{updateInfo.action.label}</a>
+            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme} text-decoration-none`}>{updateInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={updateInfo.action.type === 'methodCall'}>
-            <button className="btn btn-secondary btn-sm w-100 text-ai" onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod)}>{updateInfo.action.label}</button>
+            <button className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod)}>{updateInfo.action.label}</button>
           </RenderIf>
         </div>
       </div>
