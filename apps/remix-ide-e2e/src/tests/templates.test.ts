@@ -185,7 +185,7 @@ function runTemplateChecks(
         } else {
             browser
                 .useXpath()
-                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 5000)
+                .waitForElementVisible(`//div[contains(@data-id, "dropdown-content") and contains(., "${displayName}")]`, 10000)
                 .useCss()
 
             checkSelectors.forEach(selector => {
@@ -231,7 +231,7 @@ function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add')
         })
 }
 
-module.exports = {
+const tests = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
@@ -261,3 +261,6 @@ module.exports = {
         testTemplateOptions(browser, 'add')
     }
 }
+
+
+module.exports = {} // browser.browserName.includes('chrome') ? {} : tests

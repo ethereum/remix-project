@@ -1,11 +1,10 @@
-import {Profile} from '@remixproject/plugin-utils'
-import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
+import { Profile } from '@remixproject/plugin-utils'
+import { ElectronBasePlugin, ElectronBasePluginClient } from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
 import git from 'isomorphic-git'
-import http from 'isomorphic-git/http/web'
-import {gitProxy} from '../tools/git'
-import {isoGit} from '@remix-git'
-import {branchDifference, branchInputType, checkoutInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput} from '@remix-api'
+import { gitProxy } from '../tools/git'
+import { isoGit } from '@remix-git'
+import { branchDifference, branchInputType, checkoutInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput } from '@remix-api'
 
 const profile: Profile = {
   name: 'isogit',
@@ -92,13 +91,18 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return []
     }
 
-    const log = await git.log({
-      ...(await this.getGitConfig()),
-      ...cmd,
-      depth: cmd.depth || 10,
-    })
+    try {
+      const log = await git.log({
+        ...(await this.getGitConfig()),
+        ...cmd,
+        depth: cmd.depth || 10,
+      })
 
-    return log
+      return log
+    }
+    catch (e) {
+      return []
+    }
   }
 
   async add(cmd: any) {
@@ -176,13 +180,16 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     if (!this.workingDir || this.workingDir === '') {
       return null
     }
+    try {
+      const resolveref = await git.resolveRef({
+        ...(await this.getGitConfig()),
+        ...cmd,
+      })
 
-    const resolveref = await git.resolveRef({
-      ...(await this.getGitConfig()),
-      ...cmd,
-    })
-
-    return resolveref
+      return resolveref
+    } catch (e) {
+      return null
+    }
   }
 
   async readblob(cmd: any) {
@@ -330,8 +337,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return await isoGit.getCommitChanges(commitHash1, commitHash2, await this.getGitConfig())
   }
 
-  async compareBranches({branch, remote}: compareBranchesInput): Promise<branchDifference> {
-    return await isoGit.compareBranches({branch, remote}, await this.getGitConfig())
+  async compareBranches({ branch, remote }: compareBranchesInput): Promise<branchDifference> {
+    return await isoGit.compareBranches({ branch, remote }, await this.getGitConfig())
   }
 
   async updateSubmodules(input) {
@@ -342,7 +349,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         throw e
       }
     } else {
-      this.call('terminal', 'log', {type: 'error', value: 'Please install git into your OS to use this functionality...'})
+      this.call('terminal', 'log', { type: 'error', value: 'Please install git into your OS to use this functionality...' })
     }
   }
 }

@@ -3,8 +3,8 @@ import EventEmitter from 'events'
 
 class AddFile extends EventEmitter {
   command(this: NightwatchBrowser, name: string, content: NightwatchContractContent, readMeFile?:string): NightwatchBrowser {
-    if(!readMeFile)
-      readMeFile = 'README.txt' 
+    if (!readMeFile)
+      readMeFile = 'README.txt'
     this.api.perform((done) => {
       addFile(this.api, name, content, readMeFile, () => {
         done()
@@ -27,6 +27,10 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
       if (!okVisible.value) {
         browser.clickLaunchIcon('filePanel')
       }
+    })
+    .execute(function () {
+      const container = document.querySelector('[data-test-id="virtuoso-scroller"]');
+      container.scrollTop = container.scrollHeight;
     })
     .scrollInto(readmeSelector)
     .waitForElementVisible(readmeSelector)
@@ -63,7 +67,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
           })
           .setEditorValue(content.content)
           .getEditorValue((result) => {
-            if(result != content.content) {
+            if (result != content.content) {
               browser.setEditorValue(content.content)
             }
           })

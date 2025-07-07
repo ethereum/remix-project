@@ -70,7 +70,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   async pinView (profile) {
-    await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
+    await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name]?.view)
     if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.remove(profile.name)
     this.renderComponent()
@@ -93,6 +93,9 @@ export class SidePanel extends AbstractPanel {
    */
   async showContent(name) {
     super.showContent(name)
+    if (name === 'remixaiassistant') { // TODO: should this be a plugin feature?
+      this.pinView(this.plugins['remixaiassistant'].profile)
+    }
     this.emit('focusChanged', name)
     this.renderComponent()
   }

@@ -1,12 +1,13 @@
 import { Plugin } from '@remixproject/engine'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { TEMPLATE_METADATA } from '@remix-ui/workspace'
+import { cloneInputType } from '@remix-api'
 
 const profile = {
   name: 'remix-templates',
   displayName: 'remix-templates',
   description: 'Remix Templates plugin',
-  methods: ['getTemplate', 'loadTemplateInNewWindow', 'loadFilesInNewWindow'],
+  methods: ['getTemplate', 'loadTemplateInNewWindow', 'addToCurrentElectronFolder', 'loadFilesInNewWindow'],
 }
 
 export class TemplatesPlugin extends Plugin {
@@ -15,24 +16,46 @@ export class TemplatesPlugin extends Plugin {
     super(profile)
   }
 
-  async getTemplate (template: string, opts?: any) {
+  async getTemplate(template: string, opts?: any) {
     const templateList = Object.keys(templateWithContent)
     if (!templateList.includes(template)) return
+    opts = {
+      ...opts || {},
+      isElectron: true,
+    }
     // @ts-ignore
-    const files = await templateWithContent[template](opts)
+    const files = await templateWithContent[template](opts, this)
     return files
   }
   // electron only method
-  async loadTemplateInNewWindow (template: string, opts?: any) {
+
+  async addToCurrentElectronFolder(template: string, opts?: any) {
     const metadata = TEMPLATE_METADATA[template]
     if (metadata) {
-      if (metadata.type === 'git') {
+      if (metadata.type === 'git' || metadata.type === 'plugin') {
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'This template is not available in the desktop version',
         })
         return
-      } else if (metadata.type === 'plugin'){
+      }
+    }
+    const files = await this.getTemplate(template, opts)
+    this.call('electronTemplates', 'addToCurrentElectronFolder', files)
+  }
+
+  async loadTemplateInNewWindow(template: string, opts?: any) {
+    const metadata = TEMPLATE_METADATA[template]
+    if (metadata) {
+      if (metadata.type === 'git') {
+
+        const input: cloneInputType = {
+          url: metadata.url,
+        }
+        await this.call('dgitApi', 'clone', input)
+
+        return
+      } else if (metadata.type === 'plugin') {
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'This template is not available in the desktop version',
@@ -44,7 +67,7 @@ export class TemplatesPlugin extends Plugin {
     this.call('electronTemplates', 'loadTemplateInNewWindow', files)
   }
 
-  async loadFilesInNewWindow (files: any) {
+  async loadFilesInNewWindow(files: any) {
     this.call('electronTemplates', 'loadTemplateInNewWindow', files)
   }
 }

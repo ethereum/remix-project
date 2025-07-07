@@ -16,6 +16,22 @@ import { Recorder } from '../tabs/runTab/model/recorder'
 import { EnvDropdownLabelStateType } from 'libs/remix-ui/run-tab/src/lib/types'
 const _paq = (window._paq = window._paq || [])
 
+export const providerLogos = {
+  'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
+  'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
+  'injected-metamask-gnosis': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
+  'injected-metamask-chiado': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
+  'injected-metamask-linea': ['assets/img/linea_chain.png', 'assets/img/metamask.png'],
+  'injected-metamask-sepolia': ['assets/img/metamask.png'],
+  'injected-metamask-ephemery': ['assets/img/metamask.png'],
+  'injected-MetaMask': ['assets/img/metamask.png'],
+  'injected-Brave Wallet': ['assets/img/brave.png'],
+  'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
+  'hardhat-provider': ['assets/img/hardhat.png'],
+  'walletconnect': ['assets/img/Walletconnect-logo.png'],
+  'foundry-provider': ['assets/img/foundry.png']
+}
+
 const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
@@ -153,6 +169,7 @@ export class RunTab extends ViewPlugin {
       'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet latest block in the in-browser virtual machine.',
       'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
+      'desktopHost': 'Deploy using web metamask.',
       'basic-http-provider': 'Deploy to a Custom local network.',
       'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
       'ganache-provider': 'Deploy to the local Ganache dev chain.',
@@ -169,22 +186,6 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-linea': 'Deploy to Linea through the Metamask browser extension.'
     }
 
-    const logos = {
-      'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
-      'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
-      'injected-metamask-gnosis': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
-      'injected-metamask-chiado': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
-      'injected-metamask-linea': ['assets/img/linea_chain.png', 'assets/img/metamask.png'],
-      'injected-metamask-sepolia': ['assets/img/metamask.png'],
-      'injected-metamask-ephemery': ['assets/img/metamask.png'],
-      'injected-MetaMask': ['assets/img/metamask.png'],
-      'injected-Brave Wallet': ['assets/img/brave.png'],
-      'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
-      'hardhat-provider': ['assets/img/hardhat.png'],
-      'walletconnect': ['assets/img/Walletconnect-logo.png'],
-      'foundry-provider': ['assets/img/foundry.png']
-    }
-
     const addProvider = async (position: number, name: string, displayName: string, providerConfig: ProviderConfig, dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
@@ -193,7 +194,7 @@ export class RunTab extends ViewPlugin {
         name,
         displayName,
         description: descriptions[name] || displayName,
-        logos: logos[name],
+        logos: providerLogos[name],
         config: providerConfig,
         title,
         init: async function () {
@@ -206,6 +207,15 @@ export class RunTab extends ViewPlugin {
           }
         },
         provider: new Provider(udapp, name)
+      })
+      this.emit('providerAdded', {
+        name,
+        displayName,
+        description: descriptions[name] || displayName,
+        logos: providerLogos[name],
+        isInjected: providerConfig.isInjected,
+        isVM: providerConfig.isVM,
+        isForkedState: providerConfig.isRpcForkedState,
       })
     }
 
@@ -313,6 +323,11 @@ export class RunTab extends ViewPlugin {
       await addFVSProvider(`.states/forked_states/${stateName}.json`, 20)
       this.emit('forkStateProviderAdded', stateName)
     })
+
+    if (isElectron()) {
+      // desktop host
+      await addProvider(5, 'desktopHost', 'Browser Wallet', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })
+    }
 
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', { isInjected: false, isVM: false, isRpcForkedState: false, fork: '' })

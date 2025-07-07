@@ -146,14 +146,19 @@ export class ExecutionContext {
     if (this.customNetWorks[context]) {
       this.isConnected = false
       var network = this.customNetWorks[context]
-      await network.init()
-      this.currentFork = network.config.fork
-      // injected
-      web3.setProvider(network.provider)
-      this.executionContext = context
-      this.isConnected = await this._updateChainContext()
-      this.event.trigger('contextChanged', [context])
-      cb()
+      try {
+        await network.init()
+        this.currentFork = network.config.fork
+        // injected
+        web3.setProvider(network.provider)
+        this.executionContext = context
+        this.isConnected = await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        cb()
+      } catch (e) {
+        console.error(e)
+        cb(false)
+      }
     }
   }
 
