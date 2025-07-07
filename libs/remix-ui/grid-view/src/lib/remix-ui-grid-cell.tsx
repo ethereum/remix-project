@@ -30,9 +30,6 @@ interface RemixUIGridCellProps {
   handleExpand?: any
   id: string
   searchKeywords?: string[]
-  cornerBtnLabel?: string
-  cornerBtnCallback?: () => void
-  cornerBtnCSS?: string
 }
 
 export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
@@ -113,18 +110,15 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                 }
               </div> }
               { props.children }
-              <div className='d-flex w-100 flex-row justify-content-between'>
-                { props.cornerBtnLabel || props.cornerBtnCSS ? <button className={props.cornerBtnCSS} onClick={() => props.cornerBtnCallback && props.cornerBtnCallback()}>{props.cornerBtnLabel}</button> : <div></div> }
-                { filterCon.showPin && <button
-                  className={`${pinned ? 'fas fa-toggle-on fa-lg text-dark' : 'fas fa-toggle-off fa-lg text-secondary'}` + ` fa-regular border-0 p-0 mt-2 align-self-end mr-1 remixui_grid_cell_pin`}
-                  style={{ fontSize: 'large' }}
-                  data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
-                  onClick={async () => {
-                    if (!props.pinStateCallback) setPinned(!pinned)
-                    if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
-                  }}
-                ></button>}
-              </div>
+              { filterCon.showPin && <button
+                className={`${pinned ? 'fas fa-toggle-on fa-lg text-dark' : 'fas fa-toggle-off fa-lg text-secondary'}` + ` fa-regular border-0 p-0 mt-2 align-self-end mr-1 remixui_grid_cell_pin`}
+                style={{ fontSize: 'large' }}
+                data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
+                onClick={async () => {
+                  if (!props.pinStateCallback) setPinned(!pinned)
+                  if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
+                }}
+              ></button>}
             </div>
           </div>
 
