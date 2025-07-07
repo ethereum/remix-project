@@ -3,6 +3,8 @@ import remarkGfm from "remark-gfm"
 import copy from "copy-to-clipboard"
 import { ChatMessage, assistantAvatar } from "../lib/types"
 import React from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const DEFAULT_SUGGESTIONS = [
   'Explain what a modifier is',
@@ -29,7 +31,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   return (
     <div
       ref={historyRef}
-      className="d-flex flex-column flex-grow-1 overflow-y-auto"
+      className="d-flex flex-column overflow-y-auto border-box-sizing preserve-wrap w-100"
     >
       {messages.length === 0 ? (
         <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
@@ -56,7 +58,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
             msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-light'
 
           return (
-            <div key={msg.id} className="chat-row d-flex mb-2">
+            <div key={msg.id} className="chat-row d-flex mb-2 w-100">
               {/* Avatar for assistant */}
               {msg.role === 'assistant' && (
                 <img
@@ -67,7 +69,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-75 mr-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
@@ -82,6 +84,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       components={{
                         code({ node, inline, className, children, ...props }) {
                           const text = String(children).replace(/\n$/, '')
+                          const match = /language-(\w+)/.exec(className || '')
 
                           if (inline) {
                             return (

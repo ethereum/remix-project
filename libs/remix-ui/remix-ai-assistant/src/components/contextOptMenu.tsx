@@ -14,6 +14,7 @@ export default function GroupListMenu(props: GroupListMenuProps) {
     <div className="btn-group-vertical">
       {props.groupList.map((item, index) => (
         <button
+          key={`${item.label}-${index}`}
           className="btn btn-light"
           data-id={item.dataId}
           onClick={() => {

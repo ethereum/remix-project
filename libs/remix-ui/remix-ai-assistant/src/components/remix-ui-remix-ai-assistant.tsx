@@ -39,7 +39,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    null
+    'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<AiContextType>(
     'none'
@@ -294,44 +294,50 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     [sendPrompt, messages]
   )
 
+  {console.log(messages)}
   return (
     <div
-      className="d-flex flex-column h-100 mx-3"
+      className="d-flex flex-column h-100 mx-3 "
     >
-      <div data-id="remix-ai-assistant-ready"></div>
-      {/* hidden hook for E2E tests: data-streaming="true|false" */}
-      <div
-        data-id="remix-ai-streaming"
-        className='d-none'
-        data-streaming={isStreaming ? 'true' : 'false'}
-      ></div>
-      <ChatHistoryComponent
-        messages={messages}
-        isStreaming={isStreaming}
-        sendPrompt={sendPrompt}
-        recordFeedback={recordFeedback}
-        historyRef={historyRef}
-      />
-      <PromptArea
-        input={input}
-        setInput={setInput}
-        isStreaming={isStreaming}
-        handleSend={handleSend}
-        showContextOptions={showContextOptions}
-        setShowContextOptions={setShowContextOptions}
-        showAssistantOptions={showAssistantOptions}
-        setShowAssistantOptions={setShowAssistantOptions}
-        contextChoice={contextChoice}
-        setContextChoice={setContextChoice}
-        assistantChoice={assistantChoice}
-        setAssistantChoice={setAssistantChoice}
-        contextFiles={contextFiles}
-        clearContext={clearContext}
-        handleAddContext={handleAddContext}
-        handleSetAssistant={handleSetAssistant}
-        handleGenerateWorkspace={handleGenerateWorkspace}
-        dispatchActivity={dispatchActivity}
-      />
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column border border-success align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }}>
+        <div data-id="remix-ai-assistant-ready"></div>
+        {/* hidden hook for E2E tests: data-streaming="true|false" */}
+        <div
+          data-id="remix-ai-streaming"
+          className='d-none'
+          data-streaming={isStreaming ? 'true' : 'false'}
+        ></div>
+        <ChatHistoryComponent
+          messages={messages}
+          isStreaming={isStreaming}
+          sendPrompt={sendPrompt}
+          recordFeedback={recordFeedback}
+          historyRef={historyRef}
+        />
+      </section>
+      <section id="remix-ai-prompt-area" className="border border-danger mt-1" style={{ flex: 1 }}
+      >
+        <PromptArea
+          input={input}
+          setInput={setInput}
+          isStreaming={isStreaming}
+          handleSend={handleSend}
+          showContextOptions={showContextOptions}
+          setShowContextOptions={setShowContextOptions}
+          showAssistantOptions={showAssistantOptions}
+          setShowAssistantOptions={setShowAssistantOptions}
+          contextChoice={contextChoice}
+          setContextChoice={setContextChoice}
+          assistantChoice={assistantChoice}
+          setAssistantChoice={setAssistantChoice}
+          contextFiles={contextFiles}
+          clearContext={clearContext}
+          handleAddContext={handleAddContext}
+          handleSetAssistant={handleSetAssistant}
+          handleGenerateWorkspace={handleGenerateWorkspace}
+          dispatchActivity={dispatchActivity}
+        />
+      </section>
     </div>
   )
 })

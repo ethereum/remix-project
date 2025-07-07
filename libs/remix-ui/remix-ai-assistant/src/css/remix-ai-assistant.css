@@ -290,12 +290,145 @@
   display: none !important;
 }
 
+.w-70 {
+  width: 70dvw !important;
+}
+
+.w-71 {
+  width: 71dvw !important;
+}
+
+.w-72 {
+  width: 72dvw !important;
+}
+
+.w-73 {
+  width: 73dvw !important;
+}
+
+.w-74 {
+  width: 74dvw !important;
+}
+
+.w-75 {
+  width: 75dvw !important;
+}
+
+.w-76 {
+  width: 76dvw !important;
+}
+
+.w-77 {
+  width: 77dvw !important;
+}
+
+.w-78 {
+  width: 78dvw !important;
+}
+
+.w-79 {
+  width: 79dvw !important;
+}
+
+.w-80 {
+  width: 80dvw !important;
+}
+
+.w-81 {
+  width: 81dvw !important;
+}
+
+.w-82 {
+  width: 82dvw !important;
+}
+
+.w-83 {
+  width: 83dvw !important;
+}
+
+.w-84 {
+  width: 84dvw !important;
+}
 .w-85 {
-  width: 85% !important;
+  width: 85dvw !important;
 }
 
 .w-90 {
-  width: 90% !important;
+  width: 90dvw !important;
 }
 
---dim: #333446
+.w-95 {
+  width: 95dvw !important;
+}
+
+.h-80 {
+  height: 80dvh !important;
+}
+
+.h-85 {
+  height: 85dvh !important;
+}
+
+.h-90 {
+  height: 90dvh !important;
+}
+
+.h-95 {
+  height: 95dvh !important;
+}
+
+.h-5 {
+  height: 5dvh !important;
+}
+
+.h-10 {
+  height: 10dvh !important;
+}
+
+.h-12 {
+  height: 12dvh !important;
+}
+
+.h-13 {
+  height: 13dvh !important;
+}
+
+.h-14 {
+  height: 14dvh !important;
+}
+
+.h-15 {
+  height: 15dvh !important;
+}
+
+.h-16 {
+  height: 16dvh !important;
+}
+
+.h-17 {
+  height: 17dvh !important;
+}
+
+.h-18 {
+  height: 18dvh !important;
+}
+
+.h-19 {
+  height: 19dvh !important;
+}
+
+.h-20 {
+  height: 20dvh !important;
+}
+
+.remix-aichat-background {
+  background-color: #2A2C3F;
+}
+
+.preserve-wrap {
+  white-space: pre-wrap;
+}
+
+.border-box-sizing {
+  box-sizing: border-box;
+}

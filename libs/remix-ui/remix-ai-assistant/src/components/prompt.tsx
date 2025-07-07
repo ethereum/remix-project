@@ -105,8 +105,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text position-absolute"
-          style={{ borderRadius: '8px', zIndex: 99999, left: '76dvw', right: '0px', bottom: '177px', height: '300px', width: '300px' }}
+          className="bg-light mb-1 p-2 border border-text"
+          // style={{ borderRadius: '8px', zIndex: 99999, left: '76dvw', right: '0px', bottom: '177px', height: '300px', width: '300px' }}
+          style={{ zIndex: 99999 }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
           <GroupListMenu
@@ -119,7 +120,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text remix-aichat-background align-self-start"
       >
         <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom">
           <button
@@ -174,7 +175,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               onClick={handleSetAssistant}
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
             >
-              {'Provider'}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}

@@ -36,7 +36,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
       tooltipClasses="text-nowrap"
       tooltipText={terminalState.isVM ? intl.formatMessage({ id: 'terminal.listenVM' }) : intl.formatMessage({ id: 'terminal.listenTitle' })}
     >
-      <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
+      <div className="mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
         <input
           className="custom-control-input"
           id="listenNetworkCheck"
