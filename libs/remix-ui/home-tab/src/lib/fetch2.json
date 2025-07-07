@@ -1,0 +1,51 @@
+{
+    "caption": "Most used plugins",
+    "plugins": [{
+        "pluginId": "contractVerification",
+        "pluginTitle": "Contract Verification",
+        "action": {
+            "type": "link",
+            "label": "Open documentation",
+            "url": "https://remix-ide.readthedocs.io/en/latest/contract_verification.html"
+        },
+        "iconClass": "fa-solid fa-file-contract",
+        "maintainedByRemix": true,
+        "description": "Verify your contracts on multiple services at the same time."
+    },
+    {   
+        "pluginId": "learnEth",
+        "pluginTitle": "LearnEth Tutorials",
+        "action": {
+            "type": "methodCall",
+            "label": "Open documentation",
+            "url": "https://remix-ide.readthedocs.io/en/latest/learneth.html"
+        },
+        "iconClass": "fa-solid fa-book",
+        "maintainedByRemix": true,
+        "description": "Learn about Remix, Solidity, and other Web3 projects."
+    },
+    {
+        "pluginId": "staticAnalysis",
+        "pluginTitle": "Solidity Analyzers",
+        "action": {
+            "type": "link",
+            "label": "Open documentation",
+            "url": "https://remix-ide.readthedocs.io/en/latest/solidity_analyzers.html" 
+        },
+        "iconClass": "fa-solid fa-file-code",
+        "maintainedByRemix": true,
+        "description": "Analyze your code using Remix, Solhint and Slither."
+    },
+    {
+        "pluginId": "cookbook",
+        "pluginTitle": "Cookbook",
+        "action": {
+            "type": "link",
+            "label": "Open documentation",
+            "url": "https://remix-ide.readthedocs.io/en/latest/cookbook.html"
+        },
+        "iconClass": "fa-solid fa-book",
+        "maintainedByRemix": false,
+        "description": "Find smart contracts, solidity libraries, and discover protocols."
+    }]
+}
