@@ -53,7 +53,6 @@ export const setupEvents = (plugin: RunTab) => {
     if (error) {
       const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
-
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)

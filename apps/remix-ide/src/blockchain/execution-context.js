@@ -78,7 +78,7 @@ export class ExecutionContext {
           callback && callback('No provider set')
           return reject('No provider set')
         }
-        const cb = (err, id) => {
+        const cb = async (err, id) => {
           let name = null
           if (err) name = 'Unknown'
           // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
@@ -88,8 +88,17 @@ export class ExecutionContext {
           else if (id === 5) name = 'Goerli'
           else if (id === 42) name = 'Kovan'
           else if (id === 11155111) name = 'Sepolia'
-          else name = 'Custom'
-  
+          else {
+            const response = await fetch('https://chainid.network/chains.json')
+            if (!response.ok) name = 'Custom'
+            else {
+              const networks = await response.json()
+              const connectedNetwork = networks.find((n) => n.chainId === id)
+              if (connectedNetwork) name = connectedNetwork.name
+              else name = 'Custom'
+            }
+          }
+        
           if (id === 1) {
             web3.eth.getBlock(0).then((block) => {
               if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
@@ -105,7 +114,7 @@ export class ExecutionContext {
             return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
           }
         }
-        web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
+        web3.eth.net.getId().then(async (id) => await cb(null,parseInt(id))).catch(err=>cb(err))
       }
     })
   }

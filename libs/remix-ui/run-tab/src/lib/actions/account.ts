@@ -46,6 +46,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
+        // send ticker symbol
         loadedAccounts[account] = shortenAddress(account, balance)
         if (safeAddresses.length && safeAddresses.includes(account)) loadedAccounts[account] = `[SMART] ${loadedAccounts[account]}`
       }
