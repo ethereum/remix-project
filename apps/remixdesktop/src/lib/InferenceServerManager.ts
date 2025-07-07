@@ -7,7 +7,6 @@ import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
   ChatHistory, downloadLatestReleaseExecutable,
   buildChatPrompt } from "@remix/remix-ai-core"
-import { platform } from 'os';
 
 class ServerStatusTimer {
   private intervalId: NodeJS.Timeout | null = null;

@@ -215,7 +215,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
         switch (assistantChoice) {
         case 'openai':
-          console.log('Handling OpenAI response')
           HandleOpenAIResponse(
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
@@ -227,7 +226,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           )
           break;
         case 'mistralai':
-          console.log('Handling MistralAI response')
           HandleMistralAIResponse(
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
@@ -240,7 +238,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           // Add MistralAI handler here if available
           break;
         case 'anthropic':
-          console.log('Handling Anthropic response')
           HandleAnthropicResponse(
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
