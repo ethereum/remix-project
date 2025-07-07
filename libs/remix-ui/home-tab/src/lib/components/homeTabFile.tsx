@@ -13,6 +13,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
   }>({
     recentWorkspaces: [],
   })
+  const [loadingWorkspace, setLoadingWorkspace] = useState<string>(null)
   const theme = useContext(ThemeContext)
   const isDark = theme.name === 'dark'
 
@@ -60,6 +61,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
 
   const handleSwitchToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault()
+    setLoadingWorkspace(workspaceName)
     plugin.call('sidePanel', 'showContent', 'filePanel')
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
@@ -89,6 +91,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     } else if (workspaceFiles['README.md'] && !workspaceFiles['README.md'].isDirectory) {
       await plugin.call('fileManager', 'open', '/README.md')
     }
+    setLoadingWorkspace(null)
   }
 
   return (
@@ -103,7 +106,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
               Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
                 return index < 3 ? (
                   <a className="cursor-pointer mb-1 text-decoration-none" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)}>
-                    <i className="fas fa-folder-tree mr-2"></i> <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
+                    { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
+                    <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
                   </a>
                 ) : null
               })
