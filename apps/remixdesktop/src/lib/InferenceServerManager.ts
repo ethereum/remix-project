@@ -5,7 +5,7 @@ import axios from "axios";
 import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
-  IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
+  ChatHistory, downloadLatestReleaseExecutable,
   buildChatPrompt } from "@remix/remix-ai-core"
 import { platform } from 'os';
 

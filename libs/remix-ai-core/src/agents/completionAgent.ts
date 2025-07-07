@@ -23,7 +23,7 @@ export class CodeCompletionAgent {
   props: any;
   indexer: any;
   Documents: Document[] = [];
-  INDEX_THRESHOLD = 0.1;
+  INDEX_THRESHOLD = 0.05;
   N_MATCHES = 1;
   indexed: indexT = {
     isIndexed: false,
