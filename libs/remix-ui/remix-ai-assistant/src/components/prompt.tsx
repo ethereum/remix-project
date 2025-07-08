@@ -131,7 +131,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       <div
         className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text remix-aichat-background align-self-start"
       >
-        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom">
+        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
@@ -186,6 +186,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
               ref={modelBtnRef}
             >
+              {assistantChoice === null && 'Default'}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}
