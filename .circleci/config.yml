@@ -368,8 +368,8 @@ jobs:
 
       - run: 
           command: |
-            nvm install 20.16
-            nvm use 20.16
+            nvm install 20.19.2
+            nvm use 20.19.2
             node -v
             npx -v
             npm install --global yarn
