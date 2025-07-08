@@ -3,6 +3,7 @@ import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react
 import GroupListMenu from "./contextOptMenu"
 import { AiContextType, groupListType } from '../types/componentTypes'
 import { AiAssistantType } from '../types/componentTypes'
+import { useOnClickOutside } from "../hooks/useOnClickOutsideButton"
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -107,35 +108,8 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
   const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
-
-  // useEffect(() => {
-  //   const controller = new AbortController()
-  //   const refs: MutableRefObject<HTMLElement>[] = [contextBtnRef, modelBtnRef]
-  //   const handlerListener = (event: MouseEvent) => {
-  //     if (contextBtnRef.current?.contains(event.target as Node))
-  //       return
-  //     // setShowAssistantOptions(!showAssistantOptions)
-  //   }
-  //   document.addEventListener('mousedown', handlerListener, { signal: controller.signal })
-
-  //   return () => {
-  //     controller.abort()
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   const controller = new AbortController()
-
-  //   document.addEventListener('mousedown', (event: MouseEvent) => {
-  //     if (modelBtnRef.current?.contains(event.target as Node))
-  //       return
-  //     // setShowContextOptions(!showContextOptions)
-  //   }, { signal: controller.signal })
-
-  //   return () => {
-  //     controller.abort()
-  //   }
-  // }, [])
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
 
   return (
     <>
