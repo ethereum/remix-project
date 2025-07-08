@@ -8,6 +8,9 @@ import './remix-ui-tabs.css'
 import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
+import CompileDropdown from './components/CompileDropdown'
+import RunScriptDropdown from './components/RunScriptDropdown'
+
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -80,6 +83,8 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
   const appContext = useContext(AppContext)
+
+  const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -208,7 +213,7 @@ export const TabsUI = (props: TabsUIProps) => {
     >
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <CustomTooltip
+          {/* <CustomTooltip
             placement="bottom"
             tooltipId="overlay-tooltip-run-script"
             tooltipText={
@@ -335,6 +340,74 @@ export const TabsUI = (props: TabsUIProps) => {
                 <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
               </button>
             </CustomTooltip>
+          </div> */}
+
+
+          <div className="d-flex align-items-center m-1">
+            <div className="btn-group" role="group" aria-label="compile group">
+              <CustomTooltip
+                placement="bottom"
+                tooltipId="overlay-tooltip-run-script"
+                tooltipText={
+                  <span>
+                    {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText1" />
+                    ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText2" />
+                    ) : (
+                      <FormattedMessage id="remixUiTabs.tooltipText3" />
+                    )}
+                  </span>
+                }
+              >
+                <button
+                  className="btn btn-primary d-flex align-items-center justify-content-center"
+                  style={{ 
+                    padding: "4px 8px",
+                    height: "28px",
+                    fontFamily: "Nunito Sans, sans-serif",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    lineHeight: "14px",
+                    whiteSpace: "nowrap",
+                    borderRadius: "4px 0 0 4px"
+                  }}
+                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+                  onClick={async () => {
+                    setCompileState('compiling')
+                    const path = active().substr(active().indexOf('/') + 1, active().length)
+                    const content = await props.plugin.call('fileManager', 'readFile', path)
+                    if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                      await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+                    } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
+                      await props.plugin.call('solidity', 'compile', path)
+                    }
+                    setCompileState('compiled')
+                    _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                  }}
+                >
+                  <i className={
+                    compileState === 'compiled' ? "fas fa-check"
+                    : "fas fa-play"
+                  }></i>
+                  <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
+                    {compileState === 'compiling' ? "Compiling..." :
+                      compileState === 'compiled' ? "Compiled" :
+                      (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? 'Run script' : 'Compile')}
+                  </span>
+                </button>
+              </CustomTooltip>
+            </div>
+            {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? (
+              <RunScriptDropdown
+                onSelect={(option) => console.log("Run script:", option)}
+              />
+            ) : (
+              <CompileDropdown
+                disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+                onSelect={(option) => console.log("Compile:", option)}
+              />
+            )}
           </div>
 
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
@@ -362,6 +435,7 @@ export const TabsUI = (props: TabsUIProps) => {
               payload: index,
               ext: getExt(props.tabs[currentIndexRef.current].name)
             })
+            setCompileState('idle')
           }}
         >
           <TabList className="d-flex flex-row align-items-center">
@@ -377,6 +451,7 @@ export const TabsUI = (props: TabsUIProps) => {
           ))}
         </Tabs>
       </div>
+      
     </div>
   )
 }
