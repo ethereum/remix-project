@@ -3,7 +3,6 @@ import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react
 import GroupListMenu from "./contextOptMenu"
 import { AiContextType, groupListType } from '../types/componentTypes'
 import { AiAssistantType } from '../types/componentTypes'
-import { useOnClickOutside } from "../hooks/useOnClickOutsideButton"
 
 // PromptArea component
 export interface PromptAreaProps {

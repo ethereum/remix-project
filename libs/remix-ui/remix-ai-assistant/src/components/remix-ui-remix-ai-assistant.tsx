@@ -9,7 +9,6 @@ import { PromptArea } from './prompt'
 import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
 import { AiAssistantType, AiContextType, groupListType } from '../types/componentTypes'
-import { useOnClickOutside } from '../hooks/useOnClickOutsideButton'
 import GroupListMenu from './contextOptMenu'
 
 const _paq = (window._paq = window._paq || [])
@@ -41,9 +40,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<AiAssistantType>(null)
-  const [contextChoice, setContextChoice] = useState<AiContextType>(
-    'none'
-  )
+  const [contextChoice, setContextChoice] = useState<AiContextType>('none')
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
@@ -51,9 +48,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
   const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
-  // useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
-  // useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
   const chatCmdParser = new ChatCommandParser(props.plugin)
+
   const aiContextGroupList: groupListType[] = [
     {
       label: 'None',
@@ -356,7 +352,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     [sendPrompt, messages]
   )
 
-  {console.log(messages)}
   return (
     <div
       className="d-flex flex-column h-100 mx-3 "
