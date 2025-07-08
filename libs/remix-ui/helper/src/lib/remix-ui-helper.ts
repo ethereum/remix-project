@@ -90,11 +90,10 @@ export const isNumeric = (value) => {
   return /^\+?(0|[1-9]\d*)$/.test(value)
 }
 
-export const shortenAddress = (address, etherBalance?) => {
-  console.log('shortenAddress with ether')
+export const shortenAddress = (address, etherBalance?, currency = 'ETH') => {
   const len = address.length
 
-  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ' + currency + ')' : '')
 }
 
 export const addressToString = (address) => {

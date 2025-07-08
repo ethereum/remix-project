@@ -25,7 +25,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject'],
+  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getCurrentNetworkCurrency', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject'],
 
   version: packageJson.version
 }
@@ -62,6 +62,11 @@ export class Blockchain extends Plugin {
       id: string
     }
     error?: string
+  }
+  networkNativeCurrency: {
+      name: string,
+      symbol: string,
+      decimals: number
   }
   providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider }
   transactionContextAPI: TransactionContextAPI
@@ -100,6 +105,7 @@ export class Blockchain extends Plugin {
     // the first item in the list should be latest fork.
     this.defaultPinnedProviders = ['vm-prague', 'vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider', 'desktopHost']
     this.networkStatus = { network: { name: this.defaultPinnedProviders[0], id: ' - ' } }
+    this.networkNativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
     this.pinnedProviders = []
     this.setupEvents()
     this.setupProviders()
@@ -120,6 +126,7 @@ export class Blockchain extends Plugin {
           if (plugin.name === this.executionContext.executionContext) {
             this.detectNetwork((error, network) => {
               this.networkStatus = { network, error }
+              if (network.networkNativeCurrency) this.networkNativeCurrency = network.networkNativeCurrency
               this._triggerEvent('networkStatus', [this.networkStatus])
             })
           }
@@ -184,6 +191,7 @@ export class Blockchain extends Plugin {
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
+        if (network.networkNativeCurrency) this.networkNativeCurrency = network.networkNativeCurrency
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -199,6 +207,7 @@ export class Blockchain extends Plugin {
     setInterval(() => {
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
+        if (network.networkNativeCurrency) this.networkNativeCurrency = network.networkNativeCurrency
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     }, 30000)
@@ -206,6 +215,10 @@ export class Blockchain extends Plugin {
 
   getCurrentNetworkStatus() {
     return this.networkStatus
+  }
+
+  getCurrentNetworkCurrency() {
+    return this.networkNativeCurrency
   }
 
   isSmartAccount(address) {

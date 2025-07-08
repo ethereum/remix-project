@@ -80,6 +80,7 @@ export class ExecutionContext {
         }
         const cb = async (err, id) => {
           let name = null
+          let networkNativeCurrency = null
           if (err) name = 'Unknown'
           // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
           else if (id === 1) name = 'Main'
@@ -94,7 +95,10 @@ export class ExecutionContext {
             else {
               const networks = await response.json()
               const connectedNetwork = networks.find((n) => n.chainId === id)
-              if (connectedNetwork) name = connectedNetwork.name
+              if (connectedNetwork) {
+                name = connectedNetwork.name
+                networkNativeCurrency = connectedNetwork.nativeCurrency
+              }
               else name = 'Custom'
             }
           }
@@ -102,19 +106,19 @@ export class ExecutionContext {
           if (id === 1) {
             web3.eth.getBlock(0).then((block) => {
               if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
-              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
+              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
             }).catch((error) => {
               // Rabby wallet throws an error at this point. We are in that case unable to check the genesis hash.
-              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
+              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
             })
           } else {
-            callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-            return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+            callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
+            return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
           }
         }
-        web3.eth.net.getId().then(async (id) => await cb(null,parseInt(id))).catch(err=>cb(err))
+        web3.eth.net.getId().then(async (id) => await cb(null, parseInt(id))).catch(err => cb(err))
       }
     })
   }
