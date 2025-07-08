@@ -39,7 +39,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    null
+    'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<AiContextType>(
     'none'

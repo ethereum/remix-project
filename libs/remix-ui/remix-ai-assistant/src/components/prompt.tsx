@@ -186,7 +186,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
               ref={modelBtnRef}
             >
-              {'Provider '}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}
