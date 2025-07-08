@@ -100,8 +100,8 @@ function HomeTabTitle() {
   }
 
   return (
-    <div className="card mb-3 px-5 py-3 rounded overflow-hidden">
-      <img src="assets/img/remix-link-illustration.svg" className="home-tab-banner" alt="Remix Logo" style={{ position: 'absolute', top: '-200px', left: '125px', width: 300, height: 350, zIndex: 0 }} />
+    <div className="card mb-3 p-5 rounded overflow-hidden">
+      <img src="assets/img/remix-link-illustration.svg" className="home-tab-banner" alt="Remix Logo" style={{ position: 'absolute', top: '-200px', left: '125px', width: 400, height: 400, zIndex: 0 }} />
       <div style={{ backgroundColor: 'var(--body-bg)', opacity: 0.8, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}></div>
       <div style={{ zIndex: 2 }}>
         <div className="mb-0 d-flex align-items-center">
@@ -151,8 +151,8 @@ function HomeTabTitle() {
           </span>
         </div>
         <div className="d-flex flex-row flex-wrap justify-content-between">
-          <a className="btn btn-secondary bg-dark text-decoration-none" style={{ fontSize: '0.7rem', width: '150px', color: isDark ? 'white' : 'black' }} href="https://remix-ide.readthedocs.io/en/latest" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}><FormattedMessage id="home.documentation" /></a>
-          <a className="btn btn-secondary bg-dark text-decoration-none" style={{ fontSize: '0.7rem', width: '150px', color: isDark ? 'white' : 'black' }} href="https://remix-project.org" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])}><FormattedMessage id="home.website" /></a>
+          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-ide.readthedocs.io/en/latest" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}><FormattedMessage id="home.documentation" /></a>
+          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-project.org" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])}><FormattedMessage id="home.website" /></a>
         </div>
       </div>
     </div>
