@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../themeContext'
 import { RenderIf } from '@remix-ui/helper'
 import axios from 'axios'
-import { HOME_TAB_NEW_UPDATES } from './constant'
+import { HOME_TAB_BASE_URL, HOME_TAB_NEW_UPDATES } from './constant'
 import { LoadingCard } from './LoaderPlaceholder'
 declare global {
   interface Window {
@@ -56,7 +56,7 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
       <div className="card">
         <div className="d-flex align-items-center p-3 overflow-hidden justify-content-between" style={{ height: '80px', backgroundColor: 'var(--body-bg)' }}>
           <span className={`badge bg-info bg-transparent border p-2 rounded-pill text-${updateInfo.theme}`} style={{ fontWeight: 'light', border: `1px solid var(--${updateInfo.theme})` }}>{updateInfo.badge}</span>
-          <img src={'assets/img/in-app-marketing-card-illustration.svg'} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
+          <img src={`${HOME_TAB_BASE_URL + updateInfo.icon}`} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
         </div>
         <div className="p-3" style={{ fontSize: '1rem', zIndex: 1 }}>
           <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>
