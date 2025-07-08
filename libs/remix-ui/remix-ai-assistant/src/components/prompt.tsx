@@ -135,14 +135,14 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dim btn-sm text-light small font-weight-light"
+            className="btn btn-dim btn-sm text-light small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
           @Add context
           </button>
 
           <span
-            className="badge align-self-center badge-info text-ai font-weight-light"
+            className="badge align-self-center badge-info text-ai font-weight-light rounded"
           >
           Ai Beta
           </span>
@@ -183,7 +183,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           <div className="d-flex justify-content-between">
             <button
               onClick={handleSetAssistant}
-              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
               ref={modelBtnRef}
             >
               {'Provider '}
@@ -195,7 +195,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             </button>
             <button
               data-id="remix-ai-workspace-generate"
-              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
               onClick={handleGenerateWorkspace}
             >
               {'@Generate'}
