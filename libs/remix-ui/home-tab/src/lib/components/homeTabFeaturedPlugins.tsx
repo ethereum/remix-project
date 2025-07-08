@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { ThemeContext } from '../themeContext'
 import { ToggleSwitch } from '@remix-ui/toggle'
-import fetchResults from '../fetch2.json'
 import { RenderIf, RenderIfNot } from '@remix-ui/helper'
+import { HOME_TAB_PLUGIN_LIST } from './constant'
+import axios from 'axios'
+import { LoadingCard } from './LoaderPlaceholder'
 declare global {
   interface Window {
     _paq: any
@@ -33,21 +34,30 @@ interface PluginInfo {
 function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   const [activePlugins, setActivePlugins] = useState<string[]>([])
   const [loadingPlugins, setLoadingPlugins] = useState<string[]>([])
+  const [pluginList, setPluginList] = useState<{ caption: string, plugins: PluginInfo[] }>({ caption: '', plugins: []})
+  const [isLoading, setIsLoading] = useState(true)
   const theme = useContext(ThemeContext)
   const isDark = theme.name === 'dark'
 
-  // TODO: Fix this
-  // useEffect(() => {
-  //   const fetchActivePlugins = async () => {
-  //     fetchResults.plugins.forEach(async (pluginInfo: PluginInfo) => {
-  //       const isActive = await plugin.appManager.isActive(pluginInfo.pluginId)
-  //       if (isActive) {
-  //         setActivePlugins([...activePlugins, pluginInfo.pluginId])
-  //       }
-  //     })
-  //   }
-  //   fetchActivePlugins()
-  // }, [])
+  useEffect(() => {
+    async function getPluginList() {
+      try {
+        setIsLoading(true)
+        const response = await axios.get(HOME_TAB_PLUGIN_LIST)
+
+        response.data && setPluginList(response.data)
+      } catch (error) {
+        console.error('Error fetching plugin list:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    getPluginList()
+
+    plugin.on('manager', 'activate', (plugin: { name: string }) => {
+      setActivePlugins(activePlugins => [...activePlugins, plugin.name])
+    })
+  }, [])
 
   const activateFeaturedPlugin = async (pluginId: string) => {
     setLoadingPlugins([...loadingPlugins, pluginId])
@@ -65,11 +75,11 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
 
   function PluginCard(pluginInfo: PluginInfo) {
     return (
-      <div className="card mb-3">
+      <div className="card">
         <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
-          <div className='d-flex align-items-center'>
+          <div className='d-flex align-items-center px-2'>
             <RenderIf condition={loadingPlugins.includes(pluginInfo.pluginId)}>
-              <i className="fad fa-spinner fa-spin mr-2"></i>
+              <i className="fad fa-spinner fa-spin"></i>
             </RenderIf>
             <RenderIfNot condition={loadingPlugins.includes(pluginInfo.pluginId)}>
               { pluginInfo.iconClass ? <i className={`${pluginInfo.iconClass} mr-2`}></i> : <i className="fa-solid fa-file-book mr-2"></i> }
@@ -78,7 +88,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
           </div>
           <ToggleSwitch id={`toggleSwitch-${pluginInfo.pluginId}`} isOn={activePlugins.includes(pluginInfo.pluginId)} onClick={() => activateFeaturedPlugin(pluginInfo.pluginId)} />
         </div>
-        <div className="p-2">
+        <div className="p-3">
           <div className={`text-${pluginInfo.maintainedByRemix ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedByRemix ? 'Remix' : 'Community'}</div>
           <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
           <RenderIf condition={pluginInfo.action.type === 'link'}>
@@ -95,14 +105,23 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   return (
     <div className="w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h6 style={{ color: isDark ? 'white' : 'black' }}>{fetchResults.caption}</h6>
+        <h6 style={{ color: isDark ? 'white' : 'black' }}>{pluginList.caption}</h6>
         <button className="btn btn-secondary btn-sm" onClick={() => plugin.call('menuicons', 'select', 'pluginManager')} >Explore all plugins</button>
       </div>
       <div className="row">
         {
-          fetchResults.plugins.map((pluginInfo: PluginInfo) => (
-            <div className="col-md-6" key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
-          ))}
+          isLoading ? (
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={`loading-${index}`} className="col-md-6 mb-4">
+                <LoadingCard />
+              </div>
+            ))
+          ) : (
+            pluginList.plugins.map((pluginInfo: PluginInfo) => (
+              <div className="col-md-6 mb-4" key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
+            ))
+          )
+        }
       </div>
     </div>
   )

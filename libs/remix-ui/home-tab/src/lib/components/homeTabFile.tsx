@@ -105,7 +105,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
             {
               Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
                 return index < 3 ? (
-                  <a className="cursor-pointer mb-1 text-decoration-none" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)}>
+                  <a className="cursor-pointer mb-1 text-decoration-none" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
                     { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
                     <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
                   </a>
