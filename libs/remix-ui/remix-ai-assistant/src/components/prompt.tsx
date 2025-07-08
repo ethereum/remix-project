@@ -25,6 +25,10 @@ export interface PromptAreaProps {
   handleSetAssistant: () => void
   handleGenerateWorkspace: () => void
   dispatchActivity: (type: ActivityType, payload?: any) => void
+  contextBtnRef: React.RefObject<HTMLButtonElement>
+  modelBtnRef: React.RefObject<HTMLButtonElement>
+  aiContextGroupList: groupListType[]
+  aiAssistantGroupList: groupListType[]
 }
 
 export const PromptArea: React.FC<PromptAreaProps> = ({
@@ -45,78 +49,19 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   handleAddContext,
   handleSetAssistant,
   handleGenerateWorkspace,
-  dispatchActivity
+  dispatchActivity,
+  contextBtnRef,
+  modelBtnRef,
+  aiContextGroupList,
+  aiAssistantGroupList
 }) => {
-  const aiContextGroupList: groupListType[] = [
-    {
-      label: 'None',
-      bodyText: 'Assistant will automatically decide the context',
-      icon: 'fa-solid fa-check',
-      stateValue: 'none',
-      dataId: 'composer-ai-context-none'
-    },
-    {
-      label: 'Current file',
-      bodyText: 'Add the current file in the editor as context',
-      icon: 'fa-solid fa-check',
-      stateValue: 'current',
-      dataId: 'currentFile-context-option'
-    },
-    {
-      label: 'All opened files',
-      bodyText: 'Adds all files opened in the editor as context',
-      icon: 'fa-solid fa-check',
-      stateValue: 'opened',
-      dataId: 'allOpenedFiles-context-option'
-    },
-    {
-      label: 'Workspace',
-      bodyText: 'Uses the current workspace as context',
-      icon: 'fa-solid fa-check',
-      stateValue: 'workspace',
-      dataId: 'workspace-context-option'
-    }
-  ]
-
-  const aiAssistantGroupList: groupListType[] = [
-    {
-      label: 'OpenAI',
-      bodyText: 'Better for general purpose coding tasks',
-      icon: 'fa-solid fa-check',
-      stateValue: 'openai',
-      dataId: 'composer-ai-assistant-openai'
-    },
-    {
-      label: 'MistralAI',
-      bodyText: 'Better for more complex coding tasks with solidity, typescript and more',
-      icon: 'fa-solid fa-check',
-      stateValue: 'mistralai',
-      dataId: 'composer-ai-assistant-mistralai'
-    },
-    {
-      label: 'Anthropic',
-      bodyText: 'Best for complex coding tasks but most demanding on resources',
-      icon: 'fa-solid fa-check',
-      stateValue: 'anthropic',
-      dataId: 'composer-ai-assistant-anthropic'
-    }
-  ]
-  const modelBtnRef = useRef(null)
-  const contextBtnRef = useRef(null)
-  const [currentPosition, setCurrentPosition] = useState(0)
-
-  const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
-  const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
-  const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
-  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
-  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
 
   return (
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text position-absolute"
-          style={{ borderRadius: '8px', zIndex: 99999, left: `${calcAndConvertToDvh(getBoundingRect(contextBtnRef).left)}dvh`, right: '0px', bottom: '177px', height: '300px', width: '300px' }}
+          className="bg-light mb-1 p-2 border border-text"
+          style={{ borderRadius: '8px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
           <GroupListMenu
@@ -166,27 +111,13 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             }}
             placeholder="Ask me anything, add workspace files..."
           />
-          {showAssistantOptions && (
-            <div
-              className="pt-2 mb-2 z-3 bg-light border border-text position-absolute"
-              style={{ left: `${calcAndConvertToDvw(getBoundingRect(modelBtnRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
-            >
-              <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
-              <GroupListMenu
-                setChoice={setAssistantChoice}
-                setShowOptions={setShowAssistantOptions}
-                choice={assistantChoice}
-                groupList={aiAssistantGroupList}
-              />
-            </div>
-          )}
+
           <div className="d-flex justify-content-between">
             <button
               onClick={handleSetAssistant}
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
               ref={modelBtnRef}
             >
-              {assistantChoice === null && 'Default'}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}

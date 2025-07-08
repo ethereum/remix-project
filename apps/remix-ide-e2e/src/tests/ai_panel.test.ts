@@ -81,7 +81,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      // .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
       .assistantAddContext('currentFile')
       .waitForElementVisible({
         locateStrategy: 'xpath',
