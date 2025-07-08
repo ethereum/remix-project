@@ -39,7 +39,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    'mistralai'
+    null
   )
   const [contextChoice, setContextChoice] = useState<AiContextType>(
     'none'
@@ -299,7 +299,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     <div
       className="d-flex flex-column h-100 mx-3 "
     >
-      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column border border-success align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }}>
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }}>
         <div data-id="remix-ai-assistant-ready"></div>
         {/* hidden hook for E2E tests: data-streaming="true|false" */}
         <div
@@ -315,7 +315,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           historyRef={historyRef}
         />
       </section>
-      <section id="remix-ai-prompt-area" className="border border-danger mt-1" style={{ flex: 1 }}
+      <section id="remix-ai-prompt-area" className=" mt-1" style={{ flex: 1 }}
       >
         <PromptArea
           input={input}

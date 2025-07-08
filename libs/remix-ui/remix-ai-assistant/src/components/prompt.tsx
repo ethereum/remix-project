@@ -1,5 +1,5 @@
 import { ActivityType } from "../lib/types"
-import React from 'react'
+import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react'
 import GroupListMenu from "./contextOptMenu"
 import { AiContextType, groupListType } from '../types/componentTypes'
 import { AiAssistantType } from '../types/componentTypes'
@@ -100,14 +100,49 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       dataId: 'composer-ai-assistant-anthropic'
     }
   ]
+  const modelBtnRef = useRef(null)
+  const contextBtnRef = useRef(null)
+  const [currentPosition, setCurrentPosition] = useState(0)
+
+  const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
+  const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
+  const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
+
+  // useEffect(() => {
+  //   const controller = new AbortController()
+  //   const refs: MutableRefObject<HTMLElement>[] = [contextBtnRef, modelBtnRef]
+  //   const handlerListener = (event: MouseEvent) => {
+  //     if (contextBtnRef.current?.contains(event.target as Node))
+  //       return
+  //     // setShowAssistantOptions(!showAssistantOptions)
+  //   }
+  //   document.addEventListener('mousedown', handlerListener, { signal: controller.signal })
+
+  //   return () => {
+  //     controller.abort()
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   const controller = new AbortController()
+
+  //   document.addEventListener('mousedown', (event: MouseEvent) => {
+  //     if (modelBtnRef.current?.contains(event.target as Node))
+  //       return
+  //     // setShowContextOptions(!showContextOptions)
+  //   }, { signal: controller.signal })
+
+  //   return () => {
+  //     controller.abort()
+  //   }
+  // }, [])
 
   return (
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text"
-          // style={{ borderRadius: '8px', zIndex: 99999, left: '76dvw', right: '0px', bottom: '177px', height: '300px', width: '300px' }}
-          style={{ zIndex: 99999 }}
+          className="bg-light mb-1 p-2 border border-text position-absolute"
+          style={{ borderRadius: '8px', zIndex: 99999, left: `${calcAndConvertToDvh(getBoundingRect(contextBtnRef).left)}dvh`, right: '0px', bottom: '177px', height: '300px', width: '300px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
           <GroupListMenu
@@ -127,6 +162,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
             className="btn btn-dim btn-sm text-light small font-weight-light"
+            ref={contextBtnRef}
           >
           @Add context
           </button>
@@ -159,7 +195,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           {showAssistantOptions && (
             <div
               className="pt-2 mb-2 z-3 bg-light border border-text position-absolute"
-              style={{ left: '76dvw', right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
+              style={{ left: `${calcAndConvertToDvw(getBoundingRect(modelBtnRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', borderRadius: '8px' }}
             >
               <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
               <GroupListMenu
@@ -174,7 +210,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             <button
               onClick={handleSetAssistant}
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end"
+              ref={modelBtnRef}
             >
+              {'Provider '}
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}
