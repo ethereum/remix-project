@@ -40,7 +40,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [isStreaming, setIsStreaming] = useState(false)
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
-  const [assistantChoice, setAssistantChoice] = useState<AiAssistantType>('mistralai')
+  const [assistantChoice, setAssistantChoice] = useState<AiAssistantType>(null)
   const [contextChoice, setContextChoice] = useState<AiContextType>(
     'none'
   )
@@ -51,8 +51,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
   const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
-  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
-  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
+  // useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
+  // useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
   const chatCmdParser = new ChatCommandParser(props.plugin)
   const aiContextGroupList: groupListType[] = [
     {
