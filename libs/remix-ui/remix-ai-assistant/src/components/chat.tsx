@@ -118,13 +118,27 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                               </pre>
                             </div>
                           )
-                        }
+                        },
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            {...props}
+                            style={{
+                              listStylePosition: 'inside',
+                              paddingLeft: '0.5rem'
+                            }}
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li {...props} style={{ padding: '1px' }} />
+                        )
                       }}
                     >
                       {msg.content}
                     </ReactMarkdown>
                   ) : (
-                    msg.content
+                    <div className="p-1">
+                      msg.content
+                    </div>
                   )}
                 </div>
 
