@@ -86,6 +86,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <div className="col-lg-5 col-xl-5 mb-4">
               <HomeTabTitle />
               <HomeTabFile plugin={plugin} />
+              {/* {!(platform === appPlatformTypes.desktop) ? <HomeTabFile plugin={plugin} /> : <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>} */}
             </div>
             <div className="col-lg-7 col-xl-7">
               <HomeTabUpdates plugin={plugin} />
