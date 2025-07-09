@@ -93,9 +93,6 @@ export class SidePanel extends AbstractPanel {
    */
   async showContent(name) {
     super.showContent(name)
-    if (name === 'remixaiassistant') { // TODO: should this be a plugin feature?
-      this.pinView(this.plugins['remixaiassistant'].profile)
-    }
     this.emit('focusChanged', name)
     this.renderComponent()
   }
