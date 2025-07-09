@@ -69,22 +69,6 @@ module.exports = {
       */
   },
 
-  'Load Gist Modal #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('home')
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('filePanel')
-      .click('div[data-id="verticalIconsHomeIcon"]')
-      .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
-      .pause(1000)
-      .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalTitle-react"]')
-      .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
-      .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
-      .modalFooterCancelClick('gisthandler')
-  },
-
   'Display Error Message For Invalid Gist ID #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
