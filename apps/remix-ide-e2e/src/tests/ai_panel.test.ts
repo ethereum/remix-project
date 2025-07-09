@@ -22,7 +22,7 @@ module.exports = {
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
   // Conversation starter button with data id 'explain-editor' doesn't exist anymore
-  'Should explain the contract #group1': function (browser: NightwatchBrowser) {
+  'Should contain message starters #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('remixaiassistant')
       .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')

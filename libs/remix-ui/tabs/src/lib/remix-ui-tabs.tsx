@@ -8,6 +8,7 @@ import './remix-ui-tabs.css'
 import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
+import { SupportedFileExtensions } from '@remix/remix-ai-core'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -271,7 +272,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-explanation"
               tooltipText={
                 <span>
-                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
+                  {Object.values(SupportedFileExtensions).some(ext => ext === tabsState.currentExt) ? (
                     <FormattedMessage id="remixUiTabs.tooltipText5" />
                   ) : (
                     <FormattedMessage id="remixUiTabs.tooltipText4" />
@@ -283,11 +284,11 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="explain-editor"
                 id='explain_btn'
                 className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
+                disabled={!(Object.values(SupportedFileExtensions).some(ext => ext === tabsState.currentExt)) || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
                   const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
+                  if (Object.values(SupportedFileExtensions).some(ext => ext === tabsState.currentExt) && !explaining) {
                     setExplaining(true)
                     try {
                       await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
@@ -311,7 +312,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-copilot"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'sol' ? (
+                  {Object.values(SupportedFileExtensions).some(ext => ext === tabsState.currentExt) ? (
                     !ai_switch ? (
                       <FormattedMessage id="remixUiTabs.tooltipText6" />
                     ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
@@ -325,7 +326,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="remix_ai_switch"
                 id='remix_ai_switch'
                 className="btn ai-switch text-ai pl-2 pr-0 py-0"
-                disabled={!(tabsState.currentExt === 'sol')}
+                disabled={!(Object.values(SupportedFileExtensions).some(ext => ext === tabsState.currentExt))}
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                   setAI_switch(!ai_switch)

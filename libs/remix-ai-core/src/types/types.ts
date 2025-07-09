@@ -3,6 +3,18 @@
 import constants from 'constants';
 import { ModelType } from './constants';
 
+export enum SupportedFileExtensions {
+  solidity = 'sol',
+  vyper = 'vy',
+  circom = 'circom',
+  noir = 'nr',
+  cairo = 'cairo',
+  javascript = 'js',
+  typescript = 'ts',
+  tests_ts = 'test.ts',
+  tests_js = 'test.js',
+}
+
 export interface IModelRequirements{
   backend: string,
   minSysMemory: number,
@@ -23,8 +35,7 @@ export interface IModel {
   modelType: ModelType;
   modelReqs: IModelRequirements;
   downloadPath?: string;
-  modelOP?: RemoteBackendOPModel;
-
+  provider?: string;
 }
 export interface IRemoteModel {
   completionUrl: string;
@@ -38,22 +49,6 @@ export interface IModelResponse {
   model: IModel;
 }
 
-export interface IStreamResponse {
-  generatedText: string;
-  isGenerating: boolean;
-}
-
-export interface IModelRequest {
-  input: string;
-  model: IModel;
-}
-
-export interface InferenceModel {
-  model: IModel;
-  location: string;
-  isRemote: boolean;
-}
-
 export interface ICompletions{
   code_completion(context, ctxFiles, fileName, params:IParams): Promise<any>;
   code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, params:IParams): Promise<any>;
@@ -62,7 +57,7 @@ export interface IGeneration{
   code_generation(prompt, params:IParams): Promise<any>;
   code_explaining(prompt, context:string, params:IParams): Promise<any>;
   error_explaining(prompt, params:IParams): Promise<any>;
-  solidity_answer(prompt, params:IParams): Promise<any>;
+  answer(prompt, params:IParams): Promise<any>;
   generate(prompt, params:IParams): Promise<any>;
   generateWorkspace(prompt, params:IParams): Promise<any>;
   vulnerability_check(prompt, params:IParams): Promise<any>;
@@ -71,6 +66,7 @@ export interface IGeneration{
 export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
+  max_tokens?: number;
   repetition_penalty?: number;
   repeat_penalty?:any
   no_repeat_ngram_size?: number;
@@ -91,6 +87,8 @@ export interface IParams {
   provider?: string;
   stream?: boolean;
   model?: string;
+  stop?: string[];
+  chatHistory?: any[];
 }
 
 export enum AIRequestType {
@@ -99,12 +97,6 @@ export enum AIRequestType {
 }
 
 export type ChatEntry = [string, string];
-
-export enum RemoteBackendOPModel{
-  DEEPSEEK,
-  CODELLAMA,
-  MISTRAL
-}
 
 interface GeneratedTextObject {
   generatedText: string;

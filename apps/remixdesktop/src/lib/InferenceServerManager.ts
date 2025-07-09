@@ -5,9 +5,8 @@ import axios from "axios";
 import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
-  IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
-  buildSolgptPrompt } from "@remix/remix-ai-core"
-import { platform } from 'os';
+  ChatHistory, downloadLatestReleaseExecutable,
+  buildChatPrompt } from "@remix/remix-ai-core"
 
 class ServerStatusTimer {
   private intervalId: NodeJS.Timeout | null = null;
@@ -409,7 +408,7 @@ export class InferenceManager implements ICompletions {
       if (payload.return_stream_response) {
         return response
       }
-      
+
       response.data.on('data', (chunk: Buffer) => {
         try {
           const parsedData = JSON.parse(chunk.toString());
@@ -506,7 +505,7 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async solidity_answer(userPrompt: string, params:IParams=GenerationParams): Promise<any> {
+  async answer(userPrompt: string, params:IParams=GenerationParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
@@ -517,12 +516,12 @@ export class InferenceManager implements ICompletions {
         modelOP = model.modelOP
       }
     }
-    const prompt = buildSolgptPrompt(userPrompt, modelOP)
+    params.chatHistory = params.provider === 'anthropic' ? buildChatPrompt(prompt) : []
 
     if (params.stream_result) {
-      return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
+      return this._streamInferenceRequest('answer', { prompt:userPrompt, ...params })
     } else {
-      return this._makeInferenceRequest('solidity_answer', { prompt, ...params }, AIRequestType.GENERAL)
+      return this._makeInferenceRequest('answer', { prompt, ...params }, AIRequestType.GENERAL)
     }
   }
 

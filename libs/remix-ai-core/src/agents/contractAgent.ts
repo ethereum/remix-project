@@ -39,8 +39,6 @@ export class ContractAgent {
 
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
-        console.log('Writing AI results to desktop workspace:', parsedResults.files)
-        // Transform parsedResults.files into an object: { [fileName]: content }
         const files = parsedResults.files.reduce((acc, file) => {
           acc[file.fileName] = file.content
           return acc
@@ -62,8 +60,8 @@ export class ContractAgent {
         // check if file already exists
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
-        return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
       }
+      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
     }
 
     try {

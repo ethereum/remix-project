@@ -83,9 +83,9 @@ export class ChatCommandParser {
     }
   }
 
-  private async handleAssistant(provider: string, ref: { props: { assistantProvider: string; }; }) {
+  private async handleAssistant(provider: string, ref) {
     if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic') {
-      ref.props.assistantProvider = provider
+      await ref.props.call('remixAI', 'setAssistantProvider', provider);
       return "AI Provider set to `" + provider + "` successfully! "
     } else {
       return "Invalid AI Provider. Please use `openai`, `mistralai`, or `anthropic`."

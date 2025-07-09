@@ -1,22 +1,19 @@
 'use strict'
 
-import { IModel, IModelResponse, IModelRequest, InferenceModel, ICompletions,
-  IParams, ChatEntry, AIRequestType, IRemoteModel,
-  RemoteBackendOPModel, IStreamResponse } from './types/types'
+import { IModel, IModelResponse, ICompletions,
+  IParams, ChatEntry, AIRequestType, IRemoteModel } from './types/types'
 import { ModelType } from './types/constants'
 import { DefaultModels, InsertionParams, CompletionParams, GenerationParams, AssistantParams } from './types/models'
-import { getCompletionPrompt, getInsertionPrompt } from './prompts/completionPrompts'
-import { buildSolgptPrompt, PromptBuilder } from './prompts/promptBuilder'
+import { buildChatPrompt } from './prompts/promptBuilder'
 import { RemoteInferencer } from './inferencers/remote/remoteInference'
 import { ChatHistory } from './prompts/chat'
 import { downloadLatestReleaseExecutable } from './helpers/inferenceServerReleases'
 import { ChatCommandParser } from './helpers/chatCommandParser'
 export {
-  IModel, IModelResponse, IModelRequest, InferenceModel, ChatCommandParser,
-  ModelType, DefaultModels, ICompletions, IParams, IRemoteModel,
-  getCompletionPrompt, getInsertionPrompt, IStreamResponse, buildSolgptPrompt,
+  IModel, IModelResponse, ChatCommandParser,
+  ModelType, DefaultModels, ICompletions, IParams, IRemoteModel, buildChatPrompt,
   RemoteInferencer, InsertionParams, CompletionParams, GenerationParams, AssistantParams,
-  ChatEntry, AIRequestType, RemoteBackendOPModel, ChatHistory, downloadLatestReleaseExecutable
+  ChatEntry, AIRequestType, ChatHistory, downloadLatestReleaseExecutable
 }
 
 export * from './types/types'
