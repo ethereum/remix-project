@@ -79,27 +79,31 @@ export class ExecutionContext {
           return reject('No provider set')
         }
         const cb = async (err, id) => {
-          let name = null
+          let name = 'Custom'
           let networkNativeCurrency = null
           if (err) name = 'Unknown'
           // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
           else if (id === 1) name = 'Main'
-          else if (id === 3) name = 'Ropsten'
-          else if (id === 4) name = 'Rinkeby'
-          else if (id === 5) name = 'Goerli'
-          else if (id === 42) name = 'Kovan'
           else if (id === 11155111) name = 'Sepolia'
           else {
-            const response = await fetch('https://chainid.network/chains.json')
-            if (!response.ok) name = 'Custom'
-            else {
-              const networks = await response.json()
-              const connectedNetwork = networks.find((n) => n.chainId === id)
-              if (connectedNetwork) {
-                name = connectedNetwork.name
-                networkNativeCurrency = connectedNetwork.nativeCurrency
+            let networkDetails = localStorage.getItem('networkDetails')
+            if (!networkDetails) networkDetails = '{}'
+            networkDetails = JSON.parse(networkDetails)
+            if (networkDetails[id]) {
+              name = networkDetails[id].name
+              networkNativeCurrency = networkDetails[id].nativeCurrency
+            } else {
+              const response = await fetch('https://chainid.network/chains.json')
+              if (response.ok) {
+                const networks = await response.json()
+                const connectedNetwork = networks.find((n) => n.chainId === id)
+                if (connectedNetwork) {
+                  name = connectedNetwork.name
+                  networkNativeCurrency = connectedNetwork.nativeCurrency
+                  networkDetails[id] = { name, nativeCurrency:  networkNativeCurrency}
+                  localStorage.setItem('networkDetails', JSON.stringify(networkDetails))
+                }
               }
-              else name = 'Custom'
             }
           }
         
