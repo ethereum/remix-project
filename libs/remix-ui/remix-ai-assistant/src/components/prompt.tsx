@@ -3,6 +3,7 @@ import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react
 import GroupListMenu from "./contextOptMenu"
 import { AiContextType, groupListType } from '../types/componentTypes'
 import { AiAssistantType } from '../types/componentTypes'
+import { CustomTooltip } from "@remix-ui/helper"
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -73,23 +74,30 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text remix-aichat-background align-self-start"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text bg-light align-self-start"
       >
         <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dim btn-sm text-light small font-weight-light border border-text rounded"
+            className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
           @Add context
           </button>
 
-          <span
-            className="badge align-self-center badge-info text-ai font-weight-light rounded"
-          >
-          Ai Beta
-          </span>
+          <div className="d-flex justify-content-center align-items-center">
+            <CustomTooltip
+              tooltipText={<TooltipContent />}
+            >
+              <span className="far fa-circle-info text-ai mr-1"></span>
+            </CustomTooltip>
+            <span
+              className="badge align-self-center badge-info text-ai font-weight-light rounded"
+            >
+              Ai Beta
+            </span>
+          </div>
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <input
@@ -169,5 +177,21 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         )}
       </div>
     </>
+  )
+}
+
+function TooltipContent () {
+  return (
+    <ul className="list-unstyled p-2 mr-3">
+      <li className="">
+        {'- /w <command> will manipulate files in your workspace'}
+      </li>
+      <li className="">
+        {'- /g <command> will generate contracts or workspaces'}
+      </li>
+      <li className="">
+        {'- you can also just type in your question below'}
+      </li>
+    </ul>
   )
 }
