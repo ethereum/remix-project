@@ -46,7 +46,10 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
-        loadedAccounts[account] = shortenAddress(account, balance)
+        if (provider.startsWith('injected') && plugin.blockchain && plugin.blockchain['networkNativeCurrency'] && plugin.blockchain['networkNativeCurrency'].symbol)
+          loadedAccounts[account] = shortenAddress(account, balance, plugin.blockchain['networkNativeCurrency'].symbol)
+        else
+          loadedAccounts[account] = shortenAddress(account, balance)
         if (safeAddresses.length && safeAddresses.includes(account)) loadedAccounts[account] = `[SMART] ${loadedAccounts[account]}`
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
