@@ -1432,7 +1432,6 @@ export const EditorUI = (props: EditorUIProps) => {
       decoratorList.onDidChange(() => {
         const newRanges = decoratorList.getRanges()
         if (newRanges.length === 0) return
-        console.log('decoratorList onDidChange', startLineNumber, newRanges, widgetId)
         if (newRanges[0].startLineNumber !== startLineNumber && document.getElementById(widgetId)) {
           editorRef.removeContentWidget({
             getId: () => widgetId
