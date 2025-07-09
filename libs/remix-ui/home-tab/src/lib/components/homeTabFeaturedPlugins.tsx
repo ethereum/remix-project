@@ -46,10 +46,9 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
         const response = await axios.get(HOME_TAB_PLUGIN_LIST)
 
         response.data && setPluginList(response.data)
+        setIsLoading(false)
       } catch (error) {
         console.error('Error fetching plugin list:', error)
-      } finally {
-        setIsLoading(false)
       }
     }
     getPluginList()

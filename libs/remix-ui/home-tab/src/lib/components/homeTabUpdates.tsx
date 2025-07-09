@@ -42,10 +42,9 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
         setIsLoading(true)
         const response = await axios.get(HOME_TAB_NEW_UPDATES)
         setPluginList(response.data)
+        setIsLoading(false)
       } catch (error) {
         console.error('Error fetching plugin list:', error)
-      } finally {
-        setIsLoading(false)
       }
     }
     getLatestUpdates()
