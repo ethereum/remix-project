@@ -189,6 +189,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  plugin.call('notification', 'toast', `Preparing tx to sign...`)
   const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
@@ -254,6 +255,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
         value: 0
       }]
     })
+    plugin.call('notification', 'toast', `Waiting for tx confirmation, can take 5-10 seconds...`)
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
 
     // To verify creation, check if there is a contract code at this address
@@ -270,6 +272,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
+    await fillAccountsList(plugin, dispatch)
     _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createdSuccessfully'])
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
