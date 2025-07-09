@@ -11,6 +11,7 @@ import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
 import { groupListType } from '../types/componentTypes'
 import GroupListMenu from './contextOptMenu'
+import { useOnClickOutside } from './onClickOutsideHook'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -50,6 +51,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
+
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
 
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
