@@ -25,6 +25,7 @@ interface PluginInfo {
     url?: string
     pluginName?: string
     pluginMethod?: string
+    pluginArgs?: (string | number | boolean | object | null)[]
   }
   iconClass: string
   maintainedByRemix: boolean
@@ -94,7 +95,9 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
             <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm w-100 text-decoration-none" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={pluginInfo.action.type === 'methodCall'}>
-            <button className="btn btn-secondary btn-sm w-100 text-decoration-none" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</button>
+            <button className="btn btn-secondary btn-sm w-100 text-decoration-none" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
+              <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
+            </button>
           </RenderIf>
         </div>
       </div>
