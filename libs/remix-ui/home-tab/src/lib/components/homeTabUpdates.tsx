@@ -25,7 +25,8 @@ interface UpdateInfo {
     label: string
     url?: string
     pluginName?: string
-    pluginMethod?: string
+    pluginMethod?: string,
+    pluginArgs?: (string | number | boolean | object | null)[]
   },
   theme: string
 }
@@ -68,7 +69,9 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
             <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme} text-decoration-none`}>{updateInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={updateInfo.action.type === 'methodCall'}>
-            <button className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod)}>{updateInfo.action.label}</button>
+            <button className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
+              {updateInfo.action.label}
+            </button>
           </RenderIf>
         </div>
       </div>
