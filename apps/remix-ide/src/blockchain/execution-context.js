@@ -80,7 +80,7 @@ export class ExecutionContext {
         }
         const cb = async (err, id) => {
           let name = 'Custom'
-          let networkNativeCurrency = null
+          let networkNativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
           if (err) name = 'Unknown'
           // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
           else if (id === 1) name = 'Main'
