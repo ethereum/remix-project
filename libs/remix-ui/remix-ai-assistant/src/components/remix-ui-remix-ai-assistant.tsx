@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, MutableRefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
@@ -8,6 +8,8 @@ import { ModalTypes } from '@remix-ui/app'
 import { PromptArea } from './prompt'
 import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
+import { AiAssistantType, AiContextType, groupListType } from '../types/componentTypes'
+import GroupListMenu from './contextOptMenu'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -37,14 +39,71 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [isStreaming, setIsStreaming] = useState(false)
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
-  const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    null
-  )
-  const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
-    'none'
-  )
+  const [assistantChoice, setAssistantChoice] = useState<AiAssistantType>(null)
+  const [contextChoice, setContextChoice] = useState<AiContextType>('none')
   const historyRef = useRef<HTMLDivElement | null>(null)
+  const modelBtnRef = useRef(null)
+  const contextBtnRef = useRef(null)
+
+  const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
+  const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
+  const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
   const chatCmdParser = new ChatCommandParser(props.plugin)
+
+  const aiContextGroupList: groupListType[] = [
+    {
+      label: 'None',
+      bodyText: 'Assistant will automatically decide the context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'none',
+      dataId: 'composer-ai-context-none'
+    },
+    {
+      label: 'Current file',
+      bodyText: 'Add the current file in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'current',
+      dataId: 'currentFile-context-option'
+    },
+    {
+      label: 'All opened files',
+      bodyText: 'Adds all files opened in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'opened',
+      dataId: 'allOpenedFiles-context-option'
+    },
+    {
+      label: 'Workspace',
+      bodyText: 'Uses the current workspace as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'workspace',
+      dataId: 'workspace-context-option'
+    }
+  ]
+
+  const aiAssistantGroupList: groupListType[] = [
+    {
+      label: 'OpenAI',
+      bodyText: 'Better for general purpose coding tasks',
+      icon: 'fa-solid fa-check',
+      stateValue: 'openai',
+      dataId: 'composer-ai-assistant-openai'
+    },
+    {
+      label: 'MistralAI',
+      bodyText: 'Better for more complex coding tasks with solidity, typescript and more',
+      icon: 'fa-solid fa-check',
+      stateValue: 'mistralai',
+      dataId: 'composer-ai-assistant-mistralai'
+    },
+    {
+      label: 'Anthropic',
+      bodyText: 'Best for complex coding tasks but most demanding on resources',
+      icon: 'fa-solid fa-check',
+      stateValue: 'anthropic',
+      dataId: 'composer-ai-assistant-anthropic'
+    }
+  ]
 
   const dispatchActivity = useCallback(
     (type: ActivityType, payload?: any) => {
@@ -295,42 +354,65 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   return (
     <div
-      className="d-flex flex-column h-100 mx-3"
+      className="d-flex flex-column h-100 mx-3 "
     >
-      <div data-id="remix-ai-assistant-ready"></div>
-      {/* hidden hook for E2E tests: data-streaming="true|false" */}
-      <div
-        data-id="remix-ai-streaming"
-        className='d-none'
-        data-streaming={isStreaming ? 'true' : 'false'}
-      ></div>
-      <ChatHistoryComponent
-        messages={messages}
-        isStreaming={isStreaming}
-        sendPrompt={sendPrompt}
-        recordFeedback={recordFeedback}
-        historyRef={historyRef}
-      />
-      <PromptArea
-        input={input}
-        setInput={setInput}
-        isStreaming={isStreaming}
-        handleSend={handleSend}
-        showContextOptions={showContextOptions}
-        setShowContextOptions={setShowContextOptions}
-        showAssistantOptions={showAssistantOptions}
-        setShowAssistantOptions={setShowAssistantOptions}
-        contextChoice={contextChoice}
-        setContextChoice={setContextChoice}
-        assistantChoice={assistantChoice}
-        setAssistantChoice={setAssistantChoice}
-        contextFiles={contextFiles}
-        clearContext={clearContext}
-        handleAddContext={handleAddContext}
-        handleSetAssistant={handleSetAssistant}
-        handleGenerateWorkspace={handleGenerateWorkspace}
-        dispatchActivity={dispatchActivity}
-      />
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }}>
+        <div data-id="remix-ai-assistant-ready"></div>
+        {/* hidden hook for E2E tests: data-streaming="true|false" */}
+        <div
+          data-id="remix-ai-streaming"
+          className='d-none'
+          data-streaming={isStreaming ? 'true' : 'false'}
+        ></div>
+        <ChatHistoryComponent
+          messages={messages}
+          isStreaming={isStreaming}
+          sendPrompt={sendPrompt}
+          recordFeedback={recordFeedback}
+          historyRef={historyRef}
+        />
+      </section>
+      <section id="remix-ai-prompt-area" className=" mt-1" style={{ flex: 1 }}
+      >
+        {showAssistantOptions && (
+          <div
+            className="pt-2 mb-2 z-3 bg-light border border-text"
+            style={{ borderRadius: '8px', left: `${calcAndConvertToDvw(getBoundingRect(modelBtnRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', }}
+          >
+            <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
+            <GroupListMenu
+              setChoice={setAssistantChoice}
+              setShowOptions={setShowAssistantOptions}
+              choice={assistantChoice}
+              groupList={aiAssistantGroupList}
+            />
+          </div>
+        )}
+        <PromptArea
+          input={input}
+          setInput={setInput}
+          isStreaming={isStreaming}
+          handleSend={handleSend}
+          showContextOptions={showContextOptions}
+          setShowContextOptions={setShowContextOptions}
+          showAssistantOptions={showAssistantOptions}
+          setShowAssistantOptions={setShowAssistantOptions}
+          contextChoice={contextChoice}
+          setContextChoice={setContextChoice}
+          assistantChoice={assistantChoice}
+          setAssistantChoice={setAssistantChoice}
+          contextFiles={contextFiles}
+          clearContext={clearContext}
+          handleAddContext={handleAddContext}
+          handleSetAssistant={handleSetAssistant}
+          handleGenerateWorkspace={handleGenerateWorkspace}
+          dispatchActivity={dispatchActivity}
+          contextBtnRef={contextBtnRef}
+          modelBtnRef={modelBtnRef}
+          aiContextGroupList={aiContextGroupList}
+          aiAssistantGroupList={aiAssistantGroupList}
+        />
+      </section>
     </div>
   )
 })

@@ -1,5 +1,8 @@
 import { ActivityType } from "../lib/types"
-import React from 'react'
+import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react'
+import GroupListMenu from "./contextOptMenu"
+import { AiContextType, groupListType } from '../types/componentTypes'
+import { AiAssistantType } from '../types/componentTypes'
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -11,16 +14,20 @@ export interface PromptAreaProps {
   setShowContextOptions: React.Dispatch<React.SetStateAction<boolean>>
   showAssistantOptions: boolean
   setShowAssistantOptions: React.Dispatch<React.SetStateAction<boolean>>
-  contextChoice: 'none' | 'current' | 'opened' | 'workspace'
-  setContextChoice: React.Dispatch<React.SetStateAction<'none' | 'current' | 'opened' | 'workspace'>>
-  assistantChoice: 'openai' | 'mistralai' | 'anthropic'
-  setAssistantChoice: React.Dispatch<React.SetStateAction<'openai' | 'mistralai' | 'anthropic'>>
+  contextChoice: AiContextType
+  setContextChoice: React.Dispatch<React.SetStateAction<AiContextType>>
+  assistantChoice: AiAssistantType
+  setAssistantChoice: React.Dispatch<React.SetStateAction<AiAssistantType>>
   contextFiles: string[]
   clearContext: () => void
   handleAddContext: () => void
   handleSetAssistant: () => void
   handleGenerateWorkspace: () => void
   dispatchActivity: (type: ActivityType, payload?: any) => void
+  contextBtnRef: React.RefObject<HTMLButtonElement>
+  modelBtnRef: React.RefObject<HTMLButtonElement>
+  aiContextGroupList: groupListType[]
+  aiAssistantGroupList: groupListType[]
 }
 
 export const PromptArea: React.FC<PromptAreaProps> = ({
@@ -41,97 +48,48 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   handleAddContext,
   handleSetAssistant,
   handleGenerateWorkspace,
-  dispatchActivity
+  dispatchActivity,
+  contextBtnRef,
+  modelBtnRef,
+  aiContextGroupList,
+  aiAssistantGroupList
 }) => {
+
   return (
     <>
       {showContextOptions && (
         <div
-          className=" w-100 bg-dark p-2 border border-text border-bottom-0 rounded"
+          className="bg-light mb-1 p-2 border border-text"
+          style={{ borderRadius: '8px' }}
         >
-          <div className="text-uppercase ml-2 mb-2">Add Context Files</div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-none"
-              checked={contextChoice === 'none'}
-              onChange={() => {
-                setContextChoice('none')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="none-context-option" htmlFor="ctx-none">
-              None
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-current"
-              checked={contextChoice === 'current'}
-              onChange={() => {
-                setContextChoice('current')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="currentFile-context-option" htmlFor="ctx-current">
-              Current file
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-opened"
-              checked={contextChoice === 'opened'}
-              onChange={() => {
-                setContextChoice('opened')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
-              All opened files
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-workspace"
-              checked={contextChoice === 'workspace'}
-              onChange={() => {
-                setContextChoice('workspace')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
-              Workspace
-            </label>
-          </div>
+          <div className="text-uppercase ml-2 mb-2">Context</div>
+          <GroupListMenu
+            setChoice={setContextChoice}
+            setShowOptions={setShowContextOptions}
+            choice={contextChoice}
+            groupList={aiContextGroupList}
+          />
         </div>
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text remix-aichat-background align-self-start"
       >
-        <div className="d-flex justify-content-between mb-2">
+        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dark btn-sm text-secondary"
+            className="btn btn-dim btn-sm text-light small font-weight-light border border-text rounded"
+            ref={contextBtnRef}
           >
-          Add context
+          @Add context
           </button>
 
-          <button
-            onClick={handleGenerateWorkspace}
-            className="btn btn-dark btn-sm text-secondary"
-            data-id="composer-ai-workspace-generate"
+          <span
+            className="badge align-self-center badge-info text-ai font-weight-light rounded"
           >
-          @Generate Workspace
-          </button>
+          Ai Beta
+          </span>
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <input
@@ -152,65 +110,35 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             }}
             placeholder="Ask me anything, add workspace files..."
           />
-          {showAssistantOptions && (
-            <div
-              className="p-3 mb-2 z-3 bg-dark border border-text position-absolute"
-              style={{ top: '79dvh', left: '85dvw', right: '0px', bottom: '15px', height: '125px', width: '220px', borderRadius: '15px' }}
+
+          <div className="d-flex justify-content-between">
+            <button
+              onClick={handleSetAssistant}
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+              ref={modelBtnRef}
             >
-              <div className="text-uppercase ml-2 mb-2">Choose Assistant Model</div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-openai`}
-                  checked={assistantChoice === 'openai'}
-                  onChange={() => {
-                    setAssistantChoice('openai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-openai`}>
-                    OpenAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'mistralai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-mistralai`}
-                  checked={assistantChoice === 'mistralai'}
-                  onChange={() => {
-                    setAssistantChoice('mistralai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-mistralai`}>
-                    MistralAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'anthropic'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-anthropic`}
-                  checked={assistantChoice === 'anthropic'}
-                  onChange={() => {
-                    setAssistantChoice('anthropic')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
-                    Anthropic
-                </label>
-              </div>
-            </div>
-          )}
-          <button
-            onClick={handleSetAssistant}
-            className="btn btn-dark btn-sm text-secondary mt-2 align-self-end"
-          >
-            Set assistant&nbsp;
-          </button>
+              {assistantChoice === null && 'Default'}
+              {assistantChoice === 'openai' && ' OpenAI'}
+              {assistantChoice === 'mistralai' && ' MistralAI'}
+              {assistantChoice === 'anthropic' && ' Anthropic'}
+              {'  '}
+              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+            </button>
+            <button
+              data-id="remix-ai-workspace-generate"
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+              onClick={handleGenerateWorkspace}
+            >
+              {'@Generate'}
+            </button>
+            {/* <button
+              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
+              style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
+              onClick={handleSend}
+            >
+              <span className="fa fa-arrow-up text-light"></span>
+            </button> */}
+          </div>
         </div>
         {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>

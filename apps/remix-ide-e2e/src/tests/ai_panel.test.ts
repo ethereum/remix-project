@@ -81,7 +81,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
+      // .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
       .assistantAddContext('currentFile')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -171,8 +171,8 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .waitForElementVisible('*[data-id="composer-ai-workspace-generate"]')
-      .click('*[data-id="composer-ai-workspace-generate"]')
+      .waitForElementVisible('*[data-id="remix-ai-workspace-generate"]')
+      .click('*[data-id="remix-ai-workspace-generate"]')
       .waitForElementVisible('*[data-id="generate-workspaceModalDialogModalBody-react"]')
       .click('*[data-id="modalDialogCustomPromp"]')
       .setValue('*[data-id="modalDialogCustomPromp"]', 'a simple ERC20 contract')
