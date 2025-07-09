@@ -314,9 +314,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           title: 'Generate Workspace',
           message: `
             Describe the kind of workspace you want RemixAI to scaffold. For example:
-            ERC‑20 token with foundry tests
-            ERC‑721 NFT collection with IPFS metadata
-            Decentralized voting app with Solidity smart contracts
+            Create an ERC‑20 token with all explanations as comments in the contract.
+            Create a Voting contract and explain the contract with comments
+            Create a proxy contract with all explanations about the contract as comments
 
           `,
           modalType: ModalTypes.prompt, // single-line text
