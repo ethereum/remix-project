@@ -3,6 +3,8 @@ import remarkGfm from "remark-gfm"
 import copy from "copy-to-clipboard"
 import { ChatMessage, assistantAvatar } from "../lib/types"
 import React from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const DEFAULT_SUGGESTIONS = [
   'Explain what a modifier is',
@@ -19,6 +21,29 @@ export interface ChatHistoryComponentProps {
   historyRef: React.RefObject<HTMLDivElement>
 }
 
+const AiChatIntro = (props) => {
+  return (
+    <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
+      <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
+      <h5 className="mb-2">RemixAI</h5>
+      <p className="mb-4" style={{ fontSize: '1.1rem' }}>
+            RemixAI provides you personalized guidance as you build. It can break down concepts,
+            answer questions about blockchain technology and assist you with your smart contracts.
+      </p>
+      {DEFAULT_SUGGESTIONS.map((s, index) => (
+        <button
+          key={s}
+          data-id={`remix-ai-assistant-starter-${index}`}
+          className="btn btn-secondary mb-2 w-100 text-left"
+          onClick={() => props.sendPrompt(s)}
+        >
+          <i className="fa-kit fa-remixai mr-2"></i>{s}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   messages,
   isStreaming,
@@ -29,34 +54,17 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   return (
     <div
       ref={historyRef}
-      className="d-flex flex-column flex-grow-1 overflow-y-auto"
+      className="d-flex flex-column overflow-y-auto border-box-sizing preserve-wrap w-100"
     >
       {messages.length === 0 ? (
-        <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
-          <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
-          <h5 className="mb-2">RemixAI</h5>
-          <p className="mb-4" style={{ fontSize: '1.1rem' }}>
-            RemixAI provides you personalized guidance as you build. It can break down concepts,
-            answer questions about blockchain technology and assist you with your smart contracts.
-          </p>
-          {DEFAULT_SUGGESTIONS.map((s, index) => (
-            <button
-              key={s}
-              data-id={`remix-ai-assistant-starter-${index}`}
-              className="btn btn-secondary mb-2 w-100 text-left"
-              onClick={() => sendPrompt(s)}
-            >
-              <i className="fa-kit fa-remixai mr-2"></i>{s}
-            </button>
-          ))}
-        </div>
+        <AiChatIntro sendPrompt={sendPrompt} />
       ) : (
         messages.map(msg => {
           const bubbleClass =
             msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-light'
 
           return (
-            <div key={msg.id} className="chat-row d-flex mb-2">
+            <div key={msg.id} className="chat-row d-flex mb-2 w-100">
               {/* Avatar for assistant */}
               {msg.role === 'assistant' && (
                 <img
@@ -67,7 +75,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 mr-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
@@ -154,7 +162,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               </div>
             </div>
           )
-        })
+        }) //end of messages render
       )}
       {isStreaming && (
         <div className="text-center my-2">

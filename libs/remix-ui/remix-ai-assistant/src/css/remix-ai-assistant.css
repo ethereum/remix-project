@@ -289,3 +289,15 @@
 [data-id="remix-ai-streaming"] {
   display: none !important;
 }
+
+.remix-aichat-background {
+  background-color: #2A2C3F;
+}
+
+.preserve-wrap {
+  white-space: pre-wrap;
+}
+
+.border-box-sizing {
+  box-sizing: border-box;
+}

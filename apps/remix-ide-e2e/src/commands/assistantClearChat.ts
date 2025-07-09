@@ -2,24 +2,24 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class AssistantClearChat extends EventEmitter {
-    command(this: NightwatchBrowser): NightwatchBrowser {
-        this.api.perform((done) => {
-            clearChat(this.api, () => {
-                done()
-                this.emit('complete')
-            })
-        })
-        return this
-    }
+  command(this: NightwatchBrowser): NightwatchBrowser {
+    this.api.perform((done) => {
+      clearChat(this.api, () => {
+        done()
+        this.emit('complete')
+      })
+    })
+    return this
+  }
 }
 
 function clearChat(browser: NightwatchBrowser, done: VoidFunction) {
-    browser
-        .execute(function () {
-            (window as any).remixAIChat.current.clearChat();
-        }, [])
+  browser
+    .execute(function () {
+      (window as any).remixAIChat.current.clearChat();
+    }, [])
 
-    done()
+  done()
 }
 
 module.exports = AssistantClearChat;
