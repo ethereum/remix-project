@@ -10,9 +10,10 @@ export interface MenuItem {
 interface DropdownMenuProps {
   items: MenuItem[]
   disabled?: boolean
+  onOpen?: () => void
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen }) => {
   const [open, setOpen] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null)
   const ref = useRef<HTMLDivElement>(null)
@@ -32,7 +33,12 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled }) => {
     <div className="custom-dropdown-wrapper" ref={ref}>
       <button 
         className="custom-dropdown-trigger btn btn-primary"
-        onClick={() => !disabled && setOpen(!open)}
+        onClick={() => {
+          if (!disabled) {
+            setOpen(!open)
+            if (!open && onOpen) onOpen()
+          }
+        }}
         disabled={disabled}
       >
         <i className="fas fa-angle-down"></i>
@@ -46,7 +52,12 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled }) => {
               className={`custom-dropdown-item ${disabled ? 'disabled' : ''}`}
               onMouseEnter={() => !disabled && item.submenu && setActiveSubmenu(idx)}
               onMouseLeave={() => !disabled && setActiveSubmenu(null)}
-              onClick={() => !disabled && item.onClick && item.onClick()}
+              onClick={() => {
+                if (!disabled && item.onClick) {
+                  item.onClick()
+                  setOpen(false)
+                }
+              }}
             >
               <span>{item.label}</span>
               {item.submenu && <i className="fas fa-angle-right" style={{ float: 'right' }}></i>}

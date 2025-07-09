@@ -74,6 +74,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
 
 export const TabsUI = (props: TabsUIProps) => {
+  
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
   const currentIndexRef = useRef(-1)
   const [explaining, setExplaining] = useState<boolean>(false)
@@ -85,6 +86,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const appContext = useContext(AppContext)
 
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
+  const [scriptFiles, setScriptFiles] = useState<string[]>([])
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -94,6 +96,7 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
+
   // Toggle the copilot in editor when clicked to update in status bar
   useEffect(() => {
     const run = async () => {
@@ -191,7 +194,6 @@ export const TabsUI = (props: TabsUIProps) => {
       active,
       setFileDecorations
     })
-
     return () => {
       tabsElement.current.removeEventListener('wheel', transformScroll)
     }
@@ -203,6 +205,10 @@ export const TabsUI = (props: TabsUIProps) => {
     if (ext) return ext[0].toLowerCase()
     else return ''
   }
+
+  useEffect(() => {
+    setCompileState('idle')
+  }, [tabsState.selectedIndex])
 
   return (
     <div
@@ -251,9 +257,9 @@ export const TabsUI = (props: TabsUIProps) => {
             >
               <i className="fas fa-play"></i>
             </button>
-          </CustomTooltip>
+          </CustomTooltip> */}
 
-          <CustomTooltip
+          {/* <CustomTooltip
             placement="bottom"
             tooltipId="overlay-tooltip-run-script-config"
             tooltipText={
@@ -269,8 +275,8 @@ export const TabsUI = (props: TabsUIProps) => {
               }}
             >
               <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button></CustomTooltip>
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+            </button></CustomTooltip> */}
+          {/* <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-explanation"
@@ -342,7 +348,6 @@ export const TabsUI = (props: TabsUIProps) => {
             </CustomTooltip>
           </div> */}
 
-
           <div className="d-flex align-items-center m-1">
             <div className="btn-group" role="group" aria-label="compile group">
               <CustomTooltip
@@ -391,9 +396,11 @@ export const TabsUI = (props: TabsUIProps) => {
                     : "fas fa-play"
                   }></i>
                   <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
-                    {compileState === 'compiling' ? "Compiling..." :
-                      compileState === 'compiled' ? "Compiled" :
-                      (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? 'Run script' : 'Compile')}
+                    {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
+                      ? (compileState === 'compiling' ? "Run script" :
+                          compileState === 'compiled' ? "Run script" : "Run script")
+                      : (compileState === 'compiling' ? "Compiling..." :
+                          compileState === 'compiled' ? "Compiled" : "Compile")}
                   </span>
                 </button>
               </CustomTooltip>
@@ -403,9 +410,12 @@ export const TabsUI = (props: TabsUIProps) => {
                 onSelect={(option) => console.log("Run script:", option)}
               />
             ) : (
-              <CompileDropdown
+              <CompileDropdown   
+                tabPath={active().substr(active().indexOf('/') + 1, active().length)}
+                compiledFileName={active()}
+                plugin={props.plugin}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                onSelect={(option) => console.log("Compile:", option)}
+                onNotify={(msg) => console.log(msg)}
               />
             )}
           </div>
