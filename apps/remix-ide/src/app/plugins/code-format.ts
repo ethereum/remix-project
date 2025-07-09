@@ -73,7 +73,7 @@ export class CodeFormat extends Plugin {
     super(profile)
   }
 
-  async format(file: string) {
+  async format(file: string, content?: string, onlyReturn?: boolean) {
 
     // lazy load
     if (!this.prettier) {
@@ -85,7 +85,7 @@ export class CodeFormat extends Plugin {
     }
 
     try {
-      const content = await this.call('fileManager', 'readFile', file)
+      if (!content) content = await this.call('fileManager', 'readFile', file)
       if (!content) return
       let parserName = ''
       let options: Options = {
@@ -254,7 +254,10 @@ export class CodeFormat extends Plugin {
         parser: parserName,
         ...options
       })
-      await this.call('fileManager', 'writeFile', file, result)
+      if (!onlyReturn) {
+        await this.call('fileManager', 'writeFile', file, result)
+      }
+      return result
     } catch (e) {
       // do nothing
     }
