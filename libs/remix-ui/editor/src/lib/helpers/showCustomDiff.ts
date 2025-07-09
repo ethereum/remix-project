@@ -29,7 +29,6 @@ export const showCustomDiff = async (
   setCurrentDiffFile: React.Dispatch<React.SetStateAction<string>>,
   changedTypeMap: ChangeTypeMap) => {
 
-  console.log(changes, uri)
   setCurrentDiffFile(uri)
   let lineShift = 0
   for (const lineChange of changes) {
