@@ -103,10 +103,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async handleActivity(type: string, payload: any) {
-    console.log('RemixAiAssistant activity:', type, payload)
-
     await this.call('layout', 'maximisePinnedPanel')
-
   }
 
   updateComponent(state: {
