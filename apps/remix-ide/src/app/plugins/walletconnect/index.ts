@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { createAppKit, Provider } from '@reown/appkit'
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
-import { mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon } from "@reown/appkit/networks"
+import { mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon, gnosis, gnosisChiado } from "@reown/appkit/networks"
 import { constants } from './utils/constants'
 import { Chain, RequestArguments } from './types'
 
@@ -37,7 +37,7 @@ export class WalletConnect extends Plugin {
         adapters: [new EthersAdapter()],
         projectId: constants.PROJECT_ID,
         metadata: constants.METADATA,
-        networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon]
+        networks: [mainnet, sepolia, arbitrum, arbitrumSepolia, optimism, optimismSepolia, solana, solanaTestnet, bitcoin, bitcoinTestnet, bsc, bscTestnet, polygon, gnosis, gnosisChiado]
       })
       this.chains = constants.chains
       this.subscribeToEvents()
