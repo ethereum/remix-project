@@ -17,6 +17,10 @@ enum SupportedFileExtensions {
   solidity = '.sol',
   vyper = '.vy',
   circom = '.circom',
+  javascript = '.js',
+  typescript = '.ts',
+  tests_ts = '.test.ts',
+  tests_js = '.test.js',
 }
 
 export class CodeCompletionAgent {

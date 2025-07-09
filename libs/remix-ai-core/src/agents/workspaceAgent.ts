@@ -1,12 +1,4 @@
-import { IContextType } from "../types/types";
-
-enum SupportedFileExtensions {
-  solidity = '.sol',
-  vyper = '.vy',
-  circom = '.circom',
-  tests_ts = '.test.ts',
-  tests_js = '.test.js',
-}
+import { IContextType, SupportedFileExtensions } from "../types/types";
 
 export class workspaceAgent {
   plugin: any

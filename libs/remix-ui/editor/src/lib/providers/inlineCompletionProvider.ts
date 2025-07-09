@@ -29,6 +29,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+    console.log("completion activated: " + isActivate)
     if (!isActivate) return
 
     const currentTime = Date.now();

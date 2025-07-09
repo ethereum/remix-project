@@ -1145,6 +1145,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-cairo', inlineCompletionProvider)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
@@ -1154,12 +1155,14 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-circom', circomTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-circom', circomLanguageConfig(monacoRef.current) as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-circom', inlineCompletionProvider)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-toml', tomlTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-toml', tomlLanguageConfig as any)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-noir', noirTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-noir', noirLanguageConfig as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-noir', inlineCompletionProvider)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

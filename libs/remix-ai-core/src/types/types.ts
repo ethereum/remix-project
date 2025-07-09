@@ -3,6 +3,18 @@
 import constants from 'constants';
 import { ModelType } from './constants';
 
+export enum SupportedFileExtensions {
+  solidity = 'sol',
+  vyper = 'vy',
+  circom = 'circom',
+  noir = 'nr',
+  cairo = 'cairo',
+  javascript = 'js',
+  typescript = 'ts',
+  tests_ts = 'test.ts',
+  tests_js = 'test.js',
+}
+
 export interface IModelRequirements{
   backend: string,
   minSysMemory: number,
