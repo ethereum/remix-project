@@ -269,6 +269,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     plugin.REACT_API.smartAccounts[safeAddress] = sAccount
     // Save smart accounts in local storage
     const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
+    if (!smartAccountsStr) await loadSmartAccounts(plugin) // In case, localstorage is cleared or not well loaded, load smart accounts again
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
