@@ -7,7 +7,7 @@ import { EventEmitter } from 'events'
 
 const profile = {
   name: 'remixaiassistant',
-  displayName: 'Remix AI Assistant',
+  displayName: 'RemixAI Assistant',
   icon: 'assets/img/remixai-logoAI-updated.webp',
   description: 'AI code assistant for Remix IDE',
   kind: 'remixaiassistant',
