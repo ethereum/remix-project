@@ -189,10 +189,7 @@ function TooltipContent () {
   return (
     <ul className="list-unstyled p-2 mr-3">
       <li className="">
-        {'- Use @workspace <text> or /w <text> to manage or edit files within your workspace'}
-      </li>
-      <li className="">
-        {"- Use @generate <text> or /g <text> to generate contracts or scripts in a workspace. In case the generation result doesn't compile, use the /continue or /c command to generate similar solutions until a solution that compiles successfully is suggested."}
+        {'- Use /w <prompt> to manage or edit files within your workspace'}
       </li>
       <li className="">
         {'- Alternatively, you may type your question directly below.'}

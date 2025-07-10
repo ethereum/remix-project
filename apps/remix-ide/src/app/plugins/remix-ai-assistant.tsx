@@ -19,7 +19,7 @@ const profile = {
   events: [],
   methods: ['chatPipe']
 }
-
+const _paq = (window._paq = window._paq || [])
 export class RemixAIAssistant extends ViewPlugin {
   element: HTMLDivElement
   dispatch: React.Dispatch<any> = () => { }
@@ -103,8 +103,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async handleActivity(type: string, payload: any) {
-    console.log('RemixAiAssistant activity:', type, payload)
-    // await this.call('layout', 'maximisePinnedPanel')
+    _paq.push([''])
   }
 
   updateComponent(state: {
