@@ -347,7 +347,7 @@ export const templates = (intl: any, plugin: any): TemplateGroup[] => {
       name: "Noir ZKP",
       items: [
         { value: "multNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.multNr' }), description: 'A simple multiplier circuit' }
-        // { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementaion built in Noir' }
+        // { value: "stealthDropNr", tagList: ["ZKP", "Noir"], displayName: intl.formatMessage({ id: 'filePanel.stealthDropNr' }), description: 'A stealth drop implementation built in Noir' }
       ]
     },
     {
