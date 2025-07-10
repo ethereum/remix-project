@@ -49,7 +49,7 @@ export class RemixAIPlugin extends Plugin {
   constructor(inDesktop:boolean) {
     super(profile)
     this.isOnDesktop = inDesktop
-    // user machine dont use ressource for remote inferencing
+    // user machine dont use resource for remote inferencing
   }
 
   onActivation(): void {
