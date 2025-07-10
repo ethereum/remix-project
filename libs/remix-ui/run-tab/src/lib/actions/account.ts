@@ -279,7 +279,8 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   } catch (error) {
     _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `creationFailedWithError:${error.message}`])
     console.error('Failed to create safe smart account: ', error)
-    return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
+    if (error.message.includes('User rejected the request')) return plugin.call('notification', 'toast', `User rejected the request to create safe smart account !!!`)
+    else return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
   }
 }
 
