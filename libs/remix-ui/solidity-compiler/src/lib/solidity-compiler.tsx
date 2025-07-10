@@ -10,6 +10,7 @@ import * as packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { CompileDropdown } from '../../../tabs/src/lib/components/CompileDropdown'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
@@ -285,14 +286,22 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           && compileErrors
           && compileErrors[currentFile]
           && compileErrors[currentFile]['contracts'] && (
-          <ContractSelection
-            api={api}
-            compiledFileName={currentFile}
-            contractsDetails={contractsFile[currentFile].contractsDetails}
-            contractList={contractsFile[currentFile].contractList}
-            compilerInput={contractsFile[currentFile].input}
-            modal={modal}
-          />
+          <>
+            <ContractSelection
+              api={api}
+              compiledFileName={currentFile}
+              contractsDetails={contractsFile[currentFile].contractsDetails}
+              contractList={contractsFile[currentFile].contractList}
+              compilerInput={contractsFile[currentFile].input}
+              modal={modal}
+            />
+            <CompileDropdown
+              api={api}
+              contractsDetails={contractsFile[currentFile].contractsDetails}
+              contractList={contractsFile[currentFile]?.contractList}
+            />
+          </>
+          
         )}
         {compileErrors && compileErrors[currentFile] && (
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">

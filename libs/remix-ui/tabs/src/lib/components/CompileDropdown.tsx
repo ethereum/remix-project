@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DropdownMenu, { MenuItem } from './DropdownMenu'
 import { AppModal } from '@remix-ui/app'
 import { FormattedMessage } from 'react-intl'
@@ -6,20 +6,50 @@ import { SolScanTable } from './solScanTable'
 import axios from 'axios'
 import { endpointUrls } from '@remix-endpoints-helper'
 import { ScanReport } from '../types'
+import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
+import { ICompilerApi } from '@remix-project/remix-lib'
 
-declare let _paq: any
+const _paq = (window._paq = window._paq || [])
 
 interface CompileDropdownProps {
-  tabPath: string
-  compiledFileName: string
-  plugin: any
+  api?: ICompilerApi 
+  tabPath?: string
+  contractsDetails?: Record<string, any>
+  compiledFileName?: string
+  plugin?: any
+  contractList?: { name: string; file: string }[]
   disabled?: boolean
   onNotify?: (msg: string) => void
   onOpen?: () => void
 }
 
-const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, compiledFileName, plugin, disabled, onNotify, onOpen }) => {
+export const CompileDropdown: React.FC<CompileDropdownProps> = ({ api, tabPath, contractsDetails, compiledFileName, plugin, disabled, onNotify, onOpen, contractList }) => {
   const [scriptFiles, setScriptFiles] = useState<string[]>([])
+  const [storage, setStorage] = useState(null)
+  const [selectedContract, setSelectedContract] = useState<string>('')
+  const [pendingStorageType, setPendingStorageType] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (contractList?.length) {
+      setSelectedContract(contractList[0].name)
+    }
+  }, [contractList])
+
+  const handlePublishDone = () => {
+    setTimeout(() => setStorage(null), 0) // Set storage back to null so PublishToStorage is hidden
+  }
+
+  const handlePublishToStorage = async (type) => {
+    await plugin.call('solidity', 'compile', tabPath)
+    setPendingStorageType(type)
+  }
+
+  useEffect(() => {
+    if (pendingStorageType && selectedContract && contractsDetails?.[selectedContract]) {
+      setStorage(pendingStorageType)
+      setPendingStorageType(null)
+    }
+  }, [pendingStorageType, selectedContract, contractsDetails])
 
   const fetchScripts = async () => {
     try {
@@ -45,8 +75,12 @@ const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, compiledFile
   }
 
   const runRemixAnalysis = async () => {
-    _paq.push(['trackEvent', 'solidityCompiler', 'staticAnalysis', 'run'])
-    await plugin.call('solidityStaticAnalysis', 'run')
+    _paq.push(['trackEvent', 'solidityCompiler', 'staticAnalysis', 'initiate'])
+    const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
+    if (!isStaticAnalyzersActive) {
+      await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
+    }
+    plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
     onNotify?.("Ran Remix static analysis")
   }
 
@@ -148,12 +182,6 @@ const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, compiledFile
     await plugin.call('notification', 'modal', modal)
   }
 
-  const publishTo = async (type: 'ipfs' | 'swarm') => {
-    _paq.push(['trackEvent', 'solidityCompiler', 'publishToStorage', type])
-    await plugin.call('publishToStorage', 'publish', type)
-    onNotify?.(`Published on ${type.toUpperCase()}`)
-  }
-
   const items: MenuItem[] = [
     {
       label: 'Compile and run script',
@@ -171,8 +199,8 @@ const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, compiledFile
     {
       label: 'Compile and publish',
       submenu: [
-        { label: 'Publish on IPFS', onClick: () => publishTo('ipfs') },
-        { label: 'Publish on Swarm', onClick: () => publishTo('swarm') }
+        { label: 'Publish on IPFS', onClick: () => handlePublishToStorage('ipfs') },
+        { label: 'Publish on Swarm', onClick: () => handlePublishToStorage('swarm') }
       ]
     },
     {
@@ -186,11 +214,17 @@ const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, compiledFile
   ]
 
   return (
-    <DropdownMenu
-      items={items}
-      disabled={disabled}
-      onOpen={() => { fetchScripts(); onOpen?.() }}
-    />
+    <>
+      <DropdownMenu
+        items={items}
+        disabled={disabled}
+        onOpen={() => { fetchScripts(); onOpen?.() }}
+      />
+      {  api && selectedContract && contractsDetails?.[selectedContract] && 
+        <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={handlePublishDone} />
+      }
+    </>
+    
   )
 }
 
