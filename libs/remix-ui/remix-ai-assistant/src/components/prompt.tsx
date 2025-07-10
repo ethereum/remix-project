@@ -100,7 +100,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             <span
               className="badge align-self-center badge-info text-ai font-weight-light rounded"
             >
-              Ai Beta
+              AI Beta
             </span>
           </div>
         </div>
