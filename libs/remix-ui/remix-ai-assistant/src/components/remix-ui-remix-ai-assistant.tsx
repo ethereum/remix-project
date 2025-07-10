@@ -130,6 +130,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const refreshContext = useCallback(async (choice: typeof contextChoice) => {
     try {
       let files: string[] = []
+      _paq.push(['trackEvent', 'remixAI', 'AddingAIContext', choice])
       switch (choice) {
       case 'none':
         await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
@@ -373,6 +374,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         setMessages([])
         sendPrompt(`/setAssistant ${assistantChoice}`)
         setAssistantChoice(assistantChoice || 'mistralai')
+        _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
       }
     }
     fetchAssistantChoice()
@@ -410,6 +412,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       if (description && description.trim()) {
         sendPrompt(`/generate ${description.trim()}`)
+        _paq.push(['trackEvent', 'remixAI', 'GenerateNewAIWorkspaceFromModal', description])
       }
     } catch {
       /* user cancelled */
