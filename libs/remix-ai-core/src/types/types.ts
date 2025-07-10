@@ -89,6 +89,7 @@ export interface IParams {
   model?: string;
   stop?: string[];
   chatHistory?: any[];
+  version: string;
 }
 
 export enum AIRequestType {

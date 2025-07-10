@@ -189,6 +189,7 @@ export class RemixAIPlugin extends Plugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
 
     if (useRag) {
       try {
@@ -226,6 +227,7 @@ export class RemixAIPlugin extends Plugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'WorkspaceAgentEdit'])
     if (useRag) {
       try {
         let ragContext = ""

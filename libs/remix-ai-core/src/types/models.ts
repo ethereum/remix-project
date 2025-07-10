@@ -59,6 +59,7 @@ const CompletionParams:IParams = {
   max_new_tokens: 15,
   stream_result: false,
   max_tokens: 200,
+  version: '1.0.0'
 }
 
 const InsertionParams:IParams = {
@@ -69,6 +70,7 @@ const InsertionParams:IParams = {
   stream_result: false,
   stream: false,
   model: "",
+  version: '1.0.0',
 }
 
 const GenerationParams:IParams = {
@@ -81,6 +83,7 @@ const GenerationParams:IParams = {
   model: "",
   repeat_penalty: 1.2,
   terminal_output: false,
+  version: '1.0.0',
 }
 
 const AssistantParams:IParams = GenerationParams
