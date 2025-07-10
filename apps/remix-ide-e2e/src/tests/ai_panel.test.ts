@@ -32,7 +32,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
+        selector: '//*[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
       })
       .waitForElementPresent({
         locateStrategy: 'xpath',
