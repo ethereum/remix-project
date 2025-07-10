@@ -98,16 +98,16 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               ></span>
             </CustomTooltip>
             <span
-              className="badge align-self-center badge-info text-ai font-weight-light rounded"
+              className="badge align-self-center badge-info font-weight-light rounded"
             >
               AI Beta
             </span>
           </div>
         </div>
         <div className="ai-chat-input d-flex flex-column">
-          <input
+          <textarea
             style={{ flexGrow: 1 }}
-            type="text"
+            rows={2}
             className="form-control bg-light"
             value={input}
             disabled={isStreaming}
