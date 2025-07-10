@@ -299,7 +299,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           }
           ws.send(JSON.stringify(reqToInitScan))
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'requestSentToRunScan'])
-        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
+        } else if (data.type === "scan_status" && data.payload && data.payload.scan_status && data.payload.scan_status === "download_failed") {
           // Message on failed scan
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', `scanFailedWith:${data.payload.scan_status_err_message}`])
           const modal: AppModal = {
@@ -310,7 +310,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           }
           await plugin.call('notification', 'modal', modal)
           ws.close()
-        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
+        } else if (data.type === "scan_status" && data.payload && data.payload.scan_status && data.payload.scan_status === "scan_done") {
           // Message on successful scan
           _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
