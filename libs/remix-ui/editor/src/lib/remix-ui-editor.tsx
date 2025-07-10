@@ -1204,6 +1204,11 @@ export const EditorUI = (props: EditorUIProps) => {
   function addAcceptDeclineWidget(id, editor, position, acceptHandler, rejectHandler, acceptAllHandler?, rejectAllHandler?) {
     const widget = editor.addContentWidget({
       allowEditorOverflow: true,
+      afterRender: () => {
+        if (document.getElementById(id)) {
+          document.getElementById(id).style.left = '0px'
+        }
+      },
       getDomNode: () => {
         if (document.getElementById(id)) {
           return document.getElementById(id)
