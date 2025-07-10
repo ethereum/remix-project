@@ -31,6 +31,8 @@ export interface PromptAreaProps {
   aiAssistantGroupList: groupListType[]
 }
 
+const _paq = (window._paq = window._paq || [])
+
 export const PromptArea: React.FC<PromptAreaProps> = ({
   input,
   setInput,
@@ -90,7 +92,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             <CustomTooltip
               tooltipText={<TooltipContent />}
             >
-              <span className="far fa-circle-info text-ai mr-1"></span>
+              <span
+                className="far fa-circle-info text-ai mr-1"
+                onMouseEnter={_paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
+              ></span>
             </CustomTooltip>
             <span
               className="badge align-self-center badge-info text-ai font-weight-light rounded"
@@ -184,13 +189,13 @@ function TooltipContent () {
   return (
     <ul className="list-unstyled p-2 mr-3">
       <li className="">
-        {'- /w <command> will manipulate files in your workspace'}
+        {'- Use @workspace <text> or /w <text> to manage or edit files within your workspace'}
       </li>
       <li className="">
-        {'- /g <command> will generate contracts or workspaces'}
+        {"- Use @generate <text> or /g <text> to generate contracts or scripts in a workspace. In case the generation result doesn't compile, use the /continue or /c command to generate similar solutions until a solution that compiles successfully is suggested."}
       </li>
       <li className="">
-        {'- you can also just type in your question below'}
+        {'- Alternatively, you may type your question directly below.'}
       </li>
     </ul>
   )
