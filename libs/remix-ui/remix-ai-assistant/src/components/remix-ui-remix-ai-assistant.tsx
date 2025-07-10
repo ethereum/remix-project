@@ -385,6 +385,25 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     refreshContext(contextChoice)
   }, [contextChoice, refreshContext])
 
+  const modalMessage = () => {
+    return (
+      <ul className="list-unstyled">
+        <li>
+          <span className="fa-solid fa-arrow-right mr-2"></span>
+          <span>Create an ERC‑20 token with all explanations as comments in the contract.</span>
+        </li>
+        <li>
+          <span className="fa-solid fa-arrow-right mr-2"></span>
+          <span>Create a Voting contract and explain the contract with comments</span>
+        </li>
+        <li>
+          <span className="fa-solid fa-arrow-right mr-2"></span>
+          <span>Create a proxy contract with all explanations about the contract as comments</span>
+        </li>
+      </ul>
+    )
+  }
+
   const handleGenerateWorkspace = useCallback(async () => {
     dispatchActivity('button', 'generateWorkspace')
     try {
@@ -392,14 +411,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         const modalContent = {
           id: 'generate-workspace',
           title: 'Generate Workspace',
-          message: `
-            Describe the kind of workspace you want RemixAI to scaffold. For example:
-            Create an ERC‑20 token with all explanations as comments in the contract.
-            Create a Voting contract and explain the contract with comments
-            Create a proxy contract with all explanations about the contract as comments
-
-          `,
-          modalType: ModalTypes.prompt, // single-line text
+          message: modalMessage(),
+          modalType: ModalTypes.textarea,
           okLabel: 'Generate',
           cancelLabel: 'Cancel',
           okFn: (value: string) => setTimeout(() => resolve(value), 0),
