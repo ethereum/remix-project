@@ -274,7 +274,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
     await fillAccountsList(plugin, dispatch)
-    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createdSuccessfully'])
+    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `createdSuccessfullyForChainID:${chainId}`])
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
     _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `creationFailedWithError:${error.message}`])

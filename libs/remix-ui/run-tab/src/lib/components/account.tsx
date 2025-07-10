@@ -191,7 +191,7 @@ export function AccountUI(props: AccountProps) {
       },
       intl.formatMessage({ id: 'udapp.cancel' }),
       () => {
-        props.setPassphrase('')
+        _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'cancelClicked'])
       }
     )
   }
