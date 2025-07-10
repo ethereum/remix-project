@@ -262,7 +262,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
   const handleScanContinue = async () => {
     const plugin = api as any
-    await plugin.call('notification', 'toast', 'Processing data to scan...')
+    await plugin.call('notification', 'toast', 'Processing data to scan, can take 3-5 seconds...')
     _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'initiateScan'])
     const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = `${workspace.name}/${props.compiledFileName}`
@@ -298,9 +298,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             }
           }
           ws.send(JSON.stringify(reqToInitScan))
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'requestSentToRunScan'])
         } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
           // Message on failed scan
-          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanFailed'])
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', `scanFailedWith:${data.payload.scan_status_err_message}`])
           const modal: AppModal = {
             id: 'SolidityScanError',
             title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
@@ -330,7 +331,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               }
             }
             await plugin.call('terminal', 'logHtml', <SolScanTable scanReport={scanReport} fileName={fileName}/>)
+            _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanResultRendered'])
           } else {
+            _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', `failedOnDownloadResult:${scanReport.scan_status}`])
             const modal: AppModal = {
               id: 'SolidityScanError',
               title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
@@ -344,7 +347,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       })
     } else {
       await plugin.call('notification', 'toast', 'Error in processing data to scan')
-      console.error(urlResponse.data && urlResponse.data.error ? urlResponse.data.error : urlResponse)
+      const err = urlResponse.data && urlResponse.data.error ? urlResponse.data.error : urlResponse
+      _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', `scanFailedWithURLResponse: ${err}`])
+      console.error(err)
     }
   }
 
@@ -366,9 +371,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       </div>,
       okLabel: <FormattedMessage id="solidity.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />
+      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />,
+      cancelFn:() => { _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'cancelClicked'])}
     }
-
     await (api as any).call('notification', 'modal', modal)
   }
 
