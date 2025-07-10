@@ -77,6 +77,26 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     )
   }
 
+  const handleSpanTxtAreaInput = (event) => {
+    console.log('text from span text area', event)
+  }
+
+  const createFormWithTextArea = (defaultValue: string, validation: ValidationResult) => {
+    return (
+      <>
+        {props.message}
+        <textarea
+          onChange={onInputChanged}
+          defaultValue={defaultValue}
+          data-id="modalDialogCustomTextarea"
+          className="form-control"
+          ref={ref}
+        />
+        {validation && !validation.valid && <span className="text-warning">{validation.message}</span>}
+      </>
+    )
+  }
+
   const onFormChanged = () => {
     if (props.validationFn) {
       const validation = props.validationFn(getFormData())
@@ -127,6 +147,14 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           cancelLabel: null,
           preventBlur: true,
           showCancelIcon: false,
+        })
+        break
+      case ModalTypes.textarea:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createFormWithTextArea(props.defaultValue, { valid: true })
         })
         break
       default:
