@@ -178,7 +178,7 @@ export function AccountUI(props: AccountProps) {
           <br/><br/>
           <FormattedMessage id="udapp.createSmartAccountDesc3"/><br/><br/>
           <input type="textbox" className="form-control" value={selectedAccount} disabled/><br/>
-          <FormattedMessage id="udapp.createSmartAccountDesc4"/>
+          <FormattedMessage id="udapp.createSmartAccountDesc4"/><br/><br/>
           <FormattedMessage id="udapp.createSmartAccountDesc5"/><br/><br/>
           <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
         </div>
