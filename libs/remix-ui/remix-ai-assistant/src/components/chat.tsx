@@ -76,7 +76,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
 
               {/* Bubble */}
               <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 mr-1">
-                <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
+                <div className={`chat-bubble p-2 rounded ${bubbleClass}`} data-id="ai-user-chat-bubble">
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
                       You
@@ -118,12 +118,25 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                               </pre>
                             </div>
                           )
-                        }
+                        },
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            {...props}
+                            style={{
+                              listStylePosition: 'inside',
+                              paddingLeft: '0.5rem'
+                            }}
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li {...props} style={{ padding: '1px' }} />
+                        )
                       }}
                     >
                       {msg.content}
                     </ReactMarkdown>
                   ) : (
+
                     msg.content
                   )}
                 </div>

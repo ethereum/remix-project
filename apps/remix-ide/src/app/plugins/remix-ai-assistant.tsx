@@ -8,7 +8,7 @@ import { EventEmitter } from 'events'
 const profile = {
   name: 'remixaiassistant',
   displayName: 'Remix AI Assistant',
-  icon: 'assets/img/remixai-logoAI.webp',
+  icon: 'assets/img/remixai-logoAI-updated.webp',
   description: 'AI code assistant for Remix IDE',
   kind: 'remixaiassistant',
   location: 'sidePanel',
@@ -103,7 +103,8 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async handleActivity(type: string, payload: any) {
-    await this.call('layout', 'maximisePinnedPanel')
+    console.log('RemixAiAssistant activity:', type, payload)
+    // await this.call('layout', 'maximisePinnedPanel')
   }
 
   updateComponent(state: {

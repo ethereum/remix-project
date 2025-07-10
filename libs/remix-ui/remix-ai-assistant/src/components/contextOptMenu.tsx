@@ -23,9 +23,9 @@ export default function GroupListMenu(props: GroupListMenuProps) {
           }}
         >
           <div className="d-flex flex-column small text-left">
-            <span className="font-semibold text-white mb-1">{item.label}</span>
+            <span className="font-semibold text-secondary mb-1">{item.label}</span>
             <div className="d-flex justify-content-between">
-              <span className="text-light mr-2 text-wrap">{item.bodyText}</span>{ props.choice === item.stateValue && <span className={item.icon}></span> }
+              <span className="text-secondary mr-2 text-wrap">{item.bodyText}</span>{ props.choice === item.stateValue && <span className={item.icon}></span> }
             </div>
           </div>
         </button>

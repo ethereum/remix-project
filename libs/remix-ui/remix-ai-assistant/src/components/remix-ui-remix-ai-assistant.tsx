@@ -11,6 +11,7 @@ import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
 import { groupListType } from '../types/componentTypes'
 import GroupListMenu from './contextOptMenu'
+import { useOnClickOutside } from './onClickOutsideHook'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -50,6 +51,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
+
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
 
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
@@ -390,9 +394,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           title: 'Generate Workspace',
           message: `
             Describe the kind of workspace you want RemixAI to scaffold. For example:
-            ERC‑20 token with foundry tests
-            ERC‑721 NFT collection with IPFS metadata
-            Decentralized voting app with Solidity smart contracts
+            Create an ERC‑20 token with all explanations as comments in the contract.
+            Create a Voting contract and explain the contract with comments
+            Create a proxy contract with all explanations about the contract as comments
 
           `,
           modalType: ModalTypes.prompt, // single-line text

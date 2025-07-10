@@ -3,6 +3,7 @@ import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react
 import GroupListMenu from "./contextOptMenu"
 import { AiContextType, groupListType } from '../types/componentTypes'
 import { AiAssistantType } from '../types/componentTypes'
+import { CustomTooltip } from "@remix-ui/helper"
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -29,6 +30,8 @@ export interface PromptAreaProps {
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
 }
+
+const _paq = (window._paq = window._paq || [])
 
 export const PromptArea: React.FC<PromptAreaProps> = ({
   input,
@@ -73,23 +76,33 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text remix-aichat-background align-self-start"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text bg-light align-self-start"
       >
         <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dim btn-sm text-light small font-weight-light border border-text rounded"
+            className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
           @Add context
           </button>
 
-          <span
-            className="badge align-self-center badge-info text-ai font-weight-light rounded"
-          >
-          Ai Beta
-          </span>
+          <div className="d-flex justify-content-center align-items-center">
+            <CustomTooltip
+              tooltipText={<TooltipContent />}
+            >
+              <span
+                className="far fa-circle-info text-ai mr-1"
+                onMouseEnter={_paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
+              ></span>
+            </CustomTooltip>
+            <span
+              className="badge align-self-center badge-info text-ai font-weight-light rounded"
+            >
+              Ai Beta
+            </span>
+          </div>
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <input
@@ -169,5 +182,21 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         )}
       </div>
     </>
+  )
+}
+
+function TooltipContent () {
+  return (
+    <ul className="list-unstyled p-2 mr-3">
+      <li className="">
+        {'- Use @workspace <text> or /w <text> to manage or edit files within your workspace'}
+      </li>
+      <li className="">
+        {"- Use @generate <text> or /g <text> to generate contracts or scripts in a workspace. In case the generation result doesn't compile, use the /continue or /c command to generate similar solutions until a solution that compiles successfully is suggested."}
+      </li>
+      <li className="">
+        {'- Alternatively, you may type your question directly below.'}
+      </li>
+    </ul>
   )
 }

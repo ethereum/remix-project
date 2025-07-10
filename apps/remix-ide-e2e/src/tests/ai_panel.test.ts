@@ -25,12 +25,14 @@ module.exports = {
   'Should contain message starters #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('remixaiassistant')
+      .waitForElementVisible('*[data-id="movePluginToRight"]')
+      .click('*[data-id="movePluginToRight"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')
       .click('*[data-id="remix-ai-assistant-starter-0"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
+        selector: '//*[contains(@class,"chat-bubble") and contains(.,"Explain what a modifier is")]'
       })
       .waitForElementPresent({
         locateStrategy: 'xpath',
@@ -55,7 +57,6 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
       })
-
   },
   'Should select the AI assistant provider #group1': function (browser: NightwatchBrowser) {
     browser
