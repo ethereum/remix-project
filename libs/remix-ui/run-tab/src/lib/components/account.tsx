@@ -174,10 +174,11 @@ export function AccountUI(props: AccountProps) {
             target="_blank"
             onClick={() => _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'learnMore'])}>
                 Learn more
-          </a>
-          <br/><br/>
+          </a><br/><br/>
           <FormattedMessage id="udapp.createSmartAccountDesc3"/><br/><br/>
-          <input type="textbox" className="form-control" value={selectedAccount} disabled/><br/>
+          <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="createSmartAccountOwnerTooltip" tooltipText={"Owner address for Smart Account"}>
+            <input type="textbox" className="form-control" value={selectedAccount} disabled/>
+          </CustomTooltip><br/>
           <FormattedMessage id="udapp.createSmartAccountDesc4"/><br/><br/>
           <FormattedMessage id="udapp.createSmartAccountDesc5"/><br/><br/>
           <p><FormattedMessage id="udapp.resetVmStateDesc3"/></p>
