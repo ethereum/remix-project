@@ -14,6 +14,12 @@ param (
 Write-Host "ℹ️ Files to sign:"
 $FilesToSign | ForEach-Object { Write-Host "  - $_" }
 
+# Validate required environment variables
+if (-not $env:SM_API_KEY) { Write-Error "❌ SM_API_KEY is not set"; exit 1 }
+if (-not $env:SM_CLIENT_CERT_FILE_B64) { Write-Error "❌ SM_CLIENT_CERT_FILE_B64 is not set"; exit 1 }
+if (-not $env:SM_CLIENT_CERT_PASSWORD) { Write-Error "❌ SM_CLIENT_CERT_PASSWORD is not set"; exit 1 }
+if (-not $env:SSM) { Write-Error "❌ SSM is not set"; exit 1 }
+
 if ($FilesToSign.Length -eq 0) {
   Write-Host "❌ No files to sign!"
   exit 1
@@ -26,14 +32,12 @@ Write-Host "SM_API_KEY set: $([string]::IsNullOrEmpty($env:SM_API_KEY) -eq $fals
 Write-Host "SM_HOST: $env:SM_HOST"
 
 # Decode client certificate
-if (-not (Test-Path "C:\Certificate_pkcs12.p12")) {
-  Write-Host "📄 Decoding client certificate..."
-  [System.IO.File]::WriteAllBytes(
-    "C:\Certificate_pkcs12.p12",
-    [System.Convert]::FromBase64String($env:SM_CLIENT_CERT_FILE_B64)
-  )
-  $env:SM_CLIENT_CERT_FILE = "C:\Certificate_pkcs12.p12"
-}
+Write-Host "📄 Decoding client certificate..."
+[System.IO.File]::WriteAllBytes(
+  "C:\Certificate_pkcs12.p12",
+  [System.Convert]::FromBase64String($env:SM_CLIENT_CERT_FILE_B64)
+)
+$env:SM_CLIENT_CERT_FILE = "C:\Certificate_pkcs12.p12"
 
 # Install smtools if needed
 if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smctl.exe")) {
@@ -71,6 +75,7 @@ $keyLines = & (Join-Path $env:SSM "smctl.exe") keypair ls
 $keyAlias = $null
 foreach ($line in $keyLines) {
   $cells = $line -split '\s+'
+  Write-Host "🔍 Keypair line cells: $($cells -join '|')"
   if ($cells[-1] -eq $certId) {
     $keyAlias = $cells[2]
     break
@@ -81,6 +86,12 @@ if (-not $keyAlias) {
   exit 1
 }
 Write-Host "✅ Using keypair alias: $keyAlias"
+
+# Check signtool presence
+if (-not (Get-Command signtool -ErrorAction SilentlyContinue)) {
+  Write-Error "❌ signtool.exe not found in PATH"
+  exit 1
+}
 
 # Sign all files
 foreach ($file in $FilesToSign) {
@@ -93,7 +104,7 @@ foreach ($file in $FilesToSign) {
     $file
     '--verbose'
   )
-  Write-Host "smctl.exe arguments: $($smctlArgs -join ' ')"
+  Write-Host "smctl.exe arguments: $($smctlArgs -join \" \")"
   & "$env:SSM\smctl.exe" @smctlArgs
 
   Write-Host "✅ Verifying signature..."
