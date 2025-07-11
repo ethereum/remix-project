@@ -68,7 +68,7 @@ for file in "${FILE_ARRAY[@]}"; do
   "$SSM/smctl.exe" sign --keypair-alias "$KEY_ALIAS" --input "$file" --verbose
 
   log "Verifying $file..."
-  signtool.exe verify /pa /v "$file"
+  cmd.exe /c "signtool.exe verify /pa /v \"$file\""
 done
 
 log "✅ All files signed successfully."
