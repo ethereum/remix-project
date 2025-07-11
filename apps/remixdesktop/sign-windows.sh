@@ -31,7 +31,7 @@ done
 
 # Select cert
 log "Selecting certificate..."
-CERT_OUTPUT=$("$SSM" cert ls)
+CERT_OUTPUT=$("$SSM/smctl.exe" cert ls)
 CERT_ID=$(echo "$CERT_OUTPUT" | grep ACTIVE | awk '{print $1}')
 CERT_ALIAS=$(echo "$CERT_OUTPUT" | grep ACTIVE | awk '{print $2}')
 
@@ -44,7 +44,7 @@ log "Using certificate ID $CERT_ID alias $CERT_ALIAS"
 
 # Find keypair alias
 log "Finding keypair..."
-KEYPAIR_OUTPUT=$("$SSM" keypair ls)
+KEYPAIR_OUTPUT=$("$SSM/smctl.exe" keypair ls)
 KEY_ALIAS=$(echo "$KEYPAIR_OUTPUT" | grep "$CERT_ID" | awk '{print $3}')
 
 if [[ -z "$KEY_ALIAS" ]]; then
@@ -63,7 +63,7 @@ fi
 # Sign all files
 for file in "${FILE_ARRAY[@]}"; do
   log "Signing $file..."
-  "$SSM" sign --keypair-alias "$KEY_ALIAS" --input "$file" --verbose
+  "$SSM/smctl.exe" sign --keypair-alias "$KEY_ALIAS" --input "$file" --verbose
 
   log "Verifying $file..."
   signtool.exe verify /pa /v "$file"
