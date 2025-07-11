@@ -95,7 +95,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             >
               <span
                 className="far fa-circle-info text-ai mr-1"
-                onMouseEnter={_paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
+                onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
               ></span>
             </CustomTooltip>
             <span
