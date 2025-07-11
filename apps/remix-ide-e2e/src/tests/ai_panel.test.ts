@@ -175,8 +175,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="remix-ai-workspace-generate"]')
       .click('*[data-id="remix-ai-workspace-generate"]')
       .waitForElementVisible('*[data-id="generate-workspaceModalDialogModalBody-react"]')
-      .click('*[data-id="modalDialogCustomPromp"]')
-      .setValue('*[data-id="modalDialogCustomPromp"]', 'a simple ERC20 contract')
+      .click('*[data-id="modalDialogCustomTextarea"]')
+      .setValue('*[data-id="modalDialogCustomTextarea"]', 'a simple ERC20 contract')
       .click('*[data-id="generate-workspace-modal-footer-ok-react"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
