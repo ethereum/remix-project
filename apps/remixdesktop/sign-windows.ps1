@@ -62,15 +62,6 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
       exit 1
   }
 
-  $size = (Get-Item $installerPath).Length
-  Write-Host "✅ MSI file downloaded: $installerPath ($size bytes)"
-  if ($size -lt 1024) {
-      Write-Error "❌ MSI file is too small ($size bytes). Probably failed download or invalid API key."
-      Write-Host "📄 MSI file contents (start):"
-      Get-Content -Path $installerPath -TotalCount 30
-      exit 1
-  }
-
   Write-Host "📂 Directory listing of the installer location:"
   Get-ChildItem -Path (Split-Path $installerPath) -Force
 
