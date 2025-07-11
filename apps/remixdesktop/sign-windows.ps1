@@ -52,7 +52,7 @@ Write-Host "🔄 Syncing certificate..."
 $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
 $activeCerts = @()
 foreach ($line in $certLines) {
-  if ($line -match '^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\bACTIVE\b') {
+  if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\\bACTIVE\\b") {
     $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
   }
 }
@@ -82,6 +82,6 @@ Write-Host "✅ Using keypair alias: $keyAlias"
 # Sign all files
 foreach ($file in $FilesToSign) {
   Write-Host "🔑 Signing $file..."
-  & "$env:SSM\smctl.exe" sign --keypair-alias $keyAlias --input $file --verbose
+  & "$env:SSM\smctl.exe" sign --keypair-alias $keyAlias --input "$file" --verbose
   signtool verify /pa /v $file
 }
