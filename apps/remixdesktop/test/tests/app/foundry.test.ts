@@ -9,6 +9,7 @@ const dir = '/tmp/' + projectDir
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hideToolTips()
         done()
     },
     installFoundry: function (browser: NightwatchBrowser) {

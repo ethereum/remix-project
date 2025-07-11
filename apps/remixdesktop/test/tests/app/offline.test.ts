@@ -4,6 +4,7 @@ import { NightwatchBrowser } from 'nightwatch'
 module.exports = {
     '@offline': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hideToolTips()
         done()
     },
     'open default template': function (browser: NightwatchBrowser) {
@@ -17,7 +18,7 @@ module.exports = {
             .pause(3000)
             .windowHandles(function (result) {
                 console.log(result.value)
-                browser.switchWindow(result.value[1])
+                 browser.hideToolTips().switchWindow(result.value[1])
                     .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
                     .click('*[data-id="treeViewLitreeViewItemtests"]')
                     .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
