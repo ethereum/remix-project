@@ -97,65 +97,33 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           tooltipText={title}
           delay={{ show: 1000, hide: 0 }}
         >
-          {
-            name === 'remixaiassistant' ? (
-              <div
-                className={`remixui_icon_ai m-0  pt-1`}
-                onClick={() => {
-                  if (iconRecord.pinned) {
-                    verticalIconPlugin.call('pinnedPanel', 'highlight')
-                  } else {
-                    (verticalIconPlugin as any).toggle(name)
-                  }
-                }}
-                {...{ plugin: name }}
-                onContextMenu={(e: any) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleContextMenu(e)
-                }}
-                data-id={`verticalIconsKind${name}`}
-                id={`verticalIconsKind${name}`}
-                ref={iconRef}
-              >
-                <img
-                  data-id={iconRecord.active ? `selected` : ''}
-                  className={``}
-                  src={icon}
-                  alt={name}
-                />
-                <Badge badgeStatus={badgeStatus} />
-              </div>
-            ) : (
-              <div
-                className={`remixui_icon m-0  pt-1`}
-                onClick={() => {
-                  if (iconRecord.pinned) {
-                    verticalIconPlugin.call('pinnedPanel', 'highlight')
-                  } else {
-                    (verticalIconPlugin as any).toggle(name)
-                  }
-                }}
-                {...{ plugin: name }}
-                onContextMenu={(e: any) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleContextMenu(e)
-                }}
-                data-id={`verticalIconsKind${name}`}
-                id={`verticalIconsKind${name}`}
-                ref={iconRef}
-              >
-                <img
-                  data-id={iconRecord.active ? `selected` : ''}
-                  className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active || iconRecord.pinned ? `selected-${theme}` : ''}`}
-                  src={icon}
-                  alt={name}
-                />
-                <Badge badgeStatus={badgeStatus} />
-              </div>
-            )
-          }
+          <div
+            className={`remixui_icon m-0  pt-1`}
+            onClick={() => {
+              if (iconRecord.pinned) {
+                verticalIconPlugin.call('pinnedPanel', 'highlight')
+              } else {
+                (verticalIconPlugin as any).toggle(name)
+              }
+            }}
+            {...{ plugin: name }}
+            onContextMenu={(e: any) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleContextMenu(e)
+            }}
+            data-id={`verticalIconsKind${name}`}
+            id={`verticalIconsKind${name}`}
+            ref={iconRef}
+          >
+            <img
+              data-id={iconRecord.active ? `selected` : ''}
+              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active || iconRecord.pinned ? `selected-${theme}` : ''}`}
+              src={icon}
+              alt={name}
+            />
+            <Badge badgeStatus={badgeStatus} />
+          </div>
         </CustomTooltip>
         {showContext ? (
           <VerticalIconsContextMenu
