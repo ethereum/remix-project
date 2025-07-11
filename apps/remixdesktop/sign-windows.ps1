@@ -43,14 +43,27 @@ $env:SM_CLIENT_CERT_FILE = "C:\Certificate_pkcs12.p12"
 
 # Install smtools if needed
 if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smctl.exe")) {
-  Write-Host "📦 Downloading DigiCert smtools..."
-  curl.exe -X GET `
+  # Use a safe temp path for the installer
+  $installerPath = Join-Path $env:TEMP "smtools-windows-x64.msi"
+
+  Write-Host "📦 Downloading DigiCert smtools to $installerPath..."
+  $downloadResult = curl.exe -X GET `
     "https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download" `
     -H "x-api-key:$env:SM_API_KEY" `
-    -o C:\smtools-windows-x64.msi
+    -o $installerPath
 
-  Write-Host "📦 Running msiexec installer with verbose logging..."
-  $process = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i C:\smtools-windows-x64.msi /quiet /qn /l*v C:\smtools-install.log" -PassThru -Wait
+  if ($LASTEXITCODE -ne 0) {
+      Write-Error "❌ curl.exe failed to download the MSI. Exit code: $LASTEXITCODE"
+      exit 1
+  }
+
+  if (-not (Test-Path $installerPath)) {
+      Write-Error "❌ MSI file was not downloaded."
+      exit 1
+  }
+
+  Write-Host "📦 Running msiexec installer..."
+  $process = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$installerPath`" /quiet /qn /l*v C:\smtools-install.log" -PassThru -Wait
   Write-Host "📄 Installer exited with code $($process.ExitCode). Log saved to C:\smtools-install.log"
 
   # Set SSM path explicitly
