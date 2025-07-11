@@ -69,7 +69,7 @@ module.exports = {
       */
   },
 
-  'Load Gist Modal #group1': function (browser: NightwatchBrowser) {
+  'Load Gist Modal #group1': '' + function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -85,7 +85,7 @@ module.exports = {
       .modalFooterCancelClick('gisthandler')
   },
 
-  'Display Error Message For Invalid Gist ID #group1': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid Gist ID #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -126,7 +126,7 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
-  'Import From Gist For Valid Gist ID #group2': function (browser: NightwatchBrowser) {
+  'Import From Gist For Valid Gist ID #group2': '' + function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
       .clickLaunchIcon('settings')
