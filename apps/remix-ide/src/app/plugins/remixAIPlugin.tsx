@@ -216,6 +216,7 @@ export class RemixAIPlugin extends Plugin {
     }
 
     const genResult = this.contractor.writeContracts(result, userPrompt)
+    this.call('menuicons', 'select', 'filePanel')
     return genResult
   }
 

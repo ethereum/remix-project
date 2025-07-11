@@ -63,21 +63,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const aiContextGroupList: groupListType[] = [
     {
       label: 'None',
-      bodyText: 'Assistant will automatically decide the context',
+      bodyText: 'Uses no context',
       icon: 'fa-solid fa-check',
       stateValue: 'none',
       dataId: 'composer-ai-context-none'
     },
     {
       label: 'Current file',
-      bodyText: 'Add the current file in the editor as context',
+      bodyText: 'Uses the current file in the editor as context',
       icon: 'fa-solid fa-check',
       stateValue: 'current',
       dataId: 'currentFile-context-option'
     },
     {
       label: 'All opened files',
-      bodyText: 'Adds all files opened in the editor as context',
+      bodyText: 'Uses all files opened in the editor as context',
       icon: 'fa-solid fa-check',
       stateValue: 'opened',
       dataId: 'allOpenedFiles-context-option'
@@ -385,6 +385,25 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     refreshContext(contextChoice)
   }, [contextChoice, refreshContext])
 
+  const modalMessage = () => {
+    return (
+      <ul className="p-3">
+        <div className="mb-2">
+          <span>Write a command and it will execute it by creating a new workspace e.g:</span>
+        </div>
+        <li>
+          <span className="font-italic font-weight-light">Create an ERC‑20 token with all explanations as comments in the contract,</span>
+        </li>
+        <li>
+          <span className="font-italic font-weight-light">Create a Voting contract and explain the contract with comments,</span>
+        </li>
+        <li>
+          <span className="font-italic font-weight-light">Create a proxy contract with all explanations about the contract as comments</span>
+        </li>
+      </ul>
+    )
+  }
+
   const handleGenerateWorkspace = useCallback(async () => {
     dispatchActivity('button', 'generateWorkspace')
     try {
@@ -392,14 +411,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         const modalContent = {
           id: 'generate-workspace',
           title: 'Generate Workspace',
-          message: `
-            Describe the kind of workspace you want RemixAI to scaffold. For example:
-            Create an ERC‑20 token with all explanations as comments in the contract.
-            Create a Voting contract and explain the contract with comments
-            Create a proxy contract with all explanations about the contract as comments
-
-          `,
-          modalType: ModalTypes.prompt, // single-line text
+          message: modalMessage(),
+          placeholderText: 'Create a Voting contract and explain the contract',
+          modalType: ModalTypes.textarea,
           okLabel: 'Generate',
           cancelLabel: 'Cancel',
           okFn: (value: string) => setTimeout(() => resolve(value), 0),

@@ -25,7 +25,8 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       next: action.payload.next,
       data: action.payload.data,
       showCancelIcon: action.payload.showCancelIcon,
-      preventBlur: action.payload.preventBlur
+      preventBlur: action.payload.preventBlur,
+      placeholderText: action.payload.placeholderText
     }
 
     const modalList: AppModal[] = state.modals.slice()

@@ -72,7 +72,6 @@ export class workspaceAgent {
       break
     }
     default:
-      console.log('Invalid context type', context)
       this.ctxFiles = ""
       break
     }

@@ -91,23 +91,24 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           <div className="d-flex justify-content-center align-items-center">
             <CustomTooltip
               tooltipText={<TooltipContent />}
+              delay={{ show: 1000, hide: 0 }}
             >
               <span
                 className="far fa-circle-info text-ai mr-1"
-                onMouseEnter={_paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
+                onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
               ></span>
             </CustomTooltip>
             <span
-              className="badge align-self-center badge-info text-ai font-weight-light rounded"
+              className="badge align-self-center badge-info font-weight-light rounded"
             >
-              Ai Beta
+              AI Beta
             </span>
           </div>
         </div>
         <div className="ai-chat-input d-flex flex-column">
-          <input
+          <textarea
             style={{ flexGrow: 1 }}
-            type="text"
+            rows={2}
             className="form-control bg-light"
             value={input}
             disabled={isStreaming}
@@ -189,10 +190,7 @@ function TooltipContent () {
   return (
     <ul className="list-unstyled p-2 mr-3">
       <li className="">
-        {'- Use @workspace <text> or /w <text> to manage or edit files within your workspace'}
-      </li>
-      <li className="">
-        {"- Use @generate <text> or /g <text> to generate contracts or scripts in a workspace. In case the generation result doesn't compile, use the /continue or /c command to generate similar solutions until a solution that compiles successfully is suggested."}
+        {'- Use /w <prompt> : To manage or edit files within your workspace'}
       </li>
       <li className="">
         {'- Alternatively, you may type your question directly below.'}
