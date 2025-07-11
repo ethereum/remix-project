@@ -104,7 +104,7 @@ foreach ($file in $FilesToSign) {
     $file
     '--verbose'
   )
-  Write-Host "smctl.exe arguments: $($smctlArgs -join \" \")"
+  Write-Host "smctl.exe arguments: $($smctlArgs -join ' ')"
   & "$env:SSM\smctl.exe" @smctlArgs
 
   Write-Host "✅ Verifying signature..."
