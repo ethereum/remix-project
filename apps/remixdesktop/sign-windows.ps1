@@ -7,7 +7,7 @@ An array of absolute paths to the files to sign.
 #>
 
 param (
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
   [string[]]$FilesToSign
 )
 
