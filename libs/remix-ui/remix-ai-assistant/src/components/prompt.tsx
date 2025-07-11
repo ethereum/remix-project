@@ -91,6 +91,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           <div className="d-flex justify-content-center align-items-center">
             <CustomTooltip
               tooltipText={<TooltipContent />}
+              delay={{ show: 1000, hide: 0 }}
             >
               <span
                 className="far fa-circle-info text-ai mr-1"
