@@ -51,6 +51,10 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
 
   Write-Host "📦 Installing DigiCert smtools..."
   Start-Process -FilePath "msiexec.exe" -ArgumentList "/i C:\smtools-windows-x64.msi /quiet /qn" -Wait
+
+  # Set SSM path explicitly
+  $env:SSM = "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
+  $env:PATH += ";$env:SSM"
 }
 
 # Sync cert
