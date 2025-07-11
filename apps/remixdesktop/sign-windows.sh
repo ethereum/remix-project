@@ -58,6 +58,10 @@ if [[ ! -f "$SIGTOOL_EXE" ]]; then
   echo "❌ signtool.exe not found at $SIGTOOL_EXE."
   exit 1
 fi
+
+export PATH="$PATH:/c/Program Files (x86)/Windows Kits/10/App Certification Kit"
+ 
+
 # Sign all files
 for file in "${FILE_ARRAY[@]}"; do
   log "Signing $file..."
