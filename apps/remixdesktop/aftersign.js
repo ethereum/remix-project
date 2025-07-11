@@ -21,7 +21,7 @@ function signWindowsBinaries(appOutDir) {
         '-File',
         path.resolve(__dirname, 'sign-windows.ps1'),
         '-FilesToSign',
-        ...filesToSign
+        filesToSign.join(';')
       ],
       { stdio: 'inherit' },
       (error) => {

@@ -3,16 +3,18 @@
 Signs a list of EXE files with DigiCert Signing Manager.
 
 .PARAMETER FilesToSign
-An array of absolute paths to the files to sign.
+A semicolon-separated string of absolute paths to the files to sign.
 #>
 
 param (
-  [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
-  [string[]]$FilesToSign
+  [Parameter(Mandatory=$true)]
+  [string]$FilesToSign
 )
 
+$Files = $FilesToSign -split ';'
+
 Write-Host "ℹ️ Files to sign:"
-$FilesToSign | ForEach-Object { Write-Host "  - $_" }
+$Files | ForEach-Object { Write-Host "  - $_" }
 
 # Validate required environment variables
 if (-not $env:SM_API_KEY) { Write-Error "❌ SM_API_KEY is not set"; exit 1 }
@@ -20,7 +22,7 @@ if (-not $env:SM_CLIENT_CERT_FILE_B64) { Write-Error "❌ SM_CLIENT_CERT_FILE_B6
 if (-not $env:SM_CLIENT_CERT_PASSWORD) { Write-Error "❌ SM_CLIENT_CERT_PASSWORD is not set"; exit 1 }
 if (-not $env:SSM) { Write-Error "❌ SSM is not set"; exit 1 }
 
-if ($FilesToSign.Length -eq 0) {
+if ($Files.Length -eq 0) {
   Write-Host "❌ No files to sign!"
   exit 1
 }
@@ -94,7 +96,7 @@ if (-not (Get-Command signtool -ErrorAction SilentlyContinue)) {
 }
 
 # Sign all files
-foreach ($file in $FilesToSign) {
+foreach ($file in $Files) {
   Write-Host "🔑 Signing $file with parameters:"
   $smctlArgs = @(
     'sign'
