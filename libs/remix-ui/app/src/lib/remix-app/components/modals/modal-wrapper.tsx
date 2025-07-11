@@ -77,10 +77,6 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     )
   }
 
-  const handleSpanTxtAreaInput = (event) => {
-    console.log('text from span text area', event)
-  }
-
   const createFormWithTextArea = (defaultValue: string, placeholderText: string, validation: ValidationResult) => {
     return (
       <>

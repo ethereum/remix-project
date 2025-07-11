@@ -189,7 +189,7 @@ function TooltipContent () {
   return (
     <ul className="list-unstyled p-2 mr-3">
       <li className="">
-        {'- Use /w <prompt> to manage or edit files within your workspace'}
+        {'- Use /w <prompt> : To manage or edit files within your workspace'}
       </li>
       <li className="">
         {'- Alternatively, you may type your question directly below.'}

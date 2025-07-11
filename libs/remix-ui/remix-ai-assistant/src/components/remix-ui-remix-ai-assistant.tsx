@@ -388,17 +388,20 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const modalMessage = () => {
     return (
       <ul className="list-unstyled">
-        <li>
-          <span className="fa-solid fa-arrow-right mr-2"></span>
-          <span>Create an ERC‑20 token with all explanations as comments in the contract,</span>
+        <li className="mb-2">
+          <span>Write a command and it will execute it by creating a new workspace e.g:</span>
         </li>
         <li>
-          <span className="fa-solid fa-arrow-right mr-2"></span>
-          <span>Create a Voting contract and explain the contract with comments,</span>
+          <span className="fa-solid fa-circle-dot mr-2"></span>
+          <span className="font-italic font-weight-light">Create an ERC‑20 token with all explanations as comments in the contract,</span>
         </li>
         <li>
-          <span className="fa-solid fa-arrow-right mr-2"></span>
-          <span>Create a proxy contract with all explanations about the contract as comments</span>
+          <span className="fa-solid fa-circle-dot mr-2"></span>
+          <span className="font-italic font-weight-light">Create a Voting contract and explain the contract with comments,</span>
+        </li>
+        <li>
+          <span className="fa-solid fa-circle-dot mr-2"></span>
+          <span className="font-italic font-weight-light">Create a proxy contract with all explanations about the contract as comments</span>
         </li>
       </ul>
     )
