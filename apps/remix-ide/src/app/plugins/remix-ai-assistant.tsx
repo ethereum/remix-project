@@ -8,11 +8,11 @@ import { EventEmitter } from 'events'
 const profile = {
   name: 'remixaiassistant',
   displayName: 'RemixAI Assistant',
-  icon: 'assets/img/remixai-logoAIModified.webp',
+  icon: 'assets/img/remixai-logoAICropped.webp',
   description: 'AI code assistant for Remix IDE',
   kind: 'remixaiassistant',
   location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   version: packageJson.version,
   maintainedBy: 'Remix',
   permission: true,
