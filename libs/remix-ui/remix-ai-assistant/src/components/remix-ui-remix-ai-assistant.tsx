@@ -63,21 +63,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const aiContextGroupList: groupListType[] = [
     {
       label: 'None',
-      bodyText: 'Assistant will automatically decide the context',
+      bodyText: 'Uses no context',
       icon: 'fa-solid fa-check',
       stateValue: 'none',
       dataId: 'composer-ai-context-none'
     },
     {
       label: 'Current file',
-      bodyText: 'Add the current file in the editor as context',
+      bodyText: 'Uses the current file in the editor as context',
       icon: 'fa-solid fa-check',
       stateValue: 'current',
       dataId: 'currentFile-context-option'
     },
     {
       label: 'All opened files',
-      bodyText: 'Adds all files opened in the editor as context',
+      bodyText: 'Uses all files opened in the editor as context',
       icon: 'fa-solid fa-check',
       stateValue: 'opened',
       dataId: 'allOpenedFiles-context-option'
@@ -390,11 +390,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       <ul className="list-unstyled">
         <li>
           <span className="fa-solid fa-arrow-right mr-2"></span>
-          <span>Create an ERC‑20 token with all explanations as comments in the contract.</span>
+          <span>Create an ERC‑20 token with all explanations as comments in the contract,</span>
         </li>
         <li>
           <span className="fa-solid fa-arrow-right mr-2"></span>
-          <span>Create a Voting contract and explain the contract with comments</span>
+          <span>Create a Voting contract and explain the contract with comments,</span>
         </li>
         <li>
           <span className="fa-solid fa-arrow-right mr-2"></span>
@@ -412,6 +412,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           id: 'generate-workspace',
           title: 'Generate Workspace',
           message: modalMessage(),
+          placeholderText: 'Create a Voting contract and explain the contract',
           modalType: ModalTypes.textarea,
           okLabel: 'Generate',
           cancelLabel: 'Cancel',

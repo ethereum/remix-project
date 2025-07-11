@@ -7,7 +7,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const DEFAULT_SUGGESTIONS = [
-  'Explain what a modifier is',
+  'What is a modifier?',
   'What is a UniSwap hook?',
   'What is a ZKP?'
 ]
