@@ -55,6 +55,8 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
   # Set SSM path explicitly
   $env:SSM = "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
   $env:PATH += ";$env:SSM"
+} else {
+  Write-Host "✅ smtools already installed, skipping download."
 }
 
 # Sync cert

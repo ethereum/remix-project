@@ -1,5 +1,5 @@
 const { notarize } = require('@electron/notarize');
-const { execFile, exec } = require('child_process');
+const { spawn, exec } = require('child_process');
 const path = require('path');
 
 // Windows signing function
@@ -13,7 +13,7 @@ function signWindowsBinaries(appOutDir) {
   console.log('Signing the following Windows files:', filesToSign);
 
   return new Promise((resolve, reject) => {
-    execFile(
+    const child = spawn(
       'powershell.exe',
       [
         '-NoProfile',
@@ -23,17 +23,17 @@ function signWindowsBinaries(appOutDir) {
         '-FilesToSign',
         filesToSign.join(';')
       ],
-      { stdio: 'inherit' },
-      (error) => {
-        if (error) {
-          console.error('Signing script failed:', error);
-          reject(error);
-        } else {
-          console.log('Windows signing completed successfully.');
-          resolve();
-        }
-      }
+      { stdio: 'inherit' }
     );
+
+    child.on('exit', (code) => {
+      if (code === 0) {
+        console.log('Windows signing completed successfully.');
+        resolve();
+      } else {
+        reject(new Error(`Signing script exited with code ${code}`));
+      }
+    });
   });
 }
 
