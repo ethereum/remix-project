@@ -53,7 +53,11 @@ if [[ -z "$KEY_ALIAS" ]]; then
 fi
 
 log "Using keypair alias $KEY_ALIAS"
-
+SIGTOOL_EXE="C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe"
+if [[ ! -f "$SIGTOOL_EXE" ]]; then
+  echo "❌ signtool.exe not found at $SIGTOOL_EXE."
+  exit 1
+fi
 # Sign all files
 for file in "${FILE_ARRAY[@]}"; do
   log "Signing $file..."
