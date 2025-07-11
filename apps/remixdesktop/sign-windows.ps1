@@ -50,7 +50,7 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
     -o C:\smtools-windows-x64.msi
 
   Write-Host "📦 Installing DigiCert smtools..."
-  msiexec.exe /i C:\smtools-windows-x64.msi /quiet /qn | Wait-Process
+  Start-Process -FilePath "msiexec.exe" -ArgumentList "/i C:\smtools-windows-x64.msi /quiet /qn" -Wait
 }
 
 # Sync cert
