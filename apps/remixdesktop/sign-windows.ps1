@@ -49,8 +49,9 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
     -H "x-api-key:$env:SM_API_KEY" `
     -o C:\smtools-windows-x64.msi
 
-  Write-Host "📦 Installing DigiCert smtools..."
-  Start-Process -FilePath "msiexec.exe" -ArgumentList "/i C:\smtools-windows-x64.msi /quiet /qn" -Wait
+  Write-Host "📦 Running msiexec installer with verbose logging..."
+  $process = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i C:\smtools-windows-x64.msi /quiet /qn /l*v C:\smtools-install.log" -PassThru -Wait
+  Write-Host "📄 Installer exited with code $($process.ExitCode). Log saved to C:\smtools-install.log"
 
   # Set SSM path explicitly
   $env:SSM = "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
