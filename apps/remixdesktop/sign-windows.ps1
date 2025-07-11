@@ -13,7 +13,8 @@ param (
 
 $Files = $FilesToSign -split ';'
 
-Write-Host "ℹ️ Files to sign:"
+$info = "[INFO] Files to sign:"
+Write-Host $info
 $Files | ForEach-Object { Write-Host "  - $_" }
 
 # Validate required environment variables
@@ -73,7 +74,7 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
   $env:SSM = "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
   $env:PATH += ";$env:SSM"
 } else {
-  Write-Host "✅ smtools already installed, skipping download."
+  Write-Host "[OK] smtools already installed, skipping download."
 }
 
 # Sync cert
@@ -84,7 +85,7 @@ Write-Host "🔄 Syncing certificate..."
 $certLines = & (Join-Path $env:SSM "smctl.exe") cert ls
 $activeCerts = @()
 foreach ($line in $certLines) {
-  if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\\bACTIVE\\b") {
+  if ($line -match "^\s*([0-9a-f\-]+)\s+(\S+)\s+.*\bACTIVE\b") {
     $activeCerts += @{ id = $matches[1]; alias = $matches[2] }
   }
 }
@@ -129,7 +130,7 @@ foreach ($file in $Files) {
     $file
     '--verbose'
   )
-  Write-Host "smctl.exe arguments: $($smctlArgs -join ' ')"
+  Write-Host ("smctl.exe arguments: " + ($smctlArgs -join ' '))
   & "$env:SSM\smctl.exe" @smctlArgs
 
   Write-Host "✅ Verifying signature..."
