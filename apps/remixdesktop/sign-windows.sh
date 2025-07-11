@@ -54,12 +54,6 @@ fi
 
 log "Using keypair alias $KEY_ALIAS"
 
-# Check signtool
-if ! command -v signtool.exe >/dev/null 2>&1; then
-  echo "❌ signtool.exe not found in PATH."
-  exit 1
-fi
-
 # Sign all files
 for file in "${FILE_ARRAY[@]}"; do
   log "Signing $file..."
