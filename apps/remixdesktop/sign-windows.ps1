@@ -11,6 +11,9 @@ param (
   [string[]]$FilesToSign
 )
 
+Write-Host "ℹ️ Files to sign:"
+$FilesToSign | ForEach-Object { Write-Host "  - $_" }
+
 if ($FilesToSign.Length -eq 0) {
   Write-Host "❌ No files to sign!"
   exit 1
@@ -81,7 +84,18 @@ Write-Host "✅ Using keypair alias: $keyAlias"
 
 # Sign all files
 foreach ($file in $FilesToSign) {
-  Write-Host "🔑 Signing $file..."
-  & "$env:SSM\smctl.exe" sign --keypair-alias $keyAlias --input "$file" --verbose
-  signtool verify /pa /v $file
+  Write-Host "🔑 Signing $file with parameters:"
+  $smctlArgs = @(
+    'sign'
+    '--keypair-alias'
+    $keyAlias
+    '--input'
+    $file
+    '--verbose'
+  )
+  Write-Host "smctl.exe arguments: $($smctlArgs -join ' ')"
+  & "$env:SSM\smctl.exe" @smctlArgs
+
+  Write-Host "✅ Verifying signature..."
+  signtool verify /pa /v "$file"
 }
