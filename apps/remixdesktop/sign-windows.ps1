@@ -71,7 +71,8 @@ if (-not (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tool
     $process = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$installerPath`" /quiet /qn /l*v C:\smtools-install.log" -PassThru -Wait
     Write-Host "📄 Installer exited with code $($process.ExitCode). Log saved to C:\smtools-install.log"
 }
-else {
+
+if (Test-Path "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smctl.exe")) {
     Write-Host "[OK] smtools already installed, skipping download."
 }
 
