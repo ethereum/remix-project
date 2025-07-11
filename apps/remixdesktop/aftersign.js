@@ -14,13 +14,9 @@ function signWindowsBinaries(appOutDir) {
 
   return new Promise((resolve, reject) => {
     const child = spawn(
-      'powershell.exe',
+      'bash',
       [
-        '-NoProfile',
-        '-ExecutionPolicy', 'Bypass',
-        '-File',
-        path.resolve(__dirname, 'sign-windows.ps1'),
-        '-FilesToSign',
+        path.resolve(__dirname, 'sign-windows.sh'),
         filesToSign.join(';')
       ],
       { stdio: 'inherit' }
