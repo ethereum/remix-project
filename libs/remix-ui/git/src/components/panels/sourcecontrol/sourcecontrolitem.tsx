@@ -4,7 +4,7 @@ import path from "path";
 import { gitActionsContext, pluginActionsContext } from "../../../state/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
-import { SourceControlItemButtons } from "./sourcontrolitembuttons";
+import { SourceControlItemButtons } from "./sourcecontrolitembuttons";
 import { removeSlash } from "../../../utils";
 import { commitChange } from "@remix-api";
 
