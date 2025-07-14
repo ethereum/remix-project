@@ -26,7 +26,8 @@
         "hardenedRuntime": true,
         "gatekeeperAssess": false,
         "entitlements": "entitlements.mac.plist",
-        "entitlementsInherit": "entitlements.mac.plist"
+        "entitlementsInherit": "entitlements.mac.plist",
+        "extendInfo": "Info.plist"
     },
     "dmg": {
         "writeUpdateInfo": true,
@@ -56,5 +57,13 @@
     },
     "directories": {
         "output": "release"
-    }
+    },
+    "protocols": [
+        {
+            "name": "Remix",
+            "schemes": [
+                "remix"
+            ]
+        }
+    ]
 }
