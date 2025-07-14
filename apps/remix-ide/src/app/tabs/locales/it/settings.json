@@ -42,9 +42,5 @@
   "settings.projectID": "ID PROGETTO",
   "settings.projectSecret": "SEGRETO DEL PROGETTO",
   "settings.analyticsInRemix": "Analytics nella Remix IDE",
-  "settings.copilot": "Solidity copilot - Alpha",
-  "settings.copilot.activate": "Carica & Attiva copilot",
-  "settings.copilot.max_new_tokens": "Numero massimo di parole da generare",
-  "settings.copilot.temperature": "Temperatura",
   "settings.enableSaveEnvState": "Salva lo stato dell'ambiente"
 }
