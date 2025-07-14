@@ -25,8 +25,6 @@ module.exports = {
   'Should contain message starters #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('remixaiassistant')
-      .waitForElementVisible('*[data-id="movePluginToRight"]')
-      .click('*[data-id="movePluginToRight"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')
       .click('*[data-id="remix-ai-assistant-starter-0"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
