@@ -28,8 +28,21 @@ const testFiles = getTestFiles(testDirectory);
 // Filter out files that do not contain "@offline"
 const filteredFiles = filterFilesByWord(testFiles, '');
 
+// Support for test sharding in CI environments
+const shard = parseInt(process.env.SHARD) || 1;
+const totalShards = parseInt(process.env.TOTAL_SHARDS) || 1;
+
+// Split tests across shards
+let testsToRun = filteredFiles;
+if (totalShards > 1) {
+  const testsPerShard = Math.ceil(filteredFiles.length / totalShards);
+  const startIndex = (shard - 1) * testsPerShard;
+  const endIndex = Math.min(startIndex + testsPerShard, filteredFiles.length);
+  testsToRun = filteredFiles.slice(startIndex, endIndex);
+}
+
 // Output the list of filtered files
 //console.log('Files without "@offline":', filteredFiles);
-for (let i = 0; i < filteredFiles.length; i++) {
-  console.log(path.basename(filteredFiles[i]));
+for (let i = 0; i < testsToRun.length; i++) {
+  console.log(path.basename(testsToRun[i]));
 }
