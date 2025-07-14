@@ -87,10 +87,10 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
   const [publishInfo, setPublishInfo] = useState<{
-    storage?: string;
-    contract?: any;
-    api?: any;
-  }>({});
+    storage?: string
+    contract?: any
+    api?: any
+  }>({})
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -218,7 +218,7 @@ export const TabsUI = (props: TabsUIProps) => {
     const currentFile = active().substr(active().indexOf('/') + 1);
     if (!currentFile) {
       props.plugin.call('notification', 'toast', 'No file selected to compile.');
-      return;
+      return
     }
 
     try {
@@ -227,18 +227,18 @@ export const TabsUI = (props: TabsUIProps) => {
       const compilationResult: any = await new Promise((resolve, reject) => {
         props.plugin.once('solidity', 'compilationFinished', (fileName, source, languageVersion, data) => {
           if (fileName === currentFile) {
-            resolve({ data, source });
+            resolve({ data, source })
           }
-        });
-        props.plugin.call('solidity', 'compile', currentFile).catch(reject);
-      });
+        })
+        props.plugin.call('solidity', 'compile', currentFile).catch(reject)
+      })
 
       if (!compilationResult || !compilationResult.data || compilationResult.data.errors) {
-        props.plugin.call('notification', 'toast', 'Compilation failed. Please check the errors.');
-        return;
+        props.plugin.call('notification', 'toast', 'Compilation failed. Please check the errors.')
+        return
       }
 
-      const contractToPublish = Object.values(compilationResult.data.contracts[currentFile])[0];
+      const contractToPublish = Object.values(compilationResult.data.contracts[currentFile])[0]
 
       // Step 2: Pre-fetch ALL configuration settings needed for both IPFS and Swarm.
       const configKeys = [
@@ -249,18 +249,18 @@ export const TabsUI = (props: TabsUIProps) => {
         'settings/ipfs-protocol',
         'settings/swarm-postage-stamp-id',
         'settings/swarm-private-bee-address',
-      ];
+      ]
       
       const configPromises = configKeys.map(key =>
         props.plugin.call('config', 'getAppParameter', key)
-      );
+      )
       
-      const rawConfigValues = await Promise.all(configPromises);
+      const rawConfigValues = await Promise.all(configPromises)
       
       const configValues = configKeys.reduce((acc, key, index) => {
-        acc[key] = rawConfigValues[index];
-        return acc;
-      }, {});
+        acc[key] = rawConfigValues[index]
+        return acc
+      }, {})
 
       // Step 3: Create the "adapter" API object for PublishToStorage.
       // This object will mimic the structure that the downstream components expect.
@@ -270,26 +270,90 @@ export const TabsUI = (props: TabsUIProps) => {
           // Create the synchronous .get() method that PublishToStorage and its helpers expect.
           get: (key: string) => {
             // It returns the values we already fetched asynchronously.
-            console.log(`[Adapter] api.config.get called for: ${key}`);
-            return configValues[key];
+            console.log(`[Adapter] api.config.get called for: ${key}`)
+            return configValues[key]
           }
         }
-      };
+      }
 
       // Step 4: Set the state with all the prepared data to trigger rendering.
       setPublishInfo({
         storage: storageType,
         contract: contractToPublish,
         api: apiForPublisher // Pass the fully prepared adapter object.
-      });
+      })
 
     } catch (e) {
-      console.error(e);
-      props.plugin.call('notification', 'toast', `An error occurred: ${e.message}`);
+      console.error(e)
+      props.plugin.call('notification', 'toast', `An error occurred: ${e.message}`)
     }
   };
 
-  const resetPublishInfo = () => setPublishInfo({});
+  const resetPublishInfo = () => setPublishInfo({})
+
+  const handleRunScript = async (runnerKey: string) => {
+    if (runnerKey === 'new_script') {
+      try {
+        const path = 'scripts'
+        let newScriptPath = `${path}/new_script.js`
+        let counter = 1
+        
+        while (await props.plugin.call('fileManager', 'exists', newScriptPath)) {
+          newScriptPath = `${path}/new_script_${counter}.js`
+          counter++
+        }
+
+        const boilerplateContent = `// This script can be used to deploy and interact with your contracts.
+//
+// See the Remix documentation for more examples:
+// https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html
+
+(async () => {
+    try {
+        console.log('Running script...')
+    } catch (e) {
+        console.error(e.message)
+    }
+})()`
+
+        await props.plugin.call('fileManager', 'writeFile', newScriptPath, boilerplateContent)
+        _paq.push(['trackEvent', 'editor', 'runScript', 'new_script'])
+      } catch (e) {
+        console.error(e)
+        props.plugin.call('notification', 'toast', `Error creating new script: ${e.message}`)
+      }
+      return
+    }
+
+    const path = active().substr(active().indexOf('/') + 1)
+    if (!path || !PlayExtList.includes(getExt(path))) {
+      props.plugin.call('notification', 'toast', 'A runnable file (.js, .ts) must be selected.')
+      return
+    }
+
+    try {
+      setCompileState('compiling')
+
+      const configurations = await props.plugin.call('scriptRunnerBridge', 'getConfigurations')
+
+      const selectedConfig = configurations.find(c => c.name === runnerKey)
+      if (!selectedConfig) {
+        throw new Error(`Runner configuration "${runnerKey}" not found.`)
+      }
+
+      await props.plugin.call('scriptRunnerBridge', 'selectScriptRunner', selectedConfig)
+
+      const content = await props.plugin.call('fileManager', 'readFile', path)
+      await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+
+      setCompileState('compiled')
+      _paq.push(['trackEvent', 'editor', 'runScriptWithEnv', runnerKey])
+    } catch (e) {
+      console.error(e)
+      props.plugin.call('notification', 'toast', `Error running script: ${e.message}`)
+      setCompileState('idle')
+    }
+  }
 
   return (
     <div
@@ -489,6 +553,7 @@ export const TabsUI = (props: TabsUIProps) => {
             {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? (
               <RunScriptDropdown
                 plugin={props.plugin}
+                onRun={handleRunScript} 
                 onNotify={(msg) => console.log(msg)}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
