@@ -5,6 +5,7 @@ import { ChatMessage, assistantAvatar } from "../lib/types"
 import React from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { CustomTooltip } from "@remix-ui/helper"
 
 const DEFAULT_SUGGESTIONS = [
   'What is a modifier?',
@@ -30,16 +31,23 @@ const AiChatIntro = (props) => {
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      {DEFAULT_SUGGESTIONS.map((s, index) => (
-        <button
-          key={s}
-          data-id={`remix-ai-assistant-starter-${index}`}
-          className="btn btn-secondary mb-2 w-100 text-left"
-          onClick={() => props.sendPrompt(s)}
-        >
-          <i className="fa-kit fa-remixai mr-2"></i>{s}
-        </button>
-      ))}
+      <div className="d-flex flex-column" style={{ fontSize: '1rem' }}>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>to modify</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>to continue</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>to generate</span></div>
+      </div>
+      <div className="d-flex flex-column mt-3">
+        {DEFAULT_SUGGESTIONS.map((s, index) => (
+          <button
+            key={s}
+            data-id={`remix-ai-assistant-starter-${index}`}
+            className="btn btn-secondary mb-2 w-100 text-left"
+            onClick={() => props.sendPrompt(s)}
+          >
+            <i className="fa-kit fa-remixai mr-2"></i>{s}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
@@ -144,32 +152,36 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                 {/* Feedback buttons */}
                 {msg.role === 'assistant' && (
                   <div className="feedback text-end mt-2 me-1">
-                    <span
-                      role="button"
-                      aria-label="thumbs up"
-                      className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
-                      }`}
-                      onClick={() =>
-                        recordFeedback(
-                          msg.id,
-                          msg.sentiment === 'like' ? 'none' : 'like'
-                        )
-                      }
-                    ></span>
-                    <span
-                      role="button"
-                      aria-label="thumbs down"
-                      className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
-                        ? 'fas fa-thumbs-down'
-                        : 'far fa-thumbs-down'
-                      }`}
-                      onClick={() =>
-                        recordFeedback(
-                          msg.id,
-                          msg.sentiment === 'dislike' ? 'none' : 'dislike'
-                        )
-                      }
-                    ></span>
+                    <CustomTooltip tooltipText="Good Response" placement="top">
+                      <span
+                        role="button"
+                        aria-label="thumbs up"
+                        className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'like' ? 'none' : 'like'
+                          )
+                        }
+                      ></span>
+                    </CustomTooltip>
+                    <CustomTooltip tooltipText="Bad Response" placement="top">
+                      <span
+                        role="button"
+                        aria-label="thumbs down"
+                        className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
+                          ? 'fas fa-thumbs-down'
+                          : 'far fa-thumbs-down'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'dislike' ? 'none' : 'dislike'
+                          )
+                        }
+                      ></span>
+                    </CustomTooltip>
                   </div>
                 )}
               </div>
