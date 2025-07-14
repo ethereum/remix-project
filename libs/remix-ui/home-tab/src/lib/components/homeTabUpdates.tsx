@@ -66,10 +66,10 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
             {updateInfo.description.length > 120 ? `${updateInfo.description.substring(0, 100)}...` : updateInfo.description}
           </div>
           <RenderIf condition={updateInfo.action.type === 'link'}>
-            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme} text-decoration-none`}>{updateInfo.action.label}</a>
+            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-light btn-sm w-100 text-${updateInfo.theme} text-decoration-none border`}>{updateInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={updateInfo.action.type === 'methodCall'}>
-            <button className={`btn btn-secondary btn-sm w-100 text-${updateInfo.theme}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
+            <button className={`btn btn-light btn-sm w-100 text-${updateInfo.theme} border`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
               {updateInfo.action.label}
             </button>
           </RenderIf>
