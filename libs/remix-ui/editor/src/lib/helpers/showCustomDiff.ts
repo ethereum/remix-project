@@ -22,12 +22,13 @@ export const showCustomDiff = async (
   addDecoratorCollection: (widgetId: string, ranges: monacoTypes.IRange[]) => monacoTypes.editor.IEditorDecorationsCollection,
   addAcceptDeclineWidget: (id: string, editor: any, position: { lineNumber: number, column: number }, acceptHandler, rejectHandler, acceptAllHandler?, rejectAllHandler?) => void,
   setDecoratorListCollection: React.Dispatch<React.SetStateAction<Record<string, monacoTypes.editor.IEditorDecorationsCollection>>>,
-  acceptHandler: (decoratorList: any, widgetId: string) => void,
-  rejectHandler: (decoratorList: any, widgetId: string) => void,
+  acceptHandler: (decoratorList: monacoTypes.editor.IEditorDecorationsCollection, widgetId: string) => void,
+  rejectHandler: (decoratorList: monacoTypes.editor.IEditorDecorationsCollection, widgetId: string) => void,
   acceptAllHandler: () => void,
   rejectAllHandler: () => void,
   setCurrentDiffFile: React.Dispatch<React.SetStateAction<string>>,
-  changedTypeMap: ChangeTypeMap) => {
+  changedTypeMap: ChangeTypeMap,
+) => {
 
   setCurrentDiffFile(uri)
   let lineShift = 0
@@ -89,7 +90,7 @@ export const showCustomDiff = async (
     await new Promise(resolve => setTimeout(resolve, 200)); // Wait for the decoration to be added
 
     const newEntryRange = decoratorList.getRange(0)
-    addAcceptDeclineWidget(widgetId, editor, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+    addAcceptDeclineWidget(widgetId, editor, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
 
     await new Promise(resolve => setTimeout(resolve, 200)) // Wait for the widget to be added
 
