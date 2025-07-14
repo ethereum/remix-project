@@ -98,6 +98,18 @@ async function notarizeMac(context) {
 exports.default = async function afterSign(context) {
   const { appOutDir } = context;
 
+  // Skip signing for local builds
+  const isCI = process.env.CI || 
+               process.env.GITHUB_ACTIONS || 
+               process.env.CIRCLECI || 
+               process.env.APPVEYOR || 
+               process.env.TRAVIS;
+  
+  if (!isCI) {
+    console.log('Skipping signing: local build detected (no CI environment).');
+    return;
+  }
+
   if (process.platform === 'darwin') {
     await notarizeMac(context);
   } else if (process.platform === 'win32') {
