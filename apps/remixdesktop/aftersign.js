@@ -105,7 +105,7 @@ exports.default = async function afterSign(context) {
                process.env.APPVEYOR || 
                process.env.TRAVIS;
   
-  if (!isCI && !process.env.DO_NOT_NOTARIZE == 'true' && !process.env.DO_NOT_SIGN == 'true') {
+  if (!isCI || process.env.DO_NOT_NOTARIZE == 'true' || process.env.DO_NOT_SIGN == 'true') {
     console.log('Skipping signing: local build detected (no CI environment).');
     return;
   }
