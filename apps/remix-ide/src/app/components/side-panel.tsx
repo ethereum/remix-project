@@ -70,21 +70,28 @@ export class SidePanel extends AbstractPanel {
   }
 
   async pinView (profile) {
+    const active = this.currentFocus()
     await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name]?.view)
-    if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
+    if (this.plugins[profile.name].active) {
+      this.call('menuicons', 'select', 'filePanel')
+    }
+    if (active === profile.name) this.call('menuicons', 'select', active.length > 1 ? active : 'filePanel')
     super.remove(profile.name)
     this.renderComponent()
   }
 
   async unPinView (profile, view) {
     const activePlugin = this.currentFocus()
-
     if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already unpinned`)
     this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
     super.addView(profile, view)
     this.plugins[activePlugin].active = false
     this.plugins[profile.name].active = true
-    this.showContent(profile.name)
+    if (profile.name !== 'remixaiassistant') {
+      this.showContent(profile.name)
+    }
+    this.emit('focusChanged', profile.name)
+    // this.showContent(profile.name)
   }
 
   /**
@@ -93,8 +100,9 @@ export class SidePanel extends AbstractPanel {
    */
   async showContent(name) {
     super.showContent(name)
-    if (name === 'remixaiassistant') { // TODO: should this be a plugin feature?
-      this.pinView(this.plugins[name].profile)
+    if (name === 'remixaiassistant') {
+      await this.call('sidePanel', 'pinView', this.plugins[name].profile)
+      return
     }
     this.emit('focusChanged', name)
     this.renderComponent()
