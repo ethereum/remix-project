@@ -137,8 +137,6 @@ export class RemixAIPlugin extends Plugin {
       result = await this.remoteInferencer.answer(newPrompt)
     }
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-
-    if (prompt.trimStart().startsWith('gpt') || prompt.trimStart().startsWith('sol-gpt')) params.terminal_output = false
     return result
   }
 
