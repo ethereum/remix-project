@@ -6,50 +6,21 @@ import { SolScanTable } from './solScanTable'
 import axios from 'axios'
 import { endpointUrls } from '@remix-endpoints-helper'
 import { ScanReport } from '../types'
-import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
-import { ICompilerApi } from '@remix-project/remix-lib'
 
 const _paq = (window._paq = window._paq || [])
 
 interface CompileDropdownProps {
-  api?: ICompilerApi 
   tabPath?: string
-  contractsDetails?: Record<string, any>
-  compiledFileName?: string
   plugin?: any
-  contractList?: { name: string; file: string }[]
   disabled?: boolean
+  compiledFileName?: string
   onNotify?: (msg: string) => void
   onOpen?: () => void
+  onRequestCompileAndPublish?: (type: string) => void;
 }
 
-export const CompileDropdown: React.FC<CompileDropdownProps> = ({ api, tabPath, contractsDetails, compiledFileName, plugin, disabled, onNotify, onOpen, contractList }) => {
+export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugin, disabled, onNotify, onOpen, onRequestCompileAndPublish, compiledFileName }) => {
   const [scriptFiles, setScriptFiles] = useState<string[]>([])
-  const [storage, setStorage] = useState(null)
-  const [selectedContract, setSelectedContract] = useState<string>('')
-  const [pendingStorageType, setPendingStorageType] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (contractList?.length) {
-      setSelectedContract(contractList[0].name)
-    }
-  }, [contractList])
-
-  const handlePublishDone = () => {
-    setTimeout(() => setStorage(null), 0) // Set storage back to null so PublishToStorage is hidden
-  }
-
-  const handlePublishToStorage = async (type) => {
-    await plugin.call('solidity', 'compile', tabPath)
-    setPendingStorageType(type)
-  }
-
-  useEffect(() => {
-    if (pendingStorageType && selectedContract && contractsDetails?.[selectedContract]) {
-      setStorage(pendingStorageType)
-      setPendingStorageType(null)
-    }
-  }, [pendingStorageType, selectedContract, contractsDetails])
 
   const fetchScripts = async () => {
     try {
@@ -182,6 +153,16 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ api, tabPath, 
     await plugin.call('notification', 'modal', modal)
   }
 
+  const openConfiguration = async () => {
+    _paq.push(['trackEvent', 'solidityCompiler', 'initiate'])
+    const isSolidityCompilerActive = await plugin.call('manager', 'isActive', 'solidity')
+    if (!isSolidityCompilerActive) {
+      await plugin.call('manager', 'activatePlugin', 'solidity')
+    }
+    plugin.call('menuicons', 'select', 'solidity')
+    onNotify?.("Ran Remix Solidity Compiler")
+  }
+
   const items: MenuItem[] = [
     {
       label: 'Compile and run script',
@@ -199,17 +180,12 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ api, tabPath, 
     {
       label: 'Compile and publish',
       submenu: [
-        { label: 'Publish on IPFS', onClick: () => handlePublishToStorage('ipfs') },
-        { label: 'Publish on Swarm', onClick: () => handlePublishToStorage('swarm') }
+        { label: 'Publish on IPFS', onClick: () => onRequestCompileAndPublish('ipfs') },
+        { label: 'Publish on Swarm', onClick: () => onRequestCompileAndPublish('swarm') }
       ]
     },
     {
-      label: 'Open compiler configuration',
-      onClick: async () => {
-        await plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
-        await plugin.call('tabs', 'focus', 'UIScriptRunner')
-        onNotify?.("Opened compiler configuration")
-      }
+      label: 'Open compiler configuration', onClick: openConfiguration
     }
   ]
 
@@ -220,9 +196,6 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ api, tabPath, 
         disabled={disabled}
         onOpen={() => { fetchScripts(); onOpen?.() }}
       />
-      {  api && selectedContract && contractsDetails?.[selectedContract] && 
-        <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={handlePublishDone} />
-      }
     </>
     
   )

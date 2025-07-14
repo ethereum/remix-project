@@ -3,16 +3,21 @@ import DropdownMenu, { MenuItem } from './DropdownMenu'
 
 interface RunScriptDropdownProps {
   disabled?: boolean
-  onSelect?: (option: string) => void
+  plugin?: any
+  onNotify?: (msg: string) => void
 }
 
-const RunScriptDropdown: React.FC<RunScriptDropdownProps> = ({ disabled, onSelect }) => {
+const RunScriptDropdown: React.FC<RunScriptDropdownProps> = ({ plugin, disabled, onNotify }) => {
   const items: MenuItem[] = [
-    { label: 'Create a new script', onClick: () => onSelect && onSelect('create-script') },
-    { label: 'Run with Default', onClick: () => onSelect && onSelect('run-default') },
-    { label: 'Run with ZKSync-ethers V6', onClick: () => onSelect && onSelect('run-zksync') },
-    { label: 'Run with ethers v6', onClick: () => onSelect && onSelect('run-ethers') },
-    { label: 'Open script configuration', onClick: () => onSelect && onSelect('open-config') }
+    { label: 'Create a new script', onClick: () => {} },
+    { label: 'Run with Default', onClick: () => {} },
+    { label: 'Run with ZKSync-ethers V6', onClick: () => {} },
+    { label: 'Run with ethers v6', onClick: () => {} },
+    { label: 'Open script configuration', onClick: async () => {
+      await plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
+      await plugin.call('tabs', 'focus', 'UIScriptRunner')
+      onNotify?.("Opened compiler configuration")
+    }}
   ]
 
   return <DropdownMenu items={items} disabled={disabled} />

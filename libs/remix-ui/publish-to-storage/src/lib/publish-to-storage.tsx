@@ -6,7 +6,6 @@ import { publishToIPFS } from './publishToIPFS'
 import { publishToSwarm } from './publishOnSwarm'
 
 export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
-  console.log(props)
   const intl = useIntl()
   const { api, storage, contract, resetStorage } = props
   const [modalShown, setModalShown] = useState(false)

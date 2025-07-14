@@ -10,6 +10,7 @@ import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
 import CompileDropdown from './components/CompileDropdown'
 import RunScriptDropdown from './components/RunScriptDropdown'
+import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 
 const _paq = (window._paq = window._paq || [])
 
@@ -77,7 +78,6 @@ export const TabsUI = (props: TabsUIProps) => {
   
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
   const currentIndexRef = useRef(-1)
-  const [explaining, setExplaining] = useState<boolean>(false)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(true)
@@ -86,7 +86,11 @@ export const TabsUI = (props: TabsUIProps) => {
   const appContext = useContext(AppContext)
 
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
-  const [scriptFiles, setScriptFiles] = useState<string[]>([])
+  const [publishInfo, setPublishInfo] = useState<{
+    storage?: string;
+    contract?: any;
+    api?: any;
+  }>({});
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -209,6 +213,83 @@ export const TabsUI = (props: TabsUIProps) => {
   useEffect(() => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
+
+  const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
+    const currentFile = active().substr(active().indexOf('/') + 1);
+    if (!currentFile) {
+      props.plugin.call('notification', 'toast', 'No file selected to compile.');
+      return;
+    }
+
+    try {
+      // Step 1: Securely get the compilation result using the 'compilationFinished' event.
+      // This ensures we have the latest and correct data.
+      const compilationResult: any = await new Promise((resolve, reject) => {
+        props.plugin.once('solidity', 'compilationFinished', (fileName, source, languageVersion, data) => {
+          if (fileName === currentFile) {
+            resolve({ data, source });
+          }
+        });
+        props.plugin.call('solidity', 'compile', currentFile).catch(reject);
+      });
+
+      if (!compilationResult || !compilationResult.data || compilationResult.data.errors) {
+        props.plugin.call('notification', 'toast', 'Compilation failed. Please check the errors.');
+        return;
+      }
+
+      const contractToPublish = Object.values(compilationResult.data.contracts[currentFile])[0];
+
+      // Step 2: Pre-fetch ALL configuration settings needed for both IPFS and Swarm.
+      const configKeys = [
+        'settings/ipfs-url',
+        'settings/ipfs-project-id',
+        'settings/ipfs-project-secret',
+        'settings/ipfs-port',
+        'settings/ipfs-protocol',
+        'settings/swarm-postage-stamp-id',
+        'settings/swarm-private-bee-address',
+      ];
+      
+      const configPromises = configKeys.map(key =>
+        props.plugin.call('config', 'getAppParameter', key)
+      );
+      
+      const rawConfigValues = await Promise.all(configPromises);
+      
+      const configValues = configKeys.reduce((acc, key, index) => {
+        acc[key] = rawConfigValues[index];
+        return acc;
+      }, {});
+
+      // Step 3: Create the "adapter" API object for PublishToStorage.
+      // This object will mimic the structure that the downstream components expect.
+      const apiForPublisher = {
+        ...props.plugin, // Inherit all original plugin methods like .call, .on, .readFile etc.
+        config: {
+          // Create the synchronous .get() method that PublishToStorage and its helpers expect.
+          get: (key: string) => {
+            // It returns the values we already fetched asynchronously.
+            console.log(`[Adapter] api.config.get called for: ${key}`);
+            return configValues[key];
+          }
+        }
+      };
+
+      // Step 4: Set the state with all the prepared data to trigger rendering.
+      setPublishInfo({
+        storage: storageType,
+        contract: contractToPublish,
+        api: apiForPublisher // Pass the fully prepared adapter object.
+      });
+
+    } catch (e) {
+      console.error(e);
+      props.plugin.call('notification', 'toast', `An error occurred: ${e.message}`);
+    }
+  };
+
+  const resetPublishInfo = () => setPublishInfo({});
 
   return (
     <div
@@ -407,16 +488,29 @@ export const TabsUI = (props: TabsUIProps) => {
             </div>
             {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? (
               <RunScriptDropdown
-                onSelect={(option) => console.log("Run script:", option)}
+                plugin={props.plugin}
+                onNotify={(msg) => console.log(msg)}
+                disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
             ) : (
-              <CompileDropdown   
-                tabPath={active().substr(active().indexOf('/') + 1, active().length)}
-                compiledFileName={active()}
-                plugin={props.plugin}
-                disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                onNotify={(msg) => console.log(msg)}
-              />
+              <>
+                <CompileDropdown   
+                  tabPath={active().substr(active().indexOf('/') + 1, active().length)}
+                  compiledFileName={active()}
+                  plugin={props.plugin}
+                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+                  onNotify={(msg) => console.log(msg)}
+                  onRequestCompileAndPublish={handleCompileAndPublish}
+                />
+                {publishInfo.storage && (
+                  <PublishToStorage
+                    api={publishInfo.api}
+                    storage={publishInfo.storage as any}
+                    contract={publishInfo.contract}
+                    resetStorage={resetPublishInfo}
+                  />
+                )}
+              </>
             )}
           </div>
 
