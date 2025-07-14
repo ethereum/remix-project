@@ -1,10 +1,10 @@
 {
-    "version": "v0.66.0",
+    "version": "v0.67.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Login with GitHub OAuth now available",
-    "highlight2": "Vyper Compilation Details now contain method identifiers",
-    "highlight3": "Templates Explorer updated for Git based templates",
-    "highlight4": "",
+    "highlight1": "New RemixAI assistant web3 chat plugin",
+    "highlight2": "Create smart account for Gnosis chain",
+    "highlight3": "Show network name and symbol for injected provider",
+    "highlight4": "Connect Remix Desktop to a browser extension e.g. Metamask ",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-66-0-23b64fddc13b?source=friends_link&sk=7ed7e6fe93b747a76aeec137ec80f13c"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-67-0-ee2862fd392c?source=friends_link&sk=2c7ddbfe0ca81342befc33606bebdca6"
   }
