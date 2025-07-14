@@ -167,25 +167,14 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
-      - restore_cache:
-          keys:
-            - nx-cache-v1-{{ checksum "yarn.lock" }}-{{ checksum "nx.json" }}
-            - nx-cache-v1-{{ checksum "yarn.lock" }}-
-            - nx-cache-v1-
       - run: yarn
       - save_cache:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - save_cache:
-          key: nx-cache-v1-{{ checksum "yarn.lock" }}-{{ checksum "nx.json" }}
-          paths:
-            - node_modules/.cache/nx
       - run:
           name: Build
           command: |
-            # Use production build for master, regular build for other branches
-            # Both can now use NX cache for better performance
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build:production
             else

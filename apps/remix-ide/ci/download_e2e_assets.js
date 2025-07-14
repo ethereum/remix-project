@@ -29,7 +29,6 @@ if(nightlyVersionsRegexMatch){
   if(soljson3) soljson = soljson.concat(soljson3);
 }
 
-const downloadSolidity = async () => {
 if (soljson) {
   // filter out duplicates
   soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
@@ -39,8 +38,6 @@ if (soljson) {
     
   console.log('soljson versions found: ', soljson, soljson.length);
     
-  // Download in parallel batches to speed up the process
-  const downloadPromises = [];
   for (let i = 0; i < soljson.length; i++) {
     const version = soljson[i];
     if (version) {
@@ -55,40 +52,26 @@ if (soljson) {
 
       const dir = './dist/apps/remix-ide/assets/js/soljson';
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir);
       }
 
       const path = `./dist/apps/remix-ide/assets/js/soljson/soljson-${version}.js`;
       // check if the file exists
       const exists = fs.existsSync(path);
       if (!exists) {
-        console.log('Downloading:', url)
-        const downloadPromise = new Promise((resolve, reject) => {
-          try {
-            // use curl to download the file with retry and timeout
-            child_process.exec(`curl --retry 3 --retry-delay 2 --max-time 30 -o ${path} ${url}`, { encoding: 'utf8', cwd: process.cwd(), shell: true }, (error, stdout, stderr) => {
-              if (error) {
-                console.log('Failed to download soljson' + version + ' from ' + url + ': ' + error.message)
-                resolve(); // Don't reject, just continue with other downloads
-              } else {
-                console.log(`Successfully downloaded ${version}`)
-                resolve();
-              }
-            })
-          } catch (e) {
-            console.log('Failed to download soljson' + version + ' from ' + url + ': ' + e.message)
-            resolve(); // Don't reject, just continue with other downloads
-          }
-        });
-        downloadPromises.push(downloadPromise);
+        console.log('URL:', url)
+        try {
+          // use curl to download the file
+          child_process.exec(`curl -o ${path} ${url}`, { encoding: 'utf8', cwd: process.cwd(), shell: true })
+        } catch (e) {
+          console.log('Failed to download soljson' + version + ' from ' + url)
+        }
       }
+
+
     }
-  }
-   // Wait for all downloads to complete
-  await Promise.all(downloadPromises);
+       
+  } 
 
 }
-}
-
-downloadSolidity();
 

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 TEST_EXITCODE=0
+
+# Setup virtual display for CI environments
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ]; then
+    echo "Setting up CI environment for Electron tests..."
+    ./setup-ci-display.sh
+fi
+
 yarn run build:e2e && node ./splice_tests.js
 
 # Get git-related test files (with sharding support from splice_tests.js)

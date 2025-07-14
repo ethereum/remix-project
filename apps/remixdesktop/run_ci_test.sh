@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 TEST_EXITCODE=0
+
+# Setup virtual display for CI environments
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ]; then
+    echo "Setting up CI environment for Electron tests..."
+    ./setup-ci-display.sh
+fi
+
 yarn run build:e2e && node ./splice_tests.js
 
 # Get test files (splice_tests.js handles sharding via SHARD/TOTAL_SHARDS env vars)

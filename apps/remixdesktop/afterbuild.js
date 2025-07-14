@@ -1,8 +1,9 @@
 const fs = require('fs');
 
 exports.default = async function afterbuild(context) {
-  // do not run when not on macOS or when not on CIRCLECI
-  if (process.platform !== 'darwin' || !process.env.CIRCLE_BRANCH) {
+  // do not run when not on macOS or when not in CI (CircleCI or GitHub Actions)
+  const isCI = process.env.CIRCLE_BRANCH || process.env.GITHUB_REF;
+  if (process.platform !== 'darwin' || !isCI) {
     return;
   }
 
