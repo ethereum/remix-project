@@ -42,7 +42,7 @@
     "@types/json-bigint": "^1.0.4",
     "@types/lunr": "^2.3.7",
     "@types/nightwatch": "^2.3.23",
-    "chromedriver": "124",
+    "chromedriver": "^122.0.6",
     "cross-env": "^7.0.3",
     "deep-equal": "^2.2.3",
     "electron": "^29",
