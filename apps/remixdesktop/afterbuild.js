@@ -7,6 +7,8 @@ exports.default = async function afterbuild(context) {
     return;
   }
 
+  return
+
   console.log('AFTER BUILD', context);
 
   const artifactPaths = context.artifactPaths;
