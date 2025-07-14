@@ -11,7 +11,7 @@ export interface GroupListMenuProps {
 export default function GroupListMenu(props: GroupListMenuProps) {
 
   return (
-    <div className="btn-group-vertical">
+    <div className="btn-group-vertical w-100">
       {props.groupList.map((item, index) => (
         <button
           key={`${item.label}-${index}`}
