@@ -195,6 +195,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
+  const currentDecoratorListCollectionRef = useRef({})
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -370,6 +371,7 @@ export const EditorUI = (props: EditorUIProps) => {
       })
       setDisposedWidgets({ ...disposedWidgets, [currentFileRef.current]: widgetsToDispose })
     }
+    currentDecoratorListCollectionRef.current = decoratorListCollection
   }, [decoratorListCollection])
 
   /**
@@ -395,7 +397,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
             setTimeout(() => {
               const newEntryRange = decoratorList.getRange(0)
-              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
             }, 150)
             setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
           })
@@ -1375,6 +1377,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function acceptAllHandler() {
+    const decoratorListCollection = currentDecoratorListCollectionRef.current
+
     Object.keys(decoratorListCollection).forEach((widgetId) => {
       const decoratorList = decoratorListCollection[widgetId]
 
@@ -1386,6 +1390,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function rejectAllHandler() {
+    const decoratorListCollection = currentDecoratorListCollectionRef.current
+
     Object.keys(decoratorListCollection).forEach((widgetId) => {
       const decoratorList = decoratorListCollection[widgetId]
 
@@ -1448,7 +1454,7 @@ export const EditorUI = (props: EditorUIProps) => {
           editorRef.removeContentWidget({
             getId: () => widgetId
           })
-          addAcceptDeclineWidget(widgetId, editorRef, { column: 0, lineNumber: newRanges[0].startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+          addAcceptDeclineWidget(widgetId, editorRef, { column: 0, lineNumber: newRanges[0].startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
         }
         startLineNumber = newRanges[0].startLineNumber
       })
