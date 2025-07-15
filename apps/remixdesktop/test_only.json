@@ -8,8 +8,6 @@
         "build/**/*",
         "node_modules/node-pty-prebuilt-multiarch/**/*"
     ],
-    "afterSign": "aftersign.js",
-    "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
         {
             "provider": "github",
@@ -31,7 +29,7 @@
     },
     "dmg": {
         "writeUpdateInfo": true,
-        "sign": true
+        "sign": false
     },
     "nsis": {
         "createDesktopShortcut": "always",
@@ -45,7 +43,8 @@
             "nsis"
         ],
         "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
-        "icon": "assets/icon.png"
+        "icon": "assets/icon.png",
+        "sign": null
     },
     "deb": {},
     "linux": {
