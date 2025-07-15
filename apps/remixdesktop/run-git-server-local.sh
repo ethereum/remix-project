@@ -4,7 +4,7 @@ echo "🚀 Starting Git HTTP Backend Server locally..."
 echo "This will set up test git repositories and start the server on localhost:6868"
 
 # Navigate to the git HTTP backend directory
-cd /Users/filipmertens/Documents/code/remix-project/apps/remix-ide-e2e/src/githttpbackend/
+cd ../remix-ide-e2e/src/githttpbackend/
 
 echo "📦 Installing dependencies..."
 yarn
