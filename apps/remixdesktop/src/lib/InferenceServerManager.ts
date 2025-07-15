@@ -510,12 +510,6 @@ export class InferenceManager implements ICompletions {
       console.log('model not ready yet')
       return
     }
-    let modelOP = undefined
-    for (const model of this.selectedModels) {
-      if (model.modelType === ModelType.GENERAL) {
-        modelOP = model.modelOP
-      }
-    }
     params.chatHistory = params.provider === 'anthropic' ? buildChatPrompt(prompt) : []
 
     if (params.stream_result) {
