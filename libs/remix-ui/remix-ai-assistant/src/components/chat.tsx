@@ -24,17 +24,18 @@ export interface ChatHistoryComponentProps {
 
 const AiChatIntro = (props) => {
   return (
-    <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
+    <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-1 h-100">
       <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
       <h5 className="mb-2">RemixAI</h5>
-      <p className="mb-4" style={{ fontSize: '1.1rem' }}>
+      <p className="mb-4" style={{ fontSize: '0.9rem' }}>
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      <div className="d-flex flex-column" style={{ fontSize: '1rem' }}>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>to modify</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>to continue</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>to generate</span></div>
+      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`<prompt>: `}</p><span>ask your question</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>modify your code</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>continue fixing compilation</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>generate a new workspace</span></div>
       </div>
       <div className="d-flex flex-column mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
