@@ -80,15 +80,15 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="container-fluid">
           <div className="row">
             <div className="d-flex w-100 m-3 justify-content-end">
-              <button className="btn btn-secondary btn-sm mr-3" onClick={startLearnEth}><i className="fa-solid fa-book mr-1"></i> Start Learning</button>
-              <button className="btn btn-primary btn-sm" onClick={openTemplateSelection}><i className="fa-solid fa-plus mr-1"></i>Create a new workspace</button>
+              <button className="btn btn-secondary btn-md mr-3" onClick={startLearnEth}><i className="fa-solid fa-book mr-1"></i> Start Learning</button>
+              <button className="btn btn-primary btn-md mr-2" onClick={openTemplateSelection}><i className="fa-solid fa-plus mr-1"></i>Create a new workspace</button>
             </div>
             <div className="col-lg-5 col-xl-5 mb-4">
               <HomeTabTitle />
               <HomeTabFile plugin={plugin} />
               {/* {!(platform === appPlatformTypes.desktop) ? <HomeTabFile plugin={plugin} /> : <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>} */}
             </div>
-            <div className="col-lg-7 col-xl-7">
+            <div className="col-lg-7 col-xl-7" style={{ overflowY: 'auto', maxHeight: '65vh' }}>
               <HomeTabUpdates plugin={plugin} />
               <HomeTabFeaturedPlugins plugin={plugin} />
             </div>

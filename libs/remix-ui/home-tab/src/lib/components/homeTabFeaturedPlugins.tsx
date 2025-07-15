@@ -28,7 +28,7 @@ interface PluginInfo {
     pluginArgs?: (string | number | boolean | object | null)[]
   }
   iconClass: string
-  maintainedByRemix: boolean
+  maintainedBy: string
   description: string
 }
 
@@ -75,11 +75,11 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
 
   function PluginCard(pluginInfo: PluginInfo) {
     return (
-      <div className="card border">
+      <div className="card border h-100">
         <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
           <div className='d-flex align-items-center px-2'>
             <RenderIf condition={loadingPlugins.includes(pluginInfo.pluginId)}>
-              <i className="fad fa-spinner fa-spin"></i>
+              <i className="fad fa-spinner fa-spin mr-2"></i>
             </RenderIf>
             <RenderIfNot condition={loadingPlugins.includes(pluginInfo.pluginId)}>
               { pluginInfo.iconClass ? <i className={`${pluginInfo.iconClass} mr-2`}></i> : <i className="fa-solid fa-file-book mr-2"></i> }
@@ -88,17 +88,21 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
           </div>
           <ToggleSwitch id={`toggleSwitch-${pluginInfo.pluginId}`} isOn={activePlugins.includes(pluginInfo.pluginId)} onClick={() => activateFeaturedPlugin(pluginInfo.pluginId)} />
         </div>
-        <div className="p-3">
-          <div className={`text-${pluginInfo.maintainedByRemix ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedByRemix ? 'Remix' : 'Community'}</div>
-          <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
-          <RenderIf condition={pluginInfo.action.type === 'link'}>
-            <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
-          </RenderIf>
-          <RenderIf condition={pluginInfo.action.type === 'methodCall'}>
-            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
-              <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
-            </button>
-          </RenderIf>
+        <div className="d-flex flex-column justify-content-between h-100">
+          <div className="p-3">
+            <div className={`text-${(pluginInfo.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedBy || 'Community'}</div>
+            <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
+          </div>
+          <div className="px-3 pb-3">
+            <RenderIf condition={pluginInfo.action.type === 'link'}>
+              <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
+            </RenderIf>
+            <RenderIf condition={pluginInfo.action.type === 'methodCall'}>
+              <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
+                <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
+              </button>
+            </RenderIf>
+          </div>
         </div>
       </div>
     )

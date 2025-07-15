@@ -53,18 +53,22 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
 
   function UpdateCard(updateInfo: UpdateInfo) {
     return (
-      <div className="card border">
-        <div className="d-flex align-items-center p-3 overflow-hidden justify-content-between" style={{ height: '80px', backgroundColor: 'var(--body-bg)' }}>
-          <span className={`badge bg-info bg-transparent border p-2 rounded-pill text-${updateInfo.theme}`} style={{ fontWeight: 'light', border: `1px solid var(--${updateInfo.theme})` }}>{updateInfo.badge}</span>
-          <img src={`${HOME_TAB_BASE_URL + updateInfo.icon}`} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
-        </div>
-        <div className="p-3" style={{ fontSize: '1rem', zIndex: 1 }}>
-          <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>
-            {updateInfo.title.length > 35 ? `${updateInfo.title.substring(0, 45)}...` : updateInfo.title}
-          </span>
-          <div className="mb-3 small">
-            {updateInfo.description.length > 120 ? `${updateInfo.description.substring(0, 95)}...` : updateInfo.description}
+      <div className="card border h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div className="d-flex align-items-center p-3 overflow-hidden justify-content-between" style={{ height: '80px', backgroundColor: 'var(--body-bg)' }}>
+            <span className={`badge bg-info bg-transparent border p-2 rounded-pill text-${updateInfo.theme}`} style={{ fontWeight: 'light', border: `1px solid var(--${updateInfo.theme})` }}>{updateInfo.badge}</span>
+            <img src={`${HOME_TAB_BASE_URL + updateInfo.icon}`} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
           </div>
+          <div className="px-3" style={{ fontSize: '1rem', zIndex: 1 }}>
+            <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>
+              {updateInfo.title}
+            </span>
+            <div className="mb-3 small">
+              {updateInfo.description}
+            </div>
+          </div>
+        </div>
+        <div className="px-3 pb-3">
           <RenderIf condition={updateInfo.action.type === 'link'}>
             <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-light btn-sm w-100 text-decoration-none border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`}>{updateInfo.action.label}</a>
           </RenderIf>

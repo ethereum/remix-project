@@ -95,7 +95,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
   }
 
   return (
-    <div className="justify-content-start d-flex flex-column mt-5" id="hTFileSection">
+    <div className="justify-content-start d-flex flex-column my-5" id="hTFileSection">
       {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
         <div className="d-flex flex-column mb-5 remixui_recentworkspace">
           <label style={{ fontSize: '1rem', color: isDark ? 'white' : 'black' }} className="mt-1 mb-3">
@@ -105,10 +105,15 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
             {
               Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
                 return index < 3 ? (
-                  <a className="cursor-pointer mb-1 text-decoration-none" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
+                  <div key={index} className="d-flex flex-row align-items-center mb-2">
                     { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
-                    <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
-                  </a>
+                    <div className="d-flex flex-row justify-content-between w-100">
+                      <a className="cursor-pointer text-decoration-none d-inline-block" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
+                        <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
+                      </a>
+                      <span className="text-muted">{workspace}</span>
+                    </div>
+                  </div>
                 ) : null
               })
             }
