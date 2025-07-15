@@ -29,6 +29,7 @@ export interface PromptAreaProps {
   modelBtnRef: React.RefObject<HTMLButtonElement>
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
+  textareaRef?: React.RefObject<HTMLTextAreaElement>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -55,7 +56,8 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   contextBtnRef,
   modelBtnRef,
   aiContextGroupList,
-  aiAssistantGroupList
+  aiAssistantGroupList,
+  textareaRef
 }) => {
 
   return (
@@ -110,6 +112,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <textarea
+            ref={textareaRef}
             style={{ flexGrow: 1 }}
             rows={2}
             className="form-control bg-light"
