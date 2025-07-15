@@ -38,6 +38,12 @@ export interface IContextType {
   files?: { fileName: string; content: string }[]
 }
 
+export interface ISimilaritySearchConfig {
+  maxFiles?: number;
+  similarityThreshold?: number;
+  enabled?: boolean;
+}
+
 export interface IModel {
   name: string;
   task: string;

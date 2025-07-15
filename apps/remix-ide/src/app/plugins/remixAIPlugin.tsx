@@ -70,12 +70,6 @@ export class RemixAIPlugin extends Plugin {
     this.codeExpAgent = new CodeExplainAgent(this)
     this.contractor = ContractAgent.getInstance(this)
     this.workspaceAgent = workspaceAgent.getInstance(this)
-
-    // event listeners
-    this.on('solidity', 'compilationFailed', async (file: string, source, languageVersion, data, input, version) => {
-
-    })
-
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -160,6 +154,16 @@ export class RemixAIPlugin extends Plugin {
 
   async error_explaining(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let result
+    let localFilesImports = ""
+
+    // Get local imports from the workspace restrict to 5 most relevant files
+    const relevantFiles = this.workspaceAgent.getRelevantLocalFiles(prompt, 5);
+
+    for (const file in relevantFiles) {
+      localFilesImports += `\n\nFileName: ${file}\n\n${relevantFiles[file]}`
+    }
+    localFilesImports = localFilesImports + "\n End of local files imports.\n\n"
+    prompt = localFilesImports ? `Using the following local imports: ${localFilesImports}\n\n` + prompt : prompt
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {

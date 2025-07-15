@@ -10,7 +10,7 @@ const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
 
   while ((match = importRegex.exec(fileContent)) !== null) {
     const importPath = match[1];;
-    const isLocal = importPath.startsWith('.') || importPath.startsWith('/');
+    const isLocal = importPath.startsWith('.') || importPath.startsWith('/')|| !importPath.startsWith('@');
     const isLibrary = importPath.startsWith('@')
 
     imports.push({
@@ -24,15 +24,51 @@ const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
   return imports;
 }
 
-export const extractFirstLvlImports = (AIPayload: any, compilerPayload): IExtractedImport[] => {
+export const extractFirstLvlImports = (files: any, compilerPayload): IExtractedImport[] => {
   try {
     const imports: IExtractedImport[] = [];
-    if (!AIPayload || !AIPayload.files) return imports;
-    for (const file of AIPayload.files) {
+    if (!files) return imports;
+
+    // Helper function to resolve relative paths
+    const resolveImportPath = (importPath: string, currentFile: string): string => {
+      if (importPath.startsWith('./') || importPath.startsWith('../')) {
+        // Get the directory of the current file
+        const currentDir = currentFile.substring(0, currentFile.lastIndexOf('/'));
+
+        // Handle relative path resolution
+        if (importPath.startsWith('./')) {
+          // Same directory
+          return currentDir + '/' + importPath.substring(2);
+        } else if (importPath.startsWith('../')) {
+          // Parent directory - simple implementation
+          const parts = importPath.split('/');
+          let resolvedDir = currentDir;
+
+          for (const part of parts) {
+            if (part === '..') {
+              resolvedDir = resolvedDir.substring(0, resolvedDir.lastIndexOf('/'));
+            } else if (part !== '.') {
+              resolvedDir += '/' + part;
+            }
+          }
+          return resolvedDir;
+        }
+      }
+      return importPath;
+    };
+
+    for (const file of files) {
       if (!Object.values(ImportExtractionSupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
       const extractedImports = extractImportsFromFile(file.content);
+
+      // Resolve relative paths for each import
+      for (const imp of extractedImports) {
+        imp.importPath = resolveImportPath(imp.importPath, file.fileName);
+      }
+
       imports.push(...extractedImports);
     }
+
     // drop duplicated importPath
     const uniqueImports: { [key: string]: IExtractedImport } = {};
     for (const imp of imports) {
@@ -40,6 +76,7 @@ export const extractFirstLvlImports = (AIPayload: any, compilerPayload): IExtrac
         uniqueImports[imp.importPath] = imp;
       }
     }
+
     // convert back to array
     imports.length = 0;
     for (const key in uniqueImports) {

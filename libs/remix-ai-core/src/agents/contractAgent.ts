@@ -95,8 +95,9 @@ export class ContractAgent {
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
       if (!result.compilationSucceeded) {
         // console.log('Compilation failed, trying again recursively ...')
-        const imports = extractFirstLvlImports(parsedFiles, result.compilerPayload)
-        const importPaths = imports.map(imp => imp.importPath).join('\n');
+        const imports = extractFirstLvlImports(parsedFiles.files, result.compilerPayload)
+        const libs = imports.filter(imp => imp.isLibrary);
+        const importPaths = libs.map(imp => imp.importPath).join('\n');
         const newPrompt = `
               Compilation parameters:\n${JSON.stringify(compilationParams)}\n\n
               Compiler libs imports :\n${JSON.stringify(importPaths)}}\n\n
