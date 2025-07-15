@@ -179,51 +179,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
 const themeCollection = [
   {
-    themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
-    shapeColor: '#8694a1', fillColor: '#011C32'
-  },
-  {
-    themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#343a40', fillColor: '#f8f9fa'
-  },
-  {
-    themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
-    shapeColor: '#adafae', fillColor: '#222222'
-  },
-  {
     themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
     shapeColor: '#babbcc', fillColor: '#2a2c3f'
   },
   {
-    themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#7b8a8b', fillColor: '#ffffff'
-  },
-  {
-    themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
-    shapeColor: '#b5b4bc', fillColor: '#1f2020'
-  },
-  {
     themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
     shapeColor: '#343a40', fillColor: '#ffffff'
-  },
-  {
-    themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
-    shapeColor: '#343a40', fillColor: '#eeede9'
-  },
-  {
-    themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#333333', fillColor: '#eeeeee'
-  },
-  {
-    themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
-    shapeColor: '#343a40', fillColor: '#fbe7f8'
-  },
-  {
-    themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
-    shapeColor: '#343a40', fillColor: '#f8fafe'
-  },
-  {
-    themeName: 'Pride', backgroundColor: '#f1eef6', textColor: '#343a40',
-    shapeColor: '#343a40', fillColor: '#f8fafe'
   },
 ]
