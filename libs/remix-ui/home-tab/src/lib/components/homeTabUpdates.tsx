@@ -87,13 +87,13 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
       <div className="row">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, index) => (
-            <div key={`loading-${index}`} className="col-md-6 mb-4">
+            <div key={`loading-${index}`} className="col-lg-12 col-xl-6 col-md-6 col-sm-12 mb-4">
               <LoadingCard />
             </div>
           ))
         ) : (
           pluginList.map((updateInfo: UpdateInfo, index: number) => (
-            <div key={`update-${index}`} className="col-md-6 mb-4">
+            <div key={`update-${index}`} className="col-lg-12 col-xl-6 col-md-6 col-sm-12 mb-4">
               {UpdateCard(updateInfo)}
             </div>
           ))

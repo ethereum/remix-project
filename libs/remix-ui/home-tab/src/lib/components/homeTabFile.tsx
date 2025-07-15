@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useRef, useReducer, useEffect, useContext } from 'react'
 import { ThemeContext } from '../themeContext'
+import { getTimeAgo } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 interface HomeTabFileProps {
@@ -9,7 +10,7 @@ interface HomeTabFileProps {
 
 function HomeTabFile({ plugin }: HomeTabFileProps) {
   const [state, setState] = useState<{
-    recentWorkspaces: Array<string>
+    recentWorkspaces: Array<string | { name: string, timestamp: number }>
   }>({
     recentWorkspaces: [],
   })
@@ -24,9 +25,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       if (!recents) {
         recents = []
       } else {
-        const filtered = recents.filter((workspace) => {
-          return workspace !== null
-        })
+        const filtered = recents.filter((workspace) => workspace !== null)
+
         setState((prevState) => {
           return { ...prevState, recentWorkspaces: filtered.slice(0, filtered.length <= 3 ? filtered.length : 3) }
         })
@@ -39,9 +39,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       if (!recents) {
         newRecents = []
       } else {
-        newRecents = recents.filter((el) => {
-          return el !== name
-        })
+        newRecents = recents.filter((el) => typeof el === 'string' ? el !== name : el.name !== name)
         localStorage.setItem('recentWorkspaces', JSON.stringify(newRecents))
       }
       setState((prevState) => {
@@ -96,30 +94,31 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
 
   return (
     <div className="justify-content-start d-flex flex-column my-5" id="hTFileSection">
-      {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
-        <div className="d-flex flex-column mb-5 remixui_recentworkspace">
-          <label style={{ fontSize: '1rem', color: isDark ? 'white' : 'black' }} className="mt-1 mb-3">
+      <div className="d-flex flex-column mb-5 remixui_recentworkspace">
+        <label style={{ fontSize: '1rem', color: isDark ? 'white' : 'black' }} className="mt-1 mb-3">
                 Recent Workspaces
-          </label>
-          <div className="d-flex flex-column pl-2">
-            {
-              Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
-                return index < 3 ? (
-                  <div key={index} className="d-flex flex-row align-items-center mb-2">
-                    { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
-                    <div className="d-flex flex-row justify-content-between w-100">
-                      <a className="cursor-pointer text-decoration-none d-inline-block" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
-                        <span style={{ color: isDark ? 'white' : 'black' }}>{workspace}</span>
-                      </a>
-                      <span className="text-muted">{workspace}</span>
-                    </div>
+        </label>
+        <div className="d-flex flex-column pl-2">
+          {
+            Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
+              const workspaceName = typeof workspace === 'string' ? workspace : workspace.name
+              const workspaceTimestamp = typeof workspace === 'string' ? null : workspace.timestamp
+
+              return index < 3 ? (
+                <div key={index} className="d-flex flex-row align-items-center mb-2">
+                  { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
+                  <div className="d-flex flex-row justify-content-between w-100 flex-wrap">
+                    <a className="cursor-pointer text-decoration-none d-inline-block" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
+                      <span style={{ color: isDark ? 'white' : 'black' }}>{workspaceName}</span>
+                    </a>
+                    <span className="text-muted">created {getTimeAgo(workspaceTimestamp)}</span>
                   </div>
-                ) : null
-              })
-            }
-          </div>
+                </div>
+              ) : null
+            })
+          }
         </div>
-      )}
+      </div>
     </div>
   )
 }

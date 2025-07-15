@@ -118,13 +118,13 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
         {
           isLoading ? (
             Array.from({ length: 4 }).map((_, index) => (
-              <div key={`loading-${index}`} className="col-md-6 mb-4">
+              <div key={`loading-${index}`} className="col-lg-12 col-xl-6 col-md-6 col-sm-12 mb-4">
                 <LoadingCard />
               </div>
             ))
           ) : (
             pluginList.plugins.map((pluginInfo: PluginInfo) => (
-              <div className="col-md-6 mb-4 " key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
+              <div className="col-lg-12 col-xl-6 col-md-6 col-sm-12 mb-4 " key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
             ))
           )
         }
