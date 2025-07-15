@@ -29,6 +29,7 @@ export interface PromptAreaProps {
   modelBtnRef: React.RefObject<HTMLButtonElement>
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
+  textareaRef?: React.RefObject<HTMLTextAreaElement>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -55,14 +56,15 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   contextBtnRef,
   modelBtnRef,
   aiContextGroupList,
-  aiAssistantGroupList
+  aiAssistantGroupList,
+  textareaRef
 }) => {
 
   return (
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text"
+          className="bg-light mb-1 p-2 border border-text w-75"
           style={{ borderRadius: '8px' }}
         >
           <div className="text-uppercase ms-2 mb-2">Context</div>
@@ -85,7 +87,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small fw-light border border-text rounded"
             ref={contextBtnRef}
           >
-          @Add context
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
+            {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
+            {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
           <div className="d-flex justify-content-center align-items-center">
@@ -107,6 +112,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <textarea
+            ref={textareaRef}
             style={{ flexGrow: 1 }}
             rows={2}
             className="form-control bg-light"
@@ -154,7 +160,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             </button> */}
           </div>
         </div>
-        {contextChoice !== 'none' && contextFiles.length > 0 && (
+        {/* {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>
             {contextFiles.slice(0, 6).map(f => {
               const name = f.split('/').pop()
@@ -180,7 +186,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               </span>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </>
   )

@@ -19,7 +19,7 @@ jobs:
         webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         freeze-date: '2025-07-21T18:00:00Z'
     - name: Reminder for standup
-      if: github.event.schedule == '55 8 * * 1-5'
+      if: github.event.schedule == '52 8 * * 1-5'
       uses: Aniket-Engg/pr-reviews-reminder-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

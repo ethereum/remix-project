@@ -171,6 +171,17 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     }
   }, [props])
 
+  useEffect(() => {
+    if (props.modalType === ModalTypes.textarea && ref.current) {
+      setTimeout(() => {
+        // make sure rendering is done before focusing
+        if (ref.current && 'focus' in ref.current) {
+          (ref.current as HTMLTextAreaElement).focus()
+        }
+      }, 300)
+    }
+  }, [props.modalType, state])
+
   // reset the message and input if any, so when the modal is shown again it doesn't show the previous value.
   const handleHide = () => {
     setState((prevState) => {
