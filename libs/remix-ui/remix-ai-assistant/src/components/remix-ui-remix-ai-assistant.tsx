@@ -51,6 +51,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
@@ -199,6 +200,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       node.scrollTop = node.scrollHeight
     }
   }, [messages])
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    // Focus textarea when streaming stops (after request processing)
+    if (!isStreaming && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isStreaming])
 
   // helper to toggle like / dislike feedback and push Matomo events
   const recordFeedback = (msgId: string, next: 'like' | 'dislike' | 'none') => {
@@ -513,6 +527,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           modelBtnRef={modelBtnRef}
           aiContextGroupList={aiContextGroupList}
           aiAssistantGroupList={aiAssistantGroupList}
+          textareaRef={textareaRef}
         />
       </section>
     </div>
