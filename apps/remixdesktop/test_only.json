@@ -1,5 +1,5 @@
 {
-    "productName": "Remix-Desktop-Insiders",
+    "productName": "Remix-Desktop",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": false,
@@ -12,7 +12,7 @@
         {
             "provider": "github",
             "owner": "remix-project-org",
-            "repo": "remix-desktop-insiders",
+            "repo": "remix-desktop",
             "releaseType": "draft",
             "publishAutoUpdate": true
         }
