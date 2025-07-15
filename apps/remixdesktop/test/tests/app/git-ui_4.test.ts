@@ -52,6 +52,7 @@ const tests = {
                     .hideToolTips()
             })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
+            .saveScreenshot('./reports/screenshots/gitui1.png')
     },
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
@@ -102,6 +103,11 @@ const tests = {
             .saveScreenshot('./reports/screenshots/gitui9.png')
             .click('*[data-id="commitButton"]')
             .saveScreenshot('./reports/screenshots/gitui10.png')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and @disabled]',
+                locateStrategy: 'xpath'
+            })
+            .saveScreenshot('./reports/screenshots/gitui11.png')
             .waitForElementNotPresent({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
@@ -110,7 +116,7 @@ const tests = {
     'look at the commit #group1': function (browser: NightwatchBrowser) {
         browser
             .click('*[data-id="commits-panel"]')
-            .saveScreenshot('./reports/screenshots/gitui11.png')
+            .saveScreenshot('./reports/screenshots/gitui12.png')
             .waitForElementPresent({
                 selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
                 locateStrategy: 'xpath'
