@@ -97,6 +97,14 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .click('*[data-id="commitButton"]')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and @disabled]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementNotPresent({
+                selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
     },
 
     // group 3

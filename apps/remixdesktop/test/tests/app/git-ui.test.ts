@@ -94,6 +94,14 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .click('*[data-id="commitButton"]')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and @disabled]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementNotPresent({
+                selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
     },
     'look at the commit #group1': function (browser: NightwatchBrowser) {
         browser
@@ -150,6 +158,10 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .click('*[data-id="commitButton"]')
+            .waitForElementNotPresent({
+                selector: "//*[@data-status='modified-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
     },
     'push the commit #group1': function (browser: NightwatchBrowser) {
         browser
