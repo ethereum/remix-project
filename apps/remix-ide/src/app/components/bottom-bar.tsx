@@ -80,7 +80,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     <div className="bottom-bar">
       {getExplainLabel() && (
         <button 
-          className="explain-btn"
+          className="btn explain-btn"
           onClick={handleExplain}
           disabled={explaining}
         >

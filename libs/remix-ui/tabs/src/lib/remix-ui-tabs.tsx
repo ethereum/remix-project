@@ -420,7 +420,9 @@ export const TabsUI = (props: TabsUIProps) => {
               }}
             >
               <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button></CustomTooltip> */}
+            </button>
+          </CustomTooltip> */}
+
           {/* <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
@@ -462,6 +464,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
               </button>
             </CustomTooltip>
+
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-copilot"

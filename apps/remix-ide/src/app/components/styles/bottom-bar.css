@@ -1,21 +1,18 @@
-/* It needs to follow the Remix Design System. */
-
 .bottom-bar {
     display: flex;
     align-items: center;
     padding: 4px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--bs-border-color);
     height: 32px;
 }
   
 .explain-btn {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
     padding: 4px 12px;
-    background: rgba(45, 239, 243, 0.08);
-    color: #2DEFf3;
-    border: none;
+    background: #2DE7F314;
+    color: #2DE7F3;
     border-radius: 4px;
     font-family: 'Nunito Sans', sans-serif;
     font-size: 12px;
@@ -23,7 +20,15 @@
     line-height: normal;
     cursor: pointer;
 }
+
+.explain-btn span {
+    color: #2DE7F3;
+}
   
+.explain-btn:hover {
+    opacity: 0.8;
+}
+
 .explain-icon {
     width: 12px;
     height: 12px;
@@ -32,24 +37,24 @@
 .copilot-toggle {
     margin-left: auto;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
     padding: 4px 8px;
     border-radius: 8px;
     height: 24px;
+    line-height: 1; 
 }
-  
+
 .copilot-toggle span {
     font-family: 'Nunito Sans', sans-serif;
     font-size: 12px;
     font-weight: 700;
-    line-height: normal;
-    color: #A9A7B0;
+    color: var(--text-muted);
     transition: color 0.3s;
 }
   
 .copilot-toggle span.on {
-    color: #FFFFFF;
+    color: var(--text-bright);
 }
   
 .switch {
@@ -57,6 +62,7 @@
     display: inline-block;
     width: 18px;
     height: 10px;
+    margin-top: 5.5px;
 }
   
 .switch input {
@@ -69,7 +75,7 @@
     position: absolute;
     cursor: pointer;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #555;
+    background-color: var(--secondary);;
     transition: .4s;
     border-radius: 800px;
     padding: 1px;
@@ -94,4 +100,3 @@
 .switch input:checked + .slider:before {
     transform: translateX(8px);
 }
-  
