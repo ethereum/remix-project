@@ -32,7 +32,7 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
         })
       } else {
         errorFiles[err.sourceLocation.file] = {
-          content : contracts[err.sourceLocation.file].content,
+          content : err.sourceLocation.file,
           errors : [{
             errorStart : err.sourceLocation.start,
             errorEnd : err.sourceLocation.end,

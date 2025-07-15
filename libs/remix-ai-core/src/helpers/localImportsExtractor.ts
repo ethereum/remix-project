@@ -24,7 +24,7 @@ const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
   return imports;
 }
 
-export const extractFirstLvlImports = (AIPayload: any, compilationResult: CompilationResult): IExtractedImport[] => {
+export const extractFirstLvlImports = (AIPayload: any, compilerPayload): IExtractedImport[] => {
   try {
     const imports: IExtractedImport[] = [];
     if (!AIPayload || !AIPayload.files) return imports;
@@ -44,8 +44,8 @@ export const extractFirstLvlImports = (AIPayload: any, compilationResult: Compil
     imports.length = 0;
     for (const key in uniqueImports) {
       const getFileContent = () => {
-        if (compilationResult.compilerPayload && compilationResult.compilerPayload?.source?.sources) {
-          return compilationResult.compilerPayload.source.sources[key]?.content || "Import not resolved";
+        if (compilerPayload && compilerPayload?.source?.sources) {
+          return compilerPayload.source.sources[key]?.content || "Import not resolved";
         }
         return "Import not resolved";
       }

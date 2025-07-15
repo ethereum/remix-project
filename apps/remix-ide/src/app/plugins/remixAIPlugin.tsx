@@ -70,6 +70,12 @@ export class RemixAIPlugin extends Plugin {
     this.codeExpAgent = new CodeExplainAgent(this)
     this.contractor = ContractAgent.getInstance(this)
     this.workspaceAgent = workspaceAgent.getInstance(this)
+
+    // event listeners
+    this.on('solidity', 'compilationFailed', async (file: string, source, languageVersion, data, input, version) => {
+
+    })
+
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){

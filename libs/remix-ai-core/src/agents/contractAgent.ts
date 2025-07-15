@@ -93,17 +93,14 @@ export class ContractAgent {
       }
 
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
-      const imports = extractFirstLvlImports(parsedFiles, result)
-      console.log('Extracted imports:', imports)
       if (!result.compilationSucceeded) {
         // console.log('Compilation failed, trying again recursively ...')
-        // filter libraries
-        const libs = imports.filter(imp => imp.isLibrary && imp.content !== undefined);
+        const imports = extractFirstLvlImports(parsedFiles, result.compilerPayload)
+        const importPaths = imports.map(imp => imp.importPath).join('\n');
         const newPrompt = `
               Compilation parameters:\n${JSON.stringify(compilationParams)}\n\n
-              Compiler libs :\n${JSON.stringify(libs)}}\n\n
+              Compiler libs imports :\n${JSON.stringify(importPaths)}}\n\n
               Compiler error payload:\n${JSON.stringify(result.errfiles)}}\n\n
-              Generated contract files:\n${JSON.stringify(this.contracts)}\n\n
               While considering this compilation error and the provided libs above: Here is the error message.\n\n 
               Try this main prompt again: \n${this.mainPrompt}\n `
 
