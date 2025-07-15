@@ -36,9 +36,5 @@
   "settings.port": "포트",
   "settings.projectID": "프로젝트 ID",
   "settings.projectSecret": "프로젝트 SECRET",
-  "settings.analyticsInRemix": "Remix IDE에서의 분석",
-  "settings.copilot": "Solidity copilot - 알파",
-  "settings.copilot.activate": "Copilot 로드 및 활성화",
-  "settings.copilot.max_new_tokens": "생성할 최대 단어 수",
-  "settings.copilot.temperature": "온도"
+  "settings.analyticsInRemix": "Remix IDE에서의 분석"
 }

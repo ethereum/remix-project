@@ -52,7 +52,6 @@ export class DesktopClient extends ViewPlugin {
     this.queryParams = new QueryParams()
 
     this.params = this.queryParams.get()
-    console.log('DesktopClient params', this.params)
   }
 
   onActivation() {

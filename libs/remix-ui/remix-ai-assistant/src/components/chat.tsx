@@ -3,9 +3,12 @@ import remarkGfm from "remark-gfm"
 import copy from "copy-to-clipboard"
 import { ChatMessage, assistantAvatar } from "../lib/types"
 import React from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { CustomTooltip } from "@remix-ui/helper"
 
 const DEFAULT_SUGGESTIONS = [
-  'Explain what a modifier is',
+  'What is a modifier?',
   'What is a UniSwap hook?',
   'What is a ZKP?'
 ]
@@ -19,6 +22,37 @@ export interface ChatHistoryComponentProps {
   historyRef: React.RefObject<HTMLDivElement>
 }
 
+const AiChatIntro = (props) => {
+  return (
+    <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-1 h-100">
+      <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
+      <h5 className="mb-2">RemixAI</h5>
+      <p className="mb-4" style={{ fontSize: '0.9rem' }}>
+            RemixAI provides you personalized guidance as you build. It can break down concepts,
+            answer questions about blockchain technology and assist you with your smart contracts.
+      </p>
+      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`<prompt>: `}</p><span>ask your question</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>modify your code</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>continue fixing compilation</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>generate a new workspace</span></div>
+      </div>
+      <div className="d-flex flex-column mt-3">
+        {DEFAULT_SUGGESTIONS.map((s, index) => (
+          <button
+            key={s}
+            data-id={`remix-ai-assistant-starter-${index}`}
+            className="btn btn-secondary mb-2 w-100 text-left"
+            onClick={() => props.sendPrompt(s)}
+          >
+            <i className="fa-kit fa-remixai mr-2"></i>{s}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   messages,
   isStreaming,
@@ -29,34 +63,17 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   return (
     <div
       ref={historyRef}
-      className="d-flex flex-column flex-grow-1 overflow-y-auto"
+      className="d-flex flex-column overflow-y-auto border-box-sizing preserve-wrap w-100"
     >
       {messages.length === 0 ? (
-        <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-3 h-100">
-          <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
-          <h5 className="mb-2">RemixAI</h5>
-          <p className="mb-4" style={{ fontSize: '1.1rem' }}>
-            RemixAI provides you personalized guidance as you build. It can break down concepts,
-            answer questions about blockchain technology and assist you with your smart contracts.
-          </p>
-          {DEFAULT_SUGGESTIONS.map((s, index) => (
-            <button
-              key={s}
-              data-id={`remix-ai-assistant-starter-${index}`}
-              className="btn btn-secondary mb-2 w-100 text-left"
-              onClick={() => sendPrompt(s)}
-            >
-              <i className="fa-kit fa-remixai mr-2"></i>{s}
-            </button>
-          ))}
-        </div>
+        <AiChatIntro sendPrompt={sendPrompt} />
       ) : (
         messages.map(msg => {
           const bubbleClass =
             msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-light'
 
           return (
-            <div key={msg.id} className="chat-row d-flex mb-2">
+            <div key={msg.id} className="chat-row d-flex mb-2 w-100">
               {/* Avatar for assistant */}
               {msg.role === 'assistant' && (
                 <img
@@ -67,8 +84,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="flex-grow-1 w-25 mr-1">
-                <div className={`chat-bubble p-2 rounded ${bubbleClass}`}>
+              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 mr-1">
+                <div className={`chat-bubble p-2 rounded ${bubbleClass}`} data-id="ai-user-chat-bubble">
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
                       You
@@ -110,12 +127,25 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                               </pre>
                             </div>
                           )
-                        }
+                        },
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            {...props}
+                            style={{
+                              listStylePosition: 'inside',
+                              paddingLeft: '0.5rem'
+                            }}
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li {...props} style={{ padding: '1px' }} />
+                        )
                       }}
                     >
                       {msg.content}
                     </ReactMarkdown>
                   ) : (
+
                     msg.content
                   )}
                 </div>
@@ -123,38 +153,42 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                 {/* Feedback buttons */}
                 {msg.role === 'assistant' && (
                   <div className="feedback text-end mt-2 me-1">
-                    <span
-                      role="button"
-                      aria-label="thumbs up"
-                      className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
-                      }`}
-                      onClick={() =>
-                        recordFeedback(
-                          msg.id,
-                          msg.sentiment === 'like' ? 'none' : 'like'
-                        )
-                      }
-                    ></span>
-                    <span
-                      role="button"
-                      aria-label="thumbs down"
-                      className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
-                        ? 'fas fa-thumbs-down'
-                        : 'far fa-thumbs-down'
-                      }`}
-                      onClick={() =>
-                        recordFeedback(
-                          msg.id,
-                          msg.sentiment === 'dislike' ? 'none' : 'dislike'
-                        )
-                      }
-                    ></span>
+                    <CustomTooltip tooltipText="Good Response" placement="top">
+                      <span
+                        role="button"
+                        aria-label="thumbs up"
+                        className={`feedback-btn me-3 ${msg.sentiment === 'like' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'like' ? 'none' : 'like'
+                          )
+                        }
+                      ></span>
+                    </CustomTooltip>
+                    <CustomTooltip tooltipText="Bad Response" placement="top">
+                      <span
+                        role="button"
+                        aria-label="thumbs down"
+                        className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
+                          ? 'fas fa-thumbs-down'
+                          : 'far fa-thumbs-down'
+                        }`}
+                        onClick={() =>
+                          recordFeedback(
+                            msg.id,
+                            msg.sentiment === 'dislike' ? 'none' : 'dislike'
+                          )
+                        }
+                      ></span>
+                    </CustomTooltip>
                   </div>
                 )}
               </div>
             </div>
           )
-        })
+        }) //end of messages render
       )}
       {isStreaming && (
         <div className="text-center my-2">

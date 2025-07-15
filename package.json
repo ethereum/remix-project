@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.67.0-dev",
+  "version": "0.68.0-dev",
   "license": "MIT",
   "description": "Remix Project Monorepo",
   "main": "index.js",
@@ -197,6 +197,7 @@
     "react-router-dom": "^6.16.0",
     "react-select": "^5.8.0",
     "react-spinners": "^0.13.8",
+    "react-syntax-highlighter": "^15.6.1",
     "react-tabs": "^6.0.2",
     "react-toastify": "^10.0.3",
     "react-virtualized": "^9.22.5",

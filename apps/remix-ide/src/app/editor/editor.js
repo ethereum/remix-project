@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt', 'openReadOnly'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt', 'openReadOnly', 'showCustomDiff'],
 }
 
 export default class Editor extends Plugin {
@@ -272,6 +272,10 @@ export default class Editor extends Plugin {
    */
   find (string) {
     return this.api.findMatches(this.currentFile, string)
+  }
+
+  async showCustomDiff (file, content) {
+    return this.api.showCustomDiff(file, content)
   }
 
   addModel(path, content) {

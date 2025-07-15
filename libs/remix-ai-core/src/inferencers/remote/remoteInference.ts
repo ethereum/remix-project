@@ -1,6 +1,6 @@
-import { ICompletions, IGeneration, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
+import { ICompletions, IGeneration, IParams, AIRequestType, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
-import { buildSolgptPrompt } from "../../prompts/promptBuilder";
+import { buildChatPrompt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios from 'axios';
@@ -11,7 +11,6 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   api_url: string
   completion_url: string
   max_history = 7
-  model_op = RemoteBackendOPModel.CODELLAMA // default model operation change this to llama if necessary
   event: EventEmitter
   test_env=false
   test_url="http://solcodertest.org"
@@ -41,7 +40,6 @@ export class RemoteInferencer implements ICompletions, IGeneration {
         if (result.statusText === "OK") {
           if (result.data?.error) return result.data?.error
           const resultText = result.data.generatedText
-          ChatHistory.pushHistory(payload.prompt, resultText)
           return resultText
         } else {
           return defaultErrorMessage
@@ -112,12 +110,14 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   }
 
   async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
+    options.max_tokens = 10
     const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
       'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
   async code_insertion(msg_pfx, msg_sfx, ctxFiles, fileName, options:IParams=InsertionParams): Promise<any> {
+    options.max_tokens = 100
     const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, 'ctxFiles':ctxFiles,
       'currentFileName':fileName, ...options, prompt: '' }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
@@ -129,9 +129,9 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     else return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
-  async solidity_answer(prompt, options:IParams=GenerationParams): Promise<any> {
-    const main_prompt = buildSolgptPrompt(prompt, this.model_op)
-    const payload = { 'prompt': main_prompt, "endpoint":"solidity_answer", ...options }
+  async answer(prompt, options:IParams=GenerationParams): Promise<any> {
+    options.chatHistory = options.provider === 'anthropic' ? buildChatPrompt(prompt) : []
+    const payload = { 'prompt': prompt, "endpoint":"answer", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }

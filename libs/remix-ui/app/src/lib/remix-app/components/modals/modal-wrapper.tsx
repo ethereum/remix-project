@@ -77,6 +77,23 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     )
   }
 
+  const createFormWithTextArea = (defaultValue: string, placeholderText: string, validation: ValidationResult) => {
+    return (
+      <>
+        {props.message}
+        <textarea
+          onChange={onInputChanged}
+          defaultValue={defaultValue}
+          data-id="modalDialogCustomTextarea"
+          className="form-control"
+          placeholder={placeholderText}
+          ref={ref}
+        />
+        {validation && !validation.valid && <span className="text-warning">{validation.message}</span>}
+      </>
+    )
+  }
+
   const onFormChanged = () => {
     if (props.validationFn) {
       const validation = props.validationFn(getFormData())
@@ -129,6 +146,14 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           showCancelIcon: false,
         })
         break
+      case ModalTypes.textarea:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createFormWithTextArea(props.defaultValue, props.placeholderText, { valid: true })
+        })
+        break
       default:
         setState({
           ...props,
@@ -145,6 +170,17 @@ const ModalWrapper = (props: ModalWrapperProps) => {
       })
     }
   }, [props])
+
+  useEffect(() => {
+    if (props.modalType === ModalTypes.textarea && ref.current) {
+      setTimeout(() => {
+        // make sure rendering is done before focusing
+        if (ref.current && 'focus' in ref.current) {
+          (ref.current as HTMLTextAreaElement).focus()
+        }
+      }, 300)
+    }
+  }, [props.modalType, state])
 
   // reset the message and input if any, so when the modal is shown again it doesn't show the previous value.
   const handleHide = () => {

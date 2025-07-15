@@ -1,5 +1,9 @@
 import { ActivityType } from "../lib/types"
-import React from 'react'
+import React, { MutableRefObject, Ref, useEffect, useRef, useState } from 'react'
+import GroupListMenu from "./contextOptMenu"
+import { AiContextType, groupListType } from '../types/componentTypes'
+import { AiAssistantType } from '../types/componentTypes'
+import { CustomTooltip } from "@remix-ui/helper"
 
 // PromptArea component
 export interface PromptAreaProps {
@@ -11,17 +15,24 @@ export interface PromptAreaProps {
   setShowContextOptions: React.Dispatch<React.SetStateAction<boolean>>
   showAssistantOptions: boolean
   setShowAssistantOptions: React.Dispatch<React.SetStateAction<boolean>>
-  contextChoice: 'none' | 'current' | 'opened' | 'workspace'
-  setContextChoice: React.Dispatch<React.SetStateAction<'none' | 'current' | 'opened' | 'workspace'>>
-  assistantChoice: 'openai' | 'mistralai' | 'anthropic'
-  setAssistantChoice: React.Dispatch<React.SetStateAction<'openai' | 'mistralai' | 'anthropic'>>
+  contextChoice: AiContextType
+  setContextChoice: React.Dispatch<React.SetStateAction<AiContextType>>
+  assistantChoice: AiAssistantType
+  setAssistantChoice: React.Dispatch<React.SetStateAction<AiAssistantType>>
   contextFiles: string[]
   clearContext: () => void
   handleAddContext: () => void
   handleSetAssistant: () => void
   handleGenerateWorkspace: () => void
   dispatchActivity: (type: ActivityType, payload?: any) => void
+  contextBtnRef: React.RefObject<HTMLButtonElement>
+  modelBtnRef: React.RefObject<HTMLButtonElement>
+  aiContextGroupList: groupListType[]
+  aiAssistantGroupList: groupListType[]
+  textareaRef?: React.RefObject<HTMLTextAreaElement>
 }
+
+const _paq = (window._paq = window._paq || [])
 
 export const PromptArea: React.FC<PromptAreaProps> = ({
   input,
@@ -41,102 +52,69 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   handleAddContext,
   handleSetAssistant,
   handleGenerateWorkspace,
-  dispatchActivity
+  dispatchActivity,
+  contextBtnRef,
+  modelBtnRef,
+  aiContextGroupList,
+  aiAssistantGroupList,
+  textareaRef
 }) => {
+
   return (
     <>
       {showContextOptions && (
         <div
-          className=" w-100 bg-dark p-2 border border-text border-bottom-0 rounded"
+          className="bg-light mb-1 p-2 border border-text w-75"
+          style={{ borderRadius: '8px' }}
         >
-          <div className="text-uppercase ml-2 mb-2">Add Context Files</div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-none"
-              checked={contextChoice === 'none'}
-              onChange={() => {
-                setContextChoice('none')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="none-context-option" htmlFor="ctx-none">
-              None
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-current"
-              checked={contextChoice === 'current'}
-              onChange={() => {
-                setContextChoice('current')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="currentFile-context-option" htmlFor="ctx-current">
-              Current file
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-opened"
-              checked={contextChoice === 'opened'}
-              onChange={() => {
-                setContextChoice('opened')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="allOpenedFiles-context-option" htmlFor="ctx-opened">
-              All opened files
-            </label>
-          </div>
-          <div className="d-flex ml-2 custom-control custom-radio">
-            <input
-              className="custom-control-input"
-              type="radio"
-              id="ctx-workspace"
-              checked={contextChoice === 'workspace'}
-              onChange={() => {
-                setContextChoice('workspace')
-                setShowContextOptions(false)
-              }}
-            />
-            <label className="form-check-label custom-control-label" data-id="workspace-context-option" htmlFor="ctx-workspace">
-              Workspace
-            </label>
-          </div>
+          <div className="text-uppercase ml-2 mb-2">Context</div>
+          <GroupListMenu
+            setChoice={setContextChoice}
+            setShowOptions={setShowContextOptions}
+            choice={contextChoice}
+            groupList={aiContextGroupList}
+          />
         </div>
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3"
+        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text bg-light align-self-start"
       >
-        <div className="d-flex justify-content-between mb-2">
+        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dark btn-sm text-secondary"
+            className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
+            ref={contextBtnRef}
           >
-          Add context
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
+            {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
+            {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
-          <button
-            onClick={handleGenerateWorkspace}
-            className="btn btn-dark btn-sm text-secondary"
-            data-id="composer-ai-workspace-generate"
-          >
-          @Generate Workspace
-          </button>
+          <div className="d-flex justify-content-center align-items-center">
+            <CustomTooltip
+              tooltipText={<TooltipContent />}
+              delay={{ show: 1000, hide: 0 }}
+            >
+              <span
+                className="far fa-circle-info text-ai mr-1"
+                onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
+              ></span>
+            </CustomTooltip>
+            <span
+              className="badge align-self-center badge-info font-weight-light rounded"
+            >
+              AI Beta
+            </span>
+          </div>
         </div>
         <div className="ai-chat-input d-flex flex-column">
-          <input
+          <textarea
+            ref={textareaRef}
             style={{ flexGrow: 1 }}
-            type="text"
+            rows={2}
             className="form-control bg-light"
             value={input}
             disabled={isStreaming}
@@ -152,67 +130,37 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             }}
             placeholder="Ask me anything, add workspace files..."
           />
-          {showAssistantOptions && (
-            <div
-              className="p-3 mb-2 z-3 bg-dark border border-text position-absolute"
-              style={{ top: '79dvh', left: '85dvw', right: '0px', bottom: '15px', height: '125px', width: '220px', borderRadius: '15px' }}
+
+          <div className="d-flex justify-content-between">
+            <button
+              onClick={handleSetAssistant}
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+              ref={modelBtnRef}
             >
-              <div className="text-uppercase ml-2 mb-2">Choose Assistant Model</div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'openai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-openai`}
-                  checked={assistantChoice === 'openai'}
-                  onChange={() => {
-                    setAssistantChoice('openai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-openai`}>
-                    OpenAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'mistralai'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-mistralai`}
-                  checked={assistantChoice === 'mistralai'}
-                  onChange={() => {
-                    setAssistantChoice('mistralai')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-mistralai`}>
-                    MistralAI
-                </label>
-              </div>
-              <div className="d-flex ml-2 custom-control custom-radio" key={'anthropic'}>
-                <input
-                  className="custom-control-input"
-                  type="radio"
-                  id={`assistant-anthropic`}
-                  checked={assistantChoice === 'anthropic'}
-                  onChange={() => {
-                    setAssistantChoice('anthropic')
-                    setShowAssistantOptions(false)
-                  }}
-                />
-                <label className="form-check-label custom-control-label" htmlFor={`assistant-anthropic`}>
-                    Anthropic
-                </label>
-              </div>
-            </div>
-          )}
-          <button
-            onClick={handleSetAssistant}
-            className="btn btn-dark btn-sm text-secondary mt-2 align-self-end"
-          >
-            Set assistant&nbsp;
-          </button>
+              {assistantChoice === null && 'Default'}
+              {assistantChoice === 'openai' && ' OpenAI'}
+              {assistantChoice === 'mistralai' && ' MistralAI'}
+              {assistantChoice === 'anthropic' && ' Anthropic'}
+              {'  '}
+              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+            </button>
+            <button
+              data-id="remix-ai-workspace-generate"
+              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+              onClick={handleGenerateWorkspace}
+            >
+              {'@Generate'}
+            </button>
+            {/* <button
+              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
+              style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
+              onClick={handleSend}
+            >
+              <span className="fa fa-arrow-up text-light"></span>
+            </button> */}
+          </div>
         </div>
-        {contextChoice !== 'none' && contextFiles.length > 0 && (
+        {/* {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>
             {contextFiles.slice(0, 6).map(f => {
               const name = f.split('/').pop()
@@ -238,8 +186,21 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               </span>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </>
+  )
+}
+
+function TooltipContent () {
+  return (
+    <ul className="list-unstyled p-2 mr-3">
+      <li className="">
+        {'- Use /w <prompt> : To manage or edit files within your workspace'}
+      </li>
+      <li className="">
+        {'- Alternatively, you may type your question directly below.'}
+      </li>
+    </ul>
   )
 }
