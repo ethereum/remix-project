@@ -82,19 +82,26 @@ const tests = {
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
             })
+            .saveScreenshot('./reports/screenshots/gitui4.png')
             .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+            .saveScreenshot('./reports/screenshots/gitui5.png')
             .pause(1000)
             .click('*[data-id="addToGitChangestest.txt"]')
+            .saveScreenshot('./reports/screenshots/gitui6.png')
             .waitForElementVisible({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
             })
+            .saveScreenshot('./reports/screenshots/gitui7.png')
             .setValue('*[data-id="commitMessage"]', 'testcommit')
+            .saveScreenshot('./reports/screenshots/gitui8.png')
             .click('*[data-id="commitButton"]')
+            .saveScreenshot('./reports/screenshots/gitui9.png')
     },
     'look at the commit #group1': function (browser: NightwatchBrowser) {
         browser
             .click('*[data-id="commits-panel"]')
+            .saveScreenshot('./reports/screenshots/gitui10.png')
             .waitForElementPresent({
                 selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
                 locateStrategy: 'xpath'
