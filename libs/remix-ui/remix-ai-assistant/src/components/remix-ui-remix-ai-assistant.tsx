@@ -458,7 +458,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     <div
       className="d-flex flex-column h-100 mx-3 "
     >
-      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2 overflow-x-hidden" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
         <div data-id="remix-ai-assistant-ready"></div>
         {/* hidden hook for E2E tests: data-streaming="true|false" */}
         <div
