@@ -20,7 +20,7 @@ const profile = {
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
   kind: 'settings',
-  location: 'sidePanel',
+  location: 'mainPanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version,
   permission: true,
