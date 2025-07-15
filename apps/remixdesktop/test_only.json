@@ -44,7 +44,7 @@
         ],
         "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
         "icon": "assets/icon.png",
-        "sign": null
+        "forceCodeSigning": false
     },
     "deb": {},
     "linux": {
