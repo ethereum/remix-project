@@ -99,13 +99,18 @@ const tests = {
                 selector: '//*[@data-id="commitButton" and not(@disabled)]',
                 locateStrategy: 'xpath'
             })
-            .click('*[data-id="commitButton"]')
             .saveScreenshot('./reports/screenshots/gitui9.png')
+            .click('*[data-id="commitButton"]')
+            .saveScreenshot('./reports/screenshots/gitui10.png')
+            .waitForElementNotPresent({
+                selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
     },
     'look at the commit #group1': function (browser: NightwatchBrowser) {
         browser
             .click('*[data-id="commits-panel"]')
-            .saveScreenshot('./reports/screenshots/gitui10.png')
+            .saveScreenshot('./reports/screenshots/gitui11.png')
             .waitForElementPresent({
                 selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
                 locateStrategy: 'xpath'
