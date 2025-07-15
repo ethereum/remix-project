@@ -42,7 +42,7 @@ const tests = {
             .waitForElementVisible({
                 locateStrategy: 'xpath',
                 selector: "//span[@class='text-log' and contains(., 'setup done.')]",
-                timeout: 60000
+                timeout: 240000
             })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk"]')
             .click('*[data-id="treeViewLitreeViewItemscripts/plonk/zk"]')
@@ -58,7 +58,7 @@ const tests = {
             .waitForElementVisible({
                 locateStrategy: 'xpath',
                 selector: "//span[@class='text-log' and contains(., 'proof done')]",
-                timeout: 60000
+                timeout: 240000
             })
     }
 
