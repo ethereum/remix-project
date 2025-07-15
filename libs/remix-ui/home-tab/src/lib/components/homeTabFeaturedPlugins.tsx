@@ -75,7 +75,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
 
   function PluginCard(pluginInfo: PluginInfo) {
     return (
-      <div className="card">
+      <div className="card border">
         <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
           <div className='d-flex align-items-center px-2'>
             <RenderIf condition={loadingPlugins.includes(pluginInfo.pluginId)}>
@@ -92,10 +92,10 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
           <div className={`text-${pluginInfo.maintainedByRemix ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedByRemix ? 'Remix' : 'Community'}</div>
           <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
           <RenderIf condition={pluginInfo.action.type === 'link'}>
-            <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm w-100 text-decoration-none" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
+            <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={pluginInfo.action.type === 'methodCall'}>
-            <button className="btn btn-secondary btn-sm w-100 text-decoration-none" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
+            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
               <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
             </button>
           </RenderIf>
@@ -120,7 +120,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
             ))
           ) : (
             pluginList.plugins.map((pluginInfo: PluginInfo) => (
-              <div className="col-md-6 mb-4" key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
+              <div className="col-md-6 mb-4 " key={pluginInfo.pluginId}>{ PluginCard(pluginInfo) }</div>
             ))
           )
         }

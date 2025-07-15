@@ -53,7 +53,7 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
 
   function UpdateCard(updateInfo: UpdateInfo) {
     return (
-      <div className="card">
+      <div className="card border">
         <div className="d-flex align-items-center p-3 overflow-hidden justify-content-between" style={{ height: '80px', backgroundColor: 'var(--body-bg)' }}>
           <span className={`badge bg-info bg-transparent border p-2 rounded-pill text-${updateInfo.theme}`} style={{ fontWeight: 'light', border: `1px solid var(--${updateInfo.theme})` }}>{updateInfo.badge}</span>
           <img src={`${HOME_TAB_BASE_URL + updateInfo.icon}`} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
@@ -63,13 +63,13 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
             {updateInfo.title.length > 35 ? `${updateInfo.title.substring(0, 45)}...` : updateInfo.title}
           </span>
           <div className="mb-3 small">
-            {updateInfo.description.length > 120 ? `${updateInfo.description.substring(0, 100)}...` : updateInfo.description}
+            {updateInfo.description.length > 120 ? `${updateInfo.description.substring(0, 95)}...` : updateInfo.description}
           </div>
           <RenderIf condition={updateInfo.action.type === 'link'}>
-            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-light btn-sm w-100 text-${updateInfo.theme} text-decoration-none border`}>{updateInfo.action.label}</a>
+            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-light btn-sm w-100 text-decoration-none border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`}>{updateInfo.action.label}</a>
           </RenderIf>
           <RenderIf condition={updateInfo.action.type === 'methodCall'}>
-            <button className={`btn btn-light btn-sm w-100 text-${updateInfo.theme} border`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
+            <button className={`btn btn-light btn-sm w-100 border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
               {updateInfo.action.label}
             </button>
           </RenderIf>
