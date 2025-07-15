@@ -2,18 +2,15 @@
 import { RunTab, makeUdapp } from './app/udapp'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
-import { ThemeModule } from './app/tabs/theme-module'
 import { LocaleModule } from './app/tabs/locale-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { Web3ProviderModule } from './app/tabs/web3-provider'
 import { CompileAndRun } from './app/tabs/compile-and-run'
 import { PluginStateLogger } from './app/tabs/state-logger'
 import { SidePanel } from './app/components/side-panel'
-import { StatusBar } from './app/components/status-bar'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { PinnedPanel } from './app/components/pinned-panel'
 import { PopupPanel } from './app/components/popup-panel'
-import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
@@ -21,7 +18,14 @@ import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
 import { SolidityScript } from './app/plugins/solidity-script'
+import { StatusBar } from './app/components/status-bar'
+import { Topbar } from './app/components/top-bar'
+import { ThemeModule } from './app/tabs/theme-module'
+import { VerticalIcons } from './app/components/vertical-icons'
 import { RemixAIAssistant } from './app/plugins/remix-ai-assistant'
+import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
+import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
+import { ContractFlattener } from './app/plugins/contractFlattener'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -45,11 +49,8 @@ import { ExternalHttpProvider } from './app/providers/external-http-provider'
 import { EnvironmentExplorer } from './app/providers/environment-explorer'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
-import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { CompilationDetailsPlugin } from './app/plugins/compile-details'
-import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
 import { RemixGuidePlugin } from './app/plugins/remixGuide'
-import { ContractFlattener } from './app/plugins/contractFlattener'
 import { TemplatesPlugin } from './app/plugins/remix-templates'
 import { fsPlugin } from './app/plugins/electron/fsPlugin'
 import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
@@ -154,6 +155,7 @@ class AppComponent {
   pinnedPanel: PinnedPanel
   popupPanel: PopupPanel
   statusBar: StatusBar
+  topBar: Topbar
   settings: SettingsTab
   params: any
   desktopClientMode: boolean
@@ -520,6 +522,7 @@ class AppComponent {
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new Filepanel(appManager, contentImport)
     this.statusBar = new StatusBar(filePanel, this.menuicons)
+    this.topBar = new Topbar()
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor)//, appManager)
 
