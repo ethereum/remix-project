@@ -95,6 +95,10 @@ const tests = {
             .saveScreenshot('./reports/screenshots/gitui7.png')
             .setValue('*[data-id="commitMessage"]', 'testcommit')
             .saveScreenshot('./reports/screenshots/gitui8.png')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and not(@disabled)]',
+                locateStrategy: 'xpath'
+            })
             .click('*[data-id="commitButton"]')
             .saveScreenshot('./reports/screenshots/gitui9.png')
     },

@@ -92,6 +92,10 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .setValue('*[data-id="commitMessage"]', 'testcommit')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and not(@disabled)]',
+                locateStrategy: 'xpath'
+            })
             .click('*[data-id="commitButton"]')
     },
 

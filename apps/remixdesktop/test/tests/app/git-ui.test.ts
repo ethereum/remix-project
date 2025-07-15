@@ -89,6 +89,10 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .setValue('*[data-id="commitMessage"]', 'testcommit')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and not(@disabled)]',
+                locateStrategy: 'xpath'
+            })
             .click('*[data-id="commitButton"]')
     },
     'look at the commit #group1': function (browser: NightwatchBrowser) {
@@ -141,6 +145,10 @@ const tests = {
                 locateStrategy: 'xpath'
             })
             .setValue('*[data-id="commitMessage"]', 'testcommit2')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and not(@disabled)]',
+                locateStrategy: 'xpath'
+            })
             .click('*[data-id="commitButton"]')
     },
     'push the commit #group1': function (browser: NightwatchBrowser) {
