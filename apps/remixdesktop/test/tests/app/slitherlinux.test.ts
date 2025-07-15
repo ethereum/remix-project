@@ -3,6 +3,7 @@ import { ChildProcess, spawn, execSync } from 'child_process'
 import { homedir } from 'os'
 const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hideToolTips()
    done()
   },
   open: function (browser: NightwatchBrowser) {
@@ -19,7 +20,7 @@ const tests = {
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
-        browser.switchWindow(result.value[1])
+         browser.hideToolTips().switchWindow(result.value[1])
         .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
         .click('*[data-id="treeViewLitreeViewItemtests"]')
         .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')

@@ -52,6 +52,7 @@ const tests = {
                     .hideToolTips()
             })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
+            .saveScreenshot('./reports/screenshots/gitui1.png')
     },
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
@@ -82,19 +83,47 @@ const tests = {
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
             })
+            .saveScreenshot('./reports/screenshots/gitui4.png')
             .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+            .saveScreenshot('./reports/screenshots/gitui5.png')
             .pause(1000)
             .click('*[data-id="addToGitChangestest.txt"]')
+            .saveScreenshot('./reports/screenshots/gitui6.png')
             .waitForElementVisible({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
             })
+            .saveScreenshot('./reports/screenshots/gitui7.png')
             .setValue('*[data-id="commitMessage"]', 'testcommit')
+            .saveScreenshot('./reports/screenshots/gitui8.png')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and not(@disabled)]',
+                locateStrategy: 'xpath'
+            })
+            .saveScreenshot('./reports/screenshots/gitui9.png')
             .click('*[data-id="commitButton"]')
+            .saveScreenshot('./reports/screenshots/gitui10.png')
+            .execute(function() {
+                const el = document.querySelector('[data-id="terminalJournal"]');
+                if (el) {
+                    el.scrollTop = el.scrollHeight;
+                }
+            })
+            .waitForElementPresent({
+                selector: '//*[@data-id="commitButton" and @disabled]',
+                locateStrategy: 'xpath'
+            })
+            .saveScreenshot('./reports/screenshots/gitui11.png')
+            
+            .waitForElementNotPresent({
+                selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
     },
     'look at the commit #group1': function (browser: NightwatchBrowser) {
         browser
             .click('*[data-id="commits-panel"]')
+            .saveScreenshot('./reports/screenshots/gitui12.png')
             .waitForElementPresent({
                 selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
                 locateStrategy: 'xpath'

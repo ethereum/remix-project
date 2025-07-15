@@ -162,7 +162,6 @@ export const EditorUI = (props: EditorUIProps) => {
   const pendingCustomDiff = useRef({})
   const [, setCurrentBreakpoints] = useState({})
   const [isSplit, setIsSplit] = useState(true)
-  const [isDiff, setIsDiff] = useState(props.isDiff || false)
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
   const [decoratorListCollection, setDecoratorListCollection] = useState<Record<string, monacoTypes.editor.IEditorDecorationsCollection>>({})
   const [disposedWidgets, setDisposedWidgets] = useState<Record<string, Record<string, monacoTypes.IRange[]>>>({})
@@ -1473,12 +1472,13 @@ export const EditorUI = (props: EditorUIProps) => {
         onMount={handleDiffEditorDidMount}
         options={{ readOnly: false, renderSideBySide: isSplit }}
         width='100%'
-        height={isDiff ? '100%' : '0%'}
-        className={isDiff ? "d-block" : "d-none"}
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
+        data-id="diffEditor"
       />
       <Editor
         width="100%"
-        height={isDiff ? '0%' : '100%'}
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -1494,7 +1494,7 @@ export const EditorUI = (props: EditorUIProps) => {
           }
         }}
         defaultValue={defaultEditorValue}
-        className={isDiff ? "d-none" : "d-block"}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">

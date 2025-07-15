@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 
 class HideToolTips extends EventEmitter {
   command(this: NightwatchBrowser) {
+    console.log('Hiding tooltips...')
     browser
       .perform((done) => {
         browser.execute(function () {
