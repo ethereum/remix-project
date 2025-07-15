@@ -11,22 +11,20 @@ function getTestFiles(directory) {
         .map(file => path.join(directory, file)); // Return full path of each file
 }
 
-// Function to check if a file contains a specific word
-function fileContainsWord(filePath, word) {
-    const content = fs.readFileSync(filePath, 'utf-8'); // Read file content
-    return content.includes(word); // Check if word is in content
+// Function to filter files by filename containing a specific word
+function filterFilesByWord(files, word) {
+    if (!word) return files; // Return all files if no filter word provided
+    return files.filter(file => path.basename(file).includes(word)); // Return files whose filename contains the word
 }
 
-// Function to filter out files that do not contain the specified word
-function filterFilesByWord(files, word) {
-    return files.filter(file => fileContainsWord(file, word)); // Return files that do not contain the word
-}
+// Get filter from command line argument
+const filterArg = process.argv[2] || '';
 
 // Get all test files in the specified directory
 const testFiles = getTestFiles(testDirectory);
 
-// Filter out files that do not contain "@offline"
-const filteredFiles = filterFilesByWord(testFiles, '');
+// Filter files by the filter argument
+const filteredFiles = filterFilesByWord(testFiles, filterArg);
 
 // Support for test sharding in CI environments
 const shard = parseInt(process.env.SHARD) || 1;
