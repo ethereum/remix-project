@@ -103,11 +103,18 @@ const tests = {
             .saveScreenshot('./reports/screenshots/gitui9.png')
             .click('*[data-id="commitButton"]')
             .saveScreenshot('./reports/screenshots/gitui10.png')
+            .execute(function() {
+                const el = document.querySelector('[data-id="terminalJournal"]');
+                if (el) {
+                    el.scrollTop = el.scrollHeight;
+                }
+            })
             .waitForElementPresent({
                 selector: '//*[@data-id="commitButton" and @disabled]',
                 locateStrategy: 'xpath'
             })
             .saveScreenshot('./reports/screenshots/gitui11.png')
+            
             .waitForElementNotPresent({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
