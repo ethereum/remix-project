@@ -62,7 +62,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text"
+          className="bg-light mb-1 p-2 border border-text w-75"
           style={{ borderRadius: '8px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
@@ -85,7 +85,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
-          @Add context
+            {contextChoice === 'none' && '@ Add Context'}
+            {contextChoice === 'workspace' && 'Workspace'}
+            {contextChoice === 'opened' && 'Open Files'}
+            {contextChoice === 'current' && 'Current File'}
           </button>
 
           <div className="d-flex justify-content-center align-items-center">
@@ -154,7 +157,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             </button> */}
           </div>
         </div>
-        {contextChoice !== 'none' && contextFiles.length > 0 && (
+        {/* {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>
             {contextFiles.slice(0, 6).map(f => {
               const name = f.split('/').pop()
@@ -180,7 +183,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               </span>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </>
   )
