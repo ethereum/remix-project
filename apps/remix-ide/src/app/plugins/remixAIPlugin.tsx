@@ -255,13 +255,9 @@ export class RemixAIPlugin extends Plugin {
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
   }
 
-  async fixWorspaceErrors(continueGeneration=false): Promise<any> {
+  async fixWorspaceErrors(): Promise<any> {
     try {
-      if (continueGeneration) {
-        return this.contractor.continueCompilation()
-      } else {
-        return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
-      }
+      return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
     } catch (error) {
     }
   }

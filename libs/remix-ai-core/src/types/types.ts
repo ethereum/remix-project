@@ -15,6 +15,17 @@ export enum SupportedFileExtensions {
   tests_js = 'test.js',
 }
 
+export enum ImportExtractionSupportedFileExtensions {
+  solidity = 'sol',
+}
+
+export interface IExtractedImport {
+  importPath: string;
+  content: string;
+  isLocal: boolean;
+  isLibrary: boolean;
+}
+
 export interface IModelRequirements{
   backend: string,
   minSysMemory: number,
@@ -148,4 +159,5 @@ export interface CompilationResult {
   compilationSucceeded: boolean
   errors: string
   errfiles?: { [key: string]: any }
+  compilerPayload?: any
 }

@@ -1,17 +1,18 @@
 import { CompilationResult } from '../types/types'
 
-const compilationParams = {
+export const compilationParams = {
   optimize: false,
   evmVersion: null,
   language: 'Solidity',
-  version: '0.8.29+commit.ab55807c'
+  version: '0.8.30+commit.73712a01'
 }
 
 export const compilecontracts = async (contracts, plugin): Promise<CompilationResult> => {
   // do not compile tests files
+  let result
   try {
     // console.log('Compiling contracts:', contracts)
-    const result = await plugin.call('solidity' as any, 'compileWithParameters', contracts, compilationParams)
+    result = await plugin.call('solidity' as any, 'compileWithParameters', contracts, compilationParams)
     console.log('Compilation result:', result)
     const data = result.data
     let error = false
@@ -49,7 +50,7 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
       const msg = `
           - Compilation errors: ${data.errors.map((e) => e.formattedMessage)}.
           `
-      return { compilationSucceeded: false, errors: msg, errfiles: errorFiles }
+      return { compilationSucceeded: false, errors: msg, errfiles: errorFiles, compilerPayload: result }
     }
 
     if (data.error) {
@@ -58,11 +59,11 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
       const msg = `
 					- Compilation errors: ${data.error}.
 					`
-      return { compilationSucceeded: false, errors: msg, errfiles: errorFiles }
+      return { compilationSucceeded: false, errors: msg, errfiles: errorFiles, compilerPayload: result }
     }
 
-    return { compilationSucceeded: true, errors: null }
+    return { compilationSucceeded: true, errors: null, compilerPayload: result }
   } catch (err) {
-    return { compilationSucceeded: false, errors: 'An unexpected error occurred during compilation.' }
+    return { compilationSucceeded: false, errors: 'An unexpected error occurred during compilation.', compilerPayload: result }
   }
 }
