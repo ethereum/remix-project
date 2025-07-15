@@ -32,6 +32,7 @@ const testsBash = {
         return actions.sendKeys('echo "123" >> example.txt').sendKeys(this.Keys.ENTER)
       })
       .pause(1000)
+      .saveScreenshot('./reports/screenshots/xterm1.png')
       .getEditorValue((result) => {
         browser.assert.equal(result, 'test\n123\n')
       })
