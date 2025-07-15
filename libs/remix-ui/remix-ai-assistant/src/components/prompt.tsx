@@ -85,10 +85,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
-            {contextChoice === 'none' && '@ Add Context'}
-            {contextChoice === 'workspace' && 'Workspace'}
-            {contextChoice === 'opened' && 'Open Files'}
-            {contextChoice === 'current' && 'Current File'}
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
+            {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
+            {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
           <div className="d-flex justify-content-center align-items-center">
