@@ -25,7 +25,7 @@ export interface ChatHistoryComponentProps {
 const AiChatIntro = (props) => {
   return (
     <div className="assistant-landing d-flex flex-column mx-1 align-items-center justify-content-center text-center h-100 w-100">
-      <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
+      <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3 container-img" />
       <h5 className="mb-2">RemixAI</h5>
       <p className="mb-4" style={{ fontSize: '0.9rem' }}>
             RemixAI provides you personalized guidance as you build. It can break down concepts,
