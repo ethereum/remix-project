@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../themeContext'
-import { RenderIf } from '@remix-ui/helper'
+import { RenderIf, RenderIfNot } from '@remix-ui/helper'
 import axios from 'axios'
 import { HOME_TAB_BASE_URL, HOME_TAB_NEW_UPDATES } from './constant'
 import { LoadingCard } from './LoaderPlaceholder'
@@ -19,6 +19,7 @@ interface UpdateInfo {
   badge: string
   title: string
   description: string
+  descriptionList?: string[]
   icon: string
   action: {
     type: 'link' | 'methodCall'
@@ -60,12 +61,20 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
             <img src={`${HOME_TAB_BASE_URL + updateInfo.icon}`} alt="RemixAI Assistant" style={{ height: '150px', width: '150px' }} />
           </div>
           <div className="px-3" style={{ fontSize: '1rem', zIndex: 1 }}>
-            <span className="d-block mt-1 mb-2" style={{ color: isDark ? 'white' : 'black' }}>
+            <span className="d-block my-2" style={{ color: isDark ? 'white' : 'black' }}>
               {updateInfo.title}
             </span>
-            <div className="mb-3 small">
-              {updateInfo.description}
-            </div>
+            {Array.isArray(updateInfo.descriptionList) && updateInfo.descriptionList.length > 0 ? (
+              <div className="mb-3 small">
+                <ul className="list-unstyled">
+                  {updateInfo.descriptionList.map((description: string, index: number) => (
+                    <li key={`description-${index}`} className='mb-1'><i className="far fa-check-circle mr-2"></i>{description}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="mb-3 small">{updateInfo.description}</div>
+            )}
           </div>
         </div>
         <div className="px-3 pb-3">
