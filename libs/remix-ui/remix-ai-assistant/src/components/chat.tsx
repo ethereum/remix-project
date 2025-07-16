@@ -32,20 +32,21 @@ const AiChatIntro = (props) => {
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
       <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`<prompt>: `}</p><span>ask your question</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>modify your code</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>continue fixing compilation</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>generate a new workspace</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1">{`<prompt>: `}</p><span>ask your question</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1">{`/w <prompt>: `}</p><span>modify your code</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1">{`/c <prompt>: `}</p><span>continue fixing compilation</span></div>
+        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1 mb-2">{`/g <prompt>: `}</p><span>generate a new workspace</span></div>
+
       </div>
       <div className="d-flex flex-column mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
           <button
             key={s}
             data-id={`remix-ai-assistant-starter-${index}`}
-            className="btn btn-secondary mb-2 w-100 text-left"
+            className="btn btn-secondary mb-2 w-100 text-start"
             onClick={() => props.sendPrompt(s)}
           >
-            <i className="fa-kit fa-remixai mr-2"></i>{s}
+            <i className="fa-kit fa-remixai me-2"></i>{s}
           </button>
         ))}
       </div>
@@ -79,12 +80,12 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                 <img
                   src={assistantAvatar}
                   alt="AI"
-                  className="assistant-avatar me-2 flex-shrink-0 mr-1"
+                  className="assistant-avatar me-2 flex-shrink-0 me-1"
                 />
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 me-1">
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`} data-id="ai-user-chat-bubble">
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">

@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 type HometabIconSection = {
@@ -103,7 +103,7 @@ function HomeTabTitle() {
           <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: 'Noah, sans-serif' }}>
             Remix
           </span>
-          <div className="ml-2 d-flex">
+          <div className="ms-2 d-flex">
             <div onClick={() => playRemi()}>
               <img className="" src="assets/img/guitarRemiCroped.webp" style={{ height: '3rem' }} alt=""></img>
             </div>
@@ -140,7 +140,7 @@ function HomeTabTitle() {
           <FormattedMessage id="home.website" />
         </a>
         {/* <a
-          className="pl-2 remixui_home_text"
+          className="ps-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}
           target="__blank"
           href="https://remix-ide.readthedocs.io/en/latest"
@@ -148,7 +148,7 @@ function HomeTabTitle() {
           <FormattedMessage id="home.documentation" />
         </a> */}
         <a
-          className="pl-2 remixui_home_text"
+          className="ps-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])}
           target="__blank"
           href="https://github.com/remix-project-org/remix-desktop-insiders"
@@ -160,7 +160,7 @@ function HomeTabTitle() {
         <input
           ref={searchInputRef}
           type="text"
-          className="border form-control border-right-0"
+          className="border form-control border-end-0"
           id="homeTabSearchInput"
           placeholder={intl.formatMessage({ id: 'home.searchDocumentation' })}
           data-id="terminalInputSearchHome"

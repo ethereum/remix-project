@@ -61,7 +61,7 @@ const ErrorRenderer = ({ message, opt, editor, name, ssaState }: ErrorRendererPr
             textOverflow: 'ellipsis'
           }}
         >
-          <span className="h6 font-weight-bold">{opt.name}</span>
+          <span className="h6 fw-bold">{opt.name}</span>
           <span>{opt.item.warning}</span>
           {opt.item.more ? (
             <span>

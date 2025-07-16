@@ -22,10 +22,10 @@ export default function GroupListMenu(props: GroupListMenuProps) {
             props.setShowOptions(false)
           }}
         >
-          <div className="d-flex flex-column small text-left">
-            <span className="form-check-label font-weight-bold mb-1">{item.label}</span>
+          <div className="d-flex flex-column small text-start">
+            <span className="form-check-label fw-bold mb-1">{item.label}</span>
             <div className="d-flex justify-content-between">
-              <span className="form-check-label mr-2 text-wrap">{item.bodyText}</span>{ props.choice === item.stateValue && <span className={item.icon}></span> }
+              <span className="form-check-label me-2 text-wrap">{item.bodyText}</span>{ props.choice === item.stateValue && <span className={item.icon}></span> }
             </div>
           </div>
         </button>

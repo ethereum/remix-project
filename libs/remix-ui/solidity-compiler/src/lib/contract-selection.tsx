@@ -82,7 +82,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="fw-bold pe-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -99,7 +99,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="fw-bold pe-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -412,7 +412,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorBlue.webp" />
+                  <img id="ssaLogo" className="remixui_storageLogo me-2" src="assets/img/staticAnalysisColorBlue.webp" />
                   <span>
                     <FormattedMessage id="solidity.runStaticAnalysis" />
                   </span>
@@ -435,7 +435,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <img id="solscanLogo" className="remixui_storageLogo mr-2" src="assets/img/solidityScanLogo.webp" />
+                  <img id="solscanLogo" className="remixui_storageLogo me-2" src="assets/img/solidityScanLogo.webp" />
                   <span>
                     <FormattedMessage id="solidity.runSolidityScan" />
                   </span>
@@ -459,7 +459,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               >
 
                 <span>
-                  <img id="ipfsLogo" className="remixui_storageLogo mr-2" src="assets/img/ipfs.webp" />
+                  <img id="ipfsLogo" className="remixui_storageLogo me-2" src="assets/img/ipfs.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> IPFS
                   </span>
@@ -482,7 +482,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <img id="swarmLogo" className="remixui_storageLogo mr-2" src="assets/img/swarmColor.webp" />
+                  <img id="swarmLogo" className="remixui_storageLogo me-2" src="assets/img/swarmColor.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Swarm
                   </span>
@@ -504,7 +504,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
+                  <i className="fa-regular fa-memo-pad me-2 text-primary"></i>
                   <span>
                     <FormattedMessage id="solidity.compilationDetails" />
                   </span>

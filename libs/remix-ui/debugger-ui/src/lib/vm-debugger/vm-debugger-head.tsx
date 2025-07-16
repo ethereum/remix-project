@@ -130,12 +130,12 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent }, de
 
   return (
     <div id="vmheadView" className="mt-1 px-2 d-flex">
-      <div className="d-flex flex-column pr-2" style={{ flex: 1 }}>
+      <div className="d-flex flex-column pe-2" style={{ flex: 1 }}>
         <FunctionPanel className="pb-1" data={functionPanel} stepManager={stepManager} />
         <SolidityLocals className="pb-1" data={solidityLocals.calldata} message={solidityLocals.message} registerEvent={registerEvent} triggerEvent={triggerEvent} />
         <CodeListView className="pb-2 flex-grow-1" registerEvent={registerEvent} />
       </div>
-      <div className="d-flex flex-column pl-2" style={{ flex: 1 }}>
+      <div className="d-flex flex-column ps-2" style={{ flex: 1 }}>
         <SolidityState className="pb-1" calldata={solidityState.calldata} message={solidityState.message} />
         <StepDetail className="pb-1 pb-2 h-100 flex-grow-1" stepDetail={stepDetail} />
       </div>

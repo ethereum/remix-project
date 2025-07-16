@@ -379,7 +379,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   const customJSX = (
     <span className="p-0 m-0">
       <input
-        className="custom-control-input"
+        className="form-check-input"
         id="debugGeneratedSourcesInput"
         onChange={({ target: { checked } }) => {
           setState((prevState) => {
@@ -391,7 +391,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }}
         type="checkbox"
       />
-      <label data-id="debugGeneratedSourcesLabel" className="pt-1 form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">
+      <label data-id="debugGeneratedSourcesLabel" className="pt-1 form-check-label form-check-label" htmlFor="debugGeneratedSourcesInput">
         <FormattedMessage id="debugger.useGeneratedSources" />
         (Solidity {'>='} v0.7.2)
       </label>
@@ -402,16 +402,16 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <Toaster message={state.toastMessage} />
       <div className="px-2 pb-3" ref={debuggerTopRef}>
         <div>
-          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          <div className="mt-2 mb-2 debuggerConfig form-check">
             <CustomTooltip tooltipId="debuggerGenSourceCheckbox" tooltipText={<FormattedMessage id="debugger.debugWithGeneratedSources" />} placement="bottom-start">
               {customJSX}
             </CustomTooltip>
           </div>
           {state.isLocalNodeUsed && (
-            <div className="mb-2 debuggerConfig custom-control custom-checkbox">
+            <div className="mb-2 debuggerConfig form-check">
               <CustomTooltip tooltipId="debuggerGenSourceInput" tooltipText={<FormattedMessage id="debugger.forceToUseCurrentLocalNode" />} placement="right">
                 <input
-                  className="custom-control-input"
+                  className="form-check-input"
                   id="debugWithLocalNodeInput"
                   onChange={({ target: { checked } }) => {
                     setState((prevState) => {
@@ -424,7 +424,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                   type="checkbox"
                 />
               </CustomTooltip>
-              <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">
+              <label data-id="debugLocaNodeLabel" className="form-check-label form-check-label" htmlFor="debugWithLocalNodeInput">
                 <FormattedMessage id="debugger.debugLocaNodeLabel" />
               </label>
             </div>

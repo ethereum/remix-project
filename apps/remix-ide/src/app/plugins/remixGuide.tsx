@@ -149,8 +149,8 @@ export class RemixGuidePlugin extends ViewPlugin {
         </RemixUIGridView>
         { state.showVideo && <div
           data-id={`EnterModalDialogContainer-react`}
-          data-backdrop="static"
-          data-keyboard="false"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
           className={"modal d-flex"}
           role="dialog"
           style={{ justifyContent: "center" }}
