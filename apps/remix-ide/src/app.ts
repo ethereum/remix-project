@@ -526,7 +526,7 @@ class AppComponent {
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor)//, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel, this.popupPanel])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, this.topBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel, this.popupPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
@@ -603,7 +603,9 @@ class AppComponent {
       'pluginStateLogger',
       'matomo'
     ])
+
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await this.appManager.activatePlugin(['topbar'])
     await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['pinnedPanel'])
