@@ -3,11 +3,12 @@
     display: inline-block;
     z-index: 9999;
 }
-  
+
 .custom-dropdown-trigger {
-    color: #fff;
+    color: var(--text);
+    /* background: var(--custom-select, #2d2f3b); */
     padding: 4px 8px;
-    border-left: 1px solid rgba(255,255,255,0.1);
+    border-left: 1px solid var(--secondary);
     border-radius: 0 4px 4px 0;
     cursor: pointer;
     height: 28px;
@@ -16,38 +17,71 @@
 }
 
 .custom-dropdown-panel {
-    background: #2d2f3b;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--custom-select);
+    border: 1px solid var(--secondary);
     border-radius: 4px;
-    min-width: 220px;
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
+    color: var(--text);
+    padding: 0;
 }
-  
+
 .custom-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     padding: 8px 16px;
-    color: #fff;
+    color: var(--text);
     cursor: pointer;
-    position: relative;
+    white-space: nowrap;
+    position: relative
 }
-  
+
+.custom-dropdown-item-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: block;
+    align-self: center;
+    line-height: 1;
+}
+
+.custom-dropdown-item > span:not(.custom-dropdown-item-icon) {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.custom-dropdown-item .custom-dropdown-item-icon:last-child {
+    margin-left: auto;
+}
+
 .custom-dropdown-item:hover {
-    background: rgba(255,255,255,0.1);
+    background: var(--secondary);
 }
-  
+
 .custom-dropdown-submenu {
     position: absolute;
     top: 0;
     left: 100%;
-    background: #2d2f3b;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--custom-select);
+    border: 1px solid var(--secondary);
     border-radius: 4px;
     min-width: 200px;
+    color: var(--text);
 }
-  
+
 .custom-dropdown-item.disabled {
     opacity: 0.4;
     pointer-events: none;
 }
-  
+
+.custom-dropdown-item.border-top {
+    border-top: 1px solid var(--secondary);
+}
+
+.custom-dropdown-item.border-bottom {
+    border-bottom: 1px solid var(--secondary);
+}

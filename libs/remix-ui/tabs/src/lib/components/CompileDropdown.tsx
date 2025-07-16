@@ -7,6 +7,14 @@ import axios from 'axios'
 import { endpointUrls } from '@remix-endpoints-helper'
 import { ScanReport } from '../types'
 
+import ArrowRight from '../../assets/icons/ArrowRightBig'
+import IpfsLogo from '../../assets/icons/Ipfs'
+import SwarmLogo from '../../assets/icons/Swarm'
+import SettingsLogo from '../../assets/icons/SolidityCompiler'
+import SolidityScanLogo from '../../assets/icons/SolidityScan'
+import AnalysisLogo from '../../assets/icons/Analysis'
+import TsLogo from '../../assets/icons/Ts'
+
 const _paq = (window._paq = window._paq || [])
 
 interface CompileDropdownProps {
@@ -166,26 +174,32 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
   const items: MenuItem[] = [
     {
       label: 'Compile and run script',
+      icon: <ArrowRight />,
       submenu: scriptFiles.length > 0
-        ? scriptFiles.map(f => ({ label: f, onClick: () => runScript(f) }))
+        ? scriptFiles.map(f => ({ label: f, icon: <TsLogo />, onClick: () => runScript(f) }))
         : [{ label: 'No scripts found', onClick: () => {} }]
     },
     {
       label: 'Compile and run analysis',
+      icon: <ArrowRight />,
       submenu: [
-        { label: 'Run Remix Analysis', onClick: runRemixAnalysis },
-        { label: 'Run Solidity Scan', onClick: runSolidityScan }
+        { label: 'Run Remix Analysis', icon: <AnalysisLogo />, onClick: runRemixAnalysis },
+        { label: 'Run Solidity Scan', icon: <SolidityScanLogo />, onClick: runSolidityScan }
       ]
     },
     {
       label: 'Compile and publish',
+      icon: <ArrowRight />, 
       submenu: [
-        { label: 'Publish on IPFS', onClick: () => onRequestCompileAndPublish('ipfs') },
-        { label: 'Publish on Swarm', onClick: () => onRequestCompileAndPublish('swarm') }
+        { label: 'Publish on IPFS', icon: <IpfsLogo />, onClick: () => onRequestCompileAndPublish('ipfs') },
+        { label: 'Publish on Swarm', icon: <SwarmLogo />, onClick: () => onRequestCompileAndPublish('swarm') }
       ]
     },
     {
-      label: 'Open compiler configuration', onClick: openConfiguration
+      label: 'Open compiler configuration',
+      icon: <SettingsLogo />,
+      onClick: openConfiguration,
+      borderTop: true
     }
   ]
 
@@ -197,7 +211,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
         onOpen={() => { fetchScripts(); onOpen?.() }}
       />
     </>
-    
+
   )
 }
 

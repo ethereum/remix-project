@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './DropdownMenu.css'
+import ArrowRightSm from '../../assets/icons/ArrowRightSm'
 
 export interface MenuItem {
   label: string
   submenu?: MenuItem[]
   onClick?: () => void
+  icon?: React.ReactNode
+  borderTop?: boolean
+  borderBottom?: boolean
 }
 
 interface DropdownMenuProps {
@@ -41,7 +45,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen }) 
         }}
         disabled={disabled}
       >
-        <i className="fas fa-angle-down"></i>
+        <i className="fas fa-angle-down" style={{color: 'white'}}></i>
       </button>
 
       {open && (
@@ -49,7 +53,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen }) 
           {items.map((item, idx) => (
             <div
               key={idx}
-              className={`custom-dropdown-item ${disabled ? 'disabled' : ''}`}
+              className={`custom-dropdown-item ${disabled ? 'disabled' : ''} ${item.borderTop ? 'border-top' : ''} ${item.borderBottom ? 'border-bottom' : ''}`}
               onMouseEnter={() => !disabled && item.submenu && setActiveSubmenu(idx)}
               onMouseLeave={() => !disabled && setActiveSubmenu(null)}
               onClick={() => {
@@ -59,14 +63,26 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen }) 
                 }
               }}
             >
+              {item.icon && <span className="custom-dropdown-item-icon">{item.icon}</span>}
               <span>{item.label}</span>
-              {item.submenu && <i className="fas fa-angle-right" style={{ float: 'right' }}></i>}
+              {item.submenu &&  <span className="custom-dropdown-item-icon"><ArrowRightSm /> </span>}
 
               {activeSubmenu === idx && item.submenu && (
                 <div className="custom-dropdown-submenu">
                   {item.submenu.map((sub, subIdx) => (
-                    <div key={subIdx} className="custom-dropdown-item" onClick={() => !disabled && sub.onClick && sub.onClick()}>
-                      {sub.label}
+                    <div 
+                      key={subIdx} 
+                      className={`custom-dropdown-item ${sub.borderTop ? 'border-top' : ''} ${sub.borderBottom ? 'border-bottom' : ''}`}
+                      onClick={() => {
+                          if(!disabled && sub.onClick){
+                            sub.onClick()
+                            setOpen(false)
+                          }
+                        }
+                      }
+                    >
+                      {sub.icon && <span className="custom-dropdown-item-icon">{sub.icon}</span>}
+                      <span>{sub.label}</span>
                     </div>
                   ))}
                 </div>

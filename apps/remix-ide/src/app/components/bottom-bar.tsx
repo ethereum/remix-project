@@ -47,10 +47,10 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   const handleExplain = async () => {
     setExplaining(true)
     try {
+      await plugin.call('menuicons', 'select', 'remixaiassistant')
+      await new Promise(resolve => setTimeout(resolve, 500))
       const path = await plugin.call('fileManager', 'getCurrentFile')
       const content = await plugin.call('fileManager', 'readFile', path)
-  
-      // await plugin.call('sidePanel', 'showContent', 'remixaiassistant')
       await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
       console.log("Explain sent to remixAI")
   

@@ -295,11 +295,11 @@ export const TabsUI = (props: TabsUIProps) => {
     if (runnerKey === 'new_script') {
       try {
         const path = 'scripts'
-        let newScriptPath = `${path}/new_script.js`
+        let newScriptPath = `${path}/new_script.ts`
         let counter = 1
         
         while (await props.plugin.call('fileManager', 'exists', newScriptPath)) {
-          newScriptPath = `${path}/new_script_${counter}.js`
+          newScriptPath = `${path}/new_script_${counter}.ts`
           counter++
         }
 
