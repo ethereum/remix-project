@@ -24,20 +24,32 @@ export interface ChatHistoryComponentProps {
 
 const AiChatIntro = (props) => {
   return (
-    <div className="assistant-landing d-flex flex-column align-items-center justify-content-center text-center px-1 h-100">
+    <div className="assistant-landing d-flex flex-column mx-1 align-items-center justify-content-center text-center h-100 w-100">
       <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3" />
       <h5 className="mb-2">RemixAI</h5>
       <p className="mb-4" style={{ fontSize: '0.9rem' }}>
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`<prompt>: `}</p><span>ask your question</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/w <prompt>: `}</p><span>modify your code</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1">{`/c <prompt>: `}</p><span>continue fixing compilation</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="font-italic m-1 mb-2">{`/g <prompt>: `}</p><span>generate a new workspace</span></div>
+      <div className="d-flex flex-column w-100 p-1 justify-content-center" style={{ fontSize: '0.9rem' }}>
+        <div className="d-flex flex-row align-items-center">
+          <span className="font-italic">{`<prompt>: `}</span>
+          <span className="font-italic">ask your question</span>
+        </div>
+        <div className="d-flex flex-row align-items-center">
+          <span className="font-italic">{`/w <prompt>: `}</span>
+          <span>modify your code</span>
+        </div>
+        <div className="d-flex flex-row align-items-center">
+          <span className="font-italic">{`/c <prompt>: `}</span>
+          <span>continue fixing compilation</span>
+        </div>
+        <div className="d-flex flex-row align-items-center">
+          <span className="font-italic">{`/g <prompt>: `}</span>
+          <span>generate a new workspace</span>
+        </div>
       </div>
-      <div className="d-flex flex-column mt-3">
+      <div className="d-flex flex-column w-100 mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
           <button
             key={s}
