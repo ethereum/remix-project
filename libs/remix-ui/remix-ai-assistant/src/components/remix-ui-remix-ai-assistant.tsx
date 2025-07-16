@@ -470,7 +470,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   return (
     <div
-      className="d-flex flex-column h-100 mx-3 "
+      className="d-flex flex-column h-100 w-100"
     >
       <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2 overflow-x-hidden" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
         <div data-id="remix-ai-assistant-ready"></div>
@@ -488,12 +488,12 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           historyRef={historyRef}
         />
       </section>
-      <section id="remix-ai-prompt-area" className=" mt-1" style={{ flex: 1 }}
+      <section id="remix-ai-prompt-area" className="mt-1" style={{ flex: 1 }}
       >
         {showAssistantOptions && (
           <div
-            className="pt-2 mb-2 z-3 bg-light border border-text"
-            style={{ borderRadius: '8px', left: `${calcAndConvertToDvw(getBoundingRect(modelBtnRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', }}
+            className="pt-2 mb-2 z-3 bg-light border border-text w-75"
+            style={{ borderRadius: '8px' }}
           >
             <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
             <GroupListMenu
