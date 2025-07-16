@@ -60,7 +60,7 @@ function BackButton({entity}: any) {
           setShow(false)
         }}
       >
-        <Modal.Header placeholder={''} closeButton>
+        <Modal.Header closeButton>
           <Modal.Title>Leave tutorial</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to leave the tutorial?</Modal.Body>

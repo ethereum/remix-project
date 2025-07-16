@@ -293,7 +293,7 @@ export function ContractGUI(props: ContractGUIProps) {
     setShowDropdown(isOpen)
   }
 
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddressChange = (e) => {
     const address = e.target.value
 
     setProxyAddress(address)
