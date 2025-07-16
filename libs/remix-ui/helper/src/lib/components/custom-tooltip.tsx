@@ -20,13 +20,13 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
           placement={placement}
           overlay={
             <Popover id={`popover-positioned-${placement}`}>
-              <Popover.Content
+              <Popover.Body
                 id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
                 style={{ minWidth: 'fit-content' }}
                 className={'text-wrap p-1 px-2 bg-secondary w-100' + tooltipClasses}
               >
                 {typeof tooltipText === 'string' ? <span className={'text-wrap p-1 px-2 bg-secondary ' + { tooltipTextClasses }}>{tooltipText}</span> : tooltipText}
-              </Popover.Content>
+              </Popover.Body>
             </Popover>
           }>
           {children}

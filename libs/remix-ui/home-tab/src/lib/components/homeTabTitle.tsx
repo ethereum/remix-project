@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 type HometabIconSection = {
