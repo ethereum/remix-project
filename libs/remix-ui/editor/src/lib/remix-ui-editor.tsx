@@ -212,25 +212,24 @@ export const EditorUI = (props: EditorUIProps) => {
     const themeType = props.themeType === 'dark' ? 'vs-dark' : 'vs'
     const themeName = props.themeType === 'dark' ? 'remix-dark' : 'remix-light'
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = formatColor('--light')
-    const infoColor = formatColor('--info')
-    const darkColor = formatColor('--dark')
-    const secondaryColor = formatColor('--secondary')
-    const primaryColor = formatColor('--primary')
+    const lightColor = formatColor('--bs-light')
+    const infoColor = formatColor('--bs-info')
+    const darkColor = formatColor('--bs-dark')
+    const secondaryColor = formatColor('--bs-secondary')
+    const primaryColor = formatColor('--bs-primary')
     const textColor = formatColor('--text') || darkColor
     const textbackground = formatColor('--text-background') || lightColor
-
-    const blueColor = formatColor('--blue')
-    const successColor = formatColor('--success')
-    const warningColor = formatColor('--warning')
-    const yellowColor = formatColor('--yellow')
-    const pinkColor = formatColor('--pink')
+    const blueColor = formatColor('--bs-blue')
+    const successColor = formatColor('--bs-success')
+    const warningColor = formatColor('--bs-warning')
+    const yellowColor = formatColor('--bs-yellow')
+    const pinkColor = formatColor('--bs-pink')
     const locationColor = '#9e7e08'
     // const purpleColor = formatColor('--purple')
-    const dangerColor = formatColor('--danger')
-    const greenColor = formatColor('--green')
-    const orangeColor = formatColor('--orange')
-    const grayColor = formatColor('--gray')
+    const dangerColor = formatColor('--bs-danger')
+    const greenColor = formatColor('--bs-green')
+    const orangeColor = formatColor('--bs-orange')
+    const grayColor = formatColor('--bs-gray')
 
     monaco.editor.defineTheme(themeName, {
       base: themeType,
