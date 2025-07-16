@@ -44,7 +44,7 @@
   --bs-info: #3498db;
   --bs-warning: #f39c12;
   --bs-danger: #e74c3c;
-  --bs-light: #adb5bd;
+  --bs-light: #2a2c3f;
   --bs-dark: #303030;
   --bs-primary-rgb: 55, 90, 127;
   --bs-secondary-rgb: 68, 68, 68;
@@ -52,7 +52,7 @@
   --bs-info-rgb: 52, 152, 219;
   --bs-warning-rgb: 243, 156, 18;
   --bs-danger-rgb: 231, 76, 60;
-  --bs-light-rgb: 173, 181, 189;
+  --bs-light-rgb: 42, 44, 63;
   --bs-dark-rgb: 48, 48, 48;
   --bs-primary-text-emphasis: #162433;
   --bs-secondary-text-emphasis: #1b1b1b;
@@ -89,7 +89,7 @@
   --bs-body-line-height: 1.5;
   --bs-body-color: #fff;
   --bs-body-color-rgb: 255, 255, 255;
-  --bs-body-bg: #222;
+  --bs-body-bg: #222336;
   --bs-body-bg-rgb: 34, 34, 34;
   --bs-emphasis-color: #000;
   --bs-emphasis-color-rgb: 0, 0, 0;
@@ -132,13 +132,21 @@
   --bs-form-valid-border-color: #00bc8c;
   --bs-form-invalid-color: #e74c3c;
   --bs-form-invalid-border-color: #e74c3c;
+    /* Previous Remix dark theme vars */
+  --ai: #2de7f3;
+  --text: #babbcc;
+  --text-background: #222336;
+  --text-bg-mark: #8388b2;
+  --custom-select: #35384c;
+  --brand-dark-blue: #222496;
+  --runtab: #8A93B0;
 }
 
 [data-bs-theme=dark] {
   color-scheme: dark;
   --bs-body-color: #dee2e6;
   --bs-body-color-rgb: 222, 226, 230;
-  --bs-body-bg: #222;
+  --bs-body-bg: #222336;
   --bs-body-bg-rgb: 34, 34, 34;
   --bs-emphasis-color: #fff;
   --bs-emphasis-color-rgb: 255, 255, 255;
@@ -188,6 +196,14 @@
   --bs-form-valid-border-color: #66d7ba;
   --bs-form-invalid-color: #f1948a;
   --bs-form-invalid-border-color: #f1948a;
+  /* Previous Remix dark theme vars */
+  --ai: #2de7f3;
+  --text: #babbcc;
+  --text-background: #222336;
+  --text-bg-mark: #8388b2;
+  --custom-select: #35384c;
+  --brand-dark-blue: #222496;
+  --runtab: #8A93B0;
 }
 
 *,
@@ -208,7 +224,7 @@ body {
   font-size: var(--bs-body-font-size);
   font-weight: var(--bs-body-font-weight);
   line-height: var(--bs-body-line-height);
-  color: var(--bs-body-color);
+  color: #A2A3BD;
   text-align: var(--bs-body-text-align);
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
