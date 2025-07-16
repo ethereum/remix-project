@@ -2,12 +2,13 @@ import React, { useContext, useState, useEffect } from 'react'
 import './remix-ui-home-tab.css'
 import { ThemeContext, themes } from './themeContext'
 import HomeTabTitle from './components/homeTabTitle'
-import HomeTabFile from './components/homeTabFile'
+import HomeTabRecentWorkspaces from './components/homeTabRecentWorkspaces'
 import HomeTabScamAlert from './components/homeTabScamAlert'
 import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
 import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import HomeTabUpdates from './components/homeTabUpdates'
+import { FormattedMessage } from 'react-intl'
 // import { desktopConnectionType } from '@remix-api'
 import { desktopConnectionType } from '@remix-api'
 
@@ -20,6 +21,8 @@ declare global {
 export interface RemixUiHomeTabProps {
   plugin: any
 }
+
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 // --- Main Layout ---
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
@@ -63,11 +66,13 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
     }
+    _paq.push(['trackEvent', 'hometab', 'header', 'Start Learning'])
   }
 
   const openTemplateSelection = async () => {
     await plugin.call('manager', 'activatePlugin', 'templateSelection')
     await plugin.call('tabs', 'focus', 'templateSelection')
+    _paq.push(['trackEvent', 'hometab', 'header', 'Create a new workspace'])
   }
 
   // if (appContext.appState.connectedToDesktop != desktopConnectionType.disabled) {
@@ -80,12 +85,12 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="container-fluid">
           <div className="row">
             <div className="d-flex w-100 m-3 justify-content-end">
-              <button className="btn btn-secondary btn-md mr-3" onClick={startLearnEth}><i className="fa-solid fa-book mr-1"></i> Start Learning</button>
-              <button className="btn btn-primary btn-md mr-2" onClick={openTemplateSelection}><i className="fa-solid fa-plus mr-1"></i>Create a new workspace</button>
+              <button className="btn btn-secondary btn-md mr-3" onClick={startLearnEth}><i className="fa-solid fa-book mr-1"></i><FormattedMessage id="home.startLearning"/></button>
+              <button className="btn btn-primary btn-md mr-2" onClick={openTemplateSelection}><i className="fa-solid fa-plus mr-1"></i><FormattedMessage id="home.createNewWorkspace"/></button>
             </div>
             <div className="col-lg-8 col-xl-5 col-sm-12 mb-4">
               <HomeTabTitle />
-              <HomeTabFile plugin={plugin} />
+              <HomeTabRecentWorkspaces plugin={plugin} />
               {/* {!(platform === appPlatformTypes.desktop) ? <HomeTabFile plugin={plugin} /> : <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>} */}
             </div>
             <div className="col-lg-4 col-xl-7 col-sm-12" style={{ overflowY: 'auto', maxHeight: '65vh' }}>

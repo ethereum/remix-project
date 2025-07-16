@@ -8,7 +8,7 @@ interface HomeTabFileProps {
   plugin: any
 }
 
-function HomeTabFile({ plugin }: HomeTabFileProps) {
+function HomeTabRecentWorkspaces({ plugin }: HomeTabFileProps) {
   const [state, setState] = useState<{
     recentWorkspaces: Array<string | { name: string, timestamp: number }>
   }>({
@@ -62,7 +62,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     setLoadingWorkspace(workspaceName)
     plugin.call('sidePanel', 'showContent', 'filePanel')
     plugin.verticalIcons.select('filePanel')
-    _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
+    _paq.push(['trackEvent', 'hometab', 'recentWorkspacesCard', 'loadRecentWorkspace'])
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
     const workspaceFiles = await plugin.call('fileManager', 'readdir', '/')
 
@@ -123,4 +123,4 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
   )
 }
 
-export default HomeTabFile
+export default HomeTabRecentWorkspaces

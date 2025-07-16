@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../themeContext'
-import { RenderIf, RenderIfNot } from '@remix-ui/helper'
 import axios from 'axios'
 import { HOME_TAB_BASE_URL, HOME_TAB_NEW_UPDATES } from './constant'
 import { LoadingCard } from './LoaderPlaceholder'
@@ -52,6 +51,15 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
     getLatestUpdates()
   }, [])
 
+  const handleUpdatesActionClick = (updateInfo: UpdateInfo) => {
+    _paq.push(['trackEvent', 'hometab', 'updatesActionClick', updateInfo.title])
+    if (updateInfo.action.type === 'link') {
+      window.open(updateInfo.action.url, '_blank')
+    } else if (updateInfo.action.type === 'methodCall') {
+      plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)
+    }
+  }
+
   function UpdateCard(updateInfo: UpdateInfo) {
     return (
       <div className="card border h-100 d-flex flex-column justify-content-between">
@@ -78,14 +86,9 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
           </div>
         </div>
         <div className="px-3 pb-3">
-          <RenderIf condition={updateInfo.action.type === 'link'}>
-            <a href={updateInfo.action.url} target="_blank" rel="noopener noreferrer" className={`btn btn-light btn-sm w-100 text-decoration-none border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`}>{updateInfo.action.label}</a>
-          </RenderIf>
-          <RenderIf condition={updateInfo.action.type === 'methodCall'}>
-            <button className={`btn btn-light btn-sm w-100 border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`} onClick={() => plugin.call(updateInfo.action.pluginName, updateInfo.action.pluginMethod, updateInfo.action.pluginArgs)}>
-              {updateInfo.action.label}
-            </button>
-          </RenderIf>
+          <button className={`btn btn-light btn-sm w-100 border ${updateInfo.theme !== 'primary' && `text-${updateInfo.theme}`}`} onClick={() => handleUpdatesActionClick(updateInfo)}>
+            {updateInfo.action.label}
+          </button>
         </div>
       </div>
     )

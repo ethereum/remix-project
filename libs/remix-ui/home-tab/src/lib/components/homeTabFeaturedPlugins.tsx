@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ThemeContext } from '../themeContext'
 import { ToggleSwitch } from '@remix-ui/toggle'
 import { RenderIf, RenderIfNot } from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
 import { HOME_TAB_PLUGIN_LIST } from './constant'
 import axios from 'axios'
 import { LoadingCard } from './LoaderPlaceholder'
@@ -62,15 +63,25 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   const activateFeaturedPlugin = async (pluginId: string) => {
     setLoadingPlugins([...loadingPlugins, pluginId])
     if (await plugin.appManager.isActive(pluginId)) {
+      _paq.push(['trackEvent', 'hometab', 'featuredPluginsToggle', `deactivate-${pluginId}`])
       await plugin.appManager.deactivatePlugin(pluginId)
       setActivePlugins(activePlugins.filter((id) => id !== pluginId))
     } else {
+      _paq.push(['trackEvent', 'hometab', 'featuredPluginsToggle', `activate-${pluginId}`])
       await plugin.appManager.activatePlugin([pluginId])
       await plugin.verticalIcons.select(pluginId)
       setActivePlugins([...activePlugins, pluginId])
     }
     setLoadingPlugins(loadingPlugins.filter((id) => id !== pluginId))
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', pluginId])
+  }
+
+  const handleFeaturedPluginActionClick = (pluginInfo: PluginInfo) => {
+    _paq.push(['trackEvent', 'hometab', 'featuredPluginsActionClick', pluginInfo.pluginTitle])
+    if (pluginInfo.action.type === 'link') {
+      window.open(pluginInfo.action.url, '_blank')
+    } else if (pluginInfo.action.type === 'methodCall') {
+      plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
+    }
   }
 
   function PluginCard(pluginInfo: PluginInfo) {
@@ -90,18 +101,13 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
         </div>
         <div className="d-flex flex-column justify-content-between h-100">
           <div className="p-3">
-            <div className={`text-${(pluginInfo.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i>Maintained by {pluginInfo.maintainedBy || 'Community'}</div>
+            <div className={`text-${(pluginInfo.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i><FormattedMessage id="home.maintainedBy"/> {pluginInfo.maintainedBy || 'Community'}</div>
             <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
           </div>
           <div className="px-3 pb-3">
-            <RenderIf condition={pluginInfo.action.type === 'link'}>
-              <a href={pluginInfo.action.url} target="_blank" rel="noopener noreferrer" className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod)}><i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}</a>
-            </RenderIf>
-            <RenderIf condition={pluginInfo.action.type === 'methodCall'}>
-              <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)}>
-                <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
-              </button>
-            </RenderIf>
+            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => handleFeaturedPluginActionClick(pluginInfo)}>
+              <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
+            </button>
           </div>
         </div>
       </div>
@@ -112,7 +118,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     <div className="w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h6 style={{ color: isDark ? 'white' : 'black' }}>{pluginList.caption}</h6>
-        <button className="btn btn-secondary btn-md" onClick={() => plugin.call('menuicons', 'select', 'pluginManager')} >Explore all plugins</button>
+        <button className="btn btn-secondary btn-md" onClick={() => plugin.call('menuicons', 'select', 'pluginManager')} ><FormattedMessage id="home.exploreAllPlugins"/></button>
       </div>
       <div className="row">
         {

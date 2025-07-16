@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import React, { useEffect, useState, useRef, useContext } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import React, { useRef, useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { ThemeContext } from '../themeContext'
@@ -18,35 +18,35 @@ type HometabIconSection = {
 const iconButtons: HometabIconSection[] = [
   {
     textToolip: <FormattedMessage id="home.remixYoutubePlaylist" />,
-    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialMedia', 'youtube'],
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'youtube'],
     urlLink: 'https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA',
     iconClass: 'fa-youtube',
     placement: 'top'
   },
   {
     textToolip: <FormattedMessage id="home.remixTwitterProfile" />,
-    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialMedia', 'twitter'],
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'twitter'],
     urlLink: 'https://x.com/EthereumRemix',
     iconClass: 'fa-x-twitter',
     placement: 'top'
   },
   {
     textToolip: <FormattedMessage id="home.remixLinkedinProfile" />,
-    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'linkedin'],
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'linkedin'],
     urlLink: 'https://www.linkedin.com/company/ethereum-remix/',
     iconClass: 'fa-linkedin',
     placement: 'top'
   },
   {
     textToolip: <FormattedMessage id="home.remixMediumPosts" />,
-    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'medium'],
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'medium'],
     urlLink: 'https://medium.com/remix-ide',
     iconClass: 'fa-medium',
     placement: 'top'
   },
   {
     textToolip: <FormattedMessage id="home.joinUsOnDiscord" />,
-    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'discord'],
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'discord'],
     urlLink: 'https://discord.gg/7RvvZ4KX9P',
     iconClass: 'fa-discord',
     placement: 'top'
@@ -54,49 +54,17 @@ const iconButtons: HometabIconSection[] = [
 ]
 
 function HomeTabTitle() {
-  useEffect(() => {
-    document.addEventListener('keyup', (e) => handleSearchKeyDown(e))
-    return () => {
-      document.removeEventListener('keyup', handleSearchKeyDown)
-    }
-  }, [])
-  const [state, setState] = useState<{
-    searchDisable: boolean
-  }>({
-    searchDisable: true
-  })
-
-  const searchInputRef = useRef(null)
   const remiAudioEl = useRef(null)
-  const intl = useIntl()
   const theme = useContext(ThemeContext)
   const isDark = theme.name === 'dark'
 
   const playRemi = async () => {
     remiAudioEl.current.play()
-  }
-  const handleSearchKeyDown = (e: KeyboardEvent) => {
-    if (e.target !== searchInputRef.current) return
-    if (e.key === 'Enter') {
-      _paq.push(['trackEvent', 'hometab', 'header', 'searchDocumentation'])
-      openLink()
-      searchInputRef.current.value = ''
-    } else {
-      setState((prevState) => {
-        return {
-          ...prevState,
-          searchDisable: searchInputRef.current.value === ''
-        }
-      })
-    }
+    _paq.push(['trackEvent', 'hometab', 'titleCard', 'remiAudio'])
   }
 
   const openLink = (url = '') => {
-    if (url === '') {
-      window.open('https://remix-ide.readthedocs.io/en/latest/search.html?q=' + searchInputRef.current.value + '&check_keywords=yes&area=default', '_blank')
-    } else {
-      window.open(url, '_blank')
-    }
+    window.open(url, '_blank')
   }
 
   return (
@@ -119,7 +87,7 @@ function HomeTabTitle() {
         Remix
           </span>
         </div>
-        <div className={`${isDark ? 'text-white' : 'text-black'} mb-3`} style={{ fontSize: '0.7rem' }}>Learn. Explore. <span className="text-primary">Create.</span></div>
+        <div className={`${isDark ? 'text-white' : 'text-black'} mb-3`} style={{ fontSize: '0.7rem' }}><FormattedMessage id="home.projectTemplates"/> <span className="text-primary"><FormattedMessage id="home.projectTemplates2"/></span></div>
         <div className="d-flex mb-3">
           <span className="d-flex flex-nowrap align-self-end">
             {iconButtons.map((button, index) => (
@@ -144,8 +112,8 @@ function HomeTabTitle() {
           </span>
         </div>
         <div className="d-flex flex-row flex-wrap justify-content-between">
-          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-ide.readthedocs.io/en/latest" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}><FormattedMessage id="home.documentation" /></a>
-          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-project.org" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])}><FormattedMessage id="home.website" /></a>
+          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-ide.readthedocs.io/en/latest" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'titleCard', 'documentation'])}><FormattedMessage id="home.documentation" /></a>
+          <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-project.org" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'titleCard', 'webSite'])}><FormattedMessage id="home.website" /></a>
         </div>
       </div>
     </div>
