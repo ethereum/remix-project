@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
 import { RemixUiTopbar } from '@remix-ui/top-bar'
 import packageJson from '../../../../../package.json'
@@ -5,6 +6,7 @@ import { EventEmitter } from 'events'
 import { CustomRemixApi } from '@remix-api'
 import { Plugin } from '@remixproject/engine'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { AppAction } from 'libs/remix-ui/app/src/lib/remix-app/actions/app'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -18,6 +20,7 @@ const TopBarProfile = {
 
 export class Topbar extends Plugin<any, CustomRemixApi> {
   dispatch: React.Dispatch<any> = () => { }
+  appStateDispatch: React.Dispatch<AppAction> = () => { }
   htmlElement: HTMLDivElement
   events: EventEmitter
 
@@ -26,11 +29,19 @@ export class Topbar extends Plugin<any, CustomRemixApi> {
   }
 
   onActivation(): void {
-
+    this.renderComponent()
   }
 
   onDeactivation(): void {
 
+  }
+
+  setDispatch(dispatch: React.Dispatch<any>) {
+    this.dispatch = dispatch
+  }
+
+  setAppStateDispatch(appStateDispatch: React.Dispatch<AppAction>) {
+    this.appStateDispatch = appStateDispatch
   }
 
   renderComponent() {

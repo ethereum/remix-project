@@ -40,6 +40,10 @@ pre {
 .statusBar           {
 
 }
+
+.top-bar {
+  
+}
 .pinnedpanel           {
   width              : 320px;
   transition         : width 0.25s;
