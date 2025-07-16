@@ -9,7 +9,7 @@ pre {
 }
 .remixIDE            {
   width              : 100%;
-  height             : 100vh;
+  height             : 95vh;
   overflow           : hidden;
   flex-direction     : row;
   display            : flex;
@@ -42,7 +42,7 @@ pre {
 }
 
 .top-bar {
-  
+
 }
 .pinnedpanel           {
   width              : 320px;

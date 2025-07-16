@@ -249,11 +249,10 @@ const RemixApp = (props: IRemixAppUi) => {
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
             {showManagePreferencesDialog && <ManagePreferencesDialog savePreferencesFn={() => setShowEnterDialog(true)}></ManagePreferencesDialog>}
             <div className='d-flex flex-column'>
+              <div className='top-bar'>
+                {props.app.topBar.render()}
+              </div>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-                <div className='top-bar'>
-                  {props.app.topBar.render()}
-                  <h1>Top Bar</h1>
-                </div>
                 <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
                   {props.app.menuicons.render()}
                 </div>
