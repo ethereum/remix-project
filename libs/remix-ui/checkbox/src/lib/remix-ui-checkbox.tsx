@@ -1,7 +1,7 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, {CSSProperties} from 'react' //eslint-disable-line
 import './remix-ui-checkbox.css'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 
 /* eslint-disable-next-line */
 export interface RemixUiCheckboxProps {

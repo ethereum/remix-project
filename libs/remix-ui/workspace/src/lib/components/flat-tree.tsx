@@ -329,9 +329,9 @@ export const FlatTree = (props: FlatTreeProps) => {
                   minWidth: 'fit-content'
                 }
               }>
-              <Popover.Content className='text-wrap p-1 px-2 bg-secondary w-100'>
+              <Popover.Body className='text-wrap p-1 px-2 bg-secondary w-100'>
                 {mouseOverTarget && mouseOverTarget.path}
-              </Popover.Content>
+              </Popover.Body>
             </Popover>
           }
           <Virtuoso
