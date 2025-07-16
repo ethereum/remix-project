@@ -31,25 +31,21 @@ const AiChatIntro = (props) => {
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      <div className="d-flex flex-column w-100 p-1 justify-content-center" style={{ fontSize: '0.9rem' }}>
+      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
         <div className="d-flex flex-row align-items-center">
-          <span className="font-italic">{`<prompt>: `}</span>
-          <span className="font-italic">ask your question</span>
-        </div>
+          <span className="font-italic m-1">{`<prompt>: `}</span>
+          <span>ask your question</span></div>
         <div className="d-flex flex-row align-items-center">
-          <span className="font-italic">{`/w <prompt>: `}</span>
-          <span>modify your code</span>
-        </div>
+          <span className="font-italic m-1">{`/w <prompt>: `}</span>
+          <span>modify your code</span></div>
         <div className="d-flex flex-row align-items-center">
-          <span className="font-italic">{`/c <prompt>: `}</span>
-          <span>continue fixing compilation</span>
-        </div>
+          <span className="font-italic m-1">{`/c <prompt>: `}</span>
+          <span>continue fixing compilation</span></div>
         <div className="d-flex flex-row align-items-center">
-          <span className="font-italic">{`/g <prompt>: `}</span>
-          <span>generate a new workspace</span>
-        </div>
+          <span className="font-italic m-1">{`/g <prompt>: `}</span>
+          <span>generate a new workspace</span></div>
       </div>
-      <div className="d-flex flex-column w-100 mt-3">
+      <div className="d-flex flex-column mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
           <button
             key={s}
