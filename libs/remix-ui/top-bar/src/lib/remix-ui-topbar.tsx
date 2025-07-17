@@ -8,8 +8,13 @@ import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import { useIntl } from 'react-intl'
 import { FileSystemContext } from 'libs/remix-ui/workspace/src/lib/contexts'
+import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 
-export const RemixUiTopbar = () => {
+export interface RemixUiTopbarProps {
+  plugin: Topbar
+}
+
+export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
   const intl = useIntl()
   const global = useContext(FileSystemContext)
   const [showDropdown, setShowDropdown] = useState(false)
