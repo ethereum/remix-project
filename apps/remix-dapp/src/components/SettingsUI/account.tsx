@@ -33,7 +33,7 @@ export function AccountUI() {
           id="txorigin"
           data-id="runTabSelectAccount"
           name="txorigin"
-          className="form-control overflow-hidden w-100 font-weight-normal form-select pe-4"
+          className="form-control overflow-hidden w-100 fw-normal form-select pe-4"
           value={selectedAccount || ''}
           onChange={(e) => {
             setAccount(e.target.value);

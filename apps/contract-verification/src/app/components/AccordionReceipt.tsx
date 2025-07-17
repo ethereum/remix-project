@@ -51,34 +51,34 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
 
       <div className={`${expanded ? '' : 'd-none'} px-2 pt-2 pb-3 small`}>
         <div>
-          <span className="font-weight-bold">Chain: </span>
+          <span className="fw-bold">Chain: </span>
           {chainName} ({contract.chainId})
         </div>
         <div>
-          <span className="font-weight-bold">File: </span>
+          <span className="fw-bold">File: </span>
           <span className="text-break">{contract.filePath}</span>
         </div>
         <div>
-          <span className="font-weight-bold">Submitted at: </span>
+          <span className="fw-bold">Submitted at: </span>
           {new Date(contract.date).toLocaleString()}
         </div>
 
         <div>
-          <span className="font-weight-bold">Verified at: </span>
+          <span className="fw-bold">Verified at: </span>
           <ReceiptsBody receipts={contract.receipts} />
         </div>
 
         {hasProxy && (
           <>
             <div className="mt-3">
-              <span className="font-weight-bold">Proxy Address: </span>
+              <span className="fw-bold">Proxy Address: </span>
               <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={contract.proxyAddress}>
                 <span>{shortenAddress(contract.proxyAddress)}</span>
               </CustomTooltip>
               <CopyToClipboard tip="Copy" content={contract.proxyAddress} direction={'top'} />
             </div>
             <div>
-              <span className="font-weight-bold">Proxy verified at: </span>
+              <span className="fw-bold">Proxy verified at: </span>
               <ReceiptsBody receipts={contract.proxyReceipts} />
             </div>
           </>
@@ -117,7 +117,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
           </CustomTooltip>
           <div className="d-flex flex-row w-100 justify-content-between">
             <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
-              <span className="font-weight-bold pe-2">{receipt.verifierInfo.name}</span>
+              <span className="fw-bold pe-2">{receipt.verifierInfo.name}</span>
             </CustomTooltip>
             <div className="ms-1">
               {!!receipt.lookupUrl && receipt.verifierInfo.name === 'Blockscout' ?

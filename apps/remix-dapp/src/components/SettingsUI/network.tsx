@@ -17,7 +17,7 @@ export function NetworkUI() {
           data-id="runTabSelectAccount"
           name="txorigin"
           value={provider}
-          className="form-control overflow-hidden w-100 font-weight-normal form-select pe-4"
+          className="form-control overflow-hidden w-100 fw-normal form-select pe-4"
           onChange={(e) => {
             dispatch({
               type: 'SET_SETTINGS',

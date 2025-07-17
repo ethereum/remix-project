@@ -27,15 +27,15 @@ const RenderCall = ({
       >
         <CheckTxStatus tx={tx} type={txType} />
         <span>
-          <span className="remix_ui_terminal_tx font-weight-bold">[call]</span>
+          <span className="remix_ui_terminal_tx fw-bold">[call]</span>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">from:</span> {from}
+            <span className="fw-bold">from:</span> {from}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">to:</span> {to}
+            <span className="fw-bold">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">data:</span> {input}
+            <span className="fw-bold">data:</span> {input}
           </div>
         </span>
         <i
