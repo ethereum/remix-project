@@ -102,7 +102,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             tooltipTextClasses="text-capitalize"
             tooltipText={`Status: ${receipt.status}${receipt.message ? `, Message: ${receipt.message}` : ''}`}
           >
-            <span className="mr-2">
+            <span className="me-2">
               {['verified', 'partially verified', 'already verified'].includes(receipt.status) ?
                 <i className="fas fa-check text-success px-1"></i> :
                 receipt.status === 'fully verified' ?
@@ -119,7 +119,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
               <span className="font-weight-bold pr-2">{receipt.verifierInfo.name}</span>
             </CustomTooltip>
-            <div className="ml-1">
+            <div className="ms-1">
               {!!receipt.lookupUrl && receipt.verifierInfo.name === 'Blockscout' ?
                 <CopyToClipboard classList="pr-0 py-0" tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> :
                 !!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square" rel="noreferrer"></a>

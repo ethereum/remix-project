@@ -61,7 +61,7 @@ export class WalkthroughService extends Plugin {
       }
       const skipbutton = document.getElementsByClassName('introjs-skipbutton')[0]
       if (skipbutton) {
-        skipbutton.classList.add('ml-3')
+        skipbutton.classList.add('ms-3')
         skipbutton.classList.add('text-decoration-none')
         skipbutton.id = 'remixTourSkipbtn'
       }
@@ -106,7 +106,7 @@ export class WalkthroughService extends Plugin {
         }
         const skipbutton = document.getElementsByClassName('introjs-skipbutton')[0]
         if (skipbutton) {
-          skipbutton.classList.add('ml-3')
+          skipbutton.classList.add('ms-3')
           skipbutton.classList.add('text-decoration-none')
           skipbutton.id = 'remixTourSkipbtn'
         }

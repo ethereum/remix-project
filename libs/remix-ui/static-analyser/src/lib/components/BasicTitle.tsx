@@ -52,7 +52,7 @@ export function BasicTitle(props: BasicTitleProps) {
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
                     ? 'badge-danger'
                     : 'badge-info'
-              } badge-pill mx-1 ml-1 text-center`}
+              } badge-pill mx-1 ms-1 text-center`}
             >
               {filteredTotal}
             </span>
@@ -65,7 +65,7 @@ export function BasicTitle(props: BasicTitleProps) {
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
                     ? 'badge-danger'
                     : 'badge-warning'
-              } badge-pill mx-1 ml-1 text-center`}
+              } badge-pill mx-1 ms-1 text-center`}
             >
               {props.ssaWarnings.length}
             </span>

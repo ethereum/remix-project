@@ -1070,7 +1070,7 @@ export function Workspace() {
                         tooltipClasses="text-nowrap"
                         tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
                       >
-                        <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                        <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ms-2 align-self-center" aria-hidden="true"></i>
                       </CustomTooltip>}
 
                       {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
@@ -1087,8 +1087,8 @@ export function Workspace() {
                           tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
                         >
                           <div data-id='filepanel-login-github' className='d-flex'>
-                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
-                            <span onClick={() => logInGithub() } className="ml-1"> Sign in </span>
+                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ms-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
+                            <span onClick={() => logInGithub() } className="ms-1"> Sign in </span>
                           </div>
                         </CustomTooltip>
                       }

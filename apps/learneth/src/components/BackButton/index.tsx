@@ -15,7 +15,7 @@ function BackButton({entity}: any) {
 
   return (
     <nav className="navbar navbar-light bg-light justify-content-between pt-1 pb-1 pl-1">
-      <ul className="nav mr-auto">
+      <ul className="nav me-auto">
         <li className="nav-item">
           <div
             className="btn back"

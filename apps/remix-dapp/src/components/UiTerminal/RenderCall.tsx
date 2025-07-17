@@ -39,7 +39,7 @@ const RenderCall = ({
           </div>
         </span>
         <i
-          className={`remix_ui_terminal_arrow d-flex ml-2 fas ${
+          className={`remix_ui_terminal_arrow d-flex ms-2 fas ${
             showTableHash.includes(tx.hash) ? 'fa-angle-up' : 'fa-angle-down'
           }`}
         ></i>

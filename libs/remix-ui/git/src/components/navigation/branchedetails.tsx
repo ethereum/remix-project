@@ -69,7 +69,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <i className="fa fa-code-branch ms-1"></i>
-          <div className={`ml-1 ${context.currentBranch.name === branch.name && allowCheckout ? 'text-success' : ''}`}>{branch.name} {branch.remote ? `on ${branch.remote.name}` : ''}</div>
+          <div className={`ms-1 ${context.currentBranch.name === branch.name && allowCheckout ? 'text-success' : ''}`}>{branch.name} {branch.remote ? `on ${branch.remote.name}` : ''}</div>
 
         </div>
         {allowCheckout ?

@@ -38,7 +38,7 @@ export const Merge = () => {
     <>
 
       <div className="btn-group w-100" role="group" aria-label="Basic example">
-        <GitUIButton type="button" onClick={async () => merge()} className="btn btn-primary mr-1">Merge</GitUIButton>
+        <GitUIButton type="button" onClick={async () => merge()} className="btn btn-primary me-1">Merge</GitUIButton>
       </div>
 
       <label>Merge from Branch</label>

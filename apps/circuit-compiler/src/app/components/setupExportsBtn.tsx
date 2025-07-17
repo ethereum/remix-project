@@ -21,7 +21,7 @@ export function SetupExportsBtn ({ handleRunSetup, status }: { handleRunSetup: (
     >
       <div className="d-flex align-items-center justify-content-center">
         <RenderIf condition={status === 'exporting'}>
-          <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+          <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
         </RenderIf>
         <div className="text-truncate overflow-hidden text-nowrap">
           <span>

@@ -278,7 +278,7 @@ export const FlatTree = (props: FlatTreeProps) => {
               draggable={true}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
-              className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+              className={`ms-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
               data-label-type={file.isDirectory ? 'folder' : 'file'}
               data-label-path={`${file.path}`}
               key={index}>
