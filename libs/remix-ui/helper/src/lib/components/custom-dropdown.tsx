@@ -69,7 +69,7 @@ export const CustomIconsToggle = React.forwardRef(
       {icon && (
         <CustomTooltip
           placement={'top'}
-          tooltipClasses="text-nowrap text-left"
+          tooltipClasses="text-nowrap text-start"
           tooltipId="remixHamburgerTooltip"
           tooltipText={<FormattedMessage id="filePanel.workspaceActions" />}
         >

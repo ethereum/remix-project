@@ -11,7 +11,7 @@ export function CompileErrorCard(props: { output: VyperCompilationError, plugin:
     >
       <span
         data-id="error-message"
-        className="text-left"
+        className="text-start"
         style={{
           overflowX: 'hidden',
           textOverflow: 'ellipsis',
