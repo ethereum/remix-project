@@ -12,7 +12,7 @@ export function SetupExportsBtn ({ handleRunSetup, status }: { handleRunSetup: (
       placement="auto"
       tooltipId="overlay-tooltip-compile"
       tooltipText={
-        <div className="text-left">
+        <div className="text-start">
           <div>
               Click to setup and export verification keys
           </div>

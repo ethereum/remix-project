@@ -394,7 +394,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           {props.remixdActivated ? (
             <CustomTooltip
               placement={'right'}
-              tooltipClasses="text-wrap text-left"
+              tooltipClasses="text-wrap text-start"
               tooltipId="info-sync-compiled-contract"
               tooltipText={
                 <span className="text-start">
@@ -411,7 +411,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         </div>
       </div>
       <div className="udapp_subcontainer">
-        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-start" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
           <select
             ref={contractsRef}
             value={currentContract}
@@ -443,7 +443,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       {evmVersion && loadedContractData && (
         <CustomTooltip
           placement={'auto-end'}
-          tooltipClasses="text-wrap text-left"
+          tooltipClasses="text-wrap text-start"
           tooltipId="info-evm-version-warn"
           tooltipText={
             <span className="text-start">
@@ -498,7 +498,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 />
                 <CustomTooltip
                   placement={'auto-end'}
-                  tooltipClasses="text-wrap text-left"
+                  tooltipClasses="text-wrap text-start"
                   tooltipId="remixIpfsUdappTooltip"
                   tooltipText={
                     <span className="text-start">
@@ -516,7 +516,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         </div>
         <div className="pt-2 d-flex flex-column sudapp_button udapp_atAddressSect">
           <div className="d-flex flex-row">
-            <CustomTooltip placement={'top-end'} tooltipClasses="text-wrap text-left" tooltipId="runAndDeployAddresstooltip" tooltipText={atAddressOptions.title}>
+            <CustomTooltip placement={'top-end'} tooltipClasses="text-wrap text-start" tooltipId="runAndDeployAddresstooltip" tooltipText={atAddressOptions.title}>
               <div id="runAndDeployAtAddressButtonContainer" data-bs-title={atAddressOptions.title}>
                 <button
                   className={atAddressOptions.disabled ? "disabled udapp_atAddress btn btn-sm py-2 btn-primary" : "udapp_atAddress btn btn-sm py-2 btn-primary"}
@@ -532,7 +532,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             </CustomTooltip>
             <CustomTooltip
               placement={'top-end'}
-              tooltipClasses="text-wrap text-left"
+              tooltipClasses="text-wrap text-start"
               tooltipId="runAndDeployAddressInputtooltip"
               tooltipText={<FormattedMessage id="udapp.addressOfContract" />}
             >

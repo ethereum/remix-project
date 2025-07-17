@@ -66,7 +66,7 @@ const EditableText = ({
         {value ? value : placeholder}
       </TextElement>
       <i
-        className="fas fa-edit ms-2 float-right cursor_pointer"
+        className="fas fa-edit ms-2 float-end cursor_pointer"
         onClick={handleEdit}
       />
     </div>

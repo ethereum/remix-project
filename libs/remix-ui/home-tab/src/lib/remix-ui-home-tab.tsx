@@ -77,7 +77,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     return (<></>)
   }
 
-  //  border-right
+  //  border-end
   return (
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={state.themeQuality}>
