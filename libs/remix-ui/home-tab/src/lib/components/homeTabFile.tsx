@@ -168,7 +168,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
             <FormattedMessage id="home.files" />
           </label>
           <div className="d-flex flex-row flex-wrap">
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pe-3">
               <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'newFile'])
                 await plugin.call('menuicons', 'select', 'filePanel')
@@ -178,7 +178,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 <FormattedMessage id="home.newFile" />
               </button>
             </CustomTooltip>
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pe-3">
               <span>
                 <label className="btn text-nowrap p-2 me-2 border my-1 mb-2" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
                   <i className="far fa-upload ps-1 pe-2"></i>
@@ -197,14 +197,14 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 />
               </span>
             </CustomTooltip>
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pe-3"
             >
               <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
                 <i className="fab fa-github ps-1 pe-2"></i>
                 Gist
               </button>
             </CustomTooltip>
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pe-3"
             >
               <button className="btn text-nowrap p-2 me-2 border my-1 mb-2" data-id="landingPageImportFromGitHubButton" onClick={async () => {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
@@ -214,7 +214,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 Clone
               </button>
             </CustomTooltip>
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pe-3">
               <button className="btn text-nowrap p-2 border my-1 mb-2" onClick={() => connectToLocalhost()}>
                 <i className="fa-regular fa-desktop pe-2"></i>
                 <FormattedMessage id="home.accessFileSystem" />

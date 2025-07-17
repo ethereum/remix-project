@@ -32,7 +32,7 @@ export const CustomToggle = React.forwardRef(
         <div className="me-auto text-nowrap text-truncate overflow-hidden" data-id={`dropdown-content`}>{children}</div>
         {icon && (
           <div className="pe-1">
-            <i className={`${icon} pr-1`}></i>
+            <i className={`${icon} pe-1`}></i>
           </div>
         )}
         <div>

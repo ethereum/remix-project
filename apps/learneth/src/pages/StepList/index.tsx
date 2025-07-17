@@ -21,7 +21,7 @@ function StepListPage(): JSX.Element {
         </div>
       </div>
       <div id="top"></div>
-      <h1 className="pl-3 pr-3 pt-2 pb-1 menuspacer">{entity.name}</h1>
+      <h1 className="ps-3 pe-3 pt-2 pb-1 menuspacer">{entity.name}</h1>
       <div className="container-fluid">
         <Markdown>{entity.text}</Markdown>
       </div>
