@@ -48,11 +48,11 @@ export function BasicTitle(props: BasicTitleProps) {
               data-id="RemixStaticAnalysisErrorCount"
               className={`badge ${
                 props.ssaWarnings.filter((x) => x.hasWarning).length > 0
-                  ? 'badge-warning'
+                  ? 'bg-warning'
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
-                    ? 'badge-danger'
-                    : 'badge-info'
-              } badge-pill mx-1 ms-1 text-center`}
+                    ? 'bg-danger'
+                    : 'bg-info'
+              } rounded-pill mx-1 ms-1 text-center`}
             >
               {filteredTotal}
             </span>
@@ -61,11 +61,11 @@ export function BasicTitle(props: BasicTitleProps) {
               data-id="RemixStaticAnalysisErrorCount"
               className={`badge ${
                 props.ssaWarnings.filter((x) => x.options.type !== 'warning' && x.options.type !== 'error').length > 0
-                  ? 'badge-info'
+                  ? 'bg-info'
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
-                    ? 'badge-danger'
-                    : 'badge-warning'
-              } badge-pill mx-1 ms-1 text-center`}
+                    ? 'bg-danger'
+                    : 'bg-warning'
+              } rounded-pill mx-1 ms-1 text-center`}
             >
               {props.ssaWarnings.length}
             </span>

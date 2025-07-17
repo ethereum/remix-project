@@ -32,7 +32,7 @@ function Badge({ badgeStatus }: BadgeProps) {
       classes += ' fas fa-exclamation-triangle text-' + type + ' ' + 'remixui_statusCheck'
       break
     default: {
-      classes += ' badge badge-pill badge-' + type
+      classes += ' badge rounded-pill bg-' + type
     }
     }
     return classes

@@ -35,7 +35,7 @@ export function NetworkUI() {
         </select>
       </div>
       <div className="position-relative w-100" data-id="settingsNetworkEnv">
-        <span className="badge badge-secondary">{networkName}</span>
+        <span className="badge bg-secondary">{networkName}</span>
       </div>
       {/* {provider === 'walletconnect' && (
         <div className="mt-2">
