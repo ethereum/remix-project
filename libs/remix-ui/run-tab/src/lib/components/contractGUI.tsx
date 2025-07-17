@@ -433,7 +433,7 @@ export function ContractGUI(props: ContractGUIProps) {
             </div>
           </div>
           {props.initializerOptions && props.initializerOptions.initializeInputs ? (
-            <div className={`pl-4 flex-column ${toggleDeployProxy ? 'd-flex' : 'd-none'}`}>
+            <div className={`ps-4 flex-column ${toggleDeployProxy ? 'd-flex' : 'd-none'}`}>
               <div className={`flex-column 'd-flex'}`}>
                 {props.initializerOptions.inputs.inputs.map((inp, index) => {
                   return (
@@ -475,7 +475,7 @@ export function ContractGUI(props: ContractGUIProps) {
               <i className={!toggleUpgradeImp ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
             </span>
           </div>
-          <div className={`pl-4 flex-column ${toggleUpgradeImp ? 'd-flex' : 'd-none'}`}>
+          <div className={`ps-4 flex-column ${toggleUpgradeImp ? 'd-flex' : 'd-none'}`}>
             <div data-id="proxy-dropdown-items">
               <Dropdown onToggle={toggleDropdown} show={showDropdown}>
                 <Dropdown.Toggle

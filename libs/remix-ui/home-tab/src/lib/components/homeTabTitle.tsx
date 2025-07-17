@@ -118,7 +118,7 @@ function HomeTabTitle() {
               tooltipId="overlay-tooltip"
               tooltipClasses="text-nowrap"
               tooltipText={button.textToolip}
-              tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+              tooltipTextClasses="border bg-light text-dark p-1 pe-3"
             >
               <button
                 key={index}

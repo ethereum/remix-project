@@ -243,7 +243,7 @@ export const VerifyView = () => {
                   {verifierId}
                 </label>
               </div>
-              <div className="d-flex flex-column align-items-start pl-4">
+              <div className="d-flex flex-column align-items-start ps-4">
                 {!chainSettings ? (
                   ''
                 ) : !validConfiguration(chainSettings, verifierId) ? (

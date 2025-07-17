@@ -83,7 +83,7 @@ function StepDetailPage() {
       {errorLoadingFile ? (
         <>
           <div className="errorloadingspacer"></div>
-          <h1 className="pl-3 pr-3 pt-3 pb-1">{clonedStep.name}</h1>
+          <h1 className="ps-3 pe-3 pt-3 pb-1">{clonedStep.name}</h1>
           <button
             className="w-100 nav-item rounded-0 nav-link btn btn-success test"
             onClick={() => {
@@ -100,7 +100,7 @@ function StepDetailPage() {
       ) : (
         <>
           <div className="menuspacer"></div>
-          <h1 className="pr-3 pl-3 pt-3 pb-1">{clonedStep.name}</h1>
+          <h1 className="pe-3 ps-3 pt-3 pb-1">{clonedStep.name}</h1>
         </>
       )}
       <div className="container-fluid">

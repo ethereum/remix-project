@@ -25,7 +25,7 @@ export function TooltipPopup(props: TooltipPopupProps) {
         setShow(nextShow)
       }}
     >
-      <i className={`${props.icon} remixui_menuicon pr-0 me-2`}></i>
+      <i className={`${props.icon} remixui_menuicon pe-0 me-2`}></i>
     </OverlayTrigger>
   )
 }

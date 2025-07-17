@@ -202,7 +202,7 @@ function DeployPanel(): JSX.Element {
           <span
             data-id="useNatSpec"
             id="useNatSpec"
-            className="btn ai-switch pl-0 py-0"
+            className="btn ai-switch ps-0 py-0"
             onClick={async () => {
               getInfoFromNatSpec(!natSpec.checked);
             }}

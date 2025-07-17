@@ -57,10 +57,10 @@ function HomePage(): JSX.Element {
                     </Link>
                   </div>
                   <div className={`container-fluid bg-light pt-3 mt-2 ${isOpen(item.id) ? '' : 'description-collapsed'}`}>
-                    {levelMap[level] && <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
+                    {levelMap[level] && <p className="tag pt-2 pe-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
 
                     {selectedRepo.entities[item.id].metadata.data.tags?.map((tag: string) => (
-                      <p key={tag} className="tag pr-1 font-weight-bold small text-uppercase">
+                      <p key={tag} className="tag pe-1 font-weight-bold small text-uppercase">
                         {tag}
                       </p>
                     ))}
