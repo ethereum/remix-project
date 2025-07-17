@@ -8,7 +8,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should start coding #group1': function (browser: NightwatchBrowser) {
+  'Should start coding #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="homeTabGetStartedremixDefault"]')
       .click('*[data-id="homeTabGetStartedremixDefault"]')
@@ -25,7 +25,7 @@ module.exports = {
       })
   },
 
-  'Should start with ERC20 workspace #group1': function (browser: NightwatchBrowser) {
+  'Should start with ERC20 workspace #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .click('*[data-path="home"')
       .waitForElementVisible('*[data-id="homeTabGetStartedozerc20"]')
