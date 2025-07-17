@@ -155,7 +155,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               {'@Generate'}
             </button>
             {/* <button
-              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
+              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm fw-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm fw-light text-secondary mt-2 align-self-end disabled'}
               style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
               onClick={handleSend}
             >

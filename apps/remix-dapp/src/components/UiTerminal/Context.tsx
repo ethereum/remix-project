@@ -24,26 +24,26 @@ const Context = ({ opts, provider }: { opts: any; provider: string }) => {
     return (
       <div>
         <span>
-          <span className="remix_ui_terminal_tx font-weight-bold me-3">
+          <span className="remix_ui_terminal_tx fw-bold me-3">
             [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">from:</span> {from}
+            <span className="fw-bold">from:</span> {from}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">to:</span> {to}
+            <span className="fw-bold">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">value:</span> {value} wei
+            <span className="fw-bold">value:</span> {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">data:</span> {input}
+            <span className="fw-bold">data:</span> {input}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">logs:</span> {logs}
+            <span className="fw-bold">logs:</span> {logs}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">hash:</span> {hash}
+            <span className="fw-bold">hash:</span> {hash}
           </div>
         </span>
       </div>
@@ -53,26 +53,26 @@ const Context = ({ opts, provider }: { opts: any; provider: string }) => {
     return (
       <div>
         <span>
-          <span className="remix_ui_terminal_tx font-weight-bold me-3">
+          <span className="remix_ui_terminal_tx fw-bold me-3">
             [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">from:</span> {from}
+            <span className="fw-bold">from:</span> {from}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">to:</span> {to}
+            <span className="fw-bold">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">value:</span> {value} wei
+            <span className="fw-bold">value:</span> {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">data:</span> {input}
+            <span className="fw-bold">data:</span> {input}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">logs:</span> {logs}
+            <span className="fw-bold">logs:</span> {logs}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">hash:</span> {hash}
+            <span className="fw-bold">hash:</span> {hash}
           </div>
         </span>
       </div>
