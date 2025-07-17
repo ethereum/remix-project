@@ -47,7 +47,6 @@ const tests = {
           .switchBrowserTab(0)
           .refreshPage()
           .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-          .click('*[data-id="landingPageStartSolidity"]')
           .clickLaunchIcon('udapp')
           .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
           .switchEnvironment('injected-MetaMask')
@@ -282,7 +281,6 @@ const tests = {
       })
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
@@ -307,7 +305,7 @@ const tests = {
 }
 
 const branch = process.env.CIRCLE_BRANCH
-const runTestsConditions = branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
+const runTestsConditions = true // branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
 
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}

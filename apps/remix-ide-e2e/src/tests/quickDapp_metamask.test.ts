@@ -37,7 +37,6 @@ const tests = {
       .useCss().switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
 
