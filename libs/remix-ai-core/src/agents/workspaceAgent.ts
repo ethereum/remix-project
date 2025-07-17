@@ -36,6 +36,7 @@ export class workspaceAgent {
         input,
         version
       });
+      console.log('Local user imports updated:', this.localUsrFiles);
     })
   }
 

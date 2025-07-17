@@ -1,6 +1,7 @@
 // Extract all imports from a given file content at the first level
 import { CompilationResult, IExtractedImport } from '../types/types';
 import { ImportExtractionSupportedFileExtensions } from '../types/types';
+import { createLibraryScaffold } from './scaffoldSolidity';
 
 const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
   const imports: IExtractedImport[] = [];
@@ -9,7 +10,7 @@ const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
   let match: RegExpExecArray | null;
 
   while ((match = importRegex.exec(fileContent)) !== null) {
-    const importPath = match[1];;
+    const importPath = match[1];
     const isLocal = importPath.startsWith('.') || importPath.startsWith('/')|| !importPath.startsWith('@');
     const isLibrary = importPath.startsWith('@')
 
@@ -86,7 +87,16 @@ export const extractFirstLvlImports = (files: any, compilerPayload): IExtractedI
         }
         return "Import not resolved";
       }
-      uniqueImports[key].content = getFileContent();
+
+      let content = getFileContent();
+
+      // Apply scaffolding for library imports
+      if (uniqueImports[key].isLibrary) {
+        const originalLength = content.length;
+        content = createLibraryScaffold(content);
+      }
+
+      uniqueImports[key].content = content;
       imports.push(uniqueImports[key]);
     }
 

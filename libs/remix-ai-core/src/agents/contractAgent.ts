@@ -15,7 +15,6 @@ export class ContractAgent {
   contracts: any = {}
   static instance
   oldPayload: any = undefined
-  mainPrompt: string
 
   private constructor(props) {
     this.plugin = props;
@@ -80,7 +79,6 @@ export class ContractAgent {
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
-      if (this.nAttempts === 1) this.mainPrompt = userPrompt
 
       if (this.nAttempts > this.generationAttempts) {
         return await writeAIResults(parsedFiles)
@@ -97,16 +95,23 @@ export class ContractAgent {
         // console.log('Compilation failed, trying again recursively ...')
         const imports = extractFirstLvlImports(parsedFiles.files, result.compilerPayload)
         const libs = imports.filter(imp => imp.isLibrary);
-        const importPaths = libs.map(imp => imp.importPath).join('\n');
+        const importPaths = libs.map(lib => ({
+          importPath: lib.importPath,
+          content: lib.content
+        }));
+        const libraryScaffolds = importPaths.map(lib =>
+          `Library: ${lib.importPath}\n${lib.content}`
+        ).join('\n\n');
         const newPrompt = `
               Compilation parameters:\n${JSON.stringify(compilationParams)}\n\n
-              Compiler libs imports :\n${JSON.stringify(importPaths)}}\n\n
-              Compiler error payload:\n${JSON.stringify(result.errfiles)}}\n\n
-              While considering this compilation error and the provided libs above: Here is the error message.\n\n 
-              Try this main prompt again: \n${this.mainPrompt}\n `
+              Compilation errors:\n${result.errors}\n\n
+              Error contracts:\n${JSON.stringify(result.errfiles)}\n\n
+              Scaffolded library imports:\n${libraryScaffolds}\n\n
+              While considering this compilation error and the provided library scaffolds above.\n 
+              Try this main prompt again: \n${userPrompt}\n `
 
         console.log('New prompt for retry:', newPrompt)
-        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
+        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, true); // reuse the same thread
       }
 
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE

@@ -193,17 +193,18 @@ export class RemixAIPlugin extends Plugin {
    * Generates a new remix IDE workspace based on the provided user prompt, optionally using Retrieval-Augmented Generation (RAG) context.
    * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
    */
-  async generate(userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+  async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
     _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
+    let userPrompt = ''
 
     if (useRag) {
       try {
         let ragContext = ""
         const options = { headers: { 'Content-Type': 'application/json', } }
-        const response = await axios.post(endpointUrls.rag, { query: userPrompt, endpoint:"query" }, options)
+        const response = await axios.post(endpointUrls.rag, { query: prompt, endpoint:"query" }, options)
         if (response.data) {
           ragContext = response.data.response
           userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
@@ -213,6 +214,8 @@ export class RemixAIPlugin extends Plugin {
       } catch (error) {
         console.log('RAG context error:', error)
       }
+    } else {
+      userPrompt = prompt
     }
     // Evaluate if this function requires any context
     // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
@@ -223,7 +226,7 @@ export class RemixAIPlugin extends Plugin {
       result = await this.remoteInferencer.generate(userPrompt, params)
     }
 
-    const genResult = this.contractor.writeContracts(result, userPrompt)
+    const genResult = this.contractor.writeContracts(result, prompt)
     this.call('menuicons', 'select', 'filePanel')
     return genResult
   }
