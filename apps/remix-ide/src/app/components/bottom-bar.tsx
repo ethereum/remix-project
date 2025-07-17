@@ -77,7 +77,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   }
 
   return (
-    <div className="bottom-bar">
+    <div className="bottom-bar border-top border-bottom">
       {getExplainLabel() && (
         <button 
           className="btn explain-btn"

@@ -316,7 +316,7 @@ export const EditorUI = (props: EditorUIProps) => {
       ],
       colors: {
         // see https://code.visualstudio.com/api/references/theme-color for more settings
-        'editor.background': textbackground,
+        'editor.background': lightColor,
         'editorSuggestWidget.background': lightColor,
         'editorSuggestWidget.selectedBackground': secondaryColor,
         'editorSuggestWidget.selectedForeground': textColor,

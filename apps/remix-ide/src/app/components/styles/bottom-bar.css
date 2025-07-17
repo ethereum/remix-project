@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     padding: 4px 16px;
-    border-top: 1px solid var(--bs-border-color);
+    background-color: var(--light) !important;
     height: 32px;
 }
   
@@ -11,8 +11,8 @@
     align-items: center;
     gap: 8px;
     padding: 4px 12px;
-    background: #2DE7F314;
-    color: #2DE7F3;
+    background: color-mix(in srgb, var(--ai) 8%, transparent);;
+    color: var(--ai);
     border-radius: 4px;
     font-family: 'Nunito Sans', sans-serif;
     font-size: 12px;
@@ -22,7 +22,7 @@
 }
 
 .explain-btn span {
-    color: #2DE7F3;
+    color: var(--ai);
 }
   
 .explain-btn:hover {
@@ -94,7 +94,7 @@
 }
   
 .switch input:checked + .slider {
-    background-color: #2DEFf3;
+    background-color: var(--ai);
 }
   
 .switch input:checked + .slider:before {

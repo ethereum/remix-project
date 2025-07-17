@@ -214,6 +214,21 @@ export const TabsUI = (props: TabsUIProps) => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
 
+
+  /**
+   * ⚠️ Note:
+   * In the default Solidity compiler plugin flow, downstream components (like PublishToStorage)
+   * usually rely on the `api` object provided by the plugin environment.
+   *
+   * However, in this context, it's unclear how the expected `api` structure should be composed,
+   * so we manually construct an "adapter" API object (`apiForPublisher`) that mimics the expected shape.
+   *
+   * This includes the essential methods like `.call()` (inherited from props.plugin),
+   * and a synchronous `.config.get()` function built from pre-fetched settings.
+   *
+   * This approach ensures compatibility with existing consumers that expect `api.config.get()`,
+   * but might differ from how the API is normally wired in the compiler plugin context.
+   */
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
     const currentFile = active().substr(active().indexOf('/') + 1);
     if (!currentFile) {
