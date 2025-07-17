@@ -30,6 +30,7 @@ export interface PromptAreaProps {
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
   textareaRef?: React.RefObject<HTMLTextAreaElement>
+  maximizePanel: () => Promise<void>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -57,7 +58,8 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   modelBtnRef,
   aiContextGroupList,
   aiAssistantGroupList,
-  textareaRef
+  textareaRef,
+  maximizePanel
 }) => {
 
   return (
@@ -78,7 +80,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text bg-light align-self-start"
+        className="prompt-area d-flex flex-column mx-1 p-2 border border-text bg-light"
       >
         <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
@@ -120,6 +122,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             disabled={isStreaming}
             onFocus={() => {
               dispatchActivity('typing', input)
+              maximizePanel()
             }}
             onChange={e => {
               dispatchActivity('typing', e.target.value)
