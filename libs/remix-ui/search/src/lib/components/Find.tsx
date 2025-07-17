@@ -70,7 +70,7 @@ export const Find = () => {
             >
               <div
                 data-id="search_whole_word"
-                className={`monaco-custom-checkbox codicon codicon-whole-word mr-2 ${state.matchWord ? 'checked' : ''}`}
+                className={`monaco-custom-checkbox codicon codicon-whole-word me-2 ${state.matchWord ? 'checked' : ''}`}
                 role="checkbox"
                 aria-checked="false"
                 aria-label="Match Whole Word"

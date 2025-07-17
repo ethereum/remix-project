@@ -51,11 +51,11 @@ const EditableText = ({
       />
       <div className="d-flex justify-content-end">
         <i
-          className="fas ml-2 mt-2 fa-save cursor_pointer"
+          className="fas ms-2 mt-2 fa-save cursor_pointer"
           onClick={handleSave}
         />
         <i
-          className="fas ml-2 mt-2 fa-ban cursor_pointer"
+          className="fas ms-2 mt-2 fa-ban cursor_pointer"
           onClick={handleCancel}
         />
       </div>
@@ -66,7 +66,7 @@ const EditableText = ({
         {value ? value : placeholder}
       </TextElement>
       <i
-        className="fas fa-edit ml-2 float-right cursor_pointer"
+        className="fas fa-edit ms-2 float-right cursor_pointer"
         onClick={handleEdit}
       />
     </div>

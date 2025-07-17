@@ -36,7 +36,7 @@ const CustomToggle = React.forwardRef(
       className={className.replace('dropdown-toggle', '')}
     >
       <div className="d-flex">
-        <div className="mr-auto text-nowrap overflow-hidden">{children}</div>
+        <div className="me-auto text-nowrap overflow-hidden">{children}</div>
         {icon && (
           <div className="pr-1">
             <i className={`${icon} pr-1`}></i>
@@ -122,7 +122,7 @@ export function ThemeUI() {
               data-id={`dropdown-item-${item}`}
             >
               {theme === item && (
-                <span className="fas fa-check text-success mr-2"></span>
+                <span className="fas fa-check text-success me-2"></span>
               )}
               {item} - {themeMap[item].quality}
             </Dropdown.Item>

@@ -50,7 +50,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <CustomTooltip tooltipText={remote.url} placement="top">
-            <div className={`long-and-truncated ml-1 ${isDefault() ? 'text-success' : ''}`}>
+            <div className={`long-and-truncated ms-1 ${isDefault() ? 'text-success' : ''}`}>
               {remote.name}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
             </div>
           </CustomTooltip>

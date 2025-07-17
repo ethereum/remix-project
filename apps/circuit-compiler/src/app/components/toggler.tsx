@@ -26,9 +26,9 @@ export function Toggler ({ children, title, dataId, show = false, icon, iconTool
                 tooltipClasses="text-nowrap"
                 tooltipText={iconTooltip}
               >
-                <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span>
+                <span className={`${icon} border-0 p-0 ms-2`} aria-hidden="true"></span>
               </CustomTooltip>) :
-              <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span> : null }
+              <span className={`${icon} border-0 p-0 ms-2`} aria-hidden="true"></span> : null }
           </label>
         </div>
         <div>

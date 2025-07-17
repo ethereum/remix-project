@@ -185,7 +185,7 @@ export const GetDeviceCode = () => {
           <div className="input-group text-secondary mb-0 h6">
             <input disabled type="text" className="form-control" value={gitHubResponse.user_code} />
             <div className="input-group-append">
-              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
+              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ms-1 p-2 mt-1' direction={"top"} />
             </div>
           </div>
           <br></br>

@@ -52,10 +52,10 @@ export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, ini
 
         { enabled ? (
           <>
-            <button type="button" className="btn btn-primary btn-sm ml-2" onClick={handleSave}>
+            <button type="button" className="btn btn-primary btn-sm ms-2" onClick={handleSave}>
               <FormattedMessage id="contract-verification.configInputSaveButton" />
             </button>
-            <button type="button" className="btn btn-secondary btn-sm ml-2" onClick={handleCancel}>
+            <button type="button" className="btn btn-secondary btn-sm ms-2" onClick={handleCancel}>
               <FormattedMessage id="contract-verification.configInputCancelButton" />
             </button>
           </>

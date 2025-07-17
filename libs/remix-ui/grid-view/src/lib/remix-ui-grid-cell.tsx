@@ -111,7 +111,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
               </div> }
               { props.children }
               { filterCon.showPin && <button
-                className={`${pinned ? 'fas fa-toggle-on fa-lg text-dark' : 'fas fa-toggle-off fa-lg text-secondary'}` + ` fa-regular border-0 p-0 mt-2 align-self-end mr-1 remixui_grid_cell_pin`}
+                className={`${pinned ? 'fas fa-toggle-on fa-lg text-dark' : 'fas fa-toggle-off fa-lg text-secondary'}` + ` fa-regular border-0 p-0 mt-2 align-self-end me-1 remixui_grid_cell_pin`}
                 style={{ fontSize: 'large' }}
                 data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
                 onClick={async () => {

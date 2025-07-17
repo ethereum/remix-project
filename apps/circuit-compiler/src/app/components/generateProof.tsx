@@ -30,7 +30,7 @@ export function GenerateProof () {
         data-id="generateProofBtn"
       >
         <RenderIf condition={status === 'proving'}>
-          <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+          <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
         </RenderIf>
         <FormattedMessage id="circuit.generateProof" />
       </button>

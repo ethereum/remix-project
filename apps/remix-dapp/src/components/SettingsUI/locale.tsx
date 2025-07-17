@@ -35,7 +35,7 @@ export function LocaleUI() {
           id="txorigin"
           data-id="localeSelectOptions"
           name="txorigin"
-          className="form-control overflow-hidden w-100 font-weight-normal custom-select pr-4"
+          className="form-control overflow-hidden w-100 font-weight-normal form-select pr-4"
           value={selectedLocaleCode || localeCodeList[0]}
           onChange={(e) => {
             setLocaleCode(e.target.value);

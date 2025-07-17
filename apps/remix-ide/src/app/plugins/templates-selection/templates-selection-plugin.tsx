@@ -307,7 +307,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                                   createWorkspace(item, template)
                                 }
                               }}
-                              className="btn btn-sm mr-2 border border-primary"
+                              className="btn btn-sm me-2 border border-primary"
                             >
                               {isElectron() ?
                                 <><i className='fa fa-folder-open me-1'></i>Create</> : 'Create'}

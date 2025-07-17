@@ -2177,9 +2177,9 @@ progress {
   cursor: pointer;
 }
 .form-control:focus {
-  color: #303030;
-  background-color: #fff;
-  border-color: #9badbf;
+  color: #dfe1ea;
+  background-color: var(--custom-select);
+  border-color: #27c6ff;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(55, 90, 127, 0.25);
 }
@@ -2193,11 +2193,11 @@ progress {
   padding: 0;
 }
 .form-control::-moz-placeholder {
-  color: #888;
+  color: #868e96;
   opacity: 1;
 }
 .form-control::placeholder {
-  color: #888;
+  color: #868e96;
   opacity: 1;
 }
 .form-control:disabled {

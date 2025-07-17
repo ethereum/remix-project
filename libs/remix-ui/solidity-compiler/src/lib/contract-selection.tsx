@@ -295,7 +295,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">
               <FormattedMessage id="solidity.contract" />
             </label>
-            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
+            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="form-select">
               {contractList.map(({ name, file }, index) => (
                 <option value={name} key={index}>
                   {name} ({file})

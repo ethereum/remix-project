@@ -123,7 +123,7 @@ function App() {
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
           return (
-            <button data-id={`${profile.name}:${method}`} key={method} className="btn btn-primary btn-sm ml-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
+            <button data-id={`${profile.name}:${method}`} key={method} className="btn btn-primary btn-sm ms-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
               {method}
             </button>
           )

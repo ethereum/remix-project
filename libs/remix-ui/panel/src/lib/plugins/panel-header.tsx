@@ -38,7 +38,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
     _paq.push(['trackEvent', 'PluginPanel', 'pinToLeft', plugin.profile.name])
   }
 
-  const tooltipChild = <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+  const tooltipChild = <i className={`px-1 ms-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
 
   return (
     <header className="d-flex flex-column">

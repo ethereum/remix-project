@@ -147,7 +147,7 @@ export function LowLevelInteractions(props: any) {
                     >
                       <i
                         aria-hidden="true"
-                        className="fas fa-info my-2 mr-1"
+                        className="fas fa-info my-2 me-1"
                       ></i>
                     </a>
                   ) : (
@@ -158,7 +158,7 @@ export function LowLevelInteractions(props: any) {
                     >
                       <i
                         aria-hidden="true"
-                        className="fas fa-info my-2 mr-1"
+                        className="fas fa-info my-2 me-1"
                       ></i>
                     </a>
                   )

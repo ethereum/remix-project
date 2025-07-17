@@ -640,11 +640,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Solhint
           {hints.length > 0 ? (
             hideWarnings ? (
-              <i className={`badge ${hints.filter((x) => x.type === 'error').length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>
+              <i className={`badge ${hints.filter((x) => x.type === 'error').length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ms-1 text-center`}>
                 {hintErrors.length}
               </i>
             ) : (
-              <span className={`badge ${hints.filter((x) => x.type === 'error').length > 0 ? `badge-danger` : 'badge-warning'} badge-pill ml-1 text-center`}>{hints.length}</span>
+              <span className={`badge ${hints.filter((x) => x.type === 'error').length > 0 ? `badge-danger` : 'badge-warning'} badge-pill ms-1 text-center`}>{hints.length}</span>
             )
           ) : null}
         </span>
@@ -725,9 +725,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             hideWarnings ? (
               <span data-id='slitherErrors' className="badge text-bg-warning rounded-pill mx-1 ms-1">{slitherErrors.length}</span>
             ) : showLibsWarning && !hideWarnings ? (
-              <span data-id='slitherWarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{slitherWarnings.length}</span>
+              <span data-id='slitherWarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ms-1 text-center`}>{slitherWarnings.length}</span>
             ) : (
-              <span data-id='nolibslitherwarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{noLibSlitherWarnings.length}</span>
+              <span data-id='nolibslitherwarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ms-1 text-center`}>{noLibSlitherWarnings.length}</span>
             )
           ) : null}
         </span>
@@ -828,7 +828,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }}
               onChange={() => {}}
               tooltipPlacement={'bottom-start'}
-              optionalClassName="mr-3"
+              optionalClassName="me-3"
             />
 
             <RemixUiCheckbox
@@ -840,7 +840,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               label="Solhint"
               onChange={() => {}}
               tooltipPlacement={'bottom-start'}
-              optionalClassName="mr-3"
+              optionalClassName="me-3"
             />
 
             <RemixUiCheckbox
@@ -852,7 +852,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               tooltipPlacement="bottom-start"
               label="Slither"
               onChange={() => {}}
-              optionalClassName="mr-3"
+              optionalClassName="me-3"
               title={slitherEnabled ? 'Slither runs Slither static analysis' : 'To run Slither analysis, Remix IDE must be connected to your local filesystem with Remixd'}
             />
           </div>

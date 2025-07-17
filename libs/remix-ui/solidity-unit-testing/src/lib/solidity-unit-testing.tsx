@@ -312,7 +312,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     }
     let label
     if (index > -1) {
-      const className = 'alert-danger d-inline-block mb-1 mr-1 p-1 failed_' + runningTestFileName
+      const className = 'alert-danger d-inline-block mb-1 me-1 p-1 failed_' + runningTestFileName
       label = (
         <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="solidityUnitTesting.tooltipText1" />}>
           <div className={className}>
@@ -321,7 +321,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         </CustomTooltip>
       )
     } else {
-      const className = 'alert-success d-inline-block mb-1 mr-1 p-1 passed_' + runningTestFileName
+      const className = 'alert-success d-inline-block mb-1 me-1 p-1 passed_' + runningTestFileName
       label = (
         <CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="solidityUnitTesting.tooltipText2" />}>
           <div className={className}>

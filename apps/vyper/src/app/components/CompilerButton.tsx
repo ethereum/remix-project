@@ -40,10 +40,10 @@ function CompilerButton({ contract, setOutput, compilerUrl, resetCompilerState, 
           className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled"
         >
           <div className="d-flex align-items-center justify-content-center fa-1x">
-            <span className={ loadingSpinner ? 'fas fa-sync fa-pulse mr-1' : 'fas fa-sync mr-1'} />
+            <span className={ loadingSpinner ? 'fas fa-sync fa-pulse me-1' : 'fas fa-sync me-1'} />
             <div className="text-truncate overflow-hidden text-nowrap">
               <span>Compile</span>
-              <span className="ml-1 text-nowrap">{contract}</span>
+              <span className="ms-1 text-nowrap">{contract}</span>
             </div>
           </div>
         </button>
