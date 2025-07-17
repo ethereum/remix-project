@@ -3,10 +3,11 @@ import React from 'react'
 import { RemixUiTopbar } from '@remix-ui/top-bar'
 import packageJson from '../../../../../package.json'
 import { EventEmitter } from 'events'
-import { CustomRemixApi } from '@remix-api'
+import { CustomRemixApi, ICustomRemixApi } from '@remix-api'
 import { Plugin } from '@remixproject/engine'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { AppAction } from 'libs/remix-ui/app/src/lib/remix-app/actions/app'
+import { PluginNames } from '../../types'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -51,7 +52,7 @@ export class Topbar extends Plugin<any, CustomRemixApi> {
   }
 
   updateComponent(state: any) {
-    return <RemixUiTopbar />
+    return <RemixUiTopbar plugin={this} />
   }
 
   render() {
