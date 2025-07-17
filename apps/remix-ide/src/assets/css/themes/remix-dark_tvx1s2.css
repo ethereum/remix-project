@@ -11,7 +11,6 @@
  * Copyright 2011-2025 The Bootstrap Authors
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap");
 :root,
 [data-bs-theme=light] {
@@ -44,16 +43,16 @@
   --bs-info: #3498db;
   --bs-warning: #f39c12;
   --bs-danger: #e74c3c;
-  --bs-light: #2a2c3f;
-  --bs-dark: #babbcc;
+  --bs-light: #adb5bd;
+  --bs-dark: #303030;
   --bs-primary-rgb: 55, 90, 127;
   --bs-secondary-rgb: 68, 68, 68;
   --bs-success-rgb: 0, 188, 140;
   --bs-info-rgb: 52, 152, 219;
   --bs-warning-rgb: 243, 156, 18;
   --bs-danger-rgb: 231, 76, 60;
-  --bs-light-rgb: 42, 44, 63;
-  --bs-dark-rgb: 186, 187, 204;
+  --bs-light-rgb: 173, 181, 189;
+  --bs-dark-rgb: 48, 48, 48;
   --bs-primary-text-emphasis: #162433;
   --bs-secondary-text-emphasis: #1b1b1b;
   --bs-success-text-emphasis: #004b38;
@@ -89,7 +88,7 @@
   --bs-body-line-height: 1.5;
   --bs-body-color: #fff;
   --bs-body-color-rgb: 255, 255, 255;
-  --bs-body-bg: #222336;
+  --bs-body-bg: #222;
   --bs-body-bg-rgb: 34, 34, 34;
   --bs-emphasis-color: #000;
   --bs-emphasis-color-rgb: 0, 0, 0;
@@ -132,21 +131,13 @@
   --bs-form-valid-border-color: #00bc8c;
   --bs-form-invalid-color: #e74c3c;
   --bs-form-invalid-border-color: #e74c3c;
-    /* Previous Remix dark theme vars */
-  --ai: #2de7f3;
-  --text: #babbcc;
-  --text-background: #222336;
-  --text-bg-mark: #8388b2;
-  --custom-select: #35384c;
-  --brand-dark-blue: #222496;
-  --runtab: #8A93B0;
 }
 
 [data-bs-theme=dark] {
   color-scheme: dark;
   --bs-body-color: #dee2e6;
   --bs-body-color-rgb: 222, 226, 230;
-  --bs-body-bg: #222336;
+  --bs-body-bg: #222;
   --bs-body-bg-rgb: 34, 34, 34;
   --bs-emphasis-color: #fff;
   --bs-emphasis-color-rgb: 255, 255, 255;
@@ -196,14 +187,6 @@
   --bs-form-valid-border-color: #66d7ba;
   --bs-form-invalid-color: #f1948a;
   --bs-form-invalid-border-color: #f1948a;
-  /* Previous Remix dark theme vars */
-  --ai: #2de7f3;
-  --text: #babbcc;
-  --text-background: #222336;
-  --text-bg-mark: #8388b2;
-  --custom-select: #35384c;
-  --brand-dark-blue: #222496;
-  --runtab: #8A93B0;
 }
 
 *,
@@ -224,21 +207,11 @@ body {
   font-size: var(--bs-body-font-size);
   font-weight: var(--bs-body-font-weight);
   line-height: var(--bs-body-line-height);
-  color: #A2A3BD;
+  color: var(--bs-body-color);
   text-align: var(--bs-body-text-align);
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-*::-webkit-scrollbar {
-  width:  8px;
-  height: 6px;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: #41455b;
-  opacity: 0.3;
-  border-radius: 30px;
 }
 
 hr {
@@ -2155,11 +2128,11 @@ progress {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
+  color: #303030;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  color: #dfe1ea !important;
-  background-color: var(--custom-select) !important;
+  background-color: #fff;
   background-clip: padding-box;
   border: var(--bs-border-width) solid #222;
   border-radius: var(--bs-border-radius);
@@ -2177,9 +2150,9 @@ progress {
   cursor: pointer;
 }
 .form-control:focus {
-  color: #dfe1ea;
-  background-color: var(--custom-select);
-  border-color: #27c6ff;
+  color: #303030;
+  background-color: #fff;
+  border-color: #9badbf;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(55, 90, 127, 0.25);
 }
@@ -2193,11 +2166,11 @@ progress {
   padding: 0;
 }
 .form-control::-moz-placeholder {
-  color: #868e96;
+  color: #888;
   opacity: 1;
 }
 .form-control::placeholder {
-  color: #868e96;
+  color: #888;
   opacity: 1;
 }
 .form-control:disabled {
