@@ -7,7 +7,7 @@ import { CustomRemixApi, ICustomRemixApi } from '@remix-api'
 import { Plugin } from '@remixproject/engine'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { AppAction } from 'libs/remix-ui/app/src/lib/remix-app/actions/app'
-import { PluginNames } from '../../types'
+import FilePanel from '../panels/file-panel'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -24,9 +24,11 @@ export class Topbar extends Plugin<any, CustomRemixApi> {
   appStateDispatch: React.Dispatch<AppAction> = () => { }
   htmlElement: HTMLDivElement
   events: EventEmitter
+  filePanel: FilePanel
 
-  constructor() {
+  constructor(filePanel: FilePanel) {
     super(TopBarProfile)
+    this.filePanel = filePanel
   }
 
   onActivation(): void {

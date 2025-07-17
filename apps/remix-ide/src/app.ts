@@ -522,7 +522,7 @@ class AppComponent {
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new Filepanel(appManager, contentImport)
     this.statusBar = new StatusBar(filePanel, this.menuicons)
-    this.topBar = new Topbar()
+    this.topBar = new Topbar(filePanel)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor)//, appManager)
 
