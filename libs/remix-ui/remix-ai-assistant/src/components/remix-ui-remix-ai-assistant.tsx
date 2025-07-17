@@ -52,6 +52,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const aiChatRef = useRef<HTMLDivElement>(null)
 
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
@@ -468,9 +469,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [messages])
 
+  const maximizePanel = async () => {
+    await props.plugin.call('layout', 'maximisePinnedPanel')
+  }
+
   return (
     <div
       className="d-flex flex-column h-100 w-100"
+      ref={aiChatRef}
+      onBlur={async () => {
+        await props.plugin.call('layout', 'resetPinnedPanel')
+      }}
     >
       <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2 overflow-x-hidden" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
         <div data-id="remix-ai-assistant-ready"></div>
@@ -506,6 +515,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         )}
         <PromptArea
           input={input}
+          maximizePanel={maximizePanel}
           setInput={setInput}
           isStreaming={isStreaming}
           handleSend={handleSend}
