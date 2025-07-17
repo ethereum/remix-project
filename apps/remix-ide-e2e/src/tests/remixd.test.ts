@@ -490,7 +490,7 @@ async function setupHardhatProject(): Promise<void> {
 async function compileHardhatProject(): Promise<void> {
   console.log(process.cwd())
   try {
-    const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
+    const server = spawn('npx hardhat compile', [], { env: { ...process.env, HARDHAT_EXPERIMENTAL_ALLOW_NON_LOCAL_INSTALLATION: 'true' }, cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
     return new Promise((resolve, reject) => {
       server.stdout.on('data', function(data) {
           console.log('stdout: ' + data.toString())
