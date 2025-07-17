@@ -483,6 +483,15 @@ async function compileHardhatProject(): Promise<void> {
   try {
     const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
     return new Promise((resolve, reject) => {
+      server.stdout.on('data', function(data) {
+          console.log('stdout: ' + data.toString())
+      })
+      server.stderr.on('data', function(data) {
+          console.log('stderr: ' + data.toString())
+      })
+      server.on('error', function (err) {
+          console.error('Failed to start process:', err)
+      })
       server.on('exit', function (exitCode) {
         console.log("Child exited with code: " + exitCode);
         console.log('end')
