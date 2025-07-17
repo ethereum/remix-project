@@ -29,7 +29,7 @@ const ImageUpload = () => {
   }
 
   return (
-    <div className="col-3 pr-0 my-2 d-flex justify-content-center align-items-center">
+    <div className="col-3 pe-0 my-2 d-flex justify-content-center align-items-center">
       <input data-id="uploadLogo" className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
       {logo ? (
         <div className='position-absolute'>

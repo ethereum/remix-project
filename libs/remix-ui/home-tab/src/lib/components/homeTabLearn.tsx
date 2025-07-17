@@ -57,7 +57,7 @@ function HomeTabLearn({ plugin }: HomeTabLearnProps) {
           tooltipId="overlay-tooltip"
           tooltipClasses="text-nowrap"
           tooltipText={<FormattedMessage id="home.seeAllTutorials" />}
-          tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          tooltipTextClasses="border bg-light text-dark p-1 pe-3"
         >
           <button
             onClick={async () => {

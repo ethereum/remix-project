@@ -268,7 +268,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
           {getIndentLevelDiv(file.path)}
 
-          <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
+          <div className={`ps-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pe-2 caret caret_tv`} `}></div>
           {focusEdit && file.path && focusEdit.element === file.path ?
             <FlatTreeItemInput
               editModeOff={editModeOff}
@@ -278,7 +278,7 @@ export const FlatTree = (props: FlatTreeProps) => {
               draggable={true}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
-              className={`ms-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+              className={`ms-1 ps-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
               data-label-type={file.isDirectory ? 'folder' : 'file'}
               data-label-path={`${file.path}`}
               key={index}>

@@ -49,7 +49,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
           }
           {ahead? <FontAwesomeIcon className='ms-1' icon={faCloudArrowUp}></FontAwesomeIcon> : null}
           {behind? <FontAwesomeIcon className='ms-1' icon={faCloudArrowDown}></FontAwesomeIcon> : null}
-          <label className={`pl-2 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
+          <label className={`ps-2 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
         {showButtons ?

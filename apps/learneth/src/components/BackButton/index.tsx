@@ -14,7 +14,7 @@ function BackButton({entity}: any) {
   const previousStep = entity && entity.steps[stepId - 1]
 
   return (
-    <nav className="navbar navbar-light bg-light justify-content-between pt-1 pb-1 pl-1">
+    <nav className="navbar navbar-light bg-light justify-content-between pt-1 pb-1 ps-1">
       <ul className="nav me-auto">
         <li className="nav-item">
           <div
@@ -25,7 +25,7 @@ function BackButton({entity}: any) {
             role="button"
           >
             <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">Leave tutorial</Tooltip>}>
-              <i className="fas fa-home pl-1" />
+              <i className="fas fa-home ps-1" />
             </OverlayTrigger>
           </div>
         </li>
@@ -43,13 +43,13 @@ function BackButton({entity}: any) {
         <form className="form-inline">
           {stepId > 0 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId - 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'previous_step', `${entity.name}/${previousStep && previousStep.name}`])}>
-              <i className="fas fa-chevron-left pr-1" />
+              <i className="fas fa-chevron-left pe-1" />
             </Link>
           )}
           {stepId + 1}/{entity && <div className="">{entity.steps.length}</div>}
           {stepId < entity.steps.length - 1 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId + 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'next_step', `${entity.name}/${nextStep && nextStep.name}`])} >
-              <i className="fas fa-chevron-right pl-1" />
+              <i className="fas fa-chevron-right ps-1" />
             </Link>
           )}
         </form>

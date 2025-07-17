@@ -117,11 +117,11 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
           </CustomTooltip>
           <div className="d-flex flex-row w-100 justify-content-between">
             <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
-              <span className="font-weight-bold pr-2">{receipt.verifierInfo.name}</span>
+              <span className="font-weight-bold pe-2">{receipt.verifierInfo.name}</span>
             </CustomTooltip>
             <div className="ms-1">
               {!!receipt.lookupUrl && receipt.verifierInfo.name === 'Blockscout' ?
-                <CopyToClipboard classList="pr-0 py-0" tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> :
+                <CopyToClipboard classList="pe-0 py-0" tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> :
                 !!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square" rel="noreferrer"></a>
               }
             </div>

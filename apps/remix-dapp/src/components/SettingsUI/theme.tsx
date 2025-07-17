@@ -45,7 +45,7 @@ export function ThemeUI() {
           id="txorigin"
           data-id="runTabSelectAccount"
           name="txorigin"
-          className="form-control overflow-hidden w-100 font-weight-normal form-select pr-4"
+          className="form-control overflow-hidden w-100 font-weight-normal form-select pe-4"
           value={theme}
           onChange={(e) => {
             selectTheme(e.target.value);

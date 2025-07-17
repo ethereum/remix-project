@@ -102,7 +102,7 @@ export function UniversalDappUI(props: any) {
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 text-break label_key">
+        <label className="small font-weight-bold mb-0 pe-1 text-break label_key">
           {key}:
         </label>
         <label className="m-0 label_value">{value}</label>

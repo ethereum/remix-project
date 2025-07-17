@@ -36,7 +36,7 @@ export const SourceControlMenu = () => {
                 onClick={() => {
                   hideIconsMenu(!showIconsMenu)
                 }}
-                className='fab fa-github pl-2'
+                className='fab fa-github ps-2'
               >
               </span>
               <span className="ps-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>

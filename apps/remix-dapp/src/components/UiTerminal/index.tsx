@@ -107,7 +107,7 @@ export const RemixUiTerminal = (props: any) => {
                 </CustomTooltip>
               </div>
               {/* <div
-                className="pl-2 remix_ui_terminal_toggleTerminal"
+                className="ps-2 remix_ui_terminal_toggleTerminal"
                 onClick={() => {
                   setDisplay('transaction');
                 }}
@@ -121,7 +121,7 @@ export const RemixUiTerminal = (props: any) => {
               </div>
               {shortname && (
                 <div
-                  className="pl-3 remix_ui_terminal_toggleTerminal"
+                  className="ps-3 remix_ui_terminal_toggleTerminal"
                   onClick={() => {
                     setDisplay('comment');
                   }}

@@ -51,7 +51,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       position: lineColumnPos,
       hide: false,
       className: 'text-muted small',
-      afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+      afterContentClassName: 'text-muted small fas fa-gas-pump ps-4',
       from: 'debugger',
       hoverMessage: [{
         value: label,

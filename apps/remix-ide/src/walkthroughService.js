@@ -56,7 +56,7 @@ export class WalkthroughService extends Plugin {
         header.classList.add('d-flex')
         header.classList.add('justify-content-between')
         header.classList.add('text-nowrap')
-        header.classList.add('pr-0')
+        header.classList.add('pe-0')
         header.id="remixRecorderWalkthrowTitle"
       }
       const skipbutton = document.getElementsByClassName('introjs-skipbutton')[0]
@@ -102,7 +102,7 @@ export class WalkthroughService extends Plugin {
           header.classList.add('d-flex')
           header.classList.add('justify-content-between')
           header.classList.add('text-nowrap')
-          header.classList.add('pr-0')
+          header.classList.add('pe-0')
         }
         const skipbutton = document.getElementsByClassName('introjs-skipbutton')[0]
         if (skipbutton) {

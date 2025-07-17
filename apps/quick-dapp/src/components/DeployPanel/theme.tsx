@@ -38,8 +38,8 @@ const CustomToggle = React.forwardRef(
       <div className="d-flex">
         <div className="me-auto text-nowrap overflow-hidden">{children}</div>
         {icon && (
-          <div className="pr-1">
-            <i className={`${icon} pr-1`}></i>
+          <div className="pe-1">
+            <i className={`${icon} pe-1`}></i>
           </div>
         )}
         <div>

@@ -164,7 +164,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                   tooltipText={template.description}
                   tooltipId={template.gsID}
                   tooltipClasses="text-nowrap"
-                  tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+                  tooltipTextClasses="border bg-light text-dark p-1 pe-3"
                   placement="top-start"
                   key={`${template.gsID}-${template.workspaceTitle}-${index}`}
                 >
