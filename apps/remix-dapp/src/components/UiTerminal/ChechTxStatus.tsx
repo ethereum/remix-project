@@ -8,7 +8,7 @@ const CheckTxStatus = ({ tx, type }: any) => {
   }
   if (type === 'call' || type === 'unknownCall' || type === 'unknown') {
     return (
-      <i className="remix_ui_terminal_txStatus d-flex me-3 justify-content-center align-items-center font-weight-bold text-uppercase rounded-circle remix_ui_terminal_call">
+      <i className="remix_ui_terminal_txStatus d-flex me-3 justify-content-center align-items-center fw-bold text-uppercase rounded-circle remix_ui_terminal_call">
         call
       </i>
     );
