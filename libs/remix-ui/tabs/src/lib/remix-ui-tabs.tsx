@@ -512,7 +512,7 @@ export const TabsUI = (props: TabsUIProps) => {
           </div> */}
 
           <div className="d-flex align-items-center m-1">
-            <div className="btn-group" role="group" aria-label="compile group">
+            <div className="btn-group" role="group" data-id="compile_group" aria-label="compile group">
               <CustomTooltip
                 placement="bottom"
                 tooltipId="overlay-tooltip-run-script"
@@ -530,6 +530,7 @@ export const TabsUI = (props: TabsUIProps) => {
               >
                 <button
                   className="btn btn-primary d-flex align-items-center justify-content-center"
+                  data-id="compile-action"
                   style={{ 
                     padding: "4px 8px",
                     height: "28px",
