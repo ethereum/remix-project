@@ -30,6 +30,7 @@ export interface PromptAreaProps {
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
   textareaRef?: React.RefObject<HTMLTextAreaElement>
+  maximizePanel: () => Promise<void>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -57,7 +58,8 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   modelBtnRef,
   aiContextGroupList,
   aiAssistantGroupList,
-  textareaRef
+  textareaRef,
+  maximizePanel
 }) => {
 
   return (
@@ -120,6 +122,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             disabled={isStreaming}
             onFocus={() => {
               dispatchActivity('typing', input)
+              maximizePanel()
             }}
             onChange={e => {
               dispatchActivity('typing', e.target.value)
