@@ -11,7 +11,7 @@ export function SetupExports () {
   return (
     <div className="flex-column">
       <div className="flex-column d-flex">
-        <div className="mb-1 ml-0">
+        <div className="mb-1 ms-0">
           <label className="circuit_inner_label form-check-label">
             <FormattedMessage id="circuit.provingScheme" />
           </label>
@@ -46,7 +46,7 @@ export function SetupExports () {
             </label>
           </div>
         </div>
-        <div className="mb-1 ml-0">
+        <div className="mb-1 ms-0">
           <label className="circuit_inner_label form-check-label">
             <FormattedMessage id="circuit.ptau" />
           </label>
@@ -59,7 +59,7 @@ export function SetupExports () {
             <div className="mb-1">
               <select
                 value={circuitApp.appState.ptauValue}
-                className="custom-select"
+                className="form-select"
                 style={{
                   pointerEvents: 'auto'
                 }}

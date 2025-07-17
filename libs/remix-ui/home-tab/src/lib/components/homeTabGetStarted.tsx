@@ -171,10 +171,10 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                   <button
                     key={index}
                     className={index === 0 ?
-                      'btn btn-primary border p-2 text-nowrap mr-3 mb-3' :
+                      'btn btn-primary border p-2 text-nowrap me-3 mb-3' :
                       index === workspaceTemplates.length - 1 ?
-                        'btn border p-2 text-nowrap mr-2 mb-3' :
-                        'btn border p-2 text-nowrap mr-3 mb-3'
+                        'btn border p-2 text-nowrap me-2 mb-3' :
+                        'btn border p-2 text-nowrap me-3 mb-3'
                     }
                     onClick={async (e) => {
                       createWorkspace(template.templateName)

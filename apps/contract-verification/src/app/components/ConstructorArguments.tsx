@@ -126,7 +126,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
         <div>
           {constructorArgs.map((inp, i) => (
             <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center justify-content-between mb-2">
-              <div className="mr-2 small">{inp.name}</div>
+              <div className="me-2 small">{inp.name}</div>
               <input className="form-control" placeholder={inp.type} value={constructorArgsValues[i] ?? ''} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
             </div>
           ))}

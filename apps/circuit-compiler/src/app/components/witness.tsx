@@ -41,7 +41,7 @@ export function WitnessSection () {
         <>
           {
             signalInputs.map((input, index) => (
-              <div className="mb-2 ml-0" key={index}>
+              <div className="mb-2 ms-0" key={index}>
                 <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
                   <FormattedMessage id="circuit.signalInput" /> { input }
                 </label>
@@ -69,7 +69,7 @@ export function WitnessSection () {
             data-id="compute_witness_btn"
           >
             <RenderIf condition={status === 'computing'}>
-              <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+              <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
             </RenderIf>
             <FormattedMessage id="circuit.compute" />
           </button>

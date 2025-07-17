@@ -36,7 +36,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         {!appContext.appState.needsGitInit ? <span className="fa-regular fa-code-branch ms-1"></span>
           : <span className=" ms-1" onClick={initializeNewGitRepo}>Initialize as git repo</span>}
         {!appContext.appState.needsGitInit && appContext.appState.currentBranch &&
-          <span onClick={async () => await openDgit()} className="ml-1">{appContext.appState.currentBranch.name}</span>
+          <span onClick={async () => await openDgit()} className="ms-1">{appContext.appState.currentBranch.name}</span>
         }
       </div>
     </CustomTooltip>

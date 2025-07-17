@@ -190,7 +190,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       <span
                         role="button"
                         aria-label="thumbs down"
-                        className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
+                        className={`feedback-btn ms-2 ${msg.sentiment === 'dislike'
                           ? 'fas fa-thumbs-down'
                           : 'far fa-thumbs-down'
                         }`}

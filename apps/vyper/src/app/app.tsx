@@ -154,7 +154,7 @@ const App = () => {
                           value={state.environment}
                           checked={state.environment === 'remote'}
                           onChange={() => setEnvironment('remote')}
-                          className={`custom-control-input ${state.environment === 'remote' ? 'd-flex mr-1' : 'd-flex mr-1 cursor-status'}`}
+                          className={`custom-control-input ${state.environment === 'remote' ? 'd-flex me-1' : 'd-flex me-1 cursor-status'}`}
                         />
                         <label
                           htmlFor="remote-compiler"
@@ -162,7 +162,7 @@ const App = () => {
                           style={{ paddingTop: '0.19rem' }}
                         >Remote Compiler</label>
                       </div>
-                      <div className={`custom-control custom-radio ${state.environment === 'local' ? 'mr-2' : `cursor-status`}`}>
+                      <div className={`custom-control custom-radio ${state.environment === 'local' ? 'me-2' : `cursor-status`}`}>
                         <input
                           id="local-compiler"
                           data-id="local-compiler"

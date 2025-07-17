@@ -64,7 +64,7 @@ function DeployPanel(): JSX.Element {
         size="sm"
         style={{ height: 32, width: 100 }}
         data-id="deleteDapp"
-        className="ml-3"
+        className="ms-3"
         onClick={() => {
           emptyInstance();
         }}
@@ -172,7 +172,7 @@ function DeployPanel(): JSX.Element {
               Twitter
             </label>
           </div>
-          <div className="d-inline-flex align-items-center custom-control custom-checkbox ml-3">
+          <div className="d-inline-flex align-items-center custom-control custom-checkbox ms-3">
             <input
               id="shareToFacebook"
               className="form-check-input custom-control-input"
@@ -284,14 +284,14 @@ function DeployPanel(): JSX.Element {
           disabled={!formVal.email || !formVal.password || !formVal.subdomain}
         >
           {deployState.loading && (
-            <i className="fas fa-spinner fa-spin mr-1"></i>
+            <i className="fas fa-spinner fa-spin me-1"></i>
           )}
           <FormattedMessage id="quickDapp.deploy" />
         </Button>
         <Button
           data-id="teardownDapp"
           variant="primary"
-          className="mt-3 ml-3"
+          className="mt-3 ms-3"
           disabled={!formVal.email || !formVal.password || !formVal.subdomain}
           // hide this button for now, just for e2e use
           style={{ display: 'none' }}
@@ -303,7 +303,7 @@ function DeployPanel(): JSX.Element {
           }}
         >
           {teardownState.loading && (
-            <i className="fas fa-spinner fa-spin mr-1"></i>
+            <i className="fas fa-spinner fa-spin me-1"></i>
           )}
           <FormattedMessage id="quickDapp.teardown" />
         </Button>

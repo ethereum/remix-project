@@ -861,7 +861,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     </span>
                   }
                 >
-                  <i className={'ml-2 fas fa-info'} aria-hidden="true"></i>
+                  <i className={'ms-2 fas fa-info'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -890,7 +890,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     </span>
                   }
                 >
-                  <i style={{ fontSize: 'medium' }} className={'ml-2 fas fa-info'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ms-2 fas fa-info'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -943,7 +943,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     onChange={(e) => handleLanguageChange(e.target.value)}
                     disabled={state.useFileConfiguration}
                     value={state.language}
-                    className="custom-select"
+                    className="form-select"
                     id="compilerLanguageSelector"
                     style={{
                       pointerEvents: state.useFileConfiguration ? 'none' : 'auto'
@@ -967,7 +967,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 value={state.evmVersion}
                 onChange={(e) => handleEvmVersionChange(e.target.value)}
                 disabled={state.useFileConfiguration}
-                className="custom-select"
+                className="form-select"
                 id="evmVersionSelector"
               >
                 {compileTabLogic.evmVersions.map((version, index) => (
@@ -1035,7 +1035,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <FormattedMessage id="solidity.useConfigurationFile" />
             </label>
           </div>
-          <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
+          <div className={`pt-2 ms-4 ms-2 align-items-start justify-content-between d-flex`}>
             {!showFilePathInput && state.useFileConfiguration && (
               <CustomTooltip
                 placement="bottom"

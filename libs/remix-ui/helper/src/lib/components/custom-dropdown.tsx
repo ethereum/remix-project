@@ -63,7 +63,7 @@ export const CustomIconsToggle = React.forwardRef(
         e.preventDefault()
         onClick()
       }}
-      className={`${className.replace('dropdown-toggle', '')} mr-1 mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow remixuimenuicon_hamburger_menu fs-3`}
+      className={`${className.replace('dropdown-toggle', '')} me-1 mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow remixuimenuicon_hamburger_menu fs-3`}
       data-id="workspaceMenuDropdown"
     >
       {icon && (

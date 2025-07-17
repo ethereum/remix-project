@@ -82,7 +82,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
         {open && (
           <Form onSubmit={importRepo}>
             <Form.Group className="form-group">
-              <Form.Label className="mr-2" htmlFor="name">
+              <Form.Label className="me-2" htmlFor="name">
                 REPO
               </Form.Label>
               <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>

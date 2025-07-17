@@ -25,7 +25,7 @@ export function AccountUI() {
       <label>
         <FormattedMessage id="udapp.account" />
         {isRequesting && (
-          <FontAwesomeIcon className="ml-2" icon={faSpinner} pulse />
+          <FontAwesomeIcon className="ms-2" icon={faSpinner} pulse />
         )}
       </label>
       <div className="d-flex align-items-center">
@@ -33,7 +33,7 @@ export function AccountUI() {
           id="txorigin"
           data-id="runTabSelectAccount"
           name="txorigin"
-          className="form-control overflow-hidden w-100 font-weight-normal custom-select pr-4"
+          className="form-control overflow-hidden w-100 font-weight-normal form-select pr-4"
           value={selectedAccount || ''}
           onChange={(e) => {
             setAccount(e.target.value);

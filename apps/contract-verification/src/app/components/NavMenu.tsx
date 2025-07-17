@@ -18,7 +18,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
     >
       <span className=''>
         <span>{icon}</span>
-        <span className="ml-2">{title}</span>
+        <span className="ms-2">{title}</span>
       </span>
     </NavLink>
   )

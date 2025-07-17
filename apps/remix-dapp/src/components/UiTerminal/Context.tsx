@@ -24,7 +24,7 @@ const Context = ({ opts, provider }: { opts: any; provider: string }) => {
     return (
       <div>
         <span>
-          <span className="remix_ui_terminal_tx font-weight-bold mr-3">
+          <span className="remix_ui_terminal_tx font-weight-bold me-3">
             [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
@@ -53,7 +53,7 @@ const Context = ({ opts, provider }: { opts: any; provider: string }) => {
     return (
       <div>
         <span>
-          <span className="remix_ui_terminal_tx font-weight-bold mr-3">
+          <span className="remix_ui_terminal_tx font-weight-bold me-3">
             [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
