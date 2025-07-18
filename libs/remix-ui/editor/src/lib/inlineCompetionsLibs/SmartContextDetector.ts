@@ -49,28 +49,28 @@ export class SmartContextDetector {
     const inStringOrComment = this.isInStringOrComment(model, position);
     const appropriatePosition = this.isAppropriatePosition(model, position);
 
-    console.log('[SmartContextDetector] shouldShowCompletion check:', {
-      rapidTyping,
-      inStringOrComment,
-      appropriatePosition,
-      typingSpeed: this.typingSpeed,
-      timeSinceLastTyping: currentTime - this.lastTypingTime
-    });
+    // console.log('[SmartContextDetector] shouldShowCompletion check:', {
+    //   rapidTyping,
+    //   inStringOrComment,
+    //   appropriatePosition,
+    //   typingSpeed: this.typingSpeed,
+    //   timeSinceLastTyping: currentTime - this.lastTypingTime
+    // });
 
     if (rapidTyping) {
-      console.log('[SmartContextDetector] Blocked: rapid typing detected');
+      // console.log('[SmartContextDetector] Blocked: rapid typing detected');
       return false;
     }
     if (inStringOrComment) {
-      console.log('[SmartContextDetector] Blocked: in string or comment');
+      // console.log('[SmartContextDetector] Blocked: in string or comment');
       return false;
     }
     if (!appropriatePosition) {
-      console.log('[SmartContextDetector] Blocked: inappropriate position');
+      // console.log('[SmartContextDetector] Blocked: inappropriate position');
       return false;
     }
 
-    console.log('[SmartContextDetector] Completion allowed');
+    // console.log('[SmartContextDetector] Completion allowed');
     return true;
   }
 
@@ -92,11 +92,11 @@ export class SmartContextDetector {
         this.typingSpeed = avgSpeed;
       }
 
-      console.log('[SmartContextDetector] Typing speed updated:', {
-        timeDiff,
-        avgSpeed: this.typingSpeed,
-        windowSize: this.typingSpeedWindow.length
-      });
+      // console.log('[SmartContextDetector] Typing speed updated:', {
+      //   timeDiff,
+      //   avgSpeed: this.typingSpeed,
+      //   windowSize: this.typingSpeedWindow.length
+      // });
     }
     this.lastTypingTime = currentTime;
   }
@@ -180,7 +180,7 @@ export class SmartContextDetector {
   }
 
   reset(): void {
-    console.log('[SmartContextDetector] Resetting state');
+    // console.log('[SmartContextDetector] Resetting state');
     this.typingSpeed = 0;
     this.lastTypingTime = 0;
     this.typingSpeedWindow = [];
