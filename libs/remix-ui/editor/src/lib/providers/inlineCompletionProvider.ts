@@ -219,7 +219,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       }
       clean = clean.replace(word, '')
       clean = this.process_completion(clean, word_after)
-      console.log("completion after request:", clean)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean,
