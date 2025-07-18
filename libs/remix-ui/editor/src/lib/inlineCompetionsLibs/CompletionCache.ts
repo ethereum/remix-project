@@ -54,25 +54,25 @@ export class CompletionCache {
     const currentTime = Date.now();
     const isExpired = cached && currentTime - cached.timestamp >= this.cacheTimeout;
 
-    console.log('[CompletionCache] getCachedResult:', {
-      cacheKey: cacheKey.substring(0, 50) + '...',
-      hasCached: !!cached,
-      isExpired,
-      age: cached ? currentTime - cached.timestamp : 0
-    });
+    // console.log('[CompletionCache] getCachedResult:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...',
+    //   hasCached: !!cached,
+    //   isExpired,
+    //   age: cached ? currentTime - cached.timestamp : 0
+    // });
 
     if (cached && !isExpired) {
-      console.log('[CompletionCache] Cache hit');
+      // console.log('[CompletionCache] Cache hit');
       return cached.result;
     }
 
     // Remove expired cache entry
     if (cached) {
-      console.log('[CompletionCache] Removing expired cache entry');
+      // console.log('[CompletionCache] Removing expired cache entry');
       this.cache.delete(cacheKey);
     }
 
-    console.log('[CompletionCache] Cache miss');
+    // console.log('[CompletionCache] Cache miss');
     return null;
   }
 
