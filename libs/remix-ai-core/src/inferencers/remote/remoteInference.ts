@@ -26,7 +26,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
     try {
-      const options = { headers: { 'Content-Type': 'application/json', } }
+      const options = { headers: { 'Content-Type': 'application/json', }, timeout: 2000 }
       const result = await axios.post(requestURL, payload, options)
 
       switch (rType) {
@@ -49,6 +49,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     } catch (e) {
       ChatHistory.clearHistory()
       console.error('Error making request to Inference server:', e.message)
+      return ""
     }
     finally {
       this.event.emit("onInferenceDone")
@@ -110,7 +111,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
   }
 
   async code_completion(prompt, promptAfter, ctxFiles, fileName, options:IParams=CompletionParams): Promise<any> {
-    options.max_tokens = 10
+    options.max_tokens = 30
     const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion",
       'ctxFiles':ctxFiles, 'currentFileName':fileName, ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
