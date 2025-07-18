@@ -4,3 +4,13 @@
 .remixui_homeIcon svg polygon {
   fill: var(--primary);
 }
+
+.btn-topbar {
+  background-color: #333446;
+  color: #fff;
+}
+
+.btn-topbar:hover {
+  background-color: #3F4455;
+  color: #fff;
+}
