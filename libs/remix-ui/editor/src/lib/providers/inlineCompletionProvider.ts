@@ -30,7 +30,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       item: [],
       task: this.task,
       displayed: false,
-      accepted: false
+      accepted: false,
+      onAccepted: () => {
+        this.rateLimiter.trackCompletionAccepted()
+      }
     }
 
     this.rateLimiter = new AdaptiveRateLimiter();
@@ -101,6 +104,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     // Create cache key and check cache
     const cacheKey = this.cache.createCacheKey(word, word_after, position, this.task);
+    this.currentCompletion.accepted = false
 
     return await this.cache.handleRequest(cacheKey, async () => {
       return await this.performCompletion(word, word_after, position);
