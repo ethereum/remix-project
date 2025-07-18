@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { createContext, SyntheticEvent } from 'react'
 
@@ -25,7 +26,8 @@ export const TopbarContext = createContext<{
   dispatchDownloadPath: (path:string) => Promise<void>,
   dispatchHandleDownloadFiles: () => Promise<void>,
   dispatchHandleDownloadWorkspace: () => Promise<void>,
-  dispatchHandleRestoreBackup: () => Promise<void>
-  dispatchCloneRepository: (url: string) => Promise<void>
+  dispatchHandleRestoreBackup: () => Promise<void>,
+  dispatchCloneRepository: (url: string) => Promise<void>,
+  dispatchHandleExpandPath: (path: string[]) => Promise<void>
     }>(null)
 
