@@ -155,7 +155,7 @@ module.exports = {
       .assistantWorkspace('comment all function', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
@@ -203,7 +203,7 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
@@ -223,7 +223,7 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
