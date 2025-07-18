@@ -62,7 +62,7 @@ export class CompletionCache {
     // });
 
     if (cached && !isExpired) {
-      // console.log('[CompletionCache] Cache hit');
+      //  console.log('[CompletionCache] Cache hit');
       return cached.result;
     }
 
