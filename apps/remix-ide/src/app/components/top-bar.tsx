@@ -1,6 +1,6 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
-import { RemixUiTopbar } from '@remix-ui/top-bar'
+import { TopbarProvider } from '@remix-ui/top-bar'
 import packageJson from '../../../../../package.json'
 import { EventEmitter } from 'events'
 import { CustomRemixApi, ICustomRemixApi } from '@remix-api'
@@ -54,7 +54,7 @@ export class Topbar extends Plugin<any, CustomRemixApi> {
   }
 
   updateComponent(state: any) {
-    return <RemixUiTopbar plugin={this} />
+    return <TopbarProvider plugin={this} />
   }
 
   render() {
