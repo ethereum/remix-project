@@ -9,7 +9,6 @@ module.exports = {
 
   'Should display settings menu ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .click('*[data-id="landingPageStartSolidity"]')
       .waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="verticalIconsKindsettings"]')
       .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')

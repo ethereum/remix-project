@@ -839,6 +839,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const changes = e.changes;
         // Check if the change matches the current completion
         if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
+          inlineCompletionProvider.currentCompletion.onAccepted()
+          inlineCompletionProvider.currentCompletion.accepted = true
           _paq.push(['trackEvent', 'ai', 'remixAI', inlineCompletionProvider.currentCompletion.task + '_accepted'])
         }
       }
