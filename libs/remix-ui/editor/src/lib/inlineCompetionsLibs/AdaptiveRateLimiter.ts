@@ -52,26 +52,44 @@ export class AdaptiveRateLimiter {
   shouldAllowRequest(currentTime: number = Date.now()): boolean {
     const timeSinceLastRequest = currentTime - this.lastRequestTime;
     const timeSinceLastCompletion = currentTime - this.lastCompletionTime;
+    const adaptiveCooldown = this.getAdaptiveCooldown();
+
+    const minIntervalCheck = timeSinceLastRequest < this.minRequestInterval;
+    const adaptiveCooldownCheck = timeSinceLastCompletion < adaptiveCooldown;
+
+    console.log('[AdaptiveRateLimiter] shouldAllowRequest check:', {
+      timeSinceLastRequest,
+      timeSinceLastCompletion,
+      minRequestInterval: this.minRequestInterval,
+      adaptiveCooldown,
+      acceptanceRate: this.acceptanceRate,
+      minIntervalCheck,
+      adaptiveCooldownCheck
+    });
 
     // Check minimum request interval
-    if (timeSinceLastRequest < this.minRequestInterval) {
+    if (minIntervalCheck) {
+      console.log('[AdaptiveRateLimiter] Blocked: minimum request interval not met');
       return false;
     }
 
     // Check adaptive cooldown
-    const adaptiveCooldown = this.getAdaptiveCooldown();
-    if (timeSinceLastCompletion < adaptiveCooldown) {
+    if (adaptiveCooldownCheck) {
+      console.log('[AdaptiveRateLimiter] Blocked: adaptive cooldown active');
       return false;
     }
 
+    console.log('[AdaptiveRateLimiter] Request allowed');
     return true;
   }
 
   recordRequest(currentTime: number = Date.now()): void {
+    console.log('[AdaptiveRateLimiter] Recording request at:', currentTime);
     this.lastRequestTime = currentTime;
   }
 
   recordCompletion(currentTime: number = Date.now()): void {
+    console.log('[AdaptiveRateLimiter] Recording completion at:', currentTime);
     this.lastCompletionTime = currentTime;
   }
 
@@ -81,6 +99,7 @@ export class AdaptiveRateLimiter {
       timestamp: Date.now(),
       accepted: false
     });
+    console.log('[AdaptiveRateLimiter] Completion shown, total:', this.totalCompletions);
   }
 
   trackCompletionAccepted(): void {
@@ -90,10 +109,13 @@ export class AdaptiveRateLimiter {
     if (this.recentCompletionHistory.length > 0) {
       this.recentCompletionHistory[this.recentCompletionHistory.length - 1].accepted = true;
     }
+
+    console.log('[AdaptiveRateLimiter] Completion accepted, total accepted:', this.acceptedCompletions);
   }
 
   trackCompletionRejected(): void {
     this.rejectedCompletions++;
+    console.log('[AdaptiveRateLimiter] Completion rejected, total rejected:', this.rejectedCompletions);
   }
 
   private getAdaptiveCooldown(): number {
@@ -111,6 +133,7 @@ export class AdaptiveRateLimiter {
 
   private updateAcceptanceRate(): void {
     const currentTime = Date.now();
+    const oldHistoryLength = this.recentCompletionHistory.length;
 
     // Remove old entries beyond the history window
     this.recentCompletionHistory = this.recentCompletionHistory.filter(
@@ -126,6 +149,12 @@ export class AdaptiveRateLimiter {
       // do not penalize anyone at startup
       this.acceptanceRate = 0.5;
     }
+
+    console.log('[AdaptiveRateLimiter] Acceptance rate updated:', {
+      oldHistoryLength,
+      newHistoryLength: this.recentCompletionHistory.length,
+      acceptanceRate: this.acceptanceRate
+    });
   }
 
   getStats(): AdaptiveRateLimiterStats {
