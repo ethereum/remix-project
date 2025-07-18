@@ -90,7 +90,7 @@ export class CompletionCache {
     if (this.cache.size >= this.maxCacheSize) {
       const oldestKey = this.cache.keys().next().value;
       if (oldestKey) {
-        console.log('[CompletionCache] Removing oldest cache entry due to capacity');
+        // console.log('[CompletionCache] Removing oldest cache entry due to capacity');
         this.cache.delete(oldestKey);
       }
     }
@@ -100,11 +100,11 @@ export class CompletionCache {
       timestamp: Date.now()
     });
 
-    console.log('[CompletionCache] Cached result:', {
-      cacheKey: cacheKey.substring(0, 50) + '...',
-      oldSize,
-      newSize: this.cache.size
-    });
+    // console.log('[CompletionCache] Cached result:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...',
+    //   oldSize,
+    //   newSize: this.cache.size
+    // });
   }
 
   /**
@@ -112,10 +112,10 @@ export class CompletionCache {
    */
   isPending(cacheKey: string): boolean {
     const pending = this.pendingRequests.has(cacheKey);
-    console.log('[CompletionCache] isPending:', {
-      cacheKey: cacheKey.substring(0, 50) + '...',
-      pending
-    });
+    // console.log('[CompletionCache] isPending:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...',
+    //   pending
+    // });
     return pending;
   }
 
@@ -130,10 +130,10 @@ export class CompletionCache {
    * Set a pending request
    */
   setPendingRequest(cacheKey: string, promise: Promise<any>): void {
-    console.log('[CompletionCache] Setting pending request:', {
-      cacheKey: cacheKey.substring(0, 50) + '...',
-      totalPending: this.pendingRequests.size + 1
-    });
+    // console.log('[CompletionCache] Setting pending request:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...',
+    //   totalPending: this.pendingRequests.size + 1
+    // });
     this.pendingRequests.set(cacheKey, promise);
   }
 
@@ -141,10 +141,10 @@ export class CompletionCache {
    * Remove a pending request
    */
   removePendingRequest(cacheKey: string): void {
-    console.log('[CompletionCache] Removing pending request:', {
-      cacheKey: cacheKey.substring(0, 50) + '...',
-      totalPending: this.pendingRequests.size - 1
-    });
+    // console.log('[CompletionCache] Removing pending request:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...',
+    //   totalPending: this.pendingRequests.size - 1
+    // });
     this.pendingRequests.delete(cacheKey);
   }
 
@@ -155,37 +155,36 @@ export class CompletionCache {
     cacheKey: string,
     requestFn: () => Promise<T>
   ): Promise<T> {
-    console.log('[CompletionCache] handleRequest started:', {
-      cacheKey: cacheKey.substring(0, 50) + '...'
-    });
+    // console.log('[CompletionCache] handleRequest started:', {
+    //   cacheKey: cacheKey.substring(0, 50) + '...'
+    // });
 
     // Check cache first
     const cachedResult = this.getCachedResult(cacheKey);
     if (cachedResult) {
-      console.log('[CompletionCache] Returning cached result');
+      // console.log('[CompletionCache] Returning cached result');
       return cachedResult;
     }
 
     // Check if same request is already pending
     const pendingRequest = this.getPendingRequest(cacheKey);
     if (pendingRequest) {
-      console.log('[CompletionCache] Waiting for pending request');
+      // console.log('[CompletionCache] Waiting for pending request');
       return await pendingRequest;
     }
 
     // Create and store pending request
-    console.log('[CompletionCache] Creating new request');
+    // console.log('[CompletionCache] Creating new request');
     const promise = requestFn();
     this.setPendingRequest(cacheKey, promise);
 
     try {
       const result = await promise;
-      console.log('[CompletionCache] Request completed successfully');
+      // console.log('[CompletionCache] Request completed successfully');
       this.cacheResult(cacheKey, result);
       return result;
     } catch (error) {
-      console.error('[CompletionCache] Request failed:', error);
-      throw error;
+      // console.error('[CompletionCache] Request failed:', error);
     } finally {
       this.removePendingRequest(cacheKey);
     }
@@ -201,7 +200,7 @@ export class CompletionCache {
   }
 
   clear(): void {
-    console.log('[CompletionCache] Clearing cache and pending requests');
+    // console.log('[CompletionCache] Clearing cache and pending requests');
     this.cache.clear();
     this.pendingRequests.clear();
   }
@@ -217,10 +216,10 @@ export class CompletionCache {
   cleanup(): void {
     const oldSize = this.cache.size;
     this.cleanupExpiredEntries();
-    console.log('[CompletionCache] Cleanup completed:', {
-      oldSize,
-      newSize: this.cache.size,
-      removedEntries: oldSize - this.cache.size
-    });
+    // console.log('[CompletionCache] Cleanup completed:', {
+    //   oldSize,
+    //   newSize: this.cache.size,
+    //   removedEntries: oldSize - this.cache.size
+    // });
   }
 }
