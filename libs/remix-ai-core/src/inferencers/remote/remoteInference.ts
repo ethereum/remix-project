@@ -26,7 +26,7 @@ export class RemoteInferencer implements ICompletions, IGeneration {
     const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
     try {
-      const options = { headers: { 'Content-Type': 'application/json', }, timeout: 3000 }
+      const options = AIRequestType.COMPLETION ? { headers: { 'Content-Type': 'application/json', }, timeout: 3000 } : { headers: { 'Content-Type': 'application/json', } }
       const result = await axios.post(requestURL, payload, options)
 
       switch (rType) {
