@@ -71,7 +71,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   return (
     <div
       ref={historyRef}
-      className="d-flex flex-column overflow-y-auto border-box-sizing preserve-wrap w-100"
+      className="d-flex flex-column overflow-y-auto border-box-sizing preserve-wrap overflow-x-hidden"
     >
       {messages.length === 0 ? (
         <AiChatIntro sendPrompt={sendPrompt} />
@@ -81,7 +81,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
             msg.role === 'user' ? 'bubble-user bg-light' : 'bubble-assistant bg-light'
 
           return (
-            <div key={msg.id} className="chat-row d-flex mb-2 w-100">
+            <div key={msg.id} className="chat-row d-flex mb-2" style={{ minWidth: '90%' }}>
               {/* Avatar for assistant */}
               {msg.role === 'assistant' && (
                 <img
@@ -92,7 +92,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 mr-1">
+              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll" style={{ width: '90%' }}>
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`} data-id="ai-user-chat-bubble">
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">
