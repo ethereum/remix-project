@@ -7,11 +7,11 @@ import { sourceControlGroup } from "../../../types";
 import { SourceControlGroupNavigation } from "../../navigation/sourcecontrolgroup";
 import { SourceControlItem } from "./sourcecontrolitem";
 
-export interface SourceControGroupProps {
+export interface SourceControlGroupProps {
   group: sourceControlGroup
 }
 
-export const SourceControGroup = (props: SourceControGroupProps) => {
+export const SourceControlGroup = (props: SourceControlGroupProps) => {
   const { group } = props;
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)
