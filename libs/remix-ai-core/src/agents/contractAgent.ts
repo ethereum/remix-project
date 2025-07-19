@@ -1,7 +1,8 @@
 import { AssistantParams } from "../types/models";
 import { workspaceAgent } from "./workspaceAgent";
 import { CompilationResult } from "../types/types";
-import { compilecontracts } from "../helpers/compile";
+import { compilecontracts, compilationParams } from "../helpers/compile";
+import { extractFirstLvlImports } from "../helpers/localImportsExtractor";
 
 const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Solidity compiler plugin. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
 
@@ -12,8 +13,6 @@ export class ContractAgent {
   generationThreadID: string= ''
   workspaceName: string = ''
   contracts: any = {}
-  performCompile: boolean = false
-  overrideWorkspace: boolean = false
   static instance
   oldPayload: any = undefined
   mainPrompt: string
@@ -49,7 +48,6 @@ export class ContractAgent {
       }
 
       await this.createWorkspace(this.workspaceName)
-      if (!this.overrideWorkspace) await this.plugin.call('filePanel', 'switchToWorkspace', { name: this.workspaceName, isLocalHost: false })
       const dirCreated = []
       for (const file of parsedResults.files) {
         const dir = file.fileName.split('/').slice(0, -1).join('/')
@@ -68,7 +66,6 @@ export class ContractAgent {
       if (payload === undefined) {
         this.nAttempts += 1
         if (this.nAttempts > this.generationAttempts) {
-          this.performCompile = false
           if (this.oldPayload) {
             return await writeAIResults(this.oldPayload)
           }
@@ -96,9 +93,19 @@ export class ContractAgent {
       }
 
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
-      if (!result.compilationSucceeded && this.performCompile) {
+      if (!result.compilationSucceeded) {
         // console.log('Compilation failed, trying again recursively ...')
-        const newPrompt = `Payload:\n${JSON.stringify(result.errfiles)}}\n\nWhile considering this compilation error: Here is the error message\n. Try this again:${this.mainPrompt}\n `
+        const imports = extractFirstLvlImports(parsedFiles.files, result.compilerPayload)
+        const libs = imports.filter(imp => imp.isLibrary);
+        const importPaths = libs.map(imp => imp.importPath).join('\n');
+        const newPrompt = `
+              Compilation parameters:\n${JSON.stringify(compilationParams)}\n\n
+              Compiler libs imports :\n${JSON.stringify(importPaths)}}\n\n
+              Compiler error payload:\n${JSON.stringify(result.errfiles)}}\n\n
+              While considering this compilation error and the provided libs above: Here is the error message.\n\n 
+              Try this main prompt again: \n${this.mainPrompt}\n `
+
+        console.log('New prompt for retry:', newPrompt)
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID); // reuse the same thread
       }
 
@@ -145,23 +152,6 @@ export class ContractAgent {
 
     } catch (error) {
     } finally {
-    }
-  }
-
-  async continueCompilation(){
-    try {
-      if (this.oldPayload === undefined) {
-        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
-      }
-
-      this.performCompile = true
-      this.overrideWorkspace = true
-      return await this.writeContracts(this.oldPayload, this.mainPrompt)
-    } catch (error) {
-      return "Error during continue compilation. Please try again."
-    } finally {
-      this.performCompile = false
-      this.overrideWorkspace = false
     }
   }
 

@@ -154,6 +154,16 @@ export class RemixAIPlugin extends Plugin {
 
   async error_explaining(prompt: string, params: IParams=GenerationParams): Promise<any> {
     let result
+    let localFilesImports = ""
+
+    // Get local imports from the workspace restrict to 5 most relevant files
+    const relevantFiles = this.workspaceAgent.getRelevantLocalFiles(prompt, 5);
+
+    for (const file in relevantFiles) {
+      localFilesImports += `\n\nFileName: ${file}\n\n${relevantFiles[file]}`
+    }
+    localFilesImports = localFilesImports + "\n End of local files imports.\n\n"
+    prompt = localFilesImports ? `Using the following local imports: ${localFilesImports}\n\n` + prompt : prompt
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {
@@ -256,13 +266,9 @@ export class RemixAIPlugin extends Plugin {
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
   }
 
-  async fixWorspaceErrors(continueGeneration=false): Promise<any> {
+  async fixWorspaceErrors(): Promise<any> {
     try {
-      if (continueGeneration) {
-        return this.contractor.continueCompilation()
-      } else {
-        return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
-      }
+      return this.contractor.fixWorkspaceCompilationErrors(this.workspaceAgent)
     } catch (error) {
     }
   }

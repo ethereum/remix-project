@@ -2,6 +2,7 @@ import React from 'react';
 import { compile, helper, Source, CompilerInputOptions, compilerInputFactory, CompilerInput } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
+import { emit } from 'node:process';
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -314,6 +315,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
           })
         } else this.statusChanged({ key: 'succeed', title: 'Compilation successful', type: 'success' })
       } else {
+        this.emit('compilationFailed', source.target, source, 'soljson', data, input, version)
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.statusChanged({ key: count, title: `Compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
