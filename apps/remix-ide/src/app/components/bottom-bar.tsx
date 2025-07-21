@@ -51,7 +51,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       const path = await plugin.call('fileManager', 'getCurrentFile')
       const content = await plugin.call('fileManager', 'readFile', path)
       await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-  
+
     } catch (err) {
       console.error("Explain failed:", err)
     }
@@ -76,7 +76,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   return (
     <div className="bottom-bar border-top border-bottom">
       {getExplainLabel() && (
-        <button 
+        <button
           className="btn explain-btn"
           onClick={handleExplain}
           disabled={explaining}
@@ -87,7 +87,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       )}
       <div className="copilot-toggle">
         <span className={aiSwitch ? "on" : ""}>AI copilot</span>
-        <label className="switch"  data-id="copilot_toggle" >
+        <label className="switch" data-id="copilot_toggle" >
           <input type="checkbox" checked={aiSwitch} onChange={toggleAI}/>
           <span className="slider"></span>
         </label>

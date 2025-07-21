@@ -25,7 +25,7 @@ module.exports = {
   'Should compile a simple circuit using editor play button #group1': '' + function (browser: NightwatchBrowser) {
     browser
       .openFile('src/main.nr')
-      .click('[data-id="play-editor"]')
+      .click('[data-id="compile-action"]')
       .clickLaunchIcon('noir-compiler')
       .waitForElementPresent('[data-id="view-noir-compilation-result"]')
       .click('[data-id="view-noir-compilation-result"]')
@@ -37,7 +37,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .openFile('tests/multiplier.test.ts')
-      .click('[data-id="play-editor"]')
+      .click('[data-id="compile-action"]')
       .waitForElementContainsText('*[data-id="terminalJournal"]', ' CHECK PROOF ', 60000)      
   }
 }

@@ -36,10 +36,10 @@ const tests = {
     'Should compile a simple circuit using editor play button': function (browser: NightwatchBrowser) {
         browser
             .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
-            .waitForElementVisible('[data-id="play-editor"]')
-            .click('[data-id="play-editor"]')
+            .waitForElementVisible('[data-id="compile-action"]')
+            .click('[data-id="compile-action"]')
             .pause(3000)
-            .click('[data-id="play-editor"]')
+            .click('[data-id="compile-action"]')
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin"]')
             .click('[data-id="treeViewLitreeViewItemcircuits/.bin"]')

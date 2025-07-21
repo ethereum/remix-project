@@ -37,7 +37,7 @@ const tests = {
         browser
             .click('[data-id="treeViewLitreeViewItemscripts/plonk/plonk_trusted_setup.ts"]')
             .pause(2000)
-            .click('[data-id="play-editor"]')
+            .click('[data-id="compile-action"]')
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
@@ -54,7 +54,7 @@ const tests = {
         browser
             .click('[data-id="treeViewLitreeViewItemscripts/plonk/plonk_zkproof.ts"]')
             .pause(2000)
-            .click('[data-id="play-editor"]')
+            .click('[data-id="compile-action"]')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
                 selector: "//span[@class='text-log' and contains(., 'proof done')]",
