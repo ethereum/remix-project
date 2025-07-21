@@ -2,18 +2,11 @@ import React, { useState, useEffect } from 'react'
 import DropdownMenu, { MenuItem } from './DropdownMenu'
 import { AppModal } from '@remix-ui/app'
 import { FormattedMessage } from 'react-intl'
-import { SolScanTable } from './solScanTable'
+import { SolScanTable, ScanReport } from '@remix-ui/tabs'
 import axios from 'axios'
 import { endpointUrls } from '@remix-endpoints-helper'
-import { ScanReport } from '../types'
 
-import ArrowRight from '../../assets/icons/ArrowRightBig'
-import IpfsLogo from '../../assets/icons/Ipfs'
-import SwarmLogo from '../../assets/icons/Swarm'
-import SettingsLogo from '../../assets/icons/SolidityCompiler'
-import SolidityScanLogo from '../../assets/icons/SolidityScan'
-import AnalysisLogo from '../../assets/icons/Analysis'
-import TsLogo from '../../assets/icons/Ts'
+import { ArrowRightBig, IpfsLogo, SwarmLogo, SettingsLogo, SolidityScanLogo, AnalysisLogo, TsLogo  } from '@remix-ui/tabs'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -55,6 +48,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
 
   const runRemixAnalysis = async () => {
     _paq.push(['trackEvent', 'solidityCompiler', 'staticAnalysis', 'initiate'])
+    await plugin.call('solidity', 'compile', tabPath)
     const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
     if (!isStaticAnalyzersActive) {
       await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
@@ -64,6 +58,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
   }
 
   const handleScanContinue = async () => {
+    await plugin.call('solidity', 'compile', tabPath)
     await plugin.call('notification', 'toast', 'Processing data to scan...')
     _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'initiateScan'])
 
@@ -174,32 +169,39 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
   const items: MenuItem[] = [
     {
       label: 'Compile and run script',
-      icon: <ArrowRight />,
+      icon: <ArrowRightBig />,
+      dataId: 'compile-run-script-menu-item',
       submenu: scriptFiles.length > 0
-        ? scriptFiles.map(f => ({ label: f, icon: <TsLogo />, onClick: () => runScript(f) }))
-        : [{ label: 'No scripts found', onClick: () => {} }]
+        ? scriptFiles.map(f => ({ 
+          label: f, icon: <TsLogo />, 
+          onClick: () => runScript(f), 
+          dataId: `run-script-${f.replace(/[^a-zA-Z0-9-]/g, '_')}-submenu-item` }))
+        : [{ label: 'No scripts found', onClick: () => {}, dataId: 'no-scripts-found-item' }]
     },
     {
       label: 'Compile and run analysis',
-      icon: <ArrowRight />,
+      icon: <ArrowRightBig />,
+      dataId: 'compile-run-analysis-menu-item',
       submenu: [
-        { label: 'Run Remix Analysis', icon: <AnalysisLogo />, onClick: runRemixAnalysis },
-        { label: 'Run Solidity Scan', icon: <SolidityScanLogo />, onClick: runSolidityScan }
+        { label: 'Run Remix Analysis', icon: <AnalysisLogo />, onClick: runRemixAnalysis, dataId: 'run-remix-analysis-submenu-item' },
+        { label: 'Run Solidity Scan', icon: <SolidityScanLogo />, onClick: runSolidityScan, dataId: 'run-solidity-scan-submenu-item' }
       ]
     },
     {
       label: 'Compile and publish',
-      icon: <ArrowRight />, 
+      icon: <ArrowRightBig />, 
+      dataId: 'compile-publish-menu-item',
       submenu: [
-        { label: 'Publish on IPFS', icon: <IpfsLogo />, onClick: () => onRequestCompileAndPublish('ipfs') },
-        { label: 'Publish on Swarm', icon: <SwarmLogo />, onClick: () => onRequestCompileAndPublish('swarm') }
+        { label: 'Publish on IPFS', icon: <IpfsLogo />, onClick: () => onRequestCompileAndPublish('ipfs'), dataId: 'publish-ipfs-submenu-item' },
+        { label: 'Publish on Swarm', icon: <SwarmLogo />, onClick: () => onRequestCompileAndPublish('swarm'), dataId: 'publish-swarm-submenu-item' }
       ]
     },
     {
       label: 'Open compiler configuration',
       icon: <SettingsLogo />,
       onClick: openConfiguration,
-      borderTop: true
+      borderTop: true,
+      dataId: 'publish-swarm-submenu-item'
     }
   ]
 
@@ -209,6 +211,8 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
         items={items}
         disabled={disabled}
         onOpen={() => { fetchScripts(); onOpen?.() }}
+        triggerDataId="compile-dropdown-trigger"
+        panelDataId="compile-dropdown-panel"
       />
     </>
 

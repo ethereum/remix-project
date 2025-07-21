@@ -8,9 +8,7 @@ import './remix-ui-tabs.css'
 import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
-import CompileDropdown from './components/CompileDropdown'
-import RunScriptDropdown from './components/RunScriptDropdown'
-import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
+import { CompileDropdown, RunScriptDropdown } from '@remix-ui/tabs'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -86,11 +84,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const appContext = useContext(AppContext)
 
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
-  const [publishInfo, setPublishInfo] = useState<{
-    storage?: string
-    contract?: any
-    api?: any
-  }>({})
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -216,95 +209,50 @@ export const TabsUI = (props: TabsUIProps) => {
 
 
   /**
-   * ⚠️ Note:
-   * In the default Solidity compiler plugin flow, downstream components (like PublishToStorage)
-   * usually rely on the `api` object provided by the plugin environment.
-   *
-   * However, in this context, it's unclear how the expected `api` structure should be composed,
-   * so we manually construct an "adapter" API object (`apiForPublisher`) that mimics the expected shape.
-   *
-   * This includes the essential methods like `.call()` (inherited from props.plugin),
-   * and a synchronous `.config.get()` function built from pre-fetched settings.
-   *
-   * This approach ensures compatibility with existing consumers that expect `api.config.get()`,
-   * but might differ from how the API is normally wired in the compiler plugin context.
+   * Compiles the current file and triggers the 'Publish' functionality of the Solidity Compiler plugin.
+   * * ⚠️ WARNING: This function uses a brittle method of direct DOM manipulation
+   * * instead of formal inter-plugin API communication.
+   * * It relies on the compiler UI's button ID (e.g., 'publishOnIpfs'), so it may break
+   * * without warning during future updates.
+   * * It also uses an unreliable `setTimeout` to wait for the UI to render after compilation.
+   * * @todo This logic should be refactored in the future to a more stable approach:
+   * * add a formal API to the Solidity Compiler plugin and call that API instead.
+   * * @param {'ipfs' | 'swarm'} storageType - The type of storage to publish to.
    */
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
-    const currentFile = active().substr(active().indexOf('/') + 1);
-    if (!currentFile) {
-      props.plugin.call('notification', 'toast', 'No file selected to compile.');
-      return
-    }
+    setCompileState('compiling');
+    await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
 
+    await props.plugin.call('manager', 'activatePlugin', 'solidity')
+    await props.plugin.call('menuicons', 'select', 'solidity')
     try {
-      // Step 1: Securely get the compilation result using the 'compilationFinished' event.
-      // This ensures we have the latest and correct data.
-      const compilationResult: any = await new Promise((resolve, reject) => {
-        props.plugin.once('solidity', 'compilationFinished', (fileName, source, languageVersion, data) => {
-          if (fileName === currentFile) {
-            resolve({ data, source })
-          }
-        })
-        props.plugin.call('solidity', 'compile', currentFile).catch(reject)
-      })
+      await props.plugin.call('solidity', 'compile', active().substr(active().indexOf('/') + 1, active().length))
+      _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
 
-      if (!compilationResult || !compilationResult.data || compilationResult.data.errors) {
-        props.plugin.call('notification', 'toast', 'Compilation failed. Please check the errors.')
-        return
-      }
-
-      const contractToPublish = Object.values(compilationResult.data.contracts[currentFile])[0]
-
-      // Step 2: Pre-fetch ALL configuration settings needed for both IPFS and Swarm.
-      const configKeys = [
-        'settings/ipfs-url',
-        'settings/ipfs-project-id',
-        'settings/ipfs-project-secret',
-        'settings/ipfs-port',
-        'settings/ipfs-protocol',
-        'settings/swarm-postage-stamp-id',
-        'settings/swarm-private-bee-address',
-      ]
-      
-      const configPromises = configKeys.map(key =>
-        props.plugin.call('config', 'getAppParameter', key)
-      )
-      
-      const rawConfigValues = await Promise.all(configPromises)
-      
-      const configValues = configKeys.reduce((acc, key, index) => {
-        acc[key] = rawConfigValues[index]
-        return acc
-      }, {})
-
-      // Step 3: Create the "adapter" API object for PublishToStorage.
-      // This object will mimic the structure that the downstream components expect.
-      const apiForPublisher = {
-        ...props.plugin, // Inherit all original plugin methods like .call, .on, .readFile etc.
-        config: {
-          // Create the synchronous .get() method that PublishToStorage and its helpers expect.
-          get: (key: string) => {
-            // It returns the values we already fetched asynchronously.
-            console.log(`[Adapter] api.config.get called for: ${key}`)
-            return configValues[key]
-          }
+      setTimeout(() => {
+        let buttonId;
+        if (storageType === 'ipfs') {
+          buttonId = 'publishOnIpfs';
+        } else {
+          buttonId = 'publishOnSwarm';
         }
-      }
-
-      // Step 4: Set the state with all the prepared data to trigger rendering.
-      setPublishInfo({
-        storage: storageType,
-        contract: contractToPublish,
-        api: apiForPublisher // Pass the fully prepared adapter object.
-      })
+        
+        const buttonToClick = document.getElementById(buttonId);
+        
+        if (buttonToClick) {
+          buttonToClick.click();
+        } else {
+          props.plugin.call('notification', 'toast', 'Could not find the publish button.');
+        }
+      }, 500)
 
     } catch (e) {
       console.error(e)
-      props.plugin.call('notification', 'toast', `An error occurred: ${e.message}`)
+      await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
     }
+    
+    setCompileState('idle'); 
   };
-
-  const resetPublishInfo = () => setPublishInfo({})
 
   const handleRunScript = async (runnerKey: string) => {
     if (runnerKey === 'new_script') {
@@ -379,138 +327,6 @@ export const TabsUI = (props: TabsUIProps) => {
     >
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          {/* <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-run-script"
-            tooltipText={
-              <span>
-                {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
-                  <FormattedMessage id="remixUiTabs.tooltipText1" />
-                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
-                  <FormattedMessage id="remixUiTabs.tooltipText2" />
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText3" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="play-editor"
-              className="btn text-success pr-0 py-0 d-flex"
-              disabled={!(PlayExtList.includes(tabsState.currentExt))}
-              onClick={async () => {
-                const path = active().substr(active().indexOf('/') + 1, active().length)
-                const content = await props.plugin.call('fileManager', 'readFile', path)
-                if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                  await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
-                } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
-                  await props.plugin.call('solidity', 'compile', path)
-                } else if (tabsState.currentExt === 'circom') {
-                  await props.plugin.call('circuit-compiler', 'compile', path)
-                } else if (tabsState.currentExt === 'vy') {
-                  await props.plugin.call('vyper', 'vyperCompileCustomAction')
-                } else if (tabsState.currentExt === 'nr') {
-                  await props.plugin.call('noir-compiler', 'compile', path)
-                }
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }}
-            >
-              <i className="fas fa-play"></i>
-            </button>
-          </CustomTooltip> */}
-
-          {/* <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-run-script-config"
-            tooltipText={
-              <span>
-                <FormattedMessage id="remixUiTabs.tooltipText9" />
-              </span>
-            }><button
-              data-id="script-config"
-              className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
-              onClick={async () => {
-                await props.plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
-                await props.plugin.call('tabs', 'focus', 'UIScriptRunner')
-              }}
-            >
-              <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button>
-          </CustomTooltip> */}
-
-          {/* <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-explanation"
-              tooltipText={
-                <span>
-                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText5" />
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText4" />
-                  )}
-                </span>
-              }
-            >
-              <button
-                data-id="explain-editor"
-                id='explain_btn'
-                className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
-                onClick={async () => {
-                  const path = active().substr(active().indexOf('/') + 1, active().length)
-                  const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
-                    setExplaining(true)
-                    try {
-                      await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
-                    }
-                    catch (e) {
-                      // do nothing
-                    }
-
-                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-
-                    setExplaining(false)
-                    _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
-                  }
-                }}
-              >
-                <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
-              </button>
-            </CustomTooltip>
-
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-copilot"
-              tooltipText={
-                <span>
-                  {tabsState.currentExt === 'sol' ? (
-                    !ai_switch ? (
-                      <FormattedMessage id="remixUiTabs.tooltipText6" />
-                    ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
-                  )}
-                </span>
-              }
-            >
-              <button
-                data-id="remix_ai_switch"
-                id='remix_ai_switch'
-                className="btn ai-switch text-ai pl-2 pr-0 py-0"
-                disabled={!(tabsState.currentExt === 'sol')}
-                onClick={async () => {
-                  await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
-                  setAI_switch(!ai_switch)
-                  ai_switch ? _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_disabled'])
-                }}
-              >
-                <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
-              </button>
-            </CustomTooltip>
-          </div> */}
-
           <div className="d-flex align-items-center m-1">
             <div className="btn-group" role="group" data-id="compile_group" aria-label="compile group">
               <CustomTooltip
@@ -586,14 +402,6 @@ export const TabsUI = (props: TabsUIProps) => {
                   onNotify={(msg) => console.log(msg)}
                   onRequestCompileAndPublish={handleCompileAndPublish}
                 />
-                {publishInfo.storage && (
-                  <PublishToStorage
-                    api={publishInfo.api}
-                    storage={publishInfo.storage as any}
-                    contract={publishInfo.contract}
-                    resetStorage={resetPublishInfo}
-                  />
-                )}
               </>
             )}
           </div>

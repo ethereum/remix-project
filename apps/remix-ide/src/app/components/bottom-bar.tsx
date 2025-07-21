@@ -26,7 +26,6 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         const path = await plugin.call('fileManager', 'getCurrentFile')
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
-        console.log("Current ext updated:", ext)
       } catch (err) {
         console.error('Failed to get current file', err)
         setCurrentExt('')
@@ -52,7 +51,6 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       const path = await plugin.call('fileManager', 'getCurrentFile')
       const content = await plugin.call('fileManager', 'readFile', path)
       await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-      console.log("Explain sent to remixAI")
   
     } catch (err) {
       console.error("Explain failed:", err)
@@ -64,7 +62,6 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     try {
       await plugin.call('settings', 'updateCopilotChoice', !aiSwitch)
       setAiSwitch(!aiSwitch)
-      console.log("AI switch toggled:", !aiSwitch)
     } catch (err) {
       console.error('Failed to toggle AI copilot', err)
     }
@@ -90,8 +87,8 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       )}
       <div className="copilot-toggle">
         <span className={aiSwitch ? "on" : ""}>AI copilot</span>
-        <label className="switch">
-          <input type="checkbox" checked={aiSwitch} onChange={toggleAI} />
+        <label className="switch"  data-id="copilot_toggle" >
+          <input type="checkbox" checked={aiSwitch} onChange={toggleAI}/>
           <span className="slider"></span>
         </label>
       </div>
