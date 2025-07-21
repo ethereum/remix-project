@@ -73,7 +73,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
 
 export const TabsUI = (props: TabsUIProps) => {
-  
+
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
@@ -207,7 +207,6 @@ export const TabsUI = (props: TabsUIProps) => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
 
-
   /**
    * Compiles the current file and triggers the 'Publish' functionality of the Solidity Compiler plugin.
    * * ⚠️ WARNING: This function uses a brittle method of direct DOM manipulation
@@ -236,9 +235,9 @@ export const TabsUI = (props: TabsUIProps) => {
         } else {
           buttonId = 'publishOnSwarm';
         }
-        
+
         const buttonToClick = document.getElementById(buttonId);
-        
+
         if (buttonToClick) {
           buttonToClick.click();
         } else {
@@ -250,8 +249,8 @@ export const TabsUI = (props: TabsUIProps) => {
       console.error(e)
       await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
     }
-    
-    setCompileState('idle'); 
+
+    setCompileState('idle');
   };
 
   const handleRunScript = async (runnerKey: string) => {
@@ -260,7 +259,7 @@ export const TabsUI = (props: TabsUIProps) => {
         const path = 'scripts'
         let newScriptPath = `${path}/new_script.ts`
         let counter = 1
-        
+
         while (await props.plugin.call('fileManager', 'exists', newScriptPath)) {
           newScriptPath = `${path}/new_script_${counter}.ts`
           counter++
@@ -347,7 +346,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 <button
                   className="btn btn-primary d-flex align-items-center justify-content-center"
                   data-id="compile-action"
-                  style={{ 
+                  style={{
                     padding: "4px 8px",
                     height: "28px",
                     fontFamily: "Nunito Sans, sans-serif",
@@ -366,6 +365,12 @@ export const TabsUI = (props: TabsUIProps) => {
                       await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
                     } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                       await props.plugin.call('solidity', 'compile', path)
+                    } else if (tabsState.currentExt === 'circom') {
+                      await props.plugin.call('circuit-compiler', 'compile', path)
+                    } else if (tabsState.currentExt === 'vy') {
+                      await props.plugin.call('vyper', 'vyperCompileCustomAction')
+                    } else if (tabsState.currentExt === 'nr') {
+                      await props.plugin.call('noir-compiler', 'compile', path)
                     }
                     setCompileState('compiled')
                     _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
@@ -373,14 +378,14 @@ export const TabsUI = (props: TabsUIProps) => {
                 >
                   <i className={
                     compileState === 'compiled' ? "fas fa-check"
-                    : "fas fa-play"
+                      : "fas fa-play"
                   }></i>
                   <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
                     {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
                       ? (compileState === 'compiling' ? "Run script" :
-                          compileState === 'compiled' ? "Run script" : "Run script")
+                        compileState === 'compiled' ? "Run script" : "Run script")
                       : (compileState === 'compiling' ? "Compiling..." :
-                          compileState === 'compiled' ? "Compiled" : "Compile")}
+                        compileState === 'compiled' ? "Compiled" : "Compile")}
                   </span>
                 </button>
               </CustomTooltip>
@@ -388,13 +393,13 @@ export const TabsUI = (props: TabsUIProps) => {
             {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? (
               <RunScriptDropdown
                 plugin={props.plugin}
-                onRun={handleRunScript} 
+                onRun={handleRunScript}
                 onNotify={(msg) => console.log(msg)}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
             ) : (
               <>
-                <CompileDropdown   
+                <CompileDropdown
                   tabPath={active().substr(active().indexOf('/') + 1, active().length)}
                   compiledFileName={active()}
                   plugin={props.plugin}
@@ -447,7 +452,7 @@ export const TabsUI = (props: TabsUIProps) => {
           ))}
         </Tabs>
       </div>
-      
+
     </div>
   )
 }

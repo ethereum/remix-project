@@ -23,12 +23,12 @@ const RunScriptDropdown: React.FC<RunScriptDropdownProps> = ({ plugin, disabled,
       await plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
       await plugin.call('tabs', 'focus', 'UIScriptRunner')
       onNotify?.("Opened script configuration")
-    }, dataId: 'open-script-configuration-menu-item'}
+    }, dataId: 'open-script-configuration-menu-item' }
   ]
 
   return (
-    <DropdownMenu 
-      items={items} 
+    <DropdownMenu
+      items={items}
       disabled={disabled}
       triggerDataId="run-script-dropdown-trigger"
       panelDataId="run-script-dropdown-panel"

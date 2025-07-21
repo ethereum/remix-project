@@ -286,14 +286,14 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           && compileErrors
           && compileErrors[currentFile]
           && compileErrors[currentFile]['contracts'] && (
-            <ContractSelection
-              api={api}
-              compiledFileName={currentFile}
-              contractsDetails={contractsFile[currentFile].contractsDetails}
-              contractList={contractsFile[currentFile].contractList}
-              compilerInput={contractsFile[currentFile].input}
-              modal={modal}
-            />
+          <ContractSelection
+            api={api}
+            compiledFileName={currentFile}
+            contractsDetails={contractsFile[currentFile].contractsDetails}
+            contractList={contractsFile[currentFile].contractList}
+            compilerInput={contractsFile[currentFile].input}
+            modal={modal}
+          />
         )}
         {compileErrors && compileErrors[currentFile] && (
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">

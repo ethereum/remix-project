@@ -38,7 +38,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
 
   return (
     <div className="custom-dropdown-wrapper" ref={ref}>
-      <button 
+      <button
         className="custom-dropdown-trigger btn btn-primary"
         onClick={() => {
           if (!disabled) {
@@ -49,7 +49,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
         disabled={disabled}
         data-id={triggerDataId || 'custom-dropdown-trigger'}
       >
-        <i className="fas fa-angle-down" style={{color: 'white'}}></i>
+        <i className="fas fa-angle-down" style={{ color: 'white' }}></i>
       </button>
 
       {open && (
@@ -70,20 +70,20 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
             >
               {item.icon && <span className="custom-dropdown-item-icon">{item.icon}</span>}
               <span>{item.label}</span>
-              {item.submenu &&  <span className="custom-dropdown-item-icon"><ArrowRightSm /> </span>}
+              {item.submenu && <span className="custom-dropdown-item-icon"><ArrowRightSm /> </span>}
 
               {activeSubmenu === idx && item.submenu && (
                 <div className="custom-dropdown-submenu" data-id={`${item.dataId || 'submenu'}-panel`}>
                   {item.submenu.map((sub, subIdx) => (
-                    <div 
-                      key={subIdx} 
+                    <div
+                      key={subIdx}
                       className={`custom-dropdown-item ${sub.borderTop ? 'border-top' : ''} ${sub.borderBottom ? 'border-bottom' : ''}`}
                       onClick={() => {
-                          if(!disabled && sub.onClick){
-                            sub.onClick()
-                            setOpen(false)
-                          }
+                        if (!disabled && sub.onClick){
+                          sub.onClick()
+                          setOpen(false)
                         }
+                      }
                       }
                       data-id={sub.dataId}
                     >

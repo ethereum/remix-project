@@ -6,7 +6,7 @@ import { SolScanTable, ScanReport } from '@remix-ui/tabs'
 import axios from 'axios'
 import { endpointUrls } from '@remix-endpoints-helper'
 
-import { ArrowRightBig, IpfsLogo, SwarmLogo, SettingsLogo, SolidityScanLogo, AnalysisLogo, TsLogo  } from '@remix-ui/tabs'
+import { ArrowRightBig, IpfsLogo, SwarmLogo, SettingsLogo, SolidityScanLogo, AnalysisLogo, TsLogo } from '@remix-ui/tabs'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -172,9 +172,9 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       icon: <ArrowRightBig />,
       dataId: 'compile-run-script-menu-item',
       submenu: scriptFiles.length > 0
-        ? scriptFiles.map(f => ({ 
-          label: f, icon: <TsLogo />, 
-          onClick: () => runScript(f), 
+        ? scriptFiles.map(f => ({
+          label: f, icon: <TsLogo />,
+          onClick: () => runScript(f),
           dataId: `run-script-${f.replace(/[^a-zA-Z0-9-]/g, '_')}-submenu-item` }))
         : [{ label: 'No scripts found', onClick: () => {}, dataId: 'no-scripts-found-item' }]
     },
@@ -189,7 +189,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
     },
     {
       label: 'Compile and publish',
-      icon: <ArrowRightBig />, 
+      icon: <ArrowRightBig />,
       dataId: 'compile-publish-menu-item',
       submenu: [
         { label: 'Publish on IPFS', icon: <IpfsLogo />, onClick: () => onRequestCompileAndPublish('ipfs'), dataId: 'publish-ipfs-submenu-item' },
