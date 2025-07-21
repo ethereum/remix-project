@@ -29,6 +29,8 @@ export interface PromptAreaProps {
   modelBtnRef: React.RefObject<HTMLButtonElement>
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
+  textareaRef?: React.RefObject<HTMLTextAreaElement>
+  maximizePanel: () => Promise<void>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -55,14 +57,16 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   contextBtnRef,
   modelBtnRef,
   aiContextGroupList,
-  aiAssistantGroupList
+  aiAssistantGroupList,
+  textareaRef,
+  maximizePanel
 }) => {
 
   return (
     <>
       {showContextOptions && (
         <div
-          className="bg-light mb-1 p-2 border border-text"
+          className="bg-light mb-1 p-2 border border-text w-75"
           style={{ borderRadius: '8px' }}
         >
           <div className="text-uppercase ml-2 mb-2">Context</div>
@@ -76,7 +80,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       )}
 
       <div
-        className="prompt-area d-flex flex-column gap-2 w-100 p-3 border border-text bg-light align-self-start"
+        className="prompt-area d-flex flex-column mx-1 p-2 border border-text bg-light"
       >
         <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
           <button
@@ -85,7 +89,10 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
             ref={contextBtnRef}
           >
-          @Add context
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
+            {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
+            {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
           <div className="d-flex justify-content-center align-items-center">
@@ -107,6 +114,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         </div>
         <div className="ai-chat-input d-flex flex-column">
           <textarea
+            ref={textareaRef}
             style={{ flexGrow: 1 }}
             rows={2}
             className="form-control bg-light"
@@ -114,6 +122,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             disabled={isStreaming}
             onFocus={() => {
               dispatchActivity('typing', input)
+              maximizePanel()
             }}
             onChange={e => {
               dispatchActivity('typing', e.target.value)
@@ -154,7 +163,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             </button> */}
           </div>
         </div>
-        {contextChoice !== 'none' && contextFiles.length > 0 && (
+        {/* {contextChoice !== 'none' && contextFiles.length > 0 && (
           <div className="mt-2 d-flex flex-wrap gap-1 overflow-y-auto" style={{ maxHeight: '110px' }}>
             {contextFiles.slice(0, 6).map(f => {
               const name = f.split('/').pop()
@@ -180,7 +189,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               </span>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </>
   )

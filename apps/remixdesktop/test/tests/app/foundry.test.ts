@@ -9,6 +9,7 @@ const dir = '/tmp/' + projectDir
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hideToolTips()
         done()
     },
     installFoundry: function (browser: NightwatchBrowser) {
@@ -108,7 +109,9 @@ async function installFoundry(): Promise<void> {
 async function initFoundryProject(): Promise<void> {
     console.log('initFoundryProject', homedir())
     try {
-        if (process.env.CIRCLECI) {
+        // Check if running in any CI environment
+        const isCI = process.env.CIRCLECI || process.env.GITHUB_ACTIONS;
+        if (isCI) {
             spawn('git config --global user.email \"you@example.com\"', [], { cwd: homedir(), shell: true, detached: true })
             spawn('git config --global user.name \"Your Name\"', [], { cwd: homedir(), shell: true, detached: true })
         }

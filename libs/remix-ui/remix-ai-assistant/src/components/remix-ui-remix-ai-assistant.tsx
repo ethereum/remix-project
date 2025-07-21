@@ -51,6 +51,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const aiChatRef = useRef<HTMLDivElement>(null)
 
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
@@ -199,6 +201,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       node.scrollTop = node.scrollHeight
     }
   }, [messages])
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    // Focus textarea when streaming stops (after request processing)
+    if (!isStreaming && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isStreaming])
 
   // helper to toggle like / dislike feedback and push Matomo events
   const recordFeedback = (msgId: string, next: 'like' | 'dislike' | 'none') => {
@@ -446,12 +461,24 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }),
     [sendPrompt, messages]
   )
+  const chatHistoryRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight
+    }
+  }, [messages])
+
+  const maximizePanel = async () => {
+    await props.plugin.call('layout', 'maximisePinnedPanel')
+  }
 
   return (
     <div
-      className="d-flex flex-column h-100 mx-3 "
+      className="d-flex flex-column h-100 w-100 overflow-x-hidden"
+      ref={aiChatRef}
     >
-      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column align-items-center p-2" style={{ flex: 7, overflowY: 'scroll' }}>
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column p-2 overflow-x-hidden" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
         <div data-id="remix-ai-assistant-ready"></div>
         {/* hidden hook for E2E tests: data-streaming="true|false" */}
         <div
@@ -467,12 +494,12 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           historyRef={historyRef}
         />
       </section>
-      <section id="remix-ai-prompt-area" className=" mt-1" style={{ flex: 1 }}
+      <section id="remix-ai-prompt-area" className="mt-1" style={{ flex: 1 }}
       >
         {showAssistantOptions && (
           <div
-            className="pt-2 mb-2 z-3 bg-light border border-text"
-            style={{ borderRadius: '8px', left: `${calcAndConvertToDvw(getBoundingRect(modelBtnRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', }}
+            className="pt-2 mb-2 z-3 bg-light border border-text w-75"
+            style={{ borderRadius: '8px' }}
           >
             <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
             <GroupListMenu
@@ -485,6 +512,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         )}
         <PromptArea
           input={input}
+          maximizePanel={maximizePanel}
           setInput={setInput}
           isStreaming={isStreaming}
           handleSend={handleSend}
@@ -506,6 +534,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           modelBtnRef={modelBtnRef}
           aiContextGroupList={aiContextGroupList}
           aiAssistantGroupList={aiAssistantGroupList}
+          textareaRef={textareaRef}
         />
       </section>
     </div>

@@ -84,7 +84,7 @@ export class workspaceAgent {
 
   async writeGenerationResults(payload) {
     try {
-      let modifiedFilesMarkdown = '## Modified Files\n'
+      let modifiedFilesMarkdown = '# Modified Files\n'
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
         // const fileContent = await this.plugin.call('codeFormatter', 'format', file.fileName, file.content, true);

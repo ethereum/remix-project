@@ -3,7 +3,7 @@ import {Profile} from '@remixproject/plugin-utils'
 import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 
 import os from 'os'
-import * as pty from 'node-pty-prebuilt-multiarch'
+import * as pty from 'node-pty'
 import process from 'node:process'
 import {userInfo} from 'node:os'
 import {findExecutable} from '../utils/findExecutable'

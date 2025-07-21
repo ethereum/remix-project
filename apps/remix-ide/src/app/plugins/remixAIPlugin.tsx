@@ -226,8 +226,9 @@ export class RemixAIPlugin extends Plugin {
       result = await this.remoteInferencer.generate(userPrompt, params)
     }
 
-    const genResult = this.contractor.writeContracts(result, prompt)
-    this.call('menuicons', 'select', 'filePanel')
+    const genResult = await this.contractor.writeContracts(result, userPrompt)
+    if (genResult.includes('No payload')) return genResult
+    await this.call('menuicons', 'select', 'filePanel')
     return genResult
   }
 
