@@ -1,8 +1,9 @@
-import {NightwatchBrowser} from 'nightwatch'
+import { NightwatchBrowser } from 'nightwatch'
 
 const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-   done()
+    browser.hideToolTips()
+    done()
   },
   open: function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="openFolderButton"]', 10000).click('*[data-id="openFolderButton"]')
@@ -20,7 +21,7 @@ const tests = {
       .click("[data-active='1'][data-type='remixUIXT']")
       .pause(1000)
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('"test" | Out-File -FilePath example.txt').sendKeys(this.Keys.ENTER)
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemexample.txt"]', 10000)
@@ -28,7 +29,7 @@ const tests = {
   'rename that file': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('Move-Item -Path example.txt -Destination newExample.txt').sendKeys(this.Keys.ENTER)
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample.txt"]', 10000)
@@ -36,12 +37,12 @@ const tests = {
   'create a file and delete it': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('touch newExample2.txt').sendKeys(this.Keys.ENTER)
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 10000)
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('Remove-Item -Path newExample2.txt').sendKeys(this.Keys.ENTER)
       })
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 10000)
@@ -49,7 +50,7 @@ const tests = {
   'run a git clone command': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('git clone https://github.com/ethereum/awesome-remix').sendKeys(this.Keys.ENTER)
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemawesome-remix"]', 10000)
@@ -61,7 +62,7 @@ const tests = {
       .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('Remove-Item -Path awesome-remix -Recurse -Force').sendKeys(this.Keys.ENTER)
       })
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemawesome-remix"]', 10000)
@@ -73,7 +74,7 @@ const tests = {
       .click("[data-active='1'][data-type='remixUIXT']")
       .saveScreenshot('./reports/screenshots/list-files.png')
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('ls').sendKeys(this.Keys.ENTER)
       })
       .saveScreenshot('./reports/screenshots/list-files-after.png')
@@ -142,7 +143,7 @@ const tests = {
         browser.assert.ok((result.value as any).length === 4)
       })
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
         return actions.sendKeys('echo thirdterminal').sendKeys(this.Keys.ENTER)
       })
   },
@@ -245,5 +246,5 @@ const tests = {
 }
 
 module.exports = {
-    ...process.platform.startsWith('win')?tests:{}
+  ...process.platform.startsWith('win') ? tests : {}
 }

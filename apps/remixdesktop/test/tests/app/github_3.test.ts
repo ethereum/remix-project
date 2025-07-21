@@ -44,7 +44,7 @@ const tests = {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
-            .setValue('*[data-id="githubToken"]', process.env.dgit_token)
+            .setValue('*[data-id="githubToken"]', process.env.DGIT_TOKEN)
             .pause(1000)
             .setValue('*[data-id="gitubUsername"]', 'git')
             .pause(1000)

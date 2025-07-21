@@ -301,3 +301,12 @@
 .border-box-sizing {
   box-sizing: border-box;
 }
+
+@media (max-width: 1280px) {
+  @container container-img (inline-size < 150px) {
+    .container-img {
+      width: 80px;
+      min-height: 80px;
+    }
+  }
+}

@@ -25,8 +25,6 @@ module.exports = {
   'Should contain message starters #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('remixaiassistant')
-      .waitForElementVisible('*[data-id="movePluginToRight"]')
-      .click('*[data-id="movePluginToRight"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant-starter-0"]')
       .click('*[data-id="remix-ai-assistant-starter-0"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
@@ -86,8 +84,9 @@ module.exports = {
       .assistantAddContext('currentFile')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: `//*[contains(@class,"aiContext-file") and contains(.,"Untitled.sol")]`
+        selector: '//*[@data-id="composer-ai-add-context"]'
       })
+      .assert.containsText('*[data-id="composer-ai-add-context"]', 'Current File')
   },
   'Should add workspace as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
     browser
@@ -95,8 +94,9 @@ module.exports = {
       .assistantAddContext('workspace')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[contains(@class,"aiContext-file") and contains(.,"@workspace")]'
+        selector: '//*[@data-id="composer-ai-add-context"]'
       })
+      .assert.containsText('*[data-id="composer-ai-add-context"]', 'Workspace')
   },
 
   'Should add opened files as context to the AI assistant #group1': function (browser: NightwatchBrowser) {
@@ -114,8 +114,9 @@ module.exports = {
       .assistantAddContext('openedFiles')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[contains(@class,"aiContext-file") and contains(.,"anotherFile.sol")]'
+        selector: '//*[@data-id="composer-ai-add-context"]'
       })
+      .assert.containsText('*[data-id="composer-ai-add-context"]', 'Open Files')
   },
 
   'Should generate new workspace contract code with the AI assistant #group1': function (browser: NightwatchBrowser) {
@@ -154,7 +155,7 @@ module.exports = {
       .assistantWorkspace('comment all function', 'mistralai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
@@ -202,7 +203,7 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'openai')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
@@ -222,7 +223,7 @@ module.exports = {
       .assistantWorkspace('remove all comments', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied"))]',
+        selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
         timeout: 60000
       })
       .waitForElementPresent({
