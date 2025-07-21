@@ -187,6 +187,7 @@ export class RemixAIPlugin extends Plugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
+    userPrompt = userPrompt + " while specifying the library github tag in the imports"
     _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
 
     if (useRag) {
