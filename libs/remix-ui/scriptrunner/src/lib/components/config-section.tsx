@@ -41,7 +41,7 @@ export default function ConfigSection(props: ConfigSectionProps) {
             }}
             checked={(props.activeConfig && props.activeConfig.name === props.config.name)}
           />
-          <label className="pointer form-check-label form-check-label" htmlFor={`${props.config.title || props.config.name}`}
+          <label className="pointer form-check-label" htmlFor={`${props.config.title || props.config.name}`}
             data-id={`sr-${(props.activeConfig && props.activeConfig.name === props.config.name)?'loaded':'notloaded'}-${props.config.name}`}>
             <div className="ps-2">{props.config.title || props.config.name}</div>
           </label>

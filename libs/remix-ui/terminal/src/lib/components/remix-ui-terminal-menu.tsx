@@ -45,7 +45,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
           disabled={terminalState.isVM}
         />
         <label
-          className="form-check-label form-check-label text-nowrap"
+          className="form-check-label text-nowrap"
           style={{ paddingTop: '0.125rem' }}
           htmlFor="listenNetworkCheck"
           data-id="listenNetworkCheckInput"

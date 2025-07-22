@@ -799,14 +799,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className="mb-2 flex-row-reverse d-flex flex-row form-check">
             <input className="me-2 form-check-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
-            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="pt-0 form-check-label form-check-label">
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="pt-0 form-check-label">
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
           </div>
           {platform === appPlatformTypes.desktop ?
             <div className="mb-2 flex-row-reverse d-flex flex-row form-check">
               <input className="me-2 form-check-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
-              <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label form-check-label">
+              <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label">
                 <FormattedMessage id="solidity.downloadedCompilers" />
               </label>
             </div>:null}
@@ -820,7 +820,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               title="Auto compile"
               checked={state.autoCompile}
             />
-            <label className="form-check-label form-check-label" htmlFor="autoCompile">
+            <label className="form-check-label" htmlFor="autoCompile">
               <FormattedMessage id="solidity.autoCompile" />
             </label>
           </div>
@@ -833,7 +833,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               title="Hide warnings"
               checked={state.hideWarnings}
             />
-            <label className="form-check-label form-check-label" htmlFor="hideWarningsBox">
+            <label className="form-check-label" htmlFor="hideWarningsBox">
               <FormattedMessage id="solidity.hideWarnings" />
             </label>
           </div>
@@ -847,7 +847,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 title="Enable Hardhat Compilation"
                 checked={hhCompilation}
               />
-              <label className="form-check-label form-check-label" htmlFor="enableHardhat">
+              <label className="form-check-label" htmlFor="enableHardhat">
                 <FormattedMessage id="solidity.enableHardhat" />
               </label>
               <a className="mt-1 text-nowrap" href="https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation" target={'_blank'}>
@@ -876,7 +876,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 title="Enable Truffle Compilation"
                 checked={truffleCompilation}
               />
-              <label className="form-check-label form-check-label" htmlFor="enableTruffle">
+              <label className="form-check-label" htmlFor="enableTruffle">
                 <FormattedMessage id="solidity.enableTruffle" />
               </label>
               <a className="mt-1 text-nowrap" href="https://remix-ide.readthedocs.io/en/latest/truffle.html#enable-truffle-compilation" target={'_blank'}>
@@ -919,7 +919,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               checked={!state.useFileConfiguration}
               id="scManualConfig"
             />
-            <label className="form-check-label form-check-label" htmlFor="scManualConfig" data-id="scManualConfiguration">
+            <label className="form-check-label" htmlFor="scManualConfig" data-id="scManualConfiguration">
               <FormattedMessage id="solidity.compilerConfiguration" />
             </label>
           </div>
@@ -996,7 +996,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       type="checkbox"
                       checked={state.optimize}
                     />
-                    <label className="form-check-label form-check-label" htmlFor="optimize">
+                    <label className="form-check-label" htmlFor="optimize">
                       <FormattedMessage id="solidity.enableOptimization" />
                     </label>
                   </div>
@@ -1031,7 +1031,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               checked={state.useFileConfiguration}
               id="scFileConfig"
             />
-            <label className="form-check-label form-check-label" htmlFor="scFileConfig" data-id="scFileConfiguration">
+            <label className="form-check-label" htmlFor="scFileConfig" data-id="scFileConfiguration">
               <FormattedMessage id="solidity.useConfigurationFile" />
             </label>
           </div>

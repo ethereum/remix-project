@@ -85,7 +85,7 @@ export function RecorderUI(props: RecorderProps) {
               </span>
             }
           >
-            <label className="form-check-label form-check-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">
+            <label className="form-check-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">
               <FormattedMessage id="udapp.livemodeRecorderLabel" />
             </label>
           </CustomTooltip>
