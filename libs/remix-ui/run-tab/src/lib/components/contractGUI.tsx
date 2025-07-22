@@ -467,7 +467,7 @@ export function ContractGUI(props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              <label htmlFor="upgradeImplementation" data-id="contractGUIUpgradeImplementationLabel" className="m-0 form-check-label form-check-label udapp_checkboxAlign">
+              <label htmlFor="upgradeImplementation" data-id="contractGUIUpgradeImplementationLabel" className="m-0 form-check-label udapp_checkboxAlign">
                 <FormattedMessage id="udapp.upgradeWithProxy" />
               </label>
             </div>

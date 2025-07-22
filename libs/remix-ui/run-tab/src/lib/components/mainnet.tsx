@@ -171,7 +171,7 @@ export function MainnetPrompt(props: MainnetProps) {
       </div>
       <div className="d-flex py-1 align-items-center form-check remixui_checkbox">
         <input className="form-check-input form-check-input" id="confirmsetting" type="checkbox" />
-        <label className="m-0 form-check-label form-check-label" htmlFor="confirmsetting">
+        <label className="m-0 form-check-label" htmlFor="confirmsetting">
           <FormattedMessage id="udapp.mainnetText3" />
         </label>
       </div>

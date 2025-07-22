@@ -391,7 +391,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }}
         type="checkbox"
       />
-      <label data-id="debugGeneratedSourcesLabel" className="pt-1 form-check-label form-check-label" htmlFor="debugGeneratedSourcesInput">
+      <label data-id="debugGeneratedSourcesLabel" className="pt-1 form-check-label" htmlFor="debugGeneratedSourcesInput">
         <FormattedMessage id="debugger.useGeneratedSources" />
         (Solidity {'>='} v0.7.2)
       </label>
@@ -424,7 +424,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                   type="checkbox"
                 />
               </CustomTooltip>
-              <label data-id="debugLocaNodeLabel" className="form-check-label form-check-label" htmlFor="debugWithLocalNodeInput">
+              <label data-id="debugLocaNodeLabel" className="form-check-label" htmlFor="debugWithLocalNodeInput">
                 <FormattedMessage id="debugger.debugLocaNodeLabel" />
               </label>
             </div>

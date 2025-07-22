@@ -36,7 +36,7 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
                   data-id={`settingsTabLocale${locale.code}`}
                   checked={localeModule.active === locale.code.toLocaleLowerCase()}
                 />
-                <label className="form-check-label form-check-label" data-id={`settingsTabLocaleLabel${locale.code}`} htmlFor={locale.code}>
+                <label className="form-check-label" data-id={`settingsTabLocaleLabel${locale.code}`} htmlFor={locale.code}>
                   {locale.name.toLocaleUpperCase()}-{locale.localeName}
                 </label>
               </div>

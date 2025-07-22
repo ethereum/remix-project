@@ -47,7 +47,7 @@ export function GasLimitUI(props: GasPriceProps) {
             checked={gasLimitAuto}
             id="glAutoConfig"
           />
-          <label className="form-check-label form-check-label" htmlFor="glAutoConfig" data-id="glAutoConfiguration">
+          <label className="form-check-label" htmlFor="glAutoConfig" data-id="glAutoConfiguration">
             <FormattedMessage id="udapp.gasLimitAuto" />
           </label>
         </div>
@@ -61,7 +61,7 @@ export function GasLimitUI(props: GasPriceProps) {
             checked={!gasLimitAuto}
             id="glManualConfig"
           />
-          <label className="mb-1 w-50 form-check-label form-check-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
+          <label className="mb-1 w-50 form-check-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
             <FormattedMessage id="udapp.gasLimitManual" />
           </label>
           <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>

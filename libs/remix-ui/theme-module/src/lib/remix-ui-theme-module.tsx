@@ -38,7 +38,7 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
                   data-id={`settingsTabTheme${theme.name}`}
                   checked={themeModule.active === theme.name.toLocaleLowerCase()}
                 />
-                <label className="form-check-label form-check-label" data-id={`settingsTabThemeLabel${theme.name}`} htmlFor={theme.name}>
+                <label className="form-check-label" data-id={`settingsTabThemeLabel${theme.name}`} htmlFor={theme.name}>
                   {theme.name} ({theme.quality})
                 </label>
               </div>

@@ -409,7 +409,7 @@ const createModalMessage = async (
         <label
           htmlFor="initGitRepository"
           data-id="initGitRepositoryLabel"
-          className="m-0 form-check-label form-check-label udapp_checkboxAlign"
+          className="m-0 form-check-label udapp_checkboxAlign"
           title={window._intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
         >
           <FormattedMessage id="filePanel.initGitRepositoryLabel" />
@@ -442,7 +442,7 @@ const createOptionsModal = (
       {['mintable', 'burnable', 'pausable'].map((feature) => (
         <div key={feature} className="d-flex ms-2 form-check">
           <input className="form-check-input" type="checkbox" name="feature" value={feature} id={feature} onChange={onChangeCheckBoxRefs} />
-          <label className="form-check-label form-check-label" htmlFor={feature} data-id={`featureType${feature.charAt(0).toUpperCase() + feature.slice(1)}`}>
+          <label className="form-check-label" htmlFor={feature} data-id={`featureType${feature.charAt(0).toUpperCase() + feature.slice(1)}`}>
             <FormattedMessage id={`filePanel.${feature}`} />
           </label>
         </div>
@@ -456,7 +456,7 @@ const createOptionsModal = (
       {['transparent', 'uups'].map((type) => (
         <div key={type} className="d-flex ms-2 form-check">
           <input className="form-check-input" type="radio" name="upgradeability" value={type} id={type} onChange={onChangeRadioRefs} />
-          <label className="form-check-label form-check-label" htmlFor={type} data-id={`upgradeType${type.charAt(0).toUpperCase() + type.slice(1)}`}>
+          <label className="form-check-label" htmlFor={type} data-id={`upgradeType${type.charAt(0).toUpperCase() + type.slice(1)}`}>
             {type.toUpperCase()}
           </label>
         </div>

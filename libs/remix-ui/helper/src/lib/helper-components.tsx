@@ -159,7 +159,7 @@ export const CompileOptions = ({ autoCompile, hideWarnings, setCircuitAutoCompil
         checked={autoCompile}
         id="autoCompileCircuit"
       />
-      <label className="form-check-label form-check-label" htmlFor="autoCompileCircuit" data-id="auto_compile_circuit_checkbox_input">
+      <label className="form-check-label" htmlFor="autoCompileCircuit" data-id="auto_compile_circuit_checkbox_input">
         <FormattedMessage id="circuit.autoCompile" />
       </label>
     </div>
@@ -172,7 +172,7 @@ export const CompileOptions = ({ autoCompile, hideWarnings, setCircuitAutoCompil
         title="Hide warnings"
         checked={hideWarnings}
       />
-      <label className="form-check-label form-check-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
+      <label className="form-check-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
         <FormattedMessage id="solidity.hideWarnings" />
       </label>
     </div>
