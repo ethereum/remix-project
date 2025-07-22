@@ -1,4 +1,3 @@
-/* global ethereum */
 'use strict'
 import { Web3 } from 'web3'
 import { execution } from '@remix-project/remix-lib'
@@ -37,7 +36,7 @@ export class ExecutionContext {
     this.isConnected = false
   }
 
-  init (config) {
+  init (_config) {
     this.executionContext = 'vm-prague'
     this.event.trigger('contextChanged', [this.executionContext])
   }
@@ -106,13 +105,13 @@ export class ExecutionContext {
               }
             }
           }
-        
+
           if (id === 1) {
             web3.eth.getBlock(0).then((block) => {
               if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
               callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
               return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
-            }).catch((error) => {
+            }).catch((_error) => {
               // Rabby wallet throws an error at this point. We are in that case unable to check the genesis hash.
               callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
               return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork, networkNativeCurrency })
@@ -247,7 +246,7 @@ export class ExecutionContext {
       } else if (key === 'blocks') {
         return value.map(block => bytesToHex(block))
       } else if (key === '') {
-        return value       
+        return value
       }
       if (typeof value === 'string') {
         return value.startsWith('0x') ? value : '0x' + value
@@ -255,7 +254,7 @@ export class ExecutionContext {
         return '0x' + value.toString(16)
       } else {
         return bytesToHex(value)
-      }      
+      }
     }, '\t')
 
     return stringifyed
