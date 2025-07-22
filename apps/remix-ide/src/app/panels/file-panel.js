@@ -211,17 +211,16 @@ export default class Filepanel extends ViewPlugin {
   }
 
   saveRecent(workspaceName) {
+    if (typeof workspaceName !== 'string') return
     if (workspaceName === 'code-sample') return
     if (!localStorage.getItem('recentWorkspaces')) {
-      localStorage.setItem('recentWorkspaces', JSON.stringify([ workspaceName ]))
+      localStorage.setItem('recentWorkspaces', JSON.stringify([ { name: workspaceName, timestamp: Date.now() } ]))
     } else {
       let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
       // checking if we have a duplication
-      if (!recents.find((el) => {
-        return el === workspaceName
-      })) {
-        recents = ([workspaceName, ...recents])
-        recents = recents.filter((el) => { return el != "" })
+      if (!recents.find((el) => (el || {}).name ? el.name === workspaceName : el === workspaceName)) {
+        recents = ([{ name: workspaceName, timestamp: Date.now() }, ...recents])
+        recents = recents.filter((el) => (el || {}).name ? el.name !== '' : el !== '')
         localStorage.setItem('recentWorkspaces', JSON.stringify(recents))
       }
     }

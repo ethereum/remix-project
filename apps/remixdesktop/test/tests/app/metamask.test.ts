@@ -2,6 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 
 const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hideToolTips()
     done()
   },
   'open default template': function (browser: NightwatchBrowser) {
@@ -14,7 +15,7 @@ const tests = {
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
-        browser
+        browser.hideToolTips()
           .switchWindow(result.value[1])
           .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
           .click('*[data-id="treeViewLitreeViewItemtests"]')

@@ -46,7 +46,10 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
-        loadedAccounts[account] = shortenAddress(account, balance)
+        if (provider.startsWith('injected') && plugin.blockchain && plugin.blockchain['networkNativeCurrency'] && plugin.blockchain['networkNativeCurrency'].symbol)
+          loadedAccounts[account] = shortenAddress(account, balance, plugin.blockchain['networkNativeCurrency'].symbol)
+        else
+          loadedAccounts[account] = shortenAddress(account, balance)
         if (safeAddresses.length && safeAddresses.includes(account)) loadedAccounts[account] = `[SMART] ${loadedAccounts[account]}`
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
@@ -186,6 +189,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  plugin.call('notification', 'toast', `Preparing tx to sign...`)
   const { chainId } = plugin.REACT_API
   const chain = chains[aaSupportedNetworks[chainId].name]
   const PUBLIC_NODE_URL = aaSupportedNetworks[chainId].publicNodeUrl
@@ -251,6 +255,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
         value: 0
       }]
     })
+    plugin.call('notification', 'toast', `Waiting for tx confirmation, can take 5-10 seconds...`)
     await saClient.waitForUserOperationReceipt({ hash: useropHash })
 
     // To verify creation, check if there is a contract code at this address
@@ -264,15 +269,18 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     plugin.REACT_API.smartAccounts[safeAddress] = sAccount
     // Save smart accounts in local storage
     const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
+    if (!smartAccountsStr) await loadSmartAccounts(plugin) // In case, localstorage is cleared or not well loaded, load smart accounts again
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     smartAccountsObj[chainId] = plugin.REACT_API.smartAccounts
     localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
-    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', 'createdSuccessfully'])
+    await fillAccountsList(plugin, dispatch)
+    _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `createdSuccessfullyForChainID:${chainId}`])
     return plugin.call('notification', 'toast', `Safe account ${safeAccount.address} created for owner ${account}`)
   } catch (error) {
     _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `creationFailedWithError:${error.message}`])
     console.error('Failed to create safe smart account: ', error)
-    return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
+    if (error.message.includes('User rejected the request')) return plugin.call('notification', 'toast', `User rejected the request to create safe smart account !!!`)
+    else return plugin.call('notification', 'toast', `Failed to create safe smart account !!!`)
   }
 }
 

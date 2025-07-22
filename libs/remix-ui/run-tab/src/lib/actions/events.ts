@@ -53,7 +53,6 @@ export const setupEvents = (plugin: RunTab) => {
     if (error) {
       const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
-
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
@@ -67,6 +66,7 @@ export const setupEvents = (plugin: RunTab) => {
     if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
       if (!isVM) {
+        fillAccountsList(plugin, dispatch)
         currentNetwork.chainId = network.id
         await loadPinnedContracts(plugin, dispatch, pinnedChainId)
       }

@@ -10,7 +10,7 @@ const desktop_profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   icon: 'assets/img/remix-logo-blue.png',
-  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer'],
+  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'answer'],
 }
 
 export class remixAIDesktopPlugin extends ElectronPlugin {

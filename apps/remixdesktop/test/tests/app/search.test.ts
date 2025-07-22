@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 
 module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hideToolTips()
         done()
     },
     'open default template': function (browser: NightwatchBrowser) {
@@ -16,7 +17,8 @@ module.exports = {
             .pause(3000)
             .windowHandles(function (result) {
                 console.log(result.value)
-                browser.switchWindow(result.value[1])
+                browser.hideToolTips()
+                    .switchWindow(result.value[1])
                     .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
                     .click('*[data-id="treeViewLitreeViewItemtests"]')
                     .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
@@ -31,7 +33,9 @@ module.exports = {
     },
     'Should find text #group1': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-            .click('*[plugin="search"]').waitForElementVisible('*[id="search_input"]')
+            .click('*[plugin="search"]')
+            .waitForElementVisible('*[id="search_input"]')
+            .click('*[id="search_include"]')
             .waitForElementVisible('*[id="search_include"]')
             .setValue('*[id="search_include"]', ', *.*').pause(2000)
             .setValue('*[id="search_input"]', 'read').sendKeys('*[id="search_input"]', browser.Keys.ENTER)

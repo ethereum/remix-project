@@ -3,7 +3,7 @@ import { workspaceAgent } from "./workspaceAgent";
 import { CompilationResult } from "../types/types";
 import { compilecontracts } from "../helpers/compile";
 
-const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Remix IDE. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
+const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Solidity compiler plugin. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
 
 export class ContractAgent {
   plugin: any;
@@ -39,8 +39,6 @@ export class ContractAgent {
 
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
-        console.log('Writing AI results to desktop workspace:', parsedResults.files)
-        // Transform parsedResults.files into an object: { [fileName]: content }
         const files = parsedResults.files.reduce((acc, file) => {
           acc[file.fileName] = file.content
           return acc
@@ -62,8 +60,8 @@ export class ContractAgent {
         // check if file already exists
         await this.plugin.call('fileManager', 'writeFile', file.fileName, file.content)
         await this.plugin.call('codeFormatter', 'format', file.fileName)
-        return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
       }
+      return "New workspace created: **" + this.workspaceName + "**\nUse the Hamburger menu to select it!"
     }
 
     try {

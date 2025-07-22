@@ -118,6 +118,8 @@ const ManagePreferencesDialog = (props) => {
     settings.updateMatomoAnalyticsChoice(true) // Always true for matomo Anonymous analytics
     settings.updateMatomoPerfAnalyticsChoice(switcherState.current.matPerfSwitch) // Enable/Disable Matomo Performance analytics
     settings.updateCopilotChoice(switcherState.current.remixAISwitch) // Enable/Disable RemixAI copilot
+    _paq.push(['trackEvent', 'landingPage', 'MatomoAIModal', `MatomoPerfStatus: ${switcherState.current.matPerfSwitch}`])
+    _paq.push(['trackEvent', 'landingPage', 'MatomoAIModal', `AICopilotStatus: ${switcherState.current.remixAISwitch}`])
     setVisible(false)
     props.savePreferencesFn()
   }

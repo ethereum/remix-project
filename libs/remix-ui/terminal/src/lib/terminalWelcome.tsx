@@ -54,9 +54,6 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
             ethers.js
           </a>{' '}
         </li>
-        <li key="sol-gpt">
-          sol-gpt <i>&lt;your Solidity question here&gt;</i> {' '}
-        </li>
       </ul>
       <div>
         <FormattedMessage id="terminal.welcomeText10" />.

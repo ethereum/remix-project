@@ -12,7 +12,7 @@ const profile = {
   displayName: 'Vertical Icons',
   description: 'Remix IDE vertical icons',
   version: packageJson.version,
-  methods: ['select', 'unlinkContent', 'linkContent'],
+  methods: ['select', 'unlinkContent', 'linkContent', 'activateAndSelect'],
   events: ['toggleContent', 'showContent']
 }
 
@@ -126,6 +126,15 @@ export class VerticalIcons extends Plugin {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('showContent', name)
     this.events.emit('showContent', name)
+  }
+
+  async activateAndSelect(name: string) {
+    const isActive = await this.call('manager', 'isActive', name)
+
+    if (!isActive) {
+      await this.call('manager', 'activatePlugin', name)
+    }
+    this.select(name)
   }
 
   /**

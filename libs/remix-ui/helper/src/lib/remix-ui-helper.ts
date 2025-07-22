@@ -90,10 +90,10 @@ export const isNumeric = (value) => {
   return /^\+?(0|[1-9]\d*)$/.test(value)
 }
 
-export const shortenAddress = (address, etherBalance?) => {
+export const shortenAddress = (address, etherBalance?, currency = 'ETH') => {
   const len = address.length
 
-  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ' + currency + ')' : '')
 }
 
 export const addressToString = (address) => {
@@ -143,3 +143,34 @@ export const shortenDate = (dateString: string) => {
 
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ', ' + date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 }
+
+export const getTimeAgo = (timestamp: number): string => {
+  if (!timestamp) return 'recently'
+
+  const now = Date.now()
+  const diffInMs = now - timestamp
+  const diffInSeconds = Math.floor(diffInMs / 1000)
+  const diffInMinutes = Math.floor(diffInSeconds / 60)
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  const diffInDays = Math.floor(diffInHours / 24)
+  const diffInWeeks = Math.floor(diffInDays / 7)
+  const diffInMonths = Math.floor(diffInDays / 30)
+  const diffInYears = Math.floor(diffInDays / 365)
+
+  if (diffInYears > 0) return diffInYears === 1 ? '1 year ago' : `${diffInYears} years ago`
+
+  if (diffInMonths > 0) return diffInMonths === 1 ? '1 month ago' : `${diffInMonths} months ago`
+
+  if (diffInWeeks > 0) return diffInWeeks === 1 ? '1 week ago' : `${diffInWeeks} weeks ago`
+
+  if (diffInDays > 0) return diffInDays === 1 ? '1 day ago' : `${diffInDays} days ago`
+
+  if (diffInHours > 0) return diffInHours === 1 ? '1 hour ago' : `${diffInHours} hours ago`
+
+  if (diffInMinutes > 0) return diffInMinutes === 1 ? '1 minute ago' : `${diffInMinutes} minutes ago`
+
+  if (diffInSeconds > 0) return diffInSeconds === 1 ? '1 second ago' : `${diffInSeconds} seconds ago`
+
+  return 'just now'
+}
+

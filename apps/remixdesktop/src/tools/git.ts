@@ -55,6 +55,7 @@ export const gitProxy = {
 
     clone: async (input: cloneInputType) => {
         const { stdout, stderr } = await execAsync(`git clone ${input.url} "${input.dir}"`);
+        return { stdout, stderr };
     },
 
     async push(path: string, input: pushInputType) {
@@ -66,6 +67,7 @@ export const gitProxy = {
             remoteRefString = `:${input.remoteRef.name}`
         }
         const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name}${remoteRefString} ${input.ref.name}`, { cwd: path });
+        return { stdout, stderr };
     },
 
     async pull(path: string, input: pullInputType) {
@@ -77,6 +79,7 @@ export const gitProxy = {
             remoteRefString = `:${input.remoteRef.name}`
         }
         const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref.name}${remoteRefString}`, { cwd: path });
+        return { stdout, stderr };
     },
 
     async fetch(path: string, input: fetchInputType) {
@@ -86,29 +89,26 @@ export const gitProxy = {
 
         try {
             const { stdout, stderr } = await execAsync(`git fetch ${input.remote.name} ${(input.ref && input.ref.name) ? input.ref.name : ''}`, { cwd: path });
-            if (stdout) {
-                console.log('stdout:', stdout);
-            }
-            if (stderr) {
-                console.error('stderr:', stderr);
-            }
-        } catch (error) {
-            console.error('Error during fetch:', error);
+            return { stdout, stderr };
+        } catch (e) {
+            throw e;
         }
     },
 
     async checkout(path: string, input: checkoutInputType) {
         let force = input.force ? ' -f' : '';
         const { stdout, stderr } = await execAsync(`git checkout ${force} ${input.ref}`, { cwd: path });
+        return { stdout, stderr };
     },
 
     async commit(path: string, input: commitInputType) {
-
-        await execAsync(`git commit -m '${input.message}'`, { cwd: path });
+        const { stdout: commitStdout, stderr: commitStderr } = await execAsync(`git commit -m '${input.message}'`, { cwd: path });
         const { stdout, stderr } = await execAsync(`git rev-parse HEAD`, { cwd: path });
-        console.log('stdout commit:', stdout);
-        return stdout;
-
+        return { 
+            stdout: commitStdout + '\n' + stdout, 
+            stderr: commitStderr + (stderr ? '\n' + stderr : ''),
+            commitHash: stdout.trim()
+        };
     },
 
     async init(path: string) {

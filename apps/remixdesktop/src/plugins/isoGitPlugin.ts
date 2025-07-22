@@ -137,8 +137,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     if (this.gitIsInstalled) {
-      const status = await gitProxy.commit(this.workingDir, cmd)
-      return status
+      try {
+        const result = await gitProxy.commit(this.workingDir, cmd)
+        
+        // Send commit output to terminal
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'warn', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: `Commit successful: ${result.commitHash}` })
+        return result.commitHash
+      } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Commit failed: ${e.message}` })
+        throw e
+      }
     }
 
     const commit = await git.commit({
@@ -211,7 +227,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       throw new Error('No working directory')
     }
     if (this.gitIsInstalled) {
-      return await gitProxy.checkout(this.workingDir, cmd)
+      try {
+        this.call('terminal' as any, 'log', `Checking out ${cmd.ref}...`)
+        const result = await gitProxy.checkout(this.workingDir, cmd)
+        
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: `Checkout to ${cmd.ref} completed successfully!` })
+        return result
+      } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Checkout failed: ${e.message}` })
+        throw e
+      }
     } else {
       const checkout = await git.checkout({
         ...(await this.getGitConfig()),
@@ -227,7 +260,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     if (this.gitIsInstalled) {
-      return await gitProxy.push(this.workingDir, input)
+      try {
+        this.call('terminal' as any, 'log', 'Pushing changes...')
+        const result = await gitProxy.push(this.workingDir, input)
+        
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: 'Push completed successfully!' })
+        return result
+      } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Push failed: ${e.message}` })
+        throw e
+      }
     } else {
       const push = await isoGit.push(input, await this.getGitConfig(), this)
       return push
@@ -241,7 +291,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     if (this.gitIsInstalled) {
-      return await gitProxy.pull(this.workingDir, input)
+      try {
+        this.call('terminal' as any, 'log', 'Pulling changes...')
+        const result = await gitProxy.pull(this.workingDir, input)
+        
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: 'Pull completed successfully!' })
+        return result
+      } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Pull failed: ${e.message}` })
+        throw e
+      }
     } else {
       const pull = await isoGit.pull(input, await this.getGitConfig(), this)
       return pull
@@ -255,7 +322,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.fetch(this.workingDir, input)
+      try {
+        this.call('terminal' as any, 'log', 'Fetching changes...')
+        const result = await gitProxy.fetch(this.workingDir, input)
+        
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: 'Fetch completed successfully!' })
+        return result
+      } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Fetch failed: ${e.message}` })
+        throw e
+      }
     } else {
       const fetch = await isoGit.fetch(input, await this.getGitConfig(), this)
       return fetch
@@ -266,8 +350,21 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     if (this.gitIsInstalled) {
       try {
         this.call('terminal' as any, 'log', 'Cloning using git... please wait.')
-        await gitProxy.clone(cmd)
+        const result = await gitProxy.clone(cmd)
+        
+        // Send stdout to terminal as info
+        if (result.stdout) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stdout })
+        }
+        
+        // Send stderr to terminal as warning (git often sends progress info to stderr)
+        if (result.stderr) {
+          this.call('terminal' as any, 'log', { type: 'info', value: result.stderr })
+        }
+        
+        this.call('terminal' as any, 'log', { type: 'info', value: 'Clone completed successfully!' })
       } catch (e) {
+        this.call('terminal' as any, 'log', { type: 'error', value: `Clone failed: ${e.message}` })
         throw e
       }
     } else {
@@ -277,6 +374,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         return clone
       } catch (e) {
         console.log('CLONE ERROR', e)
+        this.call('terminal' as any, 'log', { type: 'error', value: `Clone failed: ${e.message}` })
         throw e
       }
     }

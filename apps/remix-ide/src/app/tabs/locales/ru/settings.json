@@ -36,9 +36,5 @@
   "settings.port": "ПОРТ",
   "settings.projectID": "ID ПРОЕКТА",
   "settings.projectSecret": "СЕКРЕТ ПРОЕКТА",
-  "settings.analyticsInRemix": "Аналитика в Remix IDE",
-  "settings.copilot": "Solidity второй пилот - Альфа",
-  "settings.copilot.activate": "Загрузка и активация копилота",
-  "settings.copilot.max_new_tokens": "Максимальное количество слов для генерации",
-  "settings.copilot.temperature": "Температура"
+  "settings.analyticsInRemix": "Аналитика в Remix IDE"
 }
