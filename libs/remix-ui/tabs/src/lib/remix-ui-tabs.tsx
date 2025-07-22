@@ -323,7 +323,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
     try {
       const path = active().substr(active().indexOf('/') + 1, active().length)
-      
+
       if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
         const content = await props.plugin.call('fileManager', 'readFile', path)
         await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
@@ -343,7 +343,7 @@ export const TabsUI = (props: TabsUIProps) => {
         setCompileState('idle')
         return
       }
-      
+
       props.plugin.once(compilerName, 'compilationFinished', (fileName, source, languageVersion, data) => {
         const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
 
