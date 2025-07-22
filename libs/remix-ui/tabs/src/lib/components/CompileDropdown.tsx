@@ -15,11 +15,36 @@ interface CompileDropdownProps {
   compiledFileName?: string
   onNotify?: (msg: string) => void
   onOpen?: () => void
-  onRequestCompileAndPublish?: (type: string) => void;
+  onRequestCompileAndPublish?: (type: string) => void
+  setCompileState: (state: 'idle' | 'compiling' | 'compiled') => void
 }
 
-export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugin, disabled, onNotify, onOpen, onRequestCompileAndPublish, compiledFileName }) => {
+export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugin, disabled, onNotify, onOpen, onRequestCompileAndPublish, compiledFileName, setCompileState }) => {
   const [scriptFiles, setScriptFiles] = useState<string[]>([])
+
+  const compileThen = async (nextAction: () => void) => {
+    setCompileState('compiling')
+
+    setTimeout(async () => {
+      plugin.once('solidity', 'compilationFinished', (data) => {
+        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
+        if (hasErrors) {
+          setCompileState('idle')
+          plugin.call('notification', 'toast', 'Compilation failed')
+        } else {
+          setCompileState('compiled')
+          nextAction()
+        }
+      })
+
+      try {
+        await plugin.call('solidity', 'compile', tabPath)
+      } catch (e) {
+        console.error(e)
+        setCompileState('idle')
+      }
+    }, 0)
+  }
 
   const fetchScripts = async () => {
     try {
@@ -38,33 +63,31 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
   }
 
   const runScript = async (path: string) => {
-    await plugin.call('solidity', 'compile', tabPath)
-    const content = await plugin.call('fileManager', 'readFile', path)
-    await plugin.call('scriptRunnerBridge', 'execute', content, path)
-    onNotify?.(`Executed script: ${path}`)
+    await compileThen(async () => {
+      const content = await plugin.call('fileManager', 'readFile', path)
+      await plugin.call('scriptRunnerBridge', 'execute', content, path)
+      onNotify?.(`Executed script: ${path}`)
+    })
   }
 
   const runRemixAnalysis = async () => {
     _paq.push(['trackEvent', 'solidityCompiler', 'staticAnalysis', 'initiate'])
-    await plugin.call('solidity', 'compile', tabPath)
-    const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
-    if (!isStaticAnalyzersActive) {
-      await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
-    }
-    plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
-    onNotify?.("Ran Remix static analysis")
+    await compileThen(async () => {
+      const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
+      if (!isStaticAnalyzersActive) {
+        await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
+      }
+      plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
+      onNotify?.("Ran Remix static analysis")
+    })
   }
 
   const handleScanContinue = async () => {
-    await plugin.call('solidity', 'compile', tabPath)
-
-    const firstSlashIndex = compiledFileName.indexOf('/');
-    
-    const finalPath = firstSlashIndex > 0 
-      ? compiledFileName.substring(firstSlashIndex + 1) 
-      : compiledFileName;
-
-    await handleSolidityScan(plugin, finalPath)
+    await compileThen(async () => {
+      const firstSlashIndex = compiledFileName.indexOf('/')
+      const finalPath = firstSlashIndex > 0 ? compiledFileName.substring(firstSlashIndex + 1) : compiledFileName
+      await handleSolidityScan(plugin, finalPath)
+    })
   }
 
   const runSolidityScan = async () => {

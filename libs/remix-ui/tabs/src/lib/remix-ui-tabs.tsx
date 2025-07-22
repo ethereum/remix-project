@@ -219,7 +219,7 @@ export const TabsUI = (props: TabsUIProps) => {
    * * @param {'ipfs' | 'swarm'} storageType - The type of storage to publish to.
    */
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
-    setCompileState('compiling');
+    setCompileState('compiling')
     await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
 
     await props.plugin.call('manager', 'activatePlugin', 'solidity')
@@ -229,19 +229,19 @@ export const TabsUI = (props: TabsUIProps) => {
       _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
 
       setTimeout(() => {
-        let buttonId;
+        let buttonId
         if (storageType === 'ipfs') {
-          buttonId = 'publishOnIpfs';
+          buttonId = 'publishOnIpfs'
         } else {
-          buttonId = 'publishOnSwarm';
+          buttonId = 'publishOnSwarm'
         }
 
-        const buttonToClick = document.getElementById(buttonId);
+        const buttonToClick = document.getElementById(buttonId)
 
         if (buttonToClick) {
-          buttonToClick.click();
+          buttonToClick.click()
         } else {
-          props.plugin.call('notification', 'toast', 'Could not find the publish button.');
+          props.plugin.call('notification', 'toast', 'Could not find the publish button.')
         }
       }, 500)
 
@@ -250,8 +250,8 @@ export const TabsUI = (props: TabsUIProps) => {
       await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
     }
 
-    setCompileState('idle');
-  };
+    setCompileState('idle')
+  }
 
   const handleRunScript = async (runnerKey: string) => {
     if (runnerKey === 'new_script') {
@@ -352,7 +352,7 @@ export const TabsUI = (props: TabsUIProps) => {
         } else {
           setCompileState('compiled')
         }
-      });
+      })
 
       if (tabsState.currentExt === 'vy') {
         await props.plugin.call(compilerName, 'vyperCompileCustomAction')
@@ -437,6 +437,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
                   onNotify={(msg) => console.log(msg)}
                   onRequestCompileAndPublish={handleCompileAndPublish}
+                  setCompileState={setCompileState}
                 />
               </>
             )}
