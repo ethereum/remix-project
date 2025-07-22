@@ -798,10 +798,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               ></CompilerDropdown>):null}
           </div>
           <div className="mb-2 flex-row-reverse d-flex flex-row form-check">
-            <input className="me-2 form-check-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
             <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="pt-0 form-check-label">
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
+            <input className="me-2 form-check-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
           </div>
           {platform === appPlatformTypes.desktop ?
             <div className="mb-2 flex-row-reverse d-flex flex-row form-check">
@@ -919,7 +919,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               checked={!state.useFileConfiguration}
               id="scManualConfig"
             />
-            <label className="form-check-label" htmlFor="scManualConfig" data-id="scManualConfiguration">
+            <label className="form-check-label ms-1" htmlFor="scManualConfig" data-id="scManualConfiguration">
               <FormattedMessage id="solidity.compilerConfiguration" />
             </label>
           </div>
@@ -991,7 +991,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                         handleOptimizeChange(e.target.checked)
                       }}
                       disabled={state.useFileConfiguration}
-                      className="custom-control-input"
+                      className="form-check-input"
                       id="optimize"
                       type="checkbox"
                       checked={state.optimize}
@@ -1009,7 +1009,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 >
                   <input
                     min="1"
-                    className="form-select ms-2 remixui_runs"
+                    className="form-select ms-4"
                     id="runs"
                     placeholder="200"
                     value={state.runs}
@@ -1031,7 +1031,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               checked={state.useFileConfiguration}
               id="scFileConfig"
             />
-            <label className="form-check-label" htmlFor="scFileConfig" data-id="scFileConfiguration">
+            <label className="form-check-label ms-1" htmlFor="scFileConfig" data-id="scFileConfiguration">
               <FormattedMessage id="solidity.useConfigurationFile" />
             </label>
           </div>
