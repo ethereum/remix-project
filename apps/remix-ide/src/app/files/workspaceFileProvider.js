@@ -25,8 +25,10 @@ export default class WorkspaceFileProvider extends FileProvider {
   }
 
   setWorkspace (workspace) {
-    if (!workspace) return
-    workspace = workspace.replace(/^\/|\/$/g, '') // remove first and last slash
+    const workspaceName = (workspace || {}).name ? workspace.name : workspace
+  
+    if (!workspaceName) return
+    workspace = workspaceName.replace(/^\/|\/$/g, '') // remove first and last slash
     this.workspace = workspace
   }
 

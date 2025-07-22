@@ -1,13 +1,17 @@
-import React, { useState, useEffect, useCallback, useRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, MutableRefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { HandleOpenAIResponse, HandleMistralAIResponse, HandleAnthropicResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
 import { ModalTypes } from '@remix-ui/app'
 import { PromptArea } from './prompt'
 import { ChatHistoryComponent } from './chat'
 import { ActivityType, ChatMessage } from '../lib/types'
+import { groupListType } from '../types/componentTypes'
+import GroupListMenu from './contextOptMenu'
+import { useOnClickOutside } from './onClickOutsideHook'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -38,13 +42,80 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
-    null
+    'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
     'none'
   )
+
   const historyRef = useRef<HTMLDivElement | null>(null)
+  const modelBtnRef = useRef(null)
+  const contextBtnRef = useRef(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const aiChatRef = useRef<HTMLDivElement>(null)
+
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
+  useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
+
+  const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
+  const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
+  const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
   const chatCmdParser = new ChatCommandParser(props.plugin)
+
+  const aiContextGroupList: groupListType[] = [
+    {
+      label: 'None',
+      bodyText: 'Uses no context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'none',
+      dataId: 'composer-ai-context-none'
+    },
+    {
+      label: 'Current file',
+      bodyText: 'Uses the current file in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'current',
+      dataId: 'currentFile-context-option'
+    },
+    {
+      label: 'All opened files',
+      bodyText: 'Uses all files opened in the editor as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'opened',
+      dataId: 'allOpenedFiles-context-option'
+    },
+    {
+      label: 'Workspace',
+      bodyText: 'Uses the current workspace as context',
+      icon: 'fa-solid fa-check',
+      stateValue: 'workspace',
+      dataId: 'workspace-context-option'
+    }
+  ]
+
+  const aiAssistantGroupList: groupListType[] = [
+    {
+      label: 'OpenAI',
+      bodyText: 'Better for general purpose coding tasks',
+      icon: 'fa-solid fa-check',
+      stateValue: 'openai',
+      dataId: 'composer-ai-assistant-openai'
+    },
+    {
+      label: 'MistralAI',
+      bodyText: 'Better for more complex coding tasks with solidity, typescript and more',
+      icon: 'fa-solid fa-check',
+      stateValue: 'mistralai',
+      dataId: 'composer-ai-assistant-mistralai'
+    },
+    {
+      label: 'Anthropic',
+      bodyText: 'Best for complex coding tasks but most demanding on resources',
+      icon: 'fa-solid fa-check',
+      stateValue: 'anthropic',
+      dataId: 'composer-ai-assistant-anthropic'
+    }
+  ]
 
   const dispatchActivity = useCallback(
     (type: ActivityType, payload?: any) => {
@@ -61,6 +132,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const refreshContext = useCallback(async (choice: typeof contextChoice) => {
     try {
       let files: string[] = []
+      _paq.push(['trackEvent', 'remixAI', 'AddingAIContext', choice])
       switch (choice) {
       case 'none':
         await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
@@ -108,6 +180,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [contextChoice, refreshContext, props.plugin])
 
+  // useEffect(() => {
+  //   const fetchAssistantChoice = async () => {
+  //     console.log('Fetching assistant choice from plugin')
+  //     const choice = await props.plugin.call('remixAI', 'getAssistantProvider')
+  //     setAssistantChoice(choice || 'openai')
+  //   }
+  //   fetchAssistantChoice()
+  // }, [props.plugin])
+
   // bubble messages up to parent
   useEffect(() => {
     props.onMessagesChange?.(messages)
@@ -120,6 +201,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       node.scrollTop = node.scrollHeight
     }
   }, [messages])
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    // Focus textarea when streaming stops (after request processing)
+    if (!isStreaming && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [isStreaming])
 
   // helper to toggle like / dislike feedback and push Matomo events
   const recordFeedback = (msgId: string, next: 'like' | 'dislike' | 'none') => {
@@ -188,11 +282,12 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
         GenerationParams.stream_result = true
         GenerationParams.return_stream_response = true
+        GenerationParams.threadId = await props.plugin.call('remixAI', 'getAssistantThrId') || ""
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending
           ? await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams)
-          : await props.plugin.call('remixAI', 'solidity_answer', trimmed, GenerationParams)
+          : await props.plugin.call('remixAI', 'answer', trimmed, GenerationParams)
 
         const assistantId = crypto.randomUUID()
         setMessages(prev => [
@@ -200,17 +295,68 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), sentiment: 'none' }
         ])
 
-        HandleStreamResponse(
-          response,
-          (chunk: string) => appendAssistantChunk(assistantId, chunk),
-          (finalText: string) => {
-            ChatHistory.pushHistory(trimmed, finalText)
-            setIsStreaming(false)
-          }
-        )
-      } catch (err) {
-        console.error('AI request failed:', err)
+        switch (assistantChoice) {
+        case 'openai':
+          HandleOpenAIResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string, threadId) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+              props.plugin.call('remixAI', 'setAssistantThrId', threadId)
+            }
+          )
+          break;
+        case 'mistralai':
+          HandleMistralAIResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string, threadId) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+              props.plugin.call('remixAI', 'setAssistantThrId', threadId)
+            }
+          )
+          // Add MistralAI handler here if available
+          break;
+        case 'anthropic':
+          HandleAnthropicResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string, threadId) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+              props.plugin.call('remixAI', 'setAssistantThrId', threadId)
+            }
+          )
+          // Add Anthropic handler here if available
+          break;
+        default:
+          HandleStreamResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string) => {
+              ChatHistory.pushHistory(trimmed, finalText)
+              setIsStreaming(false)
+            }
+          )
+        }
         setIsStreaming(false)
+      }
+      catch (error) {
+        console.error('Error sending prompt:', error)
+        setIsStreaming(false)
+        // Add error message to chat history
+        setMessages(prev => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: `Error: ${error.message}`,
+            timestamp: Date.now(),
+            sentiment: 'none'
+          }
+        ])
       }
     },
     [isStreaming, props.plugin]
@@ -236,15 +382,42 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // Only send the /setAssistant command when the choice actually changes
   useEffect(() => {
-    if (!assistantChoice) return
-    dispatchActivity('button', 'setAssistant')
-    sendPrompt(`/setAssistant ${assistantChoice}`)
+    const fetchAssistantChoice = async () => {
+      const choiceSetting = await props.plugin.call('remixAI', 'getAssistantProvider')
+      if (choiceSetting !== assistantChoice) {
+        dispatchActivity('button', 'setAssistant')
+        setMessages([])
+        sendPrompt(`/setAssistant ${assistantChoice}`)
+        setAssistantChoice(assistantChoice || 'mistralai')
+        _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
+      }
+    }
+    fetchAssistantChoice()
   }, [assistantChoice])
 
   // refresh context whenever selection changes (even if selector is closed)
   useEffect(() => {
     refreshContext(contextChoice)
   }, [contextChoice, refreshContext])
+
+  const modalMessage = () => {
+    return (
+      <ul className="p-3">
+        <div className="mb-2">
+          <span>Write a command and it will execute it by creating a new workspace e.g:</span>
+        </div>
+        <li>
+          <span className="font-italic font-weight-light">Create an ERC‑20 token with all explanations as comments in the contract,</span>
+        </li>
+        <li>
+          <span className="font-italic font-weight-light">Create a Voting contract and explain the contract with comments,</span>
+        </li>
+        <li>
+          <span className="font-italic font-weight-light">Create a proxy contract with all explanations about the contract as comments</span>
+        </li>
+      </ul>
+    )
+  }
 
   const handleGenerateWorkspace = useCallback(async () => {
     dispatchActivity('button', 'generateWorkspace')
@@ -253,14 +426,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         const modalContent = {
           id: 'generate-workspace',
           title: 'Generate Workspace',
-          message: `
-            Describe the kind of workspace you want RemixAI to scaffold. For example:
-            ERC‑20 token with foundry tests
-            ERC‑721 NFT collection with IPFS metadata
-            Decentralized voting app with Solidity smart contracts
-
-          `,
-          modalType: ModalTypes.prompt, // single-line text
+          message: modalMessage(),
+          placeholderText: 'Create a Voting contract and explain the contract',
+          modalType: ModalTypes.textarea,
           okLabel: 'Generate',
           cancelLabel: 'Cancel',
           okFn: (value: string) => setTimeout(() => resolve(value), 0),
@@ -273,6 +441,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       if (description && description.trim()) {
         sendPrompt(`/generate ${description.trim()}`)
+        _paq.push(['trackEvent', 'remixAI', 'GenerateNewAIWorkspaceFromModal', description])
       }
     } catch {
       /* user cancelled */
@@ -292,45 +461,82 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }),
     [sendPrompt, messages]
   )
+  const chatHistoryRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight
+    }
+  }, [messages])
+
+  const maximizePanel = async () => {
+    await props.plugin.call('layout', 'maximisePinnedPanel')
+  }
 
   return (
     <div
-      className="d-flex flex-column h-100 mx-3"
+      className="d-flex flex-column h-100 w-100 overflow-x-hidden"
+      ref={aiChatRef}
     >
-      <div data-id="remix-ai-assistant-ready"></div>
-      {/* hidden hook for E2E tests: data-streaming="true|false" */}
-      <div
-        data-id="remix-ai-streaming"
-        className='d-none'
-        data-streaming={isStreaming ? 'true' : 'false'}
-      ></div>
-      <ChatHistoryComponent
-        messages={messages}
-        isStreaming={isStreaming}
-        sendPrompt={sendPrompt}
-        recordFeedback={recordFeedback}
-        historyRef={historyRef}
-      />
-      <PromptArea
-        input={input}
-        setInput={setInput}
-        isStreaming={isStreaming}
-        handleSend={handleSend}
-        showContextOptions={showContextOptions}
-        setShowContextOptions={setShowContextOptions}
-        showAssistantOptions={showAssistantOptions}
-        setShowAssistantOptions={setShowAssistantOptions}
-        contextChoice={contextChoice}
-        setContextChoice={setContextChoice}
-        assistantChoice={assistantChoice}
-        setAssistantChoice={setAssistantChoice}
-        contextFiles={contextFiles}
-        clearContext={clearContext}
-        handleAddContext={handleAddContext}
-        handleSetAssistant={handleSetAssistant}
-        handleGenerateWorkspace={handleGenerateWorkspace}
-        dispatchActivity={dispatchActivity}
-      />
+      <section id="remix-ai-chat-history" className="h-83 d-flex flex-column p-2 overflow-x-hidden" style={{ flex: 7, overflowY: 'scroll' }} ref={chatHistoryRef}>
+        <div data-id="remix-ai-assistant-ready"></div>
+        {/* hidden hook for E2E tests: data-streaming="true|false" */}
+        <div
+          data-id="remix-ai-streaming"
+          className='d-none'
+          data-streaming={isStreaming ? 'true' : 'false'}
+        ></div>
+        <ChatHistoryComponent
+          messages={messages}
+          isStreaming={isStreaming}
+          sendPrompt={sendPrompt}
+          recordFeedback={recordFeedback}
+          historyRef={historyRef}
+        />
+      </section>
+      <section id="remix-ai-prompt-area" className="mt-1" style={{ flex: 1 }}
+      >
+        {showAssistantOptions && (
+          <div
+            className="pt-2 mb-2 z-3 bg-light border border-text w-75"
+            style={{ borderRadius: '8px' }}
+          >
+            <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
+            <GroupListMenu
+              setChoice={setAssistantChoice}
+              setShowOptions={setShowAssistantOptions}
+              choice={assistantChoice}
+              groupList={aiAssistantGroupList}
+            />
+          </div>
+        )}
+        <PromptArea
+          input={input}
+          maximizePanel={maximizePanel}
+          setInput={setInput}
+          isStreaming={isStreaming}
+          handleSend={handleSend}
+          showContextOptions={showContextOptions}
+          setShowContextOptions={setShowContextOptions}
+          showAssistantOptions={showAssistantOptions}
+          setShowAssistantOptions={setShowAssistantOptions}
+          contextChoice={contextChoice}
+          setContextChoice={setContextChoice}
+          assistantChoice={assistantChoice}
+          setAssistantChoice={setAssistantChoice}
+          contextFiles={contextFiles}
+          clearContext={clearContext}
+          handleAddContext={handleAddContext}
+          handleSetAssistant={handleSetAssistant}
+          handleGenerateWorkspace={handleGenerateWorkspace}
+          dispatchActivity={dispatchActivity}
+          contextBtnRef={contextBtnRef}
+          modelBtnRef={modelBtnRef}
+          aiContextGroupList={aiContextGroupList}
+          aiAssistantGroupList={aiAssistantGroupList}
+          textareaRef={textareaRef}
+        />
+      </section>
     </div>
   )
 })

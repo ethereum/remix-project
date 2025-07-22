@@ -279,9 +279,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       </div>,
       okLabel: <FormattedMessage id="solidity.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />
+      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />,
+      cancelFn:() => { _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'cancelClicked'])}
     }
-
     await (api as any).call('notification', 'modal', modal)
   }
 

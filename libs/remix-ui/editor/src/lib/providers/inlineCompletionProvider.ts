@@ -1,7 +1,12 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
-import { JsonStreamParser } from '@remix/remix-ai-core';
+import { JsonStreamParser, CompletionParams } from '@remix/remix-ai-core';
 import * as monaco from 'monaco-editor';
+import {
+  AdaptiveRateLimiter,
+  SmartContextDetector,
+  CompletionCache,
+} from '../inlineCompetionsLibs';
 
 const _paq = (window._paq = window._paq || [])
 
@@ -11,8 +16,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   completionEnabled: boolean
   task: string = 'code_completion'
   currentCompletion: any
-  private lastRequestTime: number = 0;
-  private readonly minRequestInterval: number = 200;
+
+  private rateLimiter: AdaptiveRateLimiter;
+  private contextDetector: SmartContextDetector;
+  private cache: CompletionCache;
 
   constructor(props: any, monaco: any) {
     this.props = props
@@ -21,30 +28,66 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     this.currentCompletion = {
       text: '',
       item: [],
-      task : this.task,
+      task: this.task,
       displayed: false,
-      accepted: false
+      accepted: false,
+      onAccepted: () => {
+        this.rateLimiter.trackCompletionAccepted()
+      }
+    }
+
+    this.rateLimiter = new AdaptiveRateLimiter();
+    this.contextDetector = new SmartContextDetector();
+    this.cache = new CompletionCache();
+  }
+
+  async provideInlineCompletions(
+    model: monacoTypes.editor.ITextModel,
+    position: monacoTypes.Position,
+    context: monacoTypes.languages.InlineCompletionContext,
+    token: monacoTypes.CancellationToken
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
+    // Check if completion is enabled
+    const isActivate = await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+    if (!isActivate) return { items: []}
+
+    const currentTime = Date.now();
+
+    // Check rate limiting
+    if (!this.rateLimiter.shouldAllowRequest(currentTime)) {
+      return { items: []};
+    }
+
+    // Check context appropriateness
+    if (!this.contextDetector.shouldShowCompletion(model, position, currentTime)) {
+      return { items: []};
+    }
+
+    // Record request
+    this.rateLimiter.recordRequest(currentTime);
+
+    try {
+      const result = await this.executeCompletion(model, position, context, token);
+      this.rateLimiter.recordCompletion();
+      return result;
+    } catch (error) {
+      this.rateLimiter.recordCompletion();
+      console.warn("rate limit error")
     }
   }
 
-  async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
-    const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
-    if (!isActivate) return
-
-    const currentTime = Date.now();
-    const timeSinceLastRequest = currentTime - this.lastRequestTime;
-
-    if (timeSinceLastRequest < this.minRequestInterval) {
-      return { items: []}; // dismiss the request
-    }
-    this.lastRequestTime = Date.now();
-
-    const getTextAtLine = (lineNumber) => {
+  private async executeCompletion(
+    model: monacoTypes.editor.ITextModel,
+    position: monacoTypes.Position,
+    context: monacoTypes.languages.InlineCompletionContext,
+    token: monacoTypes.CancellationToken
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
+    const getTextAtLine = (lineNumber: number) => {
       const lineRange = model.getFullModelRange().setStartPosition(lineNumber, 1).setEndPosition(lineNumber + 1, 1);
       return model.getValueInRange(lineRange);
     }
 
-    // get text before the position of the completion
+    // Get text before and after cursor
     const word = model.getValueInRange({
       startLineNumber: 1,
       startColumn: 1,
@@ -52,7 +95,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
-    // get text after the position of the completion
     const word_after = model.getValueInRange({
       startLineNumber: position.lineNumber,
       startColumn: position.column,
@@ -60,79 +102,114 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: getTextAtLine(model.getLineCount()).length + 1,
     });
 
-    const endChars = [' ', '\n', ';', '.', '(', ')', '{', '}', '[', ']', ':', ',', '<', '>', '=', '+', '-', '*', '/', '%', '&', '|', '^', '!', '?', '~', '@', '#', '$', '`', '"', "'", '\t', '\r', '\v', '\f'];
-    if (!endChars.some(char => word.endsWith(char))) {
-      return;
-    }
+    // Create cache key and check cache
+    const cacheKey = this.cache.createCacheKey(word, word_after, position, this.task);
+    this.currentCompletion.accepted = false
 
+    return await this.cache.handleRequest(cacheKey, async () => {
+      return await this.performCompletion(word, word_after, position);
+    });
+  }
+
+  private async performCompletion(
+    word: string,
+    word_after: string,
+    position: monacoTypes.Position
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
+    // Check if we should trigger completion based on context
+
+    // Code generation (triple slash comment)
     try {
       const split = word.split('\n')
-      if (split.length < 2) return
-      const ask = split[split.length - 2].trimStart()
-      if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
-        // use the code generation model, only take max 1000 word as context
-        this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'RemixAI - generating code for following comment: ' + ask.replace('///', '') })
-
-        const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
-        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_generation'])
-        this.task = 'code_generation'
-
-        const parsedData = data.trimStart() //JSON.parse(data).trimStart()
-        const item: monacoTypes.languages.InlineCompletion = {
-          insertText: parsedData,
-          range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
-        };
-        this.currentCompletion.text = parsedData
-        this.currentCompletion.item = item
-        return {
-          items: [item],
-          enableForwardStability: true
+      if (split.length >= 2) {
+        const ask = split[split.length - 2].trimStart()
+        if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
+          return await this.handleCodeGeneration(word, word_after, position, ask);
         }
       }
     } catch (e) {
-      console.error(e)
-      return
+      console.warn(e)
+      return { items: []}
     }
 
-    if (word.split('\n').at(-1).trimStart().startsWith('//') ||
-        word.split('\n').at(-1).trimStart().startsWith('/*') ||
-        word.split('\n').at(-1).trimStart().startsWith('*') ||
-        word.split('\n').at(-1).trimStart().startsWith('*/') ||
-        word.split('\n').at(-1).endsWith(';')
-    ){
-      return { items: []}; // do not do completion on single and multiline comment
+    // Code insertion (newline)
+    if (word.replace(/ +$/, '').endsWith('\n')) {
+      return await this.handleCodeInsertion(word, word_after, position);
     }
 
-    if (word.replace(/ +$/, '').endsWith('\n')){
-      // Code insertion
-      try {
-        const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
-        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
-        const generatedText = output // no need to clean it. should already be
+    // Regular code completion
+    return await this.handleCodeCompletion(word, word_after, position);
+  }
 
-        this.task = 'code_insertion'
-        const item: monacoTypes.languages.InlineCompletion = {
-          insertText: generatedText,
-          range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
-        };
-        this.currentCompletion.text = generatedText
-        this.currentCompletion.item = item
+  private async handleCodeGeneration(
+    word: string,
+    word_after: string,
+    position: monacoTypes.Position,
+    ask: string
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
+    this.props.plugin.call('terminal', 'log', {
+      type: 'aitypewriterwarning',
+      value: 'RemixAI - generating code for following comment: ' + ask.replace('///', '')
+    })
 
-        return {
-          items: [item],
-          enableForwardStability: true,
-        }
-      }
-      catch (err){
-        console.log("err: " + err)
-        return
-      }
+    const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'code_generation'])
+    this.task = 'code_generation'
+
+    const parsedData = data.trimStart()
+    const item: monacoTypes.languages.InlineCompletion = {
+      insertText: parsedData,
+      range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
+    };
+
+    this.currentCompletion.text = parsedData
+    this.currentCompletion.item = item
+
+    return {
+      items: [item],
+      enableForwardStability: true
     }
+  }
 
+  private async handleCodeInsertion(
+    word: string,
+    word_after: string,
+    position: monacoTypes.Position
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     try {
-      // Code completion
+      CompletionParams.stop = ['\n\n', '```']
+      const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after, CompletionParams)
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
+      const generatedText = output
+
+      this.task = 'code_insertion'
+      const item: monacoTypes.languages.InlineCompletion = {
+        insertText: generatedText,
+        range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
+      };
+
+      this.currentCompletion.text = generatedText
+      this.currentCompletion.item = item
+
+      return {
+        items: [item],
+        enableForwardStability: true,
+      }
+    } catch (err) {
+      console.log("err: " + err)
+      return { items: []}
+    }
+  }
+
+  private async handleCodeCompletion(
+    word: string,
+    word_after: string,
+    position: monacoTypes.Position
+  ): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
+    try {
+      CompletionParams.stop = ['\n', '```']
       this.task = 'code_completion'
-      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after)
+      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after, CompletionParams)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])
       const generatedText = output
       let clean = generatedText
@@ -147,9 +224,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         insertText: clean,
         range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
       };
+
       this.currentCompletion.text = clean
       this.currentCompletion.item = item
-
       return {
         items: [item],
         enableForwardStability: true,
@@ -164,31 +241,54 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   process_completion(data: any, word_after: any) {
-    let clean = data
+    const clean = data
     // if clean starts with a comment, remove it
-    if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
+    if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')) {
       return ""
     }
-
-    const text_after = word_after.split('\n')[0].trim()
-    if (clean.toLowerCase().includes(text_after.toLowerCase())){
-      clean = clean.replace(text_after, '') // apply regex to conserve the case
-    }
-
     return clean
   }
 
-  handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
+  handleItemDidShow?(
+    completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>,
+    item: monacoTypes.languages.InlineCompletion,
+    updatedInsertText: string
+  ): void {
     this.currentCompletion.displayed = true
     this.currentCompletion.task = this.task
+
+    this.rateLimiter.trackCompletionShown()
     _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_did_show'])
   }
-  handlePartialAccept?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, acceptedCharacters: number): void {
+
+  handlePartialAccept?(
+    completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>,
+    item: monacoTypes.languages.InlineCompletion,
+    acceptedCharacters: number
+  ): void {
     this.currentCompletion.accepted = true
     this.currentCompletion.task = this.task
+
+    this.rateLimiter.trackCompletionAccepted()
     _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_partial_accept'])
   }
-  freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
+
+  freeInlineCompletions(
+    completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>
+  ): void {
+    // If completion was shown but not accepted, consider it rejected
+    if (this.currentCompletion.displayed && !this.currentCompletion.accepted) {
+      this.rateLimiter.trackCompletionRejected()
+    }
+  }
+
+  // collect stats for debugging
+  getStats() {
+    return {
+      rateLimiter: this.rateLimiter.getStats(),
+      contextDetector: this.contextDetector.getStats(),
+      cache: this.cache.getStats(),
+    };
   }
 
   groupId?: string;

@@ -27,6 +27,7 @@ export interface AppModal {
     data?: any,
     showCancelIcon?: boolean,
     preventBlur?: boolean
+    placeholderText?: string
 }
 
 export interface AlertModal {

@@ -107,7 +107,7 @@ export class ElectronProvider extends FileProvider {
         throw new Error(e)
       }
     }
-    console.log('json', json)
+
     return json
   }
 

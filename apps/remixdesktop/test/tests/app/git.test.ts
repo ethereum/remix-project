@@ -4,13 +4,14 @@ import { NightwatchBrowser } from 'nightwatch'
 module.exports = {
   '@isogit': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hideToolTips()
     done()
   },
   'clone a repo': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .waitForElementVisible('button[data-id="landingPageImportFromGit"]')
-      .click('button[data-id="landingPageImportFromGit"]')
+      .waitForElementVisible('*[data-id="cloneFromGitButton"]')
+      .click('*[data-id="cloneFromGitButton"]')
       .pause(1000)
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -21,7 +22,7 @@ module.exports = {
       .windowHandles(function (result) {
         console.log(result.value)
         browser.switchWindow(result.value[1])
-        .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+          .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
       })
       .end()
   }

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
+import { diffLines } from 'diff'
 import { isArray } from 'lodash'
 import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 import { AppModal } from '@remix-ui/app'
@@ -13,6 +14,7 @@ import { tomlLanguageConfig, tomlTokenProvider } from './syntaxes/toml'
 import { monacoTypes } from '@remix-ui/editor'
 import { loadTypes } from './web-types'
 import { extractFunctionComments, retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { showCustomDiff, extractLineNumberRangesWithText, ChangeType, ChangeTypeMap } from './helpers/showCustomDiff'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
@@ -24,6 +26,7 @@ import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
 import { IPosition, IRange } from 'monaco-editor'
+import { GenerationParams } from '@remix/remix-ai-core';
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 const _paq = (window._paq = window._paq || [])
 
@@ -132,6 +135,7 @@ export type EditorAPIType = {
   addErrorMarker: (errors: errorMarker[], from: string) => void
   clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
   getPositionAt: (offset: number) => monacoTypes.IPosition
+  showCustomDiff: (file: string, content: string) => Promise<void>
 }
 
 /* eslint-disable-next-line */
@@ -154,9 +158,10 @@ export interface EditorUIProps {
 const contextMenuEvent = new EventManager()
 export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
+  const changedTypeMap = useRef<ChangeTypeMap>({})
+  const pendingCustomDiff = useRef({})
   const [, setCurrentBreakpoints] = useState({})
   const [isSplit, setIsSplit] = useState(true)
-  const [isDiff, setIsDiff] = useState(props.isDiff || false)
   const [currentDiffFile, setCurrentDiffFile] = useState(props.currentDiffFile || '')
   const [decoratorListCollection, setDecoratorListCollection] = useState<Record<string, monacoTypes.editor.IEditorDecorationsCollection>>({})
   const [disposedWidgets, setDisposedWidgets] = useState<Record<string, Record<string, monacoTypes.IRange[]>>>({})
@@ -189,6 +194,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
+  const currentDecoratorListCollectionRef = useRef({})
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -342,6 +348,14 @@ export const EditorUI = (props: EditorUIProps) => {
     defineAndSetTheme(monacoRef.current)
   })
 
+  useEffect(() => {
+    props.plugin.on('fileManager', 'currentFileChanged', (file: string) => {
+      if (file + '-ai' !== currentDiffFile) {
+        removeAllWidgets()
+      }
+    })
+  }, [])
+
   /**
    * add widget ranges to disposedWidgets when decoratorListCollection changes,
    * this is used to restore the widgets when the file is changed.
@@ -351,11 +365,12 @@ export const EditorUI = (props: EditorUIProps) => {
       const widgetsToDispose = {}
       Object.keys(decoratorListCollection).forEach((widgetId) => {
         const ranges = decoratorListCollection[widgetId].getRanges()
-
-        widgetsToDispose[widgetId] = ranges
+        const changeType = changedTypeMap.current[widgetId]
+        widgetsToDispose[widgetId] = changeType === 'removed' ? [null, ranges[0]] : ranges
       })
       setDisposedWidgets({ ...disposedWidgets, [currentFileRef.current]: widgetsToDispose })
     }
+    currentDecoratorListCollectionRef.current = decoratorListCollection
   }, [decoratorListCollection])
 
   /**
@@ -365,8 +380,15 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (currentFileRef.current) {
       if (props.currentFile !== currentFileRef.current) {
+
+        // add the widgets that are still pending to be applied
+        const pendingDiff = pendingCustomDiff.current[props.currentFile]
+        if (pendingDiff) {
+          showCustomDiff(pendingDiff, props.currentFile, editorRef.current, monacoRef.current, addDecoratorCollection, addAcceptDeclineWidget, setDecoratorListCollection, acceptHandler, rejectHandler, acceptAllHandler, rejectAllHandler, setCurrentDiffFile, changedTypeMap.current)
+          delete pendingCustomDiff.current[props.currentFile]
+        }
+        // restore the widgets if they exist to the new file and were already applied
         const restoredWidgets = disposedWidgets[props.currentFile]
-        // restore the widgets if they exist to the new file
         if (restoredWidgets) {
           Object.keys(restoredWidgets).forEach((widgetId) => {
             const ranges = restoredWidgets[widgetId]
@@ -374,8 +396,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
             setTimeout(() => {
               const newEntryRange = decoratorList.getRange(0)
-
-              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
+              addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newEntryRange.startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
             }, 150)
             setDecoratorListCollection(decoratorListCollection => ({ ...decoratorListCollection, [widgetId]: decoratorList }))
           })
@@ -676,11 +697,16 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.plugin.on('fileManager', 'currentFileChanged', (file: string) => {
-    if (file + '-ai' !== currentDiffFile) {
-      removeAllWidgets()
+  props.editorAPI.showCustomDiff = async (file: string, content: string) => {
+    const currentContent = await props.plugin.call('fileManager', 'readFile', file)
+    const diff = diffLines(currentContent, content)
+    const changes: ChangeType[] = extractLineNumberRangesWithText(diff)
+    if (props.currentFile === file) {
+      showCustomDiff(changes, file, editorRef.current, monacoRef.current, addDecoratorCollection, addAcceptDeclineWidget, setDecoratorListCollection, acceptHandler, rejectHandler, acceptAllHandler, rejectAllHandler, setCurrentDiffFile, changedTypeMap.current)
+    } else {
+      pendingCustomDiff.current[file] = changes
     }
-  })
+  }
 
   function removeAllWidgets() {
     const widgetIds = Object.keys(decoratorListCollection)
@@ -812,6 +838,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const changes = e.changes;
         // Check if the change matches the current completion
         if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
+          inlineCompletionProvider.currentCompletion.onAccepted()
+          inlineCompletionProvider.currentCompletion.accepted = true
           _paq.push(['trackEvent', 'ai', 'remixAI', inlineCompletionProvider.currentCompletion.task + '_accepted'])
         }
       }
@@ -876,7 +904,10 @@ export const EditorUI = (props: EditorUIProps) => {
             const uri = currentFileRef.current + '-ai'
             const content = editorRef.current.getModel().getValue()
             const query = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-            const output = await props.plugin.call('remixAI', 'code_explaining', query)
+            const params = GenerationParams
+            params.stream_result = false
+            const result = await props.plugin.call('remixAI', 'code_explaining', query, '', params)
+            const output = result['result']
             const outputFunctionComments = extractFunctionComments(output, 1, false)
             const funcRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.src })
             const newLineCount = (outputFunctionComments[currentFunction.current] || '').split('\n').length
@@ -900,6 +931,7 @@ export const EditorUI = (props: EditorUIProps) => {
               const decoratorList = addDecoratorCollection(widgetId, ranges)
 
               setCurrentDiffFile(uri)
+              changedTypeMap.current[widgetId] = 'modified'
               setDecoratorListCollection(decoratorListCollection => {
                 Object.keys(decoratorListCollection).forEach((widgetId) => {
                   const decoratorList = decoratorListCollection[widgetId]
@@ -926,6 +958,7 @@ export const EditorUI = (props: EditorUIProps) => {
               const decoratorList = addDecoratorCollection(widgetId, ranges)
 
               setCurrentDiffFile(uri)
+              changedTypeMap.current[widgetId] = 'added'
               setDecoratorListCollection(decoratorListCollection => {
                 Object.keys(decoratorListCollection).forEach((widgetId) => {
                   const decoratorList = decoratorListCollection[widgetId]
@@ -1141,6 +1174,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-cairo', inlineCompletionProvider)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
@@ -1150,12 +1184,14 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-circom', circomTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-circom', circomLanguageConfig(monacoRef.current) as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-circom', inlineCompletionProvider)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-toml', tomlTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-toml', tomlLanguageConfig as any)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-noir', noirTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-noir', noirLanguageConfig as any)
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-noir', inlineCompletionProvider)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
@@ -1171,6 +1207,11 @@ export const EditorUI = (props: EditorUIProps) => {
   function addAcceptDeclineWidget(id, editor, position, acceptHandler, rejectHandler, acceptAllHandler?, rejectAllHandler?) {
     const widget = editor.addContentWidget({
       allowEditorOverflow: true,
+      afterRender: () => {
+        if (document.getElementById(id)) {
+          document.getElementById(id).style.left = '0px'
+        }
+      },
       getDomNode: () => {
         if (document.getElementById(id)) {
           return document.getElementById(id)
@@ -1260,17 +1301,36 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function acceptHandler(decoratorList, widgetId) {
     const ranges = decoratorList.getRanges()
-
-    if (ranges[1]) {
-      ranges[1].endLineNumber = ranges[1].endLineNumber + 1
-      ranges[1].endColumn = 0
-      editorRef.current.executeEdits('removeOriginal', [
-        {
-          range: ranges[1],
-          text: null,
-        },
-      ])
+    const lineChangeType = changedTypeMap.current[widgetId]
+    /*
+      The first item represents a line that has been added.
+      The second item represents a line that has been removed.
+      If the lineChangeType is 'modified' or 'added', we remove the edit that correspond to the old code (item with index 1).
+    */
+    if (lineChangeType === 'modified' || lineChangeType === 'added') {
+      if (ranges[1]) {
+        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+        ranges[1].endColumn = 0
+        editorRef.current.executeEdits('removeOriginal', [
+          {
+            range: ranges[1],
+            text: null,
+          },
+        ])
+      }
+    } else {
+      if (ranges[0]) {
+        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+        ranges[0].endColumn = 0
+        editorRef.current.executeEdits('removeModified', [
+          {
+            range: ranges[0],
+            text: null,
+          },
+        ])
+      }
     }
+
     decoratorList.clear()
     setDecoratorListCollection(decoratorListCollection => {
       const { [widgetId]: _, ...rest } = decoratorListCollection
@@ -1280,17 +1340,36 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function rejectHandler(decoratorList, widgetId) {
     const ranges = decoratorList.getRanges()
-
-    if (ranges[0]) {
-      ranges[0].endLineNumber = ranges[0].endLineNumber + 1
-      ranges[0].endColumn = 0
-      editorRef.current.executeEdits('removeModified', [
-        {
-          range: ranges[0],
-          text: null,
-        },
-      ])
+    const lineChangeType = changedTypeMap.current[widgetId]
+    /*
+      The first item represents a line that has been added.
+      The second item represents a line that has been removed.
+      If the lineChangeType is 'modified' or 'added', we remove the edit that correspond to the old code (item with index 0).
+    */
+    if (lineChangeType === 'modified' || lineChangeType === 'added') {
+      if (ranges[0]) {
+        ranges[0].endLineNumber = ranges[0].endLineNumber + 1
+        ranges[0].endColumn = 0
+        editorRef.current.executeEdits('removeModified', [
+          {
+            range: ranges[0],
+            text: null,
+          },
+        ])
+      }
+    } else {
+      if (ranges[1]) {
+        ranges[1].endLineNumber = ranges[1].endLineNumber + 1
+        ranges[1].endColumn = 0
+        editorRef.current.executeEdits('removeOriginal', [
+          {
+            range: ranges[1],
+            text: null,
+          },
+        ])
+      }
     }
+
     decoratorList.clear()
     setDecoratorListCollection(decoratorListCollection => {
       const { [widgetId]: _, ...rest } = decoratorListCollection
@@ -1299,6 +1378,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function acceptAllHandler() {
+    const decoratorListCollection = currentDecoratorListCollectionRef.current
+
     Object.keys(decoratorListCollection).forEach((widgetId) => {
       const decoratorList = decoratorListCollection[widgetId]
 
@@ -1310,6 +1391,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function rejectAllHandler() {
+    const decoratorListCollection = currentDecoratorListCollectionRef.current
+
     Object.keys(decoratorListCollection).forEach((widgetId) => {
       const decoratorList = decoratorListCollection[widgetId]
 
@@ -1323,6 +1406,7 @@ export const EditorUI = (props: EditorUIProps) => {
   function addDecoratorCollection (widgetId: string, ranges: monacoTypes.IRange[]): monacoTypes.editor.IEditorDecorationsCollection {
     let decoratorList: monacoTypes.editor.IEditorDecorationsCollection
     if (ranges.length === 1) {
+      // content has been added
       decoratorList = editorRef.current.createDecorationsCollection([{
         range: ranges[0],
         options: {
@@ -1332,36 +1416,50 @@ export const EditorUI = (props: EditorUIProps) => {
         }
       }])
     } else {
-      decoratorList = editorRef.current.createDecorationsCollection([{
-        range: ranges[0],
-        options: {
-          isWholeLine: true,
-          className: 'newChangesDecoration',
-          marginClassName: 'newChangesDecoration',
-        }
-      }, {
-        range: ranges[1],
-        options: {
-          isWholeLine: true,
-          className: 'modifiedChangesDecoration',
-          marginClassName: 'modifiedChangesDecoration',
-        }
-      }])
+      if (ranges[0] !== null) {
+        // content has been modified
+        decoratorList = editorRef.current.createDecorationsCollection([{
+          range: ranges[0],
+          options: {
+            isWholeLine: true,
+            className: 'newChangesDecoration',
+            marginClassName: 'newChangesDecoration',
+          }
+        }, {
+          range: ranges[1],
+          options: {
+            isWholeLine: true,
+            className: 'modifiedChangesDecoration',
+            marginClassName: 'modifiedChangesDecoration',
+          }
+        }])
+      } else {
+        // content has been removed
+        decoratorList = editorRef.current.createDecorationsCollection([{
+          range: ranges[1],
+          options: {
+            isWholeLine: true,
+            className: 'modifiedChangesDecoration',
+            marginClassName: 'modifiedChangesDecoration',
+          }
+        }])
+      }
     }
 
-    decoratorList.onDidChange(() => {
-      const newRanges = decoratorList.getRanges()
-
-      if (newRanges.length === 0) return
-      if (newRanges[0].startLineNumber !== ranges[0].startLineNumber && document.getElementById(widgetId)) {
-        editorRef.current.removeContentWidget({
-          getId: () => widgetId
-        })
-
-        addAcceptDeclineWidget(widgetId, editorRef.current, { column: 0, lineNumber: newRanges[0].startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId))
-      }
-      ranges = newRanges
-    })
+    const startLineNumber = decoratorList.getRanges()[0]?.startLineNumber;
+    ((startLineNumber, decoratorList, widgetId, editorRef, acceptHandler, rejectHandler, addAcceptDeclineWidget) => {
+      decoratorList.onDidChange(() => {
+        const newRanges = decoratorList.getRanges()
+        if (newRanges.length === 0) return
+        if (newRanges[0].startLineNumber !== startLineNumber && document.getElementById(widgetId)) {
+          editorRef.removeContentWidget({
+            getId: () => widgetId
+          })
+          addAcceptDeclineWidget(widgetId, editorRef, { column: 0, lineNumber: newRanges[0].startLineNumber + 1 }, () => acceptHandler(decoratorList, widgetId), () => rejectHandler(decoratorList, widgetId), acceptAllHandler, rejectAllHandler)
+        }
+        startLineNumber = newRanges[0].startLineNumber
+      })
+    })(startLineNumber, decoratorList, widgetId, editorRef.current, acceptHandler, rejectHandler, addAcceptDeclineWidget)
 
     return decoratorList
   }
@@ -1376,12 +1474,13 @@ export const EditorUI = (props: EditorUIProps) => {
         onMount={handleDiffEditorDidMount}
         options={{ readOnly: false, renderSideBySide: isSplit }}
         width='100%'
-        height={isDiff ? '100%' : '0%'}
-        className={isDiff ? "d-block" : "d-none"}
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
+        data-id="diffEditor"
       />
       <Editor
         width="100%"
-        height={isDiff ? '0%' : '100%'}
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -1397,7 +1496,7 @@ export const EditorUI = (props: EditorUIProps) => {
           }
         }}
         defaultValue={defaultEditorValue}
-        className={isDiff ? "d-none" : "d-block"}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">

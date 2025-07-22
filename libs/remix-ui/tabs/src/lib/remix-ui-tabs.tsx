@@ -9,7 +9,7 @@ import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
 import { CompileDropdown, RunScriptDropdown } from '@remix-ui/tabs'
-
+import { SupportedFileExtensions } from '@remix/remix-ai-core'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */

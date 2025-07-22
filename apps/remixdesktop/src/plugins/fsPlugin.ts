@@ -115,6 +115,8 @@ class FSPluginClient extends ElectronBasePluginClient {
   trackDownStreamUpdate: Record<string, string> = {}
   expandedPaths: string[] = ['.']
   dataBatcher: PluginEventDataBatcher
+  private writeQueue: Map<string, {content: string, options: any, timestamp: number}> = new Map()
+  private writeTimeouts: Map<string, NodeJS.Timeout> = new Map()
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
@@ -168,8 +170,73 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async writeFile(path: string, content: string, options: any): Promise<void> {
-    this.trackDownStreamUpdate[path] = content
-    return (fs as any).writeFile(this.fixPath(path), content, options)
+    // Cancel any pending write for this file
+    const existingTimeout = this.writeTimeouts.get(path)
+    if (existingTimeout) {
+      clearTimeout(existingTimeout)
+    }
+    
+    // Queue the write with a small delay to handle rapid successive writes
+    this.writeQueue.set(path, {content, options, timestamp: Date.now()})
+    
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(async () => {
+        try {
+          const queuedWrite = this.writeQueue.get(path)
+          if (!queuedWrite) {
+            resolve()
+            return
+          }
+          
+          // Check if this is still the latest write request
+          if (queuedWrite.timestamp !== this.writeQueue.get(path)?.timestamp) {
+            resolve()
+            return
+          }
+          
+          const fullPath = this.fixPath(path)
+          
+          // First, check if file exists and read current content
+          let currentContent: string | null = null
+          try {
+            currentContent = await fs.readFile(fullPath, 'utf-8')
+          } catch (e) {
+            // File doesn't exist, that's ok
+          }
+          
+          // Use atomic write with temporary file
+          const tempPath = fullPath + '.tmp'
+          await (fs as any).writeFile(tempPath, queuedWrite.content, queuedWrite.options)
+          
+          // Atomic rename (this is atomic on most filesystems)
+          await fs.rename(tempPath, fullPath)
+          
+          // Only update tracking after successful write
+          this.trackDownStreamUpdate[path] = queuedWrite.content
+          
+          // Clean up queue and timeout
+          this.writeQueue.delete(path)
+          this.writeTimeouts.delete(path)
+          
+          resolve()
+        } catch (error) {
+          // Clean up temp file if it exists
+          try {
+            await fs.unlink(this.fixPath(path) + '.tmp')
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+          
+          // Clean up queue and timeout
+          this.writeQueue.delete(path)
+          this.writeTimeouts.delete(path)
+          
+          reject(error)
+        }
+      }, 50) // 50ms debounce delay
+      
+      this.writeTimeouts.set(path, timeout)
+    })
   }
 
   async mkdir(path: string): Promise<void> {
@@ -294,20 +361,38 @@ class FSPluginClient extends ElectronBasePluginClient {
     if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
 
     if (eventName === 'change') {
-      // remove workingDir from path
-      const newContent = await fs.readFile(eventPath, 'utf-8')
-
-      const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
-
-      if (currentContent !== newContent) {
+      try {
+        // Read the current file content
+        const newContent = await fs.readFile(eventPath, 'utf-8')
+        
+        // Get the last known content we wrote
+        const trackedContent = this.trackDownStreamUpdate[pathWithoutPrefix]
+        
+        // Only emit change if:
+        // 1. We don't have tracked content (external change), OR
+        // 2. The new content differs from what we last wrote
+        if (!trackedContent || trackedContent !== newContent) {
+          // If we had tracked content but it's different, it means external change
+          // Update our tracking to the new content to avoid false positives
+          if (trackedContent && trackedContent !== newContent) {
+            this.trackDownStreamUpdate[pathWithoutPrefix] = newContent
+          }
+          
+          const dirname = path.dirname(pathWithoutPrefix)
+          if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
+            this.dataBatcher.write('change', eventName, pathWithoutPrefix)
+          }
+        }
+      } catch (e) {
+        console.log('error reading file during change event', e)
+        // Still emit the change event even if we can't read the file
         try {
           const dirname = path.dirname(pathWithoutPrefix)
           if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
-            //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
             this.dataBatcher.write('change', eventName, pathWithoutPrefix)
           }
-        } catch (e) {
-          console.log('error emitting change', e)
+        } catch (e2) {
+          console.log('error emitting change', e2)
         }
       }
     } else {
@@ -325,8 +410,37 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async closeWatch(): Promise<void> {
+    // Cancel all pending writes
+    for (const timeout of this.writeTimeouts.values()) {
+      clearTimeout(timeout)
+    }
+    this.writeTimeouts.clear()
+    this.writeQueue.clear()
+    
     for (const watcher in this.watchers) {
       this.watchers[watcher].close()
+    }
+    // Clear tracking data when closing watchers
+    this.trackDownStreamUpdate = {}
+  }
+
+  private async cleanupTempFiles(): Promise<void> {
+    if (!this.workingDir) return
+    
+    try {
+      const files = await fs.readdir(this.workingDir)
+      const tempFiles = files.filter(file => file.endsWith('.tmp'))
+      
+      for (const tempFile of tempFiles) {
+        try {
+          await fs.unlink(path.join(this.workingDir, tempFile))
+          console.log(`Cleaned up temp file: ${tempFile}`)
+        } catch (e) {
+          // Ignore errors when cleaning temp files
+        }
+      }
+    } catch (e) {
+      // Ignore errors when listing directory
     }
   }
 
@@ -446,6 +560,10 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async setWorkingDir(path: string): Promise<void> {
     console.log('setWorkingDir', path)
+    
+    // Clean up any temp files from previous working directory
+    await this.cleanupTempFiles()
+    
     this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)

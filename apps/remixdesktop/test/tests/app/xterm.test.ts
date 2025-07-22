@@ -5,6 +5,7 @@ import {NightwatchBrowser} from 'nightwatch'
 
 const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hideToolTips()
     done()
   },
   open: function (browser: NightwatchBrowser) {

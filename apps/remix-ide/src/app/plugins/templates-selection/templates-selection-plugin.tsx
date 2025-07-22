@@ -170,7 +170,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
 
       const modalResult = await this.call('notification', 'modal', modal)
-      console.log('modalResult', modalResult)
       if (!modalResult) return
       _paq.push(['trackEvent', 'template-selection', 'createWorkspace', item.value])
       this.emit('createWorkspaceReducerEvent', workspaceName, item.value, this.opts, false, errorCallback, initGit)
