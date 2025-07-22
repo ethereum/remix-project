@@ -10,6 +10,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   const [explaining, setExplaining] = useState(false)
   const [aiSwitch, setAiSwitch] = useState(true)
   const [currentExt, setCurrentExt] = useState('')
+  const [currentFilePath, setCurrentFilePath] = useState('')
 
   useEffect(() => {
     const getAI = async () => {
@@ -24,10 +25,12 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     const getCurrentExt = async () => {
       try {
         const path = await plugin.call('fileManager', 'getCurrentFile')
+        setCurrentFilePath(path)
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
       } catch (err) {
         console.error('Failed to get current file', err)
+        setCurrentFilePath('')
         setCurrentExt('')
       }
     }
@@ -44,12 +47,15 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   }, [plugin])
 
   const handleExplain = async () => {
+    if (!currentFilePath) {
+      plugin.call('notification', 'toast', 'No file selected to explain.');
+      return
+    }
     setExplaining(true)
     try {
       await plugin.call('menuicons', 'select', 'remixaiassistant')
       await new Promise(resolve => setTimeout(resolve, 500))
-      const path = await plugin.call('fileManager', 'getCurrentFile')
-      const content = await plugin.call('fileManager', 'readFile', path)
+      const content = await plugin.call('fileManager', 'readFile', currentFilePath)
       await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
 
     } catch (err) {
@@ -79,7 +85,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         <button
           className="btn explain-btn"
           onClick={handleExplain}
-          disabled={explaining}
+          disabled={explaining || !currentFilePath}
         >
           <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
           <span>{getExplainLabel()}</span>

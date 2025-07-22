@@ -1,5 +1,3 @@
-// remix-project/libs/remix-ui/helper/src/lib/solidity-scan.tsx
-
 import React from 'react'
 import axios from 'axios'
 import { FormattedMessage } from 'react-intl'

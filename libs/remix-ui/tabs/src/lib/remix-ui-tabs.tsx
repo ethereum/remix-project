@@ -207,17 +207,6 @@ export const TabsUI = (props: TabsUIProps) => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
 
-  /**
-   * Compiles the current file and triggers the 'Publish' functionality of the Solidity Compiler plugin.
-   * * ⚠️ WARNING: This function uses a brittle method of direct DOM manipulation
-   * * instead of formal inter-plugin API communication.
-   * * It relies on the compiler UI's button ID (e.g., 'publishOnIpfs'), so it may break
-   * * without warning during future updates.
-   * * It also uses an unreliable `setTimeout` to wait for the UI to render after compilation.
-   * * @todo This logic should be refactored in the future to a more stable approach:
-   * * add a formal API to the Solidity Compiler plugin and call that API instead.
-   * * @param {'ipfs' | 'swarm'} storageType - The type of storage to publish to.
-   */
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
     setCompileState('compiling')
     await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
