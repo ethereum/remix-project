@@ -317,6 +317,54 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }
 
+  const handleCompileClick = async () => {
+    setCompileState('compiling')
+    _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+
+    try {
+      const path = active().substr(active().indexOf('/') + 1, active().length)
+      
+      if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+        const content = await props.plugin.call('fileManager', 'readFile', path)
+        await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+        setCompileState('compiled')
+        return
+      }
+
+      const compilerName = {
+        sol: 'solidity',
+        yul: 'solidity',
+        vy: 'vyper',
+        circom: 'circuit-compiler',
+        nr: 'noir-compiler'
+      }[tabsState.currentExt]
+
+      if (!compilerName) {
+        setCompileState('idle')
+        return
+      }
+      
+      props.plugin.once(compilerName, 'compilationFinished', (fileName, source, languageVersion, data) => {
+        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
+
+        if (hasErrors) {
+          setCompileState('idle')
+        } else {
+          setCompileState('compiled')
+        }
+      });
+
+      if (tabsState.currentExt === 'vy') {
+        await props.plugin.call(compilerName, 'vyperCompileCustomAction')
+      } else {
+        await props.plugin.call(compilerName, 'compile', path)
+      }
+    } catch (e) {
+      console.error(e)
+      setCompileState('idle')
+    }
+  }
+
   return (
     <div
       className={`remix-ui-tabs justify-content-between border-0 header nav-tabs ${
@@ -357,24 +405,7 @@ export const TabsUI = (props: TabsUIProps) => {
                     borderRadius: "4px 0 0 4px"
                   }}
                   disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                  onClick={async () => {
-                    setCompileState('compiling')
-                    const path = active().substr(active().indexOf('/') + 1, active().length)
-                    const content = await props.plugin.call('fileManager', 'readFile', path)
-                    if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                      await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
-                    } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
-                      await props.plugin.call('solidity', 'compile', path)
-                    } else if (tabsState.currentExt === 'circom') {
-                      await props.plugin.call('circuit-compiler', 'compile', path)
-                    } else if (tabsState.currentExt === 'vy') {
-                      await props.plugin.call('vyper', 'vyperCompileCustomAction')
-                    } else if (tabsState.currentExt === 'nr') {
-                      await props.plugin.call('noir-compiler', 'compile', path)
-                    }
-                    setCompileState('compiled')
-                    _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-                  }}
+                  onClick={handleCompileClick}
                 >
                   <i className={
                     compileState === 'compiled' ? "fas fa-check"
