@@ -10,7 +10,6 @@ import * as packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
-import { CompileDropdown } from '../../../tabs/src/lib/components/CompileDropdown'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {

@@ -1,9 +1,7 @@
 export * from './lib/remix-ui-tabs'
-export * from './lib/types'
 export { CompileDropdown } from './lib/components/CompileDropdown'
 export { default as RunScriptDropdown } from './lib/components/RunScriptDropdown'
 export { default as Dropdown } from './lib/components/DropdownMenu'
-export { SolScanTable } from './lib/components/solScanTable'
 
 export { default as AnalysisLogo } from './assets/icons/Analysis'
 export { default as ArrowRightBig } from './assets/icons/ArrowRightBig'

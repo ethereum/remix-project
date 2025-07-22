@@ -1,17 +1,14 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ContractPropertyName, ContractSelectionProps, ScanReport } from './types'
+import { ContractPropertyName, ContractSelectionProps } from './types'
 import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
 import { saveAs } from 'file-saver'
 import { AppModal } from '@remix-ui/app'
-import { SolScanTable } from './solScanTable'
-import axios from 'axios'
 
 import './css/style.css'
-import { CustomTooltip } from '@remix-ui/helper'
-import { endpointUrls } from '@remix-endpoints-helper'
+import { CustomTooltip, handleSolidityScan } from '@remix-ui/helper'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -261,91 +258,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const handleScanContinue = async () => {
-    const plugin = api as any
-    await plugin.call('notification', 'toast', 'Processing data to scan...')
-    _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'initiateScan'])
-    const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-    const fileName = `${workspace.name}/${props.compiledFileName}`
-    const filePath = `.workspaces/${fileName}`
-    const file = await plugin.call('fileManager', 'readFile', filePath)
-
-    const urlResponse = await axios.post(`${endpointUrls.solidityScan}/uploadFile`, { file, fileName })
-
-    if (urlResponse.data.status === 'success') {
-      const ws = new WebSocket(`${endpointUrls.solidityScanWebSocket}/solidityscan`)
-
-      ws.addEventListener('error', console.error);
-
-      ws.addEventListener('open', async (event) => {
-        await plugin.call('notification', 'toast', 'Loading scan result in Remix terminal...')
-      })
-
-      ws.addEventListener('message', async (event) => {
-        const data = JSON.parse(event.data)
-        if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
-          // Message on Bearer token successful registration
-          const reqToInitScan = {
-            "action": "message",
-            "payload": {
-              "type": "private_project_scan_initiate",
-              "body": {
-                "file_urls": [
-                  urlResponse.data.result.url
-                ],
-                "project_name": "RemixProject",
-                "project_type": "new"
-              }
-            }
-          }
-          ws.send(JSON.stringify(reqToInitScan))
-        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
-          // Message on failed scan
-          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanFailed'])
-          const modal: AppModal = {
-            id: 'SolidityScanError',
-            title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
-            message: data.payload.scan_status_err_message,
-            okLabel: 'Close'
-          }
-          await plugin.call('notification', 'modal', modal)
-          ws.close()
-        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
-          // Message on successful scan
-          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
-          const url = data.payload.scan_details.link
-
-          const { data: scanData } = await axios.post(`${endpointUrls.solidityScan}/downloadResult`, { url })
-          const scanReport: ScanReport = scanData.scan_report
-          if (scanReport?.multi_file_scan_details?.length) {
-            for (const template of scanReport.multi_file_scan_details) {
-              if (template.metric_wise_aggregated_findings?.length) {
-                const { metric_wise_aggregated_findings } = template
-                const positions = []
-                for (const details of metric_wise_aggregated_findings) {
-                  const { findings } = details
-                  for (const f of findings)
-                    positions.push(`${f.line_nos_start[0]}:${f.line_nos_end[0]}`)
-                }
-                template.positions = JSON.stringify(positions)
-              }
-            }
-            await plugin.call('terminal', 'logHtml', <SolScanTable scanReport={scanReport} fileName={fileName}/>)
-          } else {
-            const modal: AppModal = {
-              id: 'SolidityScanError',
-              title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
-              message: "Some error occurred! Please try again",
-              okLabel: 'Close'
-            }
-            await plugin.call('notification', 'modal', modal)
-          }
-          ws.close()
-        }
-      })
-    } else {
-      await plugin.call('notification', 'toast', 'Error in processing data to scan')
-      console.error(urlResponse.data && urlResponse.data.error ? urlResponse.data.error : urlResponse)
-    }
+    await handleSolidityScan(api, props.compiledFileName)
   }
 
   const runSolidityScan = async () => {

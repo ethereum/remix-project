@@ -1,5 +1,3 @@
-//// SolidityScan Types
-
 export interface ScanTemplate {
   issue_id: string
   issue_name: string
@@ -29,5 +27,4 @@ export interface ScanReport {
   scan_id: string
   scan_status: string
   scan_type: string
-  // others
 }
