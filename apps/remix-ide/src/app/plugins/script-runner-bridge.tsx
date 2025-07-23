@@ -13,7 +13,7 @@ import { ScriptRunnerUIPlugin } from '../tabs/script-runner-ui'
 const profile = {
   name: 'scriptRunnerBridge',
   displayName: 'Script configuration',
-  methods: ['execute'],
+  methods: ['execute', 'getConfigurations', 'selectScriptRunner'],
   events: ['log', 'info', 'warn', 'error'],
   icon: 'assets/img/solid-gear-circle-play.svg',
   description: 'Configure the dependencies for running scripts.',
@@ -93,6 +93,10 @@ export class ScriptRunnerBridgePlugin extends Plugin {
         this.renderComponent()
       }
     })
+  }
+
+  public getConfigurations() {
+    return this.configurations
   }
 
   async renderComponent() {

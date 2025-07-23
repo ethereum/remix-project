@@ -81,8 +81,8 @@ module.exports = {
       .addFile('testScript.ts', { content: testScript })
       .clearConsole()
       .pause(10000)
-      .waitForElementVisible('*[data-id="play-editor"]')
-      .click('*[data-id="play-editor"]')
+      .waitForElementVisible('*[data-id="compile-action"]')
+      .click('*[data-id="compile-action"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//span[@class='text-danger' and contains(., 'exceed maximum block range')]"
