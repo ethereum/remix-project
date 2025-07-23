@@ -129,7 +129,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('package.json', sources[9]['package.json'])
       .addFile('Untitled10.sol', sources[9]['Untitled10.sol'])
-      .expandAllFolders() // unfold also .deps folder and nested folders
+      .expandAllFolders()
       // avoid invalid source issues
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',

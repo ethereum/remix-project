@@ -33,38 +33,33 @@ function expandAllFolders (browser: NightwatchBrowser, targetDirectory?: string,
     })
   })
     .perform(() => {
-      let iteration = 0
-      const maxIterations = 20 // Prevent infinite loops
+      let attempts = 0
+      const maxAttempts = 200
 
-      const clickNext = () => {
-        if (iteration >= maxIterations) {
+      const expandNextClosedFolder = () => {
+        if (attempts >= maxAttempts) {
           if (done) done()
           return
         }
+        attempts++
 
-        iteration++
+        const closedFolderSelector = targetDirectory
+          ? `li[data-id*="treeViewLitreeViewItem${targetDirectory}"] .fa-folder:not(.fa-folder-open)`
+          : 'li[data-id*="treeViewLitreeViewItem"] .fa-folder:not(.fa-folder-open)'
 
-        // Find folders that are not expanded, / in case no folder is passed
-        const folderSelector = targetDirectory ?
-          `li[data-id*="treeViewLitreeViewItem${targetDirectory}"] li[data-id*="treeViewLitreeViewItem"] .fa-folder:not(.fa-folder-open)` :
-          'li[data-id*="treeViewLitreeViewItem"] .fa-folder:not(.fa-folder-open)'
-
-        browser.element('css selector', folderSelector, (result) => {
+        browser.element('css selector', closedFolderSelector, (result) => {
           if (result.status === 0 && result.value) {
-            // Found a closed folder, click its parent li element
-            browser.element('css selector', folderSelector, (elementResult) => {
-              if (elementResult.status === 0) {
-                browser.elementIdElement((elementResult.value as any)['element-6066-11e4-a52e-4f735466cecf'], 'xpath', './..', (parentResult) => {
-                  if (parentResult.status === 0) {
-                    browser.elementIdClick((parentResult.value as any)['element-6066-11e4-a52e-4f735466cecf']) // click on folder name
-                      .pause(100)
-                      .perform(() => clickNext()) // recursive nested folders
-                  } else {
-                    if (done) done()
-                  }
-                })
+            // Found a closed folder icon, now find its parent li element and click it
+            browser.elementIdElement((result.value as any)['element-6066-11e4-a52e-4f735466cecf'], 'xpath', './..', (parentResult) => {
+              if (parentResult.status === 0) {
+                browser.elementIdClick((parentResult.value as any)['element-6066-11e4-a52e-4f735466cecf'])
+                  .pause(100) // Wait for folder to expand and DOM to update
+                  .perform(() => expandNextClosedFolder()) // Look for next closed folder
               } else {
-                if (done) done()
+                // Failed to find parent, try alternative approach
+                browser.click(closedFolderSelector)
+                  .pause(100)
+                  .perform(() => expandNextClosedFolder()) // recursive call
               }
             })
           } else {
@@ -73,7 +68,7 @@ function expandAllFolders (browser: NightwatchBrowser, targetDirectory?: string,
         })
       }
 
-      clickNext()
+      expandNextClosedFolder()
     })
 }
 
