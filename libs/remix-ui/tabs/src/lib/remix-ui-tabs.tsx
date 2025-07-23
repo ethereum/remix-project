@@ -162,6 +162,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const active = () => {
     if (currentIndexRef.current < 0) return ''
+    if (!tabs.current[currentIndexRef.current]) return ''
     return tabs.current[currentIndexRef.current].name
   }
 
