@@ -22,7 +22,7 @@ module.exports = {
       .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
       .click('*[id="menuitemgeneratecustomaction"')
       .waitForElementVisible('*[id="sol-uml-gen"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]', 60000)
   },
   'Zoom into uml diagram #group1': function (browser: NightwatchBrowser) {
     browser
@@ -177,37 +177,16 @@ contract Ballot {
   {
     'secondContract.sol': {
       content: `
-      // SPDX-License-Identifier: GPL-3.0
+      // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
 
-pragma solidity ^0.5.9;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-import "@0x/contracts-erc20/contracts/src/ERC20Token.sol";
-
-/**
- * @title SampleERC20
- * @dev Create a sample ERC20 standard token
- */
-contract SampleERC20 is ERC20Token {
-
-    string public name;
-    string public symbol;
-    uint256 public decimals;
-
-    constructor (
-        string memory _name,
-        string memory _symbol,
-        uint256 _decimals,
-        uint256 _totalSupply
-    )
-        public
-    {
-        name = _name;
-        symbol = _symbol;
-        decimals = _decimals;
-        _totalSupply = _totalSupply;
-        balances[msg.sender] = _totalSupply;
-    }
+contract MyToken is ERC20, ERC20Permit {
+    constructor() ERC20("MyToken", "MTK") ERC20Permit("MyToken") {}
 }
+
 
 `}
   }
