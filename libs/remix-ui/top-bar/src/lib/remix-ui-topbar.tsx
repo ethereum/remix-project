@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useReducer, useState } from 'react'
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
 import { Dropdown } from 'react-bootstrap'
@@ -9,14 +9,20 @@ import { platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/con
 import { useIntl } from 'react-intl'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { TopbarContext } from '../context/topbarContext'
+import { WorkspaceDropdown } from '../components/WorkspaceDropdown'
+import { initWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
+import { browserInitialState, browserReducer } from 'libs/remix-ui/workspace/src/lib/reducers/workspace'
 
 export interface RemixUiTopbarProps {
   plugin: Topbar
+  reducerState: any
+  dispatch: any
+
 }
 
 const _paq = window._paq || []
 
-export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
+export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbarProps) {
   const intl = useIntl()
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
@@ -26,13 +32,18 @@ export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
-
+  const [latestReleaseNotesUrl, setLatestReleaseNotesUrl] = useState<string>('')
+  const [currentReleaseVersion, setCurrentReleaseVersion] = useState<string>('')
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
   }
   const formatNameForReadonly = (name: string) => {
     return global.fs.readonly ? name + ` (${intl.formatMessage({ id: 'filePanel.readOnly' })})` : name
   }
+
+  useEffect(() => {
+    console.log('plugin.workspaces', plugin.workspaces)
+  }, [plugin.workspaces])
 
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
     return (
@@ -69,7 +80,7 @@ export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
   const ShowAllMenuItems = () => {
     return (
       <>
-        { global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+        { global.plugin.workspaces.map(({ name, isGitRepo }, index) => (
           <Dropdown.Item
             key={index}
             onClick={() => { switchWorkspace(name) }}
@@ -83,7 +94,7 @@ export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
   }
 
   const ShowNonLocalHostMenuItems = () => {
-    const cachedFilter = global.fs.browser.workspaces.filter(x => !x.name.includes('localhost'))
+    const cachedFilter = global.plugin.workspaces.filter(x => !x.name.includes('localhost'))
     return (
       <>
         {
@@ -99,60 +110,94 @@ export function RemixUiTopbar ({ plugin }: RemixUiTopbarProps) {
             </Dropdown.Item>
           )) : <ShowAllMenuItems />
         }
-        <h1>ShowNonLocalHostMenuItems</h1>
       </>
     )
   }
 
-  console.log('what do we have here in topbar', global.fs)
+  useEffect(() => {
+    const run = async () => {
+      await plugin.getWorkspaces()
+      await plugin.getCurrentWorkspaceMetadata()
+      await plugin.getLatestUpdates()
+      const [url, currentReleaseVersion] = await plugin.getLatestReleaseNotesUrl()
+      setLatestReleaseNotesUrl(url)
+      setCurrentReleaseVersion(currentReleaseVersion)
+      setCurrentWorkspace(plugin.currentWorkspaceMetadata?.name)
+    }
+    run()
+  }, [])
 
   return (
     <section className="h-100 p-2 d-flex flex-row align-items-center justify-content-between bg-light border">
       <div className="d-flex flex-row align-items-center justify-content-between w-100 ">
-        <div className="d-flex flex-row align-items-center justify-content-between">
+        <div
+          className="d-flex flex-row align-items-center justify-content-evenly"
+          style={{ minWidth: '33%' }}
+        >
           <span className="d-flex align-items-center justify-content-between mr-3">
             <span style={{ width: '35px', height: '35px' }} className="remixui_homeIcon"><BasicLogo /></span>
             <span className="text-primary ml-2 font-weight-light text-uppercase" style={{ fontSize: '1.2rem' }}>Remix</span>
           </span>
-          <span className="btn btn-sm border border-secondary text-secondary">v0.57.0</span>
+          <span
+            className="btn btn-sm border border-secondary text-secondary text-decoration-none font-weight-light text-light"
+            onClick={() => {
+              window.open(latestReleaseNotesUrl, '_blank')
+            }}
+            style={{
+              padding: '0.25rem 0.5rem'
+            }}
+          >
+            {currentReleaseVersion}
+          </span>
         </div>
-        <div>
-          <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-            <Dropdown.Toggle
-              as={CustomToggle}
-              id="dropdown-custom-components"
-              className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
-              icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
-            >
-              {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
-            </Dropdown.Toggle>
-            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-              {!global.fs.initializingFS && (
-                <>
-                  <ShowNonLocalHostMenuItems />
-                  {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
-                    <Dropdown.Item
-                      onClick={() => {
-                        switchWorkspace(NO_WORKSPACE)
-                      }}
-                    >
-                      {<span className="pl-3">NO_WORKSPACE</span>}
-                    </Dropdown.Item>
-                  )}
-                </>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
+        <div className="" style={{ minWidth: '33%' }}>
+          <WorkspaceDropdown
+            toggleDropdown={toggleDropdown}
+            showDropdown={showDropdown}
+            selectedWorkspace={selectedWorkspace}
+            currentWorkspace={currentWorkspace}
+            togglerText={togglerText}
+            formatNameForReadonly={formatNameForReadonly}
+            NO_WORKSPACE={NO_WORKSPACE}
+            LOCALHOST={LOCALHOST}
+            switchWorkspace={switchWorkspace}
+            ShowNonLocalHostMenuItems={ShowNonLocalHostMenuItems}
+            ShowAllMenuItems={ShowAllMenuItems}
+            CustomToggle={CustomToggle}
+            CustomMenu={CustomMenu}
+            global={global}
+          />
         </div>
-        <div className="d-flex flex-row align-items-center justify-content-between">
-          <span className="btn btn-topbar btn-sm mr-3">
+        <div
+          className="d-flex flex-row align-items-center justify-content-sm-end px-2"
+          style={{ minWidth: '33%' }}
+        >
+          <span className="btn btn-topbar mr-3" style={{ fontSize: '0.8rem' }}>
             <i className="fab fa-github mr-2"></i>
-          Connect to Github
+            Connect to Github
           </span>
-          <span className="btn border btn-topbar btn-sm mr-3">
-          Theme
+          <span
+            className="btn border btn-topbar mr-3"
+            style={{ fontSize: '0.8rem' }}
+            onClick={async () => {
+              global.plugin.call('menuicons', 'select', 'theme')
+              _paq.push(['trackEvent', 'topbar', 'header', 'Theme'])
+            }}
+            data-id="topbar-themeIcon"
+          >
+            Theme
+            <i className="fas fa-caret-down ml-2"></i>
           </span>
-          <span style={{ fontSize: '1.5rem' }}>
+          <span
+            style={{ fontSize: '1.5rem', cursor: 'pointer' }}
+            className=""
+            onClick={async () => {
+              global.plugin.call('menuicons', 'select', 'settings')
+              global.plugin.call('tabs', 'focus', 'settings')
+              _paq.push(['trackEvent', 'topbar', 'header', 'Settings'])
+            }}
+            data-id="topbar-settingsIcon"
+          >
             <i className="fa fa-cog"></i>
           </span>
         </div>

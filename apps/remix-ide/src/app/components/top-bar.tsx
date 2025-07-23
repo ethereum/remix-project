@@ -8,6 +8,12 @@ import { Plugin } from '@remixproject/engine'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { AppAction } from 'libs/remix-ui/app/src/lib/remix-app/actions/app'
 import FilePanel from '../panels/file-panel'
+import Filepanel from '../panels/file-panel'
+import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
+import { gitUIPanels } from '@remix-ui/git'
+import { HOME_TAB_NEW_UPDATES } from 'libs/remix-ui/home-tab/src/lib/components/constant'
+import axios from 'axios'
+import { UpdateInfo } from 'libs/remix-ui/home-tab/src/lib/components/types/carouselTypes'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -19,16 +25,21 @@ const TopBarProfile = {
   events: []
 }
 
-export class Topbar extends Plugin<any, CustomRemixApi> {
+export class Topbar extends Plugin {
   dispatch: React.Dispatch<any> = () => { }
   appStateDispatch: React.Dispatch<AppAction> = () => { }
   htmlElement: HTMLDivElement
   events: EventEmitter
+  topbarExpandPath: string
   filePanel: FilePanel
+  workspaces: WorkspaceMetadata[]
+  currentWorkspaceMetadata: WorkspaceMetadata
 
   constructor(filePanel: FilePanel) {
     super(TopBarProfile)
     this.filePanel = filePanel
+    this.workspaces = []
+    this.currentWorkspaceMetadata = null
   }
 
   onActivation(): void {
@@ -37,6 +48,45 @@ export class Topbar extends Plugin<any, CustomRemixApi> {
 
   onDeactivation(): void {
 
+  }
+
+  async getWorkspaces() {
+    while (this.workspaces.length === 0) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      this.workspaces = await this.call('filePanel', 'getWorkspaces')
+    }
+    return this.workspaces
+  }
+
+  async getCurrentWorkspaceMetadata() {
+    while (!this.currentWorkspaceMetadata) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      this.currentWorkspaceMetadata = await this.call('filePanel', 'getCurrentWorkspace')
+    }
+  }
+
+  async logInGithub () {
+    // await global.plugin.call('menuicons', 'select', 'dgit');
+    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
+    (window)._paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
+  }
+
+  async getLatestUpdates() {
+    try {
+      const response = await axios.get(HOME_TAB_NEW_UPDATES)
+      console.log('response', response.data)
+    } catch (error) {
+      console.error('Error fetching plugin list:', error)
+    }
+  }
+
+  async getLatestReleaseNotesUrl () {
+    const response = await axios.get(HOME_TAB_NEW_UPDATES)
+    const data: UpdateInfo[] = response.data
+    const interim = data.find(x => x.action.label.includes('Release notes'))
+    const targetUrl = interim.action.url
+    const currentReleaseVersion = interim.badge.split(' ')[0]
+    return [targetUrl, currentReleaseVersion]
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
