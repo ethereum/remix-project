@@ -197,6 +197,7 @@ export class RemixAIPlugin extends Plugin {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
+    useRag = false
     _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
     let userPrompt = ''
 

@@ -13,6 +13,7 @@ export class ContractAgent {
   generationThreadID: string= ''
   workspaceName: string = ''
   contracts: any = {}
+  mainPrompt: string = ''
   static instance
   oldPayload: any = undefined
 
@@ -79,14 +80,17 @@ export class ContractAgent {
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
+      if (this.nAttempts === 1) this.mainPrompt=userPrompt
 
       if (this.nAttempts > this.generationAttempts) {
         return await writeAIResults(parsedFiles)
       }
 
+      const genContrats = []
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
           this.contracts[file.fileName] = { content: file.content }
+          genContrats.push({ fileName: file.fileName, content: file.content })
         }
       }
 
@@ -99,16 +103,22 @@ export class ContractAgent {
           importPath: lib.importPath,
           content: lib.content
         }));
-        const libraryScaffolds = importPaths.map(lib =>
-          `Library: ${lib.importPath}\n${lib.content}`
+        const generatedContracts = genContrats.map(contract =>
+          `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
+
+        // Format error files properly according to the schema
+        const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
+          const errors = fileData.errors.map((err: any) => 
+            `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
+          ).join('\n  ');
+          return `File: ${fileName}\n  ${errors}`;
+        }).join('\n\n');
+
         const newPrompt = `
               Compilation parameters:\n${JSON.stringify(compilationParams)}\n\n
-              Compilation errors:\n${result.errors}\n\n
-              Error contracts:\n${JSON.stringify(result.errfiles)}\n\n
-              Scaffolded library imports:\n${libraryScaffolds}\n\n
-              While considering this compilation error and the provided library scaffolds above.\n 
-              Try this main prompt again: \n${userPrompt}\n `
+              Compilation errors:\n${formattedErrorFiles}\n\n
+              Generated contracts:\n${generatedContracts}\n\nConsider other possible soultion and retry this main prompt again: \n${this.mainPrompt}\n `
 
         console.log('New prompt for retry:', newPrompt)
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, true); // reuse the same thread

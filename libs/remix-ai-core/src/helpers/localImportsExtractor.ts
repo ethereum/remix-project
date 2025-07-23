@@ -1,9 +1,8 @@
 // Extract all imports from a given file content at the first level
 import { CompilationResult, IExtractedImport } from '../types/types';
 import { ImportExtractionSupportedFileExtensions } from '../types/types';
-import { createLibraryScaffold } from './scaffoldSolidity';
 
-const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
+export const extractImportsFromFile = (fileContent: string): IExtractedImport[] => {
   const imports: IExtractedImport[] = [];
   // Match both patterns: import "path"; and import {...} from "path";
   const importRegex = /import\s+(?:.*?\s+from\s+)?["']([^"']+)["'];?/g;
@@ -33,15 +32,12 @@ export const extractFirstLvlImports = (files: any, compilerPayload): IExtractedI
     // Helper function to resolve relative paths
     const resolveImportPath = (importPath: string, currentFile: string): string => {
       if (importPath.startsWith('./') || importPath.startsWith('../')) {
-        // Get the directory of the current file
         const currentDir = currentFile.substring(0, currentFile.lastIndexOf('/'));
 
-        // Handle relative path resolution
         if (importPath.startsWith('./')) {
           // Same directory
           return currentDir + '/' + importPath.substring(2);
         } else if (importPath.startsWith('../')) {
-          // Parent directory - simple implementation
           const parts = importPath.split('/');
           let resolvedDir = currentDir;
 
@@ -88,16 +84,13 @@ export const extractFirstLvlImports = (files: any, compilerPayload): IExtractedI
         return "Import not resolved";
       }
 
-      let content = getFileContent();
+      const content = getFileContent();
 
       // Apply scaffolding for library imports
       if (uniqueImports[key].isLibrary) {
-        const originalLength = content.length;
-        content = createLibraryScaffold(content);
+        uniqueImports[key].content = content;
+        imports.push(uniqueImports[key]);
       }
-
-      uniqueImports[key].content = content;
-      imports.push(uniqueImports[key]);
     }
 
     return imports;
