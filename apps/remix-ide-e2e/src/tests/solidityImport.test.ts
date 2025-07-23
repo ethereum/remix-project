@@ -100,6 +100,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
       // avoid invalid source issues
+      .expandAllFolders()
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
         timeout: 120000,
@@ -108,6 +109,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .expandAllFolders()
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
         timeout: 120000,
@@ -126,7 +128,8 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('package.json', sources[9]['package.json'])
-      .addFile('Untitled10.sol', sources[9]['Untitled10.sol'])      
+      .addFile('Untitled10.sol', sources[9]['Untitled10.sol'])
+      .expandAllFolders() // unfold also .deps folder and nested folders
       // avoid invalid source issues
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
@@ -136,6 +139,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .expandAllFolders()
       .isVisible({
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
         timeout: 120000,
