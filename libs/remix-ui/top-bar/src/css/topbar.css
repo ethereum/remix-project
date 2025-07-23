@@ -19,3 +19,12 @@
   text-decoration: none;
   color: var(--secondary);
 }
+
+.top-bar-dropdownItem {
+  color: var(--text);
+  cursor: pointer;
+}
+
+.top-bar-dropdownItem:hover {
+  color: var(--text);
+}
