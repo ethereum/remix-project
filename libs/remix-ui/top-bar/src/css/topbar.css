@@ -14,3 +14,8 @@
   background-color: #3F4455;
   color: #fff;
 }
+
+.version-btn:hover {
+  text-decoration: none;
+  color: var(--secondary);
+}
