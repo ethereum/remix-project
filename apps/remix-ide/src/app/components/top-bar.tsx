@@ -3,17 +3,16 @@ import React from 'react'
 import { TopbarProvider } from '@remix-ui/top-bar'
 import packageJson from '../../../../../package.json'
 import { EventEmitter } from 'events'
-import { CustomRemixApi, ICustomRemixApi } from '@remix-api'
 import { Plugin } from '@remixproject/engine'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { AppAction } from 'libs/remix-ui/app/src/lib/remix-app/actions/app'
 import FilePanel from '../panels/file-panel'
-import Filepanel from '../panels/file-panel'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { gitUIPanels } from '@remix-ui/git'
 import { HOME_TAB_NEW_UPDATES } from 'libs/remix-ui/home-tab/src/lib/components/constant'
 import axios from 'axios'
 import { UpdateInfo } from 'libs/remix-ui/home-tab/src/lib/components/types/carouselTypes'
+import { loginWithGitHub } from 'libs/remix-ui/git/src/lib/pluginActions'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -66,23 +65,22 @@ export class Topbar extends Plugin {
   }
 
   async logInGithub () {
-    // await global.plugin.call('menuicons', 'select', 'dgit');
-    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
-    (window)._paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
+    await this.call('menuicons', 'select', 'dgit')
+    await this.call('dgit', 'open', gitUIPanels.GITHUB)
   }
 
   async getLatestUpdates() {
     try {
       const response = await axios.get(HOME_TAB_NEW_UPDATES)
-      console.log('response', response.data)
+      return response.data
     } catch (error) {
       console.error('Error fetching plugin list:', error)
     }
   }
 
   async getLatestReleaseNotesUrl () {
-    const response = await axios.get(HOME_TAB_NEW_UPDATES)
-    const data: UpdateInfo[] = response.data
+    const response = await this.getLatestUpdates()
+    const data: UpdateInfo[] = response
     const interim = data.find(x => x.action.label.includes('Release notes'))
     const targetUrl = interim.action.url
     const currentReleaseVersion = interim.badge.split(' ')[0]
