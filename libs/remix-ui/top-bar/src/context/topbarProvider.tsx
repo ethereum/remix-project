@@ -50,13 +50,14 @@ import {
   removeRecentElectronFolder,
   updateGitSubmodules
 } from 'libs/remix-ui/workspace/src/lib/actions'
-import { Modal, WorkspaceTemplate } from 'libs/remix-ui/workspace/src/lib/types'
+import { FilePanelType, Modal, WorkspaceTemplate } from 'libs/remix-ui/workspace/src/lib/types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from 'libs/remix-ui/workspace/src/lib/remix-ui-workspace'
 import { customAction } from '@remixproject/plugin-api'
 import { TopbarContext } from './topbarContext'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { RemixUiTopbar } from '..'
+import { FileSystemContext, FileSystemProvider } from '@remix-ui/workspace'
 
 export interface TopbarProviderProps {
   plugin: Topbar
@@ -397,10 +398,8 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
           <i className="fas fa-spinner fa-pulse fa-2x"></i>
         </div>
       )} */}
-      {/* {!fs.initializingFS && <RemixUiTopbar plugin={plugin as unknown as Topbar} />} */}
-      <RemixUiTopbar plugin={plugin as unknown as Topbar} />
-      <ModalDialog id="fileSystem" {...focusModal} handleHide={handleHideModal} />
-      <Toaster message={focusToaster} handleHide={handleToaster} />
+      {/* {!fs.initializingFS && <RemixUiTopbar plugin={plugin as unknown as Topbar} reducerState={fs} dispatch={fsDispatch} />} */}
+      <RemixUiTopbar plugin={plugin as unknown as Topbar} reducerState={fs} dispatch={fsDispatch} />
     </TopbarContext.Provider>
   )
 }
