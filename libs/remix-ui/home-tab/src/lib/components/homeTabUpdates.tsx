@@ -4,6 +4,7 @@ import { ThemeContext } from '../themeContext'
 import axios from 'axios'
 import { HOME_TAB_BASE_URL, HOME_TAB_NEW_UPDATES } from './constant'
 import { LoadingCard } from './LoaderPlaceholder'
+import { UpdateInfo } from './types/carouselTypes'
 declare global {
   interface Window {
     _paq: any
@@ -14,22 +15,22 @@ interface HomeTabUpdatesProps {
   plugin: any
 }
 
-interface UpdateInfo {
-  badge: string
-  title: string
-  description: string
-  descriptionList?: string[]
-  icon: string
-  action: {
-    type: 'link' | 'methodCall'
-    label: string
-    url?: string
-    pluginName?: string
-    pluginMethod?: string,
-    pluginArgs?: (string | number | boolean | object | null)[]
-  },
-  theme: string
-}
+// exportinterface UpdateInfo {
+//   badge: string
+//   title: string
+//   description: string
+//   descriptionList?: string[]
+//   icon: string
+//   action: {
+//     type: 'link' | 'methodCall'
+//     label: string
+//     url?: string
+//     pluginName?: string
+//     pluginMethod?: string,
+//     pluginArgs?: (string | number | boolean | object | null)[]
+//   },
+//   theme: string
+// }
 
 function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
   const [pluginList, setPluginList] = useState<UpdateInfo[]>([])
