@@ -53,7 +53,7 @@ const tests = {
         .frameParent()
         .clickLaunchIcon('filePanel')
         .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
-        .click('*[data-id="play-editor"]') // run the script
+        .click('*[data-id="compile-action"]') // run the script
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
       }
 }

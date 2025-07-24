@@ -8,6 +8,8 @@ import './remix-ui-tabs.css'
 import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
+import { CompileDropdown, RunScriptDropdown } from '@remix-ui/tabs'
+
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -71,15 +73,17 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
 
 export const TabsUI = (props: TabsUIProps) => {
+
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
   const currentIndexRef = useRef(-1)
-  const [explaining, setExplaining] = useState<boolean>(false)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(true)
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
   const appContext = useContext(AppContext)
+
+  const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
 
   useEffect(() => {
     if (props.tabs[tabsState.selectedIndex]) {
@@ -89,6 +93,7 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
+
   // Toggle the copilot in editor when clicked to update in status bar
   useEffect(() => {
     const run = async () => {
@@ -157,6 +162,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const active = () => {
     if (currentIndexRef.current < 0) return ''
+    if (!tabs.current[currentIndexRef.current]) return ''
     return tabs.current[currentIndexRef.current].name
   }
 
@@ -186,7 +192,6 @@ export const TabsUI = (props: TabsUIProps) => {
       active,
       setFileDecorations
     })
-
     return () => {
       tabsElement.current.removeEventListener('wheel', transformScroll)
     }
@@ -199,6 +204,157 @@ export const TabsUI = (props: TabsUIProps) => {
     else return ''
   }
 
+  useEffect(() => {
+    setCompileState('idle')
+  }, [tabsState.selectedIndex])
+
+  const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
+    setCompileState('compiling')
+    await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
+
+    await props.plugin.call('manager', 'activatePlugin', 'solidity')
+    await props.plugin.call('menuicons', 'select', 'solidity')
+    try {
+      await props.plugin.call('solidity', 'compile', active().substr(active().indexOf('/') + 1, active().length))
+      _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
+
+      setTimeout(() => {
+        let buttonId
+        if (storageType === 'ipfs') {
+          buttonId = 'publishOnIpfs'
+        } else {
+          buttonId = 'publishOnSwarm'
+        }
+
+        const buttonToClick = document.getElementById(buttonId)
+
+        if (buttonToClick) {
+          buttonToClick.click()
+        } else {
+          props.plugin.call('notification', 'toast', 'Could not find the publish button.')
+        }
+      }, 500)
+
+    } catch (e) {
+      console.error(e)
+      await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
+    }
+
+    setCompileState('idle')
+  }
+
+  const handleRunScript = async (runnerKey: string) => {
+    if (runnerKey === 'new_script') {
+      try {
+        const path = 'scripts'
+        let newScriptPath = `${path}/new_script.ts`
+        let counter = 1
+
+        while (await props.plugin.call('fileManager', 'exists', newScriptPath)) {
+          newScriptPath = `${path}/new_script_${counter}.ts`
+          counter++
+        }
+
+        const boilerplateContent = `// This script can be used to deploy and interact with your contracts.
+//
+// See the Remix documentation for more examples:
+// https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html
+
+(async () => {
+    try {
+        console.log('Running script...')
+    } catch (e) {
+        console.error(e.message)
+    }
+})()`
+
+        await props.plugin.call('fileManager', 'writeFile', newScriptPath, boilerplateContent)
+        _paq.push(['trackEvent', 'editor', 'runScript', 'new_script'])
+      } catch (e) {
+        console.error(e)
+        props.plugin.call('notification', 'toast', `Error creating new script: ${e.message}`)
+      }
+      return
+    }
+
+    const path = active().substr(active().indexOf('/') + 1)
+    if (!path || !PlayExtList.includes(getExt(path))) {
+      props.plugin.call('notification', 'toast', 'A runnable file (.js, .ts) must be selected.')
+      return
+    }
+
+    try {
+      setCompileState('compiling')
+
+      const configurations = await props.plugin.call('scriptRunnerBridge', 'getConfigurations')
+
+      const selectedConfig = configurations.find(c => c.name === runnerKey)
+      if (!selectedConfig) {
+        throw new Error(`Runner configuration "${runnerKey}" not found.`)
+      }
+
+      await props.plugin.call('scriptRunnerBridge', 'selectScriptRunner', selectedConfig)
+
+      const content = await props.plugin.call('fileManager', 'readFile', path)
+      await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+
+      setCompileState('compiled')
+      _paq.push(['trackEvent', 'editor', 'runScriptWithEnv', runnerKey])
+    } catch (e) {
+      console.error(e)
+      props.plugin.call('notification', 'toast', `Error running script: ${e.message}`)
+      setCompileState('idle')
+    }
+  }
+
+  const handleCompileClick = async () => {
+    setCompileState('compiling')
+    _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+
+    try {
+      const path = active().substr(active().indexOf('/') + 1, active().length)
+
+      if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+        const content = await props.plugin.call('fileManager', 'readFile', path)
+        await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+        setCompileState('compiled')
+        return
+      }
+
+      const compilerName = {
+        sol: 'solidity',
+        yul: 'solidity',
+        vy: 'vyper',
+        circom: 'circuit-compiler',
+        nr: 'noir-compiler'
+      }[tabsState.currentExt]
+
+      if (!compilerName) {
+        setCompileState('idle')
+        return
+      }
+
+      props.plugin.once(compilerName, 'compilationFinished', (fileName, source, languageVersion, data) => {
+        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
+
+        if (hasErrors) {
+          setCompileState('idle')
+        } else {
+          setCompileState('compiled')
+        }
+      })
+
+      if (tabsState.currentExt === 'vy') {
+        await props.plugin.call(compilerName, 'vyperCompileCustomAction')
+      } else {
+        await props.plugin.call(compilerName, 'compile', path)
+      }
+    } catch (e) {
+      console.error(e)
+      setCompileState('idle')
+    }
+  }
+
   return (
     <div
       className={`remix-ui-tabs justify-content-between border-0 header nav-tabs ${
@@ -208,133 +364,73 @@ export const TabsUI = (props: TabsUIProps) => {
     >
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-run-script"
-            tooltipText={
-              <span>
-                {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
-                  <FormattedMessage id="remixUiTabs.tooltipText1" />
-                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
-                  <FormattedMessage id="remixUiTabs.tooltipText2" />
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText3" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="play-editor"
-              className="btn text-success pr-0 py-0 d-flex"
-              disabled={!(PlayExtList.includes(tabsState.currentExt))}
-              onClick={async () => {
-                const path = active().substr(active().indexOf('/') + 1, active().length)
-                const content = await props.plugin.call('fileManager', 'readFile', path)
-                if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                  await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
-                } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
-                  await props.plugin.call('solidity', 'compile', path)
-                } else if (tabsState.currentExt === 'circom') {
-                  await props.plugin.call('circuit-compiler', 'compile', path)
-                } else if (tabsState.currentExt === 'vy') {
-                  await props.plugin.call('vyper', 'vyperCompileCustomAction')
-                } else if (tabsState.currentExt === 'nr') {
-                  await props.plugin.call('noir-compiler', 'compile', path)
+          <div className="d-flex align-items-center m-1">
+            <div className="btn-group" role="group" data-id="compile_group" aria-label="compile group">
+              <CustomTooltip
+                placement="bottom"
+                tooltipId="overlay-tooltip-run-script"
+                tooltipText={
+                  <span>
+                    {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText1" />
+                    ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText2" />
+                    ) : (
+                      <FormattedMessage id="remixUiTabs.tooltipText3" />
+                    )}
+                  </span>
                 }
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }}
-            >
-              <i className="fas fa-play"></i>
-            </button>
-          </CustomTooltip>
-
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-run-script-config"
-            tooltipText={
-              <span>
-                <FormattedMessage id="remixUiTabs.tooltipText9" />
-              </span>
-            }><button
-              data-id="script-config"
-              className="btn text-dark border-left ml-2 pr-0 py-0 d-flex"
-              onClick={async () => {
-                await props.plugin.call('manager', 'activatePlugin', 'UIScriptRunner')
-                await props.plugin.call('tabs', 'focus', 'UIScriptRunner')
-              }}
-            >
-              <i className="fa-kit fa-solid-gear-circle-play"></i>
-            </button></CustomTooltip>
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-explanation"
-              tooltipText={
-                <span>
-                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText5" />
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText4" />
-                  )}
-                </span>
-              }
-            >
-              <button
-                data-id="explain-editor"
-                id='explain_btn'
-                className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
-                onClick={async () => {
-                  const path = active().substr(active().indexOf('/') + 1, active().length)
-                  const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
-                    setExplaining(true)
-                    try {
-                      await props.plugin.call('sidePanel', 'showContent', 'remixaiassistant')
-                    }
-                    catch (e) {
-                      // do nothing
-                    }
-
-                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-
-                    setExplaining(false)
-                    _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
-                  }
-                }}
               >
-                <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
-              </button>
-            </CustomTooltip>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-copilot"
-              tooltipText={
-                <span>
-                  {tabsState.currentExt === 'sol' ? (
-                    !ai_switch ? (
-                      <FormattedMessage id="remixUiTabs.tooltipText6" />
-                    ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
-                  )}
-                </span>
-              }
-            >
-              <button
-                data-id="remix_ai_switch"
-                id='remix_ai_switch'
-                className="btn ai-switch text-ai pl-2 pr-0 py-0"
-                disabled={!(tabsState.currentExt === 'sol')}
-                onClick={async () => {
-                  await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
-                  setAI_switch(!ai_switch)
-                  ai_switch ? _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_disabled'])
-                }}
-              >
-                <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
-              </button>
-            </CustomTooltip>
+                <button
+                  className="btn btn-primary d-flex align-items-center justify-content-center"
+                  data-id="compile-action"
+                  style={{
+                    padding: "4px 8px",
+                    height: "28px",
+                    fontFamily: "Nunito Sans, sans-serif",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    lineHeight: "14px",
+                    whiteSpace: "nowrap",
+                    borderRadius: "4px 0 0 4px"
+                  }}
+                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+                  onClick={handleCompileClick}
+                >
+                  <i className={
+                    compileState === 'compiled' ? "fas fa-check"
+                      : "fas fa-play"
+                  }></i>
+                  <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
+                    {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
+                      ? (compileState === 'compiling' ? "Run script" :
+                        compileState === 'compiled' ? "Run script" : "Run script")
+                      : (compileState === 'compiling' ? "Compiling..." :
+                        compileState === 'compiled' ? "Compiled" : "Compile")}
+                  </span>
+                </button>
+              </CustomTooltip>
+            </div>
+            {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? (
+              <RunScriptDropdown
+                plugin={props.plugin}
+                onRun={handleRunScript}
+                onNotify={(msg) => console.log(msg)}
+                disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+              />
+            ) : (
+              <>
+                <CompileDropdown
+                  tabPath={active().substr(active().indexOf('/') + 1, active().length)}
+                  compiledFileName={active()}
+                  plugin={props.plugin}
+                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+                  onNotify={(msg) => console.log(msg)}
+                  onRequestCompileAndPublish={handleCompileAndPublish}
+                  setCompileState={setCompileState}
+                />
+              </>
+            )}
           </div>
 
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
@@ -362,6 +458,7 @@ export const TabsUI = (props: TabsUIProps) => {
               payload: index,
               ext: getExt(props.tabs[currentIndexRef.current].name)
             })
+            setCompileState('idle')
           }}
         >
           <TabList className="d-flex flex-row align-items-center">
@@ -377,6 +474,7 @@ export const TabsUI = (props: TabsUIProps) => {
           ))}
         </Tabs>
       </div>
+
     </div>
   )
 }

@@ -448,57 +448,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     copilotTemperatureValue = 0.9
   }
 
-  const copilotSettings = () => (
-    <div className="border-top">
-      <div className="card-body pt-3 pb-2">
-        <h6 className="card-title d-inline">
-          <FormattedMessage id="settings.copilot" />
-        </h6>
-        <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
-          <span
-            data-id="remix_ai_docs"
-            id="remix_ai_docs"
-            className="btn pl-2 pr-0 py-0 d-inline ai-docs text-dark"
-            role='link'
-            onClick={()=>{
-              window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
-              _paq.push(['trackEvent', 'ai', 'remixAI', 'documentation'])
-            }}
-          >
-            <i aria-hidden="true" className="fas fa-book"></i>
-          </span>
-        </CustomTooltip>
-
-        <div className="pt-2 mb-0">
-          <div className="text-secondary mb-0 h6">
-            <div>
-              <div className="mb-1">
-                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
-                </label>
-                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-2 mb-0">
-          <div className="text-secondary mb-0 h6">
-            <div>
-              <div className="mb-1">
-                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
-                </label>
-                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  )
-
   const ipfsSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
@@ -577,7 +526,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div>
       {state.message ? <Toaster message={state.message} /> : null}
       {generalConfig()}
-      {copilotSettings()}
       <GithubSettings
         saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, 'gist-access-token')

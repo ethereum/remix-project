@@ -7,19 +7,19 @@ import { EventEmitter } from 'events'
 
 const profile = {
   name: 'remixaiassistant',
-  displayName: 'Remix AI Assistant',
+  displayName: 'RemixAI Assistant',
   icon: 'assets/img/remixai-logoAI.webp',
   description: 'AI code assistant for Remix IDE',
   kind: 'remixaiassistant',
   location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
   version: packageJson.version,
   maintainedBy: 'Remix',
   permission: true,
   events: [],
   methods: ['chatPipe']
 }
-
+const _paq = (window._paq = window._paq || [])
 export class RemixAIAssistant extends ViewPlugin {
   element: HTMLDivElement
   dispatch: React.Dispatch<any> = () => { }
@@ -103,10 +103,7 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async handleActivity(type: string, payload: any) {
-    console.log('RemixAiAssistant activity:', type, payload)
-
-    await this.call('layout', 'maximisePinnedPanel')
-
+    (window as any)._paq?.push(['trackEvent', 'remixai-assistant', `${type}-${payload}`])
   }
 
   updateComponent(state: {

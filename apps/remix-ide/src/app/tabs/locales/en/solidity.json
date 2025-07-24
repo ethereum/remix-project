@@ -57,8 +57,8 @@
 
 
   "solidity.runSolidityScan": "Run SolidityScan",
-  "solidity.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using SolidityScan, a third-party provider [BETA]",
-  "solidity.solScan.modalTitle": "Permission to share code",
+  "solidity.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using SolidityScan, a third-party provider",
+  "solidity.solScan.modalTitle": "Permission to share code [BETA]",
   "solidity.solScan.modalMessage": "To scan and analyze the contract for risks and vulnerabilities, its code will be shared with SolidityScan, a third-party provider. ",
   "solidity.solScan.likeToContinue": "Would you like to continue?",
   "solidity.solScan.modalOkLabel": "Continue",
