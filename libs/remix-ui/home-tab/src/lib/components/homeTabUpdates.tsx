@@ -78,7 +78,7 @@ function HomeTabUpdates({ plugin }: HomeTabUpdatesProps) {
               <div className="mb-3 small">
                 <ul className="list-unstyled">
                   {updateInfo.descriptionList.map((description: string, index: number) => (
-                    <li key={`description-${index}`} className='mb-1'><i className="far fa-check-circle mr-2"></i>{description}</li>
+                    <li key={`description-${index}`} className='mb-1'><i className="far fa-check-circle me-2"></i>{description}</li>
                   ))}
                 </ul>
               </div>

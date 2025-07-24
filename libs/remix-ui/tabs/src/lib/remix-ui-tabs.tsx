@@ -401,7 +401,7 @@ export const TabsUI = (props: TabsUIProps) => {
                     compileState === 'compiled' ? "fas fa-check"
                       : "fas fa-play"
                   }></i>
-                  <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
+                  <span className="ms-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
                     {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
                       ? (compileState === 'compiling' ? "Run script" :
                         compileState === 'compiled' ? "Run script" : "Run script")
