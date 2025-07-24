@@ -393,12 +393,6 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   }
   return (
     <TopbarContext.Provider value={value}>
-      {/* {fs.initializingFS && (
-        <div className="text-center py-5">
-          <i className="fas fa-spinner fa-pulse fa-2x"></i>
-        </div>
-      )} */}
-      {/* {!fs.initializingFS && <RemixUiTopbar plugin={plugin as unknown as Topbar} reducerState={fs} dispatch={fsDispatch} />} */}
       <RemixUiTopbar plugin={plugin as unknown as Topbar} reducerState={fs} dispatch={fsDispatch} />
     </TopbarContext.Provider>
   )

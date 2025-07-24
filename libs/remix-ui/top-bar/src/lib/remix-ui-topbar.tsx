@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { useContext, useEffect, useReducer, useState } from 'react'
+import React, { MutableRefObject, useContext, useEffect, useReducer, useRef, useState } from 'react'
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
 import { Dropdown } from 'react-bootstrap'
@@ -10,6 +10,8 @@ import { useIntl } from 'react-intl'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { TopbarContext } from '../context/topbarContext'
 import { WorkspaceDropdown } from '../components/WorkspaceDropdown'
+import { WorkspaceDropdownSubMenu } from '../components/WorkspaceDropdownSubMenu'
+import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
 
 export interface RemixUiTopbarProps {
   plugin: Topbar
@@ -23,24 +25,32 @@ const _paq = window._paq || []
 export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbarProps) {
   const intl = useIntl()
   const [showDropdown, setShowDropdown] = useState(false)
-  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const platform = useContext(platformContext)
   const global = useContext(TopbarContext)
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
+  const [currentTheme, setCurrentTheme] = useState<any>(null)
   const [latestReleaseNotesUrl, setLatestReleaseNotesUrl] = useState<string>('')
   const [currentReleaseVersion, setCurrentReleaseVersion] = useState<string>('')
+  const subMenuIconRef = useRef<HTMLElement>(null)
+  const [showSubMenuFlyOut, setShowSubMenuFlyOut] = useState<boolean>(false)
+  useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
+
+  const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
+  const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
+  const calcAndConvertToDvw = (coordValue: number) => (coordValue / window.innerWidth) * 100
+
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
   }
-  const formatNameForReadonly = (name: string) => {
-    return global.fs.readonly ? name + ` (${intl.formatMessage({ id: 'filePanel.readOnly' })})` : name
-  }
 
   useEffect(() => {
-    console.log('plugin.workspaces', plugin.workspaces)
+    const current = localStorage.getItem('currentWorkspace')
+    const workspace = plugin.workspaces.find((workspace) => workspace.name === current)
+    setSelectedWorkspace(workspace)
+    setCurrentWorkspace(current)
   }, [plugin.workspaces])
 
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
@@ -100,7 +110,13 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
             >
               <IsGitRepoDropDownMenuItem isGitRepo={isGitRepo} mName={name} />
             </Dropdown.Item>
-            <i className="fas fa-ellipsis-vertical pt-1 top-bar-dropdownItem"></i>
+            <i
+              ref={subMenuIconRef}
+              className="fas fa-ellipsis-vertical pt-1 top-bar-dropdownItem"
+              onClick={() => {
+                setShowSubMenuFlyOut(true)
+              }}
+            ></i>
           </div>
         ))}
       </>
@@ -135,13 +151,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
       setCurrentReleaseVersion(currentReleaseVersion)
     }
     run()
-
-    return () => {
-      console.log('I ran the run function and I am unmounting')
-    }
   }, [])
-
-  const [currentTheme, setCurrentTheme] = useState<any>(null)
 
   useEffect(() => {
     const run = async () => {
@@ -165,6 +175,15 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
 
   const checkIfLightTheme = (themeName: string) =>
     themeName.includes('dark') || themeName.includes('black') || themeName.includes('hackerOwl') ? false : true
+
+  const items = [
+    { label: 'Rename', onClick: () => {}, icon: 'fas fa-pencil-alt' },
+    { label: 'Copy', onClick: () => {}, icon: 'fas fa-copy' },
+    { label: 'Download', onClick: () => {}, icon: 'fas fa-download' },
+    { label: 'Delete', onClick: () => {}, icon: 'fas fa-trash' }
+  ]
+
+  const flyOutRef = useRef<HTMLElement>(null)
 
   return (
     <section className="h-100 p-2 d-flex flex-row align-items-center justify-content-between bg-light border">
@@ -197,15 +216,18 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
           </span>
         </div>
         <div className="" style={{ minWidth: '33%' }}>
+          {showSubMenuFlyOut && <WorkspaceDropdownSubMenu ref={flyOutRef} menuItems={items} style={{
+            top: 15,
+            left: calcAndConvertToDvw(getBoundingRect(subMenuIconRef).left),
+            right: calcAndConvertToDvw(getBoundingRect(subMenuIconRef).right),
+            bottom: calcAndConvertToDvh(getBoundingRect(subMenuIconRef).bottom),
+          }} />}
           <WorkspaceDropdown
             toggleDropdown={toggleDropdown}
             showDropdown={showDropdown}
             selectedWorkspace={selectedWorkspace}
             currentWorkspace={currentWorkspace}
-            togglerText={togglerText}
-            formatNameForReadonly={formatNameForReadonly}
             NO_WORKSPACE={NO_WORKSPACE}
-            LOCALHOST={LOCALHOST}
             switchWorkspace={switchWorkspace}
             ShowNonLocalHostMenuItems={ShowNonLocalHostMenuItems}
             CustomToggle={CustomToggle}

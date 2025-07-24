@@ -1,5 +1,5 @@
 import { CustomTopbarMenu } from '@remix-ui/helper'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 
 export interface WorkspaceDropdownProps {
@@ -7,18 +7,24 @@ export interface WorkspaceDropdownProps {
   showDropdown: boolean
   selectedWorkspace: any
   currentWorkspace: any
-  togglerText: string
-  formatNameForReadonly: any
   NO_WORKSPACE: string
-  LOCALHOST: string
   switchWorkspace: any
   ShowNonLocalHostMenuItems: () => JSX.Element
   CustomToggle: any
   global: any
 }
 
-export function WorkspaceDropdown ({ toggleDropdown, showDropdown, selectedWorkspace, currentWorkspace, togglerText, formatNameForReadonly, NO_WORKSPACE, LOCALHOST, switchWorkspace, ShowNonLocalHostMenuItems, CustomToggle, global }: WorkspaceDropdownProps) {
+export function WorkspaceDropdown ({ toggleDropdown, showDropdown, selectedWorkspace, currentWorkspace, NO_WORKSPACE, switchWorkspace, ShowNonLocalHostMenuItems, CustomToggle, global }: WorkspaceDropdownProps) {
 
+  const [togglerText, setTogglerText] = useState<string>(NO_WORKSPACE)
+
+  useEffect(() => {
+    global.plugin.on('filePanel', 'setWorkspace', (workspace) => {
+      setTogglerText(workspace.name)
+    })
+  }, [])
+
+  console.log('currently selected workspace', selectedWorkspace)
   return (
     <Dropdown
       id="workspacesSelect"
@@ -31,9 +37,9 @@ export function WorkspaceDropdown ({ toggleDropdown, showDropdown, selectedWorks
         as={CustomToggle}
         id="dropdown-custom-components"
         className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
-        icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
+        icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'far fa-code-branch' : null}
       >
-        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+        {togglerText}
       </Dropdown.Toggle>
       <Dropdown.Menu as={CustomTopbarMenu} innerXPadding="px-2" className="custom-dropdown-items w-100" data-id="topbar-custom-dropdown-items">
         {global.plugin.workspaces.length > 0 && (
