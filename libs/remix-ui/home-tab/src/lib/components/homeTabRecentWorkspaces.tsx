@@ -39,7 +39,7 @@ function HomeTabRecentWorkspaces({ plugin }: HomeTabFileProps) {
       if (!recents) {
         newRecents = []
       } else {
-        newRecents = recents.filter((el) => typeof el === 'string' ? el !== name : el.name !== name)
+        newRecents = recents.filter((el) => (el || {}).name ? el.name !== name : el !== name)
         localStorage.setItem('recentWorkspaces', JSON.stringify(newRecents))
       }
       setState((prevState) => {
@@ -100,15 +100,15 @@ function HomeTabRecentWorkspaces({ plugin }: HomeTabFileProps) {
         </label>
         <div className="d-flex flex-column pl-2">
           {
-            Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace, index) => {
-              const workspaceName = typeof workspace === 'string' ? workspace : workspace.name
-              const workspaceTimestamp = typeof workspace === 'string' ? null : workspace.timestamp
+            Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace: any, index) => {
+              const workspaceName = (workspace || {}).name ? workspace.name : workspace
+              const workspaceTimestamp = (workspace || {}).timestamp ? workspace.timestamp : null
 
               return index < 3 ? (
                 <div key={index} className="d-flex flex-row align-items-center mb-2">
                   { loadingWorkspace === workspace ? <i className="fad fa-spinner fa-spin mr-2"></i> : <i className="fas fa-folder-tree mr-2"></i> }
                   <div className="d-flex flex-row justify-content-between w-100 flex-wrap">
-                    <a className="cursor-pointer text-decoration-none d-inline-block" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspace)} key={index}>
+                    <a className="cursor-pointer text-decoration-none d-inline-block" href="#" onClick={(e) => handleSwitchToRecentWorkspace(e, workspaceName)} key={index}>
                       <span style={{ color: isDark ? 'white' : 'black' }}>{workspaceName}</span>
                     </a>
                     <span className="text-muted">created {getTimeAgo(workspaceTimestamp)}</span>

@@ -17,6 +17,7 @@ function createContract (browser: NightwatchBrowser, inputParams: string, callba
   if (inputParams) {
     browser.setValue('.udapp_contractActionsContainerSingle > input', inputParams, function () {
       browser
+        .pause(1000) // wait to get the button enabled
         .waitForElementVisible('.udapp_contractActionsContainerSingle > div')
         .click('.udapp_contractActionsContainerSingle > div').pause(500).perform(function () { callback() })
     })

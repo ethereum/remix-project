@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import parse from 'html-react-parser'
-import { ScanReport } from './types'
+import { ScanReport } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 interface SolScanTableProps {
