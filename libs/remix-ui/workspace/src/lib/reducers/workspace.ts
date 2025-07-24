@@ -337,8 +337,8 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
     const check = checkCurrentParentPathInView(payload, state.mode === 'browser' ? state.browser.expandPath : state.localhost.expandPath)
     const fd = fileAdded(state, payload)
-    const browserExpandPath = state.mode === 'browser' && !isElectron() && check.inView ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' && check.inView ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && check.inView && !payload.includes('.deps') ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && check.inView && !payload.includes('.deps') ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
@@ -373,8 +373,8 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const inView = check.inView || check.rootViewToAdd
     payload.folderPath = check.inView ? payload.folderPath : check.rootViewToAdd ? check.rootFolder : ''
 
-    const browserExpandPath = state.mode === 'browser' && !isElectron() && inView ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
-    const localhostExpandPath = state.mode === 'localhost' && inView ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() && inView && !payload.folderPath.includes('.deps') ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+    const localhostExpandPath = state.mode === 'localhost' && inView && !payload.folderPath.includes('.deps') ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
       ...state,
