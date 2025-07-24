@@ -31,7 +31,6 @@ const AiChatIntro = (props) => {
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-<<<<<<< HEAD
       <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
         <div className="d-flex flex-row align-items-center">
           <span className="font-italic m-1">{`<prompt>: `}</span>
@@ -45,12 +44,6 @@ const AiChatIntro = (props) => {
         <div className="d-flex flex-row align-items-center">
           <span className="font-italic m-1">{`/g <prompt>: `}</span>
           <span>generate a new workspace</span></div>
-=======
-      <div className="d-flex flex-column" style={{ fontSize: '1rem' }}>
-        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1">{`/w <prompt>: `}</p><span>to modify</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1">{`/c <prompt>: `}</p><span>to continue</span></div>
-        <div className="d-flex flex-row align-items-center"><p className="fst-italic m-1 mb-2">{`/g <prompt>: `}</p><span>to generate</span></div>
->>>>>>> a3fdf118cc (bootstrap 5)
       </div>
       <div className="d-flex flex-column mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
@@ -99,11 +92,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
               )}
 
               {/* Bubble */}
-<<<<<<< HEAD
               <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll" style={{ width: '90%' }}>
-=======
-              <div data-id="ai-response-chat-bubble-section" className="overflow-y-scroll w-100 me-1">
->>>>>>> a3fdf118cc (bootstrap 5)
                 <div className={`chat-bubble p-2 rounded ${bubbleClass}`} data-id="ai-user-chat-bubble">
                   {msg.role === 'user' && (
                     <small className="text-uppercase fw-bold text-secondary d-block mb-1">

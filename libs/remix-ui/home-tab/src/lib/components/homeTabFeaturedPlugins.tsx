@@ -115,7 +115,6 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   }
 
   return (
-<<<<<<< HEAD
     <div className="w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h6 style={{ color: isDark ? 'white' : 'black' }}>{pluginList.caption}</h6>
@@ -135,95 +134,6 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
             ))
           )
         }
-=======
-    <div className="ps-2 w-100 align-items-end remixui_featuredplugins_container" id="hTFeaturedPlugins">
-      <label className="" style={{ fontSize: '1.2rem' }}>
-        <FormattedMessage id="home.featuredPlugins" />
-      </label>
-      <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
-        <ThemeContext.Provider value={themeFilter}>
-          <Carousel
-            ref={carouselRef}
-            focusOnSelect={true}
-            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
-            arrows={false}
-            swipeable={false}
-            draggable={true}
-            showDots={false}
-            responsive={{
-              superLargeDesktop: {
-                breakpoint: { max: 4000, min: 3000 },
-                items: itemsToShow
-              },
-              desktop: {
-                breakpoint: { max: 3000, min: 1024 },
-                items: itemsToShow
-              }
-            }}
-            renderButtonGroupOutside={true}
-            ssr={false} // means to render carousel on server-side.
-            keyBoardControl={true}
-            containerClass="carousel-container"
-            deviceType={'desktop'}
-            itemClass="w-100"
-          >
-            <PluginButton
-              imgPath="assets/img/contractVerification.webp"
-              envID="contractVerificationLogo"
-              envText="Contract Verification"
-              description={intl.formatMessage({
-                id: 'home.contractVerificationDesc',
-              })}
-              maintainedBy="Remix"
-              callback={() => startContractVerification()}
-            />
-            <PluginButton
-              imgPath="assets/img/learnEthLogo.webp"
-              envID="learnEthLogo"
-              envText="LearnEth Tutorials"
-              description={intl.formatMessage({
-                id: 'home.learnEthPluginDesc'
-              })}
-              maintainedBy='Remix'
-              callback={() => startLearnEth()}
-            />
-            <PluginButton
-              imgPath="assets/img/staticAnalysis.webp"
-              envID="staticAnalysisLogo"
-              envText="Solidity Analyzers"
-              description={intl.formatMessage({
-                id: 'home.codeAnalyizerPluginDesc'
-              })}
-              maintainedBy='Remix'
-              callback={() => startCodeAnalyzer()}
-            />
-            <PluginButton
-              imgPath="assets/img/cookbook.webp"
-              envID="cookbookLogo"
-              envText="Cookbook"
-              description={intl.formatMessage({ id: 'home.cookbookDesc' })}
-              maintainedBy="Cookbook"
-              callback={() => startCookbook()}
-            />
-            <PluginButton
-              imgPath="assets/img/solidityLogo.webp"
-              envID="solidityLogo"
-              envText="Solidity"
-              description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
-              maintainedBy='Remix'
-              callback={() => startSolidity()}
-            />
-            <PluginButton
-              imgPath="assets/img/unitTesting.webp"
-              envID="sUTLogo"
-              envText="Solidity unit testing"
-              description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
-              maintainedBy='Remix'
-              callback={() => startSolidityUnitTesting()}
-            />
-          </Carousel>
-        </ThemeContext.Provider>
->>>>>>> a3fdf118cc (bootstrap 5)
       </div>
     </div>
   )
