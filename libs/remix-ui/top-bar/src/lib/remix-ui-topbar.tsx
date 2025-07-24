@@ -216,12 +216,10 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
           </span>
         </div>
         <div className="" style={{ minWidth: '33%' }}>
-          {showSubMenuFlyOut && <WorkspaceDropdownSubMenu ref={flyOutRef} menuItems={items} style={{
-            top: 15,
-            left: calcAndConvertToDvw(getBoundingRect(subMenuIconRef).left),
-            right: calcAndConvertToDvw(getBoundingRect(subMenuIconRef).right),
-            bottom: calcAndConvertToDvh(getBoundingRect(subMenuIconRef).bottom),
-          }} />}
+          {showSubMenuFlyOut && <WorkspaceDropdownSubMenu
+            ref={flyOutRef} menuItems={items}
+            style={{ borderRadius: '8px', left: `${calcAndConvertToDvw(getBoundingRect(subMenuIconRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', }}
+          />}
           <WorkspaceDropdown
             toggleDropdown={toggleDropdown}
             showDropdown={showDropdown}
