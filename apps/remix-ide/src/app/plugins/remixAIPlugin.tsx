@@ -196,7 +196,7 @@ export class RemixAIPlugin extends Plugin {
   async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
-    params.provider = this.assistantProvider
+    params.provider = 'anthropic' // enforce all generation to be only on anthropic
     useRag = false
     _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
     let userPrompt = ''
@@ -220,12 +220,7 @@ export class RemixAIPlugin extends Plugin {
     }
     // Evaluate if this function requires any context
     // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
-    let result
-    if (this.isOnDesktop && !this.useRemoteInferencer) {
-      result = await this.call(this.remixDesktopPluginName, 'generate', userPrompt, params)
-    } else {
-      result = await this.remoteInferencer.generate(userPrompt, params)
-    }
+    const result = await this.remoteInferencer.generate(userPrompt, params)
 
     const genResult = await this.contractor.writeContracts(result, userPrompt)
     if (genResult.includes('No payload')) return genResult
@@ -234,13 +229,15 @@ export class RemixAIPlugin extends Plugin {
   }
 
   /**
-   * Performs any user action on the entire curren workspace or updates the workspace based on a user prompt, optionally using Retrieval-Augmented Generation (RAG) for additional context.
+   * Performs any user action on the entire curren workspace or updates the workspace based on a user prompt,
+   * optionally using Retrieval-Augmented Generation (RAG) for additional context.
    *
    */
   async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
-    params.provider = this.assistantProvider
+    params.provider = 'anthropic' // enforce all generation to be only on anthropic
+    useRag = false
     _paq.push(['trackEvent', 'ai', 'remixAI', 'WorkspaceAgentEdit'])
     if (useRag) {
       try {
@@ -261,12 +258,7 @@ export class RemixAIPlugin extends Plugin {
     const files = !this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
-    let result
-    if (this.isOnDesktop && !this.useRemoteInferencer) {
-      result = await this.call(this.remixDesktopPluginName, 'generateWorkspace', userPrompt, params)
-    } else {
-      result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
-    }
+    const result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
     return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
   }
 

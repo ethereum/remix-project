@@ -71,7 +71,7 @@ export class ContractAgent {
           }
           return "Max attempts reached! Please try again with a different prompt."
         }
-        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider to one of these choices `<openai|anthropic|mistralai>`"
       }
       this.contracts = {}
       const parsedFiles = payload
@@ -121,7 +121,7 @@ export class ContractAgent {
               Generated contracts:\n${generatedContracts}\n\nConsider other possible soultion and retry this main prompt again: \n${this.mainPrompt}\n `
 
         console.log('New prompt for retry:', newPrompt)
-        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, true); // reuse the same thread
+        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, false); // reuse the same thread
       }
 
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
