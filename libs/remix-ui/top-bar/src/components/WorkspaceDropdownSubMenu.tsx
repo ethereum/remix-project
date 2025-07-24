@@ -4,25 +4,49 @@ import { Dropdown } from 'react-bootstrap'
 export interface WorkspaceDropdownSubMenuProps {
   menuItems: { label: string, onClick: () => void, icon: string }[]
   style: React.CSSProperties
-  ref: React.RefObject<HTMLElement>
 }
 
-export function WorkspaceDropdownSubMenu ({ menuItems, style, ref }: WorkspaceDropdownSubMenuProps) {
+export function WorkspaceDropdownSubMenu ({ menuItems, style }: WorkspaceDropdownSubMenuProps) {
   return (
     <div
-      className="border"
+      className="border bg-light pt-2"
       style={style}
-      ref={ref as React.RefObject<HTMLDivElement>}
     >
       <ul className="list-unstyled">
-        {menuItems.map((item) => (
-          <Dropdown.Item key={item.label} onClick={item.onClick}>
-            <span className="pl-2">
-              <i className={item.icon}></i>
-              {item.label}
-            </span>
-          </Dropdown.Item>
-        ))}
+        {menuItems.map((item, index) => {
+          if (index < menuItems.length - 1) {
+            return (
+              <Dropdown.Item
+                key={item.label}
+                onClick={item.onClick}
+                className="text-decoration-none"
+              >
+                <span className="d-flex justify-content-evenly align-items-center">
+                  <i className={item.icon}></i>
+                  <span className="pl-2">{item.label}</span>
+                </span>
+              </Dropdown.Item>
+            )
+          } else {
+            return [
+              <Dropdown.Divider
+                className="border mb-0 mt-0 remixui_menuhr"
+                style={{ pointerEvents: 'none' }}
+                key="divider"
+              />,
+              <Dropdown.Item
+                key={item.label}
+                onClick={item.onClick}
+                className="text-decoration-none"
+              >
+                <span className="d-flex justify-content-evenly align-items-center text-danger">
+                  <i className={item.icon}></i>
+                  <span className="pl-2">{item.label}</span>
+                </span>
+              </Dropdown.Item>
+            ]
+          }
+        })}
       </ul>
     </div>
   )

@@ -28,3 +28,11 @@
 .top-bar-dropdownItem:hover {
   color: var(--text);
 }
+
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item:active {
+  background-color: transparent !important;
+  color: inherit !important;
+  outline: none;
+  box-shadow: none;
+}

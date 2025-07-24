@@ -9,7 +9,7 @@ import { platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/con
 import { useIntl } from 'react-intl'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { TopbarContext } from '../context/topbarContext'
-import { WorkspaceDropdown } from '../components/WorkspaceDropdown'
+import { NestedDropdown } from '../components/WorkspaceDropdown'
 import { WorkspaceDropdownSubMenu } from '../components/WorkspaceDropdownSubMenu'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
 
@@ -34,7 +34,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
   const [currentTheme, setCurrentTheme] = useState<any>(null)
   const [latestReleaseNotesUrl, setLatestReleaseNotesUrl] = useState<string>('')
   const [currentReleaseVersion, setCurrentReleaseVersion] = useState<string>('')
-  const subMenuIconRef = useRef<HTMLElement>(null)
+  const subMenuIconRef = useRef<any>(null)
   const [showSubMenuFlyOut, setShowSubMenuFlyOut] = useState<boolean>(false)
   useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
 
@@ -52,6 +52,38 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
     setSelectedWorkspace(workspace)
     setCurrentWorkspace(current)
   }, [plugin.workspaces])
+
+  useEffect(() => {
+    const run = async () => {
+      const [url, currentReleaseVersion] = await plugin.getLatestReleaseNotesUrl()
+      setLatestReleaseNotesUrl(url)
+      setCurrentReleaseVersion(currentReleaseVersion)
+    }
+    run()
+  }, [])
+
+  useEffect(() => {
+    const run = async () => {
+      await plugin.getWorkspaces()
+      await plugin.getCurrentWorkspaceMetadata()
+    }
+    run()
+  }, [showDropdown])
+
+  useEffect(() => {
+    plugin.on('theme', 'themeChanged', async (theme) => {
+      const currentTheme = await getCurrentTheme()
+      setCurrentTheme(currentTheme)
+    })
+  }, [])
+
+  const getCurrentTheme = async () => {
+    const theme = await plugin.call('theme', 'currentTheme')
+    return theme
+  }
+
+  const checkIfLightTheme = (themeName: string) =>
+    themeName.includes('dark') || themeName.includes('black') || themeName.includes('hackerOwl') ? false : true
 
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
     return (
@@ -94,6 +126,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
   }
 
   const ShowAllMenuItems = () => {
+
     return (
       <>
         { global.plugin.workspaces.map(({ name, isGitRepo }, index) => (
@@ -112,9 +145,9 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
             </Dropdown.Item>
             <i
               ref={subMenuIconRef}
-              className="fas fa-ellipsis-vertical pt-1 top-bar-dropdownItem"
+              className="fas fa-ellipsis-vertical pt-1 pr-2 top-bar-dropdownItem"
               onClick={() => {
-                setShowSubMenuFlyOut(true)
+                setShowSubMenuFlyOut(!showSubMenuFlyOut)
               }}
             ></i>
           </div>
@@ -126,7 +159,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
   const ShowNonLocalHostMenuItems = () => {
     const cachedFilter = global.plugin.workspaces.filter(x => !x.name.includes('localhost'))
     return (
-      <div className="" style={{ maxHeight: '140px', overflowY: 'scroll' }}>
+      <div className="">
         {
           currentWorkspace === LOCALHOST && cachedFilter.length > 0 ? cachedFilter.map(({ name, isGitRepo }, index) => (
             <Dropdown.Item
@@ -144,38 +177,6 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
     )
   }
 
-  useEffect(() => {
-    const run = async () => {
-      const [url, currentReleaseVersion] = await plugin.getLatestReleaseNotesUrl()
-      setLatestReleaseNotesUrl(url)
-      setCurrentReleaseVersion(currentReleaseVersion)
-    }
-    run()
-  }, [])
-
-  useEffect(() => {
-    const run = async () => {
-      await plugin.getWorkspaces()
-      await plugin.getCurrentWorkspaceMetadata()
-    }
-    run()
-  }, [showDropdown])
-
-  useEffect(() => {
-    plugin.on('theme', 'themeChanged', async (theme) => {
-      const currentTheme = await getCurrentTheme()
-      setCurrentTheme(currentTheme)
-    })
-  }, [])
-
-  const getCurrentTheme = async () => {
-    const theme = await plugin.call('theme', 'currentTheme')
-    return theme
-  }
-
-  const checkIfLightTheme = (themeName: string) =>
-    themeName.includes('dark') || themeName.includes('black') || themeName.includes('hackerOwl') ? false : true
-
   const items = [
     { label: 'Rename', onClick: () => {}, icon: 'fas fa-pencil-alt' },
     { label: 'Copy', onClick: () => {}, icon: 'fas fa-copy' },
@@ -183,10 +184,20 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
     { label: 'Delete', onClick: () => {}, icon: 'fas fa-trash' }
   ]
 
-  const flyOutRef = useRef<HTMLElement>(null)
+  const menuItems = plugin.workspaces.map((workspace) => ({
+    name: workspace.name,
+    isGitRepo: workspace.isGitRepo,
+    isGist: workspace.isGist,
+    branches: workspace.branches,
+    currentBranch: workspace.currentBranch,
+    hasGitSubmodules: workspace.hasGitSubmodules,
+    submenu: items
+  }))
 
   return (
-    <section className="h-100 p-2 d-flex flex-row align-items-center justify-content-between bg-light border">
+    <section
+      className="h-100 p-2 d-flex flex-row align-items-center justify-content-between bg-light border"
+    >
       <div className="d-flex flex-row align-items-center justify-content-between w-100 ">
         <div
           className="d-flex flex-row align-items-center justify-content-evenly"
@@ -216,11 +227,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
           </span>
         </div>
         <div className="" style={{ minWidth: '33%' }}>
-          {showSubMenuFlyOut && <WorkspaceDropdownSubMenu
-            ref={flyOutRef} menuItems={items}
-            style={{ borderRadius: '8px', left: `${calcAndConvertToDvw(getBoundingRect(subMenuIconRef).left)}dvw`, right: '0px', bottom: '75px', height: '235px', width: '300px', }}
-          />}
-          <WorkspaceDropdown
+          {/* <WorkspaceDropdown
             toggleDropdown={toggleDropdown}
             showDropdown={showDropdown}
             selectedWorkspace={selectedWorkspace}
@@ -230,6 +237,22 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
             ShowNonLocalHostMenuItems={ShowNonLocalHostMenuItems}
             CustomToggle={CustomToggle}
             global={global}
+            showSubMenuFlyOut={showSubMenuFlyOut}
+            setShowSubMenuFlyOut={setShowSubMenuFlyOut}
+          /> */}
+          <NestedDropdown
+            items={menuItems}
+            toggleDropdown={toggleDropdown}
+            showDropdown={showDropdown}
+            selectedWorkspace={selectedWorkspace}
+            currentWorkspace={currentWorkspace}
+            NO_WORKSPACE={NO_WORKSPACE}
+            switchWorkspace={switchWorkspace}
+            ShowNonLocalHostMenuItems={ShowNonLocalHostMenuItems}
+            CustomToggle={CustomToggle}
+            global={global}
+            showSubMenuFlyOut={showSubMenuFlyOut}
+            setShowSubMenuFlyOut={setShowSubMenuFlyOut}
           />
         </div>
         <div
