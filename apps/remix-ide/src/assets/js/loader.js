@@ -66,7 +66,7 @@ if (window.electronAPI) {
     }
   }
   if (domainOnPremToTrack) {
-    trackDomain(domainOnPremToTrack, 'http://178.156.150.253/matomo/', '_paq2')
+    trackDomain(domainOnPremToTrack, 'https://matomo.remix.live/matomo/', '_paq2')
   }
 }
 function isElectron() {
