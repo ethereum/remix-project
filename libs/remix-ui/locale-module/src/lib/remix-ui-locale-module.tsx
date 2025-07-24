@@ -23,14 +23,14 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
         <div className="card-text locales-container">
           {localeModule.getLocales()
             ? localeModule.getLocales().map((locale, idx) => (
-              <div className="radio form-check mb-1 form-check" key={idx}>
+              <div className="radio form-check mb-1" key={idx}>
                 <input
                   type="radio"
                   onChange={(event) => {
                     localeModule.switchLocale(locale.code)
                     setLocaleCode(locale.code)
                   }}
-                  className="align-middle custom-control-input"
+                  className="align-middle form-check-input"
                   name="locale"
                   id={locale.code}
                   data-id={`settingsTabLocale${locale.code}`}

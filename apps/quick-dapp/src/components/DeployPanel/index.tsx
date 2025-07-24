@@ -151,10 +151,10 @@ function DeployPanel(): JSX.Element {
             <FormattedMessage id="quickDapp.shareTo" />
           </Form.Label>
           <br />
-          <div className="d-inline-flex align-items-center custom-control custom-checkbox">
+          <div className="d-inline-flex align-items-center form-control custom-checkbox">
             <input
               id="shareToTwitter"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               name="group1"
               value="twitter"
@@ -166,16 +166,16 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="shareToTwitter"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               Twitter
             </label>
           </div>
-          <div className="d-inline-flex align-items-center custom-control custom-checkbox ms-3">
+          <div className="d-inline-flex align-items-center form-control custom-checkbox ms-3">
             <input
               id="shareToFacebook"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               name="group1"
               value="facebook"
@@ -187,7 +187,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="shareToFacebook"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               Facebook
@@ -225,10 +225,10 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.verifiedByEtherscan" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-control custom-checkbox">
             <input
               id="verifiedByEtherscan"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               onChange={(e) => {
                 dispatch({
@@ -241,7 +241,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="verifiedByEtherscan"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               <FormattedMessage id="quickDapp.verified" />
@@ -252,10 +252,10 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.noTerminal" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-control custom-checkbox">
             <input
               id="noTerminal"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               onChange={(e) => {
                 dispatch({
@@ -268,7 +268,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="noTerminal"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               <FormattedMessage id="quickDapp.no" />

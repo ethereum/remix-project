@@ -32,7 +32,7 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
                     themeModule.switchTheme(theme.name)
                     setThemeName(theme.name)
                   }}
-                  className="align-middle custom-control-input"
+                  className="align-middle form-check-input"
                   name="theme"
                   id={theme.name}
                   data-id={`settingsTabTheme${theme.name}`}
