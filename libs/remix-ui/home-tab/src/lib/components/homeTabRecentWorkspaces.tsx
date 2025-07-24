@@ -98,7 +98,7 @@ function HomeTabRecentWorkspaces({ plugin }: HomeTabFileProps) {
         <label style={{ fontSize: '1rem', color: isDark ? 'white' : 'black' }} className="mt-1 mb-3">
                 Recent Workspaces
         </label>
-        <div className="d-flex flex-column pl-2">
+        <div className="d-flex flex-column ps-2">
           {
             Array.isArray(state.recentWorkspaces) && state.recentWorkspaces.map((workspace: any, index) => {
               const workspaceName = (workspace || {}).name ? workspace.name : workspace

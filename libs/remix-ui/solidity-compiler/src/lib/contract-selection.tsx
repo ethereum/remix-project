@@ -303,7 +303,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               ))}
             </select>
           </div>
-          <article className="mt-2 pb-0">
+          <article className="mt-2 pb-0 d-grid gap-2">
             <CustomTooltip
               placement={'auto-end'}
               tooltipId="runStaticAnalysisTooltip"
@@ -421,8 +421,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </CustomTooltip>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
-              <div className="input-group">
-                <div className="btn-group" role="group" aria-label="Copy to Clipboard">
+              <div className="input-group d-block">
+                <div className="btn-group float-end" role="group" aria-label="Copy to Clipboard">
                   <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copyABI' })} getContent={copyABI} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
