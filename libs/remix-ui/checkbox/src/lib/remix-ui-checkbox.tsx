@@ -42,7 +42,7 @@ export const RemixUiCheckbox = ({
   const childJSXWithTooltip = (
     <CustomTooltip tooltipText={title} tooltipId={`${name}Tooltip`} placement={tooltipPlacement}>
       <div
-        className={`listenOnNetwork_2A0YE0 custom-control custom-checkbox ${optionalClassName}`}
+        className={`listenOnNetwork_2A0YE0 form-control custom-checkbox ${optionalClassName}`}
         style={
           {
             display: display,

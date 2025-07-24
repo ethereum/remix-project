@@ -203,9 +203,9 @@ export const VerifyView = () => {
         setAbiEncodingError={setAbiEncodingError}
       />}
       <div className="pt-3">
-        <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-          <input id="has-proxy" className="form-check-input custom-control-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
-          <label htmlFor="has-proxy" className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }}>
+        <div className="d-flex py-1 align-items-center form-control custom-checkbox">
+          <input id="has-proxy" className="form-check-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
+          <label htmlFor="has-proxy" className="m-0 form-check-label" style={{ paddingTop: '2px' }}>
             <FormattedMessage id="contract-verification.proxyInputLabel" defaultMessage={'The deployed contract is behind a proxy'} />
           </label>
         </div>
@@ -226,9 +226,9 @@ export const VerifyView = () => {
 
           return (
             <div key={verifierId} className="pt-2">
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              <div className="d-flex py-1 align-items-center form-control custom-checkbox">
                 <input
-                  className="form-check-input custom-control-input"
+                  className="form-check-input"
                   type="checkbox"
                   id={`verifier-${verifierId}`}
                   checked={!!enabledVerifiers[verifierId]}
@@ -237,7 +237,7 @@ export const VerifyView = () => {
                 />
                 <label
                   htmlFor={`verifier-${verifierId}`}
-                  className={`m-0 form-check-label custom-control-label large  fw-bold${!disabledVerifier ? '' : ' text-secondary'}`}
+                  className={`m-0 form-check-label large  fw-bold${!disabledVerifier ? '' : ' text-secondary'}`}
                   style={{ fontSize: '1rem', color: 'var(--text)' }}
                 >
                   {verifierId}

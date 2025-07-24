@@ -49,16 +49,16 @@ export function WitnessSection () {
               </div>
             ))
           }
-          <div className="custom-control custom-checkbox">
+          <div className="form-control custom-checkbox">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="checkbox"
               title="Export Witness As JSON"
               id="circuitExportWtnsJson"
               onChange={() => { dispatch({ type: 'SET_EXPORT_WTNS_JSON', payload: !exportWtnsJson }) }}
               checked={exportWtnsJson}
             />
-            <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportWtnsJson">
+            <label className="form-check-label pt-1" htmlFor="circuitExportWtnsJson">
               <FormattedMessage id="circuit.exportWtnsJson" />
             </label>
           </div>

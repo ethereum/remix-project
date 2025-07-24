@@ -244,7 +244,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               checked={isMetadataChecked}
             />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`}
+              className={`form-check-label align-middle ${getTextClass('settings/generate-contract-metadata')}`}
               data-id="settingsTabGenerateContractMetadataLabel"
               htmlFor="generatecontractmetadata"
             >
@@ -260,14 +260,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="mt-2 form-check mb-1">
             <input id="editorWrap" className="form-check-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
+            <label className={`form-check-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
               <FormattedMessage id="settings.wordWrapText" />
             </label>
           </div>
           <div className="form-check mb-1">
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="form-check-input" checked={isAutoCompleteChecked} />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`}
+              className={`form-check-label align-middle ${getTextClass('settings/auto-completion')}`}
               data-id="settingsAutoCompleteLabel"
               htmlFor="settingsUseAutoComplete"
             >
@@ -279,7 +279,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="form-check mb-1">
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="form-check-input" checked={isShowGasInEditorChecked} />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`}
+              className={`form-check-label align-middle ${getTextClass('settings/show-gas')}`}
               data-id="settingsShowGasLabel"
               htmlFor="settingsUseShowGas"
             >
@@ -291,7 +291,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="form-check mb-1">
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="form-check-input" checked={displayErrorsChecked} />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}
+              className={`form-check-label align-middle ${getTextClass('settings/display-errors')}`}
               data-id="displayErrorsLabel"
               htmlFor="settingsDisplayErrors"
             >
@@ -302,7 +302,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="form-check mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="form-check-input" checked={isPersonalChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
+            <label className={`form-check-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <FormattedMessage id="settings.enablePersonalModeText" />
               <CustomTooltip
                 placement="auto"
@@ -315,7 +315,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className="form-check mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoPerfAnalytics" type="checkbox" className="form-check-input" checked={isMatomoChecked} />
-            <label data-id="label-matomo-settings" className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoPerfAnalytics">
+            <label data-id="label-matomo-settings" className={`form-check-label align-middle ${getTextClass('settings/matomo-perf-analytics')}`} htmlFor="settingsMatomoPerfAnalytics">
               <span>
                 <FormattedMessage id="settings.matomoPerfAnalytics" />
               </span>
@@ -324,7 +324,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="form-check mb-1">
             <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" data-id="settingsEnableSaveEnvState" type="checkbox" className="form-check-input" checked={isSaveEvmStateChecked} />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
+              className={`form-check-label align-middle ${getTextClass('settings/save-evm-state')}`}
               data-id="settingsEnableSaveEnvStateLabel"
               htmlFor="settingsEnableSaveEnvState"
             >
