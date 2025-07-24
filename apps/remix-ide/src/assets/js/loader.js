@@ -28,6 +28,13 @@ function trackDomain(domainToTrack, u, paqName) {
   (function () {
     _paq.push(['setTrackerUrl', u + 'matomo.php?debug=1']);
     _paq.push(['setSiteId', domainToTrack]);
+
+    if (domainToTrack) {
+      const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/'
+      const secondaryWebsiteId = domainToTrack
+      _paq.push(['addTracker', secondaryTrackerUrl, secondaryWebsiteId])
+    }
+
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
     g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
   })();
@@ -53,20 +60,8 @@ if (window.electronAPI) {
     }
   })
 } else {
-  if (domainToTrack) {
-    trackDomain(domainToTrack, 'https://ethereumfoundation.matomo.cloud/', '_paq')
-    // Override push method
-    window._paq.push = function (...args) {
-      // Push to the original _paq
-      const result = originalPush.apply(this, args)
-
-      // Also replicate to other trackers
-      if (window._paq2) window._paq2.push(...args)
-      return result;
-    }
-  }
   if (domainOnPremToTrack) {
-    trackDomain(domainOnPremToTrack, 'https://matomo.remix.live/matomo/', '_paq2')
+    trackDomain(domainOnPremToTrack, 'https://matomo.remix.live/matomo/', '_paq')    
   }
 }
 function isElectron() {
