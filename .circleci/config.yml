@@ -22,9 +22,6 @@ parameters:
   web:
     type: boolean
     default: true
-  run_metamask_tests:
-    type: boolean
-    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   node: circleci/node@7.0.0
