@@ -57,7 +57,7 @@ export const wrapScript = (script: string) => {
         try {
           const ret = ${script};
           if (ret instanceof Promise) {
-            ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
+            ret.then(console.log).catch(console.log)
           } else {
             console.log(ret)
           }
