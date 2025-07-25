@@ -23,8 +23,6 @@ export class ChatCommandParser {
     this.register("/workspace", this.handleWorkspace);
     this.register("/w", this.handleWorkspace);
     this.register("/setAssistant", this.handleAssistant);
-    this.register("/continue", this.handleContinueGeneration);
-    this.register("/c", this.handleContinueGeneration);
     // Add more default commands as needed
   }
 
@@ -57,7 +55,7 @@ export class ChatCommandParser {
     try {
       GenerationParams.return_stream_response = false
       GenerationParams.stream_result = false
-    	return await ref.props.call('remixAI', 'generate', "generate " + prompt, GenerationParams, "", true);
+    	return await ref.props.call('remixAI', 'generate', "generate " + prompt, GenerationParams, "", false);
     } catch (error) {
       return "Generation failed. Please try again.";
     }
@@ -70,16 +68,6 @@ export class ChatCommandParser {
       return await ref.props.call('remixAI', 'generateWorkspace', prompt, GenerationParams, "", false);
     } catch (error) {
       return "Workspace generation failed. Please try again.";
-    }
-  }
-
-  private async handleContinueGeneration(prompt: string, ref) {
-    try {
-      GenerationParams.return_stream_response = false
-      GenerationParams.stream_result = false
-      return await ref.props.call('remixAI', 'fixWorspaceErrors', true);
-    } catch (error) {
-      return "Error while generating. Please try again.";
     }
   }
 
