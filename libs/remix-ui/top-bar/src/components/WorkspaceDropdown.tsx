@@ -249,8 +249,16 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, t
             </span>
           </li>
           <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-          <Dropdown.Item onClick={downloadWorkspaces}>
-            <span className="pl-2" style={{ color: '#D678FF' }} onClick={downloadWorkspaces}>
+          <Dropdown.Item onClick={() => {
+            window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
+            setShowMain(false)
+            setOpenSub(null)
+          }}>
+            <span className="pl-2" style={{ color: '#D678FF' }} onClick={() => {
+              window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
               <i className="far fa-desktop mr-2"></i>
                 Download Remix Desktop
             </span>
