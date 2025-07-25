@@ -7,7 +7,6 @@ const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const path = require('path')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const versionData = {
   version: version,
