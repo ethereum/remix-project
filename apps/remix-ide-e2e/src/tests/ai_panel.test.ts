@@ -8,7 +8,7 @@ const sources = [
   { 'Untitled.sol': { content: examples.ballot.content } }
 ]
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
@@ -270,4 +270,19 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 5000)
   },
+}
+
+const branch = process.env.CIRCLE_BRANCH
+const runTestsConditions = branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
+
+const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
+  return browser.browserName.indexOf('chrome') > -1
+}
+
+if (!checkBrowserIsChrome(browser)) {
+  module.exports = {}
+} else {
+  module.exports = {
+    ...(branch ? (runTestsConditions ? tests : {}) : tests)
+  };
 }

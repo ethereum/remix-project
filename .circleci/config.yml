@@ -1,14 +1,27 @@
 version: 2.1
 parameters:
+  run_all_tests:
+    type: boolean
+    default: false
+  run_pr_tests:
+    type: boolean
+    default: false
+  run_file_tests:
+    type: string
+    default: ""  
+  run_metamask_tests:
+    type: boolean
+    default: false
   run_flaky_tests:
     type: boolean
-    default: false   
+    default: false
+  resource_class:
+    type: enum
+    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge"]
+    default: "xlarge"
   web:
     type: boolean
     default: true
-  run_metamask_tests:
-    type: boolean
-    default: false   
 orbs:
   browser-tools: circleci/browser-tools@1.5.2
   node: circleci/node@7.0.0
@@ -18,9 +31,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
-
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - run: sudo apt update && sudo apt install zstd
@@ -62,8 +73,7 @@ jobs:
   build-plugin:
       docker:
       - image: cimg/node:20.0.0-browsers
-      resource_class:
-        xlarge
+      resource_class: << pipeline.parameters.resource_class >>
       working_directory: ~/remix-project
       parameters:
         plugin:
@@ -83,15 +93,12 @@ jobs:
         - persist_to_workspace:
             root: .
             paths:
-              - "persist"
-
+              - "persist"  
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
-
     steps:
       - checkout
       - restore_cache:
@@ -105,10 +112,8 @@ jobs:
   remix-libs:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
-
     steps:
       - checkout
       - attach_workspace:
@@ -128,16 +133,45 @@ jobs:
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: yarn run test:libs
 
+
+  check-flaky-or-pr-tests:
+    docker:
+      - image: cimg/node:24.3.0
+    working_directory: ~/remix-project
+    parameters:
+      pattern:
+        type: string
+    steps:
+      - checkout
+      - run: node apps/remix-ide-e2e/src/buildGroupTests.js
+      - run:
+          name: Check for enabled tests matching tag
+          command: |
+            PATTERN="<< parameters.pattern >>"
+            if [ -z "$PATTERN" ]; then
+              echo "❌ Tag parameter is empty!"
+              exit 2
+            fi
+            echo "🔍 Searching for enabled tests with .$PATTERN extension..."
+            if grep -IRiL "'@disabled': \?true" "./apps/remix-ide-e2e/src/tests" | grep "${PATTERN}"; then
+              echo "✅ Found enabled .$PATTERN tests."
+              exit 0
+            else
+              echo "⚠️ No enabled .$PATTERN tests found. Skipping workflow."
+              exit 1
+            fi   
+
   remix-ide-browser:
     docker:
       - image: cimg/node:20.19.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parameters:
       browser:
         type: string
       script:
+        type: string
+      scriptparameter:
         type: string
       job:
         type: string
@@ -199,7 +233,7 @@ jobs:
                 install-chromedriver: false
             - run: yarn install_webdriver
             - run: firefox --version
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << parameters.scriptparameter >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -217,8 +251,7 @@ jobs:
   remix-test-plugins:
     docker:
       - image: cimg/node:20.17.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     parameters:
       plugin:
@@ -253,8 +286,7 @@ jobs:
   predeploy:
     docker:
       - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
+    resource_class: << pipeline.parameters.resource_class >>
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -297,20 +329,65 @@ jobs:
     
 workflows:
 
+  run_file_tests:
+    when: << pipeline.parameters.run_file_tests >>
+    jobs:
+      - check-flaky-or-pr-tests:
+          pattern: << pipeline.parameters.run_file_tests >>
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chrome"]
+              script: ["singletest.sh"]
+              job: ["nogroup"]
+              jobsize: ["1"]
+              parallelism: [1]
+              scriptparameter: [<< pipeline.parameters.run_file_tests >>]
+
+  run_pr_tests:
+    when: << pipeline.parameters.run_pr_tests >>
+    jobs:
+      - check-flaky-or-pr-tests:
+          pattern: "\\.pr"
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chrome"]
+              script: ["singletest.sh"]
+              job: ["nogroup"]
+              jobsize: ["1"]
+              parallelism: [1]
+              scriptparameter: ["\\.pr"]
+
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - build
+      - check-flaky-or-pr-tests:
+          pattern: "\\.flaky"
+      - build:
+          requires:
+            - check-flaky-or-pr-tests
       - remix-ide-browser:
           requires:
             - build
           matrix:
             parameters:
               browser: ["chrome", "firefox"]
-              script: ["flaky.sh"]
+              script: ["singletest.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: [5]
+              scriptparameter: ["\\.flaky"]
 
   run_metamask_tests:
     when: << pipeline.parameters.run_metamask_tests >>
@@ -327,7 +404,7 @@ workflows:
               jobsize: ["1"]
               parallelism: [1]
   web:
-    when: << pipeline.parameters.web >>
+    when: << pipeline.parameters.run_all_tests >>
     jobs:
       - build
       - build-plugin:
@@ -363,6 +440,7 @@ workflows:
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
               parallelism: [15]
+              scriptparameter: [""]
       - remix-ide-browser:
           requires:
             - build
@@ -374,6 +452,7 @@ workflows:
               job: ["0"]
               jobsize: ["10"]
               parallelism: [1]
+              scriptparameter: [""]
           filters:
             branches:
               only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']

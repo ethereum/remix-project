@@ -325,6 +325,9 @@
     "5112": {
       "apiUrl": "https://explorer.ham.fun"
     },
+    "57073": {
+      "apiUrl": "https://explorer.inkonchain.com"
+    },
     "6398": {
       "apiUrl": "https://connext-sepolia.blockscout.com"
     },
@@ -463,6 +466,9 @@
     "686868": {
       "apiUrl": "https://scan.wonnetwork.org"
     },
+    "763373": {
+      "apiUrl": "https://explorer-sepolia.inkonchain.com"
+    },
     "782251": {
       "apiUrl": "https://testnet.explorer.stack.so"
     },
@@ -593,6 +599,7 @@
     "151": { "type": "mainnet" },
     "62707": { "type": "mainnet" },
     "70953": { "type": "mainnet" },
+    "57073": { "type": "mainnet" },
     "64165": { "type": "testnet" },
     "49321": { "type": "testnet" },
     "80084": { "type": "testnet" },

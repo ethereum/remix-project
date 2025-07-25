@@ -84,6 +84,7 @@ declare module 'nightwatch' {
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
     selectFiles: (selelectedElements: any[]) => NightwatchBrowser
     waitForCompilerLoaded: () => NightwatchBrowser
+    expandAllFolders: (targetDirectory?: string) => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {

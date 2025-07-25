@@ -659,7 +659,7 @@ export function Workspace() {
 
   const uploadFile = (target) => {
     const parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder].filter(path => !path.includes('.deps')))]
 
     global.dispatchHandleExpandPath(expandPath)
     global.dispatchUploadFile(target, parentFolder)
@@ -667,7 +667,7 @@ export function Workspace() {
 
   const uploadFolder = (target) => {
     const parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder].filter(path => !path.includes('.deps')))]
 
     global.dispatchHandleExpandPath(expandPath)
     global.dispatchUploadFolder(target, parentFolder)
@@ -810,7 +810,7 @@ export function Workspace() {
 
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder].filter(path => !path.includes('.deps')))]
 
     await global.dispatchAddInputField(parentFolder, 'file')
     global.dispatchHandleExpandPath(expandPath)
@@ -820,7 +820,7 @@ export function Workspace() {
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     else if (parentFolder.indexOf('.sol') !== -1 || parentFolder.indexOf('.js') !== -1) parentFolder = extractParentFromKey(parentFolder)
-    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder].filter(path => !path.includes('.deps')))]
 
     await global.dispatchAddInputField(parentFolder, 'folder')
     global.dispatchHandleExpandPath(expandPath)

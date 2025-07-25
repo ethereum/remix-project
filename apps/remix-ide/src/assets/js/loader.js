@@ -5,7 +5,10 @@ const domains = {
   'localhost': 35 // remix desktop
 }
 const domainsOnPrem = {
-  'remix-alpha.ethereum.org': 1
+  'remix-alpha.ethereum.org': 1,
+  'remix-beta.ethereum.org': 2,
+  'remix.ethereum.org': 3,
+  'localhost': 4 // remix desktop
 }
 
 let domainToTrack = domains[window.location.hostname]
@@ -28,6 +31,13 @@ function trackDomain(domainToTrack, u, paqName) {
   (function () {
     _paq.push(['setTrackerUrl', u + 'matomo.php?debug=1']);
     _paq.push(['setSiteId', domainToTrack]);
+
+    if (domainToTrack) {
+      const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/'
+      const secondaryWebsiteId = domainToTrack
+      _paq.push(['addTracker', secondaryTrackerUrl, secondaryWebsiteId])
+    }
+
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
     g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
   })();
@@ -53,20 +63,8 @@ if (window.electronAPI) {
     }
   })
 } else {
-  if (domainToTrack) {
-    trackDomain(domainToTrack, 'https://ethereumfoundation.matomo.cloud/', '_paq')
-    // Override push method
-    window._paq.push = function (...args) {
-      // Push to the original _paq
-      const result = originalPush.apply(this, args)
-
-      // Also replicate to other trackers
-      if (window._paq2) window._paq2.push(...args)
-      return result;
-    }
-  }
   if (domainOnPremToTrack) {
-    trackDomain(domainOnPremToTrack, 'http://178.156.150.253/matomo/', '_paq2')
+    trackDomain(domainOnPremToTrack, 'https://matomo.remix.live/matomo/', '_paq')    
   }
 }
 function isElectron() {

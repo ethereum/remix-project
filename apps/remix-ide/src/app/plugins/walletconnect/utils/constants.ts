@@ -16,6 +16,8 @@ import {
   bsc,
   celo,
   gnosis,
+  ink,
+  inkSepolia,
   zkSync,
   zora,
 } from './chains'
@@ -39,6 +41,8 @@ export const constants = {
     bsc,
     celo,
     gnosis,
+    ink,
+    inkSepolia,
     zkSync,
     zora,
   ],
