@@ -37,6 +37,13 @@ interface WorkspacesDropdownProps {
   global: any
   showSubMenuFlyOut: boolean
   setShowSubMenuFlyOut: (show: boolean) => void
+  createWorkspace: () => void
+  renameCurrentWorkspace: () => void
+  downloadCurrentWorkspace: () => void
+  deleteCurrentWorkspace: () => void
+  downloadWorkspaces: () => void
+  restoreBackup: () => void
+  deleteAllWorkspaces: () => void
 }
 
 function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => void) {
@@ -52,7 +59,7 @@ function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => vo
   }, [refs, handler])
 }
 
-export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, toggleDropdown, showDropdown, selectedWorkspace, currentWorkspace, NO_WORKSPACE, switchWorkspace, ShowNonLocalHostMenuItems, CustomToggle, global }) => {
+export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, toggleDropdown, showDropdown, selectedWorkspace, currentWorkspace, NO_WORKSPACE, switchWorkspace, ShowNonLocalHostMenuItems, CustomToggle, global, createWorkspace, renameCurrentWorkspace, downloadCurrentWorkspace, deleteCurrentWorkspace, downloadWorkspaces, restoreBackup, deleteAllWorkspaces }) => {
   const [showMain, setShowMain] = useState(false)
   const [openSub, setOpenSub] = useState<number | null>(null)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -187,10 +194,11 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, t
                             key={index}
                             className="dropdown-item d-flex align-items-center text-decoration-none"
                             onClick={() => {
-                              sub.onClick();
-                              setShowMain(false);
-                              setOpenSub(null);
+                              sub.onClick()
+                              setShowMain(false)
+                              setOpenSub(null)
                             }}
+                            onMouseDown={(e) => e.preventDefault()}
                           >
                             <span className="mr-2">
                               <i className={sub.icon} />
@@ -207,9 +215,9 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, t
                               key={index}
                               className="dropdown-item d-flex align-items-center text-decoration-none text-danger"
                               onClick={() => {
-                                sub.onClick();
-                                setShowMain(false);
-                                setOpenSub(null);
+                                sub.onClick()
+                                setShowMain(false)
+                                setOpenSub(null)
                               }}
                             >
                               <span className="mr-2">
@@ -227,33 +235,64 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, t
               </div>
             ))}
           </div>
-          <li className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg">
-            <span className="pl-2 ">
+          <li
+            className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg"
+            onClick={createWorkspace}
+          >
+            <span className="pl-2 " onClick={() => {
+              createWorkspace()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
               <i className="fas fa-desktop mr-2"></i>
                 Create a new workspace
             </span>
           </li>
           <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-          <Dropdown.Item>
-            <span className="pl-2" style={{ color: '#D678FF' }}>
+          <Dropdown.Item onClick={downloadWorkspaces}>
+            <span className="pl-2" style={{ color: '#D678FF' }} onClick={downloadWorkspaces}>
               <i className="far fa-desktop mr-2"></i>
                 Download Remix Desktop
             </span>
           </Dropdown.Item>
-          <Dropdown.Item>
-            <span className="pl-2">
+          <Dropdown.Item onClick={() => {
+            downloadCurrentWorkspace()
+            setShowMain(false)
+            setOpenSub(null)
+          }}>
+            <span className="pl-2" onClick={() => {
+              downloadCurrentWorkspace()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
               <i className="far fa-download mr-2"></i>
                 Backup
             </span>
           </Dropdown.Item>
-          <Dropdown.Item>
-            <span className="pl-2">
+          <Dropdown.Item onClick={() => {
+            restoreBackup()
+            setShowMain(false)
+            setOpenSub(null)
+          }}>
+            <span className="pl-2" onClick={() => {
+              restoreBackup()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
               <i className="fas fa-upload mr-2"></i>
                 Restore
             </span>
           </Dropdown.Item>
-          <li className="w-100 btn btn-danger font-weight-light text-decoration-none">
-            <span className="pl-2 text-white">
+          <li className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
+            deleteAllWorkspaces()
+            setShowMain(false)
+            setOpenSub(null)
+          }}>
+            <span className="pl-2 text-white" onClick={() => {
+              deleteAllWorkspaces()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
               <i className="fas fa-trash-can mr-2"></i>
                 Delete all Workspaces
             </span>
