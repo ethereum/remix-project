@@ -114,7 +114,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
 
           <div className="remixui_statusbar d-flex w-100 justify-content-end p-0">
 
-            <div className="remixui_statusbar">
+            <div className="remixui_statusbar" data-id="remixui_status_bottom_bar">
               <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
             </div>
           </div>

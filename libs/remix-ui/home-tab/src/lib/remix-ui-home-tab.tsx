@@ -60,11 +60,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const startLearnEth = async () => {
     if (await plugin.appManager.isActive('LearnEth')) {
       plugin.verticalIcons.select('LearnEth')
-      await plugin.call('LearnEth', 'home')
     } else {
       await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
       plugin.verticalIcons.select('LearnEth')
-      await plugin.call('LearnEth', 'home')
     }
     _paq.push(['trackEvent', 'hometab', 'header', 'Start Learning'])
   }

@@ -24,8 +24,9 @@ const tests = {
       .click('*[data-id="treeViewDivtreeViewItemscripts"]')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible('button[data-id="script-config"]')
-      .click('button[data-id="script-config"]')
+      .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
+      .click('*[data-id="run-script-dropdown-trigger"]')
+      .click('*[data-id="open-script-configuration-menu-item"]')
       .waitForElementVisible('[data-id="sr-loaded-default"]')
       .waitForElementVisible('[data-id="dependency-ethers-^5"]')
       .waitForElementVisible('[data-id="sr-notloaded-ethers6"]')
@@ -110,8 +111,10 @@ const tests = {
   'reset to default after template': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
-      .waitForElementVisible('button[data-id="script-config"]')
-      .click('button[data-id="script-config"]')
+      .openFile('scripts/deploy.ts')
+      .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
+      .click('*[data-id="run-script-dropdown-trigger"]')
+      .click('*[data-id="open-script-configuration-menu-item"]')
       .waitForElementVisible('[data-id="sr-notloaded-default"]')
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
   },
