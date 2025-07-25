@@ -150,6 +150,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ items, t
                   onClick={() => {
                     switchWorkspace(item.name)
                   }}
+                  data-id={`dropdown-item-${item.name}`}
                 >
                   {item.isGitRepo && item.currentBranch && (
                     <i className="fas fa-code-branch pt-1"></i>
