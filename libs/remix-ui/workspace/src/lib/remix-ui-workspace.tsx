@@ -1019,7 +1019,7 @@ export function Workspace() {
         }}
       >
         <div className="d-flex flex-column w-100 remixui_fileexplorer" data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
-          <div className='mb-1'>
+          {/* <div className='mb-1'>
             <header>
               <div className="mx-2 my-2 d-flex flex-column">
                 <div className="mx-2 d-flex">
@@ -1133,10 +1133,10 @@ export function Workspace() {
                 </div>
               </div>
             </header>
-          </div>
+          </div> */}
           <ElectronMenu createWorkspace={createWorkspace} clone={cloneGitRepository}></ElectronMenu>
           <div
-            className="h-100 remixui_fileExplorerTree"
+            className="h-100 remixui_fileExplorerTree mt-2 mb-2"
             onFocus={() => {
               toggleDropdown(false)
             }}
