@@ -129,7 +129,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const renderTab = (tab: Tab, index) => {
-    const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
+    const classNameImg = 'my-1 me-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
     return (
@@ -142,7 +142,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 me-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -401,7 +401,7 @@ export const TabsUI = (props: TabsUIProps) => {
                     compileState === 'compiled' ? "fas fa-check"
                       : "fas fa-play"
                   }></i>
-                  <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
+                  <span className="ms-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
                     {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
                       ? (compileState === 'compiling' ? "Run script" :
                         compileState === 'compiled' ? "Run script" : "Run script")
@@ -433,12 +433,12 @@ export const TabsUI = (props: TabsUIProps) => {
             )}
           </div>
 
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+          <div className="d-flex border-start ms-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
-              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
+              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
             </CustomTooltip>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
-              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
+              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
             </CustomTooltip>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, {useState, useEffect, useContext, useRef, useReducer} from 'react' //eslint-disable-line
 import { FormattedMessage } from 'react-intl'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 import { FileExplorerMenuProps } from '../types'
 import { FileSystemContext } from '../contexts'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
@@ -77,7 +77,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     (!global.fs.browser.isSuccessfulWorkspace ? null :
       <>
 
-        <span data-id="spanContaining" className="pl-0 pb-1 w-50">
+        <span data-id="spanContaining" className="ps-0 pb-1 w-50">
           {state.menuItems.map(({ action, title, icon, placement, platforms }, index) => {
             if (platforms && !platforms.includes(platform)) return null
             if (action === 'uploadFile') {

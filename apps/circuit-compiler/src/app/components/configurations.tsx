@@ -6,7 +6,7 @@ export function Configurations ({primeValue, setPrimeValue, versionValue}: Confi
   return (
     <div className="flex-column">
       <div className="flex-column d-flex">
-        <div className="ml-0">
+        <div className="ms-0">
           <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
             <FormattedMessage id="circuit.prime" />
           </label>
@@ -20,7 +20,7 @@ export function Configurations ({primeValue, setPrimeValue, versionValue}: Confi
               <select
                 onChange={(e) => setPrimeValue(e.target.value as PrimeValue)}
                 value={primeValue}
-                className="custom-select"
+                className="form-select"
                 style={{
                   pointerEvents: 'auto'
                 }}

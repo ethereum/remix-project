@@ -78,7 +78,7 @@ export function ValueUI() {
         <select
           name="unit"
           value={sendUnit}
-          className="form-control p-1 w-25 ml-2 udapp_col2_2 custom-select"
+          className="form-control p-1 w-25 ms-2 udapp_col2_2 form-select"
           id="unit"
           onChange={(e: any) => {
             dispatch({

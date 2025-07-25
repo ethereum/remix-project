@@ -47,7 +47,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
       )}
 
       <div onClick={panelChange} style={{ cursor: 'pointer' }} className="container-fluid d-flex mb-3 small">
-        <div className="d-flex pr-2 pl-2">
+        <div className="d-flex pe-2 ps-2">
           <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
         <div className="d-flex">Import another tutorial repo</div>
@@ -82,7 +82,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
         {open && (
           <Form onSubmit={importRepo}>
             <Form.Group className="form-group">
-              <Form.Label className="mr-2" htmlFor="name">
+              <Form.Label className="me-2" htmlFor="name">
                 REPO
               </Form.Label>
               <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>

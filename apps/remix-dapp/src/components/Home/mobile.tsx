@@ -15,7 +15,7 @@ const MobilePage: React.FC = () => {
     <div
       className={`${
         active === 'functions' ? '' : 'd-none'
-      } col-xl-9 col-lg-8 col-md-7 pr-0`}
+      } col-xl-9 col-lg-8 col-md-7 pe-0`}
     >
       <div className="mx-3 my-2 row">
         {instance.showLogo && <div className="col-2 text-center px-0 d-flex align-items-center">
@@ -33,7 +33,7 @@ const MobilePage: React.FC = () => {
     <div
       className={`${
         active === 'settings' ? '' : 'd-none'
-      } col-xl-3 col-lg-4 col-md-5 pl-0`}
+      } col-xl-3 col-lg-4 col-md-5 ps-0`}
     >
       <SettingsUI />
     </div>
