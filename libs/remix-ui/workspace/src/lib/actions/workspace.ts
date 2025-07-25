@@ -656,10 +656,10 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
     }
   }
 }
-
-export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
+export type WorkspaceType = { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }
+export const getWorkspaces = async (): Promise<WorkspaceType[]> | undefined => {
   try {
-    const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
+    const workspaces: WorkspaceType[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
 

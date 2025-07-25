@@ -1,0 +1,38 @@
+.remixui_homeIcon svg path {
+  fill: var(--primary);
+}
+.remixui_homeIcon svg polygon {
+  fill: var(--primary);
+}
+
+.btn-topbar {
+  background-color: #333446;
+  color: #fff;
+}
+
+.btn-topbar:hover {
+  background-color: #3F4455;
+  color: #fff;
+}
+
+.version-btn:hover {
+  text-decoration: none;
+  color: var(--secondary);
+}
+
+.top-bar-dropdownItem {
+  color: var(--text);
+  cursor: pointer;
+}
+
+.top-bar-dropdownItem:hover {
+  color: var(--text);
+}
+
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item:active {
+  background-color: transparent !important;
+  color: inherit !important;
+  outline: none;
+  box-shadow: none;
+}

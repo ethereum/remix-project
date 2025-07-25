@@ -84,7 +84,7 @@ export default class FileProvider {
   async _exists (path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     const unprefixedpath = this.removePrefix(path)
-    return path === this.type ? true : await window.remixFileSystem.exists(unprefixedpath)
+    return path === this.type ? true : await (window as any).remixFileSystem.exists(unprefixedpath)
   }
 
   init (cb) {
@@ -96,7 +96,7 @@ export default class FileProvider {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     const unprefixedpath = this.removePrefix(path)
     try {
-      const content = await window.remixFileSystem.readFile(unprefixedpath, options)
+      const content = await (window as any).remixFileSystem.readFile(unprefixedpath, options)
       if (cb) cb(null, content)
       return content
     } catch (err) {
@@ -108,14 +108,14 @@ export default class FileProvider {
   async set (path, content, cb, options = { encoding: 'utf8' }) {
     cb = cb || function () { /* do nothing. */ }
     const unprefixedpath = this.removePrefix(path)
-    const exists = await window.remixFileSystem.exists(unprefixedpath)
-    if (exists && await window.remixFileSystem.readFile(unprefixedpath, options) === content) {
+    const exists = await (window as any).remixFileSystem.exists(unprefixedpath)
+    if (exists && await (window as any).remixFileSystem.readFile(unprefixedpath, options) === content) {
       if (cb) cb()
       return null
     }
     await this.createDir(path.substr(0, path.lastIndexOf('/')), null)
     try {
-      await window.remixFileSystem.writeFile(unprefixedpath, content, options)
+      await (window as any).remixFileSystem.writeFile(unprefixedpath, content, options)
     } catch (e) {
       if (cb) cb(e)
       return false
@@ -142,9 +142,9 @@ export default class FileProvider {
     let currentCheck = ''
     for (const value of paths) {
       currentCheck = currentCheck + '/' + value
-      if (!await window.remixFileSystem.exists(currentCheck)) {
+      if (!await (window as any).remixFileSystem.exists(currentCheck)) {
         try {
-          await window.remixFileSystem.mkdir(currentCheck)
+          await (window as any).remixFileSystem.mkdir(currentCheck)
           this.event.emit('folderAdded', this._normalizePath(currentCheck))
         } catch (error) {
           console.log(error)
@@ -165,14 +165,14 @@ export default class FileProvider {
 
   async isDirectory (path) {
     const unprefixedpath = this.removePrefix(path)
-    const isDirectory = path === this.type ? true : (await window.remixFileSystem.stat(unprefixedpath)).isDirectory()
+    const isDirectory = path === this.type ? true : (await (window as any).remixFileSystem.stat(unprefixedpath)).isDirectory()
     return isDirectory
   }
 
   async isFile (path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     path = this.removePrefix(path)
-    return (await window.remixFileSystem.stat(path)).isFile()
+    return (await (window as any).remixFileSystem.stat(path)).isFile()
   }
 
   /**
@@ -181,13 +181,13 @@ export default class FileProvider {
    */
   async remove (path: string) {
     path = this.removePrefix(path)
-    if (await window.remixFileSystem.exists(path)) {
-      const stat = await window.remixFileSystem.stat(path)
+    if (await (window as any).remixFileSystem.exists(path)) {
+      const stat = await( window as any).remixFileSystem.stat(path)
       try {
         if (!stat.isDirectory()) {
           return await this.removeFile(path)
         } else {
-          await window.remixFileSystem.unlink(path)
+          await (window as any).remixFileSystem.unlink(path)
           this.event.emit('fileRemoved', this._normalizePath(path))
         }
       } catch (e) {
@@ -209,18 +209,18 @@ export default class FileProvider {
 
     const json = {}
     path = this.removePrefix(path)
-    if (await window.remixFileSystem.exists(path)) {
+    if (await (window as any).remixFileSystem.exists(path)) {
       try {
-        const items = await window.remixFileSystem.readdir(path)
+        const items = await (window as any).remixFileSystem.readdir(path)
         visitFolder({ path })
         if (items.length !== 0) {
           for (const item of items) {
             const file: any = {}
             const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
-            if ((await window.remixFileSystem.stat(curPath)).isDirectory()) {
+            if ((await (window as any).remixFileSystem.stat(curPath)).isDirectory()) {
               file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
             } else {
-              file.content = await window.remixFileSystem.readFile(curPath, 'utf8')
+              file.content = await (window as any).remixFileSystem.readFile(curPath, 'utf8')
               visitFile({ path: curPath, content: file.content })
             }
             json[curPath] = file
@@ -248,8 +248,8 @@ export default class FileProvider {
 
   async removeFile (path) {
     path = this.removePrefix(path)
-    if (await window.remixFileSystem.exists(path) && !(await window.remixFileSystem.stat(path)).isDirectory()) {
-      await window.remixFileSystem.unlink(path)
+    if (await (window as any).remixFileSystem.exists(path) && !(await (window as any).remixFileSystem.stat(path)).isDirectory()) {
+      await (window as any).remixFileSystem.unlink(path)
       this.event.emit('fileRemoved', this._normalizePath(path))
       return true
     } else return false
@@ -259,7 +259,7 @@ export default class FileProvider {
     const unprefixedoldPath = this.removePrefix(oldPath)
     const unprefixednewPath = this.removePrefix(newPath)
     if (await this._exists(unprefixedoldPath)) {
-      await window.remixFileSystem.rename(unprefixedoldPath, unprefixednewPath)
+      await (window as any).remixFileSystem.rename(unprefixedoldPath, unprefixednewPath)
       this.event.emit('fileRenamed',
         this._normalizePath(unprefixedoldPath),
         this._normalizePath(unprefixednewPath),
@@ -275,14 +275,14 @@ export default class FileProvider {
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
-      const files = await window.remixFileSystem.readdir(path)
+      const files = await (window as any).remixFileSystem.readdir(path)
       const ret = {}
       if (files) {
         for (let element of files) {
           path = path.replace(/^\/|\/$/g, '') // remove first and last slash
           element = element.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + element
-          ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await window.remixFileSystem.stat(absPath)).isDirectory() }
+          ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await (window as any).remixFileSystem.stat(absPath)).isDirectory() }
           // ^ ret does not accept path starting with '/'
         }
       }
