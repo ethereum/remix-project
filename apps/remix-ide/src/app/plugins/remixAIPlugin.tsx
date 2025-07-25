@@ -236,7 +236,6 @@ export class RemixAIPlugin extends Plugin {
   async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
-    params.provider = 'anthropic' // enforce all generation to be only on anthropic
     useRag = false
     _paq.push(['trackEvent', 'ai', 'remixAI', 'WorkspaceAgentEdit'])
     if (useRag) {

@@ -2,7 +2,6 @@ import { AssistantParams } from "../types/models";
 import { workspaceAgent } from "./workspaceAgent";
 import { CompilationResult } from "../types/types";
 import { compilecontracts, compilationParams } from "../helpers/compile";
-import { extractFirstLvlImports } from "../helpers/localImportsExtractor";
 
 const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Solidity compiler plugin. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
 
@@ -97,12 +96,6 @@ export class ContractAgent {
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
       if (!result.compilationSucceeded) {
         // console.log('Compilation failed, trying again recursively ...')
-        const imports = extractFirstLvlImports(parsedFiles.files, result.compilerPayload)
-        const libs = imports.filter(imp => imp.isLibrary);
-        const importPaths = libs.map(lib => ({
-          importPath: lib.importPath,
-          content: lib.content
-        }));
         const generatedContracts = genContrats.map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
