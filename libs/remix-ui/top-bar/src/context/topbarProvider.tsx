@@ -394,6 +394,8 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   return (
     <TopbarContext.Provider value={value}>
       <RemixUiTopbar plugin={plugin as unknown as Topbar} reducerState={fs} dispatch={fsDispatch} />
+      <ModalDialog id="topbarModal" {...focusModal} handleHide={handleHideModal} />
+      <Toaster message={focusToaster} handleHide={handleToaster} />
     </TopbarContext.Provider>
   )
 }
