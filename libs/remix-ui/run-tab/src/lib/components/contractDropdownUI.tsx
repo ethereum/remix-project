@@ -506,7 +506,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                     </span>
                   }
                 >
-                  <label htmlFor="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckboxLabel" className="m-0 form-check-label udapp_checkboxAlign">
+                  <label htmlFor="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckboxLabel" className="m-0 form-check-label udapp_checkboxAlign ms-1">
                     <FormattedMessage id="udapp.publishTo" /> IPFS
                   </label>
                 </CustomTooltip>
