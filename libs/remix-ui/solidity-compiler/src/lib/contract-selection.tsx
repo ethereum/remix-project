@@ -314,7 +314,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="runStaticAnalysis"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   runStaticAnalysis()
                 }}
@@ -337,7 +337,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="runSolidityScan"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   runSolidityScan()
                 }}
@@ -360,7 +360,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="publishOnIpfs"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   handlePublishToStorage('ipfs')
                 }}
@@ -384,7 +384,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="publishOnSwarm"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   handlePublishToStorage('swarm')
                 }}
@@ -405,7 +405,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 data-id="compilation-details"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={async () => {
                   details()
                   await (api as any).call('compilationDetails', 'showDetails', payload)
