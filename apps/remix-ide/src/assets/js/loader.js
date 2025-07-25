@@ -5,7 +5,10 @@ const domains = {
   'localhost': 35 // remix desktop
 }
 const domainsOnPrem = {
-  'remix-alpha.ethereum.org': 1
+  'remix-alpha.ethereum.org': 1,
+  'remix-beta.ethereum.org': 2,
+  'remix.ethereum.org': 3,
+  'localhost': 4 // remix desktop
 }
 
 let domainToTrack = domains[window.location.hostname]
