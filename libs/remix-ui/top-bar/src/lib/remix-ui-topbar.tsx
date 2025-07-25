@@ -1,16 +1,15 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { MutableRefObject, useContext, useEffect, useReducer, useRef, useState } from 'react'
+import React, { MutableRefObject, useContext, useEffect, useRef, useState } from 'react'
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
 import { Dropdown } from 'react-bootstrap'
 import { CustomToggle } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { TopbarContext } from '../context/topbarContext'
-import { NestedDropdown } from '../components/WorkspaceDropdown'
-import { WorkspaceDropdownSubMenu } from '../components/WorkspaceDropdownSubMenu'
+import { WorkspacesDropdown } from '../components/WorkspaceDropdown'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
 
 export interface RemixUiTopbarProps {
@@ -37,6 +36,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
   const subMenuIconRef = useRef<any>(null)
   const [showSubMenuFlyOut, setShowSubMenuFlyOut] = useState<boolean>(false)
   useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
+  const workspaceRenameInput = useRef()
 
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
@@ -77,9 +77,146 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
     })
   }, [])
 
+  const onFinishDeleteAllWorkspaces = async () => {
+    try {
+      await global.dispatchDeleteAllWorkspaces()
+    } catch (e) {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
+        e.message,
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
+      console.error(e)
+    }
+  }
+
+  const onFinishRenameWorkspace = async () => {
+    if (workspaceRenameInput.current === undefined) return
+    // @ts-ignore: Object is possibly 'null'.
+    const workspaceName = workspaceRenameInput.current.value
+
+    try {
+      await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
+    } catch (e) {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.rename' }),
+        e.message,
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
+      console.error(e)
+    }
+  }
+
+  const onFinishDownloadWorkspace = async () => {
+    try {
+      await global.dispatchHandleDownloadWorkspace()
+    } catch (e) {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.download' }),
+        e.message,
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
+      console.error(e)
+    }
+  }
+  const onFinishDeleteWorkspace = async () => {
+    try {
+      await global.dispatchDeleteWorkspace(currentWorkspace)
+    } catch (e) {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.delete' }),
+        e.message,
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
+      console.error(e)
+    }
+  }
+
+  const deleteCurrentWorkspace = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.delete' }),
+      intl.formatMessage({ id: 'filePanel.workspace.deleteConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      onFinishDeleteWorkspace,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
+  const restoreBackup = async () => {
+    try {
+      await global.dispatchHandleRestoreBackup()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const downloadWorkspaces = async () => {
+    try {
+      await global.dispatchHandleDownloadFiles()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const deleteAllWorkspaces = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
+      <>
+        <div className="d-flex flex-column">
+          <span className="pb-1">{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm1' })}</span>
+          <span>{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm2' })}</span>
+        </div>
+      </>,
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      onFinishDeleteAllWorkspaces,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
   const getCurrentTheme = async () => {
     const theme = await plugin.call('theme', 'currentTheme')
     return theme
+  }
+  const renameModalMessage = (workspaceName?: string) => {
+    return (
+      <div className='d-flex flex-column'>
+        <label><FormattedMessage id="filePanel.name" /></label>
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={workspaceName || currentWorkspace} ref={workspaceRenameInput} className="form-control" />
+      </div>
+    )
+  }
+
+  const downloadCurrentWorkspace = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.download' }),
+      intl.formatMessage({ id: 'filePanel.workspace.downloadConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      onFinishDownloadWorkspace,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
+  const createWorkspace = async () => {
+    await plugin.call('manager', 'activatePlugin', 'templateSelection')
+    await plugin.call('tabs', 'focus', 'templateSelection')
+  }
+
+  const renameCurrentWorkspace = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.rename' }),
+      renameModalMessage(),
+      intl.formatMessage({ id: 'filePanel.save' }),
+      onFinishRenameWorkspace,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
   }
 
   const checkIfLightTheme = (themeName: string) =>
@@ -178,10 +315,10 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
   }
 
   const items = [
-    { label: 'Rename', onClick: () => {}, icon: 'fas fa-pencil-alt' },
-    { label: 'Copy', onClick: () => {}, icon: 'fas fa-copy' },
-    { label: 'Download', onClick: () => {}, icon: 'fas fa-download' },
-    { label: 'Delete', onClick: () => {}, icon: 'fas fa-trash' }
+    { label: 'Rename', onClick: renameCurrentWorkspace, icon: 'far fa-edit' },
+    { label: 'Duplicate', onClick: downloadCurrentWorkspace, icon: 'fas fa-copy' },
+    { label: 'Download', onClick: downloadCurrentWorkspace, icon: 'fas fa-download' },
+    { label: 'Delete', onClick: deleteCurrentWorkspace, icon: 'fas fa-trash' }
   ]
 
   const menuItems = plugin.workspaces.map((workspace) => ({
@@ -227,20 +364,7 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
           </span>
         </div>
         <div className="" style={{ minWidth: '33%' }}>
-          {/* <WorkspaceDropdown
-            toggleDropdown={toggleDropdown}
-            showDropdown={showDropdown}
-            selectedWorkspace={selectedWorkspace}
-            currentWorkspace={currentWorkspace}
-            NO_WORKSPACE={NO_WORKSPACE}
-            switchWorkspace={switchWorkspace}
-            ShowNonLocalHostMenuItems={ShowNonLocalHostMenuItems}
-            CustomToggle={CustomToggle}
-            global={global}
-            showSubMenuFlyOut={showSubMenuFlyOut}
-            setShowSubMenuFlyOut={setShowSubMenuFlyOut}
-          /> */}
-          <NestedDropdown
+          <WorkspacesDropdown
             items={menuItems}
             toggleDropdown={toggleDropdown}
             showDropdown={showDropdown}
@@ -253,6 +377,13 @@ export function RemixUiTopbar ({ plugin, reducerState, dispatch }: RemixUiTopbar
             global={global}
             showSubMenuFlyOut={showSubMenuFlyOut}
             setShowSubMenuFlyOut={setShowSubMenuFlyOut}
+            createWorkspace={createWorkspace}
+            renameCurrentWorkspace={renameCurrentWorkspace}
+            downloadCurrentWorkspace={downloadCurrentWorkspace}
+            deleteCurrentWorkspace={deleteCurrentWorkspace}
+            downloadWorkspaces={downloadWorkspaces}
+            restoreBackup={restoreBackup}
+            deleteAllWorkspaces={deleteAllWorkspaces}
           />
         </div>
         <div
