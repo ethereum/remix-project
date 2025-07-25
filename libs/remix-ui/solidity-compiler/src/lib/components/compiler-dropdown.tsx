@@ -27,7 +27,7 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
   const { customVersions, selectedVersion, defaultVersion, allversions, handleLoadVersion, _shouldBeAdded, onlyDownloaded } = props
   return (
     <Dropdown id="versionSelector" data-id="versionSelector">
-      <Dropdown.Toggle as={CompilerMenuToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
+      <Dropdown.Toggle as={CompilerMenuToggle} id="dropdown-custom-components" className="btn btn-light w-100 d-inline-block border border-dark form-select" icon={null}>
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
           <div className="text-truncate">
             {customVersions.map((url, i) => {
