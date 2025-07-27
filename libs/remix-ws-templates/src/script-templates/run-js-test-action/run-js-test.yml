@@ -11,7 +11,7 @@ jobs:
     - name: Environment Setup
       uses: actions/setup-node@v4
       with:
-        node-version: 20.0.0
+        node-version: 24.4.1
     - name: Run Mocha Chai Unit Test Action
       uses: EthereumRemix/ts-sol-test@v1.3.1
       with:
