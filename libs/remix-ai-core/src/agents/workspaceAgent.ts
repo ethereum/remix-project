@@ -81,15 +81,18 @@ export class workspaceAgent {
     } catch (error) { console.error('Error getting current workspace files:', error); }
   }
 
-  async writeGenerationResults(payload) {
+  async writeGenerationResults(payload, statusCallback?: (status: string) => Promise<void>) {
     try {
+      await statusCallback?.('Processing workspace modifications...')
       let modifiedFilesMarkdown = '# Modified Files\n'
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
         // const fileContent = await this.plugin.call('codeFormatter', 'format', file.fileName, file.content, true);
+        await statusCallback?.(`Showing diff for ${file.fileName}...`)
         await this.plugin.call('editor', 'showCustomDiff', file.fileName, file.content)
         modifiedFilesMarkdown += `- ${file.fileName}\n`
       }
+      await statusCallback?.('Workspace modifications complete!')
       return modifiedFilesMarkdown
     } catch (error) {
       console.error('Error writing generation results:', error);

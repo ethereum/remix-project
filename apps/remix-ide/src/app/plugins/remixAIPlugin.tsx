@@ -193,7 +193,7 @@ export class RemixAIPlugin extends Plugin {
    * Generates a new remix IDE workspace based on the provided user prompt, optionally using Retrieval-Augmented Generation (RAG) context.
    * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
    */
-  async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+  async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false, statusCallback?: (status: string) => Promise<void>): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = 'anthropic' // enforce all generation to be only on anthropic
@@ -202,6 +202,7 @@ export class RemixAIPlugin extends Plugin {
     let userPrompt = ''
 
     if (useRag) {
+      statusCallback?.('Fetching RAG context...')
       try {
         let ragContext = ""
         const options = { headers: { 'Content-Type': 'application/json', } }
@@ -220,9 +221,12 @@ export class RemixAIPlugin extends Plugin {
     }
     // Evaluate if this function requires any context
     // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+    await statusCallback?.('Generating new workspace with AI...')
     const result = await this.remoteInferencer.generate(userPrompt, params)
 
-    const genResult = await this.contractor.writeContracts(result, userPrompt)
+    await statusCallback?.('Creating contracts and files...')
+    const genResult = await this.contractor.writeContracts(result, userPrompt, statusCallback)
+
     if (genResult.includes('No payload')) return genResult
     await this.call('menuicons', 'select', 'filePanel')
     return genResult
@@ -233,13 +237,16 @@ export class RemixAIPlugin extends Plugin {
    * optionally using Retrieval-Augmented Generation (RAG) for additional context.
    *
    */
-  async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false): Promise<any> {
+  async generateWorkspace (userPrompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false, statusCallback?: (status: string) => Promise<void>): Promise<any> {
     params.stream_result = false // enforce no stream result
     params.threadId = newThreadID
     params.provider = this.assistantProvider
     useRag = false
     _paq.push(['trackEvent', 'ai', 'remixAI', 'WorkspaceAgentEdit'])
+
+    await statusCallback?.('Performing workspace request...')
     if (useRag) {
+      await statusCallback?.('Fetching RAG context...')
       try {
         let ragContext = ""
         const options = { headers: { 'Content-Type': 'application/json', } }
@@ -255,11 +262,15 @@ export class RemixAIPlugin extends Plugin {
         console.log('RAG context error:', error)
       }
     }
+    await statusCallback?.('Loading workspace context...')
     const files = !this.workspaceAgent.ctxFiles ? await this.workspaceAgent.getCurrentWorkspaceFiles() : this.workspaceAgent.ctxFiles
     userPrompt = "Using the following workspace context: ```\n" + files + "```\n\n" + userPrompt
 
+    await statusCallback?.('Generating workspace updates with AI...')
     const result = await this.remoteInferencer.generateWorkspace(userPrompt, params)
-    return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result) : "### No Changes applied!"
+
+    await statusCallback?.('Applying changes to workspace...')
+    return (result !== undefined) ? this.workspaceAgent.writeGenerationResults(result, statusCallback) : "### No Changes applied!"
   }
 
   async fixWorspaceErrors(): Promise<any> {
