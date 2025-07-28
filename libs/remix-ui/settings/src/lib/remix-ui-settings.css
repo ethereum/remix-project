@@ -1,0 +1,8 @@
+@media (max-width: 1100px) {
+    .remix-settings-sidebar {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      flex: 1 1 100% !important;
+      width: 100% !important;
+    }
+  }
