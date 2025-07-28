@@ -13,7 +13,6 @@ export const compilecontracts = async (contracts, plugin): Promise<CompilationRe
   try {
     // console.log('Compiling contracts:', contracts)
     result = await plugin.call('solidity' as any, 'compileWithParameters', contracts, compilationParams)
-    console.log('Compilation result:', result)
     const data = result.data
     let error = false
 

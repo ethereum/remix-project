@@ -31,22 +31,29 @@ export class ContractAgent {
   * Write the result of the generation to the workspace. Compiles the contracts one time and creates a new workspace.
   * @param payload - The payload containing the generated files
   * @param userPrompt - The user prompt used to generate the files
+  * @param statusCallback - Optional callback for status updates in chat window
   */
-  async writeContracts(payload, userPrompt) {
+  async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
+    await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
 
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
+        await statusCallback?.('Preparing files for desktop...')
         const files = parsedResults.files.reduce((acc, file) => {
           acc[file.fileName] = file.content
           return acc
         }, {})
+        await statusCallback?.('Opening in new window...')
         await this.plugin.call('electronTemplates', 'loadTemplateInNewWindow', files)
         //return "Feature not only available in the browser version of Remix IDE. Please use the browser version to generate secure code."
         return "## New workspace created!  \nNavigate to the new window!"
       }
 
+      await statusCallback?.('Creating new workspace...')
       await this.createWorkspace(this.workspaceName)
+
+      await statusCallback?.('Writing files to workspace...')
       const dirCreated = []
       for (const file of parsedResults.files) {
         const dir = file.fileName.split('/').slice(0, -1).join('/')
@@ -63,6 +70,7 @@ export class ContractAgent {
 
     try {
       if (payload === undefined) {
+        await statusCallback?.('No payload received, retrying...')
         this.nAttempts += 1
         if (this.nAttempts > this.generationAttempts) {
           if (this.oldPayload) {
@@ -72,6 +80,8 @@ export class ContractAgent {
         }
         return "No payload, try again while considering changing the assistant provider to one of these choices `<openai|anthropic|mistralai>`"
       }
+
+      await statusCallback?.('Processing generated files...')
       this.contracts = {}
       const parsedFiles = payload
       this.oldPayload = payload
@@ -85,6 +95,7 @@ export class ContractAgent {
         return await writeAIResults(parsedFiles)
       }
 
+      await statusCallback?.('Processing Solidity contracts...')
       const genContrats = []
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
@@ -93,8 +104,10 @@ export class ContractAgent {
         }
       }
 
+      await statusCallback?.('Compiling contracts...')
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
       if (!result.compilationSucceeded) {
+        await statusCallback?.('Compilation failed, fixing errors...')
         // console.log('Compilation failed, trying again recursively ...')
         const generatedContracts = genContrats.map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
@@ -102,7 +115,7 @@ export class ContractAgent {
 
         // Format error files properly according to the schema
         const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
-          const errors = fileData.errors.map((err: any) => 
+          const errors = fileData.errors.map((err: any) =>
             `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
           ).join('\n  ');
           return `File: ${fileName}\n  ${errors}`;
@@ -113,11 +126,14 @@ export class ContractAgent {
               Compilation errors:\n${formattedErrorFiles}\n\n
               Generated contracts:\n${generatedContracts}\n\nConsider other possible solutions and retry this main prompt again: \n${this.mainPrompt}\n `
 
-        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, false); // reuse the same thread
+        await statusCallback?.('Regenerating workspace with error fixes...')
+        return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, false, statusCallback); // reuse the same thread
       }
 
+      await statusCallback?.('Finalizing workspace creation...')
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
+      await statusCallback?.('Error occurred, cleaning up...')
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
