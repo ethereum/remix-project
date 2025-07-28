@@ -113,7 +113,6 @@ export class ContractAgent {
               Compilation errors:\n${formattedErrorFiles}\n\n
               Generated contracts:\n${generatedContracts}\n\nConsider other possible solutions and retry this main prompt again: \n${this.mainPrompt}\n `
 
-        console.log('New prompt for retry:', newPrompt)
         return await this.plugin.generate(newPrompt, AssistantParams, this.generationThreadID, false); // reuse the same thread
       }
 
