@@ -49,7 +49,7 @@ export function WitnessSection () {
               </div>
             ))
           }
-          <div className="form-control custom-checkbox">
+          <div className="form-check">
             <input
               className="form-check-input"
               type="checkbox"

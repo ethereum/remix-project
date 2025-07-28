@@ -76,7 +76,7 @@ export function SetupExports () {
               </select>
             </div>
           </CustomTooltip>
-          <div className="mt-2 form-control custom-checkbox">
+          <div className="mt-2 form-check">
             <input
               className="form-check-input"
               type="checkbox"
@@ -89,7 +89,7 @@ export function SetupExports () {
               <FormattedMessage id="circuit.exportVerifierContract" />
             </label>
           </div>
-          <div className="mt-2 form-control custom-checkbox">
+          <div className="mt-2 form-check">
             <input
               className="form-check-input"
               type="checkbox"

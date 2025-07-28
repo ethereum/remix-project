@@ -10,7 +10,7 @@ export function GenerateProof () {
 
   return (
     <div className="flex-column d-flex">
-      <div className="mt-2 form-control custom-checkbox">
+      <div className="mt-2 form-check">
         <input
           className="form-check-input"
           type="checkbox"

@@ -203,7 +203,7 @@ export const VerifyView = () => {
         setAbiEncodingError={setAbiEncodingError}
       />}
       <div className="pt-3">
-        <div className="d-flex py-1 align-items-center form-control custom-checkbox">
+        <div className="d-flex py-1 align-items-center form-check">
           <input id="has-proxy" className="form-check-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
           <label htmlFor="has-proxy" className="m-0 form-check-label" style={{ paddingTop: '2px' }}>
             <FormattedMessage id="contract-verification.proxyInputLabel" defaultMessage={'The deployed contract is behind a proxy'} />
@@ -226,7 +226,7 @@ export const VerifyView = () => {
 
           return (
             <div key={verifierId} className="pt-2">
-              <div className="d-flex py-1 align-items-center form-control custom-checkbox">
+              <div className="d-flex py-1 align-items-center form-check">
                 <input
                   className="form-check-input"
                   type="checkbox"

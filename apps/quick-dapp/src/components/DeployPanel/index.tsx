@@ -151,7 +151,7 @@ function DeployPanel(): JSX.Element {
             <FormattedMessage id="quickDapp.shareTo" />
           </Form.Label>
           <br />
-          <div className="d-inline-flex align-items-center form-control custom-checkbox">
+          <div className="d-inline-flex align-items-center form-check">
             <input
               id="shareToTwitter"
               className="form-check-input"
@@ -172,7 +172,7 @@ function DeployPanel(): JSX.Element {
               Twitter
             </label>
           </div>
-          <div className="d-inline-flex align-items-center form-control custom-checkbox ms-3">
+          <div className="d-inline-flex align-items-center form-check ms-3">
             <input
               id="shareToFacebook"
               className="form-check-input"
@@ -225,7 +225,7 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.verifiedByEtherscan" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center form-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-check">
             <input
               id="verifiedByEtherscan"
               className="form-check-input"
@@ -252,7 +252,7 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.noTerminal" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center form-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-check">
             <input
               id="noTerminal"
               className="form-check-input"
