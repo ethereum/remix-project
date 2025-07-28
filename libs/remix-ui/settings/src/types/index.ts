@@ -36,3 +36,17 @@ export interface SindriSettingsProps {
     setUnpersistedProperty: (key: string, value: string) => void
   }
 }
+
+export interface SettingsSection {
+  key: string
+  label: string
+  decription: string,
+  subSections: {
+    title: string,
+    options: {
+      label: string,
+      labelIcon?: string,
+      description?: string
+    }[]
+  }[]
+}
