@@ -29,11 +29,11 @@ function trackDomain(domainToTrack, u, paqName) {
   _paq.push(['requireCookieConsent']);
   _paq.push(['trackEvent', 'loader', 'load']);
   (function () {
-    _paq.push(['setTrackerUrl', u + 'matomo.php?debug=1']);
+    _paq.push(['setTrackerUrl', u + 'matomo.php']);
     _paq.push(['setSiteId', domainToTrack]);
 
     if (domainToTrack) {
-      const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/'
+      const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/matomo.php'
       const secondaryWebsiteId = domainToTrack
       _paq.push(['addTracker', secondaryTrackerUrl, secondaryWebsiteId])
     }
