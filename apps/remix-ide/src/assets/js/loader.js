@@ -11,7 +11,7 @@ const domainsOnPrem = {
   'localhost': 4 // remix desktop
 }
 
-let domainToTrack = domains[window.location.hostname]
+let cloudDomainToTrack = domains[window.location.hostname]
 let domainOnPremToTrack = domainsOnPrem[window.location.hostname]
 
 
@@ -30,11 +30,11 @@ function trackDomain(domainToTrack, u, paqName) {
   _paq.push(['trackEvent', 'loader', 'load']);
   (function () {
     _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', domainOnPremToTrack]);
+    _paq.push(['setSiteId', domainToTrack]);
 
-    if (domainToTrack) {
+    if (cloudDomainToTrack) {
       const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/matomo.php'
-      const secondaryWebsiteId = domainToTrack
+      const secondaryWebsiteId = cloudDomainToTrack
       _paq.push(['addTracker', secondaryTrackerUrl, secondaryWebsiteId])
     }
 
