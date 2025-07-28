@@ -30,7 +30,7 @@ function trackDomain(domainToTrack, u, paqName) {
   _paq.push(['trackEvent', 'loader', 'load']);
   (function () {
     _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', domainToTrack]);
+    _paq.push(['setSiteId', domainOnPremToTrack]);
 
     if (domainToTrack) {
       const secondaryTrackerUrl = 'https://ethereumfoundation.matomo.cloud/matomo.php'
