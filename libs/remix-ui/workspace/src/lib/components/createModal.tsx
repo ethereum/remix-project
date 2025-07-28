@@ -24,7 +24,7 @@ export const createModalMessage = async (
         <input
           id="initGitRepository"
           data-id="initGitRepository"
-          className="form-check-input form-check-input"
+          className="form-check-input"
           type="checkbox"
           disabled={gitConfigNotSet}
           onChange={(e) => onChangeInitGit(e.target.value)}

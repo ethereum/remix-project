@@ -491,7 +491,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 <input
                   id="deployAndRunPublishToIPFS"
                   data-id="contractDropdownIpfsCheckbox"
-                  className="form-check-input form-check-input"
+                  className="form-check-input"
                   type="checkbox"
                   onChange={handleCheckedIPFS}
                   checked={props.ipfsCheckedState}

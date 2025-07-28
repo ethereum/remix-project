@@ -103,8 +103,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon && (
-              <span data-id={`${props.id}-modal-close`} className="modal-close" onClick={() => handleHide()}>
-                <i className="fas fa-times" aria-hidden="true"></i>
+              <span data-id={`${props.id}-modal-close`} className="btn-close" aria-label="Close" onClick={() => handleHide()}>
               </span>
             )}
           </div>

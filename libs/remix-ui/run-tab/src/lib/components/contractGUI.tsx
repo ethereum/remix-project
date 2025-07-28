@@ -415,7 +415,7 @@ export function ContractGUI(props: ContractGUIProps) {
               <input
                 id="deployWithProxy"
                 data-id="contractGUIDeployWithProxy"
-                className="form-check-input form-check-input"
+                className="form-check-input"
                 type="checkbox"
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
@@ -462,7 +462,7 @@ export function ContractGUI(props: ContractGUIProps) {
               <input
                 id="upgradeImplementation"
                 data-id="contractGUIUpgradeImplementation"
-                className="form-check-input form-check-input"
+                className="form-check-input"
                 type="checkbox"
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
