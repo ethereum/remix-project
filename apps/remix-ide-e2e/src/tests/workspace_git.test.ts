@@ -409,8 +409,8 @@ module.exports = {
 
   'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc20"]')
       .scrollAndClick('*[data-id="create-ozerc20"]')
@@ -475,7 +475,7 @@ module.exports = {
       .scrollAndClick('*[data-id="create-uniswapV4Template"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .modalFooterOKClick('TemplatesSelection')
-      .pause(100)      
+      .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .openFile('src')
       .openFile('src/Counter.sol')
@@ -500,8 +500,6 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-
-
 
   // GIT WORKSPACE E2E ENDS
 

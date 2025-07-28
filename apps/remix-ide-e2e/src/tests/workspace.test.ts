@@ -35,8 +35,9 @@ module.exports = {
 
   'Should create Remix default workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
@@ -47,6 +48,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(1000)
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
@@ -110,17 +112,20 @@ module.exports = {
 
   'Should create blank workspace with no files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceMenuDropdown"]')
-      .click('*[data-id="workspacecreateBlank"]')
-      .waitForElementPresent('*[data-id="fileSystemModalDialogModalTitle-react"]')
-      .assert.containsText('*[data-id="fileSystemModalDialogModalTitle-react"]', 'Create Blank Workspace')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="create-blank"]')
+      .click('*[data-id="create-blank"]')
+      .waitForElementPresent('*[data-id="TemplatesSelectionModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="TemplatesSelectionModalDialogModalTitle-react"]', 'Create Workspace Using Template')
       // .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
-      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .pause(100)
       .currentWorkspaceIs('workspace_blank')
       .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
@@ -135,7 +140,9 @@ module.exports = {
 
   'Should create ERC20 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc20"]')
       .scrollAndClick('*[data-id="create-ozerc20"]')
@@ -146,6 +153,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc20' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -196,7 +204,9 @@ module.exports = {
 
   'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc721"]')
       .scrollAndClick('*[data-id="create-ozerc721"]')
@@ -207,6 +217,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc721' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -257,7 +268,8 @@ module.exports = {
 
   'Should create ERC1155 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
@@ -268,6 +280,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc1155' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -318,7 +331,8 @@ module.exports = {
 
   'Should create ERC1155 workspace with template customizations #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       // .waitForElementPresent(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
       // .scrollAndClick(`*[data-id='create-ozerc1155{"upgradeable":"uups","mintable":true,"burnable":true,"pausable":true}']`)
@@ -331,6 +345,7 @@ module.exports = {
       .click('*[data-id="upgradeTypeUups"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
@@ -387,7 +402,7 @@ module.exports = {
   },
   'Should create circom zkp hashchecker workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-hashchecker"]')
       .scrollAndClick('*[data-id="create-hashchecker"]')
@@ -424,7 +439,7 @@ module.exports = {
 
   'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .click('*[data-id="create-remixDefault"]')
@@ -434,13 +449,14 @@ module.exports = {
       // .modalFooterOKClick('TemplatesSelection')
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .click('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'test')]",
         locateStrategy: 'xpath'
       })
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
@@ -451,6 +467,7 @@ module.exports = {
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .pause()
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .currentWorkspaceIs('workspace_name')
@@ -498,7 +515,7 @@ module.exports = {
   'Should create workspace for test #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
@@ -525,7 +542,7 @@ module.exports = {
 
   'Should create workspace for next test #group2': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
@@ -555,7 +572,7 @@ module.exports = {
   'Should create a cookbook workspace #group3': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-uniswapV4HookBookMultiSigSwapHook"]')
       .scrollAndClick('*[data-id="create-uniswapV4HookBookMultiSigSwapHook"]')
@@ -578,7 +595,7 @@ module.exports = {
   'Should add Create2 solidity factory #group4': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspaceaddcreate2solidityfactory"]')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Create2FactoryAssembly {`) !== -1,
