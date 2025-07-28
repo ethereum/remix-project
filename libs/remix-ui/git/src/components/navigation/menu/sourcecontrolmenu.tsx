@@ -15,7 +15,7 @@ export const SourceControlMenu = () => {
         as={CustomIconsToggle}
         icon={'fas fa-bars'}
       ></Dropdown.Toggle>
-      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
+      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='form-select remixui_menuwidth' rootCloseEvent="click">
         <Dropdown.Item key={0}>
           <CustomTooltip
             placement="right-start"

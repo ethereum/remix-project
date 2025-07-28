@@ -487,7 +487,7 @@ export function ContractGUI(props: ContractGUIProps) {
                 />
 
                 {props.proxy.deployments.length > 0 && (
-                  <Dropdown.Menu as={ProxyDropdownMenu} className="w-100 custom-dropdown-items" style={{ overflow: 'hidden' }}>
+                  <Dropdown.Menu as={ProxyDropdownMenu} className="w-100 form-select" style={{ overflow: 'hidden' }}>
                     {props.proxy.deployments.map((deployment, index) => (
                       <CustomTooltip
                         placement={'right'}

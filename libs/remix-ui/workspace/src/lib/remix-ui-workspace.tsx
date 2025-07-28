@@ -1033,7 +1033,7 @@ export function Workspace() {
                           }}
                           icon={'fas fa-bars'}
                         ></Dropdown.Toggle>
-                        <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className="custom-dropdown-items remixui_menuwidth" rootCloseEvent="click">
+                        <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className="form-select-lg remixui_menuwidth" rootCloseEvent="click">
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
@@ -1116,7 +1116,7 @@ export function Workspace() {
                       >
                         {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
-                      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
+                      <Dropdown.Menu as={CustomMenu} className="w-100 form-select" data-id="custom-dropdown-items">
                         <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
                           <Dropdown.Item
@@ -1346,7 +1346,7 @@ export function Workspace() {
                   >
                     {global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : (currentBranch && currentBranch.name) || '-none-'}
                   </Dropdown.Toggle>
-                  <Dropdown.Menu as={CustomMenu} className="custom-dropdown-items branches-dropdown">
+                  <Dropdown.Menu as={CustomMenu} className="form-select branches-dropdown">
                     <div data-id="custom-dropdown-menu">
                       <div className="d-flex text-dark" style={{ fontSize: 14, fontWeight: 'bold' }}>
                         <span className="mt-2 ms-2 me-auto">

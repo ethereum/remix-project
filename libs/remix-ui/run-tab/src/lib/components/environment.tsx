@@ -165,7 +165,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             {/* {isL2(currentProvider && currentProvider.displayName)} */}
             <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} envLabel={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} isL2={isL2} plugin={props.runTabPlugin} />
           </Dropdown.Toggle>
-          <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
+          <Dropdown.Menu as={CustomMenu} className="w-100 form-select" data-id="custom-dropdown-items">
             {props.providers.providerList.length === 0 && <Dropdown.Item>
               <span className="">
                 No provider pinned

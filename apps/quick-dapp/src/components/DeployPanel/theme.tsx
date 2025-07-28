@@ -110,7 +110,7 @@ export function ThemeUI() {
         </Dropdown.Toggle>
         <Dropdown.Menu
           as={CustomMenu}
-          className="w-100 custom-dropdown-items"
+          className="w-100 form-select"
           data-id="custom-dropdown-items"
         >
           {themeList.map((item) => (

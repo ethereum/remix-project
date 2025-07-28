@@ -74,7 +74,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
       >
         <Dropdown id="solUmlMenuDropdown">
           <Dropdown.Toggle icon="far fa-arrow-to-bottom uml-btn-icon" as={Markup} className="badge text-bg-info remixui_no-shadow p-2 rounded-circle me-2"></Dropdown.Toggle>
-          <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
+          <Dropdown.Menu as={UmlCustomMenu} className="form-select">
             <Dropdown.Item
               onClick={() => {
                 _paq.push(['trackEvent', 'solidityumlgen', 'umlpngdownload', 'downloadAsPng'])

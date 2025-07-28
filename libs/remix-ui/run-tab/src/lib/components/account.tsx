@@ -418,7 +418,7 @@ export function AccountUI(props: AccountProps) {
           <Dropdown.Toggle as={CustomToggle} icon={null} id="txorigin" data-id="runTabSelectAccount" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control">
             {selectedAccount ? loadedAccounts[selectedAccount] : ''}
           </Dropdown.Toggle>
-          <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
+          <Dropdown.Menu as={CustomMenu} className="w-100 form-select" data-id="custom-dropdown-items">
             {accounts && accounts.length > 0 ? accounts.map((value, index) => (
               <Dropdown.Item
                 key={index}

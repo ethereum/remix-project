@@ -43,7 +43,7 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu as={CompilerMenu} className="w-100 custom-dropdown-items overflow-hidden" data-id="custom-dropdown-items">
+      <Dropdown.Menu as={CompilerMenu} className="w-100 form-select overflow-hidden" data-id="custom-dropdown-items">
         {allversions.length <= 0 && (
           <Dropdown.Item
             key={`default`}

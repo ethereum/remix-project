@@ -36,7 +36,7 @@ export const RemixUIXtermMenu = (props: RemixUiTerminalProps) => {
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.shells' defaultMessage='Shells' />}>
           <Dropdown as={ButtonGroup}>
             <Dropdown.Toggle data-id='select_shell' split variant="" id="dropdown-split-basic" />
-            <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
+            <Dropdown.Menu className='form-select remixui_menuwidth'>
               {xtermState.shells.map((shell, index) => {
                 return (<Dropdown.Item data-id={`select_${shell}`} key={index} onClick={async () => await onCreateTerminal(shell)}>{shell}</Dropdown.Item>)
               })}

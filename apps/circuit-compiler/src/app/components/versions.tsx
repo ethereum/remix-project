@@ -13,7 +13,7 @@ export function VersionList ({ currentVersion, versionList, downloadList, setVer
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu as={CircomVersionMenu} className="w-100 custom-dropdown-items overflow-hidden">
+      <Dropdown.Menu as={CircomVersionMenu} className="w-100 form-select overflow-hidden">
         {
           versionListKeys.reverse().map((version, index) => (
             <Dropdown.Item key={index} onClick={() => {
