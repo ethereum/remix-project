@@ -1,6 +1,6 @@
 # Contributing
 
-Everyone is welcome to contribute to Remix's codebase and please join our [Discord](https://discord.gg/7RvvZ4KX9P).
+Everyone is welcome to contribute to Remix's codebase and please join our [Discord](https://discord.gg/ATKsctCS2F).
 
 ## Development
 Remix libraries work closely with [Remix IDE](https://remix.ethereum.org). Each library has a README to explain its application.
