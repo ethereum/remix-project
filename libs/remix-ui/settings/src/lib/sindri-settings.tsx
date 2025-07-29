@@ -72,6 +72,6 @@ export function SindriSettings(props: SindriSettingsProps) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
