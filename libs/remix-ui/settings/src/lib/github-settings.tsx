@@ -133,6 +133,6 @@ export function GithubSettings(props: GithubSettingsProps) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
