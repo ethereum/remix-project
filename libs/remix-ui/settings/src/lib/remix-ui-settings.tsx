@@ -32,8 +32,10 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettings } from './github-settings'
 import { EtherscanSettings } from './etherscan-settings'
 import { SindriSettings } from './sindri-settings'
-import { GeneralSettings } from './general-settings'
+import { SettingsSectionUI } from './settings-section'
 import { SettingsSection } from '../types'
+import { IPFSSettings } from './ipfs-settings'
+import { SwarmSettings } from './swarm-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -57,25 +59,169 @@ const settingsSections: SettingsSection[] = [
         title: 'Code editor',
         options: [{
           label: 'Generate contract metadata',
-          description: 'Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.'
+          description: 'Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.',
+          type: 'toggle'
         }, {
-          label: 'Enable code completion in editor'
+          label: 'Enable code completion in editor',
+          type: 'toggle'
         }, {
-          label: 'Display gas estimates in editor'
+          label: 'Display gas estimates in editor',
+          type: 'toggle'
         }, {
-          label: 'Display errors in editor while typing'
+          label: 'Display errors in editor while typing',
+          type: 'toggle'
         }, {
           label: 'Enable Personal Mode for web3 provider',
-          labelIcon: 'fa fa-exclamation-triangle text-warning'
+          labelIcon: 'fa fa-exclamation-triangle text-warning',
+          type: 'toggle'
         }, {
-          label: 'Save environment state'
+          label: 'Save environment state',
+          type: 'toggle'
+        }]
+      },
+      {
+        title: 'Appearance',
+        options: [{
+          label: 'Language',
+          type: 'select',
+          selectOptions: [{
+            label: 'English',
+            value: 'English'
+          }]
+        }, {
+          label: 'Theme',
+          type: 'select',
+          selectOptions: [{
+            label: 'Dark',
+            value: 'Dark'
+          }, {
+            label: 'Light',
+            value: 'Light'
+          }]
         }]
       }
     ]
   },
-  { key: 'analytics', label: 'Analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: []},
-  { key: 'ai', label: 'Remix AI Assistant', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: []},
-  { key: 'services', label: 'Connected Services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: []},
+  { key: 'analytics', label: 'Analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
+    { options: [{
+      label: 'AI Copilot',
+      type: 'toggle',
+      description: 'AI Copilot assists with code suggestions and improvements.',
+      footnote: {
+        text: 'Learn more about AI Copilot',
+        link: 'https://remix.ethereum.org/',
+        styleClass: 'text-primary'
+      }
+    }, {
+      label: 'Matomo Analytics (no cookies)',
+      type: 'toggle',
+      description: 'Help improve Remix with anonymous usage data.',
+      footnote: {
+        text: 'Learn more about analytics',
+        link: 'https://remix.ethereum.org/',
+        styleClass: 'text-primary'
+      }
+    }, {
+      label: 'Matomo Analytics (with cookies)',
+      type: 'toggle',
+      description: 'Enable tracking with cookies for more detailed insights.',
+      footnote: {
+        text: 'Manage Cookie Preferences',
+        link: 'https://remix.ethereum.org/',
+        styleClass: 'text-primary'
+      }
+    }]
+    }
+  ]},
+  { key: 'ai', label: 'Remix AI Assistant', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: [
+    {
+      options: [{
+        label: 'AI Copilot',
+        description: 'AI Copilot assists with code suggestions and improvements.',
+        type: 'toggle',
+        footnote: {
+          text: 'Learn more about AI Copilot',
+          link: 'https://remix.ethereum.org/',
+          styleClass: 'text-primary'
+        }
+      },{
+        label: 'Allow AI to Analyze Code Context',
+        description: 'Enables deeper insights by analyzing your code structure.',
+        type: 'toggle',
+        footnote: {
+          text: 'Disabling this may reduce suggestion accuracy.',
+          styleClass: 'text-warning'
+        }
+      },{
+        label: 'Use External API for AI Responses',
+        description: 'Sends anonymized prompts to OpenAI\'s API to enhance responses.',
+        type: 'toggle',
+        footnote: {
+          text: 'Disabling this will limit AI-generated suggestions.',
+          styleClass: 'text-warning'
+        }
+      },{
+        label: 'View Privacy Policy',
+        description: 'Understand how AI processes your data.',
+        type: 'button'
+      }]
+    }
+  ]},
+  { key: 'services', label: 'Connected Services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
+    {
+      options: [{
+        label: 'Github Credentials',
+        type: 'toggle',
+        toggleOptions: <GithubSettings
+          saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
+            // saveTokenToast(props.config, dispatchToast, githubToken, 'gist-access-token')
+            // saveTokenToast(props.config, dispatchToast, githubUserName, 'github-user-name')
+            // saveTokenToast(props.config, dispatchToast, githubEmail, 'github-email')
+          }}
+          removeToken={() => {
+            // removeTokenToast(props.config, dispatchToast, 'gist-access-token')
+            // removeTokenToast(props.config, dispatchToast, 'github-user-name')
+            // removeTokenToast(props.config, dispatchToast, 'github-email')
+          }}
+          config={{
+            exists: () => true,
+            get: () => '',
+            set: () => {},
+            clear: () => {},
+            getUnpersistedProperty: () => {},
+            setUnpersistedProperty: () => {}
+          }}
+        />
+      }, {
+        label: 'IPFS Settings',
+        type: 'toggle',
+        toggleOptions: <IPFSSettings />
+      }, {
+        label: 'Swarm Settings',
+        type: 'toggle',
+        toggleOptions: <SwarmSettings />
+      }, {
+        label: 'Sindri Credentials',
+        type: 'toggle',
+        toggleOptions: <SindriSettings
+          saveToken={(sindriToken: string) => {
+            // saveTokenToast(props.config, dispatchToast, sindriToken, 'sindri-access-token')
+          }}
+          removeToken={() => {
+            // removeTokenToast(props.config, dispatchToast, 'sindri-access-token')
+          }}
+          config={{
+            exists: () => true,
+            get: () => '',
+            set: () => {},
+            clear: () => {},
+            getUnpersistedProperty: () => {},
+            setUnpersistedProperty: () => {}
+          }}
+        />
+      }]
+    }
+  ]},
 ];
 
 const initialToggles = {
@@ -126,7 +272,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
           <div className='d-flex flex-fill'>
             <span className="input-group-text"><i className="fa fa-search"></i></span>
-            <input type="text" className="form-control shadow-none" placeholder="Search settings" style={{ minWidth: '200px', height: '40px' }} />
+            <input type="text" className="form-control shadow-none" placeholder="Search settings" style={{ minWidth: '200px', height: '40px', maxWidth: '515px' }} />
           </div>
         </div>
       </div>
@@ -161,183 +307,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           className="flex-column p-0 flex-grow-1"
           style={{ minWidth: 0, flexBasis: '300px', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
         >
-          <div className="pt-4 px-5">
+          <div className="pt-4 px-5" style={{ maxWidth: '650px' }}>
             <div className="mt-4">
-              {selected === 'general' && <GeneralSettings section={settingsSections.find(section => section.key === selected)} />}
+              { settingsSections.map((section) => (selected === section.key && <SettingsSectionUI key={section.key} section={section} />))}
             </div>
-            {selected === 'analytics' && (
-              <div>
-                <h4 className="text-white mb-4">Analytics</h4>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">AI Copilot</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="aiCopilot" checked={toggles.aiCopilot} onChange={() => handleToggle('aiCopilot')} />
-                      <label className="custom-control-label" htmlFor="aiCopilot">AI Copilot assists with code suggestions and improvements.</label>
-                    </div>
-                    <a href="#" className="text-info small">Learn more about AI Copilot</a>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Matomo Analytics (no cookies)</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="matomoNoCookies" checked={toggles.matomoNoCookies} onChange={() => handleToggle('matomoNoCookies')} />
-                      <label className="custom-control-label" htmlFor="matomoNoCookies">Help improve Remix with anonymous usage data.</label>
-                    </div>
-                    <a href="#" className="text-info small">Learn more about analytics</a>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Matomo Analytics (with cookies)</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="matomoWithCookies" checked={toggles.matomoWithCookies} onChange={() => handleToggle('matomoWithCookies')} />
-                      <label className="custom-control-label" htmlFor="matomoWithCookies">Enable tracking with cookies for more detailed insights.</label>
-                    </div>
-                    <a href="#" className="text-info small">Manage Cookie Preferences</a>
-                  </div>
-                </div>
-              </div>
-            )}
-            {selected === 'ai' && (
-              <div>
-                <h4 className="text-white mb-4">Remix AI Assistant</h4>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">AI Copilot</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="aiCopilot2" checked={toggles.aiCopilot} onChange={() => handleToggle('aiCopilot')} />
-                      <label className="custom-control-label" htmlFor="aiCopilot2">Provides AI-powered code suggestions directly in the editor.</label>
-                    </div>
-                    <a href="#" className="text-info small">Learn more about AI Copilot</a>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Allow AI to Analyze Code Context</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="aiAnalyzeContext" checked={toggles.aiAnalyzeContext} onChange={() => handleToggle('aiAnalyzeContext')} />
-                      <label className="custom-control-label" htmlFor="aiAnalyzeContext">Enables deeper insights by analyzing your code structure.</label>
-                    </div>
-                    <div className="text-warning small">Disabling this may reduce suggestion accuracy.</div>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Use External API for AI Responses</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="aiExternalApi" checked={toggles.aiExternalApi} onChange={() => handleToggle('aiExternalApi')} />
-                      <label className="custom-control-label" htmlFor="aiExternalApi">Sends anonymized prompts to OpenAI's API to enhance responses.</label>
-                    </div>
-                    <div className="text-warning small">Disabling this will limit AI-generated suggestions.</div>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">AI Privacy & Data Usage</h5>
-                    <a href="#" className="text-info small">View Privacy Policy</a>
-                  </div>
-                </div>
-              </div>
-            )}
-            {selected === 'services' && (
-              <div>
-                <h4 className="text-white mb-4">Connected Services</h4>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Github Credentials</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="githubEnabled" checked={toggles.githubEnabled} onChange={() => handleToggle('githubEnabled')} />
-                      <label className="custom-control-label" htmlFor="githubEnabled">Enable Github Integration</label>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group col-md-4">
-                        <label>Token</label>
-                        <input type="password" className="form-control" name="githubToken" value={inputs.githubToken} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-4">
-                        <label>Username</label>
-                        <input type="text" className="form-control" name="githubUsername" value={inputs.githubUsername} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-4">
-                        <label>Email</label>
-                        <input type="email" className="form-control" name="githubEmail" value={inputs.githubEmail} onChange={handleInput} />
-                      </div>
-                    </div>
-                    <button className="btn btn-primary btn-sm mr-2">Save</button>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">IPFS Settings</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="ipfsEnabled" checked={toggles.ipfsEnabled} onChange={() => handleToggle('ipfsEnabled')} />
-                      <label className="custom-control-label" htmlFor="ipfsEnabled">Enable IPFS Integration</label>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group col-md-2">
-                        <label>Host</label>
-                        <input type="text" className="form-control" name="ipfsHost" value={inputs.ipfsHost} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-2">
-                        <label>Protocol</label>
-                        <input type="text" className="form-control" name="ipfsProtocol" value={inputs.ipfsProtocol} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-2">
-                        <label>Port</label>
-                        <input type="text" className="form-control" name="ipfsPort" value={inputs.ipfsPort} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-3">
-                        <label>Project ID (Infura)</label>
-                        <input type="text" className="form-control" name="ipfsProjectId" value={inputs.ipfsProjectId} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-3">
-                        <label>Project Secret (Infura)</label>
-                        <input type="password" className="form-control" name="ipfsProjectSecret" value={inputs.ipfsProjectSecret} onChange={handleInput} />
-                      </div>
-                    </div>
-                    <button className="btn btn-primary btn-sm">Save</button>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Swarm Settings</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="swarmEnabled" checked={toggles.swarmEnabled} onChange={() => handleToggle('swarmEnabled')} />
-                      <label className="custom-control-label" htmlFor="swarmEnabled">Enable Swarm Integration</label>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group col-md-6">
-                        <label>Private Bee Address</label>
-                        <input type="text" className="form-control" name="swarmBee" value={inputs.swarmBee} onChange={handleInput} />
-                      </div>
-                      <div className="form-group col-md-6">
-                        <label>Postage Stamp ID</label>
-                        <input type="text" className="form-control" name="swarmStamp" value={inputs.swarmStamp} onChange={handleInput} />
-                      </div>
-                    </div>
-                    <button className="btn btn-primary btn-sm">Save</button>
-                  </div>
-                </div>
-                <div className="card bg-dark text-light mb-4">
-                  <div className="card-body">
-                    <h5 className="card-title">Sindri Credentials</h5>
-                    <div className="custom-control custom-switch mb-3">
-                      <input type="checkbox" className="custom-control-input" id="sindriEnabled" checked={toggles.sindriEnabled} onChange={() => handleToggle('sindriEnabled')} />
-                      <label className="custom-control-label" htmlFor="sindriEnabled">Enable Sindri Integration</label>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group col-md-6">
-                        <label>Token</label>
-                        <input type="password" className="form-control" name="sindriToken" value={inputs.sindriToken} onChange={handleInput} />
-                      </div>
-                    </div>
-                    <button className="btn btn-primary btn-sm">Save</button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

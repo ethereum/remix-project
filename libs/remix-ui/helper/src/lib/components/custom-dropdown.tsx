@@ -11,12 +11,14 @@ export const CustomToggle = React.forwardRef(
       children,
       onClick,
       icon,
-      className = ''
+      className = '',
+      useDefaultIcon = true
     }: {
       children: React.ReactNode
       onClick: (e) => void
       icon: string
       className: string
+      useDefaultIcon?: boolean
     },
     ref: Ref<HTMLButtonElement>
   ) => (
@@ -30,14 +32,21 @@ export const CustomToggle = React.forwardRef(
     >
       <div className="d-flex align-items-center">
         <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm" data-id={`dropdown-content`}>{children}</div>
-        {icon && (
+        {icon ? useDefaultIcon ? (
           <div className="pe-1">
             <i className={`${icon} pe-1`}></i>
           </div>
+        ) : (
+          <div className="pe-1">
+            <i className={`${icon} pe-1`}></i>
+          </div>
+        ) : null}
+
+        {useDefaultIcon && (
+          <div className="pe-1">
+            <i className="fad fa-sort-circle"></i>
+          </div>
         )}
-        <div>
-          <i className="fad fa-sort-circle"></i>
-        </div>
       </div>
     </button>
   )
