@@ -91,3 +91,65 @@
   margin: 0;
   font-size: 1rem;
 }
+
+/* ================================================================ */
+/* 아래 코드로 기존의 `.form-switch` 관련 CSS를 완전히 대체해주세요. */
+/* ================================================================ */
+
+/* 커스텀 토글 스위치 전체 컨테이너 */
+.plugin-manager-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;  /* 표준 토글 크기로 조정 */
+  height: 20px;
+}
+
+/* 실제 체크박스는 숨김 */
+.plugin-manager-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* 토글의 배경(트랙) 부분 */
+.plugin-manager-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--secondary); /* 비활성 시 배경색 */
+  transition: .4s;
+  border-radius: 34px;
+}
+
+/* 토글의 원(손잡이) 부분 */
+.plugin-manager-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white; /* 손잡이 색상은 흰색으로 고정 */
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* 활성화(checked) 됐을 때 스타일 */
+.plugin-manager-switch input:checked + .plugin-manager-slider {
+  background-color: var(--primary); /* 활성 시 배경색 */
+}
+
+.plugin-manager-switch input:checked + .plugin-manager-slider:before {
+  transform: translateX(14px); /* 손잡이를 오른쪽으로 이동 */
+}
+
+.plugin-manager-tabs .nav-link.active {
+  /* 2. --body-color 대신 --light 변수를 사용하여 더 밝은 흰색 계열로 표시 */
+  color: var(--light); 
+  background-color: transparent;
+  border-bottom-color: var(--primary);
+  font-weight: bold;
+}
