@@ -6,7 +6,7 @@ export function NetworkUI(props: NetworkProps) {
   return (
     <div className="">
       <div className="udapp_settingsLabel"></div>
-      <div className="udapp_environment" data-id="settingsNetworkEnv">
+      <div className="" data-id="settingsNetworkEnv">
         <span className="udapp_network badge text-bg-secondary">{props.networkName}</span>
       </div>
     </div>
