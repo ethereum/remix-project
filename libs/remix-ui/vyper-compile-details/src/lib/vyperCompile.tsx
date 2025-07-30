@@ -70,7 +70,7 @@ export default function VyperCompile({ result, theme, themeStyle }: VyperCompile
 
   return (
     <div className='w-100 h-100 d-flex flex-row'>
-      <Tabs className="flex-column" style={{ height: "fit-content", backgroundColor: 'var(--body-bg)' }} id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
+      <Tabs className="flex-column" style={{ height: "fit-content", backgroundColor: 'var(--bs-body-bg)' }} id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
         {tabContent.map((content, index) => (
           <Tab className="border-top border-start p-4 bg-light" style={{ width: '50rem', height: 'fit-content', minHeight: '25rem' }} eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
             <div className="d-flex flex-column w-90 justify-content-center mx-auto rounded-2">

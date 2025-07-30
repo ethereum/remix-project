@@ -70,7 +70,7 @@ function HomeTabTitle() {
   return (
     <div className="card mb-3 p-5 rounded overflow-hidden border">
       <img src="assets/img/remix-link-illustration.svg" className="home-tab-banner" alt="Remix Logo" style={{ position: 'absolute', top: '-200px', left: '125px', width: 400, height: 400, zIndex: 0 }} />
-      <div style={{ backgroundColor: 'var(--body-bg)', opacity: 0.8, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}></div>
+      <div style={{ backgroundColor: 'var(--bs-body-bg)', opacity: 0.8, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}></div>
       <div style={{ zIndex: 2 }}>
         <div className="mb-0 d-flex align-items-center">
           <div className="ms-2 d-flex">

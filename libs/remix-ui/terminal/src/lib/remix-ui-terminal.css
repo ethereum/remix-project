@@ -5,7 +5,7 @@ element.style {
 #terminalCliInput{
   width: 97%;
   font-weight: 800;
-  background: var(--body-bg)
+  background: var(--bs-body-bg)
 }
 #terminalCliInput:focus {
   outline: none;

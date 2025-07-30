@@ -26,7 +26,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
 
 export const NavMenu = () => {
   return (
-    <nav className="d-flex medium flex-row w-100" style={{ backgroundColor: 'var(--body-bg)!important' }}>
+    <nav className="d-flex medium flex-row w-100" style={{ backgroundColor: 'var(--bs-body-bg)!important' }}>
       <NavItem to="/" icon={<i className="fas fa-home"></i>} title={ <FormattedMessage id="contract-verification.verifyNavTitle" defaultMessage={'Verify'} /> } />
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title={ <FormattedMessage id="contract-verification.receiptsNavTitle" defaultMessage={'Receipts'} /> } />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title={ <FormattedMessage id="contract-verification.lookupNavTitle" defaultMessage={'Lookup'} /> } />
