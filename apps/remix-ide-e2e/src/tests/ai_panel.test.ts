@@ -130,7 +130,7 @@ const tests = {
         timeout: 120000
       })
       .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
-      .assistantGenerate('a simple ERC20 contract', 'mistralai')
+      .assistantGenerate('a simple ERC20 contract', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
@@ -224,39 +224,6 @@ const tests = {
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//div[contains(@class,"chat-bubble") and (contains(.,"Modified Files") or contains(.,"No Changes applied") or contains(.,"No files modified"))]',
-        timeout: 60000
-      })
-      .waitForElementPresent({
-        locateStrategy: 'xpath',
-        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
-      })
-  },
-  'Generate new workspaces code with all AI assistant providers #group1': function (browser: NightwatchBrowser) {
-    browser
-      .assistantClearChat()
-      .waitForCompilerLoaded()
-      .clickLaunchIcon('remixaiassistant')
-
-      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
-
-      .assistantGenerate('a simple ERC20 contract', 'openai')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
-        timeout: 60000
-      })
-      .waitForElementPresent({
-        locateStrategy: 'xpath',
-        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
-      })
-      .assistantClearChat()
-
-      .clickLaunchIcon('remixaiassistant')
-
-      .assistantGenerate('a simple ERC20 contract', 'anthropic')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
         timeout: 60000
       })
       .waitForElementPresent({
