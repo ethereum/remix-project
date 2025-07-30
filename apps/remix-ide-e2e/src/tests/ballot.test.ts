@@ -95,7 +95,7 @@ module.exports = {
   'Compile with remappings set in remappings.txt file #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
@@ -169,7 +169,7 @@ module.exports = {
         suppressNotFoundErrors: true,
         timeout: 1000
       })
-      
+
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
       .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
@@ -200,7 +200,7 @@ module.exports = {
             suppressNotFoundErrors: true,
             timeout: 1000
           })
-          
+
           .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
           .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
           .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
@@ -233,7 +233,7 @@ module.exports = {
             suppressNotFoundErrors: true,
             timeout: 1000
           })
-          
+
           .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
           .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
           .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)

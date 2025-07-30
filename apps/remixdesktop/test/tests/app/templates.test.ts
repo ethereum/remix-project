@@ -1,6 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
 
-
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     browser.hideToolTips()
@@ -16,23 +15,23 @@ module.exports = {
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
-         browser.hideToolTips().switchWindow(result.value[1])
-        .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-        .click('*[data-id="treeViewLitreeViewItemtests"]')
-        .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-        .click('*[data-id="treeViewLitreeViewItemcontracts"]')
-        .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-        .openFile('contracts/1_Storage.sol')
-        .waitForElementVisible('*[id="editorView"]', 10000)
-        .getEditorValue((content) => {
-          browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
-        })
+        browser.hideToolTips().switchWindow(result.value[1])
+          .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+          .click('*[data-id="treeViewLitreeViewItemtests"]')
+          .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+          .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+          .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+          .openFile('contracts/1_Storage.sol')
+          .waitForElementVisible('*[id="editorView"]', 10000)
+          .getEditorValue((content) => {
+            browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
+          })
       })
   },
   'open template explorer and add template to current': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]', 10000)
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]', 10000)
+      .click('*[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="workspacecreate.desktop"]')
       .click('*[data-id="workspacecreate.desktop"]')
       .waitForElementVisible('*[data-id="add-simpleEip7702"]')

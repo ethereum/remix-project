@@ -5,14 +5,14 @@ import init from '../helpers/init'
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    browser.globals.asyncHookTimeout = 30000000; 
+    browser.globals.asyncHookTimeout = 30000000;
     init(browser, done)
   },
 
   'Should create semaphore workspace template #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
@@ -41,7 +41,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Everything went okay')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
       .openFile('circuits/.bin/simple_js')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')  
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
@@ -178,7 +178,7 @@ module.exports = {
   'Should create a new workspace using hash checker template #group5 #group6': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-hashchecker"]')
       .scrollAndClick('*[data-id="create-hashchecker"]')

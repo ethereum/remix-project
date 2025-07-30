@@ -69,8 +69,8 @@ const tests = {
     browser
       .clickLaunchIcon('filePanel')
       .pause(2000)
-      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
@@ -90,8 +90,8 @@ const tests = {
   },
   'open template that sets a config': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
       .scrollAndClick('*[data-id="create-introToEIP7702"]')
