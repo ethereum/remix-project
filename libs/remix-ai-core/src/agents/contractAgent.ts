@@ -74,7 +74,7 @@ export class ContractAgent {
           }
           return "Max attempts reached! Please try again with a different prompt."
         }
-        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
       this.contracts = {}
       const parsedFiles = payload
@@ -151,7 +151,7 @@ export class ContractAgent {
   async continueCompilation(){
     try {
       if (this.oldPayload === undefined) {
-        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthorpic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
 
       this.performCompile = true

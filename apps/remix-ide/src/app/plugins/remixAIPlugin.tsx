@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine';
-import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams } from '@remix/remix-ai-core';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams, OllamaInferencer, isOllamaAvailable, getBestAvailableModel } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -348,6 +348,48 @@ export class RemixAIPlugin extends Plugin {
         AssistantParams.threadId = ''
       }
       this.assistantProvider = provider
+
+      // Switch back to remote inferencer for cloud providers -- important
+      if (this.remoteInferencer && this.remoteInferencer instanceof OllamaInferencer) {
+        this.remoteInferencer = new RemoteInferencer()
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+      }
+    } else if (provider === 'ollama') {
+      const isAvailable = await isOllamaAvailable();
+      if (!isAvailable) {
+        console.error('Ollama is not available. Please ensure Ollama is running.')
+        return
+      }
+
+      const bestModel = await getBestAvailableModel();
+      if (!bestModel) {
+        console.error('No Ollama models available. Please install a model first.')
+        return
+      }
+
+      // Switch to Ollama inferencer
+      this.remoteInferencer = new OllamaInferencer(bestModel);
+      this.remoteInferencer.event.on('onInference', () => {
+        this.isInferencing = true
+      })
+      this.remoteInferencer.event.on('onInferenceDone', () => {
+        this.isInferencing = false
+      })
+
+      if (this.assistantProvider !== provider){
+        // clear the threadIds
+        this.assistantThreadId = ''
+        GenerationParams.threadId = ''
+        CompletionParams.threadId = ''
+        AssistantParams.threadId = ''
+      }
+      this.assistantProvider = provider
+      console.log(`Ollama provider set with model: ${bestModel}`)
     } else {
       console.error(`Unknown assistant provider: ${provider}`)
     }

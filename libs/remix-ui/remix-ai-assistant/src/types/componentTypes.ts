@@ -1,6 +1,6 @@
 export type AiContextType = "none" | "current" | "opened" | "workspace"
 
-export type AiAssistantType = "openai" | "mistralai" | "anthropic"
+export type AiAssistantType = "openai" | "mistralai" | "anthropic" | "ollama"
 
 export type groupListType = {
       label: string,

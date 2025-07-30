@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, M
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
-import { HandleOpenAIResponse, HandleMistralAIResponse, HandleAnthropicResponse } from '@remix/remix-ai-core'
+import { HandleOpenAIResponse, HandleMistralAIResponse, HandleAnthropicResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
 import { ModalTypes } from '@remix-ui/app'
@@ -41,7 +41,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [isStreaming, setIsStreaming] = useState(false)
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
-  const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic'>(
+  const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic' | 'ollama'>(
     'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
@@ -114,6 +114,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       icon: 'fa-solid fa-check',
       stateValue: 'anthropic',
       dataId: 'composer-ai-assistant-anthropic'
+    },
+    {
+      label: 'Ollama',
+      bodyText: 'Local AI models running on your machine (requires Ollama installation)',
+      icon: 'fa-solid fa-check',
+      stateValue: 'ollama',
+      dataId: 'composer-ai-assistant-ollama'
     }
   ]
 
@@ -330,6 +337,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             }
           )
           // Add Anthropic handler here if available
+          break;
+        case 'ollama':
+          HandleOllamaResponse(
+            response,
+            (chunk: string) => appendAssistantChunk(assistantId, chunk),
+            (finalText: string) => {
+              //ChatHistory.pushHistory(trimmed, finalText) -> handled by ollama
+              setIsStreaming(false)
+            }
+          )
           break;
         default:
           HandleStreamResponse(

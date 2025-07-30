@@ -144,6 +144,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               {assistantChoice === 'openai' && ' OpenAI'}
               {assistantChoice === 'mistralai' && ' MistralAI'}
               {assistantChoice === 'anthropic' && ' Anthropic'}
+              {assistantChoice === 'ollama' && ' Ollama'}
               {'  '}
               <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
             </button>
