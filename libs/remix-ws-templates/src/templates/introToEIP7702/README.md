@@ -34,7 +34,7 @@ The script `run-eip7702.ts` will deploy two contracts, MyToken and Spender. It w
 - In the **executeBatch** function, paste the data and then run the transaction.
 
 Executing the batched transaction:
-- Go to the the deployed token's **balanceOf** function. 
+- Go to the deployed token's **balanceOf** function. 
 - Input the first and then the second account to check that each address' token balance has been updated.
 - This is possible because of the 7702 connection between the contract and the first EOA address.
 
