@@ -167,7 +167,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
         variant="outline-secondary"
         className="btn-topbar btn-sm"
         data-id="github-dropdown-toggle"
-        disabled={true}
+        // disabled={true}
       >
       </Dropdown.Toggle>
       <Dropdown.Menu

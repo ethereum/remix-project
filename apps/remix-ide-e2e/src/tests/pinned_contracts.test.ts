@@ -19,6 +19,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+      .waitForElementVisible('*[data-id="compile-action"]')
+      .pause(3000)
+      .click('[data-id="compile-action"]')
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .assert.elementPresent('*[data-id="unpinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
@@ -39,7 +42,7 @@ module.exports = {
   'Test pinned contracts loading on workspace change #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
