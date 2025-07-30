@@ -1,3 +1,29 @@
+import lunr from 'lunr';
+import { extractImportsFromFile } from "../helpers/localImportsExtractor";
+
+interface Document {
+  id: number;
+  filename: string;
+  content: string;
+  identifier: number;
+}
+
+interface indexT{
+  isIndexed: boolean;
+  lastIndexedTime?: number;
+  reason?: string;
+}
+
+enum SupportedFileExtensions {
+  solidity = '.sol',
+  vyper = '.vy',
+  circom = '.circom',
+  javascript = '.js',
+  typescript = '.ts',
+  tests_ts = '.test.ts',
+  tests_js = '.test.js',
+}
+
 export class CodeCompletionAgent {
   props: any;
 
@@ -7,34 +33,10 @@ export class CodeCompletionAgent {
 
   async getLocalImports(fileContent: string, currentFile: string) {
     try {
-      const lines = fileContent.split('\n');
-      const imports = [];
-
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('import')) {
-          const importMatch = trimmedLine.match(/import\s+(?:.*\s+from\s+)?["']([^"']+)["']/);
-          if (importMatch) {
-            let importPath = importMatch[1];
-
-            // Skip library imports (npm packages, node_modules, etc.)
-            if (importPath.startsWith('@') ||
-                (!importPath.startsWith('./') && !importPath.startsWith('../') && !importPath.startsWith('/'))) {
-              continue;
-            }
-
-            // Handle relative imports
-            if (importPath.startsWith('./') || importPath.startsWith('../')) {
-              const currentDir = currentFile.includes('/') ? currentFile.substring(0, currentFile.lastIndexOf('/')) : '';
-              importPath = this.resolvePath(currentDir, importPath);
-            }
-
-            imports.push(importPath);
-          }
-        }
-      }
-
-      return imports;
+      // Use extractImportsFromFile to get all imports from the current file
+      const imports = extractImportsFromFile(fileContent);
+      const localImports = imports.filter(imp => imp.isLocal);
+      return localImports.map(imp => imp.importPath);
     } catch (error) {
       return [];
     }

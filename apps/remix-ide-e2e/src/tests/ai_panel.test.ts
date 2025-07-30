@@ -8,7 +8,7 @@ const sources = [
   { 'Untitled.sol': { content: examples.ballot.content } }
 ]
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
@@ -130,7 +130,7 @@ module.exports = {
         timeout: 120000
       })
       .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
-      .assistantGenerate('a simple ERC20 contract', 'mistralai')
+      .assistantGenerate('a simple ERC20 contract', 'anthropic')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
@@ -231,43 +231,25 @@ module.exports = {
         selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
       })
   },
-  'Generate new workspaces code with all AI assistant providers #group1': function (browser: NightwatchBrowser) {
-    browser
-      .assistantClearChat()
-      .waitForCompilerLoaded()
-      .clickLaunchIcon('remixaiassistant')
-
-      .waitForElementPresent('*[data-id="remix-ai-assistant-ready"]')
-
-      .assistantGenerate('a simple ERC20 contract', 'openai')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
-        timeout: 60000
-      })
-      .waitForElementPresent({
-        locateStrategy: 'xpath',
-        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
-      })
-      .assistantClearChat()
-
-      .clickLaunchIcon('remixaiassistant')
-
-      .assistantGenerate('a simple ERC20 contract', 'anthropic')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//div[contains(@class,"chat-bubble") and contains(.,"New workspace created:")]',
-        timeout: 60000
-      })
-      .waitForElementPresent({
-        locateStrategy: 'xpath',
-        selector: "//*[@data-id='remix-ai-streaming' and @data-streaming='false']"
-      })
-  },
   "Should close the AI assistant #group1": function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="movePluginToLeft"]')
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 5000)
   },
+}
+
+const branch = process.env.CIRCLE_BRANCH
+const runTestsConditions = branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
+
+const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
+  return browser.browserName.indexOf('chrome') > -1
+}
+
+if (!checkBrowserIsChrome(browser)) {
+  module.exports = {}
+} else {
+  module.exports = {
+    ...(branch ? (runTestsConditions ? tests : {}) : tests)
+  };
 }

@@ -192,6 +192,7 @@ module.exports = {
       .modalFooterOKClick('TemplatesSelection')
       .pause(3000)
       .currentWorkspaceIs('workspace_new')
+      .expandAllFolders()
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_tests.sol"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItem.deps/remix-tests/remix_accounts.sol"]')
       .openFile('.deps/remix-tests/remix_tests.sol')
