@@ -1,6 +1,5 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { CustomTooltip } from '@remix-ui/helper'
 
 interface PluginCardProps {
   profile: any;
@@ -14,10 +13,10 @@ function PluginCard({ profile, isActive, togglePlugin }: PluginCardProps) {
       <div className="d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           {profile.icon ? <img src={profile.icon} className="mr-2 remixui_pluginIcon text-dark" alt={`${profile.name} icon`} /> : <i className="fas fa-puzzle-piece mr-2 text-dark"></i>}
-          <div className="font-weight-bold m-0 text-dark">{profile.displayName || profile.name}</div>
+          <div className={`font-weight-bold m-0 ${isActive ? 'card-title' : ''}`}>{profile.displayName || profile.name}</div>
         </div>
 
-        <label className="plugin-manager-switch">
+        <label className="plugin-manager-switch mt-2">
           <input
             type="checkbox"
             checked={isActive}
