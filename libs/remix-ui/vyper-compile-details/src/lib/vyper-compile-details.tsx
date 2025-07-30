@@ -1,6 +1,10 @@
-import React from 'react'
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+import React, { useState } from 'react'
 import VyperCompile from './vyperCompile'
 import { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
+import { GitHubCallback } from 'libs/remix-ui/top-bar/src/topbarUtils/gitOauthHandler'
+import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
+import { GitHubLogin } from 'libs/remix-ui/top-bar/src/components/gitLogin'
 
 interface RemixUiVyperCompileDetailsProps {
   payload: any

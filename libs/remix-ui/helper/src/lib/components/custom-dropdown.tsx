@@ -119,7 +119,8 @@ export const CustomTopbarMenu = React.forwardRef(
       className,
       'aria-labelledby': labeledBy,
       innerItemWidth = '',
-      innerXPadding = ''
+      innerXPadding = '',
+      width = 'w-100'
     }: {
       'children': React.ReactNode
       'style'?: React.CSSProperties
@@ -128,13 +129,14 @@ export const CustomTopbarMenu = React.forwardRef(
       'aria-labelledby'?: string
       innerItemWidth?: string,
       innerXPadding?: string
+      width?: string
     },
     ref: Ref<HTMLDivElement>
   ) => {
     const height = window.innerHeight * 0.6
     return (
       <div ref={ref} style={style} className={className} aria-labelledby={labeledBy} data-id={dataId}>
-        <ul className={`overflow-auto w-100 list-unstyled text-truncate mb-0 ${innerItemWidth} ${innerXPadding}`} style={{ maxHeight: height + 'px' }}>
+        <ul className={`overflow-auto ${ width } list-unstyled text-truncate mb-0 ${innerItemWidth} ${innerXPadding}`} style={{ maxHeight: height + 'px' }}>
           {children}
         </ul>
       </div>

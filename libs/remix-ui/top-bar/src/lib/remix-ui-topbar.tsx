@@ -3,7 +3,7 @@ import React, { MutableRefObject, useCallback, useContext, useEffect, useMemo, u
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
-import { CustomToggle, CustomTopbarMenu } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
+import { CustomMenu, CustomToggle, CustomTopbarMenu } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { appPlatformTypes, platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -12,6 +12,11 @@ import { WorkspacesDropdown } from '../components/WorkspaceDropdown'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
 import { cloneRepository, deleteWorkspace, fetchWorkspaceDirectory, getWorkspaces, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, publishToGist, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
 import { gitUIPanels } from 'libs/remix-ui/git/src/types'
+import { loginWithGitHub, setPlugin } from 'libs/remix-ui/git/src/lib/pluginActions'
+import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
+import { GitHubCallback } from '../topbarUtils/gitOauthHandler'
+import { GitHubLogin } from '../components/gitLogin'
+import GithubLoginSuccess from '../components/githubLoginSuccess'
 
 const _paq = window._paq || []
 
@@ -36,6 +41,30 @@ export function RemixUiTopbar () {
   useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
   const workspaceRenameInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
+
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check if we're on the callback page
+  if (window.location.pathname === '/auth/github/callback') {
+    return <GitHubCallback />;
+  }
+
+  const handleLoginSuccess = (user: GitHubUser, token: string) => {
+    setUser(user);
+    setError(null);
+    console.log('Login successful:', user);
+  };
+
+  const handleLoginError = (error: string) => {
+    setError(error);
+    console.error('Login failed:', error);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('github_token');
+    setUser(null);
+  };
 
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
@@ -392,9 +421,9 @@ export function RemixUiTopbar () {
 
   return (
     <section
-      className="h-100 p-2 d-flex flex-row align-items-center justify-content-between bg-light border"
+      className="h-100 d-flex flex-row align-items-center justify-content-between bg-light border"
     >
-      <div className="d-flex flex-row align-items-center justify-content-between w-100 ">
+      <div className="d-flex flex-row align-items-center justify-content-between w-100 py-2 px-3">
         <div
           className="d-flex flex-row align-items-center justify-content-evenly"
           style={{ minWidth: '33%' }}
@@ -447,79 +476,66 @@ export function RemixUiTopbar () {
           />
         </div>
         <div
-          className="d-flex flex-row align-items-center justify-content-between px-2"
+          className="d-flex flex-row align-items-center justify-content-end"
           style={{ minWidth: '33%' }}
         >
-          <Dropdown
-            as={ButtonGroup}
-            alignRight={true}
-          >
-            <Button
-              className="btn btn-topbar border"
-              data-id="github-dropdown-toggle-login"
-              style={{ fontSize: '0.8rem' }}
-              onClick={async () => {
-                await plugin.logInGithub()
-                _paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
-              }}
-            >
-              <i className="fab fa-github mr-2"></i>
-              Connect to Github
-            </Button>
+          <>
+            {user ? (
+              <GithubLoginSuccess
+                user={user}
+                handleLogout={handleLogout}
+                cloneGitRepository={cloneGitRepository}
+                publishToGist={publishToGist}
+                logOutOfGithub={logOutOfGithub}
+              />
+            ) : (
+              <GitHubLogin
+                onLoginSuccess={handleLoginSuccess}
+                onLoginError={handleLoginError}
+                cloneGitRepository={cloneGitRepository}
+                logOutOfGithub={logOutOfGithub}
+              />
+            )}
+          </>
+          <Dropdown className="ml-5" data-id="topbar-themeIcon">
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
-              className="btn-topbar"
-              data-id="github-dropdown-toggle"
+              className="btn-topbar btn-sm mr-5"
+              style={{
+                padding: '0.35rem 0.5rem',
+                fontSize: '0.8rem'
+              }}
             >
+              <i className="fas fa-sun-bright mr-2"></i>
+              Theme
             </Dropdown.Toggle>
             <Dropdown.Menu
               as={CustomTopbarMenu}
-              className="custom-dropdown-items w-75 text-decoration-none"
+              className="custom-dropdown-items text-decoration-none"
+              data-id="topbar-thememenu-body"
+              style={{
+                minWidth: '95px'
+              }}
             >
               <Dropdown.Item
-                data-id="github-dropdown-item-clone"
-                onClick={cloneGitRepository}
-              >
-                <i className="fab fa-github mr-2"></i>
-                <span>Clone</span>
-              </Dropdown.Item>
-              <Dropdown.Item
-                data-id="github-dropdown-item-publish-to-gist"
-                onClick={async () => {
-                  await publishToGist()
-                  _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
+                onClick={() => {
+                  plugin.call('theme', 'switchTheme', 'Light')
                 }}
               >
-                <i className="fab fa-github mr-2"></i>
-                <span>Publish to Gist</span>
+                <i className="fas fa-sun-bright mr-2"></i>
+                Light
               </Dropdown.Item>
-              <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
               <Dropdown.Item
-                data-id="github-dropdown-item-disconnect"
-                onClick={async () => {
-                  await logOutOfGithub()
-                  _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
+                onClick={() => {
+                  plugin.call('theme', 'switchTheme', 'Dark')
                 }}
-                className="text-danger"
               >
-                <i className="fas fa-sign-out-alt mr-2"></i>
-                <span>Disconnect</span>
+                <i className="fas fa-moon mr-2"></i>
+                Dark
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <span
-            className="btn border btn-topbar mr-3"
-            style={{ fontSize: '0.8rem' }}
-            onClick={async () => {
-              global.plugin.call('menuicons', 'select', 'theme')
-              _paq.push(['trackEvent', 'topbar', 'header', 'Theme'])
-            }}
-            data-id="topbar-themeIcon"
-          >
-            Theme
-            <i className="fas fa-caret-down ml-2"></i>
-          </span>
           <span
             style={{ fontSize: '1.5rem', cursor: 'pointer' }}
             className=""
