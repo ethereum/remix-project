@@ -12,7 +12,7 @@ module.exports = {
   'Should not be able to create GIT without credentials #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
@@ -46,7 +46,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-blank"]')
       .scrollAndClick('*[data-id="create-blank"]')
@@ -81,8 +81,8 @@ module.exports = {
   'Should clone a repository #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
-      .click('[data-id="workspaceMenuDropdown"]')
+      .waitForElementVisible('[data-id="workspacesSelect"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceclone"]')
       .click('[data-id="workspaceclone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -107,7 +107,7 @@ module.exports = {
 
   'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
     browser
-      .click('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceclone"]')
       .click('[data-id="workspaceclone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -117,7 +117,7 @@ module.exports = {
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
-      .click('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceclone"]')
       .click('[data-id="workspaceclone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -127,7 +127,7 @@ module.exports = {
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
-      .click('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceDropdownMenuIcon]"')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -144,8 +144,8 @@ module.exports = {
 
   'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('[data-id="workspaceDropdownMenuIcon"]')
-      .click('[data-id="workspaceMenuDropdown"]')
+      .waitForElementVisible('[data-id="workspacesSelect"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceclone"]')
       .click('[data-id="workspaceclone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -166,7 +166,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
-      .click('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('[data-id="workspaceclone"]')
       .click('[data-id="workspaceclone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -376,11 +376,34 @@ module.exports = {
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="dropdown-item-test-branch-submodule"]')
-      .click('*[data-id="dropdown-item-test-branch-submodule"]')
+      .waitForElementVisible('*[data-id="dropdown-item-default_workspace"]')
+      .click('*[data-id="dropdown-item-default_workspace"]')
   },
   'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
     browser
-      .pause()
+      .click('[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="dropdown-item-test-branch-submodule"]')
+      .click('[data-id="dropdown-item-test-branch-submodule"]')
+      .refresh()
+      .perform((done) => {
+        browser.execute(function () { // hide tooltips
+          function addStyle(styleString) {
+            const style = document.createElement('style');
+            style.textContent = styleString;
+            document.head.append(style);
+          }
+
+          addStyle(`
+            .popover {
+              display:none !important;
+            }
+            #scamDetails {
+              display:none !important;
+            }
+            `);
+        }, [], done())
+      })
+      .click('[data-id="treeViewUltreeViewMenu"]')
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .pause(2000)
@@ -398,30 +421,40 @@ module.exports = {
       .pause(2000)
       // check recursive submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
-      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
+      .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2/submodule2.ts"]')
       // check test-branch-submodule-2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
-      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2/submodule2.ts"]')
+      .pause(2000)
       // check libdeep submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
-      .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
+      .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2/submodule2.ts"]')
       // check libdeep2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
+      .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
+      .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
   },
 
@@ -431,7 +464,7 @@ module.exports = {
 
   'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
       .scrollAndClick('*[data-id="create-uniswapV4Template"]')
@@ -450,7 +483,7 @@ module.exports = {
 
   'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc20"]')
@@ -510,7 +543,7 @@ module.exports = {
   'Should create a git workspace (uniswapV4Template) #group5': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
       .scrollAndClick('*[data-id="create-uniswapV4Template"]')
