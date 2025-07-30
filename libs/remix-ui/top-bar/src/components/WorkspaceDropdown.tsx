@@ -222,11 +222,10 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       <Dropdown.Item
                         className="dropdown-item d-flex align-items-center text-decoration-none"
                         onClick={() => {
-                          console.log('clicked now')
                           renameCurrentWorkspace(item.name)
-                          // setCurrentMenuItemName(item.name)
-                          // setShowMain(false)
-                          // setOpenSub(null)
+                          setCurrentMenuItemName(item.name)
+                          setShowMain(false)
+                          setOpenSub(null)
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
@@ -239,11 +238,10 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       <Dropdown.Item
                         className="dropdown-item d-flex align-items-center text-decoration-none"
                         onClick={() => {
-                          console.log('clicked now')
                           downloadCurrentWorkspace()
-                          // setCurrentMenuItemName(item.name)
-                          // setShowMain(false)
-                          // setOpenSub(null)
+                          setCurrentMenuItemName(item.name)
+                          setShowMain(false)
+                          setOpenSub(null)
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
@@ -256,11 +254,10 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       <Dropdown.Item
                         className="dropdown-item d-flex align-items-center text-decoration-none"
                         onClick={() => {
-                          console.log('clicked now')
                           downloadCurrentWorkspace()
-                          // setCurrentMenuItemName(item.name)
-                          // setShowMain(false)
-                          // setOpenSub(null)
+                          setCurrentMenuItemName(item.name)
+                          setShowMain(false)
+                          setOpenSub(null)
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
@@ -277,10 +274,9 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       <Dropdown.Item
                         className="dropdown-item d-flex align-items-center text-decoration-none text-danger"
                         onClick={() => {
-                          console.log('clicked now')
                           deleteCurrentWorkspace(item.name)
-                          // setShowMain(false)
-                          // setOpenSub(null)
+                          setShowMain(false)
+                          setOpenSub(null)
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
