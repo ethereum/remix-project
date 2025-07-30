@@ -50,10 +50,8 @@ import {
   removeRecentElectronFolder,
   updateGitSubmodules
 } from 'libs/remix-ui/workspace/src/lib/actions'
-import { FilePanelType, Modal, WorkspaceTemplate } from 'libs/remix-ui/workspace/src/lib/types'
+import { Modal } from 'libs/remix-ui/workspace/src/lib/types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Workspace } from 'libs/remix-ui/workspace/src/lib/remix-ui-workspace'
-import { customAction } from '@remixproject/plugin-api'
 import { TopbarContext } from './topbarContext'
 import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { RemixUiTopbar } from '..'
@@ -85,61 +83,6 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
-
-  // useEffect(() => {
-  //   // Helper function to refresh workspace list
-  //   const refreshWorkspaces = async () => {
-  //     try {
-  //       const workspaces = await plugin.filePanel.getWorkspaces()
-  //       fsDispatch({ type: 'SET_WORKSPACES', payload: workspaces })
-  //     } catch (error) {
-  //       console.error('Failed to refresh workspaces:', error)
-  //     }
-  //   }
-
-  //   // Listen for workspace deletion events
-  //   const handleWorkspaceDeleted = (workspaceName: string) => {
-  //     console.log('TopbarProvider: workspaceDeleted event received', workspaceName)
-  //     // Use the reducer action to remove the workspace
-  //     fsDispatch({ type: 'DELETE_WORKSPACE', payload: workspaceName })
-  //   }
-
-  //   // Listen for workspace creation events
-  //   const handleWorkspaceCreated = (workspace: any) => {
-  //     console.log('TopbarProvider: workspaceCreated event received', workspace)
-  //     // Refresh the entire workspace list to get the new workspace
-  //     refreshWorkspaces()
-  //   }
-
-  //   // Listen for workspace rename events
-  //   const handleWorkspaceRenamed = (workspace: any) => {
-  //     console.log('TopbarProvider: workspaceRenamed event received', workspace)
-  //     // Refresh the entire workspace list to get the updated workspace
-  //     refreshWorkspaces()
-  //   }
-
-  //   // Listen for workspace switching events
-  //   const handleSetWorkspace = (workspace: any) => {
-  //     console.log('TopbarProvider: setWorkspace event received', workspace)
-  //     if (workspace && workspace.name) {
-  //       fsDispatch({ type: 'SET_CURRENT_WORKSPACE', payload: workspace.name })
-  //     }
-  //   }
-
-  //   // Register event listeners
-  //   plugin.on('filePanel', 'workspaceDeleted', handleWorkspaceDeleted)
-  //   plugin.on('filePanel', 'workspaceCreated', handleWorkspaceCreated)
-  //   plugin.on('filePanel', 'workspaceRenamed', handleWorkspaceRenamed)
-  //   plugin.on('filePanel', 'setWorkspace', handleSetWorkspace)
-
-  //   // Cleanup function
-  //   return () => {
-  //     plugin.off('filePanel', 'workspaceDeleted')
-  //     plugin.off('filePanel', 'workspaceCreated')
-  //     plugin.off('filePanel', 'workspaceRenamed')
-  //     plugin.off('filePanel', 'setWorkspace')
-  //   }
-  // }, [plugin])
 
   useEffect(() => {
     if (modals.length > 0) {
@@ -221,12 +164,7 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
 
   return (
     <TopbarContext.Provider value={value}>
-      {fs.initializingFS && (
-        <div className="text-center py-5">
-          <i className="fas fa-spinner fa-pulse fa-2x"></i>
-        </div>
-      )}
-      {!fs.initializingFS && <RemixUiTopbar />}
+      <RemixUiTopbar />
       <ModalDialog id="topbarModal" {...focusModal} handleHide={handleHideModal} />
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </TopbarContext.Provider>
