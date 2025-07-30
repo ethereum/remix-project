@@ -174,7 +174,7 @@ export const delegationAuthorization = async (contractAddress: string, plugin: R
       plugin.call('udapp', 'addInstance', plugin.REACT_API.accounts.selectedAccount, artefact.contract.abi, 'Delegated ' + artefact.name, contractObject)
       await plugin.call('compilerArtefacts', 'addResolvedContract', plugin.REACT_API.accounts.selectedAccount, data)
       plugin.call('terminal', 'log', { type: 'info',
-        value: `Contract interation with ${plugin.REACT_API.accounts.selectedAccount} has been added to the deployed contracts. Please make sure the contract is pinned.` })
+        value: `Contract interaction with ${plugin.REACT_API.accounts.selectedAccount} has been added to the deployed contracts. Please make sure the contract is pinned.` })
     }
     plugin.call('terminal', 'log', { type: 'info',
       value: `Delegation for ${plugin.REACT_API.accounts.selectedAccount} activated. This account will be running the code located at ${contractAddress} .` })
