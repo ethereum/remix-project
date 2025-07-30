@@ -2,16 +2,16 @@
 import React, { MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
-import { Dropdown } from 'react-bootstrap'
-import { CustomToggle } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
+import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
+import { CustomToggle, CustomTopbarMenu } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
-import { platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
+import { appPlatformTypes, platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 import { TopbarContext } from '../context/topbarContext'
 import { WorkspacesDropdown } from '../components/WorkspaceDropdown'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
-import { deleteWorkspace, fetchWorkspaceDirectory, getWorkspaces, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
+import { cloneRepository, deleteWorkspace, fetchWorkspaceDirectory, getWorkspaces, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, publishToGist, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
+import { gitUIPanels } from 'libs/remix-ui/git/src/types'
 
 const _paq = window._paq || []
 
@@ -35,6 +35,7 @@ export function RemixUiTopbar () {
   const [showSubMenuFlyOut, setShowSubMenuFlyOut] = useState<boolean>(false)
   useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
   const workspaceRenameInput = useRef()
+  const cloneUrlRef = useRef<HTMLInputElement>()
 
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
@@ -204,6 +205,54 @@ export function RemixUiTopbar () {
       </>,
       intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteAllWorkspaces,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
+  const cloneModalMessage = () => {
+    return (
+      <>
+        <input
+          type="text"
+          data-id="modalDialogCustomPromptTextClone"
+          placeholder={intl.formatMessage({
+            id: 'filePanel.workspace.enterGitUrl'
+          })}
+          ref={cloneUrlRef}
+          className="form-control"
+        />
+      </>
+    )
+  }
+
+  const logOutOfGithub = async () => {
+    await global.plugin.call('menuicons', 'select', 'dgit');
+    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
+    _paq.push(['trackEvent', 'Workspace', 'GIT', 'logout'])
+  }
+
+  const handleTypingUrl = () => {
+    const url = cloneUrlRef.current.value
+
+    if (url) {
+      cloneRepository(url)
+    } else {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.clone' }),
+        intl.formatMessage({ id: 'filePanel.workspace.cloneMessage' }),
+        intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
+    }
+  }
+
+  const cloneGitRepository = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.clone' }),
+      cloneModalMessage(),
+      intl.formatMessage({ id:  (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
+      handleTypingUrl,
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
@@ -398,20 +447,67 @@ export function RemixUiTopbar () {
           />
         </div>
         <div
-          className="d-flex flex-row align-items-center justify-content-sm-end px-2"
+          className="d-flex flex-row align-items-center justify-content-between px-2"
           style={{ minWidth: '33%' }}
         >
-          <span
-            className="btn btn-topbar mr-3"
-            style={{ fontSize: '0.8rem' }}
-            onClick={async () => {
-              await plugin.logInGithub()
-              _paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
-            }}
+          <Dropdown
+            as={ButtonGroup}
+            alignRight={true}
           >
-            <i className="fab fa-github mr-2"></i>
-            Connect to Github
-          </span>
+            <Button
+              className="btn btn-topbar border"
+              data-id="github-dropdown-toggle-login"
+              style={{ fontSize: '0.8rem' }}
+              onClick={async () => {
+                await plugin.logInGithub()
+                _paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
+              }}
+            >
+              <i className="fab fa-github mr-2"></i>
+              Connect to Github
+            </Button>
+            <Dropdown.Toggle
+              as={Button}
+              variant="outline-secondary"
+              className="btn-topbar"
+              data-id="github-dropdown-toggle"
+            >
+            </Dropdown.Toggle>
+            <Dropdown.Menu
+              as={CustomTopbarMenu}
+              className="custom-dropdown-items w-75 text-decoration-none"
+            >
+              <Dropdown.Item
+                data-id="github-dropdown-item-clone"
+                onClick={cloneGitRepository}
+              >
+                <i className="fab fa-github mr-2"></i>
+                <span>Clone</span>
+              </Dropdown.Item>
+              <Dropdown.Item
+                data-id="github-dropdown-item-publish-to-gist"
+                onClick={async () => {
+                  await publishToGist()
+                  _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
+                }}
+              >
+                <i className="fab fa-github mr-2"></i>
+                <span>Publish to Gist</span>
+              </Dropdown.Item>
+              <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
+              <Dropdown.Item
+                data-id="github-dropdown-item-disconnect"
+                onClick={async () => {
+                  await logOutOfGithub()
+                  _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
+                }}
+                className="text-danger"
+              >
+                <i className="fas fa-sign-out-alt mr-2"></i>
+                <span>Disconnect</span>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           <span
             className="btn border btn-topbar mr-3"
             style={{ fontSize: '0.8rem' }}
