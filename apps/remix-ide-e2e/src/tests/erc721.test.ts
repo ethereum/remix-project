@@ -14,7 +14,7 @@ module.exports = {
   },
   'Deploy SampleERC721 whose bytecode is very similar to ERC721': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       // create contract
       .waitForElementPresent('*[data-id="create-hashchecker"]')
@@ -41,9 +41,9 @@ module.exports = {
       .selectContract('MyToken')
       .createContract('')
       .testFunction('last',
-      {
-        status: '0x1 Transaction mined and execution succeed',
-        'decoded input': {}
-      }).end()
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': {}
+        }).end()
   }
 }

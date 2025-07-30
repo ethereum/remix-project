@@ -49,8 +49,6 @@ const sources = [
   }
 ]
 
-
-
 module.exports = {
   '@disabled': true,
   before: function (browser, done) {
@@ -102,8 +100,8 @@ module.exports = {
       remix try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
-      try{
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
@@ -118,8 +116,8 @@ module.exports = {
   },
   'Import from node_modules and reference a github import #group3': function (browser) {
     browser.perform(async (done) => {
-      try{
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
@@ -143,8 +141,8 @@ module.exports = {
   'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      try{
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
@@ -219,8 +217,8 @@ module.exports = {
 
     browser.perform(async (done) => {
       console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
-      try{
-      remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))
+      try {
+        remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
@@ -285,8 +283,8 @@ module.exports = {
   'Should disable git when running remixd #group9': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      try{
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
@@ -467,14 +465,14 @@ async function setupHardhatProject(): Promise<void> {
   try {
     const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
     return new Promise((resolve, reject) => {
-       server.stdout.on('data', function(data) {
-          console.log('stdout: ' + data.toString())
+      server.stdout.on('data', function(data) {
+        console.log('stdout: ' + data.toString())
       })
       server.stderr.on('data', function(data) {
-          console.log('stderr: ' + data.toString())
+        console.log('stderr: ' + data.toString())
       })
       server.on('error', function (err) {
-          console.error('Failed to start process:', err)
+        console.error('Failed to start process:', err)
       })
       server.on('exit', function (exitCode) {
         console.log("Child exited with code: " + exitCode);
@@ -493,13 +491,13 @@ async function compileHardhatProject(): Promise<void> {
     const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
     return new Promise((resolve, reject) => {
       server.stdout.on('data', function(data) {
-          console.log('stdout: ' + data.toString())
+        console.log('stdout: ' + data.toString())
       })
       server.stderr.on('data', function(data) {
-          console.log('stderr: ' + data.toString())
+        console.log('stderr: ' + data.toString())
       })
       server.on('error', function (err) {
-          console.error('Failed to start process:', err)
+        console.error('Failed to start process:', err)
       })
       server.on('exit', function (exitCode) {
         console.log("Child exited with code: " + exitCode);
@@ -621,7 +619,6 @@ async function installSlither(): Promise<void> {
     console.log(e)
   }
 }
-
 
 function resetGitToHead() {
   if (process.env.CIRCLECI) {
