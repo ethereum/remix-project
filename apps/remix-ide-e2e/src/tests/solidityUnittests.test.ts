@@ -177,7 +177,7 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickLaunchIcon('filePanel')
       // creating a new workspace
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')

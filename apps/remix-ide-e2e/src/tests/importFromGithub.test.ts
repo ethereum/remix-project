@@ -20,7 +20,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('div[data-id="verticalIconsHomeIcon"]')
       .pause(1000)
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspaceclone"]')
       .waitForElementVisible('*[data-id="fileSystemModalDialogModalTitle-react"]')
       .assert.containsText('*[data-id="fileSystemModalDialogModalTitle-react"]', 'Clone Git Repository')
@@ -46,7 +46,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('div[data-id="verticalIconsHomeIcon"]')
       .pause(1000)
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspaceclone"]')
       .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
       .execute(() => {
