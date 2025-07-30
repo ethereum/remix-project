@@ -49,6 +49,8 @@ export function Workspace() {
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
+  console.log('selectedWorkspace', selectedWorkspace)
+
   const [canPaste, setCanPaste] = useState(false)
 
   const appContext = useContext(AppContext)
@@ -1297,37 +1299,39 @@ export function Workspace() {
           </div>
         </div>
       </div>
-      { selectedWorkspace && (
-        <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
+      { (selectedWorkspace && selectedWorkspace.isGitRepo && selectedWorkspace.hasGitSubmodules) && (
+        <div className={`bg-light border-top`} data-id="workspaceGitPanel">
           <div className="d-flex justify-content-between p-1">
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
 
-              <div className="pr-1">
-                { global.fs.browser.isRequestingCloning ?
-                  <CustomTooltip
-                    placement="top"
-                    tooltipId="updatingSubmodules"
-                    tooltipClasses="text-nowrap"
-                    tooltipText={"Updating submodules"}
-                  >
-                    <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                      <i className="fad fa-spinner fa-spin mr-2"></i>
+              <>
+                <div className="pr-1">
+                  { global.fs.browser.isRequestingCloning ?
+                    <CustomTooltip
+                      placement="top"
+                      tooltipId="updatingSubmodules"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={"Updating submodules"}
+                    >
+                      <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
+                        <i className="fad fa-spinner fa-spin mr-2"></i>
                         Updating...
-                    </button>
-                  </CustomTooltip> :
-                  <CustomTooltip
-                    placement="top"
-                    tooltipId="updateSubmodules"
-                    tooltipClasses="text-nowrap"
-                    tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
-                  >
-                    <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
+                      </button>
+                    </CustomTooltip> :
+                    <CustomTooltip
+                      placement="top"
+                      tooltipId="updateSubmodules"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
+                    >
+                      <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
                        Update submodules
-                    </button>
-                  </CustomTooltip>
-                }
-              </div>
+                      </button>
+                    </CustomTooltip>
+                  }
+                </div>
+              </>
               : null
             }
             <CustomTooltip
