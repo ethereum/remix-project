@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use strict'
 import { NightwatchBrowser } from "nightwatch"
 import init from "../helpers/init"
@@ -40,7 +41,6 @@ module.exports = {
       .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
       .click('[data-id="settingsTabSaveGistToken"]')
   },
-
 
   'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
     browser
@@ -277,15 +277,23 @@ module.exports = {
   'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
-      .click('[data-id="workspaceMenuDropdown"]')
-      .waitForElementVisible('[data-id="workspaceclone"]')
-      .click('[data-id="workspaceclone"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="github-dropdown-toggle-login"]')
+      .click('[data-id="github-dropdown-toggle"]')
+      .waitForElementVisible('[data-id="github-dropdown-item-clone"]')
+      .click('[data-id="github-dropdown-item-clone"]')
       .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .click('[data-id="modalDialogCustomPromptTextClone"]')
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/bunsenstraat/test-branch-submodule')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .click('[data-id="topbarModal-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="github-dropdown-toggle"]')
+      .click('[data-id="github-dropdown-toggle"]')
+      .click('[data-id="github-dropdown-item-clone"]')
+      .waitForElementVisible('[data-id="topbarModalModalDialogModalBody-react"]')
+      .click('[data-id="topbarModalModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .click('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/bunsenstraat/test-branch-submodule')
+      .click('[data-id="topbarModal-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
@@ -304,26 +312,54 @@ module.exports = {
       .pause(2000)
       // check recursive submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .click('[data-id="treeViewDivDraggableItemREADME.md"]')
+      .click('[data-id="treeViewDivDraggableItemtest-branch-submodule-2"]')
+      .pause(3000)
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .click('[data-id="treeViewDivtreeViewItem.git"]')
+      .pause(3000)
+      .click('[data-id="treeViewDivtreeViewItem.gitmodules"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
+      .click('[data-id="treeViewDivDraggableItem.git"]')
+      .pause(3000)
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .pause(3000)
+      .click('[data-id="treeViewLitreeViewItemREADME.md"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .pause(3000)
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2/submodule2.ts"]')
       // check test-branch-submodule-2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .pause(3000)
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .pause(3000)
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .pause(3000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2/submodule2.ts"]')
       // check libdeep submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .pause(3000)
+      .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
+      .pause(3000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2/submodule2.ts"]')
       // check libdeep2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2"]')
+      .pause(3000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
+      .pause(3000)
+      // .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
+      .pause(3000)
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
   },
@@ -338,11 +374,16 @@ module.exports = {
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .click('[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="dropdown-item-test-branch-submodule"]')
+      .click('*[data-id="dropdown-item-test-branch-submodule"]')
   },
   'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
     browser
+      .pause()
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
+      .pause(2000)
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/main')
       .waitForElementPresent('[data-id="workspaceGit-origin/main"]')
