@@ -24,8 +24,8 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .pause(1000)
-      .waitForElementVisible('*[data-id="filepanel-login-github"]')
-      .click('*[data-id="filepanel-login-github"]')
+      .waitForElementVisible('*[data-id="github-dropdown-toggle-login"]')
+      .click('*[data-id="github-dropdown-toggle-login"]')
   },
   'login to github #group1 #group2': function (browser: NightwatchBrowser) {
     browser

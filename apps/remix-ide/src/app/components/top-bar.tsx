@@ -12,7 +12,7 @@ import { gitUIPanels } from '@remix-ui/git'
 import { HOME_TAB_NEW_UPDATES } from 'libs/remix-ui/home-tab/src/lib/components/constant'
 import axios from 'axios'
 import { UpdateInfo } from 'libs/remix-ui/home-tab/src/lib/components/types/carouselTypes'
-import { loginWithGitHub } from 'libs/remix-ui/git/src/lib/pluginActions'
+import { GitPlugin } from '../plugins/git'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -31,12 +31,14 @@ export class Topbar extends Plugin {
   events: EventEmitter
   topbarExpandPath: string
   filePanel: FilePanel
+  git: GitPlugin
   workspaces: WorkspaceMetadata[]
   currentWorkspaceMetadata: WorkspaceMetadata
 
-  constructor(filePanel: FilePanel) {
+  constructor(filePanel: FilePanel, git: GitPlugin) {
     super(TopBarProfile)
     this.filePanel = filePanel
+    this.git = git
     this.workspaces = []
     this.currentWorkspaceMetadata = null
   }

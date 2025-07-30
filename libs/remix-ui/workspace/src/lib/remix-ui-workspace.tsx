@@ -49,8 +49,6 @@ export function Workspace() {
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
-  console.log('selectedWorkspace', selectedWorkspace)
-
   const [canPaste, setCanPaste] = useState(false)
 
   const appContext = useContext(AppContext)
