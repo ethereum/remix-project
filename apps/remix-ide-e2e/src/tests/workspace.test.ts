@@ -467,26 +467,30 @@ module.exports = {
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .pause()
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .currentWorkspaceIs('workspace_name')
   },
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
+    const selector = '[data-id="dropdown-item-workspace_name"] + *[data-id="workspacesubMenuIcon"]'
     browser
-      .waitForElementPresent('*[data-id="workspaceDropdownMenuIcon"]')
-      .click('*[data-id="workspaceDropdownMenuIcon"]')
-      .waitForElementVisible('*[data-id="wsdropdownMenu"]')
-      .click('*[data-id="workspacerename"]') // rename workspace_name
+      .waitForElementPresent('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="dropdown-item-workspace_name"]')
+      .waitForElementVisible(selector)
+      .click(selector)
+      .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]')
+      .waitForElementVisible('*[data-id="workspacesubMenuRename"]')
+      .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
       .useCss()
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       .click('*[data-id="modalDialogCustomPromptTextRename"]')
       .clearValue('*[data-id="modalDialogCustomPromptTextRename"]')
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
       .pause(2000)
       .switchWorkspace('workspace_name_1')
       .pause(2000)
@@ -499,13 +503,18 @@ module.exports = {
   },
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
+    const selector = '[data-id="dropdown-item-workspace_name_1"] + *[data-id="workspacesubMenuIcon"]'
     browser
       .switchWorkspace('workspace_name_1')
-      .click('*[data-id="workspaceDropdownMenuIcon"]')
-      .waitForElementVisible('*[data-id="wsdropdownMenu"]')
-      .click('*[data-id="workspacedelete"]') // delete workspace_name_1
-      .waitForElementVisible('*[data-id="fileSystemModalDialogModalFooter-react"]')
-      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible(selector)
+      .click(selector)
+      .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]')
+      .waitForElementVisible('*[data-id="workspacesubMenuDelete"]')
+      .click('*[data-id="workspacesubMenuDelete"]') // delete workspace_name_1
+      .waitForElementVisible('*[data-id="topbarModalModalDialogModalFooter-react"]')
+      .click('*[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)

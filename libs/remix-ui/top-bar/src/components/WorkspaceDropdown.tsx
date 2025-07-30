@@ -191,6 +191,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                   onClick={e => { e.stopPropagation(); toggleSub(idx) }}
                   style={{ padding: '', cursor: 'pointer' }}
                   ref={subRefs[idx]}
+                  data-id="workspacesubMenuIcon"
                 >
                 ⋮
                 </div>
@@ -218,6 +219,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         ...overlayProps.style
                       }}
                       className="border pt-2 "
+                      data-id="workspacesubMenuOverlay"
                     >
                       <Dropdown.Item
                         className="dropdown-item d-flex align-items-center text-decoration-none"
@@ -229,6 +231,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
+                        data-id="workspacesubMenuRename"
                       >
                         <span className="mr-2">
                           <i className="far fa-edit" />
@@ -245,6 +248,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
+                        data-id="workspacesubMenuDuplicate"
                       >
                         <span className="mr-2">
                           <i className="fas fa-copy" />
@@ -261,6 +265,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
+                        data-id="workspacesubMenuDownload"
                       >
                         <span className="mr-2">
                           <i className="fas fa-download" />
@@ -280,6 +285,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         as={'button'}
+                        data-id="workspacesubMenuDelete"
                       >
                         <span className="mr-2">
                           <i className="fas fa-trash" />
