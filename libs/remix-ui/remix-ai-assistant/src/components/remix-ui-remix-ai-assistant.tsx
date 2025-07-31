@@ -264,10 +264,28 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       try {
         setIsStreaming(true)
-        const parseResult = await chatCmdParser.parse(trimmed)
+
+        // Add temporary assistant message for parsing status
+        const parsingId = crypto.randomUUID()
+        setMessages(prev => [
+          ...prev,
+          { id: parsingId, role: 'assistant', content: '***Processing command...***', timestamp: Date.now(), sentiment: 'none' }
+        ])
+
+        // callback to update parsing status with minimum display time
+        const updateParsingStatus = (status: string): Promise<void> => {
+          setMessages(prev =>
+            prev.map(m => (m.id === parsingId ? { ...m, content: `***${status}***` } : m))
+          )
+          return new Promise<void>(resolve => setTimeout(resolve, 400))
+        }
+
+        const parseResult = await chatCmdParser.parse(trimmed, updateParsingStatus)
+
         if (parseResult) {
+          // Remove the temporary parsing message and add the actual result
           setMessages(prev => [
-            ...prev,
+            ...prev.filter(m => m.id !== parsingId),
             {
               id: crypto.randomUUID(),
               role: 'assistant',
@@ -279,6 +297,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           setIsStreaming(false)
           return
         }
+        // Remove all temporary parsing message if no parse result
+        setMessages(prev => prev.filter(m => m.id !== parsingId))
 
         GenerationParams.stream_result = true
         GenerationParams.return_stream_response = true

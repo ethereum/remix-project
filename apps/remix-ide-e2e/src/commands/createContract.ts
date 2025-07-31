@@ -17,12 +17,14 @@ function createContract (browser: NightwatchBrowser, inputParams: string, callba
   if (inputParams) {
     browser.setValue('.udapp_contractActionsContainerSingle > input', inputParams, function () {
       browser
-        .waitForElementVisible('.udapp_contractActionsContainerSingle > div')
-        .click('.udapp_contractActionsContainerSingle > div').pause(500).perform(function () { callback() })
+        .pause(1000) // wait to get the button enabled
+        .waitForElementVisible('.udapp_contractActionsContainerSingle button')
+        .click('.udapp_contractActionsContainerSingle button').pause(500).perform(function () { callback() })
     })
   } else {
     browser
-      .click('.udapp_contractActionsContainerSingle > div')
+      .waitForElementVisible('.udapp_contractActionsContainerSingle button')
+      .click('.udapp_contractActionsContainerSingle button')
       .pause(500)
       .perform(function () { callback() })
   }

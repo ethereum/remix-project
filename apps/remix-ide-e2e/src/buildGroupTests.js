@@ -15,12 +15,12 @@ fs.readdirSync(testFolder).forEach(file => {
   if (!file.includes('group')) {
     const content = fs.readFileSync(testFolder + file, 'utf8')
     const matches = content.match(/group\d+/g)
-    createFlakyTestFiles(file, content)
+    createTaggedTestFiles(file, content)
     createFiles(file, matches)
   }
 })
 
-function createFiles(file, matches, flaky = false) {
+function createFiles(file, matches, tag = false) {
   if (matches) {
     const unique = matches.filter(onlyUnique)
     unique.map((group) => {
@@ -28,10 +28,10 @@ function createFiles(file, matches, flaky = false) {
       const extension = file.split('.')
       extension.shift()
       let filename
-      if (!flaky) {
+      if (!tag) {
         filename = `${testFolder}${file.split('.').shift()}_${group}.${extension.join('.')}`
       } else {
-        filename = `${testFolder}${file.split('.').shift()}_${group}.flaky.ts`
+        filename = `${testFolder}${file.split('.').shift()}_${group}.${tag.toLowerCase()}.ts`
       }
       fs.writeFileSync(filename, rewrite)
     })
@@ -42,14 +42,17 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index
 }
 
-function createFlakyTestFiles(file, text) {
+function createTaggedTestFiles(file, text) {
   const lines = text.split('\n')
-  lines.forEach((line, index) => {
-    // if line contains #flaky
-    if (line.includes('#flaky')) {
+  lines.forEach((line) => {
+    if (line.includes('#flaky') || line.includes('#pr') || line.includes('#PR')) {
       const matches = line.match(/group\d+/g)
-      const unique = matches.filter(onlyUnique)
-      createFiles(file, matches, true)
+      if (matches) {
+        const tags = line.match(/#(flaky|pr|PR)/gi).map(t => t.replace('#', '').toLowerCase());
+        tags.forEach(tag => {
+          createFiles(file, matches, tag);
+        });
+      }
     }
   })
 }

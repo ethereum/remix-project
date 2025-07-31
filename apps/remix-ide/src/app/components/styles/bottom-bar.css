@@ -1,0 +1,102 @@
+.bottom-bar {
+    display: flex;
+    align-items: center;
+    padding: 4px 16px;
+    background-color: var(--light) !important;
+    height: 32px;
+}
+  
+.explain-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: color-mix(in srgb, var(--ai) 8%, transparent);;
+    color: var(--ai);
+    border-radius: 4px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.explain-btn span {
+    color: var(--ai);
+}
+  
+.explain-btn:hover {
+    opacity: 0.8;
+}
+
+.explain-icon {
+    width: 12px;
+    height: 12px;
+}
+  
+.copilot-toggle {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    height: 24px;
+    line-height: 1; 
+}
+
+.copilot-toggle span {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+  
+.copilot-toggle span.on {
+    color: var(--text-bright);
+}
+  
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 10px;
+    margin-top: 5.5px;
+}
+  
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--secondary);;
+    transition: .4s;
+    border-radius: 800px;
+    padding: 1px;
+}
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 8px;
+    width: 8px;
+    left: 1px;
+    bottom: 1px;
+    background-color: #222336; 
+    transition: .4s;
+    border-radius: 50%;
+}
+  
+.switch input:checked + .slider {
+    background-color: var(--ai);
+}
+  
+.switch input:checked + .slider:before {
+    transform: translateX(8px);
+}

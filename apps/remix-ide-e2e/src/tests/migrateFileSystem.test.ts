@@ -2,7 +2,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 
 
-module.exports = {
+const tests = {
   '@disabled': true,
   'Should load the testmigration url #group1': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
@@ -136,4 +136,12 @@ module.exports = {
       .assert.containsText('.alert-danger', 'An unknown error')
   },
 
+}
+
+const isFirefox = browser.options.desiredCapabilities?.browserName === 'firefox'
+
+if (isFirefox) {
+  module.exports = tests
+} else {
+  module.exports = {}
 }
