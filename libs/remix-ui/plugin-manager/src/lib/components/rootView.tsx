@@ -6,6 +6,7 @@ import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 import FilterView from './FilterView'
+import { ToggleSwitch } from '@remix-ui/toggle'
 
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
@@ -91,23 +92,19 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
             />
           )}
 
-          <div className="w-100">
+          <div className="d-flex align-items-center w-100">
             <label
-              htmlFor="filter-by-remix-input"
-              className="m-0 remixui-filter-label text-dark"
+              htmlFor="filter-by-remix-switch"
+              className="m-0 remixui-filter-label text-dark mr-2"
               style={{ cursor: 'pointer' }}
             >
               Only maintained by Remix
             </label>
-            <label className="plugin-manager-switch ml-2 mt-2">
-              <input
-                id="filter-by-remix-input"
-                type="checkbox"
-                checked={filterByRemix}
-                onChange={(e) => setFilterByRemix(e.target.checked)}
-              />
-              <span className="plugin-manager-slider"></span>
-            </label>
+            <ToggleSwitch
+              id="filter-by-remix-switch"
+              isOn={filterByRemix}
+              onClick={() => setFilterByRemix(!filterByRemix)}
+            />
           </div>
         </header>
         {children}

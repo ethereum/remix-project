@@ -67,17 +67,40 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   const [filterByRemix, setFilterByRemix] = useState<boolean>(false)
   const tabsRef = useRef<HTMLDivElement>(null)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [loadingPlugins, setLoadingPlugins] = useState<string[]>([])
 
-  const togglePlugin = (pluginName: string) => {
-    const isActive = pluginComponent.activePlugins.some(p => p.name === pluginName)
-    if (isActive) {
-      pluginComponent.deactivateP(pluginName)
-    } else {
-      pluginComponent.activateP(pluginName)
+  useEffect(() => {
+    const onActivation = (profile: Profile) => {
+      setLoadingPlugins(prev => prev.filter(p => p !== profile.name));
+    }
+    
+    const client = pluginComponent as any;
+    
+    client.on('manager', 'activate', onActivation)
+    client.on('manager', 'deactivate', onActivation)
+
+    return () => {
+      client.off('manager', 'activate', onActivation)
+      client.off('manager', 'deactivate', onActivation)
+    }
+  }, [pluginComponent])
+
+  const togglePlugin = async (pluginName: string) => {
+    setLoadingPlugins(prev => [...prev, pluginName]);
+    const isActive = pluginComponent.activePlugins.some(p => p.name === pluginName);
+    try {
+      if (isActive) {
+        await pluginComponent.deactivateP(pluginName);
+      } else {
+        await pluginComponent.activateP(pluginName);
+      }
+    } catch (e) {
+      console.error(e);
+      setLoadingPlugins(prev => prev.filter(p => p !== pluginName));
     }
   }
 
-useEffect(() => {
+  useEffect(() => {
     const tabsNode = tabsRef.current
     if (!tabsNode) return
 
@@ -139,7 +162,8 @@ useEffect(() => {
 
     return pluginsToRender.map((profile, idx) => {
       const isActive = pluginComponent.activePlugins.some(p => p.name === profile.name)
-      return <PluginCard profile={profile} isActive={isActive} togglePlugin={togglePlugin} key={profile.name || idx} />
+      const isLoading = loadingPlugins.includes(profile.name)
+      return <PluginCard profile={profile} isActive={isActive} togglePlugin={togglePlugin} key={profile.name || idx} isLoading={isLoading} />
     })
   }
 
@@ -170,7 +194,7 @@ useEffect(() => {
             </div>
           </a>
         </nav>
-        <div className="mt-3">{renderPluginList()}</div>
+        <div className="plugin-list mt-3">{renderPluginList()}</div>
       </section>
     </RootView>
   )

@@ -95,6 +95,9 @@
   overflow-y: scroll;
   height: 100%;
 }
+#pluginManager .plugins-header {
+  border-bottom: 0 !important;
+}
 .search-bar-container {
   position: relative;
 }
@@ -109,46 +112,6 @@
 }
 .search-bar-container .form-control {
   padding-left: 30px !important;
-}
-.plugin-manager-switch {
-  position: relative;
-  display: inline-block;
-  width: 28px;
-  height: 16px;
-  vertical-align: middle;
-}
-.plugin-manager-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.plugin-manager-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #6c757d;
-  transition: .4s;
-  border-radius: 34px;
-}
-.plugin-manager-slider:before {
-  position: absolute;
-  content: "";
-  height: 12px;
-  width: 12px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-.plugin-manager-switch input:checked + .plugin-manager-slider {
-  background-color: var(--primary);
-}
-.plugin-manager-switch input:checked + .plugin-manager-slider:before {
-  transform: translateX(12px);
 }
 .plugin-manager-tabs {
   position: relative;
@@ -275,4 +238,23 @@
 #pluginManager .clear-filters-btn:focus {
   outline: none;
   box-shadow: none;
+}
+#pluginManager .plugin-list {
+  display: grid;
+  gap: 1rem;
+} 
+#pluginManager .remixui-plugin-card {
+  background-color: var(--light);
+}
+#pluginManager .card-title {
+  margin-bottom: 0 !important;
+}
+#pluginManager .remixui_pluginIcon {
+  width: 1rem;
+  height: 1rem;
+  filter: invert(0.6);
+}
+#pluginManager .icon-pluginManager {
+  width: 12px;
+  height: 12px;
 }
