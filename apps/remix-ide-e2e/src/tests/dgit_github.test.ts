@@ -37,21 +37,22 @@ module.exports = {
       .pause(1000)
       .click('*[data-id="saveGitHubCredentials"]')
   },
-  // 'check if the settings are loaded #group1 #group2': !function (browser: NightwatchBrowser) {
-  //   browser
-  //     .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="remotes-panel"]')
-  // },
-  // 'check the FE for the auth user #group1 #group2': !function (browser: NightwatchBrowser) {
-  //   browser
-  //     .clickLaunchIcon('filePanel')
-  //     .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
-  // },
+  'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="remotes-panel"]')
+  },
+  'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
+  },
   'clone a repository #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('dgit')
+      // .clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="clone-panel"]')
       .click('*[data-id="clone-panel"]')
       .click({
         selector: '//*[@data-id="clone-panel-content"]//*[@data-id="fetch-repositories"]',
