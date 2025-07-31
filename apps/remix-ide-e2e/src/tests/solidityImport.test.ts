@@ -151,10 +151,10 @@ module.exports = {
     browser
       // clone https://github.com/yann300/remix-reward
       .clickLaunchIcon('filePanel')
-      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
-      .click('[data-id="workspaceMenuDropdown"]')
-      .waitForElementVisible('[data-id="workspaceclone"]')
-      .click('[data-id="workspaceclone"]')
+      .waitForElementVisible('[data-id="github-dropdown-toggle"]')
+      .click('[data-id="github-dropdown-toggle"]')
+      .waitForElementVisible('[data-id="github-dropdown-item-clone"]')
+      .click('[data-id="github-dropdown-item-clone"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
       .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
