@@ -466,6 +466,7 @@ module.exports = {
   'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-ozerc20"]')
@@ -474,6 +475,8 @@ module.exports = {
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'new_workspace')
       .modalFooterOKClick('TemplatesSelection')
+      .clickLaunchIcon('filePanel')
+      .pause(1000)
       .waitForElementVisible('*[data-id="treeViewDivDraggableItemtests/MyToken_test.sol"]')
   },
   'Update settings for git #group5': function (browser: NightwatchBrowser) {

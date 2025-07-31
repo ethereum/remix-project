@@ -104,6 +104,10 @@ function initModules(browser: NightwatchBrowser, callback: VoidFunction) {
     .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
     .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
     .click('[data-id="settingsTabSaveGistToken"]')
-    .click('[data-id="settingsTabThemeLabelFlatly"]') // e2e tests were initially developed with Flatly. Some tests are failing with the default one (Dark), because the dark theme put uppercase everywhere.
+    .waitForElementVisible('*[data-id="topbar-themeIcon-toggle"]')
+    .click('*[data-id="topbar-themeIcon-toggle"]')
+    .waitForElementVisible('*[data-id="topbar-themeIcon-light"]')
+    .click('*[data-id="topbar-themeIcon-light"]')
+    // .click('[data-id="settingsTabThemeLabelFlatly"]') // e2e tests were initially developed with Flatly. Some tests are failing with the default one (Dark), because the dark theme put uppercase everywhere.
     .perform(() => { callback() })
 }

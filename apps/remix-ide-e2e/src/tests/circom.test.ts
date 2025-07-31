@@ -118,12 +118,15 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
 
-        return actions.keyDown(this.Keys.CONTROL).sendKeys('s')
+        actions.keyDown(this.Keys.CONTROL).sendKeys('s').perform()
+        return actions.keyUp(this.Keys.CONTROL).perform()
       })
-      .pause(2000)
-      .openFile('circuits/.bin/simple_js/simple.wasm')
+      .click('[data-id="treeViewDivtreeViewItemREADME.md"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcircuits/.bin/simple_js"]')
+      .click('*[data-id="treeViewDivtreeViewItemcircuits/.bin/simple_js"]')
+      // .openFile('circuits/.bin/simple_js/simple.wasm')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },

@@ -34,7 +34,7 @@ module.exports = {
   'run analysis and filter results': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .clickLaunchIcon('solidity')
       .click('*[id="compileBtn"]')

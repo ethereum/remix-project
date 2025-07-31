@@ -143,7 +143,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
       alignRight={true}
     >
       <Button
-        className="btn btn-topbar btn-sm border"
+        className="btn btn-topbar btn-sm border d-flex flex-nowrap"
         data-id="github-dropdown-toggle-login"
         style={{ fontSize: '0.8rem' }}
         onClick={openPopupLogin}

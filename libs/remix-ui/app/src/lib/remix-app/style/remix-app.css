@@ -35,7 +35,7 @@ pre {
   flex-direction     : row-reverse;
   width              : 320px;
   transition         : width 0.25s;
-  padding-bottom     : 1.4rem;
+  padding-bottom     : 1.1rem;
 }
 .statusBar           {
 
