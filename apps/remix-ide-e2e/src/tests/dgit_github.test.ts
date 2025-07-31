@@ -12,7 +12,7 @@ module.exports = {
       done()
     })
   },
-  'Update settings for git #group1 #group2': !function (browser: NightwatchBrowser) {
+  'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
     browser.
       clickLaunchIcon('dgit')
       .pause(1000)
@@ -20,14 +20,12 @@ module.exports = {
       .click('*[data-id="initgit-btn"]')
       .waitForElementNotPresent('*[data-id="initgit-btn"]')
   },
-  'launch github login via FE #group1 #group2': !function (browser: NightwatchBrowser) {
+  'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
-      .pause(1000)
-      .waitForElementVisible('*[data-id="github-dropdown-toggle-login"]')
-      .click('*[data-id="github-dropdown-toggle-login"]')
+      .waitForElementVisible('*[data-id="github-panel"]')
+      .click('*[data-id="github-panel"]')
   },
-  'login to github #group1 #group2': !function (browser: NightwatchBrowser) {
+  'login to github #group1 #group2': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="github-panel"]')
       .waitForElementVisible('*[data-id="gitubUsername"]')
@@ -39,18 +37,18 @@ module.exports = {
       .pause(1000)
       .click('*[data-id="saveGitHubCredentials"]')
   },
-  'check if the settings are loaded #group1 #group2': !function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
-      .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
-      .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
-      .waitForElementVisible('*[data-id="remotes-panel"]')
-  },
-  'check the FE for the auth user #group1 #group2': !function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('filePanel')
-      .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
-  },
+  // 'check if the settings are loaded #group1 #group2': !function (browser: NightwatchBrowser) {
+  //   browser
+  //     .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
+  //     .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
+  //     .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
+  //     .waitForElementVisible('*[data-id="remotes-panel"]')
+  // },
+  // 'check the FE for the auth user #group1 #group2': !function (browser: NightwatchBrowser) {
+  //   browser
+  //     .clickLaunchIcon('filePanel')
+  //     .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
+  // },
   'clone a repository #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('dgit')
@@ -96,12 +94,12 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check if there is a README.md file #group1': !function (browser: NightwatchBrowser) {
+  'check if there is a README.md file #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
   },
-  'check the commands panel #group1': !function (browser: NightwatchBrowser) {
+  'check the commands panel #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('dgit')
       .click('*[data-id="commands-panel"]')
