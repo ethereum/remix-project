@@ -113,10 +113,10 @@ export class RemixAIPlugin extends Plugin {
   }
 
   async code_completion(prompt: string, promptAfter: string, params:IParams=CompletionParams): Promise<any> {
-    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
     params.provider = 'mistralai' // default provider for code completion
     const currentFileName = await this.call('fileManager', 'getCurrentFile')
-    const contextfiles = await this.completionAgent.getContextFiles(prompt)
+    const contextfiles = await this.completionAgent.getContextFiles()
+    console.log('completion file context is:', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter, contextfiles, currentFileName, params)
     } else {
@@ -281,11 +281,11 @@ export class RemixAIPlugin extends Plugin {
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=CompletionParams): Promise<any> {
-    if (this.completionAgent.indexer == null || this.completionAgent.indexer == undefined) await this.completionAgent.indexWorkspace()
 
     params.provider = 'mistralai' // default provider for code completion
     const currentFileName = await this.call('fileManager', 'getCurrentFile')
-    const contextfiles = await this.completionAgent.getContextFiles(msg_pfx)
+    const contextfiles = await this.completionAgent.getContextFiles()
+    console.log('insertion file context is:', contextfiles)
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx, contextfiles, currentFileName, params)
     } else {
