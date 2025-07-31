@@ -135,7 +135,6 @@ const tests = {
       .waitForElementPresent('[data-id="dependency-ethers-^6"]')
   },
 
-
 }
 
 module.exports = tests
