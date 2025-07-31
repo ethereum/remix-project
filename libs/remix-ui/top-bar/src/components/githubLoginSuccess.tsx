@@ -19,9 +19,10 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
     <Dropdown
       as={ButtonGroup}
       alignRight={true}
+      className="d-flex flex-nowrap"
     >
       <Button
-        className="btn btn-topbar btn-sm border"
+        className="btn btn-topbar btn-sm border d-flex flex-nowrap"
         data-id="github-dropdown-toggle-login"
         style={{ fontSize: '0.8rem' }}
       >

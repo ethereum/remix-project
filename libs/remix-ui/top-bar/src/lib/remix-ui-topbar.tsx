@@ -421,7 +421,7 @@ export function RemixUiTopbar () {
 
   return (
     <section
-      className="h-100 d-flex flex-row align-items-center justify-content-between bg-light border"
+      className="h-100 d-flex flex-row align-items-center justify-content-between bg-light border flex-nowrap"
     >
       <div className="d-flex flex-row align-items-center justify-content-between w-100 py-2 px-3">
         <div
@@ -476,7 +476,7 @@ export function RemixUiTopbar () {
           />
         </div>
         <div
-          className="d-flex flex-row align-items-center justify-content-end"
+          className="d-flex flex-row align-items-center justify-content-end flex-nowrap"
           style={{ minWidth: '33%' }}
         >
           <>
@@ -502,6 +502,7 @@ export function RemixUiTopbar () {
               as={Button}
               variant="outline-secondary"
               className="btn-topbar btn-sm mr-5"
+              data-id="topbar-themeIcon-toggle"
               style={{
                 padding: '0.35rem 0.5rem',
                 fontSize: '0.8rem'
@@ -520,8 +521,9 @@ export function RemixUiTopbar () {
             >
               <Dropdown.Item
                 onClick={() => {
-                  plugin.call('theme', 'switchTheme', 'Light')
+                  plugin.call('theme', 'switchTheme', 'Flatly')
                 }}
+                data-id="topbar-themeIcon-light"
               >
                 <i className="fas fa-sun-bright mr-2"></i>
                 Light
@@ -530,6 +532,7 @@ export function RemixUiTopbar () {
                 onClick={() => {
                   plugin.call('theme', 'switchTheme', 'Dark')
                 }}
+                data-id="topbar-themeIcon-dark"
               >
                 <i className="fas fa-moon mr-2"></i>
                 Dark

@@ -1011,7 +1011,7 @@ export function Workspace() {
       <div
         className="remixui_container overflow-auto"
         style={{
-          maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%'
+          maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95dvh' : '100dvh'
         }}
         onContextMenu={(e) => {
           e.preventDefault()
@@ -1297,9 +1297,11 @@ export function Workspace() {
           </div>
         </div>
       </div>
-      { (selectedWorkspace && selectedWorkspace.isGitRepo && selectedWorkspace.hasGitSubmodules) && (
-        <div className={`bg-light border-top`} data-id="workspaceGitPanel">
-          <div className="d-flex justify-content-between p-1">
+      { (selectedWorkspace && selectedWorkspace.isGitRepo) && (
+        <div className={`bg-light border-top d-flex justify-content-between align-items-center`} data-id="workspaceGitPanel" style={{
+          minHeight: '5dvh'
+        }}>
+          <div className="d-flex justify-content-between p-1 w-100">
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
 

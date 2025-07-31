@@ -21,7 +21,8 @@ const tests = {
       .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
       .click('*[data-id="verticalIconsKindfilePanel"]')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts"]')
-      .click('*[data-id="treeViewDivtreeViewItemscripts"]')
+      // .click('*[data-id="treeViewDivtreeViewItemscripts"]')
+      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
@@ -75,6 +76,7 @@ const tests = {
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
       .modalFooterOKClick('TemplatesSelection')
+      .pause()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',

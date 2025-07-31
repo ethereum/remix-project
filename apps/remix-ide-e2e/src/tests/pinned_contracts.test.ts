@@ -17,7 +17,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      // .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
       .waitForElementVisible('*[data-id="compile-action"]')
       .pause(3000)
