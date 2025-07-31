@@ -5,12 +5,16 @@ import { PluginManagerComponent } from '../../types'
 import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
+import FilterView from './FilterView'
 
 interface RootViewProps {
   pluginComponent: PluginManagerComponent
   children: ReactNode
   filterByRemix: boolean
   setFilterByRemix: (value: boolean) => void
+  categories: string[]
+  selectedCategories: string[]
+  setSelectedCategories: (categories: string[]) => void
 }
 
 export interface pluginDeactivated {
@@ -23,12 +27,12 @@ export interface pluginActivated {
   profile: Profile
 }
 
-function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix }: RootViewProps) {
+function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, categories, selectedCategories, setSelectedCategories }: RootViewProps) {
   const intl = useIntl()
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
   const [showFilters, setShowFilters] = useState<boolean>(false)
-
+  
   const openModal = () => setVisible(false)
   const closeModal = () => setVisible(true)
 
@@ -78,6 +82,15 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix }
               <span>Filters</span>
             </button>
           </div>
+
+          {showFilters && (
+            <FilterView 
+              categories={categories}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+            />
+          )}
+
           <div className="w-100">
             <label
               htmlFor="filter-by-remix-input"
@@ -86,7 +99,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix }
             >
               Only maintained by Remix
             </label>
-            <label className="plugin-manager-switch ml-3 mt-2">
+            <label className="plugin-manager-switch ml-2 mt-2">
               <input
                 id="filter-by-remix-input"
                 type="checkbox"
