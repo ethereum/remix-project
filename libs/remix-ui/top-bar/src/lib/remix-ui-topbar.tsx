@@ -29,7 +29,7 @@ export function RemixUiTopbar () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ROOT_PATH = '/'
-  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
+
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [currentMenuItemName, setCurrentMenuItemName] = useState<string>(null)
   const [currentTheme, setCurrentTheme] = useState<any>(null)
@@ -53,12 +53,10 @@ export function RemixUiTopbar () {
   const handleLoginSuccess = (user: GitHubUser, token: string) => {
     setUser(user);
     setError(null);
-    console.log('Login successful:', user);
   };
 
   const handleLoginError = (error: string) => {
     setError(error);
-    console.error('Login failed:', error);
   };
 
   const handleLogout = () => {
@@ -75,10 +73,8 @@ export function RemixUiTopbar () {
 
   useEffect(() => {
     const current = localStorage.getItem('currentWorkspace')
-    const workspace = plugin.workspaces.find((workspace) => workspace.name === current)
-    setSelectedWorkspace(workspace)
     setCurrentWorkspace(current)
-  }, [plugin.workspaces])
+  }, [plugin.filePanel.workspaces])
 
   useEffect(() => {
     const run = async () => {
@@ -467,7 +463,6 @@ export function RemixUiTopbar () {
             menuItems={menuItems}
             toggleDropdown={toggleDropdown}
             showDropdown={showDropdown}
-            selectedWorkspace={selectedWorkspace}
             currentWorkspace={currentWorkspace}
             NO_WORKSPACE={NO_WORKSPACE}
             switchWorkspace={switchWorkspace}

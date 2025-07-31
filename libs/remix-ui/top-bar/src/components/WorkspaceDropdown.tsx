@@ -5,6 +5,7 @@ import { Dropdown, Overlay } from 'react-bootstrap'
 import { remote } from '@remix-api'
 import { TopbarContext } from '../context/topbarContext'
 import { getWorkspaces } from 'libs/remix-ui/workspace/src/lib/actions'
+import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 
 interface Branch {
   name: string
@@ -31,7 +32,6 @@ interface WorkspacesDropdownProps {
   menuItems: MenuItem[]
   toggleDropdown: any
   showDropdown: boolean
-  selectedWorkspace: any
   currentWorkspace: any
   NO_WORKSPACE: string
   switchWorkspace: any
@@ -63,11 +63,11 @@ function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => vo
   }, [refs, handler])
 }
 
-export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItems, selectedWorkspace, NO_WORKSPACE, switchWorkspace, CustomToggle, createWorkspace, downloadCurrentWorkspace, restoreBackup, deleteAllWorkspaces, setCurrentMenuItemName, setMenuItems, renameCurrentWorkspace, deleteCurrentWorkspace }) => {
+export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItems, NO_WORKSPACE, switchWorkspace, CustomToggle, createWorkspace, downloadCurrentWorkspace, restoreBackup, deleteAllWorkspaces, setCurrentMenuItemName, setMenuItems, renameCurrentWorkspace, deleteCurrentWorkspace }) => {
   const [showMain, setShowMain] = useState(false)
   const [openSub, setOpenSub] = useState<number | null>(null)
   const global = useContext(TopbarContext)
-
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const subRefs = useMemo( // useMemo or else rules of hooks is broken.
     () => menuItems.map(() => React.createRef<HTMLDivElement>()),
@@ -85,31 +85,44 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
   }, [])
 
   useEffect(() => {
-    global.plugin.on('filePanel', 'setWorkspace', (workspace) => {
+    global.plugin.on('filePanel', 'setWorkspace', async(workspace) => {
       setTogglerText(workspace.name)
+      let workspaces = []
+      const fromLocalStore = localStorage.getItem('currentWorkspace')
+      workspaces = await getWorkspaces()
+      const current = workspaces.find((workspace) => workspace.name === fromLocalStore)
+      setSelectedWorkspace(current)
     })
+
+    return () => {
+      global.plugin.off('filePanel', 'setWorkspace')
+    }
   }, [global.plugin.filePanel.currentWorkspaceMetadata])
 
   useEffect(() => {
-    const run = async () => {
-      let workspaces = []
-      workspaces = await getWorkspaces()
-      const updated = workspaces.map((workspace) => {
-        (workspace as any).submenu = subItems
-        return workspace as any
-      })
-      setMenuItems(updated)
+    let workspaces: any[] = []
+
+    try {
+      setTimeout(async () => {
+        workspaces = await getWorkspaces()
+        const updated = workspaces.map((workspace) => {
+          (workspace as any).submenu = subItems
+          return workspace as any
+        })
+        setMenuItems(updated)
+      }, 150)
+    } catch (error) {
+      console.info('Error fetching workspaces:', error)
     }
-    run()
   }, [showMain])
 
   useClickOutside([mainRef, ...subRefs], () => {
     setShowMain(false)
-    setOpenSub(null);
+    setOpenSub(null)
   })
 
   const toggleSub = (idx: number) =>
-    setOpenSub(prev => (prev === idx ? null : idx));
+    setOpenSub(prev => (prev === idx ? null : idx))
 
   return (
     <div ref={mainRef} >
@@ -124,10 +137,15 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           data-id="workspacesMenuDropdown"
           as={CustomToggle}
           id="dropdown-custom-components"
-          className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
-          icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'far fa-code-branch' : null}
+          className="btn btn-light btn-sm btn-block w-100 d-inline-block border border-dark form-control"
+          icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'fas fa-code-branch' : null}
         >
-          {togglerText}
+          <div
+            data-id="workspacesSelect-togglerText"
+            className="text-truncate d-flex flex-row align-items-center justify-content-between"
+          >
+            {togglerText}
+          </div>
         </Dropdown.Toggle>
 
         <Dropdown.Menu
