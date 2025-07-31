@@ -141,7 +141,7 @@ export default class RemixDProvider extends FileProvider {
       if (!this._isReady) return reject(new Error('provider not ready'))
       const unprefixedpath = this.removePrefix(path)
       this._appManager.call('remixd', 'remove', { path: unprefixedpath })
-        .then(result => {
+        .then(_result => {
           const path = unprefixedpath
           delete this.filesContent[path]
           resolve(true)
@@ -175,7 +175,7 @@ export default class RemixDProvider extends FileProvider {
       })
   }
 
-  isExternalFolder (path) {
+  isExternalFolder (_path) {
     return false
   }
 
