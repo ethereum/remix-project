@@ -20,11 +20,13 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('div[data-id="verticalIconsHomeIcon"]')
       .pause(1000)
-      .click('*[data-id="workspacesSelect"]')
-      .click('*[data-id="workspaceclone"]')
-      .waitForElementVisible('*[data-id="fileSystemModalDialogModalTitle-react"]')
-      .assert.containsText('*[data-id="fileSystemModalDialogModalTitle-react"]', 'Clone Git Repository')
-      .waitForElementVisible('*[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('*[data-id="github-dropdown-toggle"]')
+      .click('*[data-id="github-dropdown-toggle"]')
+      .waitForElementVisible('*[data-id="github-dropdown-item-clone"]')
+      .click('*[data-id="github-dropdown-item-clone"]')
+      .waitForElementVisible('*[data-id="topbarModalModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="topbarModalModalDialogModalTitle-react"]', 'Clone Git Repository')
+      .waitForElementVisible('*[data-id="topbarModalModalDialogModalBody-react"]')
       .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
   },
 
@@ -47,6 +49,8 @@ module.exports = {
       .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('*[data-id="github-dropdown-toggle"]')
       .click('*[data-id="github-dropdown-toggle"]')
+      .waitForElementVisible('*[data-id="github-dropdown-item-clone"]')
+      .click('*[data-id="github-dropdown-item-clone"]')
       .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
       .execute(() => {
         (document.querySelector('input[data-id="modalDialogCustomPromptTextClone"]') as any).focus()
