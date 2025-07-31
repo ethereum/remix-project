@@ -218,3 +218,61 @@
   width: 12px;
   height: 12px;
 }
+#pluginManager .filter-panel {
+  border-radius: 4px;
+}
+#pluginManager .filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#pluginManager .filter-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+#pluginManager .clear-filters-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+#pluginManager .clear-filters-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+#pluginManager .filter-group {
+  border-bottom: 1px solid var(--gray);
+}
+#pluginManager .filter-group:last-child {
+  border-bottom: none;
+}
+#pluginManager .filter-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-left: 0;
+  padding-right: 0;
+}
+#pluginManager .chevron-icon {
+  transition: transform 0.2s ease-in-out;
+}
+#pluginManager .chevron-icon.open {
+  transform: rotate(90deg);
+}
+#pluginManager .filter-group-header:focus {
+  outline: none;
+  box-shadow: none;
+}
+#pluginManager .clear-filters-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
