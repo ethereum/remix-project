@@ -45,17 +45,16 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .click('div[data-id="verticalIconsHomeIcon"]')
-      .pause(1000)
-      .click('*[data-id="workspacesSelect"]')
-      .click('*[data-id="workspaceclone"]')
+      .waitForElementVisible('*[data-id="github-dropdown-toggle"]')
+      .click('*[data-id="github-dropdown-toggle"]')
       .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
       .execute(() => {
         (document.querySelector('input[data-id="modalDialogCustomPromptTextClone"]') as any).focus()
       }, [], () => { })
       .clearValue('input[data-id="modalDialogCustomPromptTextClone"]').pause(1000)
       .setValue('input[data-id="modalDialogCustomPromptTextClone"]', testData.validURL)
-      .waitForElementVisible('*[data-id="fileSystem-modal-footer-ok-react"]')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementVisible('*[data-id="topbarModal-modal-footer-ok-react"]')
+      .click('[data-id="topbarModal-modal-footer-ok-react"]')
       .openFile('Roles.sol')
       .waitForElementVisible({
         selector: `//*[@data-id='tab-active' and @data-path="git-hometab-test.git/Roles.sol"]`,
