@@ -434,8 +434,19 @@ export function RemixUiTopbar () {
               await plugin.call('tabs', 'focus', 'home')
               _paq.push(['trackEvent', 'topbar', 'header', 'Home'])
             }}
+            data-id="verticalIconsHomeIcon"
           >
-            <span style={{ width: '35px', height: '35px' }} className="remixui_homeIcon"><BasicLogo /></span>
+            <span
+              style={{ width: '35px', height: '35px' }}
+              data-id="verticalIconsHomeIcon"
+              className="remixui_homeIcon"
+              onClick={async () => {
+                await plugin.call('tabs', 'focus', 'home')
+                _paq.push(['trackEvent', 'topbar', 'header', 'Home'])
+              }}
+            >
+              <BasicLogo />
+            </span>
             <span className="text-primary ml-2 font-weight-light text-uppercase cursor-pointer" style={{ fontSize: '1.2rem' }}>Remix</span>
           </span>
           <span

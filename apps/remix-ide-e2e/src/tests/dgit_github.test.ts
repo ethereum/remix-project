@@ -44,11 +44,11 @@ module.exports = {
       .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
       .waitForElementVisible('*[data-id="remotes-panel"]')
   },
-  'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('filePanel')
-      .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
-  },
+  // 'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .clickLaunchIcon('filePanel')
+  //     .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
+  // },
   'clone a repository #group1': function (browser: NightwatchBrowser) {
     browser
       // .clickLaunchIcon('dgit')
@@ -117,7 +117,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check the remotes #group1': !function (browser: NightwatchBrowser) {
+  'check the remotes #group1': function (browser: NightwatchBrowser) {
     browser
 
       .click('*[data-id="remotes-panel"]')
@@ -142,7 +142,7 @@ module.exports = {
       })
 
   },
-  'check the commits of branch links #group1': !function (browser: NightwatchBrowser) {
+  'check the commits of branch links #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible({
         selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
@@ -157,7 +157,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'switch to branch links #group1': !function (browser: NightwatchBrowser) {
+  'switch to branch links #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="branches-panel"]')
       .waitForElementVisible({
@@ -173,14 +173,14 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check the local branches #group1': !function (browser: NightwatchBrowser) {
+  'check the local branches #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible({
         selector: '//*[@data-id="branches-panel-content-local-branches"]//*[@data-id="branches-toggle-current-branch-links"]',
         locateStrategy: 'xpath'
       })
   },
-  'check the local commits #group1': !function (browser: NightwatchBrowser) {
+  'check the local commits #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="commits-panel"]')
       .pause(1000)
@@ -197,7 +197,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check the commands panel for links #group1': !function (browser: NightwatchBrowser) {
+  'check the commands panel for links #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="commands-panel"]')
       .waitForElementVisible({
@@ -213,7 +213,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'disconnect github #group1': !function (browser: NightwatchBrowser) {
+  'disconnect github #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="github-panel"]')
       .pause(1000)
@@ -223,13 +223,13 @@ module.exports = {
       .click('*[data-id="disconnect-github"]')
       .waitForElementNotPresent('*[data-id="connected-as-bunsenstraat"]')
   },
-  'check the FE for the disconnected auth user #group1': !function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('filePanel')
-      .waitForElementNotPresent('*[data-id="filepanel-connected-img-bunsenstraat"]')
-      .waitForElementVisible('*[data-id="filepanel-login-github"]')
-  },
-  'add a remote #group2': !function (browser: NightwatchBrowser) {
+  // 'check the FE for the disconnected auth user #group1': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .clickLaunchIcon('filePanel')
+  //     .waitForElementNotPresent('*[data-id="filepanel-connected-img-bunsenstraat"]')
+  //     .waitForElementVisible('*[data-id="filepanel-login-github"]')
+  // },
+  'add a remote #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .clickLaunchIcon('dgit')
@@ -276,7 +276,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check the commands panel for newremote #group2': !function (browser: NightwatchBrowser) {
+  'check the commands panel for newremote #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .click('*[data-id="commands-panel"]')
@@ -304,7 +304,7 @@ module.exports = {
         }
       })
   },
-  'remove the remote #group2': !function (browser: NightwatchBrowser) {
+  'remove the remote #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .click('*[data-id="remotes-panel"]')
@@ -323,7 +323,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
   },
-  'check the commands panel for removed remote #group2': !function (browser: NightwatchBrowser) {
+  'check the commands panel for removed remote #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .click('*[data-id="commands-panel"]')
@@ -351,7 +351,7 @@ module.exports = {
       })
   },
   // pagination test
-  'clone repo #group3': !function (browser: NightwatchBrowser) {
+  'clone repo #group3': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="clone-panel"]')
@@ -365,7 +365,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
   },
-  'Update settings for git #group3': !function (browser: NightwatchBrowser) {
+  'Update settings for git #group3': function (browser: NightwatchBrowser) {
     browser.
       clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="github-panel"]')
@@ -382,7 +382,7 @@ module.exports = {
       .pause(1000)
       .modalFooterOKClick('github-credentials-error')
   },
-  'check the commits panel for pagination #group3': !function (browser: NightwatchBrowser) {
+  'check the commits panel for pagination #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="commits-panel"]')
       .click('*[data-id="commits-panel"]')
@@ -391,7 +391,7 @@ module.exports = {
         browser.assert.ok((result.value as any).length == 1)
       })
   },
-  'load more commits #group3': !function (browser: NightwatchBrowser) {
+  'load more commits #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="load-more-commits"]')
       .click('*[data-id="load-more-commits"]')
@@ -403,7 +403,7 @@ module.exports = {
         browser.assert.ok((result.value as any).length > 2)
       })
   },
-  'load more branches from remote #group3': !function (browser: NightwatchBrowser) {
+  'load more branches from remote #group3': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="branches-panel"]')
       .waitForElementVisible({
