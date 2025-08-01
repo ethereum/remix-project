@@ -232,7 +232,7 @@ module.exports = {
   'add a remote #group2': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
-      .clickLaunchIcon('dgit')
+      // .clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="remotes-panel"]')
       .click('*[data-id="remotes-panel"]')
       .click({
