@@ -18,7 +18,8 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[data-id="verticalIconsHomeIcon"]')
+      .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
+      .click('*[data-id="verticalIconsHomeIcon"]')
       .pause(1000)
       .waitForElementVisible('*[data-id="github-dropdown-toggle"]')
       .click('*[data-id="github-dropdown-toggle"]')
@@ -46,7 +47,8 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[data-id="verticalIconsHomeIcon"]')
+      .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
+      .click('*[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('*[data-id="github-dropdown-toggle"]')
       .click('*[data-id="github-dropdown-toggle"]')
       .waitForElementVisible('*[data-id="github-dropdown-item-clone"]')
@@ -70,7 +72,8 @@ module.exports = {
   },
   'Confirm JSON After Cloning From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
-      .click('div[data-id="verticalIconsHomeIcon"]')
+      .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
+      .click('*[data-id="verticalIconsHomeIcon"]')
       .openFile('package.json')
       .waitForElementVisible("*[data-path='git-hometab-test.git/package.json'")
       .getEditorValue((content) => {
