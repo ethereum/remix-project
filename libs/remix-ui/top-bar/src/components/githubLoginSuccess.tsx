@@ -22,11 +22,11 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
       className="d-flex flex-nowrap"
     >
       <Button
-        className="btn btn-topbar btn-sm border d-flex flex-nowrap"
+        className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
         data-id="github-dropdown-toggle-login"
         style={{ fontSize: '0.8rem' }}
       >
-        {user.login}
+        <span>{user.login}</span>
         <img src={user.avatar_url} alt="Avatar" className="ml-1" style={{
           width: '25px',
           height: '25px',
@@ -39,6 +39,9 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
         variant="outline-secondary"
         className="btn-topbar btn-sm"
         data-id="github-dropdown-toggle"
+        style={{
+          padding: '0.35rem 0.5rem',
+        }}
       >
       </Dropdown.Toggle>
       <Dropdown.Menu
