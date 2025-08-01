@@ -34,7 +34,7 @@ export function RecorderUI(props: RecorderProps) {
   }
 
   return (
-    <div className="udapp_cardContainer py-1 list-group-item border-top border-bottom" id="udappRecorderCard">
+    <div className="udapp_cardContainer py-1 list-group-item border-top border-bottom bg-dark" id="udappRecorderCard">
       <div className="udapp_recorderSection d-flex justify-content-between">
         <div className="d-flex justify-content-center align-items-center">
           <label className="text-nowrap mt-1 udapp_recorderSectionLabel" onClick={toggleClass}>
@@ -74,7 +74,7 @@ export function RecorderUI(props: RecorderProps) {
       </div>
       { toggleExpander && <div className={`pb-2 flex-column d-flex`} data-id='remixRecorderExpanded'>
         <div className="mb-1 mt-1 form-check mb-1" id='udappRecorderUseLatest'>
-          <input ref={inputLive} type="checkbox" id="livemode-recorder" className="form-check-input form-select" name="input-livemode" />
+          <input ref={inputLive} type="checkbox" id="livemode-recorder" className="form-check-input" name="input-livemode" />
           <CustomTooltip
             placement={'auto-end'}
             tooltipClasses="text-wrap"

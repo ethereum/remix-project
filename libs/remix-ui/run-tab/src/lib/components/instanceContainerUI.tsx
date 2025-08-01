@@ -15,7 +15,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   }
 
   return (
-    <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
+    <div className="udapp_instanceContainer mt-2 border-0 list-group-item bg-dark">
       <div className="d-flex justify-content-between align-items-center p-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts text-nowrap" data-id="deployedContracts">

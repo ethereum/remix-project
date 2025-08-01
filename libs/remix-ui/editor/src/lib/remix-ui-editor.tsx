@@ -1218,13 +1218,13 @@ export const EditorUI = (props: EditorUIProps) => {
         const containerElement = document.createElement('div')
         containerElement.id = id
         containerElement.style.width = '100%'
-        containerElement.style.borderTop = '1px solid var(--ai)'
+        containerElement.style.borderTop = '1px solid var(--custom-ai-color)'
 
         const innerContainer = document.createElement('div')
         innerContainer.style.float = 'right'
 
         const acceptBtn = document.createElement('button')
-        acceptBtn.style.backgroundColor = 'var(--ai)'
+        acceptBtn.style.backgroundColor = 'var(--custom-ai-color)'
         acceptBtn.style.color = 'var(--vscode-editor-background)'
         acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'me-1'])
         acceptBtn.style.fontSize = '0.8rem'

@@ -417,7 +417,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             value={currentContract}
             name={contractOptions.title.toString()}
             onChange={handleContractChange}
-            className="udapp_contractNames w-100 form-select"
+            className="udapp_contractNames w-100 form-select p-2"
             disabled={contractOptions.disabled}
             style={{
               display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block',

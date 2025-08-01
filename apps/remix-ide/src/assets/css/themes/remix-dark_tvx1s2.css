@@ -90,12 +90,12 @@
   --bs-body-color-rgb: 162, 163, 189;
   --bs-body-bg: #222336;
   --bs-body-bg-rgb: 34, 35, 54;
-  --bs-emphasis-color: #000;
+  --bs-emphasis-color: #fff;
   --bs-emphasis-color-rgb: 0, 0, 0;
-  --bs-secondary-color: rgba(255, 255, 255, 0.75);
-  --bs-secondary-color-rgb: 255, 255, 255;
-  --bs-secondary-bg: #ebebeb;
-  --bs-secondary-bg-rgb: 235, 235, 235;
+  --bs-secondary-color: rgba(222, 226, 230, 0.75);
+  --bs-secondary-color-rgb: 222, 226, 230;
+  --bs-secondary-bg: #333446;
+  --bs-secondary-bg-rgb: 51, 52, 70;
   --bs-tertiary-color: rgba(255, 255, 255, 0.5);
   --bs-tertiary-color-rgb: 255, 255, 255;
   --bs-tertiary-bg: #f8f9fa;
@@ -131,6 +131,11 @@
   --bs-form-valid-border-color: #00bc8c;
   --bs-form-invalid-color: #e74c3c;
   --bs-form-invalid-border-color: #e74c3c;
+  --custom-onsurface-layer-1:#2a2c3f;
+  --custom-onsurface-layer-2:#333446;
+  --custom-onsurface-layer-3:#3b3c4d;
+  --custom-onsurface-layer-4:#434454;
+  --custom-ai-color: #2de7f3;
 }
 
 [data-bs-theme=dark] {
@@ -143,8 +148,8 @@
   --bs-emphasis-color-rgb: 255, 255, 255;
   --bs-secondary-color: rgba(222, 226, 230, 0.75);
   --bs-secondary-color-rgb: 222, 226, 230;
-  --bs-secondary-bg: #303030;
-  --bs-secondary-bg-rgb: 48, 48, 48;
+  --bs-secondary-bg: #333446;
+  --bs-secondary-bg-rgb: 51, 52, 70;
   --bs-tertiary-color: rgba(222, 226, 230, 0.5);
   --bs-tertiary-color-rgb: 222, 226, 230;
   --bs-tertiary-bg: #292929;
@@ -187,6 +192,11 @@
   --bs-form-valid-border-color: #66d7ba;
   --bs-form-invalid-color: #f1948a;
   --bs-form-invalid-border-color: #f1948a;
+  --custom-onsurface-layer-1:#2a2c3f;
+  --custom-onsurface-layer-2:#333446;
+  --custom-onsurface-layer-3:#3b3c4d;
+  --custom-onsurface-layer-4:#434454;
+  --custom-ai-color: #2de7f3;
 }
 
 *,
@@ -222,6 +232,10 @@ body {
   background-color: #41455b;
   opacity: 0.3;
   border-radius: 30px;
+}
+
+.text-ai {
+  color: var(--custom-ai-color) !important;
 }
 
 hr {
@@ -2138,11 +2152,11 @@ progress {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #303030;
+  color: #fff;
+  background-color: var(--custom-onsurface-layer-4);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: #fff;
   background-clip: padding-box;
   border: var(--bs-border-width) solid #222;
   border-radius: var(--bs-border-radius);
@@ -2160,8 +2174,8 @@ progress {
   cursor: pointer;
 }
 .form-control:focus {
-  color: #303030;
-  background-color: #fff;
+  color: #fff;
+  background-color: var(--custom-onsurface-layer-4);
   border-color: #9badbf;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(55, 90, 127, 0.25);
@@ -2332,11 +2346,11 @@ textarea.form-control-lg {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #303030;
+  color: #fff;
+  background-color: var(--custom-onsurface-layer-4);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: #fff;
   background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none);
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
@@ -2420,7 +2434,7 @@ textarea.form-control-lg {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: var(--bs-form-check-bg);
+  background-color: var(--custom-onsurface-layer-4);
   background-image: var(--bs-form-check-bg-image);
   background-repeat: no-repeat;
   background-position: center;
@@ -2476,7 +2490,8 @@ textarea.form-control-lg {
   --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
   width: 2em;
   margin-left: -2.5em;
-  background-image: var(--bs-form-switch-bg);
+  /* background-image: var(--bs-form-switch-bg); */
+  background-color: var(--custom-onsurface-layer-4);
   background-position: left center;
   border-radius: 2em;
   transition: background-position 0.15s ease-in-out;
@@ -3449,7 +3464,7 @@ textarea.form-control-lg {
   --bs-dropdown-spacer: 0.125rem;
   --bs-dropdown-font-size: 1rem;
   --bs-dropdown-color: var(--bs-body-color);
-  --bs-dropdown-bg: #222;
+  --bs-dropdown-bg: var(--custom-onsurface-layer-1);
   --bs-dropdown-border-color: #444;
   --bs-dropdown-border-radius: var(--bs-border-radius);
   --bs-dropdown-border-width: var(--bs-border-width);
@@ -3675,7 +3690,7 @@ textarea.form-control-lg {
   padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
   clear: both;
   font-weight: 400;
-  color: var(--bs-dropdown-link-color);
+  color: var(--bs-body-color);
   text-align: inherit;
   text-decoration: none;
   white-space: nowrap;
@@ -5891,7 +5906,7 @@ textarea.form-control-lg {
   --bs-popover-zindex: 1070;
   --bs-popover-max-width: 276px;
   --bs-popover-font-size: 0.875rem;
-  --bs-popover-bg: #303030;
+  --bs-popover-bg: var(--bs-secondary);
   --bs-popover-border-width: var(--bs-border-width);
   --bs-popover-border-color: var(--bs-border-color-translucent);
   --bs-popover-border-radius: var(--bs-border-radius-lg);
@@ -5904,7 +5919,7 @@ textarea.form-control-lg {
   --bs-popover-header-bg: #444;
   --bs-popover-body-padding-x: 1rem;
   --bs-popover-body-padding-y: 1rem;
-  --bs-popover-body-color: var(--bs-body-color);
+  --bs-popover-body-color: var(--bs-white);
   --bs-popover-arrow-width: 1rem;
   --bs-popover-arrow-height: 0.5rem;
   --bs-popover-arrow-border: var(--bs-popover-border-color);

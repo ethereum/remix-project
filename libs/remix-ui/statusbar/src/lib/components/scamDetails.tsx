@@ -26,7 +26,7 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
         height: 'fit-content',
         transform: 'translate(88.5px, -80px)',
         willChange: 'transform',
-        boxShadow: "0 1px 7px var(--secondary)"
+        boxShadow: "0 1px 7px var(--bs-secondary)"
       } }
       className="py-2 px-4 pb-0 mb-0 d-flex alert alert-warning border border-warning"
     >

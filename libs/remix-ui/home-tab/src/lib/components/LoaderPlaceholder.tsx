@@ -8,14 +8,14 @@ export function LoadingCard() {
           width: '60px',
           height: '30px',
           borderRadius: '50px',
-          backgroundColor: 'var(--secondary)',
+          backgroundColor: 'var(--bs-secondary)',
           opacity: 0.3,
           animation: 'pulse 1.5s ease-in-out infinite'
         }}></div>
         <div className="skeleton-image" style={{
           height: '150px',
           width: '150px',
-          backgroundColor: 'var(--secondary)',
+          backgroundColor: 'var(--bs-secondary)',
           opacity: 0.3,
           animation: 'pulse 1.5s ease-in-out infinite'
         }}></div>
@@ -23,19 +23,19 @@ export function LoadingCard() {
       <div className="p-3" style={{ fontSize: '1rem', zIndex: 1 }}>
         <div className="skeleton-title mb-2" style={{
           height: '20px',
-          backgroundColor: 'var(--secondary)',
+          backgroundColor: 'var(--bs-secondary)',
           opacity: 0.3,
           animation: 'pulse 1.5s ease-in-out infinite'
         }}></div>
         <div className="skeleton-description mb-3" style={{
           height: '40px',
-          backgroundColor: 'var(--secondary)',
+          backgroundColor: 'var(--bs-secondary)',
           opacity: 0.3,
           animation: 'pulse 1.5s ease-in-out infinite'
         }}></div>
         <div className="skeleton-button" style={{
           height: '32px',
-          backgroundColor: 'var(--secondary)',
+          backgroundColor: 'var(--bs-secondary)',
           opacity: 0.3,
           animation: 'pulse 1.5s ease-in-out infinite'
         }}></div>

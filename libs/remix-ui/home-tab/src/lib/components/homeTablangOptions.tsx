@@ -31,7 +31,7 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
           <FormattedMessage id="home.featured" />
         </label>
         <Dropdown>
-          <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm" style={{ backgroundColor: 'var(--secondary)', color: 'var(--text)' }}>
+          <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm" style={{ backgroundColor: 'var(--bs-secondary)', color: 'var(--text)' }}>
             {langOptions}
           </Dropdown.Toggle>
           <Dropdown.Menu className="dropdown-menu langSelector" style={{ paddingTop: "0px", paddingBottom: "0px", minWidth: 'fit-content', backgroundColor: 'var(--body-bg)' }}>

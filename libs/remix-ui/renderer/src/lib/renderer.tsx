@@ -133,7 +133,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
             <span
               className="button border ask-remix-ai-button text-ai btn-sm"
               onClick={(event) => { event.preventDefault(); askGtp() }}
-              style={{ borderColor: "var(--ai)" }}
+              style={{ borderColor: "var(--custom-ai-color)" }}
             >
               Ask RemixAI
             </span>
