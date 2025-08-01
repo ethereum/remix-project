@@ -424,7 +424,7 @@ export function RemixUiTopbar () {
           className="d-flex flex-row align-items-center justify-content-evenly m-1"
           style={{ minWidth: '33%' }}
         >
-          <span
+          <div
             className="d-flex align-items-center justify-content-between mr-3 cursor-pointer"
             onClick={async () => {
               await plugin.call('tabs', 'focus', 'home')
@@ -432,7 +432,7 @@ export function RemixUiTopbar () {
             }}
             data-id="verticalIconsHomeIcon"
           >
-            <span
+            <div
               style={{ width: '35px', height: '35px' }}
               data-id="verticalIconsHomeIcon"
               className="remixui_homeIcon"
@@ -442,9 +442,18 @@ export function RemixUiTopbar () {
               }}
             >
               <BasicLogo />
-            </span>
-            <span className="text-primary ml-2 font-weight-light text-uppercase cursor-pointer" style={{ fontSize: '1.2rem' }}>Remix</span>
-          </span>
+            </div>
+            <div
+              className="text-primary ml-2 font-weight-light text-uppercase cursor-pointer"
+              style={{ fontSize: '1.2rem' }}
+              onClick={async () => {
+                await plugin.call('tabs', 'focus', 'home')
+                _paq.push(['trackEvent', 'topbar', 'header', 'Home'])
+              }}
+            >
+              Remix
+            </div>
+          </div>
           <span
             className="btn btn-sm border border-secondary text-decoration-none font-weight-light"
             onClick={() => {
