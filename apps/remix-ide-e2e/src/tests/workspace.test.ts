@@ -480,15 +480,16 @@ module.exports = {
       .waitForElementVisible('*[data-id="dropdown-item-workspace_name"]')
       .waitForElementVisible(selector)
       .click(selector)
+      // .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]', 5000)
+      // .waitForElementVisible('*[data-id="workspacesubMenuRename"]', 5000)
       .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
-      .useCss()
       // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       .click('*[data-id="modalDialogCustomPromptTextRename"]')
       .clearValue('*[data-id="modalDialogCustomPromptTextRename"]')
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
       .waitForElementPresent('[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
+      .click('[data-id="topbarModalModalDialogModalFooter-react"] > .modal-ok')
       .pause(2000)
       .switchWorkspace('workspace_name_1')
       .pause(2000)
@@ -497,7 +498,6 @@ module.exports = {
       .switchWorkspace('workspace_name_renamed')
       .pause(2000)
       .currentWorkspaceIs('workspace_name_renamed')
-      .expandAllFolders()
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests"]')
   },
 
