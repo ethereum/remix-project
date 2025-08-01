@@ -15,7 +15,8 @@ module.exports = {
   },
 
   'Import from GitHub Modal #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('home')
+    browser
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
@@ -37,8 +38,9 @@ module.exports = {
         (document.querySelector('input[data-id="modalDialogCustomPromptTextClone"]') as any).focus()
       }, [], () => { })
       .setValue('input[data-id="modalDialogCustomPromptTextClone"]', testData.invalidURL)
-      .waitForElementVisible('*[data-id="fileSystemModalDialogModalFooter-react"]')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]') // submitted
+      .pause()
+      .waitForElementVisible('*[data-id="topbarModalModalDialogModalFooter-react"]')
+      .click('[data-id="topbarModal-modal-footer-ok-react"]') // submitted
       //.waitForElementVisible('*[data-shared="tooltipPopup"]')
       //.waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
