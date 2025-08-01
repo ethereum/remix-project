@@ -482,6 +482,7 @@ module.exports = {
       .click(selector)
       .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]')
       .waitForElementVisible('*[data-id="workspacesubMenuRename"]')
+      .pause(1000)
       .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
       .useCss()
       // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
@@ -519,7 +520,6 @@ module.exports = {
       .click('*[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
-      .pause()
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
       .end()
   },

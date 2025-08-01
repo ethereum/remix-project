@@ -46,7 +46,7 @@ module.exports = {
     browser
       .openFile('contracts/3_Ballot.sol')
       .click('[data-id="compile-dropdown-trigger"]')
-      .waitForElementVisible('[data-id="compile-dropdown-panel"]', 5000) 
+      .waitForElementVisible('[data-id="compile-dropdown-panel"]', 5000)
       .click('[data-id="compile-run-analysis-menu-item"]')
       .waitForElementVisible('[data-id="compile-run-analysis-menu-item-panel"]', 5000)
       .click('[data-id="run-solidity-scan-submenu-item"]')
@@ -56,6 +56,4 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Scan Summary:', 30000)
       .verifyContracts(['Ballot'])
   }
-
-  
 }

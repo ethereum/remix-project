@@ -47,13 +47,13 @@ const tests = {
       .pause(1000)
       .click('*[data-id="saveGitHubCredentials"]')
   },
-  // 'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
-  //   browser
-  //     .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
-  //     .waitForElementVisible('*[data-id="remotes-panel"]')
-  // },
+  'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
+      .waitForElementVisible('*[data-id="remotes-panel"]')
+  },
   // 'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
   //   browser
   //     .clickLaunchIcon('filePanel')
