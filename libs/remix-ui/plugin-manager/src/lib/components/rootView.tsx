@@ -37,7 +37,7 @@ function RootView({ pluginComponent, children }: RootViewProps) {
   return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
-        <header className="form-group mb-0 d-flex flex-column align-items-center bg-light plugins-header pt-3 pb-0 px-3" data-id="pluginManagerComponentPluginManagerHeader">
+        <header className="mb-3 mb-0 d-flex flex-column align-items-center bg-light plugins-header pt-3 pb-0 px-3" data-id="pluginManagerComponentPluginManagerHeader">
           <input
             type="text"
             onChange={(event) => {

@@ -86,7 +86,7 @@
 }
 
 .search_plugin_search_tab .checked {
-    background-color: var(--secondary);
+    background-color: var(--bs-secondary);
 }
 
 .search_plugin_search_tab .search_plugin_search_file_name {

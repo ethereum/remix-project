@@ -6,10 +6,10 @@
   height             : 200px;
 }
 .centered svg path {
-  fill: var(--secondary);
+  fill: var(--bs-secondary);
 }
 .centered svg polygon {
-  fill              : var(--secondary);
+  fill              : var(--bs-secondary);
 }
 .splash {
   text-align: center;

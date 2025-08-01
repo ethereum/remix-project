@@ -85,11 +85,9 @@ export const Clone = (props: CloneProps) => {
         <hr />
         <label className="text-uppercase">Options</label>
         <InputGroup className="mt-1 mb-1">
-          <InputGroup.Prepend className="bg-secondary">
-            <InputGroup.Text id="clonedepthprepend" className="text-dark">
-              --depth
-            </InputGroup.Text>
-          </InputGroup.Prepend>
+          <InputGroup.Text id="clonedepthprepend" className="bg-secondary text-dark">
+            --depth
+          </InputGroup.Text>
           <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />
         </InputGroup>
 

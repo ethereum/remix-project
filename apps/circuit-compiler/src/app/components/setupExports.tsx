@@ -11,14 +11,14 @@ export function SetupExports () {
   return (
     <div className="flex-column">
       <div className="flex-column d-flex">
-        <div className="mb-1 ml-0">
+        <div className="mb-1 ms-0">
           <label className="circuit_inner_label form-check-label">
             <FormattedMessage id="circuit.provingScheme" />
           </label>
-          <div className="radio custom-control custom-radio mb-1 form-check">
+          <div className="radio form-control custom-radio mb-1 form-check">
             <input
               type="radio"
-              className="align-middle custom-control-input"
+              className="align-middle form-check-input"
               name="circuitProvingScheme"
               id="groth16ProvingScheme"
               onClick={() => circuitApp.dispatch({ type: 'SET_PROVING_SCHEME', payload: 'groth16' })}
@@ -26,14 +26,14 @@ export function SetupExports () {
               checked={circuitApp.appState.provingScheme === 'groth16'}
               readOnly
             />
-            <label className="form-check-label custom-control-label" data-id="groth16ProvingScheme" htmlFor="groth16ProvingScheme" style={{ paddingTop: '0.125rem' }}>
+            <label className="form-check-label" data-id="groth16ProvingScheme" htmlFor="groth16ProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Groth16
             </label>
           </div>
-          <div className="radio custom-control custom-radio form-check">
+          <div className="radio form-control custom-radio form-check">
             <input
               type="radio"
-              className="align-middle custom-control-input"
+              className="align-middle form-check-input"
               name="circuitProvingScheme"
               id="plonkProvingScheme"
               onClick={() => circuitApp.dispatch({ type: 'SET_PROVING_SCHEME', payload: 'plonk' })}
@@ -41,12 +41,12 @@ export function SetupExports () {
               checked={circuitApp.appState.provingScheme === 'plonk'}
               readOnly
             />
-            <label className="form-check-label custom-control-label" data-id="plonkProvingScheme" htmlFor="plonkProvingScheme" style={{ paddingTop: '0.125rem' }}>
+            <label className="form-check-label" data-id="plonkProvingScheme" htmlFor="plonkProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Plonk
             </label>
           </div>
         </div>
-        <div className="mb-1 ml-0">
+        <div className="mb-1 ms-0">
           <label className="circuit_inner_label form-check-label">
             <FormattedMessage id="circuit.ptau" />
           </label>
@@ -59,7 +59,7 @@ export function SetupExports () {
             <div className="mb-1">
               <select
                 value={circuitApp.appState.ptauValue}
-                className="custom-select"
+                className="form-select"
                 style={{
                   pointerEvents: 'auto'
                 }}
@@ -76,29 +76,29 @@ export function SetupExports () {
               </select>
             </div>
           </CustomTooltip>
-          <div className="mt-2 custom-control custom-checkbox">
+          <div className="mt-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="checkbox"
               title="Export Verifier Contract"
               id="circuitExportVerifierContract"
               onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFICATION_CONTRACT', payload: !circuitApp.appState.exportVerificationContract })}
               checked={circuitApp.appState.exportVerificationContract}
             />
-            <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportVerifierContract">
+            <label className="form-check-label pt-1" htmlFor="circuitExportVerifierContract">
               <FormattedMessage id="circuit.exportVerifierContract" />
             </label>
           </div>
-          <div className="mt-2 custom-control custom-checkbox">
+          <div className="mt-2 form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="checkbox"
               title="Export Verification Key"
               id="circuitExportVerificationKey"
               onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFICATION_KEY', payload: !circuitApp.appState.exportVerificationKey })}
               checked={circuitApp.appState.exportVerificationKey}
             />
-            <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportVerificationKey">
+            <label className="form-check-label pt-1" htmlFor="circuitExportVerificationKey">
               <FormattedMessage id="circuit.exportVerificationKey" />
             </label>
           </div>

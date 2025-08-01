@@ -110,9 +110,9 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
   return (
     <div className="mt-4">
       <label>Constructor Arguments</label>
-      <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-        <input className="form-check-input custom-control-input" type="checkbox" id="toggleRawInputSwitch" checked={toggleRawInput} onChange={() => setToggleRawInput(!toggleRawInput)} />
-        <label className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }} htmlFor="toggleRawInputSwitch">
+      <div className="d-flex py-1 align-items-center form-check">
+        <input className="form-check-input" type="checkbox" id="toggleRawInputSwitch" checked={toggleRawInput} onChange={() => setToggleRawInput(!toggleRawInput)} />
+        <label className="m-0 form-check-label" style={{ paddingTop: '2px' }} htmlFor="toggleRawInputSwitch">
           <FormattedMessage id="contract-verification.constructorArgumentsToggleRawInput" />
         </label>
       </div>
@@ -126,7 +126,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
         <div>
           {constructorArgs.map((inp, i) => (
             <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center justify-content-between mb-2">
-              <div className="mr-2 small">{inp.name}</div>
+              <div className="me-2 small">{inp.name}</div>
               <input className="form-control" placeholder={inp.type} value={constructorArgsValues[i] ?? ''} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
             </div>
           ))}

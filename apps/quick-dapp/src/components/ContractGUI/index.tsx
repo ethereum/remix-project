@@ -102,7 +102,7 @@ export function ContractGUI(props: { funcABI: any, funcId: any }) {
         </div>
         <input
           disabled
-          className="instance-input w-100 p-2 border-0 rounded-right"
+          className="instance-input w-100 p-2 border-0 rounded-end"
           data-id={'multiParamManagerBasicInputField'}
           placeholder={inputs}
           data-title={inputs}

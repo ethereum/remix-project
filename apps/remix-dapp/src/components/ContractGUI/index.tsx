@@ -310,7 +310,7 @@ export function ContractGUI(props: any) {
               <button className="btn">
                 <i
                   id="copyCalldata"
-                  className="mr-2 far fa-copy"
+                  className="me-2 far fa-copy"
                   aria-hidden="true"
                 ></i>
                 <label htmlFor="copyCalldata">Calldata</label>
@@ -325,7 +325,7 @@ export function ContractGUI(props: any) {
               <button className="btn">
                 <i
                   id="copyParameters"
-                  className="mr-2 far fa-copy"
+                  className="me-2 far fa-copy"
                   aria-hidden="true"
                 ></i>
                 <label htmlFor="copyParameters">

@@ -514,7 +514,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const handleAutoComplete = () => (
     <div
-      className="remix_ui_terminal_popup bg-light ml-4 p-2 position-absolute text-left "
+      className="remix_ui_terminal_popup bg-light ms-4 p-2 position-absolute text-start "
       style={{
         display:
           autoCompletState.showSuggestions && autoCompletState.userInput !== '' && autoCompletState.userInput.length > 0 && autoCompletState.data._options.length > 0
@@ -593,7 +593,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">
-            <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
+            <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 me-0" data-id="terminalJournal">
               {!terminalState.clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
               {terminalState.journalBlocks &&
               terminalState.journalBlocks.map((x, index) => {
@@ -739,9 +739,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </div>
             {isOpen && (
               <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
-                <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
+                <span className="remix_ui_terminal_prompt blink mx-1 fw-bold text-dark">{'>'}</span>
                 <input
-                  className="remix_ui_terminal_input ml-1 text-dark text-break border-0"
+                  className="remix_ui_terminal_input ms-1 text-dark text-break border-0"
                   ref={inputEl}
                   spellCheck="false"
                   contentEditable="true"

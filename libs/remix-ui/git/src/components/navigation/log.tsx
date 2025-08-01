@@ -50,32 +50,32 @@ export const LogNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-2 nav form-check-label mr-2">LOG</label>
+          <label className="ps-2 nav form-check-label me-2">LOG</label>
           {logState.errorCount > 0 && (
-            <div className="text-danger mr-1">
+            <div className="text-danger me-1">
               {logState.errorCount}
-              <FontAwesomeIcon className="ml-1" icon={faTriangleExclamation} />
+              <FontAwesomeIcon className="ms-1" icon={faTriangleExclamation} />
             </div>
           )}
 
           {logState.warningCount > 0 && (
-            <div className="text-warning mr-1">
+            <div className="text-warning me-1">
               {logState.warningCount}
-              <FontAwesomeIcon className="ml-1" icon={faWarning} />
+              <FontAwesomeIcon className="ms-1" icon={faWarning} />
             </div>
           )}
 
           {logState.infoCount > 0 && (
-            <div className="text-info mr-1">
+            <div className="text-info me-1">
               {logState.infoCount}
-              <FontAwesomeIcon className="ml-1" icon={faCircleInfo} />
+              <FontAwesomeIcon className="ms-1" icon={faCircleInfo} />
             </div>
           )}
 
           {logState.successCount > 0 && (
             <div className="text-success">
               {logState.successCount}
-              <FontAwesomeIcon className="ml-1" icon={faCircleCheck} />
+              <FontAwesomeIcon className="ms-1" icon={faCircleCheck} />
             </div>
           )}
         </span>

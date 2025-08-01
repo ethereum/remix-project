@@ -67,21 +67,21 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             <span>
               <span className="m-0 label_value">0x</span>
               <span className="m-0 label_value">{split[1]}</span>
-              {split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span>}
+              {split[2] && <span className="m-0 label_value fw-bold text-dark">{split[2]}</span>}
             </span>
           )
         } else
           value = (
             <span>
               <span className="m-0 label_value">0x</span>
-              <span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span>
+              <span className="m-0 label_value fw-bold text-dark">{data.self.replace('0x', '')}</span>
             </span>
           )
       } else value = <span className="m-0 label_value">{data.self}</span>
     } else value = <span className="m-0 label_value">{data.self}</span>
     return (
-      <div className="d-flex mr-1 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
+      <div className="d-flex me-1 flex-row label_item">
+        <label className="small fw-bold mb-0 pe-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )

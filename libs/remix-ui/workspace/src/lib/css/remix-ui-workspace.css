@@ -28,13 +28,13 @@
     cursor            : pointer;
   }
   .remixui_connectToLocalhost i:hover   {
-    color             : var(--secondary)
+    color             : var(--bs-secondary)
   }
   .remixui_uploadFile         {
     padding           : 10px;
   }
   .remixui_uploadFile label:hover   {
-    color             : var(--secondary)
+    color             : var(--bs-secondary)
   }
   .remixui_uploadFile label   {
     cursor            : pointer;
@@ -112,7 +112,7 @@
   }
 
   #workspacesMenuDropdown > div > ul > a:hover {
-    background-color: var(--secondary);
+    background-color: var(--bs-secondary);
     border-radius: 2px;
     color: var(--text)
   }

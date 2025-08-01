@@ -7,7 +7,7 @@ var css = csjs`
     display          : none;
     width            : 95%;
     font-family      : monospace;
-    background-color : var(--secondary);
+    background-color : var(--bs-secondary);
     overflow         : auto;
     padding-bottom   : 13px;
     z-index          : 80;

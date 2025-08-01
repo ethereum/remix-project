@@ -61,7 +61,7 @@ export default class CodeParserGasService {
           position: estimate.range,
           hide: false,
           className: 'text-muted small',
-          afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+          afterContentClassName: 'text-muted small fas fa-gas-pump ps-4',
           from: 'codeParser',
           hoverMessage: [{
             value: `${Object.entries(estimate.node.gasEstimate).map(([key, value]) => `${friendlyNames[key]}: ${value} gas`).join(' ')}`,

@@ -13,11 +13,11 @@
 {
   cursor: pointer;
   color: var(--text-dark);
-  background-color: var(--light);
+  background-color: var(--bs-light);
 }
 .remixui_liitem:hover
 {
-  background-color:  var(--secondary);
+  background-color:  var(--bs-secondary);
 }
 #remixui_menuitems
 {

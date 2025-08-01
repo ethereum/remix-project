@@ -5,7 +5,7 @@ element.style {
 #terminalCliInput{
   width: 97%;
   font-weight: 800;
-  background: var(--body-bg)
+  background: var(--bs-body-bg)
 }
 #terminalCliInput:focus {
   outline: none;
@@ -29,7 +29,7 @@ element.style {
   cursor            : pointer;
 }
 .remix_ui_terminal_toggleTerminal:hover {
-  color             : var(--secondary);
+  color             : var(--bs-secondary);
 }
 .remix_ui_terminal_container {
   overflow-y          : auto;
@@ -61,7 +61,7 @@ element.style {
   line-height       : 1.7em;
   font-family       : monospace;
   padding           : .4em;
-  color             : var(--primary);
+  color             : var(--bs-primary);
 }
 .remix_ui_terminal_prompt {
   font-family       : monospace;
@@ -97,7 +97,7 @@ element.style {
 .remix_ui_terminal_popup {
   width            : 95%;
   font-family      : monospace;
-  background-color : var(--secondary);
+  background-color : var(--bs-secondary);
   overflow         : auto;
   z-index          : 80;
   bottom           : 2.2em;
@@ -158,10 +158,10 @@ element.style {
   float: left;
 }
 .remix_ui_terminal_succeeded {
-  color: var(--success);
+  color: var(--bs-success);
 }
 .remix_ui_terminal_failed {
-  color: var(--danger);
+  color: var(--bs-danger);
 }
 
 .remix_ui_terminal_arrow {
@@ -172,7 +172,7 @@ element.style {
   margin-left: 10px;
 }
 .remix_ui_terminal_arrow:hover {
-  color: var(--secondary);
+  color: var(--bs-secondary);
 }
 .remix_ui_terminal_call {
   font-size: 7px;

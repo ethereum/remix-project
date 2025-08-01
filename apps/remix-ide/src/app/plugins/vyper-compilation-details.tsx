@@ -56,18 +56,6 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
     const active = await this.call('theme', 'currentTheme')
     if (active.quality === 'dark') {
       switch (active.name) {
-      case 'HackerOwl':
-        this.theme = 'harmonic'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      case 'Black':
-        this.theme = 'eighties'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      case 'Cyborg':
-        this.theme = 'shapeshifter'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
       case 'Dark':
         this.theme = 'flat'
         this.themeStyle = { backgroundColor: active.backgroundColor }
@@ -78,27 +66,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
         break
       }
     } else {
-      switch (active.name) {
-      case 'Candy':
-        this.theme = 'apathy:inverted'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      case 'Midcentury':
-        this.theme = 'apathy:inverted'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      case 'Unicorn':
-        this.theme = 'apathy:inverted'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      case 'Violet':
-        this.theme = 'summerfruit:inverted'
-        this.themeStyle = { backgroundColor: active.backgroundColor }
-        break
-      default:
         this.theme = 'bright:inverted'
-        break
-      }
     }
     this.renderComponent()
   }
@@ -107,18 +75,6 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
     this.on('theme', 'themeChanged', (theme: any) => {
       if (theme.quality === 'dark') {
         switch (theme.name) {
-        case 'HackerOwl':
-          this.theme = 'solarized'
-          this.themeStyle = { backgroundColor: theme.backgroundColor }
-          break
-        case 'Black':
-          this.theme = 'shapeshifter'
-          this.themeStyle = { backgroundColor: theme.backgroundColor }
-          break
-        case 'Cyborg':
-          this.theme = 'shapeshifter'
-          this.themeStyle = { backgroundColor: theme.backgroundColor }
-          break
         case 'Dark':
           this.theme = 'harmonic'
           this.themeStyle = { backgroundColor: theme.backgroundColor }

@@ -64,10 +64,10 @@ pre {
   height             : 200px;
 }
 .centered svg path {
-  fill               : var(--secondary);
+  fill               : var(--bs-secondary);
 }
 .centered svg polygon {
-  fill               : var(--secondary);
+  fill               : var(--bs-secondary);
 }
 .onboarding {
   color              : var(--text-info);

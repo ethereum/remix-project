@@ -49,13 +49,13 @@ export const ElectronMenu = (props: {
                       placement='bottom'
                     >
                       <div className="recentfolder pb-1">
-                        <span onClick={async () => { await openFolderElectron(folder) }} className="pl-2 recentfolder_name pr-2">{lastFolderName(folder)}</span>
-                        <span onClick={async () => { await openFolderElectron(folder) }} data-id={`recent_folder_${folder}`} className="recentfolder_path pr-2">{folder}</span>
+                        <span onClick={async () => { await openFolderElectron(folder) }} className="ps-2 recentfolder_name pe-2">{lastFolderName(folder)}</span>
+                        <span onClick={async () => { await openFolderElectron(folder) }} data-id={`recent_folder_${folder}`} className="recentfolder_path pe-2">{folder}</span>
                         <i
                           onClick={() => {
                             global.dispatchRemoveRecentFolder(folder)
                           }}
-                          className="fas fa-times recentfolder_delete pr-2"
+                          className="fas fa-times recentfolder_delete pe-2"
                         >
 
                         </i>

@@ -427,13 +427,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           <span>Write a command and it will execute it by creating a new workspace e.g:</span>
         </div>
         <li>
-          <span className="font-italic font-weight-light">Create an ERC‑20 token with all explanations as comments in the contract,</span>
+          <span className="fst-italic fw-light">Create an ERC‑20 token with all explanations as comments in the contract,</span>
         </li>
         <li>
-          <span className="font-italic font-weight-light">Create a Voting contract and explain the contract with comments,</span>
+          <span className="fst-italic fw-light">Create a Voting contract and explain the contract with comments,</span>
         </li>
         <li>
-          <span className="font-italic font-weight-light">Create a proxy contract with all explanations about the contract as comments</span>
+          <span className="fst-italic fw-light">Create a proxy contract with all explanations about the contract as comments</span>
         </li>
       </ul>
     )
@@ -521,7 +521,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             className="pt-2 mb-2 z-3 bg-light border border-text w-75"
             style={{ borderRadius: '8px' }}
           >
-            <div className="text-uppercase ml-2 mb-2 small">AI Assistant Provider</div>
+            <div className="text-uppercase ms-2 mb-2 small">AI Assistant Provider</div>
             <GroupListMenu
               setChoice={setAssistantChoice}
               setShowOptions={setShowAssistantOptions}

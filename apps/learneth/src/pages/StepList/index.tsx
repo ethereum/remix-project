@@ -21,14 +21,14 @@ function StepListPage(): JSX.Element {
         </div>
       </div>
       <div id="top"></div>
-      <h1 className="pl-3 pr-3 pt-2 pb-1 menuspacer">{entity.name}</h1>
+      <h1 className="ps-3 pe-3 pt-2 pb-1 menuspacer">{entity.name}</h1>
       <div className="container-fluid">
         <Markdown>{entity.text}</Markdown>
       </div>
       <SlideIn>
         <article className="list-group m-3">
           {entity.steps.map((step: any, i: number) => (
-            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left steplink" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'step_slide_in', `${id}/${i}/${step.name}`])}>
+            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-start steplink" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'step_slide_in', `${id}/${i}/${step.name}`])}>
               {step.name} »
             </Link>
           ))}

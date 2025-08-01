@@ -21,7 +21,7 @@ export class ExternalHttpProvider extends AbstractProvider {
     const thePath = '<path/to/local/folder/for/test/chain>'
     return (
       <>
-        <div className="pr-1">
+        <div className="pe-1">
           <FormattedMessage
             id="udapp.externalHttpProviderText1"
             values={{

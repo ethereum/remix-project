@@ -12,27 +12,6 @@ const themes = [
     shapeColor: '#babbcc',fillColor: '#2a2c3f' },
   { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css', backgroundColor: '#eef1f6', textColor: '#3b445e',
     shapeColor: '#343a40',fillColor: '#ffffff' },
-  { name: 'Violet', quality: 'light', url: 'assets/css/themes/remix-violet.css', backgroundColor: '#f1eef6', textColor: '#3b445e',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { name: 'Unicorn', quality: 'light', url: 'assets/css/themes/remix-unicorn.css', backgroundColor: '#f1eef6', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css', backgroundColor: '#DBE2E0', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#eeede9' },
-  { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css', backgroundColor: '#1a1a1a', textColor: '#babbcc',
-    shapeColor: '#b5b4bc',fillColor: '#1f2020' },
-  { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css', backgroundColor: '#d5efff', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#fbe7f8' },
-  { name: 'HackerOwl', quality: 'dark', url: 'assets/css/themes/remix-hacker_owl.css', backgroundColor: '#011628', textColor: '#babbcc',
-    shapeColor: '#8694a1',fillColor: '#011C32' },
-
-  { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8f9fa' },
-  { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#7b8a8b',fillColor: '#ffffff' },
-  { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#333333', fillColor: '#eeeeee' },
-  { name: 'Cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css', backgroundColor: '#060606', textColor: '#adafae',
-    shapeColor: '#adafae', fillColor: '#222222' }
 ]
 
 const profile = {
