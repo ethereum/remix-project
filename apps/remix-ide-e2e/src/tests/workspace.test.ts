@@ -473,7 +473,7 @@ module.exports = {
   },
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
-    const selector = '[data-id="dropdown-item-workspace_name"] + *[data-id="workspacesubMenuIcon"]'
+    const selector = 'a[data-id="dropdown-item-workspace_name"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .waitForElementPresent('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
@@ -499,15 +499,17 @@ module.exports = {
       .switchWorkspace('workspace_name_renamed')
       .pause(2000)
       .currentWorkspaceIs('workspace_name_renamed')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .expandAllFolders()
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests"]')
   },
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
-    const selector = '[data-id="dropdown-item-workspace_name_1"] + *[data-id="workspacesubMenuIcon"]'
+    const selector = 'a[data-id="dropdown-item-workspace_name_1"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .switchWorkspace('workspace_name_1')
       .waitForElementPresent('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible(`[data-id="dropdown-item-workspace_name_1"]`)
       .waitForElementVisible(selector)
       .click(selector)
       .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]')
@@ -517,6 +519,7 @@ module.exports = {
       .click('*[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
+      .pause()
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
       .end()
   },

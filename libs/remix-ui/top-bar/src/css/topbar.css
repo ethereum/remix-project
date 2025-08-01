@@ -5,6 +5,10 @@
   fill: var(--primary);
 }
 
+.remixui_homeIcon:hover {
+  box-shadow: 0px 0px 14px -7px;
+}
+
 .btn-topbar {
   background-color: #333446;
   color: #fff;
