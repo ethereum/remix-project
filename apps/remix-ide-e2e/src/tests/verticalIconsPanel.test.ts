@@ -25,7 +25,9 @@ module.exports = {
       .pause(5000)
       .rightClickCustom('[data-id="verticalIconsKinddebugger"]')
       .click('*[id="menuitemdeactivate"]')
-      .click('*[data-id="verticalIconsKindsettings"]')
+      // .click('*[data-id="verticalIconsKindsettings"]')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="verticalIconsKindpluginManager"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
   }
