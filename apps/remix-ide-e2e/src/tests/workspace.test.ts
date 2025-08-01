@@ -512,7 +512,6 @@ module.exports = {
       .waitForElementVisible(`[data-id="dropdown-item-workspace_name_1"]`)
       .waitForElementVisible(selector)
       .click(selector)
-      .waitForElementVisible('*[data-id="workspacesubMenuDelete"]')
       .click('*[data-id="workspacesubMenuDelete"]') // delete workspace_name_1
       .waitForElementVisible('*[data-id="topbarModalModalDialogModalFooter-react"]')
       .click('*[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
