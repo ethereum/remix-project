@@ -87,7 +87,8 @@ module.exports = {
     function (browser: NightwatchBrowser) {
       browser
         .waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
-        .click('*[data-id="verticalIconsKindsettings"]')
+        .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+        .click('*[data-id="topbar-settingsIcon"]')
         .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
         .click('*[data-id="settingsTabThemeLabelDark"]')
         .pause(2000)
@@ -181,7 +182,7 @@ const sourcehighlightScript = {
             }
         }
         await remix.call('editor', 'highlight', pos, 'contracts/3_Ballot.sol')
-        
+
          const pos2 = {
             start: {
                 line: 40,
@@ -193,7 +194,7 @@ const sourcehighlightScript = {
             }
         }
         await remix.call('editor', 'highlight', pos2, 'contracts/3_Ballot.sol')
-        
+
          const pos3 = {
             start: {
                 line: 50,
@@ -216,7 +217,7 @@ const removeAllSourcehighlightScript = {
   content: `
   (async () => {
     try {
-        await remix.call('editor', 'discardHighlight')         
+        await remix.call('editor', 'discardHighlight')
     } catch (e) {
         console.log(e.message)
     }
@@ -246,7 +247,7 @@ contract Storage {
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retrieve() public view returns (uint256){

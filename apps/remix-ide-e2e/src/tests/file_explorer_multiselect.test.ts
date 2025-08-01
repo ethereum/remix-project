@@ -11,6 +11,7 @@ module.exports = {
     const selectedElements = []
     browser
       .openFile('contracts')
+      .click('*[data-id="treeViewDivtreeViewItemcontracts"]')
       .click({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
       .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)

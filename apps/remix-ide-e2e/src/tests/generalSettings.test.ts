@@ -10,7 +10,8 @@ module.exports = {
   'Should display settings menu ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
-      .click('*[data-id="verticalIconsKindsettings"]')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
       .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
   },
 
@@ -36,7 +37,8 @@ module.exports = {
 
   'Should add new github access token ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="verticalIconsKindsettings"]')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
       .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
       .click('*[data-id="settingsTabSaveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)

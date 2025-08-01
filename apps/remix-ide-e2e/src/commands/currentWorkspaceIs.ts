@@ -11,10 +11,10 @@ class CurrentWorkspaceIs extends EventEmitter {
       selector: xpath,
       timeout: 20000
     })
-    .perform((done) => {
-      done()
-      this.emit('complete')
-    })
+      .perform((done) => {
+        done()
+        this.emit('complete')
+      })
     return this
   }
 }

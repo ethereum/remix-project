@@ -12,7 +12,7 @@ module.exports = {
       .waitForElementVisible('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('div[plugin="filePanel"]')
       .waitForElementVisible('div[plugin="pluginManager"]')
-      .waitForElementVisible('div[plugin="settings"]')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
   },
 
   'Loads Side Panel': function (browser: NightwatchBrowser) {

@@ -1,0 +1,61 @@
+.remixui_homeIcon svg path {
+  fill: var(--primary);
+}
+.remixui_homeIcon svg polygon {
+  fill: var(--primary);
+}
+
+.remixui_homeIcon:hover {
+  box-shadow: 0px 0px 14px -7px;
+}
+
+.btn-topbar {
+  background-color: #333446;
+  color: #fff;
+}
+
+.btn-topbar:hover {
+  background-color: #3F4455;
+  color: #fff;
+}
+
+.version-btn:hover {
+  text-decoration: none;
+  color: var(--secondary);
+}
+
+.top-bar-dropdownItem {
+  color: var(--text);
+  cursor: pointer;
+}
+
+.top-bar-dropdownItem:hover {
+  color: var(--text);
+}
+
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item:active {
+  background-color: transparent !important;
+  color: inherit !important;
+  outline: none;
+  box-shadow: none;
+}
+
+.custom-form-control {
+  display: block;
+  width: 100%;
+  height: calc(1em + 1rem + 2px);
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 400;
+  line-height: 1;
+  color: #dfe1ea !important;
+  background-color: var(--custom-select)
+ !important;
+  background-clip: padding-box;
+  border: none !important;
+  border-radius: 2px !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}

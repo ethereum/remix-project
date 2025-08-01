@@ -121,3 +121,20 @@ export type localeLang = {
   messages: { [key: string]: string }
   name: string
 }
+
+export interface UpdateInfo {
+  badge: string
+  title: string
+  description: string
+  descriptionList?: string[]
+  icon: string
+  action: {
+    type: 'link' | 'methodCall'
+    label: string
+    url?: string
+    pluginName?: string
+    pluginMethod?: string,
+    pluginArgs?: (string | number | boolean | object | null)[]
+  },
+  theme: string
+}

@@ -137,6 +137,7 @@ export function isNative(name) {
     'solidityUnitTesting',
     'layout',
     'statusBar',
+    'topbar',
     'notification',
     'hardhat-provider',
     'ganache-provider',
