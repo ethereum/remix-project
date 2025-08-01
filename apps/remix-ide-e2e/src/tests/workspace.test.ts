@@ -472,7 +472,7 @@ module.exports = {
       .currentWorkspaceIs('workspace_name')
   },
 
-  'Should rename a workspace #group1#pr': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
     const selector = 'a[data-id="dropdown-item-workspace_name"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .waitForElementPresent('*[data-id="workspacesSelect"]')
@@ -480,10 +480,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="dropdown-item-workspace_name"]')
       .waitForElementVisible(selector)
       .click(selector)
-      // .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]', 5000)
-      // .waitForElementVisible('*[data-id="workspacesubMenuRename"]', 5000)
       .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
-      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       .click('*[data-id="modalDialogCustomPromptTextRename"]')
       .clearValue('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -501,7 +498,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests"]')
   },
 
-  'Should delete a workspace #group1#pr': function (browser: NightwatchBrowser) {
+  'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     const selector = 'a[data-id="dropdown-item-workspace_name_1"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .switchWorkspace('workspace_name_1')
