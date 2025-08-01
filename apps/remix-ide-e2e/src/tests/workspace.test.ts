@@ -482,7 +482,6 @@ module.exports = {
       .click(selector)
       .waitForElementVisible('*[data-id="workspacesubMenuOverlay"]')
       .waitForElementVisible('*[data-id="workspacesubMenuRename"]')
-      .pause(1000)
       .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
       .useCss()
       // .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
