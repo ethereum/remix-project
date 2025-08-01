@@ -417,11 +417,11 @@ export function RemixUiTopbar () {
 
   return (
     <section
-      className="h-100 d-flex flex-row align-items-center justify-content-between bg-light border flex-nowrap"
+      className="h-100 d-flex bg-light border flex-nowrap px-2"
     >
-      <div className="d-flex flex-row align-items-center justify-content-between w-100 py-2 px-3">
+      <div className="d-flex flex-row align-items-center justify-content-between w-100">
         <div
-          className="d-flex flex-row align-items-center justify-content-evenly"
+          className="d-flex flex-row align-items-center justify-content-evenly m-1"
           style={{ minWidth: '33%' }}
         >
           <span
@@ -451,14 +451,14 @@ export function RemixUiTopbar () {
               window.open(latestReleaseNotesUrl, '_blank')
             }}
             style={{
-              padding: '0.25rem 0.5rem',
+              // padding: '0.25rem 0.5rem',
               color: currentTheme && !checkIfLightTheme(currentTheme.name) ? 'var(--white)' : 'var(--text)'
             }}
           >
             {currentReleaseVersion}
           </span>
         </div>
-        <div className="" style={{ minWidth: '33%' }}>
+        <div className="m-1" style={{ minWidth: '33%' }}>
           <WorkspacesDropdown
             menuItems={menuItems}
             toggleDropdown={toggleDropdown}

@@ -143,22 +143,25 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
       alignRight={true}
     >
       <Button
-        className="btn btn-topbar btn-sm border d-flex flex-nowrap"
+        className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
         data-id="github-dropdown-toggle-login"
-        style={{ fontSize: '0.8rem' }}
+        style={{
+          fontSize: '0.8rem',
+          padding: '0.35rem 0.5rem',
+        }}
         onClick={openPopupLogin}
         disabled={isLoading}
       >
         {isLoading ? (
           <>
             <i className="fas fa-spinner fa-spin mr-1"></i>
-            Connecting...
+            <span>Connecting...</span>
           </>
         ) : (
-          <>
+          <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
             <i className="fab fa-github mr-1"></i>
-            Login with GitHub
-          </>
+            <span>Login with GitHub</span>
+          </div>
         )}
       </Button>
 
