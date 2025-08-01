@@ -39,7 +39,8 @@ module.exports = {
   'Test Manual Deploy Lib': function (browser: NightwatchBrowser) {
     browser.click('*[data-id="deployAndRunClearInstances"]')
       .pause(5000)
-      .clickLaunchIcon('settings')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .clickLaunchIcon('solidity')
       .click('#compileTabView button[data-id="compilerContainerCompileBtn"]') // that should generate the JSON artefact
