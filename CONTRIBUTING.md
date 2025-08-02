@@ -18,15 +18,15 @@ Follow GitHub's standard model of making changes & submitting pull requests - ex
 Remix supports Internationalization.
 
 ### How to contribute translations?
-Remix uses CrowdIn to manage translations.  Please DO NOT make a PR on GitHub with translation. To contribute, make an account on [CrowdIn](https://accounts.crowdin.com/register). 
+Remix uses CrowdIn to manage translations. Please DO NOT make a PR on GitHub with translation. To contribute, make an account on [CrowdIn](https://accounts.crowdin.com/register). 
 
 Remix has four projects on CrowdIn
 1. [RemixUI](https://crowdin.com/project/remix-ui/) - for translating Remix's User Interface
-2. [Remix Docs](https://crowdin.com/project/remix-translation)  - for translating Remix's [Documentation](https://remix-ide.readthedocs.io)
+2. [Remix Docs](https://crowdin.com/project/remix-translation) - for translating Remix's [Documentation](https://remix-ide.readthedocs.io)
 3. [LearnEth](https://crowdin.com/project/remix-learneth) - for translating the tutorials in Remix's tutorial plugin called [Learneth](https://remix.ethereum.org/?#activate=solidity,solidityUnitTesting,LearnEth)
 4. [Remix Project Website](https://crowdin.com/project/361d7e8c3b07220fa22e9d5a901b0021) - for translating the info site about [Remix](https://remix-project.org/)
 
-There are many languages, for each project.  But if you do not see your desired language, send us a note on CrowdIn or in the Remix Discord.
+There are many languages, for each project. But if you do not see your desired language, send us a note on CrowdIn or in the Remix Discord.
 
 In addition to writing translations, you can also review other's work. 
 
