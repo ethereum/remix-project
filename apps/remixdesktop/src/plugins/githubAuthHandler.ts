@@ -13,7 +13,6 @@ const profile: Profile = {
 export class GitHubAuthHandler extends ElectronBasePlugin {
   clients: GitHubAuthHandlerClient[] = []
   constructor() {
-    console.log('[GitHubAuthHandler] Initializing')
     super(profile, clientProfile, GitHubAuthHandlerClient)
     this.methods = [...super.methods, 'getClientId', 'getAccessToken']
   }
@@ -29,8 +28,6 @@ export class GitHubAuthHandler extends ElectronBasePlugin {
           'Accept': 'application/json'
         }
       })
-
-      console.log('[GitHubAuthHandler] GitHub response:', response.data)
 
       if (response.data.access_token) {
         this.sendAccessToken(response.data.access_token)
@@ -75,7 +72,6 @@ const clientProfile: Profile = {
 }
 class GitHubAuthHandlerClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
-    console.log('[GitHubAuthHandlerClient] Initializing with webContentsId:', webContentsId)
     super(webContentsId, profile)
   }
 
@@ -85,7 +81,6 @@ class GitHubAuthHandlerClient extends ElectronBasePluginClient {
       const redirectUri = `remix://auth/callback`
       const scope = 'repo gist user:email read:user'
       const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
-      console.log('[GitHubAuthHandlerClient] Opening GitHub login URL:', url)
       shell.openExternal(url); // open in browser
     } catch (error) {
       console.error('[GitHubAuthHandlerClient] Error fetching client ID:', error)
@@ -94,12 +89,11 @@ class GitHubAuthHandlerClient extends ElectronBasePluginClient {
   }
 
   async sendAccessToken(token: string): Promise<void> {
-    console.log('[GitHubAuthHandlerClient] Sending access token:', token)
+
     this.emit('onLogin', { token })
   }
 
   async sendAuthFailure(error: string): Promise<void> {
-    console.error('[GitHubAuthHandlerClient] Sending auth failure:', error)
     this.emit('onError', { error })
   }
 
