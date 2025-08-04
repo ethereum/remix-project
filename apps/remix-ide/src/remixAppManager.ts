@@ -93,6 +93,7 @@ let requiredModules = [
   'remixAI',
   'remixAID',
   'remixaiassistant',
+  'topbar',
   'githubAuthHandler'
 ]
 
