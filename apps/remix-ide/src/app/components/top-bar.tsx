@@ -52,10 +52,9 @@ export class Topbar extends Plugin {
   }
 
   async getWorkspaces() {
-    while (this.workspaces.length === 0) {
-      await new Promise(resolve => setTimeout(resolve, 100))
-      this.workspaces = await this.call('filePanel', 'getWorkspaces')
-    }
+    this.on('filePanel', 'setWorkspaces', (workspaces) => {
+      this.workspaces = workspaces
+    })
     return this.workspaces
   }
 
