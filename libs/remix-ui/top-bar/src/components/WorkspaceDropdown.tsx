@@ -48,6 +48,7 @@ interface WorkspacesDropdownProps {
   deleteAllWorkspaces: () => void
   setCurrentMenuItemName: (workspaceName: string) => void
   setMenuItems: (menuItems: MenuItem[]) => void
+  connectToLocalhost: () => void
 }
 
 function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => void) {
@@ -63,7 +64,7 @@ function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => vo
   }, [refs, handler])
 }
 
-export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItems, NO_WORKSPACE, switchWorkspace, CustomToggle, createWorkspace, downloadCurrentWorkspace, restoreBackup, deleteAllWorkspaces, setCurrentMenuItemName, setMenuItems, renameCurrentWorkspace, deleteCurrentWorkspace }) => {
+export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItems, NO_WORKSPACE, switchWorkspace, CustomToggle, createWorkspace, downloadCurrentWorkspace, restoreBackup, deleteAllWorkspaces, setCurrentMenuItemName, setMenuItems, renameCurrentWorkspace, deleteCurrentWorkspace, downloadWorkspaces, connectToLocalhost }) => {
   const [showMain, setShowMain] = useState(false)
   const [openSub, setOpenSub] = useState<number | null>(null)
   const global = useContext(TopbarContext)
@@ -351,12 +352,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           </span>
         </Dropdown.Item>
         <Dropdown.Item onClick={() => {
-          downloadCurrentWorkspace()
+          downloadWorkspaces()
           setShowMain(false)
           setOpenSub(null)
         }}>
           <span className="pl-2" onClick={() => {
-            downloadCurrentWorkspace()
+            downloadWorkspaces()
             setShowMain(false)
             setOpenSub(null)
           }}>
@@ -376,6 +377,20 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           }}>
             <i className="fas fa-upload mr-2"></i>
                 Restore
+          </span>
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => {
+          connectToLocalhost()
+          setShowMain(false)
+          setOpenSub(null)
+        }}>
+          <span className="pl-2" onClick={() => {
+            connectToLocalhost()
+            setShowMain(false)
+            setOpenSub(null)
+          }}>
+            <i className="fas fa-desktop mr-2"></i>
+                Connect to Localhost
           </span>
         </Dropdown.Item>
         <li className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
