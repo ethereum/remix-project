@@ -140,7 +140,6 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   }
 
   const filteredPlugins = getFilteredPlugins();
-
   const activeCount = filteredPlugins.filter(p => pluginComponent.activePlugins.some(ap => ap.name === p.name)).length;
   const inactiveCount = filteredPlugins.filter(p => pluginComponent.inactivePlugins.some(ip => ip.name === p.name)).length;
   const allCount = filteredPlugins.length;
@@ -178,19 +177,19 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
     >
       <section data-id="pluginManagerComponentPluginManagerSection" className="px-3">
         <nav ref={tabsRef} className="plugin-manager-tabs mt-2 d-flex flex-row">
-          <a className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>
+          <a data-id="pluginManagerAllTab" className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>
             <div className={activeTab === 'all' ? 'card-title' : ''}>
-              All plugins <span className="badge">{allCount}</span>
+              All plugins <span className="badge" data-id="pluginManagerAllCount">{allCount}</span>
             </div>
           </a>
-          <a className={`nav-link ${activeTab === 'active' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('active'); }}>
+          <a data-id="pluginManagerActiveTab" className={`nav-link ${activeTab === 'active' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('active'); }}>
             <div className={activeTab === 'active' ? 'card-title' : ''}>
-              Active <span className="badge">{activeCount}</span>
+              Active <span className="badge" data-id="pluginManagerActiveCount">{activeCount}</span>
             </div>
           </a>
-          <a className={`nav-link ${activeTab === 'inactive' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('inactive'); }}>
+          <a data-id="pluginManagerInactiveTab" className={`nav-link ${activeTab === 'inactive' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('inactive'); }}>
             <div className={activeTab === 'inactive' ? 'card-title' : ''}>
-              Inactive <span className="badge">{inactiveCount}</span>
+              Inactive <span className="badge" data-id="pluginManagerInactiveCount">{inactiveCount}</span>
             </div>
           </a>
         </nav>

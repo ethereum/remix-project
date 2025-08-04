@@ -100,11 +100,13 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
             >
               Only maintained by Remix
             </label>
-            <ToggleSwitch
-              id="filter-by-remix-switch"
-              isOn={filterByRemix}
-              onClick={() => setFilterByRemix(!filterByRemix)}
-            />
+            <div data-id="filter-by-remix-switch">
+              <ToggleSwitch
+                id="filter-by-remix-switch"
+                isOn={filterByRemix}
+                onClick={() => setFilterByRemix(!filterByRemix)}
+              />
+            </div>
           </div>
         </header>
         {children}
