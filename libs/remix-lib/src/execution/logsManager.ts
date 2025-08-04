@@ -32,8 +32,8 @@ export class LogsManager {
               blockHash: bytesToHex(block.hash()),
               transactionHash: bytesToHex(tx.hash()),
               transactionIndex: '0x' + i.toString(16),
-              // TODO: if it's a contract deploy, it should be that address instead
-              address: log.address,
+              // Use contract address if it's a contract deployment
+              address: receipt.contractAddress || log.address,
               data: log.data,
               topics: log.topics
             }
@@ -170,8 +170,8 @@ export class LogsManager {
           blockHash: bytesToHex(log.block.hash()),
           transactionHash: bytesToHex(log.tx.hash()),
           transactionIndex: '0x' + log.txNumber.toString(16),
-          // TODO: if it's a contract deploy, it should be that address instead
-          address: log.log.address,
+          // Use contract address if it's a contract deployment
+          address: log.receipt && log.receipt.contractAddress ? log.receipt.contractAddress : log.log.address,
           data: log.log.data,
           topics: log.log.topics
         }
@@ -188,8 +188,8 @@ export class LogsManager {
           blockHash: bytesToHex(log.block.hash()),
           transactionHash: bytesToHex(log.tx.hash()),
           transactionIndex: '0x' + log.txNumber.toString(16),
-          // TODO: if it's a contract deploy, it should be that address instead
-          address: log.log.address,
+          // Use contract address if it's a contract deployment
+          address: log.receipt && log.receipt.contractAddress ? log.receipt.contractAddress : log.log.address,
           data: log.log.data,
           topics: log.log.topics
         })
