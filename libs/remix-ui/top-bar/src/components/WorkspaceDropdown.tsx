@@ -152,7 +152,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
       <Dropdown.Menu
         as={CustomTopbarMenu}
         innerXPadding="px-2"
-        className="custom-dropdown-items w-100"
+        className="custom-dropdown-items w-100 bg-light"
         data-id="topbar-custom-dropdown-items"
         style={{
           overflow: 'visible'
@@ -203,7 +203,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                 {item.isGitRepo && item.currentBranch && (
                   <i className="fas fa-code-branch pt-1"></i>
                 )}
-                <span className="pl-1">{item.name}</span>
+                <span className="ps-1">{item.name}</span>
               </Dropdown.Item>
 
               {/* submenu toggle */}
@@ -253,7 +253,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       as={'button'}
                       data-id="workspacesubMenuRename"
                     >
-                      <span className="mr-2">
+                      <span className="me-2">
                         <i className="far fa-edit" />
                       </span>
                       <span>Rename</span>
@@ -270,7 +270,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       as={'button'}
                       data-id="workspacesubMenuDuplicate"
                     >
-                      <span className="mr-2">
+                      <span className="me-2">
                         <i className="fas fa-copy" />
                       </span>
                       <span>Duplicate</span>
@@ -287,7 +287,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       as={'button'}
                       data-id="workspacesubMenuDownload"
                     >
-                      <span className="mr-2">
+                      <span className="me-2">
                         <i className="fas fa-download" />
                       </span>
                       <span>Download</span>
@@ -307,7 +307,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       as={'button'}
                       data-id="workspacesubMenuDelete"
                     >
-                      <span className="mr-2">
+                      <span className="me-2">
                         <i className="fas fa-trash" />
                       </span>
                       <span>Delete</span>
@@ -327,12 +327,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           }}
           data-id="workspacecreate"
         >
-          <span className="pl-2 " onClick={() => {
+          <span className="ps-2 " onClick={() => {
             createWorkspace()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-plus mr-2"></i>
+            <i className="fas fa-plus me-2"></i>
                 Create a new workspace
           </span>
         </li>
@@ -342,12 +342,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           setShowMain(false)
           setOpenSub(null)
         }}>
-          <span className="pl-2" style={{ color: '#D678FF' }} onClick={() => {
+          <span className="ps-2" style={{ color: '#D678FF' }} onClick={() => {
             window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="far fa-desktop mr-2"></i>
+            <i className="far fa-desktop me-2"></i>
                 Download Remix Desktop
           </span>
         </Dropdown.Item>
@@ -356,12 +356,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           setShowMain(false)
           setOpenSub(null)
         }}>
-          <span className="pl-2" onClick={() => {
+          <span className="ps-2" onClick={() => {
             downloadWorkspaces()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="far fa-download mr-2"></i>
+            <i className="far fa-download me-2"></i>
                 Backup
           </span>
         </Dropdown.Item>
@@ -370,12 +370,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           setShowMain(false)
           setOpenSub(null)
         }}>
-          <span className="pl-2" onClick={() => {
+          <span className="ps-2" onClick={() => {
             restoreBackup()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-upload mr-2"></i>
+            <i className="fas fa-upload me-2"></i>
                 Restore
           </span>
         </Dropdown.Item>
@@ -384,12 +384,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           setShowMain(false)
           setOpenSub(null)
         }}>
-          <span className="pl-2" onClick={() => {
+          <span className="ps-2" onClick={() => {
             connectToLocalhost()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-desktop mr-2"></i>
+            <i className="fas fa-desktop me-2"></i>
                 Connect to Localhost
           </span>
         </Dropdown.Item>
@@ -398,12 +398,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           setShowMain(false)
           setOpenSub(null)
         }}>
-          <span className="pl-2 text-white" onClick={() => {
+          <span className="ps-2 text-white" onClick={() => {
             deleteAllWorkspaces()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-trash-can mr-2"></i>
+            <i className="fas fa-trash-can me-2"></i>
                 Delete all Workspaces
           </span>
         </li>
