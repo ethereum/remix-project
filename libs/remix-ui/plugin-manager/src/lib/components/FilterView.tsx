@@ -27,10 +27,10 @@ const FilterView = ({ categories, selectedCategories, setSelectedCategories }: F
   };
 
   return (
-    <div className="filter-panel my-2 bg-light border p-3">
+    <div data-id="filter-panel" className="filter-panel my-2 bg-light border p-3">
       <div className="filter-header mb-2">
         <span className="filter-title">Filters</span>
-        <button onClick={clearFilters} className="clear-filters-btn">
+        <button onClick={clearFilters} className="clear-filters-btn" data-id="clear-filters-btn">
           <span className="clear-filters-icon mr-1">&times;</span> Clear filters
         </button>
       </div>
@@ -50,12 +50,14 @@ const FilterView = ({ categories, selectedCategories, setSelectedCategories }: F
                     type="checkbox"
                     className="custom-control-input"
                     id={checkboxId}
+                    data-id={checkboxId}
                     checked={selectedCategories.includes(category)}
                     onChange={() => handleCheckboxChange(category)}
                   />
                   <label
                     className="custom-control-label"
                     htmlFor={checkboxId}
+                    data-id={`filter-label-${category.replace(/[^a-zA-Z0-9]/g, '')}`}
                   >
                     {category}
                   </label>
