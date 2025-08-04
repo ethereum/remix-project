@@ -79,7 +79,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
   const subItems = useMemo(() => {
     return [
       { label: 'Rename', onClick: renameCurrentWorkspace, icon: 'far fa-edit' },
-      { label: 'Duplicate', onClick: downloadCurrentWorkspace, icon: 'fas fa-copy' },
+      // { label: 'Duplicate', onClick: downloadCurrentWorkspace, icon: 'fas fa-copy' },
       { label: 'Download', onClick: downloadCurrentWorkspace, icon: 'fas fa-download' },
       { label: 'Delete', onClick: deleteCurrentWorkspace, icon: 'fas fa-trash' }
     ]
@@ -234,7 +234,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       zIndex: 2000,
                       left: '86dvh',
                       top: '10dvh',
-                      height: '130px',
+                      height: '100px',
                       width: '120px',
                       ...overlayProps.style
                     }}
@@ -258,7 +258,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       </span>
                       <span>Rename</span>
                     </Dropdown.Item>
-                    <Dropdown.Item
+                    {/* <Dropdown.Item
                       className="dropdown-item d-flex align-items-center text-decoration-none"
                       onClick={() => {
                         downloadCurrentWorkspace()
@@ -274,7 +274,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                         <i className="fas fa-copy" />
                       </span>
                       <span>Duplicate</span>
-                    </Dropdown.Item>
+                    </Dropdown.Item> */}
                     <Dropdown.Item
                       className="dropdown-item d-flex align-items-center text-decoration-none"
                       onClick={() => {
