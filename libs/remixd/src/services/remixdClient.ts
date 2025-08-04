@@ -266,21 +266,33 @@ export class RemixdClient extends PluginClient {
     })
     */
     this.watcher.on('change', async (f: string) => {
-      const path = pathModule.resolve(f)
-      const currentContent = this.trackDownStreamUpdate[path]
-      const newContent = fs.readFileSync(f, 'utf-8')
-      if (currentContent !== newContent && this.isLoaded) {
-        this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+      try {
+        const path = pathModule.resolve(f)
+        const currentContent = this.trackDownStreamUpdate[path]
+        const newContent = fs.readFileSync(f, 'utf-8')
+        if (currentContent !== newContent && this.isLoaded) {
+          this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+        }
+      } catch (error) {
+        console.error('Error in change event handler:', error)
       }
     })
     this.watcher.on('unlink', async (f: string) => {
-      if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
+      try {
+        if (this.isLoaded) {
+          this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
+        }
+      } catch (error) {
+        console.error('Error in unlink event handler:', error)
       }
     })
     this.watcher.on('unlinkDir', async (f: string) => {
-      if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
+      try {
+        if (this.isLoaded) {
+          this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
+        }
+      } catch (error) {
+        console.error('Error in unlinkDir event handler:', error)
       }
     })
   }
