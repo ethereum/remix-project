@@ -10,7 +10,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { TopbarContext } from '../context/topbarContext'
 import { WorkspacesDropdown } from '../components/WorkspaceDropdown'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
-import { cloneRepository, deleteWorkspace, fetchWorkspaceDirectory, getWorkspaces, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, publishToGist, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
+import { cloneRepository, deleteWorkspace, fetchWorkspaceDirectory, deleteAllWorkspaces as deleteAllWorkspacesAction, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, publishToGist, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
 import { gitUIPanels } from 'libs/remix-ui/git/src/types'
 import { loginWithGitHub, setPlugin } from 'libs/remix-ui/git/src/lib/pluginActions'
 import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
@@ -131,21 +131,6 @@ export function RemixUiTopbar () {
     setMenuItems(menuItems)
   }
 
-  const onFinishDeleteAllWorkspaces = async () => {
-    try {
-      await deleteAllWorkspaces()
-    } catch (e) {
-      global.modal(
-        intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
-        e.message,
-        intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
-        intl.formatMessage({ id: 'filePanel.cancel' })
-      )
-      console.error(e)
-    }
-  }
-
   const onFinishRenameWorkspace = async (currMenuName?: string) => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
@@ -215,6 +200,20 @@ export function RemixUiTopbar () {
     try {
       await handleDownloadFiles()
     } catch (e) {
+      console.error(e)
+    }
+  }
+  const onFinishDeleteAllWorkspaces = async () => {
+    try {
+      await deleteAllWorkspacesAction()
+    } catch (e) {
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
+        e.message,
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        intl.formatMessage({ id: 'filePanel.cancel' })
+      )
       console.error(e)
     }
   }
@@ -488,6 +487,7 @@ export function RemixUiTopbar () {
             deleteAllWorkspaces={deleteAllWorkspaces}
             setCurrentMenuItemName={setCurrentMenuItemName}
             setMenuItems={setMenuItems}
+            connectToLocalhost={() => switchWorkspace(LOCALHOST)}
           />
         </div>
         <div
