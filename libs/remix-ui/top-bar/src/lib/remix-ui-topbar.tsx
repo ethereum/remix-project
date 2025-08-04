@@ -36,9 +36,12 @@ export function RemixUiTopbar () {
   const [latestReleaseNotesUrl, setLatestReleaseNotesUrl] = useState<string>('')
   const [currentReleaseVersion, setCurrentReleaseVersion] = useState<string>('')
   const [menuItems, setMenuItems] = useState<any[]>([])
+  const [showTheme, setShowTheme] = useState<boolean>(false)
   const subMenuIconRef = useRef<any>(null)
+  const themeIconRef = useRef<any>(null)
   const [showSubMenuFlyOut, setShowSubMenuFlyOut] = useState<boolean>(false)
-  useOnClickOutside([subMenuIconRef], () => setShowSubMenuFlyOut(false))
+  useOnClickOutside([subMenuIconRef, themeIconRef], () => setShowSubMenuFlyOut(false))
+  useOnClickOutside([themeIconRef], () => setShowTheme(false))
   const workspaceRenameInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
 
@@ -285,6 +288,15 @@ export function RemixUiTopbar () {
     const theme = await plugin.call('theme', 'currentTheme')
     return theme
   }
+
+  useEffect(() => {
+    const run = async () => {
+      const theme = await getCurrentTheme()
+      setCurrentTheme(theme)
+    }
+    run()
+  }, [])
+
   const renameModalMessage = (workspaceName?: string) => {
     return (
       <div className='d-flex flex-column'>
@@ -512,7 +524,7 @@ export function RemixUiTopbar () {
               />
             )}
           </>
-          <Dropdown className="ml-5" data-id="topbar-themeIcon">
+          <Dropdown className="ml-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
@@ -522,8 +534,13 @@ export function RemixUiTopbar () {
                 padding: '0.35rem 0.5rem',
                 fontSize: '0.8rem'
               }}
+              onClick={async () => {
+                const theme = await getCurrentTheme()
+                setCurrentTheme(theme)
+                setShowTheme(!showTheme)
+              }}
             >
-              <i className="fas fa-sun-bright mr-2"></i>
+              <i className={`fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright'} mr-2`}></i>
               Theme
             </Dropdown.Toggle>
             <Dropdown.Menu
@@ -559,7 +576,6 @@ export function RemixUiTopbar () {
             className=""
             onClick={async () => {
               plugin.call('menuicons', 'select', 'settings')
-              plugin.call('tabs', 'focus', 'settings')
               _paq.push(['trackEvent', 'topbar', 'header', 'Settings'])
             }}
             data-id="topbar-settingsIcon"
