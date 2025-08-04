@@ -28,7 +28,7 @@ export const CustomToggle = React.forwardRef(
       }}
       className={className.replace('dropdown-toggle', '')}
     >
-      <div className="d-flex">
+      <div className="d-flex align-items-center">
         <div className="me-auto text-nowrap text-truncate overflow-hidden" data-id={`dropdown-content`}>{children}</div>
         {icon && (
           <div className="pe-1">
@@ -89,7 +89,7 @@ export const CustomMenu = React.forwardRef(
       style,
       'data-id': dataId,
       className,
-      'aria-labelledby': labeledBy
+      'aria-labelledby': labeledBy,
     }: {
       'children': React.ReactNode
       'style'?: React.CSSProperties
@@ -102,7 +102,41 @@ export const CustomMenu = React.forwardRef(
     const height = window.innerHeight * 0.6
     return (
       <div ref={ref} style={style} className={className} aria-labelledby={labeledBy} data-id={dataId}>
-        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height + 'px' }}>
+        <ul className={`overflow-auto list-unstyled mb-0`} style={{ maxHeight: height + 'px' }}>
+          {children}
+        </ul>
+      </div>
+    )
+  }
+)
+
+export const CustomTopbarMenu = React.forwardRef(
+  (
+    {
+      children,
+      style,
+      'data-id': dataId,
+      className,
+      'aria-labelledby': labeledBy,
+      innerItemWidth = '',
+      innerXPadding = '',
+      width = 'w-100'
+    }: {
+      'children': React.ReactNode
+      'style'?: React.CSSProperties
+      'data-id'?: string
+      'className': string
+      'aria-labelledby'?: string
+      innerItemWidth?: string,
+      innerXPadding?: string
+      width?: string
+    },
+    ref: Ref<HTMLDivElement>
+  ) => {
+    const height = window.innerHeight * 0.6
+    return (
+      <div ref={ref} style={style} className={className} aria-labelledby={labeledBy} data-id={dataId}>
+        <ul className={`overflow-auto ${ width } list-unstyled text-truncate mb-0 ${innerItemWidth} ${innerXPadding}`} style={{ maxHeight: height + 'px' }}>
           {children}
         </ul>
       </div>
