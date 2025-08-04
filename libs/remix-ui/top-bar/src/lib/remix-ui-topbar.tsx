@@ -290,11 +290,12 @@ export function RemixUiTopbar () {
   }
 
   useEffect(() => {
-    const run = async () => {
-      const theme = await getCurrentTheme()
+    plugin.on('theme', 'themeChanged', (theme) => {
       setCurrentTheme(theme)
+    })
+    return () => {
+      plugin.off('theme', 'themeChanged')
     }
-    run()
   }, [])
 
   const renameModalMessage = (workspaceName?: string) => {
@@ -540,7 +541,14 @@ export function RemixUiTopbar () {
                 setShowTheme(!showTheme)
               }}
             >
-              <i className={`fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright'} mr-2`}></i>
+              <i
+                className={
+                  `fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright text-white'} mr-2`
+                }
+                onClick={() => {
+                  setShowTheme(!showTheme)
+                }}
+              ></i>
               Theme
             </Dropdown.Toggle>
             <Dropdown.Menu
