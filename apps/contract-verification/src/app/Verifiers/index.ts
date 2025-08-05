@@ -3,11 +3,13 @@ import { AbstractVerifier } from './AbstractVerifier'
 import { BlockscoutVerifier } from './BlockscoutVerifier'
 import { EtherscanVerifier } from './EtherscanVerifier'
 import { SourcifyVerifier } from './SourcifyVerifier'
+import { SourcifyV1Verifier } from './SourcifyV1Verifier'
 import { RoutescanVerifier } from './RoutescanVerifier'
 
 export { AbstractVerifier } from './AbstractVerifier'
 export { BlockscoutVerifier } from './BlockscoutVerifier'
 export { SourcifyVerifier } from './SourcifyVerifier'
+export { SourcifyV1Verifier } from './SourcifyV1Verifier'
 export { EtherscanVerifier } from './EtherscanVerifier'
 export { RoutescanVerifier } from './RoutescanVerifier'
 
@@ -16,6 +18,9 @@ export function getVerifier(identifier: VerifierIdentifier, settings: VerifierSe
   case 'Sourcify':
     if (!settings?.explorerUrl) {
       throw new Error('The Sourcify verifier requires an explorer URL.')
+    }
+    if (settings?.useV1API) {
+      return new SourcifyV1Verifier(settings.apiUrl, settings.explorerUrl)
     }
     return new SourcifyVerifier(settings.apiUrl, settings.explorerUrl)
   case 'Etherscan':

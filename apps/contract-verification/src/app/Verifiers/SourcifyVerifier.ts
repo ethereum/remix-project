@@ -1,166 +1,211 @@
-import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
 import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
 import { getAddress } from 'ethers'
 
 interface SourcifyVerificationRequest {
-  address: string
-  chain: string
-  files: Record<string, string>
-  creatorTxHash?: string
-  chosenContract?: string
+  stdJsonInput: any
+  compilerVersion: string
+  contractIdentifier: string
+  creationTransactionHash?: string
 }
 
-type SourcifyVerificationStatus = 'perfect' | 'full' | 'partial' | null
+type SourcifyVerificationStatus = 'exact_match' | 'match' | null
 
 interface SourcifyVerificationResponse {
-  result: [
-    {
-      address: string
-      chainId: string
-      status: SourcifyVerificationStatus
-      libraryMap: {
-        [key: string]: string
-      }
-      message?: string
-    }
-  ]
+  verificationId: string
+}
+
+interface SourcifyCheckStatusResponse {
+  isJobCompleted: boolean
+  verificationId: string
+  jobStartTime: string
+  jobFinishTime: string
+  contract: {
+    match: SourcifyVerificationStatus
+    creationMatch: SourcifyVerificationStatus
+    runtimeMatch: SourcifyVerificationStatus
+    chainId: string
+    address: string
+  }
+  error?: SourcifyErrorResponse
 }
 
 interface SourcifyErrorResponse {
-  error: string
+  customCode: string
+  errorId: string
+  message: string
 }
 
-interface SourcifyFile {
-  name: string
-  path: string
-  content: string
-}
+type Sources = Record<string, { content: string }>
 
 interface SourcifyLookupResponse {
-  status: Exclude<SourcifyVerificationStatus, null>
-  files: SourcifyFile[]
+  match: SourcifyVerificationStatus
+  creationMatch: SourcifyVerificationStatus
+  runtimeMatch: SourcifyVerificationStatus
+  chainId: string
+  address: string
+  verifiedAt: string
+  matchId: string
+  sources: Sources
+  compilation: {
+    fullyQualifiedName: string
+  }
 }
 
 export class SourcifyVerifier extends AbstractVerifier {
   LOOKUP_STORE_DIR = 'sourcify-verified'
 
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
-    const metadataStr = compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata
-    const sources = compilerAbstract.source.sources
+    const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
+    const compilerVersion = `v${metadata.compiler.version}`
+    const contractIdentifier = `${submittedContract.filePath}:${submittedContract.contractName}`
+    // The CompilerAbstract.input property seems to be wrongly typed
+    const stdJsonInput = JSON.parse(compilerAbstract.input as unknown as string)
 
-    // from { "filename.sol": {content: "contract MyContract { ... }"} }
-    // to { "filename.sol": "contract MyContract { ... }" }
-    const formattedSources = Object.entries(sources).reduce((acc, [fileName, { content }]) => {
-      acc[fileName] = content
-      return acc
-    }, {})
     const body: SourcifyVerificationRequest = {
-      chain: submittedContract.chainId,
-      address: submittedContract.address,
-      files: {
-        'metadata.json': metadataStr,
-        ...formattedSources,
-      },
+      stdJsonInput,
+      compilerVersion,
+      contractIdentifier,
     }
 
-    const response = await fetch(new URL(this.apiUrl + '/verify').href, {
+    const response = await fetch(`${this.apiUrl}/v2/verify/${submittedContract.chainId}/${submittedContract.address}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     })
 
     if (!response.ok) {
+      if (response.status === 409) {
+        return { status: 'already verified', receiptId: null, lookupUrl: this.getContractCodeUrl(submittedContract.address, submittedContract.chainId) }
+      }
+
       const errorResponse: SourcifyErrorResponse = await response.json()
       console.error('Error on Sourcify verification at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
-      throw new Error(errorResponse.error)
+      throw new Error(errorResponse.message || 'Verification failed')
     }
 
     const verificationResponse: SourcifyVerificationResponse = await response.json()
 
-    if (verificationResponse.result[0].status === null) {
-      console.error('Error on Sourcify verification at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + verificationResponse.result[0].message)
-      throw new Error(verificationResponse.result[0].message)
+    return {
+      status: 'pending',
+      receiptId: verificationResponse.verificationId,
+      lookupUrl: this.getContractCodeUrl(submittedContract.address, submittedContract.chainId),
+    }
+  }
+
+  async checkVerificationStatus(receiptId: string, chainId: string): Promise<VerificationResponse> {
+    const response = await fetch(`${this.apiUrl}/v2/verify/${receiptId}`, {
+      method: 'GET',
+    })
+
+    if (!response.ok) {
+      let errorResponse: SourcifyErrorResponse
+      try {
+        errorResponse = await response.json()
+      } catch {
+        //pass
+      }
+      if (errorResponse) {
+        console.error('Error checking Sourcify verification status at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
+        throw new Error(errorResponse.message || 'Status check failed')
+      } else {
+        const responseText = await response.text()
+        console.error('Error checking Sourcify verification status at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + responseText)
+        throw new Error(responseText)
+      }
     }
 
-    // Map to a user-facing status message
-    let status: VerificationStatus = 'unknown'
-    let lookupUrl: string | undefined = undefined
-    if (verificationResponse.result[0].status === 'perfect' || verificationResponse.result[0].status === 'full') {
-      status = 'fully verified'
-      lookupUrl = this.getContractCodeUrl(submittedContract.address, submittedContract.chainId, true)
-    } else if (verificationResponse.result[0].status === 'partial') {
-      status = 'partially verified'
-      lookupUrl = this.getContractCodeUrl(submittedContract.address, submittedContract.chainId, false)
+    const checkStatusResponse: SourcifyCheckStatusResponse = await response.json()
+
+    if (!checkStatusResponse.isJobCompleted) {
+      return { status: 'pending', receiptId }
     }
 
-    return { status, receiptId: null, lookupUrl }
+    if (checkStatusResponse.error) {
+      const message = checkStatusResponse.error.message || 'Unknown error'
+      return { status: 'failed', receiptId, message }
+    }
+
+    let status: VerificationStatus
+    switch (checkStatusResponse.contract.match) {
+    case 'exact_match':
+      status = 'exactly verified'
+      break
+    case 'match':
+      status = 'verified'
+      break
+    default:
+      status = 'not verified'
+      break
+    }
+    return {
+      status,
+      receiptId,
+    }
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
-    const url = new URL(this.apiUrl + `/files/any/${chainId}/${contractAddress}`)
+    const url = new URL(this.apiUrl + `/v2/contract/${chainId}/${contractAddress}`)
+    url.searchParams.set('fields', 'sources,compilation.fullyQualifiedName')
 
     const response = await fetch(url.href, { method: 'GET' })
 
     if (!response.ok) {
-      const errorResponse: SourcifyErrorResponse = await response.json()
-
-      if (errorResponse.error === 'Files have not been found!') {
+      if (response.status === 404) {
         return { status: 'not verified' }
       }
 
+      const errorResponse: SourcifyErrorResponse = await response.json()
       console.error('Error on Sourcify lookup at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
-      throw new Error(errorResponse.error)
+      throw new Error(errorResponse.message || 'Lookup failed')
     }
 
     const lookupResponse: SourcifyLookupResponse = await response.json()
 
     let status: VerificationStatus = 'unknown'
     let lookupUrl: string | undefined = undefined
-    if (lookupResponse.status === 'perfect' || lookupResponse.status === 'full') {
-      status = 'fully verified'
-      lookupUrl = this.getContractCodeUrl(contractAddress, chainId, true)
-    } else if (lookupResponse.status === 'partial') {
-      status = 'partially verified'
-      lookupUrl = this.getContractCodeUrl(contractAddress, chainId, false)
+    if (lookupResponse.match === 'exact_match') {
+      status = 'exactly verified'
+      lookupUrl = this.getContractCodeUrl(contractAddress, chainId)
+    } else if (lookupResponse.match === 'match') {
+      status = 'verified'
+      lookupUrl = this.getContractCodeUrl(contractAddress, chainId)
     }
 
-    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.files, contractAddress, chainId)
+    let sourceFiles: SourceFile[] = []
+    let targetFilePath: string | undefined = undefined
+
+    if (lookupResponse.sources && Object.keys(lookupResponse.sources).length > 0) {
+      const processed = this.processReceivedFiles(lookupResponse.sources, lookupResponse.compilation.fullyQualifiedName, contractAddress, chainId)
+      sourceFiles = processed.sourceFiles
+      targetFilePath = processed.targetFilePath
+    }
 
     return { status, lookupUrl, sourceFiles, targetFilePath }
   }
 
-  getContractCodeUrl(address: string, chainId: string, fullMatch: boolean): string {
-    const url = new URL(this.explorerUrl + `/contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}/`)
+  getContractCodeUrl(address: string, chainId: string): string {
+    const url = new URL(this.explorerUrl + `/${chainId}/${address}/`)
     return url.href
   }
 
-  processReceivedFiles(files: SourcifyFile[], contractAddress: string, chainId: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+  processReceivedFiles(sources: Sources, fullyQualifiedName: string, contractAddress: string, chainId: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
     const result: SourceFile[] = []
     let targetFilePath: string
     const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
-    for (const file of files) {
-      let filePath: string
-      for (const a of [contractAddress, getAddress(contractAddress)]) {
-        const matching = file.path.match(`/${a}/(.*)$`)
-        if (matching) {
-          filePath = matching[1]
-          break
-        }
-      }
+    // Extract contract path from fully qualified name (path can include colons)
+    const splitIdentifier = fullyQualifiedName.split(':')
+    const contractPath = splitIdentifier.slice(0, -1).join(':')
 
-      if (filePath) {
-        result.push({ path: `${filePrefix}/${filePath}`, content: file.content })
-      }
-
-      if (file.name === 'metadata.json') {
-        const metadata = JSON.parse(file.content)
-        const compilationTarget = metadata.settings.compilationTarget
-        const contractPath = Object.keys(compilationTarget)[0]
-        targetFilePath = `${filePrefix}/sources/${contractPath}`
+    for (const [filePath, fileData] of Object.entries(sources)) {
+      const path = `${filePrefix}/sources/${filePath}`
+      result.push({ path, content: fileData.content })
+      if (filePath === contractPath) {
+        targetFilePath = path
       }
     }
 

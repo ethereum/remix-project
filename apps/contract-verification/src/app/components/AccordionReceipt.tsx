@@ -105,7 +105,7 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             <span className="me-2">
               {['verified', 'partially verified', 'already verified'].includes(receipt.status) ?
                 <i className="fas fa-check text-success px-1"></i> :
-                receipt.status === 'fully verified' ?
+                receipt.status === 'exactly verified' ?
                   <i className="fas fa-check-double text-success px-1"></i> :
                   receipt.status === 'failed' ?
                     <i className="fas fa-xmark text-warning px-1"></i> :
