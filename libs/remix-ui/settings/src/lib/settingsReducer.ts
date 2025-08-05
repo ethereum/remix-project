@@ -1,198 +1,104 @@
-import { textSecondary } from './constants'
+import { Registry } from '@remix-project/remix-lib'
+import { SettingsState } from '../types'
 
-export const initialState = {
-  elementState: [
-    {
-      name: 'contractMetadata',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'ethereumVM',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'textWrap',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'personal',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'useMatomoPerfAnalytics',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'useAutoCompletion',
-      isChecked: true,
-      textClass: textSecondary
-    },
-    {
-      name: 'useShowGasInEditor',
-      isChecked: true,
-      textClass: textSecondary
-    },
-    {
-      name: 'displayErrors',
-      isChecked: true,
-      textClass: textSecondary
-    },
-    {
-      name: 'copilot/suggest/activate',
-      isChecked: false,
-      textClass: textSecondary
-    },
-    {
-      name: 'copilot/suggest/max_new_tokens',
-      value: 5,
-      textClass: textSecondary
-    },
-    {
-      name: 'copilot/suggest/temperature',
-      value: 0.5,
-      textClass: textSecondary
-    },
-    {
-      name: 'save-evm-state',
-      isChecked: false,
-      textClass: textSecondary
-    },
-  ]
+const config = Registry.getInstance().get('config').api
+const settingsConfig = Registry.getInstance().get('settingsConfig').api
+const defaultTheme = config.get('settings/theme') ? settingsConfig.themes.find((theme) => theme.name.toLowerCase() === config.get('settings/theme').toLowerCase()) : settingsConfig.themes[0]
+const defaultLocale = config.get('settings/locale') ? settingsConfig.locales.find((locale) => locale.code === config.get('settings/locale')) : settingsConfig.locales.find((locale) => locale.code === 'en')
+
+export const initialState: SettingsState = {
+  'generate-contract-metadata': {
+    value: config.get('settings/generate-contract-metadata') || false,
+    isLoading: false
+  },
+  'text-wrap': {
+    value: config.get('settings/text-wrap') || false,
+    isLoading: false
+  },
+  'personal-mode': {
+    value: config.get('settings/personal-mode') || false,
+    isLoading: false
+  },
+  'matomo-perf-analytics': {
+    value: config.get('settings/matomo-perf-analytics') || false,
+    isLoading: false
+  },
+  'matomo-analytics': {
+    value: config.get('settings/matomo-analytics') || false,
+    isLoading: false
+  },
+  'auto-completion': {
+    value: config.get('settings/auto-completion') || false,
+    isLoading: false
+  },
+  'show-gas': {
+    value: config.get('settings/show-gas') || false,
+    isLoading: false
+  },
+  'display-errors': {
+    value: config.get('settings/display-errors') || false,
+    isLoading: false
+  },
+  'copilot/suggest/activate': {
+    value: config.get('settings/copilot/suggest/activate') || false,
+    isLoading: false
+  },
+  'copilot/suggest/max_new_tokens': {
+    value: config.get('settings/copilot/suggest/max_new_tokens') || 5,
+    isLoading: false
+  },
+  'copilot/suggest/temperature': {
+    value: config.get('settings/copilot/suggest/temperature') || 0.5,
+    isLoading: false
+  },
+  'save-evm-state': {
+    value: config.get('settings/save-evm-state') || false,
+    isLoading: false
+  },
+  'theme': {
+    value: defaultTheme.name,
+    isLoading: false
+  },
+  'locale': {
+    value: defaultLocale.localeName,
+    isLoading: false
+  }
 }
 
-export const settingReducer = (state, action) => {
+export const settingReducer = (state: SettingsState, action: { type: string, payload: { name: string, value?: boolean } }) => {
   switch (action.type) {
-  case 'contractMetadata':
-    state.elementState.map(element => {
-      if (element.name === 'contractMetadata') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'ethereumVM':
-    state.elementState.map(element => {
-      if (element.name === 'ethereumVM') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'textWrap':
-    state.elementState.map(element => {
-      if (element.name === 'textWrap') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'personal':
-    state.elementState.map(element => {
-      if (element.name === 'personal') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'useMatomoPerfAnalytics':
-    state.elementState.map(element => {
-      if (element.name === 'useMatomoPerfAnalytics') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
+  case 'SET_VALUE':
+    if (action.payload.name === 'theme') {
+      const theme = settingsConfig.themes.find((theme) => theme.name === action.payload.value)
 
-  case 'useAutoCompletion':
-    state.elementState.map(element => {
-      if (element.name === 'useAutoCompletion') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'displayErrors':
-    state.elementState.map(element => {
-      if (element.name === 'displayErrors') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'useShowGasInEditor':
-    state.elementState.map(element => {
-      if (element.name === 'useShowGasInEditor') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'copilot/suggest/activate':
-    state.elementState.map(element => {
-      if (element.name === 'copilot/suggest/activate') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'copilot/suggest/max_new_tokens':
-    state.elementState.map(element => {
-      if (element.name === 'copilot/suggest/max_new_tokens') {
-        element.value = action.payload.value
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
-  case 'copilot/suggest/temperature':
-    state.elementState.map(element => {
-      if (element.name === 'useShowGasInEditor') {
-        element.value = action.payload.value
-        element.textClass = action.payload.textClass
-      }
-    })
-    return {
-      ...state
-    }
+      if (theme) {
+        const themeModule = Registry.getInstance().get('themeModule').api
 
-  case 'save-evm-state':
-    state.elementState.map(element => {
-      if (element.name === 'save-evm-state') {
-        element.isChecked = action.payload.isChecked
-        element.textClass = action.payload.textClass
+        themeModule.switchTheme(theme.name)
+        return { ...state, [action.payload.name]: { ...state[action.payload.name], value: theme.name, isLoading: false } }
+      } else {
+        console.error('Theme not found: ', action.payload.value)
+        return state
       }
-    })
-    return {
-      ...state
+    } else if (action.payload.name === 'locale') {
+      const locale = settingsConfig.locales.find((locale) => locale.code === action.payload.value)
+      if (locale) {
+        const localeModule = Registry.getInstance().get('localeModule').api
+
+        localeModule.switchLocale(locale.code)
+        return { ...state, [action.payload.name]: { ...state[action.payload.name], value: locale.localeName, isLoading: false } }
+      } else {
+        console.error('Locale not found: ', action.payload.value)
+        return state
+      }
     }
+    config.set('settings/' + action.payload.name, action.payload.value)
+    return { ...state, [action.payload.name]: { ...state[action.payload.name], value: action.payload.value, isLoading: false } }
+  case 'SET_LOADING':
+    return { ...state, [action.payload.name]: { ...state[action.payload.name], isLoading: true } }
   default:
-    return initialState
+    return state
   }
-
 }
 
 export const toastInitialState = {

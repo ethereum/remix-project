@@ -8,41 +8,34 @@ declare global {
 
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
-export const generateContractMetadat = (config, checked, dispatch) => {
-  config.set('settings/generate-contract-metadata', checked)
-  dispatch({ type: 'contractMetadata', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const generateContractMetadat = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'generate-contract-metadata', value: checked } })
 }
 
-export const textWrapEventAction = (config, editor, checked, dispatch) => {
-  config.set('settings/text-wrap', checked)
+export const textWrapEventAction = ( editor, checked, dispatch) => {
   editor.resize(checked)
-  dispatch({ type: 'textWrap', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+  dispatch({ type: 'SET_VALUE', payload: { name: 'text-wrap', value: checked } })
 }
 
-export const personal = (config, checked, dispatch) => {
-  config.set('settings/personal-mode', checked)
-  dispatch({ type: 'personal', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const personal = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'personal-mode', value: checked } })
 }
 
-export const copilotActivate = (config, checked, dispatch) => {
-  config.set('settings/copilot/suggest/activate', checked)
-  dispatch({ type: 'copilot/suggest/activate', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const copilotActivate = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/activate', value: checked } })
 }
 
-export const copilotMaxNewToken = (config, checked, dispatch) => {
-  config.set('settings/copilot/suggest/max_new_tokens', checked)
-  dispatch({ type: 'copilot/suggest/max_new_tokens', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const copilotMaxNewToken = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/max_new_tokens', value: checked } })
 }
 
-export const copilotTemperature = (config, checked, dispatch) => {
-  config.set('settings/copilot/suggest/temperature', checked)
-  dispatch({ type: 'copilot/suggest/temperature', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const copilotTemperature = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/temperature', value: checked } })
 }
 
-export const useMatomoPerfAnalytics = (config, checked, dispatch) => {
-  config.set('settings/matomo-perf-analytics', checked)
+export const useMatomoPerfAnalytics = (checked, dispatch) => {
   localStorage.setItem('matomo-analytics-consent', Date.now().toString())
-  dispatch({ type: 'useMatomoPerfAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+  dispatch({ type: 'SET_VALUE', payload: { name: 'matomo-perf-analytics', value: checked } })
   if (checked) {
     // user has given consent to process their performance data
     _paq.push(['setCookieConsentGiven'])
@@ -53,19 +46,16 @@ export const useMatomoPerfAnalytics = (config, checked, dispatch) => {
   }
 }
 
-export const useAutoCompletion = (config, checked, dispatch) => {
-  config.set('settings/auto-completion', checked)
-  dispatch({ type: 'useAutoCompletion', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const useAutoCompletion = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'auto-completion', value: checked } })
 }
 
-export const useShowGasInEditor = (config, checked, dispatch) => {
-  config.set('settings/show-gas', checked)
-  dispatch({ type: 'useShowGasInEditor', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const useShowGasInEditor = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'show-gas', value: checked } })
 }
 
-export const useDisplayErrors = (config, checked, dispatch) => {
-  config.set('settings/display-errors', checked)
-  dispatch({ type: 'displayErrors', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const useDisplayErrors = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'display-errors', value: checked } })
 }
 
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
@@ -93,7 +83,6 @@ export const saveIpfsSettingsToast = (config, dispatch, ipfsURL, ipfsProtocol, i
   dispatch({ type: 'save', payload: { message: 'IPFS settings have been saved' } })
 }
 
-export const saveEnvState = (config, checked, dispatch) => {
-  config.set('settings/save-evm-state', checked)
-  dispatch({ type: 'save-evm-state', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+export const saveEnvState = (checked, dispatch) => {
+  dispatch({ type: 'SET_VALUE', payload: { name: 'save-evm-state', value: checked } })
 }

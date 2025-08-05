@@ -1,12 +1,8 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
 import { CustomTooltip } from '@remix-ui/helper'
-const _paq = (window._paq = window._paq || [])
-
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { labels, textDark, textSecondary } from './constants'
-
-import './remix-ui-settings.css'
 import {
   generateContractMetadat,
   personal,
@@ -29,6 +25,7 @@ import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { Registry } from '@remix-project/remix-lib'
 import { GithubSettings } from './github-settings'
 import { EtherscanSettings } from './etherscan-settings'
 import { SindriSettings } from './sindri-settings'
@@ -36,6 +33,7 @@ import { SettingsSectionUI } from './settings-section'
 import { SettingsSection } from '../types'
 import { IPFSSettings } from './ipfs-settings'
 import { SwarmSettings } from './swarm-settings'
+import './remix-ui-settings.css'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -49,6 +47,9 @@ export interface RemixUiSettingsProps {
   localeModule: LocaleModule
 }
 
+const _paq = (window._paq = window._paq || [])
+const settingsConfig = Registry.getInstance().get('settingsConfig').api
+
 const settingsSections: SettingsSection[] = [
   {
     key: 'general',
@@ -58,23 +59,29 @@ const settingsSections: SettingsSection[] = [
       {
         title: 'Code editor',
         options: [{
+          name: 'generate-contract-metadata',
           label: 'Generate contract metadata',
           description: 'Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.',
           type: 'toggle'
         }, {
+          name: 'auto-completion',
           label: 'Enable code completion in editor',
           type: 'toggle'
         }, {
+          name: 'show-gas',
           label: 'Display gas estimates in editor',
           type: 'toggle'
         }, {
+          name: 'display-errors',
           label: 'Display errors in editor while typing',
           type: 'toggle'
         }, {
+          name: 'personal-mode',
           label: 'Enable Personal Mode for web3 provider',
           labelIcon: 'fa fa-exclamation-triangle text-warning',
           type: 'toggle'
         }, {
+          name: 'save-evm-state',
           label: 'Save environment state',
           type: 'toggle'
         }]
@@ -82,28 +89,28 @@ const settingsSections: SettingsSection[] = [
       {
         title: 'Appearance',
         options: [{
+          name: 'locale',
           label: 'Language',
           type: 'select',
-          selectOptions: [{
-            label: 'English',
-            value: 'English'
-          }]
+          selectOptions: settingsConfig.locales.map((locale) => ({
+            label: locale.name.toLocaleUpperCase() + '-' + locale.localeName,
+            value: locale.code
+          }))
         }, {
+          name: 'theme',
           label: 'Theme',
           type: 'select',
-          selectOptions: [{
-            label: 'Dark',
-            value: 'Dark'
-          }, {
-            label: 'Light',
-            value: 'Light'
-          }]
+          selectOptions: settingsConfig.themes.map((theme) => ({
+            label: theme.name + ' (' + theme.quality + ')',
+            value: theme.name
+          }))
         }]
       }
     ]
   },
   { key: 'analytics', label: 'Analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
     { options: [{
+      name: 'copilot/suggest/activate',
       label: 'AI Copilot',
       type: 'toggle',
       description: 'AI Copilot assists with code suggestions and improvements.',
@@ -113,6 +120,7 @@ const settingsSections: SettingsSection[] = [
         styleClass: 'text-primary'
       }
     }, {
+      name: 'matomo-analytics',
       label: 'Matomo Analytics (no cookies)',
       type: 'toggle',
       description: 'Help improve Remix with anonymous usage data.',
@@ -122,6 +130,7 @@ const settingsSections: SettingsSection[] = [
         styleClass: 'text-primary'
       }
     }, {
+      name: 'matomo-perf-analytics',
       label: 'Matomo Analytics (with cookies)',
       type: 'toggle',
       description: 'Enable tracking with cookies for more detailed insights.',
@@ -136,6 +145,7 @@ const settingsSections: SettingsSection[] = [
   { key: 'ai', label: 'Remix AI Assistant', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: [
     {
       options: [{
+        name: 'copilot/suggest/activate',
         label: 'AI Copilot',
         description: 'AI Copilot assists with code suggestions and improvements.',
         type: 'toggle',
@@ -145,6 +155,7 @@ const settingsSections: SettingsSection[] = [
           styleClass: 'text-primary'
         }
       },{
+        name: 'ai-analyze-context',
         label: 'Allow AI to Analyze Code Context',
         description: 'Enables deeper insights by analyzing your code structure.',
         type: 'toggle',
@@ -153,6 +164,7 @@ const settingsSections: SettingsSection[] = [
           styleClass: 'text-warning'
         }
       },{
+        name: 'ai-external-api',
         label: 'Use External API for AI Responses',
         description: 'Sends anonymized prompts to OpenAI\'s API to enhance responses.',
         type: 'toggle',
@@ -161,6 +173,7 @@ const settingsSections: SettingsSection[] = [
           styleClass: 'text-warning'
         }
       },{
+        name: 'ai-privacy-policy',
         label: 'View Privacy Policy',
         description: 'Understand how AI processes your data.',
         type: 'button'
@@ -170,6 +183,7 @@ const settingsSections: SettingsSection[] = [
   { key: 'services', label: 'Connected Services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
     {
       options: [{
+        name: 'github-credentials',
         label: 'Github Credentials',
         type: 'toggle',
         toggleOptions: <GithubSettings
@@ -193,14 +207,17 @@ const settingsSections: SettingsSection[] = [
           }}
         />
       }, {
+        name: 'ipfs-settings',
         label: 'IPFS Settings',
         type: 'toggle',
         toggleOptions: <IPFSSettings />
       }, {
+        name: 'swarm-settings',
         label: 'Swarm Settings',
         type: 'toggle',
         toggleOptions: <SwarmSettings />
       }, {
+        name: 'sindri-credentials',
         label: 'Sindri Credentials',
         type: 'toggle',
         toggleOptions: <SindriSettings
@@ -209,6 +226,26 @@ const settingsSections: SettingsSection[] = [
           }}
           removeToken={() => {
             // removeTokenToast(props.config, dispatchToast, 'sindri-access-token')
+          }}
+          config={{
+            exists: () => true,
+            get: () => '',
+            set: () => {},
+            clear: () => {},
+            getUnpersistedProperty: () => {},
+            setUnpersistedProperty: () => {}
+          }}
+        />
+      }, {
+        name: 'etherscan-access-token',
+        label: 'Etherscan Access Token',
+        type: 'toggle',
+        toggleOptions: <EtherscanSettings
+          saveToken={(etherscanToken: string) => {
+            // saveTokenToast(props.config, dispatchToast, etherscanToken, 'etherscan-access-token')
+          }}
+          removeToken={() => {
+            // removeTokenToast(props.config, dispatchToast, 'etherscan-access-token')
           }}
           config={{
             exists: () => true,
@@ -245,6 +282,7 @@ const initialToggles = {
 };
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
+  const [settingsState, dispatch] = useReducer(settingReducer, initialState)
   const [selected, setSelected] = useState('general');
   const [toggles, setToggles] = useState(initialToggles);
   const [inputs, setInputs] = useState({
@@ -272,7 +310,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
           <div className='d-flex flex-fill'>
             <span className="input-group-text"><i className="fa fa-search"></i></span>
-            <input type="text" className="form-control shadow-none" placeholder="Search settings" style={{ minWidth: '200px', height: '40px', maxWidth: '515px' }} />
+            <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} />
           </div>
         </div>
       </div>
@@ -284,10 +322,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         >
           <div className="pt-4">
             <ul className="mt-4 px-5 list-unstyled">
-              {settingsSections.map((section) => (
+              {settingsSections.map((section, index) => (
                 <li
-                  className={`nav-item border-bottom px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
-                  key={section.key}
+                  className={`nav-item ${index !== settingsSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
+                  key={index}
                 >
                   <a
                     className="nav-link p-0"
@@ -309,7 +347,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         >
           <div className="pt-4 px-5" style={{ maxWidth: '650px' }}>
             <div className="mt-4">
-              { settingsSections.map((section) => (selected === section.key && <SettingsSectionUI key={section.key} section={section} />))}
+              { settingsSections.map((section, index) => (selected === section.key && <SettingsSectionUI key={index} section={section} state={settingsState} dispatch={dispatch} />))}
             </div>
           </div>
         </div>
