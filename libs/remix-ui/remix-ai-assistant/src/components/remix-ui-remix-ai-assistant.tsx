@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, MutableRefObject } from 'react'
 import '../css/remix-ai-assistant.css'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, listModels, isOllamaAvailable } from '@remix/remix-ai-core'
 import { HandleOpenAIResponse, HandleMistralAIResponse, HandleAnthropicResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
 import '../css/color.css'
 import { Plugin } from '@remixproject/engine'
@@ -41,21 +41,26 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [isStreaming, setIsStreaming] = useState(false)
   const [showContextOptions, setShowContextOptions] = useState(false)
   const [showAssistantOptions, setShowAssistantOptions] = useState(false)
+  const [showModelOptions, setShowModelOptions] = useState(false)
   const [assistantChoice, setAssistantChoice] = useState<'openai' | 'mistralai' | 'anthropic' | 'ollama'>(
     'mistralai'
   )
   const [contextChoice, setContextChoice] = useState<'none' | 'current' | 'opened' | 'workspace'>(
     'none'
   )
+  const [availableModels, setAvailableModels] = useState<string[]>([])
+  const [selectedModel, setSelectedModel] = useState<string | null>(null)
 
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
+  const modelSelectorBtnRef = useRef(null)
   const contextBtnRef = useRef(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const aiChatRef = useRef<HTMLDivElement>(null)
 
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowAssistantOptions(false))
   useOnClickOutside([modelBtnRef, contextBtnRef], () => setShowContextOptions(false))
+  useOnClickOutside([modelSelectorBtnRef], () => setShowModelOptions(false))
 
   const getBoundingRect = (ref: MutableRefObject<any>) => ref.current?.getBoundingClientRect()
   const calcAndConvertToDvh = (coordValue: number) => (coordValue / window.innerHeight) * 100
@@ -412,6 +417,49 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     fetchAssistantChoice()
   }, [assistantChoice])
 
+  // Fetch available models everytime Ollama is selected
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (assistantChoice === 'ollama') {
+        try {
+          const available = await isOllamaAvailable()
+          if (available) {
+            const models = await listModels()
+            setAvailableModels(models)
+            if (!selectedModel && models.length > 0) {
+              const defaultModel = models.find(m => m.includes('codellama') || m.includes('code')) || models[0]
+              setSelectedModel(defaultModel)
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to fetch Ollama models:', error)
+          setAvailableModels([])
+        }
+      } else {
+        setAvailableModels([])
+        setSelectedModel(null)
+      }
+    }
+    fetchModels()
+  }, [assistantChoice, selectedModel])
+
+  const handleSetModel = useCallback(() => {
+    dispatchActivity('button', 'setModel')
+    setShowModelOptions(prev => !prev)
+  }, [])
+
+  const handleModelSelection = useCallback(async (modelName: string) => {
+    setSelectedModel(modelName)
+    setShowModelOptions(false)
+    // Update the model in the backend
+    try {
+      await props.plugin.call('remixAI', 'setModel', modelName)
+    } catch (error) {
+      console.warn('Failed to set model:', error)
+    }
+    _paq.push(['trackEvent', 'remixAI', 'SetOllamaModel', modelName])
+  }, [props.plugin])
+
   // refresh context whenever selection changes (even if selector is closed)
   useEffect(() => {
     refreshContext(contextChoice)
@@ -527,6 +575,26 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             />
           </div>
         )}
+        {showModelOptions && assistantChoice === 'ollama' && (
+          <div
+            className="pt-2 mb-2 z-3 bg-light border border-text w-75"
+            style={{ borderRadius: '8px' }}
+          >
+            <div className="text-uppercase ml-2 mb-2 small">Ollama Model</div>
+            <GroupListMenu
+              setChoice={handleModelSelection}
+              setShowOptions={setShowModelOptions}
+              choice={selectedModel}
+              groupList={availableModels.map(model => ({
+                label: model,
+                bodyText: `Use ${model} model`,
+                icon: 'fa-solid fa-check',
+                stateValue: model,
+                dataId: `ollama-model-${model.replace(/[^a-zA-Z0-9]/g, '-')}`
+              }))}
+            />
+          </div>
+        )}
         <PromptArea
           input={input}
           maximizePanel={maximizePanel}
@@ -537,18 +605,25 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           setShowContextOptions={setShowContextOptions}
           showAssistantOptions={showAssistantOptions}
           setShowAssistantOptions={setShowAssistantOptions}
+          showModelOptions={showModelOptions}
+          setShowModelOptions={setShowModelOptions}
           contextChoice={contextChoice}
           setContextChoice={setContextChoice}
           assistantChoice={assistantChoice}
           setAssistantChoice={setAssistantChoice}
+          availableModels={availableModels}
+          selectedModel={selectedModel}
           contextFiles={contextFiles}
           clearContext={clearContext}
           handleAddContext={handleAddContext}
           handleSetAssistant={handleSetAssistant}
+          handleSetModel={handleSetModel}
+          handleModelSelection={handleModelSelection}
           handleGenerateWorkspace={handleGenerateWorkspace}
           dispatchActivity={dispatchActivity}
           contextBtnRef={contextBtnRef}
           modelBtnRef={modelBtnRef}
+          modelSelectorBtnRef={modelSelectorBtnRef}
           aiContextGroupList={aiContextGroupList}
           aiAssistantGroupList={aiAssistantGroupList}
           textareaRef={textareaRef}

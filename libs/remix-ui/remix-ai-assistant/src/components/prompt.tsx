@@ -15,18 +15,25 @@ export interface PromptAreaProps {
   setShowContextOptions: React.Dispatch<React.SetStateAction<boolean>>
   showAssistantOptions: boolean
   setShowAssistantOptions: React.Dispatch<React.SetStateAction<boolean>>
+  showModelOptions: boolean
+  setShowModelOptions: React.Dispatch<React.SetStateAction<boolean>>
   contextChoice: AiContextType
   setContextChoice: React.Dispatch<React.SetStateAction<AiContextType>>
   assistantChoice: AiAssistantType
   setAssistantChoice: React.Dispatch<React.SetStateAction<AiAssistantType>>
+  availableModels: string[]
+  selectedModel: string | null
   contextFiles: string[]
   clearContext: () => void
   handleAddContext: () => void
   handleSetAssistant: () => void
+  handleSetModel: () => void
+  handleModelSelection: (modelName: string) => void
   handleGenerateWorkspace: () => void
   dispatchActivity: (type: ActivityType, payload?: any) => void
   contextBtnRef: React.RefObject<HTMLButtonElement>
   modelBtnRef: React.RefObject<HTMLButtonElement>
+  modelSelectorBtnRef: React.RefObject<HTMLButtonElement>
   aiContextGroupList: groupListType[]
   aiAssistantGroupList: groupListType[]
   textareaRef?: React.RefObject<HTMLTextAreaElement>
@@ -44,18 +51,25 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   setShowContextOptions,
   showAssistantOptions,
   setShowAssistantOptions,
+  showModelOptions,
+  setShowModelOptions,
   contextChoice,
   setContextChoice,
   assistantChoice,
   setAssistantChoice,
+  availableModels,
+  selectedModel,
   contextFiles,
   clearContext,
   handleAddContext,
   handleSetAssistant,
+  handleSetModel,
+  handleModelSelection,
   handleGenerateWorkspace,
   dispatchActivity,
   contextBtnRef,
   modelBtnRef,
+  modelSelectorBtnRef,
   aiContextGroupList,
   aiAssistantGroupList,
   textareaRef,
@@ -135,19 +149,33 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           />
 
           <div className="d-flex justify-content-between">
-            <button
-              onClick={handleSetAssistant}
-              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
-              ref={modelBtnRef}
-            >
-              {assistantChoice === null && 'Default'}
-              {assistantChoice === 'openai' && ' OpenAI'}
-              {assistantChoice === 'mistralai' && ' MistralAI'}
-              {assistantChoice === 'anthropic' && ' Anthropic'}
-              {assistantChoice === 'ollama' && ' Ollama'}
-              {'  '}
-              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
-            </button>
+            <div className="d-flex">
+              <button
+                onClick={handleSetAssistant}
+                className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+                ref={modelBtnRef}
+              >
+                {assistantChoice === null && 'Default'}
+                {assistantChoice === 'openai' && ' OpenAI'}
+                {assistantChoice === 'mistralai' && ' MistralAI'}
+                {assistantChoice === 'anthropic' && ' Anthropic'}
+                {assistantChoice === 'ollama' && ' Ollama'}
+                {'  '}
+                <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+              </button>
+              {assistantChoice === 'ollama' && availableModels.length > 0 && (
+                <button
+                  onClick={handleSetModel}
+                  className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded ms-2"
+                  ref={modelSelectorBtnRef}
+                  data-id="ollama-model-selector"
+                >
+                  {selectedModel || 'Select Model'}
+                  {'  '}
+                  <span className={showModelOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+                </button>
+              )}
+            </div>
             <button
               data-id="remix-ai-workspace-generate"
               className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"

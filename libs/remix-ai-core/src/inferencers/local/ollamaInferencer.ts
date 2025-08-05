@@ -2,6 +2,8 @@ import { AIRequestType, ICompletions, IGeneration, IParams } from "../../types/t
 import { CompletionParams, GenerationParams } from "../../types/models";
 import { discoverOllamaHost, listModels } from "./ollama";
 import { HandleOllamaResponse } from "../../helpers/streamHandler";
+import { sanitizeCompletionText } from "../../helpers/textSanitizer";
+import { FIMModelManager } from "./fimModelConfig";
 import {
   CONTRACT_PROMPT,
   WORKSPACE_PROMPT,
@@ -22,10 +24,14 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
   private ollama_host: string | null = null;
   model_name: string = "llama2:13b"; // Default model
   private isInitialized: boolean = false;
+  private modelSupportsInsert: boolean | null = null;
+  private currentSuffix: string = "";
+  private fimManager: FIMModelManager;
 
   constructor(modelName?: string) {
     super();
     this.model_name = modelName || this.model_name;
+    this.fimManager = FIMModelManager.getInstance();
     this.initialize();
   }
 
@@ -63,6 +69,124 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     }
   }
 
+  private removeSuffixOverlap(completion: string, suffix: string): string {
+    if (!suffix || !completion) return completion;
+
+    const trimmedCompletion = completion.trimEnd();
+    const trimmedSuffix = suffix.trimStart();
+
+    if (!trimmedCompletion || !trimmedSuffix) return completion;
+
+    // Helper function to normalize whitespace for comparison
+    const normalizeWhitespace = (str: string): string => {
+      return str.replace(/\s+/g, ' ').trim();
+    };
+
+    // Helper function to find whitespace-flexible overlap
+    const findFlexibleOverlap = (compEnd: string, suffStart: string): number => {
+      const normalizedCompEnd = normalizeWhitespace(compEnd);
+      const normalizedSuffStart = normalizeWhitespace(suffStart);
+
+      if (normalizedCompEnd === normalizedSuffStart) {
+        return compEnd.length;
+      }
+      return 0;
+    };
+
+    let bestOverlapLength = 0;
+    let bestOriginalLength = 0;
+
+    // Start from longer overlaps for better performance (early exit on first match)
+    const maxOverlap = Math.min(trimmedCompletion.length, trimmedSuffix.length);
+
+    // Limit search to reasonable overlap lengths for performance
+    const searchLimit = Math.min(maxOverlap, 50);
+
+    for (let i = searchLimit; i >= 1; i--) {
+      const completionEnd = trimmedCompletion.slice(-i);
+      const suffixStart = trimmedSuffix.slice(0, i);
+
+      // First try exact match for performance
+      if (completionEnd === suffixStart) {
+        bestOverlapLength = i;
+        bestOriginalLength = i;
+        break;
+      }
+
+      // Then try whitespace-flexible match
+      const flexibleOverlap = findFlexibleOverlap(completionEnd, suffixStart);
+      if (flexibleOverlap > 0 && flexibleOverlap > bestOriginalLength) {
+        bestOverlapLength = flexibleOverlap;
+        bestOriginalLength = flexibleOverlap;
+        break;
+      }
+    }
+
+    // Also check for partial semantic overlaps (like "){"  matching " ) { ")
+    if (bestOverlapLength === 0) {
+      // Extract significant characters (non-whitespace) from end of completion
+      const significantCharsRegex = /[^\s]+[\s]*$/;
+      const compMatch = trimmedCompletion.match(significantCharsRegex);
+
+      if (compMatch) {
+        const significantEnd = compMatch[0];
+        const normalizedSignificant = normalizeWhitespace(significantEnd);
+
+        // Check if this appears at the start of suffix (with flexible whitespace)
+        for (let i = 1; i <= Math.min(significantEnd.length + 10, trimmedSuffix.length); i++) {
+          const suffixStart = trimmedSuffix.slice(0, i);
+          const normalizedSuffStart = normalizeWhitespace(suffixStart);
+
+          if (normalizedSignificant === normalizedSuffStart) {
+            bestOverlapLength = significantEnd.length;
+            console.log(`Found semantic overlap: "${significantEnd}" matches "${suffixStart}"`);
+            break;
+          }
+        }
+      }
+    }
+
+    // Remove the overlapping part from the completion
+    if (bestOverlapLength > 0) {
+      const result = trimmedCompletion.slice(0, -bestOverlapLength);
+      console.log(`Removed ${bestOverlapLength} overlapping characters from completion`);
+      return result;
+    }
+
+    return completion;
+  }
+
+  private async checkModelInsertSupport(): Promise<boolean> {
+    try {
+      const response = await axios.post(`${this.ollama_host}/api/show`, {
+        name: this.model_name
+      });
+
+      if (response.status === 200 && response.data) {
+        // Check if the model template or parameters indicate insert support
+        const modelInfo = response.data;
+        const template = modelInfo.template || '';
+        const parameters = modelInfo.parameters || {};
+        console.log('model parameters', parameters)
+        console.log('model template', template)
+
+        // Look for FIM/insert indicators in the template or model info
+        const hasInsertSupport = template.includes('fim') ||
+                                template.includes('suffix') ||
+                                template.includes('<fim_') ||
+                                template.includes('<|fim_') ||
+                                template.includes('.Suffix') ||
+                                parameters.stop?.includes('<fim_middle>')
+
+        console.log(`Model ${this.model_name} insert support:`, hasInsertSupport);
+        return hasInsertSupport;
+      }
+    } catch (error) {
+      console.warn(`Failed to check model insert support: ${error}`);
+    }
+    return false;
+  }
+
   private buildOllamaOptions(payload: any) {
     const options: any = {};
 
@@ -86,17 +210,13 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
 
     const endpoint = this.getEndpointForRequestType(rType);
     const options = this.buildOllamaOptions(payload);
-    let requestPayload: any;
+    let requestPayload = payload
 
     if (rType === AIRequestType.COMPLETION) {
       // Use /api/generate for completion requests
-      requestPayload = {
-        model: this.model_name,
-        prompt: payload.prompt || payload.messages?.[0]?.content || "",
-        stream: false,
-        system: payload.system || CODE_COMPLETION_PROMPT
-      };
-      if (options) requestPayload.options = options;
+      if (options) {
+        requestPayload.options = options;
+      }
     } else {
       // Use /api/chat for general requests
       requestPayload = {
@@ -116,11 +236,22 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
       if (result.status === 200) {
         let text = "";
         if (rType === AIRequestType.COMPLETION) {
-          text = result.data.response || "";
+          console.log('text before sanitization', result.data.response)
+          // Skip sanitization for any FIM-capable models (user-selected or API-detected)
+          const userSelectedFIM = this.fimManager.supportsFIM(this.model_name);
+          const hasAnyFIM = userSelectedFIM || this.modelSupportsInsert;
+
+          if (hasAnyFIM) {
+            console.log('Skipping sanitization for FIM-capable model')
+            text = result.data.response || "";
+          } else {
+            text = sanitizeCompletionText(result.data.response || "");
+            console.log('text after sanitization', text)
+          }
         } else {
           text = result.data.message?.content || "";
         }
-        return text;
+        return text.trimStart();
       } else {
         return defaultErrorMessage;
       }
@@ -213,34 +344,69 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
 
   async code_completion(prompt: string, promptAfter: string, ctxFiles: any, fileName: any, options: IParams = CompletionParams): Promise<any> {
     console.log("Code completion called")
-    // const contextText = Array.isArray(ctxFiles) ? ctxFiles.map(f => f.content).join('\n') : '';
 
-    // let completionPrompt = `Complete the following code:\n\nFile: ${fileName}\n`;
+    // Store the suffix for overlap removal
+    this.currentSuffix = promptAfter || "";
 
-    // if (contextText) {
-    //   completionPrompt += `Context:\n${contextText}\n\n`;
-    // }
+    let payload: any;
+    let usesFIM = false;
 
-    // completionPrompt += `Code before cursor (prefix):\n${prompt}\n`;
+    // Check FIM support: user selection first, then API detection for native FIM
+    const userSelectedFIM = this.fimManager.supportsFIM(this.model_name);
 
-    // if (promptAfter && promptAfter.trim()) {
-    //   completionPrompt += `\nCode after cursor (suffix):\n${promptAfter}\n`;
-    //   completionPrompt += `\nComplete the missing code between the prefix and suffix:`;
-    // } else {
-    //   completionPrompt += `\nComplete the code that should come next:`;
-    // }
-    const completionPrompt = await this.buildCompletionPrompt(prompt, promptAfter)
-    const payload = this._buildPayload(completionPrompt, options, CODE_COMPLETION_PROMPT);
-    return await this._makeRequest(payload, AIRequestType.COMPLETION);
+    // Check API for native FIM support if not user-selected
+    if (!userSelectedFIM && this.modelSupportsInsert === null) {
+      this.modelSupportsInsert = await this.checkModelInsertSupport();
+    }
+
+    const hasNativeFIM = userSelectedFIM ? this.fimManager.usesNativeFIM(this.model_name) : this.modelSupportsInsert;
+    const hasTokenFIM = userSelectedFIM && !this.fimManager.usesNativeFIM(this.model_name);
+
+    if (hasNativeFIM) {
+      // Native FIM support (prompt/suffix parameters)
+      console.log(`Using native FIM for: ${this.model_name} (${userSelectedFIM ? 'user-selected' : 'API-detected'})`);
+      usesFIM = true;
+      payload = {
+        model: this.model_name,
+        prompt: prompt,
+        suffix: promptAfter,
+        stream: false,
+        ...options
+      };
+      console.log('using native FIM params', payload);
+    } else if (hasTokenFIM) {
+      // Token-based FIM support
+      console.log(`Using token-based FIM for: ${this.model_name}`);
+      usesFIM = true;
+      const fimPrompt = this.fimManager.buildFIMPrompt(prompt, promptAfter, this.model_name);
+      payload = {
+        model: this.model_name,
+        prompt: fimPrompt,
+        stream: false,
+        ...options
+      };
+      console.log('using token FIM params', payload);
+    } else {
+      // No FIM support, use completion prompt
+      console.log(`Model ${this.model_name} does not support FIM, using completion prompt`);
+      const completionPrompt = await this.buildCompletionPrompt(prompt, promptAfter);
+      payload = this._buildPayload(completionPrompt, options, CODE_COMPLETION_PROMPT);
+    }
+
+    const result = await this._makeRequest(payload, AIRequestType.COMPLETION);
+
+    // Apply suffix overlap removal if we have both result and suffix
+    if (result && this.currentSuffix) {
+      return this.removeSuffixOverlap(result, this.currentSuffix);
+    }
+
+    return result;
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string, ctxFiles: any, fileName: any, options: IParams = GenerationParams): Promise<any> {
     console.log("Code insertion called")
-    const contextText = Array.isArray(ctxFiles) ? ctxFiles.map(f => f.content).join('\n') : '';
-    const prompt = `Fill in the missing code between the prefix and suffix:\n\nFile: ${fileName}\nContext:\n${contextText}\n\nPrefix:\n${msg_pfx}\n\nSuffix:\n${msg_sfx}\n\nComplete the missing code:`;
-
-    const payload = this._buildPayload(prompt, options, CODE_INSERTION_PROMPT);
-    return await this._makeRequest(payload, AIRequestType.COMPLETION);
+    // Delegate to code_completion which already handles suffix overlap removal
+    return await this.code_completion(msg_pfx, msg_sfx, ctxFiles, fileName, options);
   }
 
   async code_generation(prompt: string, options: IParams = GenerationParams): Promise<any> {

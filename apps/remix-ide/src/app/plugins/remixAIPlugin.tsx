@@ -18,7 +18,7 @@ const profile = {
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
     'resetChatRequestBuffer', 'setAssistantThrId',
-    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider'],
+    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider', 'setModel'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -392,6 +392,32 @@ export class RemixAIPlugin extends Plugin {
       console.log(`Ollama provider set with model: ${bestModel}`)
     } else {
       console.error(`Unknown assistant provider: ${provider}`)
+    }
+  }
+
+  async setModel(modelName: string) {
+    if (this.assistantProvider === 'ollama' && this.remoteInferencer instanceof OllamaInferencer) {
+      try {
+        const isAvailable = await isOllamaAvailable();
+        if (!isAvailable) {
+          console.error('Ollama is not available. Please ensure Ollama is running.')
+          return
+        }
+
+        this.remoteInferencer = new OllamaInferencer(modelName);
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+
+        console.log(`Ollama model changed to: ${modelName}`)
+      } catch (error) {
+        console.error('Failed to set Ollama model:', error)
+      }
+    } else {
+      console.warn(`setModel is only supported for Ollama provider. Current provider: ${this.assistantProvider}`)
     }
   }
 
