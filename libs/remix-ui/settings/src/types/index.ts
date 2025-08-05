@@ -44,6 +44,7 @@ export interface SettingsSection {
   subSections: {
     title?: string,
     options: {
+      name: string,
       label: string,
       labelIcon?: string,
       description?: string,
@@ -60,4 +61,35 @@ export interface SettingsSection {
       toggleOptions?: JSX.Element
     }[]
   }[]
+}
+
+interface SettingsStateToggle {
+  value: boolean,
+  isLoading: boolean
+}
+interface SettingsStateInput {
+  value: string,
+  isLoading: boolean
+}
+
+interface SettingsStateSelect {
+  value: string,
+  isLoading: boolean
+}
+
+export interface SettingsState {
+  'generate-contract-metadata': SettingsStateToggle
+  'text-wrap': SettingsStateToggle
+  'personal-mode': SettingsStateToggle
+  'matomo-perf-analytics': SettingsStateToggle
+  'matomo-analytics': SettingsStateToggle
+  'auto-completion': SettingsStateToggle
+  'show-gas': SettingsStateToggle
+  'display-errors': SettingsStateToggle
+  'copilot/suggest/activate': SettingsStateToggle
+  'copilot/suggest/max_new_tokens': SettingsStateInput
+  'copilot/suggest/temperature': SettingsStateInput
+  'save-evm-state': SettingsStateToggle,
+  'theme': SettingsStateSelect,
+  'locale': SettingsStateSelect
 }
