@@ -103,6 +103,16 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
           </div>
         </div>
       </div>
-    </div>
+      <div className="d-flex pt-3">
+        <input
+          className="btn btn-sm btn-primary"
+          id="saveetherscantoken"
+          data-id="settingsTabSaveEtherscanToken"
+          onClick={saveEtherscanToken}
+          value={intl.formatMessage({ id: 'settings.save' })}
+          type="button"
+        ></input>
+      </div>
+    </>
   )
 }
