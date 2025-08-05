@@ -31,6 +31,7 @@ export interface VerificationReceipt {
   status: VerificationStatus
   message?: string
   lookupUrl?: string
+  receiptLookupUrl?: string
   contractId: string
   isProxyReceipt: boolean
   failedChecks: number
@@ -55,13 +56,17 @@ export interface SubmittedContracts {
   [id: string]: SubmittedContract
 }
 
-export type VerificationStatus = 'exactly verified' | 'verified' | 'already verified' | 'failed' | 'pending' | 'awaiting implementation verification' | 'not verified' | 'lookup failed' | 'unknown'
+// Keep fully and partially verified for compatibility with old data in local storage
+type SourcifyStatus = 'exactly verified' | 'verified' | 'fully verified' | 'partially verified'
+type EtherscanStatus = 'verified' | 'already verified'
+export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'awaiting implementation verification' | 'not verified' | 'lookup failed' | 'unknown'
 
 export interface VerificationResponse {
   status: VerificationStatus
   receiptId: string | null
   message?: string
   lookupUrl?: string
+  receiptLookupUrl?: string
 }
 
 export interface SourceFile {

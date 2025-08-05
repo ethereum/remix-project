@@ -56,6 +56,10 @@ interface SourcifyLookupResponse {
 export class SourcifyVerifier extends AbstractVerifier {
   LOOKUP_STORE_DIR = 'sourcify-verified'
 
+  constructor(apiUrl: string, explorerUrl: string, protected receiptsUrl?: string) {
+    super(apiUrl, explorerUrl)
+  }
+
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
     const compilerVersion = `v${metadata.compiler.version}`
@@ -92,8 +96,13 @@ export class SourcifyVerifier extends AbstractVerifier {
     return {
       status: 'pending',
       receiptId: verificationResponse.verificationId,
+      receiptLookupUrl: this.receiptLookupUrl(verificationResponse.verificationId),
       lookupUrl: this.getContractCodeUrl(submittedContract.address, submittedContract.chainId),
     }
+  }
+
+  receiptLookupUrl(receiptId: string): string {
+    return `${this.receiptsUrl}/${receiptId}`
   }
 
   async checkVerificationStatus(receiptId: string, chainId: string): Promise<VerificationResponse> {

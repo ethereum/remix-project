@@ -1,7 +1,8 @@
 {
   "Sourcify": {
     "apiUrl": "https://sourcify.dev/server",
-    "explorerUrl": "https://repo.sourcify.dev"
+    "explorerUrl": "https://repo.sourcify.dev",
+    "receiptsUrl": "https://verify.sourcify.dev/jobs"
   },
   "Etherscan": {
     "apiUrl": "https://api.etherscan.io/v2",
