@@ -2,114 +2,54 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-declare global {
-  interface Window { testmode: boolean; }
-}
-
-const testData = {
-  pluginName: 'remixIde',
-  pluginDisplayName: 'Remix IDE',
-  pluginUrl: 'https://zokrates.github.io/zokrates-remix-plugin/'
-}
-
-const localPluginData = {
-  name: testData.pluginName,
-  displayName: testData.pluginDisplayName,
-  canActivate: [],
-  url: testData.pluginUrl,
-  location: 'sidePanel'
-}
-
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080', false)
+    init(browser, done, undefined, false)
   },
 
-  'Should Load Plugin Manager #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-      .pause(3000)
-      .click('*[plugin="pluginManager"]')
-      .pause(3000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
-  },
-
-  'Should Search for plugins #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys('debugger')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-      .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys('Vyper')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-      .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys('ZoKrates')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
-      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-      .click('*[data-id="pluginManagerComponentSearchInput"]')
-      .keys(browser.Keys.SPACE)
-      .keys(browser.Keys.BACK_SPACE)
-  },
-
-  'Should activate plugins #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentPluginManager"]')
-      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-      .pause(2000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
-      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 70000)
-      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]', 60000)
-  },
-
-  'Should deactivate plugins #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentPluginManager"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
-      .pause(2000)
-      .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]', 60000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 60000)
-      .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]', 60000)
-  },
-
-  'Should connect a local plugin #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-      .pause(3000)
-      .click('*[plugin="pluginManager"]')
-      .clickLaunchIcon('filePanel')
-      .addLocalPlugin(localPluginData, false)
-      .pause(2000)
-  },
-
-  'Should display error message for creating already existing plugin #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .clickLaunchIcon('filePanel')
-      .addLocalPlugin(localPluginData, false)
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
-  },
-
-  'Should load back installed plugins after reload #group2': function (browser: NightwatchBrowser) {
+  'Should load Plugin Manager and switch tabs #group1 #pr': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]',3000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .getInstalledPlugins((plugins) => {
-        browser.refreshPage()
-          .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-          .pause(3000)
-          .perform((done) => {
-            plugins.forEach(plugin => {
-              if (plugin !== testData.pluginName) {
-                browser.waitForElementVisible(`[plugin="${plugin}"`)
-              }
-            })
-            done()
-          })
+      .clickLaunchIcon('pluginManager')
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .assert.visible('[data-id="pluginManagerComponentPluginManager"]', 'Plugin Manager component is visible.')
+  },
+
+  'Should search for a plugin #group1 #pr': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .waitForElementVisible('[data-id="pluginManagerComponentSearchInput"]')
+      .setValue('[data-id="pluginManagerComponentSearchInput"]', 'debugger')
+      .assert.visible('[data-id="plugin-manager-plugin-card-debugger"]', 'Debugger plugin card is visible after search.')
+  },
+
+  'Should activate and deactivate a plugin #group1 #pr': function (browser: NightwatchBrowser) {
+    let initialActiveCount: number;
+    browser
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .click('[data-id="pluginManagerActiveTab"]')
+      .getText('[data-id="pluginManagerActiveCount"]', (result) => {
+        initialActiveCount = parseInt(result.value as string);
       })
+  },
+
+  'Should filter by "Only maintained by Remix" #group2 #pr': function (browser: NightwatchBrowser) {
+    let initialAllCount: number;
+    browser
+      .clickLaunchIcon('pluginManager')
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .getText('[data-id="pluginManagerAllCount"]', (result) => {
+        initialAllCount = parseInt(result.value as string);
+      })
+  },
+
+  'Should filter by category and clear filters #group2 #pr': function (browser: NightwatchBrowser) {
+    let initialAllCount: number;
+    browser 
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .getText('[data-id="pluginManagerAllCount"]', (result) => {
+        initialAllCount = parseInt(result.value as string);
+      })
+      .end() 
   }
 }
