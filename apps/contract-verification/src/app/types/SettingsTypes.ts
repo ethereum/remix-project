@@ -5,6 +5,7 @@ export interface VerifierSettings {
   explorerUrl?: string
   apiKey?: string
   useV1API?: boolean // For Sourcify, whether to use the v1 API
+  receiptsUrl?: string
 }
 
 export type SettingsForVerifier = Partial<Record<VerifierIdentifier, VerifierSettings>>

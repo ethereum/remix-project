@@ -53,6 +53,7 @@ export const SettingsView = () => {
               </div>
             </CustomTooltip>
             <ConfigInput label="Repo URL" id="sourcify-explorer-url" secret={false} initialValue={chainSettings.verifiers['Sourcify']?.explorerUrl ?? ''} saveResult={(result) => handleChange('Sourcify', 'explorerUrl', result)} />
+            <ConfigInput label="Jobs URL" id="sourcify-receipts-url" secret={false} initialValue={chainSettings.verifiers['Sourcify']?.receiptsUrl ?? ''} saveResult={(result) => handleChange('Sourcify', 'receiptsUrl', result)} />
           </div>
           <div className="p-2 my-2 border">
             <span className="fw-bold">Etherscan - {selectedChain.name}</span>

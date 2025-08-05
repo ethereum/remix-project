@@ -22,7 +22,7 @@ export function getVerifier(identifier: VerifierIdentifier, settings: VerifierSe
     if (settings?.useV1API) {
       return new SourcifyV1Verifier(settings.apiUrl, settings.explorerUrl)
     }
-    return new SourcifyVerifier(settings.apiUrl, settings.explorerUrl)
+    return new SourcifyVerifier(settings.apiUrl, settings.explorerUrl, settings.receiptsUrl)
   case 'Etherscan':
     if (!settings?.explorerUrl) {
       throw new Error('The Etherscan verifier requires an explorer URL.')
