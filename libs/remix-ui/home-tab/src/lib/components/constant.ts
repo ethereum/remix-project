@@ -1,5 +1,5 @@
-export const HOME_TAB_BASE_URL = process.env.CIRCLE_BRANCH === 'beta' ?
-  'https://raw.githubusercontent.com/remix-project-org/remix-dynamics/refs/heads/beta/' : process.env.CIRCLE_BRANCH === 'live' ?
+export const HOME_TAB_BASE_URL = process.env.CIRCLE_BRANCH === 'remix_beta' ?
+  'https://raw.githubusercontent.com/remix-project-org/remix-dynamics/refs/heads/beta/' : process.env.CIRCLE_BRANCH === 'remix_live' ?
     'https://raw.githubusercontent.com/remix-project-org/remix-dynamics/refs/heads/live/' :
     'https://raw.githubusercontent.com/remix-project-org/remix-dynamics/refs/heads/alpha/'
 
