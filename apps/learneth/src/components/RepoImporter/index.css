@@ -2,3 +2,36 @@
   width: 3px;
   display: inline-block;
 }
+.repo-label {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.custom-dropdown-toggle {
+  text-align: left;
+}
+.hr-themed {
+  border-top-color: var(--secondary);
+}
+.custom-dark-dropdown .dropdown-menu {
+  background-color: var(--custom-select) !important;
+  border-color: var(--bs-secondary-border-color);
+}
+.custom-dark-dropdown .dropdown-item, 
+.custom-dark-menu .dropdown-item div {
+  color: var(--bs-light);
+}
+.custom-dark-dropdown .dropdown-item:hover,
+.custom-dark-dropdown .dropdown-item:focus {
+  background-color: var(--bs-secondary-border-color); 
+  color: var(--bs-light);
+}
+.dropdown-menu.show {
+  background-color: var(--custom-select) !important; 
+}
+.dropdown-item {
+  text-decoration: none !important;
+}
+.dropdown-menu {
+}

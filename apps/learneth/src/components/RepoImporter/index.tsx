@@ -1,123 +1,135 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Dropdown, Form, Tooltip, OverlayTrigger } from 'react-bootstrap'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import React, { useState, forwardRef, ReactNode } from 'react'
+import { Dropdown, Tooltip, OverlayTrigger } from 'react-bootstrap'
+import { useAppDispatch } from '../../redux/hooks'
 import './index.css'
 
-function RepoImporter({ list, selectedRepo }: any): JSX.Element {
+interface CustomToggleProps {
+  children?: ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+const CustomToggle = forwardRef<HTMLButtonElement, CustomToggleProps>(
+  ({ children, onClick }, ref) => (
+    <button
+      ref={ref}
+      onClick={(e) => { e.preventDefault(); onClick?.(e); }}
+      className="btn btn-secondary d-flex justify-content-between align-items-center w-100 custom-dropdown-toggle"
+    >
+      {children}
+      <i className="fas fa-caret-down"></i>
+    </button>
+  )
+);
+CustomToggle.displayName = 'CustomToggle';
+
+const CustomMenu = forwardRef<HTMLDivElement, { children?: ReactNode, className?: string }>(
+  ({ children, className }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={className}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+CustomMenu.displayName = 'CustomMenu';
+
+function RepoImporter({ list }: any): JSX.Element {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [branch, setBranch] = useState('')
   const dispatch = useAppDispatch()
-  const localeCode = useAppSelector((state) => state.remixide.localeCode)
 
-  useEffect(() => {
-    setName(selectedRepo.name)
-    setBranch(selectedRepo.branch)
-  }, [selectedRepo])
-
-  const panelChange = () => {
-    setOpen(!open)
-  }
-
-  const selectRepo = (repo: {name: string; branch: string}) => {
+  const panelChange = () => { setOpen(!open) }
+  const selectRepo = (repo: { name: string; branch: string }) => {
     dispatch({ type: 'workshop/loadRepo', payload: repo });
-    (window as any)._paq.push(['trackEvent', 'learneth', 'select_repo', `${name}/${branch}`])
+    (window as any)._paq.push(['trackEvent', 'learneth', 'select_repo', `${repo.name}/${repo.branch}`])
   }
-
-  const importRepo = (event: {preventDefault: () => void}) => {
+  const importRepo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    dispatch({ type: 'workshop/loadRepo', payload: { name, branch } });
+    dispatch({ type: 'workshop/loadRepo', payload: { name, branch } });   
     (window as any)._paq.push(['trackEvent', 'learneth', 'import_repo', `${name}/${branch}`])
-  }
-
-  const resetAll = () => {
-    dispatch({ type: 'workshop/resetAll', payload: { code: localeCode } })
-    setName('')
-    setBranch('')
-  }
+  } 
 
   return (
-    <>
-      {selectedRepo.name && (
-        <div className="container-fluid mb-3 small mt-3">
-          Tutorials from:
-          <h4 className="mb-1">{selectedRepo.name}</h4>
-          <span className="">Date modified: {new Date(selectedRepo.datemodified).toLocaleString()}</span>
-        </div>
-      )}
-
-      <div onClick={panelChange} style={{ cursor: 'pointer' }} className="container-fluid d-flex mb-3 small">
-        <div className="d-flex pr-2 pl-2">
-          <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
-        </div>
-        <div className="d-flex">Import another tutorial repo</div>
-      </div>
+    <div className="px-3 pt-3">
+      <button onClick={panelChange} className="btn btn-secondary d-flex align-items-center justify-content-center w-100 mb-3">
+        <i className="fas fa-upload mr-2"></i>
+        <span>Import another tutorial repo</span>
+      </button>
 
       {open && (
-        <div className="container-fluid">
-          <Dropdown className="w-100">
-            <Dropdown.Toggle className="btn btn-secondary w-100" id="dropdownBasic1">
-              Select a repo
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="w-100">
-              {list.map((item: any) => (
-                <Dropdown.Item
-                  key={`${item.name}/${item.branch}`}
-                  onClick={() => {
-                    selectRepo(item)
-                  }}
-                >
-                  {item.name}-{item.branch}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-          <div onClick={resetAll} className="small mb-3" style={{ cursor: 'pointer' }}>
-            reset list
-          </div>
-        </div>
-      )}
+        <>
+          <h6 className="mb-3">Tutorial import</h6>
+          <div className="bg-light border rounded p-3">
+            <Dropdown className="w-100 mb-2">
+              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+                Select a repo
+              </Dropdown.Toggle>  
+              <Dropdown.Menu as={CustomMenu} className="w-100 custom-dark-menu"> 
+                {list.map((item: any) => (
+                  <Dropdown.Item
+                    key={`${item.name}/${item.branch}`}
+                    onClick={() => selectRepo(item)}
+                    title={`${item.name}-${item.branch}`}
+                  >
+                    <div className="text-truncate">
+                      {item.name}-{item.branch}
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
 
-      <div className="container-fluid mt-3">
-        {open && (
-          <Form onSubmit={importRepo}>
-            <Form.Group className="form-group">
-              <Form.Label className="mr-2" htmlFor="name">
-                REPO
-              </Form.Label>
-              <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>
-                <i className="fas fa-question-circle" />
-              </OverlayTrigger>
-              <Form.Control
-                id="name"
-                required
-                onChange={(e) => {
-                  setName(e.target.value)
-                }}
-                value={name}
-              />
-              <Form.Label htmlFor="branch">BRANCH</Form.Label>
-              <Form.Control
-                id="branch"
-                required
-                onChange={(e) => {
-                  setBranch(e.target.value)
-                }}
-                value={branch}
-              />
-            </Form.Group>
-            <Button className="btn btn-success start w-100" type="submit" disabled={!name || !branch}>
-              Import {name}
-            </Button>
-            <a href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md" className="d-none" target="_blank" rel="noreferrer">
-              <i className="fas fa-info" /> How to setup your repo
-            </a>
-          </Form>
-        )}
-        <hr />
-      </div>
-    </>
-  )
-}
+            <div className="d-flex align-items-center my-3">
+              <hr className="w-100 hr-themed" />
+              <span className="px-2 small text-nowrap">or import</span>
+              <hr className="w-100 hr-themed" />
+            </div>
 
-export default RepoImporter
+            <form onSubmit={importRepo}>
+              <div className="form-group">
+                <label className="repo-label d-flex align-items-center" htmlFor="name">
+                  REPO REFERENCE
+                  <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-repo">ie. username/repository</Tooltip>}>
+                    <i className="fas fa-question-circle ml-1" />
+                  </OverlayTrigger>
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  className="form-control"
+                  required
+                  placeholder="username/repository"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="repo-label" htmlFor="branch">BRANCH</label>
+                <input
+                  id="branch"
+                  type="text"
+                  className="form-control"
+                  required
+                  placeholder="master" 
+                  onChange={(e) => setBranch(e.target.value)}
+                  value={branch}
+                />  
+              </div>
+              
+              <button className="btn btn-primary w-100" type="submit" disabled={!name || !branch}>
+                Import tutorial repository
+              </button> 
+            </form> 
+          </div>   
+        </> 
+      )} 
+    </div>
+  )  
+} 
+
+export default RepoImporter 
