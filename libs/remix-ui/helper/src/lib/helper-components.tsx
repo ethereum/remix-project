@@ -1,9 +1,10 @@
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { CompileOptionsProps } from '../types/compilerTypes'
 import { CustomTooltip } from './components/custom-tooltip'
 import { extractNameFromKey } from './remix-ui-helper'
+import { etherscanTokenLink, gitAccessTokenLink, sindriAccessTokenLink } from 'libs/remix-ui/settings/src/lib/constants'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div>
@@ -218,3 +219,50 @@ export const CompileBtn = ({ plugin, appState, id, compileAction }: { plugin: an
     </button>
   </CustomTooltip>
 )
+
+export const GitHubCredentialsDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.gitAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a href={gitAccessTokenLink} target="_blank" rel="noopener noreferrer" className="text-primary">{intl.formatMessage({ id: 'settings.gitAccessTokenText2' })}</a> <FormattedMessage id="settings.gitAccessTokenText3" />
+      </p>
+    </>
+  )
+}
+
+export const SindriCredentialsDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.sindriAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a href={sindriAccessTokenLink} target="_blank" rel="noopener noreferrer" className="text-primary">{intl.formatMessage({ id: 'settings.gitAccessTokenText2' })}</a> <FormattedMessage id="settings.sindriAccessTokenText2" />
+      </p>
+    </>
+  )
+}
+
+export const EtherscanConfigDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.etherscanAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a className="text-primary" target="_blank" href={etherscanTokenLink}>
+          {intl.formatMessage({ id: 'settings.etherscanAccessTokenText2' })}
+        </a> <FormattedMessage id="settings.etherscanAccessTokenText3" />
+      </p>
+    </>
+  )
+}

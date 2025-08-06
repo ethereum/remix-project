@@ -44,10 +44,10 @@ export interface SettingsSection {
   subSections: {
     title?: string,
     options: {
-      name: string,
+      name: keyof SettingsState,
       label: string,
       labelIcon?: string,
-      description?: string,
+      description?: string | JSX.Element,
       footnote?: {
         text: string,
         link?: string,
@@ -58,38 +58,61 @@ export interface SettingsSection {
         label: string,
         value: string
       }[],
-      toggleOptions?: JSX.Element
+      toggleUIOptions?: {
+        name: keyof SettingsState,
+        type: 'text' | 'password'
+      }[],
+      toggleUIDescription?: string | JSX.Element
     }[]
   }[]
 }
 
-interface SettingsStateToggle {
-  value: boolean,
-  isLoading: boolean
-}
-interface SettingsStateInput {
-  value: string,
-  isLoading: boolean
-}
-
-interface SettingsStateSelect {
-  value: string,
+interface ConfigState {
+  value: boolean | string,
   isLoading: boolean
 }
 
 export interface SettingsState {
-  'generate-contract-metadata': SettingsStateToggle
-  'text-wrap': SettingsStateToggle
-  'personal-mode': SettingsStateToggle
-  'matomo-perf-analytics': SettingsStateToggle
-  'matomo-analytics': SettingsStateToggle
-  'auto-completion': SettingsStateToggle
-  'show-gas': SettingsStateToggle
-  'display-errors': SettingsStateToggle
-  'copilot/suggest/activate': SettingsStateToggle
-  'copilot/suggest/max_new_tokens': SettingsStateInput
-  'copilot/suggest/temperature': SettingsStateInput
-  'save-evm-state': SettingsStateToggle,
-  'theme': SettingsStateSelect,
-  'locale': SettingsStateSelect
+  'generate-contract-metadata': ConfigState
+  'text-wrap': ConfigState
+  'personal-mode': ConfigState
+  'matomo-perf-analytics': ConfigState
+  'matomo-analytics': ConfigState
+  'auto-completion': ConfigState
+  'show-gas': ConfigState
+  'display-errors': ConfigState
+  'copilot/suggest/activate': ConfigState
+  'save-evm-state': ConfigState,
+  'theme': ConfigState,
+  'locale': ConfigState,
+  'github-config': ConfigState,
+  'ipfs-config': ConfigState,
+  'swarm-config': ConfigState,
+  'sindri-config': ConfigState,
+  'etherscan-config': ConfigState,
+  'gist-access-token': ConfigState,
+  'github-user-name': ConfigState,
+  'github-email': ConfigState,
+  'ipfs-url': ConfigState,
+  'ipfs-protocol': ConfigState,
+  'ipfs-port': ConfigState,
+  'ipfs-project-id': ConfigState,
+  'ipfs-project-secret': ConfigState,
+  'swarm-private-bee-address': ConfigState,
+  'swarm-postage-stamp-id': ConfigState,
+  'sindri-access-token': ConfigState,
+  'etherscan-access-token': ConfigState,
+  'ai-privacy-policy': ConfigState,
+  toaster: ConfigState
 }
+export interface SettingsActionPayloadTypes {
+  SET_VALUE: { name: string, value: boolean | string },
+  SET_LOADING: { name: string },
+  SET_TOAST_MESSAGE: { value: string }
+}
+export interface SettingsAction<T extends keyof SettingsActionPayloadTypes> {
+  type: T
+  payload: SettingsActionPayloadTypes[T]
+}
+
+export type SettingsActions = {[A in keyof SettingsActionPayloadTypes]: SettingsAction<A>}[keyof SettingsActionPayloadTypes]
