@@ -423,7 +423,7 @@ export function AccountUI(props: AccountProps) {
               <Dropdown.Item
                 key={index}
                 eventKey={selectedAccount}
-                onSelect={(e) => {
+                onClick={(e) => {
                   props.setAccount(value)
                 }}
                 data-id={`txOriginSelectAccountItem-${value}`}

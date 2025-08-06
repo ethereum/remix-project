@@ -201,12 +201,12 @@ export function ContractGUI(props: any) {
             className="d-flex p-0 wrapperElement"
             onClick={handleActionClick}
             data-id={buttonOptions.dataId}
-            data-title={buttonOptions.title}
+            data-bs-title={buttonOptions.title}
           >
             <button
               className={`text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
               data-id={buttonOptions.dataId}
-              data-title={buttonOptions.title}
+              data-bs-title={buttonOptions.title}
               disabled={
                 props.disabled || (props.inputs !== '' && basicInput === '')
               }
@@ -230,7 +230,7 @@ export function ContractGUI(props: any) {
           }
           placeholder={props.inputs}
           onChange={handleBasicInput}
-          data-title={
+          data-bs-title={
             props.funcABI.type === 'fallback' ||
             props.funcABI.type === 'receive'
               ? `'(${props.funcABI.type}')`
