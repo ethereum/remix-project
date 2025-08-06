@@ -15,6 +15,17 @@ export enum SupportedFileExtensions {
   tests_js = 'test.js',
 }
 
+export enum ImportExtractionSupportedFileExtensions {
+  solidity = 'sol',
+}
+
+export interface IExtractedImport {
+  importPath: string;
+  content: string;
+  isLocal: boolean;
+  isLibrary: boolean;
+}
+
 export interface IModelRequirements{
   backend: string,
   minSysMemory: number,
@@ -25,6 +36,12 @@ export interface IModelRequirements{
 export interface IContextType {
   context: 'currentFile' | 'workspace'|'openedFiles' | 'none'
   files?: { fileName: string; content: string }[]
+}
+
+export interface ISimilaritySearchConfig {
+  maxFiles?: number;
+  similarityThreshold?: number;
+  enabled?: boolean;
 }
 
 export interface IModel {
@@ -148,4 +165,5 @@ export interface CompilationResult {
   compilationSucceeded: boolean
   errors: string
   errfiles?: { [key: string]: any }
+  compilerPayload?: any
 }

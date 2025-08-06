@@ -205,6 +205,9 @@
             ],
             "@remix-ui/remix-ai-assistant": [
               "libs/remix-ui/remix-ai-assistant/src/index.ts"
+            ],
+            "@remix-ui/top-bar": [
+              "libs/remix-ui/top-bar/src/index.ts"
             ]
         }
     }

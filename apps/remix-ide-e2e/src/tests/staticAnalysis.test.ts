@@ -34,7 +34,7 @@ module.exports = {
   'run analysis and filter results': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .clickLaunchIcon('solidity')
       .click('*[id="compileBtn"]')
@@ -77,8 +77,8 @@ function runTests (browser: NightwatchBrowser) {
         'Fallback function of contract TooMuchGas requires too much gas',
         'TooMuchGas.() : Variables have very similar names "test" and "test1".',
         'TooMuchGas.() : Variables have very similar names "test" and "test1".'],
-        '#staticanalysisresult .warning',
-        browser
+      '#staticanalysisresult .warning',
+      browser
       )
     })
 }

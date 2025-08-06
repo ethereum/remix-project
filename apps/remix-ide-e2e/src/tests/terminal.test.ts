@@ -99,7 +99,8 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
-      .clickLaunchIcon('settings')
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal

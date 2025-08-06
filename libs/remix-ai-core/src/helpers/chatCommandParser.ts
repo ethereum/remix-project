@@ -2,7 +2,7 @@ import { isOllamaAvailable, listModels, getBestAvailableModel, validateModel, ge
 import { OllamaInferencer } from "../inferencers/local/ollamaInferencer";
 import { GenerationParams } from "../types/models";
 
-type CommandHandler = (args: string, reference: any) => void;
+type CommandHandler = (args: string, reference: any, statusCallback?: (status: string) => Promise<void>) => void;
 
 export class ChatCommandParser {
   private commands: Map<string, CommandHandler> = new Map();
@@ -24,8 +24,6 @@ export class ChatCommandParser {
     this.register("/workspace", this.handleWorkspace);
     this.register("/w", this.handleWorkspace);
     this.register("/setAssistant", this.handleAssistant);
-    this.register("/continue", this.handleContinueGeneration);
-    this.register("/c", this.handleContinueGeneration);
     // Add more default commands as needed
   }
 
@@ -33,7 +31,7 @@ export class ChatCommandParser {
     this.commands.set(command.toLowerCase(), handler);
   }
 
-  public async parse(input: string) {
+  public async parse(input: string, statusCallback?: (status: string) => Promise<void>) {
     const commandPattern = /^[@/](\w{1,})\s*(.*)/;
     const match = input.match(commandPattern);
 
@@ -47,40 +45,32 @@ export class ChatCommandParser {
 
     const handler = this.commands.get(commandName);
     if (handler) {
-      return handler(rawArgs, this);
+      return handler(rawArgs, this, statusCallback);
     } else {
       console.log(`Unknown command: ${commandName}`);
       return "";
     }
   }
 
-  private async handleGenerate(prompt: string, ref) {
+  private async handleGenerate(prompt: string, ref, statusCallback?: (status: string) => Promise<void>) {
     try {
+      await statusCallback?.('Initializing new workspace generation...')
       GenerationParams.return_stream_response = false
       GenerationParams.stream_result = false
-    	return await ref.props.call('remixAI', 'generate', "generate " + prompt, GenerationParams, "", true);
+    	return await ref.props.call('remixAI', 'generate', "generate " + prompt, GenerationParams, "", false, statusCallback);
     } catch (error) {
       return "Generation failed. Please try again.";
     }
   }
 
-  private async handleWorkspace(prompt: string, ref) {
+  private async handleWorkspace(prompt: string, ref, statusCallback?: (status: string) => Promise<void>) {
     try {
+      await statusCallback?.('Initializing new workspace request...')
       GenerationParams.return_stream_response = false
       GenerationParams.stream_result = false
-      return await ref.props.call('remixAI', 'generateWorkspace', prompt, GenerationParams, "", false);
+      return await ref.props.call('remixAI', 'generateWorkspace', prompt, GenerationParams, "", false, statusCallback);
     } catch (error) {
       return "Workspace generation failed. Please try again.";
-    }
-  }
-
-  private async handleContinueGeneration(prompt: string, ref) {
-    try {
-      GenerationParams.return_stream_response = false
-      GenerationParams.stream_result = false
-      return await ref.props.call('remixAI', 'fixWorspaceErrors', true);
-    } catch (error) {
-      return "Error while generating. Please try again.";
     }
   }
 
@@ -97,7 +87,7 @@ export class ChatCommandParser {
     }
   }
 
-  private async handleOllama(prompt: string, ref: any) {
+  private async handleOllama(prompt: string, ref: any, statusCallback?: (status: string) => Promise<void>) {
     try {
       if (prompt === "start") {
         const available = await isOllamaAvailable();

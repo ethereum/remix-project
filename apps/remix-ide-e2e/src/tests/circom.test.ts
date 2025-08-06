@@ -5,14 +5,14 @@ import init from '../helpers/init'
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    browser.globals.asyncHookTimeout = 30000000; 
+    browser.globals.asyncHookTimeout = 30000000;
     init(browser, done)
   },
 
   'Should create semaphore workspace template #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
@@ -41,7 +41,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Everything went okay')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
       .openFile('circuits/.bin/simple_js')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')  
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
@@ -118,12 +118,15 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .perform(function () {
-        const actions = this.actions({async: true})
+        const actions = this.actions({ async: true })
 
-        return actions.keyDown(this.Keys.CONTROL).sendKeys('s')
+        actions.keyDown(this.Keys.CONTROL).sendKeys('s').perform()
+        return actions.keyUp(this.Keys.CONTROL).perform()
       })
-      .pause(2000)
-      .openFile('circuits/.bin/simple_js/simple.wasm')
+      .click('[data-id="treeViewDivtreeViewItemREADME.md"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcircuits/.bin/simple_js"]')
+      .click('*[data-id="treeViewDivtreeViewItemcircuits/.bin/simple_js"]')
+      // .openFile('circuits/.bin/simple_js/simple.wasm')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
   },
@@ -178,7 +181,7 @@ module.exports = {
   'Should create a new workspace using hash checker template #group5 #group6': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-hashchecker"]')
       .scrollAndClick('*[data-id="create-hashchecker"]')
