@@ -5,6 +5,15 @@ const config = Registry.getInstance().get('config').api
 const settingsConfig = Registry.getInstance().get('settingsConfig').api
 const defaultTheme = config.get('settings/theme') ? settingsConfig.themes.find((theme) => theme.name.toLowerCase() === config.get('settings/theme').toLowerCase()) : settingsConfig.themes[0]
 const defaultLocale = config.get('settings/locale') ? settingsConfig.locales.find((locale) => locale.code === config.get('settings/locale')) : settingsConfig.locales.find((locale) => locale.code === 'en')
+const gistAccessToken = config.get('settings/gist-access-token') || ''
+const githubUserName = config.get('settings/github-user-name') || ''
+const githubEmail = config.get('settings/github-email') || ''
+let githubConfig = config.get('settings/github-config') || false
+
+if (!githubConfig && (githubUserName || githubEmail || gistAccessToken)) {
+  config.set('settings/github-config', true)
+  githubConfig = true
+}
 
 export const initialState: SettingsState = {
   'generate-contract-metadata': {
@@ -56,7 +65,7 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'github-config': {
-    value: config.get('settings/github-config') || false,
+    value: githubConfig,
     isLoading: false
   },
   'ipfs-config': {
@@ -76,15 +85,15 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'gist-access-token': {
-    value: config.get('settings/gist-access-token') || '',
+    value: gistAccessToken,
     isLoading: false
   },
   'github-user-name': {
-    value: config.get('settings/github-user-name') || '',
+    value: githubUserName,
     isLoading: false
   },
   'github-email': {
-    value: config.get('settings/github-email') || '',
+    value: githubEmail,
     isLoading: false
   },
   'ipfs-url': {
