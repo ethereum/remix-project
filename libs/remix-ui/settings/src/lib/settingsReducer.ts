@@ -1,5 +1,5 @@
 import { Registry } from '@remix-project/remix-lib'
-import { SettingsState } from '../types'
+import { SettingsActions, SettingsState } from '../types'
 
 const config = Registry.getInstance().get('config').api
 const settingsConfig = Registry.getInstance().get('settingsConfig').api
@@ -43,14 +43,6 @@ export const initialState: SettingsState = {
     value: config.get('settings/copilot/suggest/activate') || false,
     isLoading: false
   },
-  'copilot/suggest/max_new_tokens': {
-    value: config.get('settings/copilot/suggest/max_new_tokens') || 5,
-    isLoading: false
-  },
-  'copilot/suggest/temperature': {
-    value: config.get('settings/copilot/suggest/temperature') || 0.5,
-    isLoading: false
-  },
   'save-evm-state': {
     value: config.get('settings/save-evm-state') || false,
     isLoading: false
@@ -62,56 +54,96 @@ export const initialState: SettingsState = {
   'locale': {
     value: defaultLocale.localeName,
     isLoading: false
+  },
+  'github-config': {
+    value: config.get('settings/github-config') || false,
+    isLoading: false
+  },
+  'ipfs-config': {
+    value: config.get('settings/ipfs-config') || false,
+    isLoading: false
+  },
+  'swarm-config': {
+    value: config.get('settings/swarm-config') || false,
+    isLoading: false
+  },
+  'sindri-config': {
+    value: config.get('settings/sindri-config') || false,
+    isLoading: false
+  },
+  'etherscan-config': {
+    value: config.get('settings/etherscan-config') || false,
+    isLoading: false
+  },
+  'gist-access-token': {
+    value: config.get('settings/gist-access-token') || '',
+    isLoading: false
+  },
+  'github-user-name': {
+    value: config.get('settings/github-user-name') || '',
+    isLoading: false
+  },
+  'github-email': {
+    value: config.get('settings/github-email') || '',
+    isLoading: false
+  },
+  'ipfs-url': {
+    value: config.get('settings/ipfs-url') || '',
+    isLoading: false
+  },
+  'ipfs-protocol': {
+    value: config.get('settings/ipfs-protocol') || '',
+    isLoading: false
+  },
+  'ipfs-port': {
+    value: config.get('settings/ipfs-port') || '',
+    isLoading: false
+  },
+  'ipfs-project-id': {
+    value: config.get('settings/ipfs-project-id') || '',
+    isLoading: false
+  },
+  'ipfs-project-secret': {
+    value: config.get('settings/ipfs-project-secret') || '',
+    isLoading: false
+  },
+  'swarm-private-bee-address': {
+    value: config.get('settings/swarm-private-bee-address') || '',
+    isLoading: false
+  },
+  'swarm-postage-stamp-id': {
+    value: config.get('settings/swarm-postage-stamp-id') || '',
+    isLoading: false
+  },
+  'sindri-access-token': {
+    value: config.get('settings/sindri-access-token') || '',
+    isLoading: false
+  },
+  'etherscan-access-token': {
+    value: config.get('settings/etherscan-access-token') || '',
+    isLoading: false
+  },
+  'ai-privacy-policy': {
+    value: '',
+    isLoading: false
+  },
+  toaster: {
+    value: '',
+    isLoading: false
   }
 }
 
-export const settingReducer = (state: SettingsState, action: { type: string, payload: { name: string, value?: boolean } }) => {
+export const settingReducer = (state: SettingsState, action: SettingsActions): SettingsState => {
   switch (action.type) {
   case 'SET_VALUE':
-    if (action.payload.name === 'theme') {
-      const theme = settingsConfig.themes.find((theme) => theme.name === action.payload.value)
-
-      if (theme) {
-        const themeModule = Registry.getInstance().get('themeModule').api
-
-        themeModule.switchTheme(theme.name)
-        return { ...state, [action.payload.name]: { ...state[action.payload.name], value: theme.name, isLoading: false } }
-      } else {
-        console.error('Theme not found: ', action.payload.value)
-        return state
-      }
-    } else if (action.payload.name === 'locale') {
-      const locale = settingsConfig.locales.find((locale) => locale.code === action.payload.value)
-      if (locale) {
-        const localeModule = Registry.getInstance().get('localeModule').api
-
-        localeModule.switchLocale(locale.code)
-        return { ...state, [action.payload.name]: { ...state[action.payload.name], value: locale.localeName, isLoading: false } }
-      } else {
-        console.error('Locale not found: ', action.payload.value)
-        return state
-      }
-    }
     config.set('settings/' + action.payload.name, action.payload.value)
     return { ...state, [action.payload.name]: { ...state[action.payload.name], value: action.payload.value, isLoading: false } }
   case 'SET_LOADING':
     return { ...state, [action.payload.name]: { ...state[action.payload.name], isLoading: true } }
+
+  case 'SET_TOAST_MESSAGE':
+    return { ...state, toaster: { ...state.toaster, value: action.payload.value, isLoading: false } }
   default:
     return state
-  }
-}
-
-export const toastInitialState = {
-  message: ''
-}
-
-export const toastReducer = (state, action) => {
-  switch (action.type) {
-  case 'save' :
-    return { ...state, message: action.payload.message }
-  case 'removed' :
-    return { ...state, message: action.payload.message }
-  default :
-    return { ...state, message: '' }
   }
 }

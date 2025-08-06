@@ -2,6 +2,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { Registry } from '@remix-project/remix-lib'
 import { GithubSettingsProps } from '../types'
 import { gitAccessTokenLink } from './constants'
 
@@ -12,16 +13,15 @@ export function GithubSettings(props: GithubSettingsProps) {
   const intl = useIntl()
 
   useEffect(() => {
-    if (props.config) {
-      const githubToken = props.config.get('settings/gist-access-token') || ''
-      const githubUserName = props.config.get('settings/github-user-name') || ''
-      const githubEmail = props.config.get('settings/github-email') || ''
+    const config = Registry.getInstance().get('config').api
+    const githubToken = config.get('settings/gist-access-token') || ''
+    const githubUserName = config.get('settings/github-user-name') || ''
+    const githubEmail = config.get('settings/github-email') || ''
 
-      setGithubToken(githubToken)
-      setGithubUsername(githubUserName)
-      setGithubEmail(githubEmail)
-    }
-  }, [props.config])
+    setGithubToken(githubToken)
+    setGithubUsername(githubUserName)
+    setGithubEmail(githubEmail)
+  }, [])
 
   const handleChangeTokenState = (event) => {
     const token = event.target.value ? event.target.value.trim() : event.target.value
