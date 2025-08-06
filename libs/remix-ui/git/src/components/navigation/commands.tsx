@@ -26,8 +26,8 @@ export const CommandsNavigation = ({ eventKey, activePanel, callback }) => {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <label className="pl-2 nav form-check-label">COMMANDS</label>
+          <LoaderIndicator></LoaderIndicator>
         </span>
-        <LoaderIndicator></LoaderIndicator>
       </div>
     </>
   );
