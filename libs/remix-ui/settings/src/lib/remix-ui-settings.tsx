@@ -1,6 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
-import { CustomTooltip } from '@remix-ui/helper'
+import { CustomTooltip, EtherscanConfigDescription, GitHubCredentialsDescription, SindriCredentialsDescription } from '@remix-ui/helper'
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { labels, textDark, textSecondary } from './constants'
 import {
@@ -20,7 +20,7 @@ import {
   useDisplayErrors,
   saveEnvState
 } from './settingsAction'
-import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
+import { initialState, settingReducer } from './settingsReducer'
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
@@ -110,16 +110,6 @@ const settingsSections: SettingsSection[] = [
   },
   { key: 'analytics', label: 'Analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
     { options: [{
-      name: 'copilot/suggest/activate',
-      label: 'AI Copilot',
-      type: 'toggle',
-      description: 'AI Copilot assists with code suggestions and improvements.',
-      footnote: {
-        text: 'Learn more about AI Copilot',
-        link: 'https://remix.ethereum.org/',
-        styleClass: 'text-primary'
-      }
-    }, {
       name: 'matomo-analytics',
       label: 'Matomo Analytics (no cookies)',
       type: 'toggle',
@@ -154,25 +144,27 @@ const settingsSections: SettingsSection[] = [
           link: 'https://remix.ethereum.org/',
           styleClass: 'text-primary'
         }
-      },{
-        name: 'ai-analyze-context',
-        label: 'Allow AI to Analyze Code Context',
-        description: 'Enables deeper insights by analyzing your code structure.',
-        type: 'toggle',
-        footnote: {
-          text: 'Disabling this may reduce suggestion accuracy.',
-          styleClass: 'text-warning'
-        }
-      },{
-        name: 'ai-external-api',
-        label: 'Use External API for AI Responses',
-        description: 'Sends anonymized prompts to OpenAI\'s API to enhance responses.',
-        type: 'toggle',
-        footnote: {
-          text: 'Disabling this will limit AI-generated suggestions.',
-          styleClass: 'text-warning'
-        }
-      },{
+      },
+      // {
+      //   name: 'ai-analyze-context',
+      //   label: 'Allow AI to Analyze Code Context',
+      //   description: 'Enables deeper insights by analyzing your code structure.',
+      //   type: 'toggle',
+      //   footnote: {
+      //     text: 'Disabling this may reduce suggestion accuracy.',
+      //     styleClass: 'text-warning'
+      //   }
+      // },{
+      //   name: 'ai-external-api',
+      //   label: 'Use External API for AI Responses',
+      //   description: 'Sends anonymized prompts to OpenAI\'s API to enhance responses.',
+      //   type: 'toggle',
+      //   footnote: {
+      //     text: 'Disabling this will limit AI-generated suggestions.',
+      //     styleClass: 'text-warning'
+      //   }
+      // },
+      {
         name: 'ai-privacy-policy',
         label: 'View Privacy Policy',
         description: 'Understand how AI processes your data.',
@@ -183,145 +175,98 @@ const settingsSections: SettingsSection[] = [
   { key: 'services', label: 'Connected Services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
     {
       options: [{
-        name: 'github-credentials',
+        name: 'github-config',
         label: 'Github Credentials',
         type: 'toggle',
-        toggleOptions: <GithubSettings
-          saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
-            // saveTokenToast(props.config, dispatchToast, githubToken, 'gist-access-token')
-            // saveTokenToast(props.config, dispatchToast, githubUserName, 'github-user-name')
-            // saveTokenToast(props.config, dispatchToast, githubEmail, 'github-email')
-          }}
-          removeToken={() => {
-            // removeTokenToast(props.config, dispatchToast, 'gist-access-token')
-            // removeTokenToast(props.config, dispatchToast, 'github-user-name')
-            // removeTokenToast(props.config, dispatchToast, 'github-email')
-          }}
-          config={{
-            exists: () => true,
-            get: () => '',
-            set: () => {},
-            clear: () => {},
-            getUnpersistedProperty: () => {},
-            setUnpersistedProperty: () => {}
-          }}
-        />
+        toggleUIDescription: <GitHubCredentialsDescription />,
+        toggleUIOptions: [{
+          name: 'gist-access-token',
+          type: 'password'
+        }, {
+          name: 'github-user-name',
+          type: 'text'
+        }, {
+          name: 'github-email',
+          type: 'text'
+        }]
       }, {
-        name: 'ipfs-settings',
+        name: 'ipfs-config',
         label: 'IPFS Settings',
         type: 'toggle',
-        toggleOptions: <IPFSSettings />
+        toggleUIOptions: [{
+          name: 'ipfs-url',
+          type: 'text'
+        }, {
+          name: 'ipfs-protocol',
+          type: 'text'
+        }, {
+          name: 'ipfs-port',
+          type: 'text'
+        }, {
+          name: 'ipfs-project-id',
+          type: 'text'
+        }, {
+          name: 'ipfs-project-secret',
+          type: 'text'
+        }]
       }, {
-        name: 'swarm-settings',
+        name: 'swarm-config',
         label: 'Swarm Settings',
         type: 'toggle',
-        toggleOptions: <SwarmSettings />
+        toggleUIOptions: [{
+          name: 'swarm-private-bee-address',
+          type: 'text'
+        }, {
+          name: 'swarm-postage-stamp-id',
+          type: 'text'
+        }]
       }, {
-        name: 'sindri-credentials',
+        name: 'sindri-config',
         label: 'Sindri Credentials',
         type: 'toggle',
-        toggleOptions: <SindriSettings
-          saveToken={(sindriToken: string) => {
-            // saveTokenToast(props.config, dispatchToast, sindriToken, 'sindri-access-token')
-          }}
-          removeToken={() => {
-            // removeTokenToast(props.config, dispatchToast, 'sindri-access-token')
-          }}
-          config={{
-            exists: () => true,
-            get: () => '',
-            set: () => {},
-            clear: () => {},
-            getUnpersistedProperty: () => {},
-            setUnpersistedProperty: () => {}
-          }}
-        />
-      }, {
-        name: 'etherscan-access-token',
+        toggleUIDescription: <SindriCredentialsDescription />,
+        toggleUIOptions: [{
+          name: 'sindri-access-token',
+          type: 'password'
+        }]
+      },{
+        name: 'etherscan-config',
         label: 'Etherscan Access Token',
         type: 'toggle',
-        toggleOptions: <EtherscanSettings
-          saveToken={(etherscanToken: string) => {
-            // saveTokenToast(props.config, dispatchToast, etherscanToken, 'etherscan-access-token')
-          }}
-          removeToken={() => {
-            // removeTokenToast(props.config, dispatchToast, 'etherscan-access-token')
-          }}
-          config={{
-            exists: () => true,
-            get: () => '',
-            set: () => {},
-            clear: () => {},
-            getUnpersistedProperty: () => {},
-            setUnpersistedProperty: () => {}
-          }}
-        />
+        toggleUIDescription: <EtherscanConfigDescription />,
+        toggleUIOptions: [{
+          name: 'etherscan-access-token',
+          type: 'password'
+        }]
       }]
-    }
-  ]},
-];
-
-const initialToggles = {
-  generateContractMetadata: true,
-  codeCompletion: true,
-  gasEstimates: true,
-  errorsInEditor: true,
-  personalMode: true,
-  saveEnvState: true,
-  language: 'English',
-  theme: 'Dark',
-  aiCopilot: true,
-  aiAnalyzeContext: true,
-  aiExternalApi: true,
-  matomoNoCookies: true,
-  matomoWithCookies: true,
-  githubEnabled: true,
-  ipfsEnabled: true,
-  swarmEnabled: true,
-  sindriEnabled: true,
-};
+    }]}
+]
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [settingsState, dispatch] = useReducer(settingReducer, initialState)
   const [selected, setSelected] = useState('general');
-  const [toggles, setToggles] = useState(initialToggles);
-  const [inputs, setInputs] = useState({
-    githubToken: '',
-    githubUsername: '',
-    githubEmail: '',
-    ipfsHost: '',
-    ipfsProtocol: '',
-    ipfsPort: '',
-    ipfsProjectId: '',
-    ipfsProjectSecret: '',
-    swarmBee: '',
-    swarmStamp: '',
-    sindriToken: '',
-  });
-
-  const handleToggle = (key) => setToggles({ ...toggles, [key]: !toggles[key] });
-  const handleInput = (e) => setInputs({ ...inputs, [e.target.name]: e.target.value });
 
   return (
-    <div className="container-fluid bg-light">
-      <div className='pt-5'></div>
-      <div className='d-flex flex-row px-5'>
-        <div className="input-group remix-settings-sidebar">
-          <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
-          <div className='d-flex flex-fill'>
-            <span className="input-group-text"><i className="fa fa-search"></i></span>
-            <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} />
+    <>
+      {settingsState.toaster.value ? <Toaster message={settingsState.toaster.value as string} /> : null}
+      <div className="container-fluid bg-light">
+        <div className='pt-5'></div>
+        <div className='d-flex flex-row px-5 pb-4'>
+          <div className="input-group remix-settings-sidebar">
+            <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
+            <div className='d-flex flex-fill'>
+              <span className="input-group-text"><i className="fa fa-search"></i></span>
+              <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="d-flex flex-wrap align-items-stretch">
-        {/* Sidebar */}
-        <div
-          className="flex-column bg-transparent p-0 remix-settings-sidebar"
-          style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}
-        >
-          <div className="pt-4">
-            <ul className="mt-4 px-5 list-unstyled">
+        <div className="d-flex flex-wrap align-items-stretch">
+          {/* Sidebar */}
+          <div
+            className="flex-column bg-transparent p-0 remix-settings-sidebar"
+            style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}
+          >
+            <ul className="px-5 list-unstyled">
               {settingsSections.map((section, index) => (
                 <li
                   className={`nav-item ${index !== settingsSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
@@ -339,20 +284,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               ))}
             </ul>
           </div>
-        </div>
-        {/* Main Content */}
-        <div
-          className="flex-column p-0 flex-grow-1"
-          style={{ minWidth: 0, flexBasis: '300px', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
-        >
-          <div className="pt-4 px-5" style={{ maxWidth: '650px' }}>
-            <div className="mt-4">
+          {/* Main Content */}
+          <div
+            className="flex-column p-0 flex-grow-1"
+            style={{ minWidth: 0, flexBasis: '300px', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
+          >
+            <div className="px-5 remix-settings-main remix-settings-main-vh" style={{ maxWidth: '650px', overflowY: 'auto', maxHeight: '58vh' }}>
               { settingsSections.map((section, index) => (selected === section.key && <SettingsSectionUI key={index} section={section} state={settingsState} dispatch={dispatch} />))}
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
