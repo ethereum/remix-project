@@ -78,7 +78,7 @@ export class ContractAgent {
           }
           return "Max attempts reached! Please try again with a different prompt."
         }
-        return "No payload, try again while considering changing the assistant provider to one of these choices `<openai|anthropic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
 
       await statusCallback?.('Processing generated files...')
