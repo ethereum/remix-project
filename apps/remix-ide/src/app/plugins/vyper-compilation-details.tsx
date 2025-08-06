@@ -66,7 +66,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
         break
       }
     } else {
-        this.theme = 'bright:inverted'
+      this.theme = 'bright:inverted'
     }
     this.renderComponent()
   }
