@@ -52,7 +52,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
 
   const [toasterMsg, setToasterMsg] = useState<string>('')
 
-  const [disableCreateButton, setDisableCreateButton] = useState<boolean>(true)
+  const [disableCreateButton, setDisableCreateButton] = useState<boolean>(false)
   const [disableGenerateButton, setDisableGenerateButton] = useState<boolean>(false)
   const [disableStopButton, setDisableStopButton] = useState<boolean>(true)
   const [disableRunButton, setDisableRunButton] = useState<boolean>(false)
