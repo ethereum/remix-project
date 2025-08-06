@@ -8,11 +8,41 @@ const defaultLocale = config.get('settings/locale') ? settingsConfig.locales.fin
 const gistAccessToken = config.get('settings/gist-access-token') || ''
 const githubUserName = config.get('settings/github-user-name') || ''
 const githubEmail = config.get('settings/github-email') || ''
+const ipfsUrl = config.get('settings/ipfs-url') || ''
+const ipfsProtocol = config.get('settings/ipfs-protocol') || ''
+const ipfsPort = config.get('settings/ipfs-port') || ''
+const ipfsProjectId = config.get('settings/ipfs-project-id') || ''
+const ipfsProjectSecret = config.get('settings/ipfs-project-secret') || ''
+const swarmPrivateBeeAddress = config.get('settings/swarm-private-bee-address') || ''
+const swarmPostageStampId = config.get('settings/swarm-postage-stamp-id') || ''
+const sindriAccessToken = config.get('settings/sindri-access-token') || ''
+const etherscanAccessToken = config.get('settings/etherscan-access-token') || ''
+
 let githubConfig = config.get('settings/github-config') || false
+let ipfsConfig = config.get('settings/ipfs-config') || false
+let swarmConfig = config.get('settings/swarm-config') || false
+let sindriConfig = config.get('settings/sindri-config') || false
+let etherscanConfig = config.get('settings/etherscan-config') || false
 
 if (!githubConfig && (githubUserName || githubEmail || gistAccessToken)) {
   config.set('settings/github-config', true)
   githubConfig = true
+}
+if (!ipfsConfig && (ipfsUrl || ipfsProtocol || ipfsPort || ipfsProjectId || ipfsProjectSecret)) {
+  config.set('settings/ipfs-config', true)
+  ipfsConfig = true
+}
+if (!swarmConfig && (swarmPrivateBeeAddress || swarmPostageStampId)) {
+  config.set('settings/swarm-config', true)
+  swarmConfig = true
+}
+if (!sindriConfig && sindriAccessToken) {
+  config.set('settings/sindri-config', true)
+  sindriConfig = true
+}
+if (!etherscanConfig && etherscanAccessToken) {
+  config.set('settings/etherscan-config', true)
+  etherscanConfig = true
 }
 
 export const initialState: SettingsState = {
@@ -69,19 +99,19 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'ipfs-config': {
-    value: config.get('settings/ipfs-config') || false,
+    value: ipfsConfig,
     isLoading: false
   },
   'swarm-config': {
-    value: config.get('settings/swarm-config') || false,
+    value: swarmConfig,
     isLoading: false
   },
   'sindri-config': {
-    value: config.get('settings/sindri-config') || false,
+    value: sindriConfig,
     isLoading: false
   },
   'etherscan-config': {
-    value: config.get('settings/etherscan-config') || false,
+    value: etherscanConfig,
     isLoading: false
   },
   'gist-access-token': {
@@ -97,39 +127,39 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'ipfs-url': {
-    value: config.get('settings/ipfs-url') || '',
+    value: ipfsUrl,
     isLoading: false
   },
   'ipfs-protocol': {
-    value: config.get('settings/ipfs-protocol') || '',
+    value: ipfsProtocol,
     isLoading: false
   },
   'ipfs-port': {
-    value: config.get('settings/ipfs-port') || '',
+    value: ipfsPort,
     isLoading: false
   },
   'ipfs-project-id': {
-    value: config.get('settings/ipfs-project-id') || '',
+    value: ipfsProjectId,
     isLoading: false
   },
   'ipfs-project-secret': {
-    value: config.get('settings/ipfs-project-secret') || '',
+    value: ipfsProjectSecret,
     isLoading: false
   },
   'swarm-private-bee-address': {
-    value: config.get('settings/swarm-private-bee-address') || '',
+    value: swarmPrivateBeeAddress,
     isLoading: false
   },
   'swarm-postage-stamp-id': {
-    value: config.get('settings/swarm-postage-stamp-id') || '',
+    value: swarmPostageStampId,
     isLoading: false
   },
   'sindri-access-token': {
-    value: config.get('settings/sindri-access-token') || '',
+    value: sindriAccessToken,
     isLoading: false
   },
   'etherscan-access-token': {
-    value: config.get('settings/etherscan-access-token') || '',
+    value: etherscanAccessToken,
     isLoading: false
   },
   'ai-privacy-policy': {
