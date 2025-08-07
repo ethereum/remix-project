@@ -34,7 +34,7 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">{group.name}</label>
+          <label className="ps-1 nav form-check-label">{group.name}</label>
         </span>
         {
           activePanel === eventKey ?

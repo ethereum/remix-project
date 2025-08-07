@@ -36,7 +36,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const forkStatePrompt = (defaultName: string) => {
     return (
       <div data-id="forkVmStateModal">
-        <ul className='ml-3'>
+        <ul className='ms-3'>
           <li><FormattedMessage id="udapp.forkVmStateDesc1"/></li>
           <li><FormattedMessage id="udapp.forkVmStateDesc2"/></li>
         </ul>
@@ -57,7 +57,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const deleteVmStatePrompt = () => {
     return (
       <div data-id="deleteVmStateModal">
-        <ul className='ml-3'>
+        <ul className='ms-3'>
           <li><FormattedMessage id="udapp.resetVmStateDesc1"/></li>
           <li><FormattedMessage id="udapp.resetVmStateDesc2"/></li>
         </ul>
@@ -146,26 +146,26 @@ export function EnvironmentUI(props: EnvironmentProps) {
         <FormattedMessage id="udapp.environment" />
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
           <a href="https://chainlist.org/" target="_blank">
-            <i className='udapp_infoDeployAction ml-2 fas fa-plug' aria-hidden="true"></i>
+            <i className='udapp_infoDeployAction ms-2 fas fa-plug' aria-hidden="true"></i>
           </a>
         </CustomTooltip>
         { currentProvider && currentProvider.config.isVM && isSaveEvmStateChecked && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="forkStatetooltip" tooltipText={<FormattedMessage id="udapp.forkStateTitle" />}>
-          <i className="udapp_infoDeployAction ml-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
+          <i className="udapp_infoDeployAction ms-2 fas fa-code-branch" style={{ cursor: 'pointer' }} onClick={forkState} data-id="fork-state-icon"></i>
         </CustomTooltip> }
         { currentProvider && currentProvider.config.isVM && isSaveEvmStateChecked && !currentProvider.config.isVMStateForked && !currentProvider.config.isRpcForkedState && <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="deleteVMStatetooltip" tooltipText={<FormattedMessage id="udapp.resetVmStateTitle" />}>
           <span onClick={resetVmState} style={{ cursor: 'pointer', float: 'right', textTransform: 'none' }}>
-            <i className="udapp_infoDeployAction ml-2 fas fa-rotate-right" data-id="delete-state-icon"></i>
-            <span className="ml-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
+            <i className="udapp_infoDeployAction ms-2 fas fa-rotate-right" data-id="delete-state-icon"></i>
+            <span className="ms-1" style = {{ textTransform: 'none', fontSize: '13px' }}>Reset State</span>
           </span>
         </CustomTooltip> }
       </label>
-      <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
+      <div className="" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {/* {isL2(currentProvider && currentProvider.displayName)} */}
             <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} envLabel={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} isL2={isL2} plugin={props.runTabPlugin} />
           </Dropdown.Toggle>
-          <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
+          <Dropdown.Menu as={CustomMenu} className="w-100 form-select" data-id="custom-dropdown-items">
             {props.providers.providerList.length === 0 && <Dropdown.Item>
               <span className="">
                 No provider pinned

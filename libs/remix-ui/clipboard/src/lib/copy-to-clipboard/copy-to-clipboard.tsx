@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import copy from 'copy-to-clipboard'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 
 import './copy-to-clipboard.css'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -18,7 +18,7 @@ interface ICopyToClipboard {
   classList?: string
 }
 export const CopyToClipboard = (props: ICopyToClipboard) => {
-  const { tip = 'Copy', icon = 'fa-copy', classList = ' ml-1 p-2', direction = 'right', getContent, children, callback, ...otherProps } = props
+  const { tip = 'Copy', icon = 'fa-copy', classList = ' ms-1 p-2', direction = 'right', getContent, children, callback, ...otherProps } = props
   let { content } = props
   const [message, setMessage] = useState(tip)
 

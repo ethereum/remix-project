@@ -17,7 +17,7 @@ function WorkspaceTemplate({ gsID, workspaceTitle, description, projectLogo, cal
   return (
     <div className="d-flex remixui_home_workspaceTemplate">
       <button
-        className="btn border-secondary p-1 d-flex flex-column  text-nowrap justify-content-center mr-2 remixui_home_workspaceTemplate"
+        className="btn border-secondary p-1 d-flex flex-column  text-nowrap justify-content-center me-2 remixui_home_workspaceTemplate"
         data-id={'landingPageStart' + gsID}
         onClick={() => callback()}
       >

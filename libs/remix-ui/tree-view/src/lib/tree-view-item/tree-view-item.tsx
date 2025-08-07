@@ -26,15 +26,15 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
         onClick={() => !controlBehaviour && setIsExpanded(!isExpanded)}
       >
         {children && showIcon ? (
-          <div className={isExpanded ? `pl-2 ${iconY}` : `pl-2 ${iconX} caret caret_tv`}
+          <div className={isExpanded ? `ps-2 ${iconY}` : `ps-2 ${iconX} caret caret_tv`}
             style={{ visibility: children ? 'visible' : 'hidden' }}
           ></div>
         ) : icon ? (
-          <div className={`pr-2 pl-2 ${icon} caret caret_tv`}></div>
+          <div className={`pe-2 ps-2 ${icon} caret caret_tv`}></div>
         ) : null}
-        <span className="w-100 ml-1 pl-2">{label}</span>
+        <span className="w-100 ms-1 ps-2">{label}</span>
       </div>
-      {isExpanded ? <div className="pl-3">
+      {isExpanded ? <div className="ps-3">
         {children}
       </div> : null}
     </li>

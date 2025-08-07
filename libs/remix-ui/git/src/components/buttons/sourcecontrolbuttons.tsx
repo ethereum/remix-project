@@ -86,23 +86,23 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
       {props.panel === gitUIPanels.COMMITS || props.panel === gitUIPanels.SOURCECONTROL ? (
         <>
           <CustomTooltip tooltipText={getTooltipText('git.pull')}>
-            <GitUIButton data-id="sourcecontrol-button-pull" disabledCondition={buttonsDisabled()} onClick={pull} className="btn btn-sm pl-0 pr-2">
+            <GitUIButton data-id="sourcecontrol-button-pull" disabledCondition={buttonsDisabled()} onClick={pull} className="btn btn-sm ps-0 pe-2">
               <div className="d-flex align-items-baseline">
-                {syncState.commitsBehind.length ? <div className="badge badge-pill pl-0">{syncState.commitsBehind.length}</div> : null}
+                {syncState.commitsBehind.length ? <div className="badge rounded-pill ps-0">{syncState.commitsBehind.length}</div> : null}
                 <FontAwesomeIcon icon={faArrowDown} className="" />
               </div>
             </GitUIButton>
           </CustomTooltip>
           <CustomTooltip tooltipText={getTooltipText('git.push')}>
-            <GitUIButton data-id="sourcecontrol-button-push" disabledCondition={buttonsDisabled()} onClick={push} className="btn btn-sm pl-0 pr-2">
+            <GitUIButton data-id="sourcecontrol-button-push" disabledCondition={buttonsDisabled()} onClick={push} className="btn btn-sm ps-0 pe-2">
               <div className="d-flex align-items-baseline">
-                {syncState.commitsAhead.length ? <div className="badge badge-pill pl-0">{syncState.commitsAhead.length}</div> : null}
+                {syncState.commitsAhead.length ? <div className="badge rounded-pill ps-0">{syncState.commitsAhead.length}</div> : null}
                 <FontAwesomeIcon icon={faArrowUp} className="" />
               </div>
             </GitUIButton>
           </CustomTooltip>
           <CustomTooltip tooltipText={getTooltipText('git.sync')}>
-            <GitUIButton data-id="sourcecontrol-button-sync" disabledCondition={buttonsDisabled()} onClick={sync} className="btn btn-sm  pl-0 pr-2">
+            <GitUIButton data-id="sourcecontrol-button-sync" disabledCondition={buttonsDisabled()} onClick={sync} className="btn btn-sm  ps-0 pe-2">
               <FontAwesomeIcon icon={faArrowsUpDown} className="" />
             </GitUIButton>
           </CustomTooltip>

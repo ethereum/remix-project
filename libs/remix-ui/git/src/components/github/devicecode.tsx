@@ -157,7 +157,7 @@ export const GetDeviceCode = () => {
       {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={openPopupLogin}>
-          <i className="fab fa-github mr-1"></i>Login with GitHub
+          <i className="fab fa-github me-1"></i>Login with GitHub
         </button>
         {popupError && !gitHubResponse && !authorized && (
           <div className="alert alert-warning mt-2" role="alert">
@@ -185,7 +185,7 @@ export const GetDeviceCode = () => {
           <div className="input-group text-secondary mb-0 h6">
             <input disabled type="text" className="form-control" value={gitHubResponse.user_code} />
             <div className="input-group-append">
-              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
+              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ms-1 p-2 mt-1' direction={"top"} />
             </div>
           </div>
           <br></br>

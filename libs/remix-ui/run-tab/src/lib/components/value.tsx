@@ -68,7 +68,7 @@ export function ValueUI(props: ValueProps) {
           <select
             name="unit"
             value={props.sendUnit}
-            className="custom-select"
+            className="form-select"
             id="unit"
             onChange={(e) => {
               props.setUnit(e.target.value as 'ether' | 'finney' | 'gwei' | 'wei')

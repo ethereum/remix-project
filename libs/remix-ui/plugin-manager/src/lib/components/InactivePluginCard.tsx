@@ -118,7 +118,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
           </h6>
         </div>
         <div className="remixui_description d-flex text-body plugin-text mb-2">
-          {profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon" /> : null}
+          {profile.icon ? <img src={profile.icon} className="me-1 mt-1 remixui_pluginIcon" alt="profile icon" /> : null}
           <span className="remixui_descriptiontext">{profile.description}</span>
         </div>
       </article>

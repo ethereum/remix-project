@@ -88,7 +88,7 @@ export const LookupView = () => {
               return (
                 <div key={verifierId} className="pt-4">
                   <div>
-                    <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
+                    <span className="fw-bold text-secondary">{verifierId}</span>{' '}
                     <CustomTooltip tooltipText="Configure the API in the settings">
                       <span className="text-secondary" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Enable?
@@ -103,7 +103,7 @@ export const LookupView = () => {
               return (
                 <div key={verifierId} className="pt-4">
                   <div>
-                    <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
+                    <span className="fw-bold text-secondary">{verifierId}</span>{' '}
                     <CustomTooltip tooltipText={`The configured Sourcify server (${chainSettings.verifiers['Sourcify'].apiUrl}) does not support chain ${selectedChain?.chainId}`}>
                       <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Unsupported
@@ -117,7 +117,7 @@ export const LookupView = () => {
             return (
               <div key={verifierId} className="pt-4">
                 <div className="d-flex align-items-center">
-                  <span className="font-weight-bold">{verifierId}&nbsp;</span>
+                  <span className="fw-bold">{verifierId}&nbsp;</span>
                   <span className="text-secondary d-inline-block text-truncate mw-100">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 </div>
                 {!!loadingVerifiers[verifierId] && (
@@ -129,7 +129,7 @@ export const LookupView = () => {
                   <div>
                     <div className="pt-2">
                       Status:{' '}
-                      <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
+                      <span className="fw-bold" style={{ textTransform: 'capitalize' }}>
                         {lookupResults[verifierId].status}
                       </span>{' '}
                       {!!lookupResults[verifierId].lookupUrl && verifierId === 'Blockscout' ? <CopyToClipboard tip="Copy code URL" content={lookupResults[verifierId].lookupUrl} direction="top" /> : !!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}

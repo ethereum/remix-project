@@ -212,25 +212,24 @@ export const EditorUI = (props: EditorUIProps) => {
     const themeType = props.themeType === 'dark' ? 'vs-dark' : 'vs'
     const themeName = props.themeType === 'dark' ? 'remix-dark' : 'remix-light'
     // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = formatColor('--light')
-    const infoColor = formatColor('--info')
-    const darkColor = formatColor('--dark')
-    const secondaryColor = formatColor('--secondary')
-    const primaryColor = formatColor('--primary')
+    const lightColor = formatColor('--bs-light')
+    const infoColor = formatColor('--bs-info')
+    const darkColor = formatColor('--bs-dark')
+    const secondaryColor = formatColor('--bs-secondary')
+    const primaryColor = formatColor('--bs-primary')
     const textColor = formatColor('--text') || darkColor
     const textbackground = formatColor('--text-background') || lightColor
-
-    const blueColor = formatColor('--blue')
-    const successColor = formatColor('--success')
-    const warningColor = formatColor('--warning')
-    const yellowColor = formatColor('--yellow')
-    const pinkColor = formatColor('--pink')
+    const blueColor = formatColor('--bs-blue')
+    const successColor = formatColor('--bs-success')
+    const warningColor = formatColor('--bs-warning')
+    const yellowColor = formatColor('--bs-yellow')
+    const pinkColor = formatColor('--bs-pink')
     const locationColor = '#9e7e08'
     // const purpleColor = formatColor('--purple')
-    const dangerColor = formatColor('--danger')
-    const greenColor = formatColor('--green')
-    const orangeColor = formatColor('--orange')
-    const grayColor = formatColor('--gray')
+    const dangerColor = formatColor('--bs-danger')
+    const greenColor = formatColor('--bs-green')
+    const orangeColor = formatColor('--bs-orange')
+    const grayColor = formatColor('--bs-gray')
 
     monaco.editor.defineTheme(themeName, {
       base: themeType,
@@ -787,7 +786,7 @@ export const EditorUI = (props: EditorUIProps) => {
           message: (
             <div>
               {' '}
-              <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+              <i className="fas fa-exclamation-triangle text-danger me-1"></i>
               <FormattedMessage id="editor.title1.message1" />
               <div>
                 <FormattedMessage id="editor.title1.message2" />
@@ -819,7 +818,7 @@ export const EditorUI = (props: EditorUIProps) => {
                   <input
                     type="checkbox"
                     id="donotshowagain"
-                    className="mr-2"
+                    className="me-2"
                     onChange={(e) => dontShowAgainChecked = e.target.checked}
                   />
                   <FormattedMessage id="editor.doNotShowAgain" defaultMessage="Do not show this warning again" /> {/* Consider adding this to locale files */}
@@ -1219,15 +1218,15 @@ export const EditorUI = (props: EditorUIProps) => {
         const containerElement = document.createElement('div')
         containerElement.id = id
         containerElement.style.width = '100%'
-        containerElement.style.borderTop = '1px solid var(--ai)'
+        containerElement.style.borderTop = '1px solid var(--custom-ai-color)'
 
         const innerContainer = document.createElement('div')
         innerContainer.style.float = 'right'
 
         const acceptBtn = document.createElement('button')
-        acceptBtn.style.backgroundColor = 'var(--ai)'
+        acceptBtn.style.backgroundColor = 'var(--custom-ai-color)'
         acceptBtn.style.color = 'var(--vscode-editor-background)'
-        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'mr-1'])
+        acceptBtn.classList.add(...['btn', 'border', 'align-items-center', 'px-1', 'py-0', 'me-1'])
         acceptBtn.style.fontSize = '0.8rem'
         acceptBtn.textContent = 'Accept'
 
@@ -1499,7 +1498,7 @@ export const EditorUI = (props: EditorUIProps) => {
         className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
-        <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
+        <span className="ps-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
           <i className="fas fa-lock-alt p-2"></i>
           <FormattedMessage
             id="editor.text"

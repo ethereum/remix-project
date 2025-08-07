@@ -56,7 +56,7 @@ export function Container () {
               tooltipClasses="text-nowrap"
               tooltipText='See compiler license'
             >
-              <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+              <span className="far fa-file-certificate border-0 p-0 ms-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={noirApp.appState.autoCompile} hideWarnings={noirApp.appState.hideWarnings} />
             <div className="pb-2">

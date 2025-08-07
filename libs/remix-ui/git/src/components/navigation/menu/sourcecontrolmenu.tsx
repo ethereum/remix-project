@@ -15,7 +15,7 @@ export const SourceControlMenu = () => {
         as={CustomIconsToggle}
         icon={'fas fa-bars'}
       ></Dropdown.Toggle>
-      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
+      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='form-select remixui_menuwidth' rootCloseEvent="click">
         <Dropdown.Item key={0}>
           <CustomTooltip
             placement="right-start"
@@ -36,10 +36,10 @@ export const SourceControlMenu = () => {
                 onClick={() => {
                   hideIconsMenu(!showIconsMenu)
                 }}
-                className='fab fa-github pl-2'
+                className='fab fa-github ps-2'
               >
               </span>
-              <span className="pl-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
+              <span className="ps-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
             </div>
           </CustomTooltip>
         </Dropdown.Item>

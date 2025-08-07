@@ -52,9 +52,8 @@ module.exports = {
     browser.pause(500)
       .debugTransaction(1)
       .pause(2000)
-      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-      .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-      .pause(2000)
+      // .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      // .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]') That button is disabled
       .waitForElementVisible('#stepdetail')
       .goToVMTraceStep(20)
       .pause(1000)

@@ -45,7 +45,7 @@ export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
           tooltipClasses="text-nowrap"
           tooltipText='Open in file explorer'
         >
-          <i onClick={openInExplorer} style={{ cursor: 'pointer' }} className="fa fas fa-arrow-up-right-from-square ml-2"></i>
+          <i onClick={openInExplorer} style={{ cursor: 'pointer' }} className="fa fas fa-arrow-up-right-from-square ms-2"></i>
         </CustomTooltip>
       </div>
 
