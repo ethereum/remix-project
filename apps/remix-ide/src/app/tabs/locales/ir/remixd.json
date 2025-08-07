@@ -1,0 +1,16 @@
+{
+  "remixd.connectionAlert1": "نمی توان به دیمون remixd متصل شد. لطفاً مطمئن شوید که remixd در پس زمینه در حال اجرا است.",
+  "remixd.connectionAlert2": "اتصال به remixd خاتمه یافت. لطفاً مطمئن شوید که remixd هنوز در پس زمینه در حال اجرا است.",
+  "remixd.remixdConnect": "دسترسی به سیستم فایل با استفاده از remixd",
+  "remixd.connect": "اتصال",
+  "remixd.cancel": "لغو",
+  "remixd.text1": "با استفاده از <a>بسته NPM Remixd</a> از Remix IDE به سیستم فایل محلی خود دسترسی پیدا کنید.",
+  "remixd.text2": "<a>مستندات</a> Remixd.",
+  "remixd.text3": "دستور remixd این است:",
+  "remixd.text4": "دستور remixd بدون گزینه از دایرکتوری فعلی ترمینال به عنوان دایرکتوری مشترک استفاده می کند و دامنه Remix مشترک فقط می تواند https://remix.ethereum.org، https://remix-alpha.ethereum.org یا https://remix-beta.ethereum.org باشد",
+  "remixd.text5": "دستور مثال با پرچم ها:",
+  "remixd.text6": "برای اطلاعات در مورد پورت ها، به <a>استفاده از پورت های Remixd</a> مراجعه کنید",
+  "remixd.text7": "این ویژگی هنوز در آلفا است. توصیه می کنیم یک نسخه پشتیبان از پوشه مشترک نگه دارید.",
+  "remixd.text8": "قبل از استفاده، مطمئن شوید که نسخه remixd آخرین نسخه است، یعنی",
+  "remixd.text9": "اینجا بخوانید که چگونه آن را به روز کنید"
+}

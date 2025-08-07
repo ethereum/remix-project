@@ -1,0 +1,19 @@
+{
+  "publishToStorage.title1": "انتشار در حافظه",
+  "publishToStorage.title1.message": "این قرارداد ممکن است انتزاعی باشد، ممکن است متدهای یک والد انتزاعی را به طور کامل پیاده سازی نکند یا ممکن است سازنده یک قرارداد به ارث برده شده را به درستی فراخوانی نکند.",
+  "publishToStorage.title2": "فراداده و منابع {name} منتشر شد",
+  "publishToStorage.title2.message": "فراداده و منابع \"{name}\" با موفقیت منتشر شد.",
+  "publishToStorage.title3": "انتشار Swarm ناموفق بود",
+  "publishToStorage.title4": "تنظیمات IPFS",
+  "publishToStorage.title4.message1": "شما تنظیمات IPFS سفارشی خود را تنظیم نکرده اید.",
+  "publishToStorage.title4.message2": "ما دیگر یک نقطه پایانی عمومی برای انتشار قراردادهای شما در IPFS ارائه نخواهیم داد.",
+  "publishToStorage.title4.message3": "در عوض، اکنون 4 گزینه در دسترس است:",
+  "publishToStorage.title4.message4": "گزینه پیش فرض: از گره عمومی INFURA استفاده کنید. این تضمین نمی کند که داده های شما باقی بمانند.",
+  "publishToStorage.title4.message5": "از گره IPFS INFURA خود استفاده کنید. این نیاز به اشتراک دارد. <a> بیشتر بدانید </a>",
+  "publishToStorage.title4.message6": "از هر IPFS خارجی که نیازی به احراز هویت ندارد استفاده کنید.",
+  "publishToStorage.title4.message7": "از گره ipfs محلی خود استفاده کنید (که معمولاً تحت http://localhost:5001 اجرا می شود)",
+  "publishToStorage.title4.message8": "می توانید تنظیمات IPFS خود را در برگه تنظیمات به روز کنید.",
+  "publishToStorage.title4.message9": "اکنون از گزینه پیش فرض استفاده خواهد شد.",
+  "publishToStorage.title5": "انتشار IPFS ناموفق بود",
+  "publishToStorage.title5.message": "انتشار فایل فراداده و منابع در {storage} ناموفق بود، لطفاً بررسی کنید که دروازه های {storage} در دسترس باشند."
+}

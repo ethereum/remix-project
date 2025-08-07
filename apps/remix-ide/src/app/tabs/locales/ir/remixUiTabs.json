@@ -1,0 +1,14 @@
+{
+  "remixUiTabs.tooltipText1": "اجرای اسکریپت (CTRL + SHIFT + S)",
+  "remixUiTabs.tooltipText2": "کامپایل CTRL + S",
+  "remixUiTabs.tooltipText3": "فایل .sol یا .yul را برای کامپایل یا فایل .ts یا .js را برای اجرا انتخاب کنید",
+  "remixUiTabs.tooltipText4": "برای توضیح یک قرارداد، یک فایل پشتیبانی شده را انتخاب کنید",
+  "remixUiTabs.tooltipText5": "توضیح قرارداد(های) موجود در فایل فعلی [BETA]",
+  "remixUiTabs.tooltipText6": "فعال کردن RemixAI Copilot [BETA]",
+  "remixUiTabs.tooltipText7": "غیرفعال کردن RemixAI Copilot [BETA]",
+  "remixUiTabs.tooltipText8": "مستندات ابزارهای RemixAI",
+  "remixUiTabs.tooltipText9": "پیکربندی وابستگی های اسکریپت نویسی",
+  "remixUiTabs.tooltipTextDisabledCopilot": "برای استفاده از RemixAI Copilot، یک فایل پشتیبانی شده را انتخاب کنید",
+  "remixUiTabs.zoomOut": "کوچک نمایی",
+  "remixUiTabs.zoomIn": "بزرگنمایی"
+}

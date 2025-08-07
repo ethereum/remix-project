@@ -1,0 +1,10 @@
+{
+  "solUmlGen.pngDownload": "دانلود به صورت PNG",
+  "solUmlGen.pdfDownload": "دانلود به صورت PDF",
+  "solUmlGen.pngDownloadTooltip": "دانلود نمودار UML به عنوان یک فایل PNG",
+  "solUmlGen.pdfDownloadTooltip": "دانلود نمودار UML به عنوان یک فایل PDF",
+  "solUmlGen.text1": "برای مشاهده قرارداد خود به عنوان یک نمودار UML",
+  "solUmlGen.text2": "روی فایل قرارداد خود کلیک راست کنید",
+  "solUmlGen.clickOn": "کلیک کنید روی",
+  "solUmlGen.generateUML": "تولید UML"
+}

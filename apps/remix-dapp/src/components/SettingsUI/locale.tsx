@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react';
-import { AppContext } from '../../contexts';
+import { useContext, useEffect } from 'react'
+import { AppContext } from '../../contexts'
 
 const localeMap: Record<string, string> = {
   zh: 'Chinese Simplified - 简体中文',
@@ -7,26 +7,26 @@ const localeMap: Record<string, string> = {
   fr: 'French - Français',
   it: 'Italian - Italiano',
   es: 'Spanish - Español',
-};
+  ir: 'Iranian - فارسی',
+}
 
 export function LocaleUI() {
-  const { appState, dispatch } = useContext(AppContext);
-  const { selectedLocaleCode } = appState.settings;
-  const localeCodeList = Object.keys(localeMap);
+  const { appState, dispatch } = useContext(AppContext)
+  const { selectedLocaleCode } = appState.settings
+  const localeCodeList = Object.keys(localeMap)
 
   useEffect(() => {
-    const defaultLocaleCode =
-      localStorage.getItem('selectedLocaleCode') || 'en';
-    setLocaleCode(defaultLocaleCode);
-  }, []);
+    const defaultLocaleCode = localStorage.getItem('selectedLocaleCode') || 'en'
+    setLocaleCode(defaultLocaleCode)
+  }, [])
 
   const setLocaleCode = (localeCode: string) => {
     dispatch({
       type: 'SET_SETTINGS',
       payload: { selectedLocaleCode: localeCode },
-    });
-    localStorage.setItem('selectedLocaleCode', localeCode);
-  };
+    })
+    localStorage.setItem('selectedLocaleCode', localeCode)
+  }
 
   return (
     <div className="d-block">
@@ -38,7 +38,7 @@ export function LocaleUI() {
           className="form-control overflow-hidden w-100 font-weight-normal custom-select pr-4"
           value={selectedLocaleCode || localeCodeList[0]}
           onChange={(e) => {
-            setLocaleCode(e.target.value);
+            setLocaleCode(e.target.value)
           }}
         >
           {localeCodeList.map((localeCode) => (
@@ -49,5 +49,5 @@ export function LocaleUI() {
         </select>
       </div>
     </div>
-  );
+  )
 }
