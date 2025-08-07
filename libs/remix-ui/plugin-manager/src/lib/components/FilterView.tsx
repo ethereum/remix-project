@@ -7,62 +7,62 @@ const ChevronRight = () => (
 )
 
 interface FilterViewProps {
-  categories: string[];
-  selectedCategories: string[];
-  setSelectedCategories: (categories: string[]) => void;
+  categoryMap: Record<number, string>
+  selectedCategories: number[]
+  setSelectedCategories: (categories: number[]) => void
 }
 
-const FilterView = ({ categories, selectedCategories, setSelectedCategories }: FilterViewProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+const FilterView = ({ categoryMap, selectedCategories, setSelectedCategories }: FilterViewProps) => {
+  const [isOpen, setIsOpen] = useState(true)
 
-  const handleCheckboxChange = (category: string) => {
-    const newSelection = selectedCategories.includes(category)
-      ? selectedCategories.filter(c => c !== category)
-      : [...selectedCategories, category]
+  const handleCheckboxChange = (categoryId: number) => {
+    const newSelection = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter(id => id !== categoryId)
+      : [...selectedCategories, categoryId]
     setSelectedCategories(newSelection)
-  };
+  }
   
   const clearFilters = () => {
     setSelectedCategories([])
-  };
+  }
 
   return (
-    <div data-id="filter-panel" className="filter-panel my-2 bg-light border p-3">
-      <div className="filter-header mb-2">
-        <span className="filter-title">Filters</span>
-        <button onClick={clearFilters} className="clear-filters-btn" data-id="clear-filters-btn">
-          <span className="clear-filters-icon mr-1">&times;</span> Clear filters
+    <div data-id="filter-panel" className="my-2 bg-light border rounded p-3">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <span className="font-weight-bold">Filters</span>
+        <button onClick={clearFilters} className="btn btn-sm btn-link text-primary p-0" data-id="clear-filters-btn">
+          <span className="font-weight-bold mr-1">&times;</span> Clear filters
         </button>
       </div>
-
-      <div className="filter-group">
-        <button className="filter-group-header py-2" onClick={() => setIsOpen(!isOpen)}>
-          <span>CATEGORY</span>
+      <div className="border-bottom">
+        <button className="d-flex justify-content-between align-items-center w-100 py-2 btn btn-transparent text-secondary p-0" onClick={() => setIsOpen(!isOpen)}>
+          <span className="font-size-12">CATEGORY</span>
           <span className={`chevron-icon ${isOpen ? 'open' : ''}`}><ChevronRight /></span>
         </button>
         {isOpen && (
           <div className="filter-group-body pb-2 pt-2">
-            {categories.map(category => {
-              const checkboxId = `filter-checkbox-${category.replace(/[^a-zA-Z0-9]/g, '')}`;
+            {Object.entries(categoryMap).map(([id, name]) => {
+              const categoryId = parseInt(id, 10)
+              const checkboxId = `filter-checkbox-${categoryId}`
               return (
-                <div className="custom-control custom-checkbox mb-1" key={category}>
+                <div className="custom-control custom-checkbox mb-1" key={categoryId}>
                   <input
                     type="checkbox"
                     className="custom-control-input"
                     id={checkboxId}
                     data-id={checkboxId}
-                    checked={selectedCategories.includes(category)}
-                    onChange={() => handleCheckboxChange(category)}
+                    checked={selectedCategories.includes(categoryId)}
+                    onChange={() => handleCheckboxChange(categoryId)}
                   />
                   <label
                     className="custom-control-label"
                     htmlFor={checkboxId}
-                    data-id={`filter-label-${category.replace(/[^a-zA-Z0-9]/g, '')}`}
+                    data-id={`filter-label-${name.replace(/[^a-zA-Z0-9]/g, '')}`}
                   >
-                    {category}
+                    {name}
                   </label>
                 </div>
-              );
+              )
             })}
           </div>
         )}
