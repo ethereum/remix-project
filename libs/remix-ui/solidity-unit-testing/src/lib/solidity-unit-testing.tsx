@@ -208,14 +208,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       if (testDirInput.endsWith('/') && testDirInput !== '/') {
         testDirInput = helper.removeTrailingSlashes(testDirInput)
         if (testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
-          setDisableCreateButton(true)
+          setDisableCreateButton(false)
           setDisableGenerateButton(true)
         }
         updateDirList(testDirInput)
       } else {
         // If there is no matching folder in the workspace with entered text, enable Create button
         if (await testTabLogic.pathExists(testDirInput)) {
-          setDisableCreateButton(true)
+          setDisableCreateButton(false)
           setDisableGenerateButton(false)
         } else {
           // Enable Create button

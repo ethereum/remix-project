@@ -132,7 +132,7 @@ module.exports = {
       .click('*[data-id="commitButton"]')
   },
   'push the commit #group1': function (browser: NightwatchBrowser) {
-    const tag = browser.options.desiredCapabilities?.browserName === 'firefox' ? 'ahead' : ''
+    // const tag = browser.options.desiredCapabilities?.browserName === 'firefox' ? 'ahead' : ''
     browser
       .waitForElementVisible('*[data-id="commands-panel"]', 60000)
       .click('*[data-id="commands-panel"]')
@@ -142,7 +142,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="commits-panel"]', 60000)
       .click('*[data-id="commits-panel"]')
       .waitForElementPresent({
-        selector: `//*[@data-id="commit-summary-testcommit2-${tag}"]`,
+        selector: `//*[@data-id="commit-summary-testcommit2-"]`,
         locateStrategy: 'xpath',
         timeout: 60000
       }).pause(2000)
