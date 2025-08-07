@@ -7,7 +7,7 @@ const localeMap: Record<string, string> = {
   fr: 'French - Français',
   it: 'Italian - Italiano',
   es: 'Spanish - Español',
-  ir: 'Iranian - فارسی',
+  ir: 'Persian - فارسی',
 }
 
 export function LocaleUI() {
