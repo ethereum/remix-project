@@ -90,53 +90,47 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           }
         </div>
       </div>
-      <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
-        {plugin?.profile?.author && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.author" />:
-            </label>
-            <span> {plugin?.profile.author} </span>
-          </span>
-        )}
-        {plugin?.profile?.maintainedBy && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.maintainedBy" />:
-            </label>
-            <span> {plugin?.profile.maintainedBy} </span>
-          </span>
-        )}
-        {plugin?.profile?.documentation && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.documentation" />:
-            </label>
-            <span>
-              <CustomTooltip placement="right-end" tooltipId="linkToDocsTooltip" tooltipClasses=" text-nowrap " tooltipText={<FormattedMessage id="panel.linkToDoc" />}>
-                <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" target="_blank" rel="noreferrer">
-                  <i aria-hidden="true" className="fas fa-book"></i>
-                </a>
-              </CustomTooltip>
+      <div className={`mx-3 mb-2 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
+        <div className="bg-light p-3 rounded">
+          <div className="border-bottom pb-2 mb-2 font-weight-bold card-title">
+            <FormattedMessage id="panel.pluginDetails" defaultMessage="Plugin details" />
+          </div>
+
+          {plugin?.profile?.maintainedBy && (
+            <div className="d-flex align-items-center mb-3">
+              <span className={`font-weight-bold ${plugin.profile.maintainedBy.toLowerCase() === 'remix' ? 'text-success' : ''}`}>
+                Maintained by {plugin.profile.maintainedBy}
+              </span>
+              <i className={`fa-solid fa-shield-halved ml-2 ${plugin.profile.maintainedBy.toLowerCase() === 'remix' ? 'text-success' : 'text-body-secondary'}`}></i>
+            </div>
+          )}
+
+          {plugin?.profile?.description && (
+            <div className="mb-3">
+              <label className="text-body-secondary d-block mb-1">
+                <FormattedMessage id="panel.description" />
+              </label>
+              <span className="small">{plugin.profile.description}</span>
+            </div>
+          )}
+
+          {plugin?.profile?.repo && (
+            <span className="d-flex flex-row align-items-center d-block mb-1">
+              <a href={plugin?.profile?.repo} target="_blank" rel="noreferrer">
+                <FormattedMessage id="panel.makeAnissue" />
+              </a>
             </span>
-          </span>
-        )}
-        {plugin?.profile?.description && (
-          <span className="d-flex flex-row align-items-baseline">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.description" />:
-            </label>
-            <span> {plugin?.profile.description} </span>
-          </span>
-        )}
-        {plugin?.profile?.repo && (
-          <span className="d-flex flex-row align-items-center">
-            <a href={plugin?.profile?.repo} target="_blank" rel="noreferrer">
-              <FormattedMessage id="panel.makeAnissue" />
+          )}
+
+          {plugin?.profile?.documentation && (
+            <a href={plugin.profile.documentation} target="_blank" rel="noreferrer" className="btn btn-secondary w-100 d-flex align-items-center justify-content-center text-decoration-none">
+              <i className="fas fa-book mr-2"></i>
+              <FormattedMessage id="panel.openDocumentation" defaultMessage="Open documentation" />
             </a>
-          </span>
-        )}
+          )}
+        </div>
       </div>
+
     </header>
   )
 }
