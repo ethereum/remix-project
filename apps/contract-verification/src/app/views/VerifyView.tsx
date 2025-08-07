@@ -152,7 +152,7 @@ export const VerifyView = () => {
         } else {
           response = await verifier.verify(newSubmittedContract, compilerAbstract)
         }
-        const { status, message, receiptId, lookupUrl } = response
+        const { status, message, receiptId, lookupUrl, receiptLookupUrl } = response
         receipt.status = status
         receipt.message = message
         if (lookupUrl) {
@@ -160,6 +160,9 @@ export const VerifyView = () => {
         }
         if (receiptId) {
           receipt.receiptId = receiptId
+        }
+        if (receiptLookupUrl) {
+          receipt.receiptLookupUrl = receiptLookupUrl
         }
       } catch (e) {
         const err = e as Error
