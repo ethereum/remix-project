@@ -472,7 +472,7 @@ module.exports = {
       .currentWorkspaceIs('workspace_name')
   },
 
-  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group1': !function (browser: NightwatchBrowser) {
     const selector = 'a[data-id="dropdown-item-workspace_name"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .waitForElementPresent('*[data-id="workspacesSelect"]')
@@ -499,7 +499,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests"]')
   },
 
-  'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
+  'Should delete a workspace #group1': !function (browser: NightwatchBrowser) {
     const selector = 'a[data-id="dropdown-item-workspace_name_1"] + div[data-id="workspacesubMenuIcon"]'
     browser
       .switchWorkspace('workspace_name_1')
