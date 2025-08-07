@@ -13,9 +13,9 @@ interface RootViewProps {
   children: ReactNode
   filterByRemix: boolean
   setFilterByRemix: (value: boolean) => void
-  categories: string[]
-  selectedCategories: string[]
-  setSelectedCategories: (categories: string[]) => void
+  categoryMap: Record<number, string>
+  selectedCategories: number[]
+  setSelectedCategories: (categories: number[]) => void
 }
 
 export interface pluginDeactivated {
@@ -28,7 +28,7 @@ export interface pluginActivated {
   profile: Profile
 }
 
-function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, categories, selectedCategories, setSelectedCategories }: RootViewProps) {
+function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, categoryMap, selectedCategories, setSelectedCategories }: RootViewProps) {
   const intl = useIntl()
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
@@ -86,7 +86,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
 
           {showFilters && (
             <FilterView 
-              categories={categories}
+              categoryMap={categoryMap}
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
             />

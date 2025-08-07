@@ -95,9 +95,6 @@
   overflow-y: scroll;
   height: 100%;
 }
-#pluginManager .plugins-header {
-  border-bottom: 0 !important;
-}
 .search-bar-container {
   position: relative;
 }
@@ -112,6 +109,9 @@
 }
 .search-bar-container .form-control {
   padding-left: 30px !important;
+}
+.font-size-12 {
+  font-size: 12px !important;
 }
 .plugin-manager-tabs {
   position: relative;
@@ -151,14 +151,11 @@
   transition: color 0.2s ease-in-out;
   z-index: 1;
 }
-.plugin-manager-tabs .nav-link:last-child {
-  margin-right: 0;
+.plugin-manager-tabs .nav-link:hover {
+  color: var(--text-tertiary); 
 }
 .plugin-manager-tabs .nav-link.active {
   color: var(--text-primary); 
-}
-.plugin-manager-tabs .nav-link:hover {
-  color: var(--text-tertiary); 
 }
 .plugin-manager-tabs .nav-link .badge {
   color: inherit;
@@ -170,91 +167,18 @@
 .plugin-manager-tabs .nav-link.active .badge {
   opacity: 1;
 }
-.remixui-filter-label {
-  font-size: 13px;
-  line-height: 20px;
-  font-weight: 600;
-  display: inline-block;
-  vertical-align: middle;
-}
-.icon-pluginManager {
-  width: 12px;
-  height: 12px;
-}
-#pluginManager .filter-panel {
-  border-radius: 4px;
-}
-#pluginManager .filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-#pluginManager .filter-title {
-  font-weight: 600;
-  font-size: 14px;
-}
-#pluginManager .clear-filters-btn {
-  background: none;
-  border: none;
-  color: var(--primary);
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-}
-#pluginManager .clear-filters-icon {
-  font-size: 16px;
-  line-height: 1;
-}
-#pluginManager .filter-group {
-  border-bottom: 1px solid var(--gray);
-}
-#pluginManager .filter-group:last-child {
-  border-bottom: none;
-}
-#pluginManager .filter-group-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  font-size: 12px;
-  color: var(--text-secondary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding-left: 0;
-  padding-right: 0;
-}
 #pluginManager .chevron-icon {
   transition: transform 0.2s ease-in-out;
 }
 #pluginManager .chevron-icon.open {
   transform: rotate(90deg);
 }
-#pluginManager .filter-group-header:focus {
-  outline: none;
-  box-shadow: none;
-}
-#pluginManager .clear-filters-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-#pluginManager .plugin-list {
-  display: grid;
-  gap: 1rem;
-} 
-#pluginManager .remixui-plugin-card {
-  background-color: var(--light);
-}
-#pluginManager .card-title {
-  margin-bottom: 0 !important;
+.icon-pluginManager {
+  width: 12px;
+  height: 12px;
 }
 #pluginManager .remixui_pluginIcon {
   width: 1rem;
   height: 1rem;
   filter: invert(0.6);
-}
-#pluginManager .icon-pluginManager {
-  width: 12px;
-  height: 12px;
 }

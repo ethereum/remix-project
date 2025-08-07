@@ -18,7 +18,7 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
   }
 
   return (
-    <article className="remixui-plugin-card card h-100" data-id={`plugin-manager-plugin-card-${profile.name}`}>
+    <article className="mb-3 card h-100" data-id={`plugin-manager-plugin-card-${profile.name}`}>
       <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
         <div className='d-flex align-items-center px-2'>
           <RenderIf condition={isLoading}>
@@ -27,7 +27,7 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
           <RenderIf condition={!isLoading}>
             {profile.icon ? <img src={profile.icon} className="mr-2 remixui_pluginIcon" alt={`${profile.name} icon`} /> : <i className="fas fa-puzzle-piece mr-2"></i>}
           </RenderIf>
-          <span className={`font-weight-bold ${isActive ? 'card-title' : ''}`}>{profile.displayName || profile.name}</span>
+          <span className="font-weight-bold">{profile.displayName || profile.name}</span>
         </div>
         <ToggleSwitch id={`toggleSwitch-${profile.name}`} isOn={isActive} onClick={() => togglePlugin(profile.name)} />
       </div>
