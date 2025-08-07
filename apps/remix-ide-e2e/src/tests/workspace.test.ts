@@ -481,6 +481,7 @@ module.exports = {
       .waitForElementVisible(selector)
       .click(selector)
       .click('*[data-id="workspacesubMenuRename"]') // rename workspace_name
+      .pause(3000)
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       .click('*[data-id="modalDialogCustomPromptTextRename"]')
       .clearValue('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -508,6 +509,7 @@ module.exports = {
       .waitForElementVisible(selector)
       .click(selector)
       .click('*[data-id="workspacesubMenuDelete"]') // delete workspace_name_1
+      .pause(3000)
       .waitForElementVisible('*[data-id="topbarModalModalDialogModalFooter-react"]')
       .click('*[data-id="topbarModalModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="workspacesSelect"]')
