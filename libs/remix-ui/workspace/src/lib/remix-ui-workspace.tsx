@@ -998,7 +998,7 @@ export function Workspace() {
       <Dropdown.Toggle
         as={CustomToggle}
         id="dropdown-custom-components"
-        className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
+        className="btn btn-light btn-block w-100 d-inline-block border form-select mt-1"
         icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
       >
         {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
@@ -1344,7 +1344,7 @@ export function Workspace() {
                   <Dropdown.Toggle
                     as={CustomToggle}
                     id="dropdown-custom-components"
-                    className="btn btn-sm btn-light d-inline-block border border-dark form-control h-100 p-0 ps-2 pe-2 text-dark"
+                    className="btn btn-sm btn-light d-inline-block border form-select h-100 p-0 ps-2 pe-2 text-dark"
                     icon={null}
                   >
                     {global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : (currentBranch && currentBranch.name) || '-none-'}
