@@ -38,7 +38,7 @@
   flex-direction: row;
 }
 .remixui_isStuck {
-  background-color: var(--primary);
+  background-color: var(--bs-primary);
   /* color:  */
 }
 .remixui_versionWarning {

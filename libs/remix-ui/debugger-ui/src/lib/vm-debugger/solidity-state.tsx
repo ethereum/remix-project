@@ -6,7 +6,7 @@ import {ExtractData} from '../../types' // eslint-disable-line
 export const SolidityState = ({ calldata, message, className }) => {
   const formatSelf = (key: string, data: ExtractData) => {
     try {
-      let color = 'var(--primary)'
+      let color = 'var(--bs-primary)'
       if (data.isArray || data.isStruct || data.isMapping) {
         color = 'var(--info)'
       } else if (data.type && data.type.indexOf && (data.type.indexOf('uint') === 0 || data.type.indexOf('int') === 0 || data.type.indexOf('bool') === 0 || data.type.indexOf('enum') === 0)) {

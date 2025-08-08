@@ -1,8 +1,8 @@
 .remixui_homeIcon svg path {
-  fill: var(--primary);
+  fill: var(--bs-primary);
 }
 .remixui_homeIcon svg polygon {
-  fill: var(--primary);
+  fill: var(--bs-primary);
 }
 
 .remixui_homeIcon:hover {
@@ -21,7 +21,7 @@
 
 .version-btn:hover {
   text-decoration: none;
-  color: var(--secondary);
+  color: var(--bs-secondary);
 }
 
 .top-bar-dropdownItem {

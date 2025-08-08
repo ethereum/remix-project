@@ -103,7 +103,7 @@ export function ThemeUI() {
       <Dropdown className="w-100">
         <Dropdown.Toggle
           as={CustomToggle}
-          className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
+          className="btn btn-light btn-block w-100 d-inline-block border form-select"
           icon={''}
         >
           {theme} - {themeMap[theme].quality}

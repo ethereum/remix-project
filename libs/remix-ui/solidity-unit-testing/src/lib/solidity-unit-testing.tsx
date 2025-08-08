@@ -771,7 +771,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                 data-id="uiPathInput"
                 name="utPath"
                 value={inputPathValue}
-                style={{ backgroundImage: 'var(--primary)' }}
+                style={{ backgroundImage: 'var(--bs-primary)' }}
                 onKeyDown={() => {
                   if (inputPathValue === '/') setInputPathValue('')
                 }}

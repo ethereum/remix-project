@@ -272,7 +272,7 @@
   width: 100%;
 }
 .udapp_title .udapp_copy {
-  color: var(--primary);
+  color: var(--bs-primary);
 }
 .udapp_titleExpander {
   align-self: center;

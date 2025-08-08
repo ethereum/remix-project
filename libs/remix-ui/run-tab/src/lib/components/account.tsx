@@ -415,7 +415,7 @@ export function AccountUI(props: AccountProps) {
       </label>
       <div className="udapp_account">
         <Dropdown className="udapp_selectExEnvOptions" data-id="runTabSelectAccount">
-          <Dropdown.Toggle as={CustomToggle} icon={null} id="txorigin" data-id="runTabSelectAccount" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control">
+          <Dropdown.Toggle as={CustomToggle} icon={null} id="txorigin" data-id="runTabSelectAccount" className="btn btn-light btn-block w-100 d-inline-block border form-select">
             {selectedAccount ? loadedAccounts[selectedAccount] : ''}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 form-select" data-id="custom-dropdown-items">
