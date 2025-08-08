@@ -7,7 +7,7 @@ export function VersionList ({ currentVersion, versionList, downloadList, setVer
   const versionListKeys = Object.keys(versionList)
   return (
     <Dropdown>
-      <Dropdown.Toggle as={CircomVersionMenuToggle} id="circomVersionList" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control">
+      <Dropdown.Toggle as={CircomVersionMenuToggle} id="circomVersionList" className="btn btn-light btn-block w-100 d-inline-block border form-select">
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
           { versionList[currentVersion].name }
         </div>
