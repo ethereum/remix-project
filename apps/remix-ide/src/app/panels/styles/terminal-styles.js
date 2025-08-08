@@ -61,7 +61,7 @@ var css = csjs`
     line-height       : 1.7em;
     font-family       : monospace;
     padding           : .4em;
-    color             : var(--primary)
+    color             : var(--bs-primary)
     border-top        : solid 2px var(--bs-secondary);
   }
   .prompt             {
