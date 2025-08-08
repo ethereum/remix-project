@@ -18,7 +18,7 @@ compiler.loadRemoteVersion(defaultVersion, (error, solcSnapshot) => {
 
 function gatherCompilationResults (dir, compilationResult, solcSnapshot) {
   var filenames = fs.readdirSync(dir, 'utf8')
-  filenames.map(function (item, i) {
+  filenames.map(function (item, _i) {
     if (item.endsWith('.js')) {
       var testDef = require(dir + item)
       if ('@sources' in testDef) {

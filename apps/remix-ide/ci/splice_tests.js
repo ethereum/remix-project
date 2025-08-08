@@ -1,4 +1,3 @@
-const fs = require('fs')
 var exec = require('child_process').exec;
 let cmd = `grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests"`
 // get command line arguments
@@ -11,12 +10,12 @@ exec(cmd, (error, stdout, stderr) => {
     console.error(`error: ${error.message}`);
     return;
   }
-  
+
   if (stderr) {
     console.error(`stderr: ${stderr}`);
     return;
   }
-  
+
   let files = stdout.split('\n').filter(f => f.includes('.test')).map(f => f.replace('dist/apps/remix-ide-e2e/src/tests/', '')).map(f => f.replace('.js', ''))
   let splitIndex = Math.ceil(files.length / jobsize);
   const parts = []
