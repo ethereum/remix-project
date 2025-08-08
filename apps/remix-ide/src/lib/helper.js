@@ -144,7 +144,7 @@ function findDeep (object, fn, found = { break: false, value: undefined }) {
 
 function find (args, query) {
   query = query.trim()
-  var isMatch = !!findDeep(args, function check (value, key) {
+  var isMatch = !!findDeep(args, function check (value, _key) {
     if (value === undefined || value === null) return false
     if (typeof value === 'function') return false
     if (typeof value === 'object') return false
