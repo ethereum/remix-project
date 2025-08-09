@@ -221,6 +221,16 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                 placement="right-start"
                 containerPadding={8}
                 key={item.name}
+                popperConfig={{
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [2, 28]
+                      }
+                    }
+                  ]
+                }}
               >
                 {({ placement, arrowProps, show: _show, popper, ...overlayProps }) => (
                   <div
@@ -232,17 +242,18 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       boxShadow: '0 0.5rem 1rem rgba(0,0,0,.175)',
                       backgroundColor: '#36384c',
                       zIndex: 2000,
+                      paddingLeft: '6px',
                       left: '86dvh',
                       top: '10dvh',
-                      height: '100px',
-                      width: '120px',
+                      height: '90px',
+                      width: '110px',
                       ...overlayProps.style
                     }}
-                    className="border pt-2 "
+                    className="border"
                     data-id="workspacesubMenuOverlay"
                   >
                     <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none"
+                      className="dropdown-item d-flex align-items-center text-decoration-none py-1"
                       onClick={() => {
                         renameCurrentWorkspace(item.name)
                         setCurrentMenuItemName(item.name)
@@ -276,7 +287,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       <span>Duplicate</span>
                     </Dropdown.Item> */}
                     <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none"
+                      className="dropdown-item d-flex align-items-center text-decoration-none py-1"
                       onClick={() => {
                         downloadCurrentWorkspace()
                         setCurrentMenuItemName(item.name)
@@ -297,7 +308,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       style={{ pointerEvents: 'none' }}
                     />
                     <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none text-danger"
+                      className="dropdown-item d-flex align-items-center text-decoration-none text-danger py-1"
                       onClick={() => {
                         deleteCurrentWorkspace(item.name)
                         setShowMain(false)
