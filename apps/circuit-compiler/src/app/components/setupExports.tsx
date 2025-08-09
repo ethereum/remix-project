@@ -54,7 +54,7 @@ export function SetupExports () {
             placement={"auto"}
             tooltipId="circuitPtauTooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<span>{'To choose the from the list of ptau files'}</span>}
+            tooltipText={<span>{'To choose from the list of ptau files'}</span>}
           >
             <div className="mb-1">
               <select
