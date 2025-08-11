@@ -38,7 +38,7 @@
   --bs-gray-800: #343a40;
   --bs-gray-900: #212529;
   --bs-primary: #007aa6;
-  --bs-secondary: #95a5a6;
+  --bs-secondary: #747b90;
   --bs-success: #18bc9c;
   --bs-info: #3498db;
   --bs-warning: #f39c12;
@@ -46,7 +46,7 @@
   --bs-light: #f8fafe;
   --bs-dark: #8e94a6;
   --bs-primary-rgb: 0, 122, 166;
-  --bs-secondary-rgb: 149, 165, 166;
+  --bs-secondary-rgb: 116 123 144;
   --bs-success-rgb: 24, 188, 156;
   --bs-info-rgb: 52, 152, 219;
   --bs-warning-rgb: 243, 156, 18;
@@ -79,15 +79,18 @@
   --bs-dark-border-subtle: #b4bcc2;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-font-sans-serif: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --bs-font-sans-serif: "Nunito Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-monospace: Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #8e94a6;
-  --bs-body-color-rgb: 142, 148, 166;
+  --bs-body-color: #747b90;
+  --bs-body-color-rgb: 116, 123, 144;
   --bs-body-bg: #eff1f5;
   --bs-body-bg-rgb: 239, 241, 245;
   --bs-emphasis-color: #000;
@@ -142,8 +145,8 @@
   --bs-body-bg-rgb: 239, 241, 245;
   --bs-emphasis-color: #fff;
   --bs-emphasis-color-rgb: 255, 255, 255;
-  --bs-secondary-color: rgba(222, 226, 230, 0.75);
-  --bs-secondary-color-rgb: 222, 226, 230;
+  --bs-secondary-color: rgba(116, 123, 144, 0.75);
+  --bs-secondary-color-rgb: 116 123 144;
   --bs-secondary-bg: #343a40;
   --bs-secondary-bg-rgb: 52, 58, 64;
   --bs-tertiary-color: rgba(222, 226, 230, 0.5);
