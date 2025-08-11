@@ -114,7 +114,7 @@
   --bs-highlight-bg: #fdebd0;
   --bs-border-width: 1px;
   --bs-border-style: solid;
-  --bs-border-color: #dfe1ea;
+  --bs-border-color: #dadbe0;
   --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
   --bs-border-radius: 0.375rem;
   --bs-border-radius-sm: 0.25rem;
@@ -185,7 +185,7 @@
   --bs-code-color: #f18bba;
   --bs-highlight-color: #dee2e6;
   --bs-highlight-bg: #613e07;
-  --bs-border-color: #7b8a8b;
+  --bs-border-color: #1b1d24;
   --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
   --bs-form-valid-color: #74d7c4;
   --bs-form-valid-border-color: #74d7c4;
@@ -3889,7 +3889,7 @@ textarea.form-control-lg {
   --bs-nav-tabs-border-color: #ced4da;
   --bs-nav-tabs-border-radius: var(--bs-border-radius);
   --bs-nav-tabs-link-hover-border-color: #ced4da #ced4da transparent;
-  --bs-nav-tabs-link-active-color: #18bc9c;
+  --bs-nav-tabs-link-active-color: #1b1d24;
   --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
   --bs-nav-tabs-link-active-border-color: #ced4da #ced4da transparent;
   border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
@@ -3907,7 +3907,7 @@ textarea.form-control-lg {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: var(--bs-nav-tabs-link-active-color);
-  background-color: var(--bs-nav-tabs-link-active-bg);
+  background-color: var(--bs-light);
   border-color: var(--bs-nav-tabs-link-active-border-color);
 }
 .nav-tabs .dropdown-menu {
