@@ -134,6 +134,9 @@ export class SourcifyVerifier extends AbstractVerifier {
     }
 
     if (checkStatusResponse.error) {
+      if (checkStatusResponse.error.customCode === 'already_verified') {
+        return { status: 'already verified', receiptId, message: checkStatusResponse.error.message }
+      }
       const message = checkStatusResponse.error.message || 'Unknown error'
       return { status: 'failed', receiptId, message }
     }
