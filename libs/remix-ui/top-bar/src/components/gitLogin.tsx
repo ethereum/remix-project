@@ -140,7 +140,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
   return (
     <Dropdown
       as={ButtonGroup}
-      alignRight={true}
+      align="end"
     >
       <Button
         className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
