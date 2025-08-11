@@ -16,8 +16,8 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
 
   useEffect(() => {
     if (section) {
-      section.subSections.forEach((subSection) => {
-        subSection.options.forEach((option) => {
+      (section.subSections || []).forEach((subSection) => {
+        (subSection.options || []).forEach((option) => {
           if (option.type === 'toggle' && option.toggleUIOptions) {
             option.toggleUIOptions.forEach((toggleOption) => {
               handleFormUIData(option.name, toggleOption.name, state[toggleOption.name].value as string)
@@ -60,7 +60,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
     <>
       <h3 className="text-white py-3">{section.label}</h3>
       <span className="text-dark">{section.decription}</span>
-      {section.subSections.map((subSection, subSectionIndex) => {
+      {(section.subSections || []).map((subSection, subSectionIndex) => {
         const isLastItem = subSectionIndex === section.subSections.length - 1
 
         return (
