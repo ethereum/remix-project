@@ -21,19 +21,14 @@ export const FIM_MODEL_CONFIGS: FIMModelConfig[] = [
     supportsNativeFIM: true,
     description: "Mistral's code model with native FIM support"
   },
+  {
+    name: "starcoder",
+    patterns: ["starcoder"],
+    supportsNativeFIM: true,
+    description: "StarCoder models"
+  },
 
   // Token-based FIM models
-  {
-    name: "CodeLlama",
-    patterns: ["codellama", "code-llama"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<PRE>",
-      suffix: "<SUF>",
-      middle: "<MID>"
-    },
-    description: "Meta's CodeLlama with FIM tokens"
-  },
   {
     name: "DeepSeek Coder",
     patterns: ["deepseek-coder", "deepseek"],
@@ -44,83 +39,6 @@ export const FIM_MODEL_CONFIGS: FIMModelConfig[] = [
       middle: "<｜fim▁end｜>"
     },
     description: "DeepSeek's code model with FIM support"
-  },
-  {
-    name: "StarCoder",
-    patterns: ["starcoder", "star-coder"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<fim_prefix>",
-      suffix: "<fim_suffix>",
-      middle: "<fim_middle>"
-    },
-    description: "BigCode's StarCoder with FIM tokens"
-  },
-  {
-    name: "Code Gemma",
-    patterns: ["codegemma", "code-gemma"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<|fim_prefix|>",
-      suffix: "<|fim_suffix|>",
-      middle: "<|fim_middle|>"
-    },
-    description: "Google's Code Gemma with FIM support"
-  },
-  {
-    name: "Qwen Coder",
-    patterns: ["qwen", "qwencoder", "qwen2.5-coder"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<fim_prefix>",
-      suffix: "<fim_suffix>",
-      middle: "<fim_middle>"
-    },
-    description: "Alibaba's Qwen Coder with FIM tokens"
-  },
-  {
-    name: "CodeT5+",
-    patterns: ["codet5", "codet5+", "codet5-plus"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<extra_id_0>",
-      suffix: "<extra_id_1>",
-      middle: "<extra_id_2>"
-    },
-    description: "Salesforce's CodeT5+ with FIM support"
-  },
-  {
-    name: "WizardCoder",
-    patterns: ["wizardcoder", "wizard-coder"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<fim_prefix>",
-      suffix: "<fim_suffix>",
-      middle: "<fim_middle>"
-    },
-    description: "WizardLM's coding model with FIM"
-  },
-  {
-    name: "Phind CodeLlama",
-    patterns: ["phind-codellama", "phind"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<PRE>",
-      suffix: "<SUF>",
-      middle: "<MID>"
-    },
-    description: "Phind's fine-tuned CodeLlama"
-  },
-  {
-    name: "InCoder",
-    patterns: ["incoder", "in-coder"],
-    supportsNativeFIM: false,
-    fimTokens: {
-      prefix: "<|fim▁begin|>",
-      suffix: "<|fim▁hole|>",
-      middle: "<|fim▁end|>"
-    },
-    description: "Facebook's InCoder model"
   }
 ];
 

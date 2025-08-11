@@ -233,6 +233,9 @@ function TooltipContent () {
       <li className="">
         {'- Alternatively, you may type your question directly below.'}
       </li>
+      <li className="">
+        - {'-[Ollama Setup Guide](https://github.com/ethereum/remix-project/blob/master/OLLAMA_SETUP.md)'}
+      </li>
     </ul>
   )
 }

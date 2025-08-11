@@ -236,16 +236,18 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
       if (result.status === 200) {
         let text = "";
         if (rType === AIRequestType.COMPLETION) {
-          console.log('text before sanitization', result.data.response)
+          console.log('text before processing', result.data.response)
+          const rawResponse = result.data.response || "";
+
           // Skip sanitization for any FIM-capable models (user-selected or API-detected)
           const userSelectedFIM = this.fimManager.supportsFIM(this.model_name);
           const hasAnyFIM = userSelectedFIM || this.modelSupportsInsert;
 
           if (hasAnyFIM) {
             console.log('Skipping sanitization for FIM-capable model')
-            text = result.data.response || "";
+            text = rawResponse;
           } else {
-            text = sanitizeCompletionText(result.data.response || "");
+            text = sanitizeCompletionText(rawResponse);
             console.log('text after sanitization', text)
           }
         } else {
@@ -332,7 +334,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     return {
       model: this.model_name,
       system: system || CHAT_PROMPT,
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "user", content: prompt }, { role:"assistant", content:system }],
       ...payload
     };
   }
@@ -349,7 +351,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     this.currentSuffix = promptAfter || "";
 
     let payload: any;
-    let usesFIM = false;
 
     // Check FIM support: user selection first, then API detection for native FIM
     const userSelectedFIM = this.fimManager.supportsFIM(this.model_name);
@@ -362,10 +363,10 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     const hasNativeFIM = userSelectedFIM ? this.fimManager.usesNativeFIM(this.model_name) : this.modelSupportsInsert;
     const hasTokenFIM = userSelectedFIM && !this.fimManager.usesNativeFIM(this.model_name);
 
+    console.log("modelSupportsInsert;", this.modelSupportsInsert)
+    console.log("usesNativeFim;", this.fimManager.usesNativeFIM(this.model_name) )
     if (hasNativeFIM) {
       // Native FIM support (prompt/suffix parameters)
-      console.log(`Using native FIM for: ${this.model_name} (${userSelectedFIM ? 'user-selected' : 'API-detected'})`);
-      usesFIM = true;
       payload = {
         model: this.model_name,
         prompt: prompt,
@@ -376,8 +377,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
       console.log('using native FIM params', payload);
     } else if (hasTokenFIM) {
       // Token-based FIM support
-      console.log(`Using token-based FIM for: ${this.model_name}`);
-      usesFIM = true;
       const fimPrompt = this.fimManager.buildFIMPrompt(prompt, promptAfter, this.model_name);
       payload = {
         model: this.model_name,

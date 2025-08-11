@@ -446,14 +446,54 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           if (available) {
             const models = await listModels()
             setAvailableModels(models)
-            if (!selectedModel && models.length > 0) {
-              const defaultModel = models.find(m => m.includes('codellama') || m.includes('code')) || models[0]
-              setSelectedModel(defaultModel)
+            if (models.length === 0) {
+              // Ollama is running but no models installed
+              setMessages(prev => [...prev, {
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content: '**Ollama is running but no models are installed.**\n\nTo use Ollama, you need to install at least one model. Try:\n\n```bash\nollama pull codestral:latest\n# or\nollama pull qwen2.5-coder:14b\n```\n\nSee the [Ollama Setup Guide](https://github.com/ethereum/remix-project/blob/master/OLLAMA_SETUP.md) for more information.',
+                timestamp: Date.now(),
+                sentiment: 'none'
+              }])
+            } else {
+              if (!selectedModel && models.length > 0) {
+                const defaultModel = models.find(m => m.includes('codellama') || m.includes('code')) || models[0]
+                setSelectedModel(defaultModel)
+              }
+              // Show success message when Ollama is available
+              setMessages(prev => [...prev, {
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content: `**Ollama connected successfully!**\n\nFound ${models.length} model${models.length > 1 ? 's' : ''}:\n${models.map(m => `• ${m}`).join('\n')}\n\nYou can now use local AI for code completion and assistance.`,
+                timestamp: Date.now(),
+                sentiment: 'none'
+              }])
             }
+          } else {
+            // Ollama is not available
+            setAvailableModels([])
+            setMessages(prev => [...prev, {
+              id: crypto.randomUUID(),
+              role: 'assistant',
+              content: '**Ollama is not available.**\n\nTo use Ollama with Remix IDE:\n\n1. **Install Ollama**: Visit [ollama.ai](https://ollama.ai) to download\n2. **Start Ollama**: Run `ollama serve` in your terminal\n3. **Install a model**: Run `ollama pull codestral:latest`\n4. **Configure CORS**: Set `OLLAMA_ORIGINS=https://remix.ethereum.org`\n\nSee the [Ollama Setup Guide](https://github.com/ethereum/remix-project/blob/master/OLLAMA_SETUP.md) for detailed instructions.\n\n*Switching back to previous model for now.*',
+              timestamp: Date.now(),
+              sentiment: 'none'
+            }])
+            // Automatically switch back to mistralai
+            setAssistantChoice('mistralai')
           }
         } catch (error) {
           console.warn('Failed to fetch Ollama models:', error)
           setAvailableModels([])
+          setMessages(prev => [...prev, {
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: `**Failed to connect to Ollama.**\n\nError: ${error.message || 'Unknown error'}\n\nPlease ensure:\n- Ollama is running (\`ollama serve\`)\n- CORS is configured for Remix IDE\n- At least one model is installed\n\nSee the [Ollama Setup Guide](https://github.com/ethereum/remix-project/blob/master/OLLAMA_SETUP.md) for help.\n\n*Switching back to previous model.*`,
+            timestamp: Date.now(),
+            sentiment: 'none'
+          }])
+          // Switch back to mistralai on error
+          setAssistantChoice('mistralai')
         }
       } else {
         setAvailableModels([])

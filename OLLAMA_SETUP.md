@@ -184,7 +184,7 @@ curl http://localhost:11434/api/tags
 
 Download at least one model:
 ```bash
-ollama pull codellama:7b
+ollama pull codestral:latest
 ```
 
 #### **Connection Refused**
