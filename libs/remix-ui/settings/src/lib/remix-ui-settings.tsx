@@ -275,7 +275,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         setFilteredSections(resultItems)
         setSelected(resultItems[0].key)
       } else {
-        console.log('No results found')
+        setFilteredSections([])
+        setSelected(null)
+        setFilteredSection({} as SettingsSection)
       }
     } else {
       setFilteredSections(settingsSections)
@@ -298,6 +300,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             </div>
           </div>
         </div>
+        {filteredSections.length === 0 && <div className="text-info px-5 text-center" style={{ cursor: 'pointer' }}>No match found</div>}
         <div className="d-flex flex-wrap align-items-stretch">
           {/* Sidebar */}
           <div
