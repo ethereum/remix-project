@@ -1,5 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
+import Fuse from 'fuse.js'
 import { CustomTooltip, EtherscanConfigDescription, GitHubCredentialsDescription, SindriCredentialsDescription } from '@remix-ui/helper'
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { labels, textDark, textSecondary } from './constants'
@@ -244,7 +245,44 @@ const settingsSections: SettingsSection[] = [
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [settingsState, dispatch] = useReducer(settingReducer, initialState)
-  const [selected, setSelected] = useState('general');
+  const [selected, setSelected] = useState(settingsSections[0].key)
+  const [search, setSearch] = useState('')
+  const [filteredSections, setFilteredSections] = useState<SettingsSection[]>(settingsSections)
+  const [filteredSection, setFilteredSection] = useState<SettingsSection>(settingsSections[0])
+
+  useEffect(() => {
+    if (search.length > 0) {
+      const fuseTopLevel = new Fuse(settingsSections, {
+        threshold: 0.1,
+        keys: ['label', 'decription', 'subSections.label', 'subSections.decription', 'subSections.options.label', 'subSections.options.description', 'subSections.options.selectOptions.label', 'subSections.options.footnote.text']
+      })
+      const sectionResults = fuseTopLevel.search(search)
+      const resultItems = sectionResults.map((result, index) => {
+        if (index === 0) {
+          const fuseLowLevel = new Fuse(result.item.subSections, {
+            threshold: 0.1,
+            keys: ['title', 'options.label', 'options.description', 'options.selectOptions.label', 'options.footnote.text']
+          })
+          const subSectionResults = fuseLowLevel.search(search)
+          const filtSection = Object.assign({}, filteredSection, result.item)
+
+          filtSection.subSections = subSectionResults.map((result) => result.item)
+          setFilteredSection(filtSection)
+        }
+        return result.item
+      })
+      if (resultItems.length > 0) {
+        setFilteredSections(resultItems)
+        setSelected(resultItems[0].key)
+      } else {
+        console.log('No results found')
+      }
+    } else {
+      setFilteredSections(settingsSections)
+      setFilteredSection(settingsSections[0])
+      setSelected(settingsSections[0].key)
+    }
+  }, [search])
 
   return (
     <>
@@ -256,7 +294,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
             <div className='d-flex flex-fill'>
               <span className="input-group-text"><i className="fa fa-search"></i></span>
-              <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} />
+              <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
         </div>
@@ -267,15 +305,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}
           >
             <ul className="px-5 list-unstyled">
-              {settingsSections.map((section, index) => (
+              {filteredSections.map((section, index) => (
                 <li
-                  className={`nav-item ${index !== settingsSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
+                  className={`nav-item ${index !== filteredSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
                   key={index}
                 >
                   <a
                     className="nav-link p-0"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => setSelected(section.key)}
+                    onClick={() => {
+                      setSelected(section.key)
+                      setFilteredSection(section)
+                    }}
                   >
                     <h3 className={`${selected === section.key ? 'active text-white' : 'text-secondary'}`}>{section.label}</h3>
                     {selected !== section.key && <span style={{ fontSize: '0.7rem' }}>{section.decription}</span>}
@@ -290,7 +331,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             style={{ minWidth: 0, flexBasis: '300px', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
           >
             <div className="px-5 remix-settings-main remix-settings-main-vh" style={{ maxWidth: '650px', overflowY: 'auto', maxHeight: '58vh' }}>
-              { settingsSections.map((section, index) => (selected === section.key && <SettingsSectionUI key={index} section={section} state={settingsState} dispatch={dispatch} />))}
+              <SettingsSectionUI section={filteredSection} state={settingsState} dispatch={dispatch} />
             </div>
           </div>
         </div>

@@ -32,7 +32,7 @@ const SelectDropdown = ({ value, options, name, dispatch }: SelectDropdownProps)
 
       if (locale) {
         localeModule.switchLocale(locale.code)
-        dispatch({ type: 'SET_VALUE', payload: { name: name, value: locale.code } })
+        dispatch({ type: 'SET_VALUE', payload: { name: name, value: locale.localeName } })
       } else {
         console.error('Locale not found: ', value)
       }
