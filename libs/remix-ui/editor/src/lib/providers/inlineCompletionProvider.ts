@@ -87,20 +87,67 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return model.getValueInRange(lineRange);
     }
 
-    // Get text before and after cursor
-    const word = model.getValueInRange({
-      startLineNumber: 1,
-      startColumn: 1,
-      endLineNumber: position.lineNumber,
-      endColumn: position.column,
-    });
+    // Get viewport-aware context (what user actually sees on screen)
+    const getViewportContext = (model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, editor?: monacoTypes.editor.ICodeEditor) => {
+      let visibleRange = null;
 
-    const word_after = model.getValueInRange({
-      startLineNumber: position.lineNumber,
-      startColumn: position.column,
-      endLineNumber: model.getLineCount(),
-      endColumn: getTextAtLine(model.getLineCount()).length + 1,
-    });
+      // Try to get the visible range from the editor if available
+      if (editor && editor.getVisibleRanges) {
+        const visibleRanges = editor.getVisibleRanges();
+        if (visibleRanges && visibleRanges.length > 0) {
+          visibleRange = visibleRanges[0];
+        }
+      }
+
+      // Fallback: approximate visible range (about 30 lines above/below cursor)
+      if (!visibleRange) {
+        const approximateViewportSize = 30;
+        const startLine = Math.max(1, position.lineNumber - approximateViewportSize);
+        const endLine = Math.min(model.getLineCount(), position.lineNumber + approximateViewportSize);
+
+        visibleRange = {
+          startLineNumber: startLine,
+          startColumn: 1,
+          endLineNumber: endLine,
+          endColumn: model.getLineMaxColumn(endLine)
+        };
+      }
+
+      const contextBefore = model.getValueInRange({
+        startLineNumber: Math.max(visibleRange.startLineNumber, 1),
+        startColumn: visibleRange.startLineNumber === position.lineNumber ? 1 : 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      });
+
+      const contextAfter = model.getValueInRange({
+        startLineNumber: position.lineNumber,
+        startColumn: position.column,
+        endLineNumber: Math.min(visibleRange.endLineNumber, model.getLineCount()),
+        endColumn: visibleRange.endLineNumber === model.getLineCount()
+          ? getTextAtLine(model.getLineCount()).length + 1
+          : model.getLineMaxColumn(visibleRange.endLineNumber),
+      });
+
+      return { contextBefore, contextAfter };
+    };
+
+    // Try to get the editor instance for accurate viewport detection
+    let editor = null;
+    try {
+      // Access the editor through Monaco's editor instances
+      const editorInstances = this.monaco.editor.getEditors();
+      if (editorInstances && editorInstances.length > 0) {
+        // splitted editors not handled now
+        editor = editorInstances.find(e => e.getModel() === model) || editorInstances[0];
+      }
+    } catch (e) {
+      console.debug('Could not access editor instance for viewport detection:', e);
+    }
+
+    const { contextBefore, contextAfter } = getViewportContext(model, position, editor);
+    const word = contextBefore;
+    const word_after = contextAfter;
 
     // Create cache key and check cache
     const cacheKey = this.cache.createCacheKey(word, word_after, position, this.task);
