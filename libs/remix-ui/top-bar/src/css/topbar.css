@@ -49,9 +49,6 @@
   font-size: 0.875rem !important;
   font-weight: 400;
   line-height: 1;
-  color: #dfe1ea !important;
-  background-color: var(--custom-select)
- !important;
   background-clip: padding-box;
   border: none !important;
   border-radius: 2px !important;
