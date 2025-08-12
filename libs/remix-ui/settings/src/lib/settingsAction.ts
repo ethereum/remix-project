@@ -1,5 +1,3 @@
-import { textDark, textSecondary } from './constants'
-
 declare global {
   interface Window {
     _paq: any

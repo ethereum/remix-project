@@ -4,7 +4,6 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { CompileOptionsProps } from '../types/compilerTypes'
 import { CustomTooltip } from './components/custom-tooltip'
 import { extractNameFromKey } from './remix-ui-helper'
-import { etherscanTokenLink, gitAccessTokenLink, sindriAccessTokenLink } from 'libs/remix-ui/settings/src/lib/constants'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div>
@@ -219,6 +218,10 @@ export const CompileBtn = ({ plugin, appState, id, compileAction }: { plugin: an
     </button>
   </CustomTooltip>
 )
+
+export const gitAccessTokenLink = 'https://github.com/settings/tokens/new?scopes=gist,repo&description=Remix%20IDE%20Token'
+export const etherscanTokenLink = 'https://etherscan.io/myapikey'
+export const sindriAccessTokenLink = 'https://sindri.app'
 
 export const GitHubCredentialsDescription = () => {
   const intl = useIntl()

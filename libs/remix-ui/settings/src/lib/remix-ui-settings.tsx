@@ -3,7 +3,6 @@ import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react
 import Fuse from 'fuse.js'
 import { CustomTooltip, EtherscanConfigDescription, GitHubCredentialsDescription, SindriCredentialsDescription } from '@remix-ui/helper'
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
-import { labels, textDark, textSecondary } from './constants'
 import {
   generateContractMetadat,
   personal,
@@ -28,9 +27,6 @@ import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
 import { ThemeContext, themes } from '@remix-ui/home-tab'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Registry } from '@remix-project/remix-lib'
-import { GithubSettings } from './github-settings'
-import { EtherscanSettings } from './etherscan-settings'
-import { SindriSettings } from './sindri-settings'
 import { SettingsSectionUI } from './settings-section'
 import { SettingsSection } from '../types'
 import { IPFSSettings } from './ipfs-settings'
