@@ -62,7 +62,7 @@ export function ContractGUI(props: ContractGUIProps) {
       setButtonOptions({
         title: title + ' - call',
         content: 'call',
-        classList: 'btn-info',
+        classList: 'btn-primary',
         dataId: title + ' - call'
       })
     } else if (props.funcABI.stateMutability === 'payable' || props.funcABI.payable) {
@@ -331,7 +331,7 @@ export function ContractGUI(props: ContractGUIProps) {
           </div>
         </CustomTooltip>
         <input
-          className="form-control"
+          className="form-control border-dark"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
           onChange={handleBasicInput}
@@ -366,7 +366,7 @@ export function ContractGUI(props: ContractGUIProps) {
                       ref={(el) => {
                         multiFields.current[index] = el
                       }}
-                      className="form-control"
+                      className="form-control border-dark"
                       placeholder={inp.type}
                       data-id={`multiParamManagerInput${inp.name}`}
                       onChange={handleBasicInput}

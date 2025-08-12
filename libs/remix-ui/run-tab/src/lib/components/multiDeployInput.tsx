@@ -25,7 +25,7 @@ export function MultiDeployInput(props: MultiDeployInputProps) {
                     ref={(el) => {
                       multiFields.current[index] = el
                     }}
-                    className="form-control"
+                    className="form-control border-dark"
                     placeholder={inp.type}
                     data-id={`multiParamManagerInput${inp.name}`}
                   />
