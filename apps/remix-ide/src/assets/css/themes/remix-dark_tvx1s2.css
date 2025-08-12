@@ -139,6 +139,10 @@
   --custom-onsurface-layer-3:#3b3c4d;
   --custom-onsurface-layer-4:#434454;
   --custom-ai-color: #2de7f3;
+  --custom-border-light: #51536b;
+  --custom-border-light-rgb: 81, 83, 107;
+  --custom-border-dark: #2c3244;
+  --custom-border-dark-rgb: 44, 50, 68;
 }
 
 [data-bs-theme=dark] {
@@ -200,6 +204,10 @@
   --custom-onsurface-layer-3:#3b3c4d;
   --custom-onsurface-layer-4:#434454;
   --custom-ai-color: #2de7f3;
+  --custom-border-light: #51536b;
+  --custom-border-light-rgb: 81, 83, 107;
+  --custom-border-dark: #2c3244;
+  --custom-border-dark-rgb: 44, 50, 68;
 }
 
 *,
@@ -7621,12 +7629,12 @@ textarea.form-control-lg {
 
 .border-light {
   --bs-border-opacity: 1;
-  border-color: rgba(var(--bs-light-rgb), var(--bs-border-opacity)) !important;
+  border-color: rgba(var(--custom-border-light-rgb), var(--bs-border-opacity)) !important;
 }
 
 .border-dark {
   --bs-border-opacity: 1;
-  border-color: rgba(var(--bs-dark-rgb), var(--bs-border-opacity)) !important;
+  border-color: rgba(var(--custom-border-dark-rgb), var(--bs-border-opacity)) !important;
 }
 
 .border-black {
