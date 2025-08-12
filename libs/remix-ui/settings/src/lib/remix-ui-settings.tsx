@@ -330,7 +330,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           {/* Sidebar */}
           <div
             className="flex-column bg-transparent p-0 px-5 remix-settings-sidebar"
-            style={{ maxWidth: '28.2em' }}
+            style={{ width: '28.2em' }}
           >
             <ul className="list-unstyled">
               {filteredSections.map((section, index) => (
