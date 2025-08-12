@@ -361,7 +361,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 classList='TSCellStyle'
               >
                 <div className='d-flex justify-content-between h-100 flex-column'>
-                  <span className='pt-4 px-1 h6 text-dark'>{template.description}</span>
+                  <span className='pt-2 px-1 h6 text-dark'>{template.description}</span>
                   <span style={{ cursor: 'pointer' }} className='mt-2 mb-1 btn btn-sm border align-items-left' onClick={() => template.onClick()}>{template.onClickLabel}</span>
                 </div>
               </RemixUIGridCell>}
