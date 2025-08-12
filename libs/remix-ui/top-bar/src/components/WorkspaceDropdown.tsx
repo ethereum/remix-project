@@ -1,8 +1,9 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { CustomTopbarMenu } from '@remix-ui/helper'
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Dropdown, Overlay } from 'react-bootstrap'
+import { Button, ButtonGroup, Dropdown, Overlay, Popover } from 'react-bootstrap'
 import { remote } from '@remix-api'
+import { FiMoreVertical } from 'react-icons/fi'
 import { TopbarContext } from '../context/topbarContext'
 import { getWorkspaces } from 'libs/remix-ui/workspace/src/lib/actions'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
@@ -64,10 +65,24 @@ function useClickOutside(refs: React.RefObject<HTMLElement>[], handler: () => vo
   }, [refs, handler])
 }
 
+const ITEM_LABELS = [
+  "First item",
+  "Second item",
+  "Third item",
+  "Fourth item",
+  "Fifth item",
+]
+
 export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItems, NO_WORKSPACE, switchWorkspace, CustomToggle, createWorkspace, downloadCurrentWorkspace, restoreBackup, deleteAllWorkspaces, setCurrentMenuItemName, setMenuItems, renameCurrentWorkspace, deleteCurrentWorkspace, downloadWorkspaces, connectToLocalhost }) => {
   const [showMain, setShowMain] = useState(false)
   const [openSub, setOpenSub] = useState<number | null>(null)
   const global = useContext(TopbarContext)
+  const [openSubmenuId, setOpenSubmenuId] = useState(null);
+  const iconRefs = useRef({});
+
+  const toggleSubmenu = (id) => {
+    setOpenSubmenuId((current) => (current === id ? null : id));
+  }
   const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const subRefs = useMemo( // useMemo or else rules of hooks is broken.
@@ -115,7 +130,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
     } catch (error) {
       console.info('Error fetching workspaces:', error)
     }
-  }, [showMain])
+  }, [togglerText, openSubmenuId])
 
   useClickOutside([mainRef, ...subRefs], () => {
     setShowMain(false)
@@ -127,18 +142,17 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
 
   return (
     <Dropdown
-      show={showMain}
-      onToggle={setShowMain}
+      as={ButtonGroup}
+      style={{ minWidth: '70%' }}
+      className="d-flex"
       id="workspacesSelect"
       data-id="workspacesSelect"
-      className="w-75 mx-auto border"
-      ref={mainRef}
     >
       <Dropdown.Toggle
-        data-id="workspacesMenuDropdown"
         as={CustomToggle}
-        id="dropdown-custom-components"
-        className="btn btn-light btn-sm btn-block w-100 d-inline-block border border-dark custom-form-control"
+        className="btn btn-sm w-100 border"
+        variant="secondary"
+        data-id="workspacesMenuDropdown"
         icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'fas fa-code-branch' : null}
       >
         <div
@@ -148,277 +162,222 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           {togglerText}
         </div>
       </Dropdown.Toggle>
-
       <Dropdown.Menu
-        as={CustomTopbarMenu}
-        innerXPadding="px-2"
-        className="custom-dropdown-items w-100 bg-light"
+        style={{ minWidth: 320 }}
+        className="px-2"
         data-id="topbar-custom-dropdown-items"
-        style={{
-          overflow: 'visible'
-        }}
-        popperConfig={{
-          modifiers: [
-            {
-              name: 'preventOverflow',
-              options: {
-                boundary: 'viewport'
-              }
-            },
-            {
-              name: 'flip',
-              options: {
-                fallbackPlacements: ['right-start']
-              }
-            }
-          ]
-        }}
       >
-        <div
-          className="overflow-y-scroll p-1"
-          style={{
-            maxHeight: '160px',
-            overflowY: 'scroll'
-          }}
-        >
-          {menuItems.map((item, idx) => (
-            <div
-              key={item.name}
-              ref={subRefs[idx]}
-              style={{
-                position: 'relative',
-                paddingRight: 0
-              }}
-              className="d-flex align-items-center"
-            >
-              {/* label */}
+        {menuItems.map((item, idx) => {
+          const id = idx + 1
+          if (!iconRefs.current[id]) iconRefs.current[id] = { current: null }
+          return (
+            <div key={id} className="d-flex flex-row">
               <Dropdown.Item
-                className="dropdown-item text-truncate"
-                style={{ flexGrow: 1, cursor: 'default' }}
-                onClick={() => {
+                key={id}
+                className="dropdown-item d-flex justify-content-between align-items-center position-relative"
+                onMouseDown={(e) => {
                   switchWorkspace(item.name)
-                }}
+                  e.preventDefault()
+                } }
                 data-id={`dropdown-item-${item.name}`}
               >
                 {item.isGitRepo && item.currentBranch && (
                   <i className="fas fa-code-branch pt-1"></i>
                 )}
-                <span className="ps-1">{item.name}</span>
+                <span className="pl-1">{item.name}</span>
               </Dropdown.Item>
+              <div className="d-flex align-items-center" id="submenu-activate-button">
+                <Button
+                  ref={(el) => (iconRefs.current[id].current = el)}
+                  variant="link"
+                  className="p-0 ms-2 text-muted submenu-trigger"
+                  aria-label={`More actions for ${item.name}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    toggleSubmenu(id)
+                  } }
+                  data-id="workspacesubMenuIcon"
+                >
+                  <FiMoreVertical size={18} />
+                </Button>
 
-              {/* submenu toggle */}
-              <div
-                onClick={e => { e.stopPropagation(); toggleSub(idx) }}
-                style={{ padding: '', cursor: 'pointer' }}
-                ref={subRefs[idx]}
-                data-id="workspacesubMenuIcon"
-              >
-                ⋮
-              </div>
-              <Overlay
-                target={subRefs[idx].current}
-                show={openSub === idx}
-                placement="right-start"
-                containerPadding={8}
-                key={item.name}
-                popperConfig={{
-                  modifiers: [
-                    {
-                      name: 'offset',
-                      options: {
-                        offset: [2, 28]
-                      }
-                    }
-                  ]
-                }}
-              >
-                {({ placement, arrowProps, show: _show, popper, ...overlayProps }) => (
-                  <div
-                    key={item.name}
-                    {...overlayProps}
+                <Overlay
+                  show={openSubmenuId === id}
+                  target={iconRefs.current[id].current}
+                  placement="right-start"
+                  container={document.body}
+                  popperConfig={{
+                    modifiers: [
+                      { name: "offset", options: { offset: [8, 12]} },
+                      { name: "preventOverflow", options: { boundary: "viewport", padding: 8 } },
+                      { name: 'flip', options: { enabled: false } }
+                    ],
+                  }}
+                  rootClose
+                  transition={false} //fix flickering and hopefully e2e as well
+                  onHide={() => setOpenSubmenuId(null)}
+                >
+                  <section
+                    id={`submenu-${id}`}
                     style={{
-                      position: 'absolute',
-                      borderRadius: 4,
-                      boxShadow: '0 0.5rem 1rem rgba(0,0,0,.175)',
-                      backgroundColor: '#36384c',
-                      zIndex: 2000,
-                      paddingLeft: '6px',
-                      left: '86dvh',
-                      top: '10dvh',
-                      height: '90px',
-                      width: '110px',
-                      ...overlayProps.style
+                      minWidth: 160,
                     }}
-                    className="border"
                     data-id="workspacesubMenuOverlay"
                   >
-                    <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none py-1"
-                      onClick={() => {
-                        renameCurrentWorkspace(item.name)
-                        setCurrentMenuItemName(item.name)
-                        setShowMain(false)
-                        setOpenSub(null)
-                      }}
-                      onMouseDown={(e) => e.preventDefault()}
-                      as={'button'}
-                      data-id="workspacesubMenuRename"
-                    >
-                      <span className="me-2">
-                        <i className="far fa-edit" />
-                      </span>
-                      <span>Rename</span>
-                    </Dropdown.Item>
-                    {/* <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none"
-                      onClick={() => {
-                        downloadCurrentWorkspace()
-                        setCurrentMenuItemName(item.name)
-                        setShowMain(false)
-                        setOpenSub(null)
-                      }}
-                      onMouseDown={(e) => e.preventDefault()}
-                      as={'button'}
-                      data-id="workspacesubMenuDuplicate"
-                    >
-                      <span className="me-2">
-                        <i className="fas fa-copy" />
-                      </span>
-                      <span>Duplicate</span>
-                    </Dropdown.Item> */}
-                    <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none py-1"
-                      onClick={() => {
-                        downloadCurrentWorkspace()
-                        setCurrentMenuItemName(item.name)
-                        setShowMain(false)
-                        setOpenSub(null)
-                      }}
-                      onMouseDown={(e) => e.preventDefault()}
-                      as={'button'}
-                      data-id="workspacesubMenuDownload"
-                    >
-                      <span className="me-2">
-                        <i className="fas fa-download" />
-                      </span>
-                      <span>Download</span>
-                    </Dropdown.Item>
-                    <Dropdown.Divider
-                      className="border mb-0 mt-0 remixui_menuhr"
-                      style={{ pointerEvents: 'none' }}
-                    />
-                    <Dropdown.Item
-                      className="dropdown-item d-flex align-items-center text-decoration-none text-danger py-1"
-                      onClick={() => {
-                        deleteCurrentWorkspace(item.name)
-                        setShowMain(false)
-                        setOpenSub(null)
-                      }}
-                      onMouseDown={(e) => e.preventDefault()}
-                      as={'button'}
-                      data-id="workspacesubMenuDelete"
-                    >
-                      <span className="me-2">
-                        <i className="fas fa-trash" />
-                      </span>
-                      <span>Delete</span>
-                    </Dropdown.Item>
-                  </div>
-                )}
-              </Overlay>
+                    <div className="border rounded w-75 px-1">
+                      <div className="d-grid gap-0">
+                        <Button
+                          // variant="light"
+                          className="border border-0 btn btn-sm btn-light d-flex align-items-center text-decoration-none"
+                          data-id="workspacesubMenuRename"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            renameCurrentWorkspace(item.name)
+                            setOpenSubmenuId(null)
+                          } }
+                          style={{
+                            color: 'var(--bs-body-color)'
+                          }}
+                        >
+                          <span className="me-2">
+                            <i className="far fa-edit" />
+                          </span>
+                          <span>Rename</span>
+                        </Button>
+                        <Button
+                          variant="light"
+                          size="sm"
+                          style={{
+                            color: 'var(--bs-body-color)'
+                          }}
+                          className="border border-0 d-flex align-items-center text-decoration-none"
+                          data-id="workspacesubMenuDownload"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            downloadCurrentWorkspace()
+                            setCurrentMenuItemName(item.name)
+                            setOpenSubmenuId(null)
+                          } }
+                        >
+                          <span className="me-2">
+                            <i className="fas fa-download" />
+                          </span>
+                          <span>Download</span>
+                        </Button>
+                        <Button
+                          variant="light"
+                          size="sm"
+                          style={{
+                            color: 'var(--bs-body-color)'
+                          }}
+                          className="border border-0 d-flex align-items-center text-decoration-none"
+                          data-id="workspacesubMenuDelete"
+                          onClick={(e) => {
+                            deleteCurrentWorkspace(item.name)
+                            e.stopPropagation()
+                            setOpenSubmenuId(null)
+                          } }
+                        >
+                          <span className="me-2">
+                            <i className="fas fa-trash" />
+                          </span>
+                          <span>Delete</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </section>
+                </Overlay>
+              </div>
             </div>
-          ))}
-        </div>
-        <li
-          className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg"
-          onClick={() => {
-            createWorkspace()
-            setShowMain(false)
-            setOpenSub(null)
-          }}
-          data-id="workspacecreate"
-        >
-          <span className="ps-2 " onClick={() => {
-            createWorkspace()
-            setShowMain(false)
-            setOpenSub(null)
-          }}>
-            <i className="fas fa-plus me-2"></i>
+          )
+        })}
+        <div className="d-grid gap-2">
+          <Button
+            className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg"
+            data-id="workspacecreate"
+          >
+            <span className="pl-2 " onClick={() => {
+              createWorkspace()
+            }}>
+              <i className="fas fa-plus me-2"></i>
                 Create a new workspace
-          </span>
-        </li>
-        <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-        <Dropdown.Item onClick={() => {
-          window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
-          setShowMain(false)
-          setOpenSub(null)
-        }}>
-          <span className="ps-2" style={{ color: '#D678FF' }} onClick={() => {
+            </span>
+          </Button>
+          <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
+          <Dropdown.Item onClick={() => {
             window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="far fa-desktop me-2"></i>
+            <span className="pl-2" style={{ color: '#D678FF' }} onClick={() => {
+              window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
+              <i className="far fa-desktop me-2"></i>
                 Download Remix Desktop
-          </span>
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => {
-          downloadWorkspaces()
-          setShowMain(false)
-          setOpenSub(null)
-        }}>
-          <span className="ps-2" onClick={() => {
+            </span>
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => {
             downloadWorkspaces()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="far fa-download me-2"></i>
+            <span className="pl-2" onClick={() => {
+              downloadWorkspaces()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
+              <i className="far fa-download me-2"></i>
                 Backup
-          </span>
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => {
-          restoreBackup()
-          setShowMain(false)
-          setOpenSub(null)
-        }}>
-          <span className="ps-2" onClick={() => {
+            </span>
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => {
             restoreBackup()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-upload me-2"></i>
+            <span className="pl-2" onClick={() => {
+              restoreBackup()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
+              <i className="fas fa-upload me-2"></i>
                 Restore
-          </span>
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => {
-          connectToLocalhost()
-          setShowMain(false)
-          setOpenSub(null)
-        }}>
-          <span className="ps-2" onClick={() => {
+            </span>
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => {
             connectToLocalhost()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-desktop me-2"></i>
+            <span className="pl-2" onClick={() => {
+              connectToLocalhost()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
+              <i className="fas fa-desktop me-2"></i>
                 Connect to Localhost
-          </span>
-        </Dropdown.Item>
-        <li className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
-          deleteAllWorkspaces()
-          setShowMain(false)
-          setOpenSub(null)
-        }}>
-          <span className="ps-2 text-white" onClick={() => {
+            </span>
+          </Dropdown.Item>
+          <Button className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
             deleteAllWorkspaces()
             setShowMain(false)
             setOpenSub(null)
           }}>
-            <i className="fas fa-trash-can me-2"></i>
+            <span className="pl-2 text-white" onClick={() => {
+              deleteAllWorkspaces()
+              setShowMain(false)
+              setOpenSub(null)
+            }}>
+              <i className="fas fa-trash-can me-2"></i>
                 Delete all Workspaces
-          </span>
-        </li>
+            </span>
+          </Button>
+        </div>
       </Dropdown.Menu>
     </Dropdown>
-  );
-};
+  )
+}
