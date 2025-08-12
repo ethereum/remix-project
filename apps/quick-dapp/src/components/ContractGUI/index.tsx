@@ -82,7 +82,7 @@ export function ContractGUI(props: { funcABI: any, funcId: any }) {
         <div
           className="d-flex p-0 wrapperElement"
           data-id={buttonOptions.dataId}
-          data-title={buttonOptions.title}
+          data-bs-title={buttonOptions.title}
         >
           <button
             disabled
@@ -94,7 +94,7 @@ export function ContractGUI(props: { funcABI: any, funcId: any }) {
                 : ''
             }`}
             data-id={buttonOptions.dataId}
-            data-title={buttonOptions.title}
+            data-bs-title={buttonOptions.title}
             style={{ pointerEvents: 'none', width: 100 }}
           >
             {title}
@@ -102,10 +102,10 @@ export function ContractGUI(props: { funcABI: any, funcId: any }) {
         </div>
         <input
           disabled
-          className="instance-input w-100 p-2 border-0 rounded-right"
+          className="instance-input w-100 p-2 border-0 rounded-end"
           data-id={'multiParamManagerBasicInputField'}
           placeholder={inputs}
-          data-title={inputs}
+          data-bs-title={inputs}
           style={{
             height: '2rem',
             visibility: !(

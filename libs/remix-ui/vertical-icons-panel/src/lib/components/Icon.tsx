@@ -100,7 +100,7 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           {
             name === 'remixaiassistant' ? (
               <div
-                className={`remixui_icon_ai ml-1  pt-1`}
+                className={`remixui_icon_ai ms-1  pt-1`}
                 onClick={() => {
                   if (iconRecord.pinned) {
                     verticalIconPlugin.call('pinnedPanel', 'highlight')

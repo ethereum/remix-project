@@ -83,8 +83,8 @@ export const ModalDialog = (props: ModalDialogProps) => {
   return (
     <div
       data-id={`${props.id}ModalDialogContainer-react`}
-      data-backdrop="static"
-      data-keyboard="false"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
       className="modal"
       style={{ display: props.hide ? 'none' : 'block' }}
       role="dialog"
@@ -103,8 +103,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon && (
-              <span data-id={`${props.id}-modal-close`} className="modal-close" onClick={() => handleHide()}>
-                <i className="fas fa-times" aria-hidden="true"></i>
+              <span data-id={`${props.id}-modal-close`} className="btn-close" aria-label="Close" onClick={() => handleHide()}>
               </span>
             )}
           </div>
@@ -132,7 +131,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
               <button
                 data-id={`${props.id}-modal-footer-cancel-react`}
                 className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'border-secondary' : 'border-primary')}
-                data-dismiss="modal"
+                data-bs-dismiss="modal"
                 onClick={() => {
                   if (props.cancelFn) props.cancelFn(AppModalCancelTypes.click)
                   handleHide()

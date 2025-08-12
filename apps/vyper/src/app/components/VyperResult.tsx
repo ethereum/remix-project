@@ -63,7 +63,7 @@ function VyperResult({ output, plugin }: VyperResultProps) {
           await plugin?.call('vyperCompilationDetails', 'showDetails', output)
         }}>
           <span>
-            <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
+            <i className="fa-regular fa-memo-pad me-2 text-primary"></i>
             <span>Compilation Details</span>
           </span>
         </button>

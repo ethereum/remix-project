@@ -50,10 +50,10 @@ const AiChatIntro = (props) => {
           <button
             key={s}
             data-id={`remix-ai-assistant-starter-${index}`}
-            className="btn btn-secondary mb-2 w-100 text-left"
+            className="btn btn-secondary mb-2 w-100 text-start"
             onClick={() => props.sendPrompt(s)}
           >
-            <i className="fa-kit fa-remixai mr-2"></i>{s}
+            <i className="fa-kit fa-remixai me-2"></i>{s}
           </button>
         ))}
       </div>
@@ -87,7 +87,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                 <img
                   src={assistantAvatar}
                   alt="AI"
-                  className="assistant-avatar me-2 flex-shrink-0 mr-1"
+                  className="assistant-avatar me-2 flex-shrink-0 me-1"
                 />
               )}
 
@@ -179,7 +179,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       <span
                         role="button"
                         aria-label="thumbs down"
-                        className={`feedback-btn ml-2 ${msg.sentiment === 'dislike'
+                        className={`feedback-btn ms-2 ${msg.sentiment === 'dislike'
                           ? 'fas fa-thumbs-down'
                           : 'far fa-thumbs-down'
                         }`}

@@ -22,6 +22,6 @@
 
 .dragbar:hover,
 .dragbar.ondrag {
-  background-color: var(--secondary);
+  background-color: var(--bs-secondary);
   cursor: col-resize;
 }

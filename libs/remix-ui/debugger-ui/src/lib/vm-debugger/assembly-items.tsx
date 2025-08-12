@@ -85,8 +85,8 @@ export const AssemblyItems = ({ registerEvent }) => {
 
     const currentItem = codeView.children[index]
     if (currentItem) {
-      currentItem.style.setProperty('background-color', 'var(--primary)')
-      currentItem.style.setProperty('color', 'var(--light)')
+      currentItem.style.setProperty('background-color', 'var(--bs-primary)')
+      currentItem.style.setProperty('color', 'var(--bs-light)')
       currentItem.setAttribute('selected', 'selected')
       codeView.scrollTop = currentItem.offsetTop - parseInt(codeView.offsetTop)
     }
@@ -103,7 +103,7 @@ export const AssemblyItems = ({ registerEvent }) => {
 
       const currentItem = codeView.children[index]
       if (currentItem) {
-        currentItem.style.setProperty('color', 'var(--primary)')
+        currentItem.style.setProperty('color', 'var(--bs-primary)')
         currentItem.style.setProperty('font-weight', 'bold')
         currentItem.setAttribute('selected', 'selected')
       }
@@ -151,7 +151,7 @@ export const AssemblyItems = ({ registerEvent }) => {
               <FormattedMessage id="debugger.noDataAvailable" />
             </div>
           )}
-          <div className="pl-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
+          <div className="ps-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
             {assemblyItems.display.map((item, i) => {
               return (
                 <div

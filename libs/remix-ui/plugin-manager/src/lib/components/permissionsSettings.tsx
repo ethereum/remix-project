@@ -73,11 +73,11 @@ function PermisssionsSettings() {
       <>
         {Object.keys(permissions[targetPlugin]).map((funcName) => {
           return Object.keys(permissions[targetPlugin][funcName]).map((pluginName, index) => (
-            <div className="form-group remixui_permissionKey" key={pluginName}>
+            <div className="mb-3 remixui_permissionKey" key={pluginName}>
               {permissions && Object.keys(permissions).length > 0 ? (
                 <>
                   <div className="remixui_checkbox">
-                    <span className="mr-2">
+                    <span className="me-2">
                       <input
                         type="checkbox"
                         onChange={() => handleCheckboxClick(targetPlugin, funcName, pluginName)}
@@ -86,7 +86,7 @@ function PermisssionsSettings() {
                         aria-describedby={`module ${pluginName} asks permission for ${funcName}`}
                       />
                       <label
-                        className="ml-4"
+                        className="ms-4"
                         htmlFor={`permission-checkbox-${targetPlugin}-${funcName}-${targetPlugin}`}
                         data-id={`permission-label-${targetPlugin}-${funcName}-${targetPlugin}`}
                       >

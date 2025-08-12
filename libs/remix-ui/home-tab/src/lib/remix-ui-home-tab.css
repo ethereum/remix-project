@@ -111,7 +111,7 @@
 }
 
 .langSelectorbg {
-  background-color: var(--body-bg);
+  background-color: var(--bs-body-bg);
   color: var(--text);
 }
 

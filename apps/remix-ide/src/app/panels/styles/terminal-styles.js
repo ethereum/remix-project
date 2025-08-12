@@ -24,7 +24,7 @@ var css = csjs`
     cursor            : pointer;
   }
   .toggleTerminal:hover              {
-    color             : var(--secondary);
+    color             : var(--bs-secondary);
   }
   .terminal_container   {
     display             : flex;
@@ -61,8 +61,8 @@ var css = csjs`
     line-height       : 1.7em;
     font-family       : monospace;
     padding           : .4em;
-    color             : var(--primary)
-    border-top        : solid 2px var(--secondary);
+    color             : var(--bs-primary)
+    border-top        : solid 2px var(--bs-secondary);
   }
   .prompt             {
     margin-right      : 0.5em;
@@ -110,7 +110,7 @@ var css = csjs`
     min-width: 50px;
   }
   .verticalLine {
-    border-left       : 1px solid var(--secondary)
+    border-left       : 1px solid var(--bs-secondary)
     height            : 65%;
   }
   .dragbarHorizontal  {

@@ -91,7 +91,7 @@ html, body, #root, main {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background-color: var(--body-bg);
+  background-color: var(--bs-body-bg);
 }
 
 #result .copy {
@@ -232,7 +232,7 @@ html, body, #root, main {
 }
 
 .accordion-background {
-  background-color: var(--body-bg);
+  background-color: var(--bs-body-bg);
 }
 
 .accordion-background:hover {

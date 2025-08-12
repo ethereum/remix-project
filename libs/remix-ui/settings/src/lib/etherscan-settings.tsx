@@ -65,7 +65,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
                 tip={intl.formatMessage({ id: 'settings.copy' })}
                 content={etherscanToken}
                 data-id="copyToClipboardCopyIcon"
-                className="far fa-copy ml-1 p-2 mt-1"
+                className="far fa-copy ms-1 p-2 mt-1"
                 direction={'top'}
               />
             </div>
@@ -75,7 +75,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
           <div className="text-secondary mb-0 h6">
             <div className="d-flex justify-content-end pt-2">
               <input
-                className="btn btn-sm btn-primary ml-2"
+                className="btn btn-sm btn-primary ms-2"
                 id="saveetherscantoken"
                 data-id="settingsTabSaveEtherscanToken"
                 onClick={saveEtherscanToken}
@@ -90,7 +90,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
                 placement="left-start"
               >
                 <button
-                  className="btn btn-sm btn-secondary ml-2"
+                  className="btn btn-sm btn-secondary ms-2"
                   id="removeetherscantoken"
                   data-id="settingsTabRemoveEtherscanToken"
                   title="Delete Etherscan token"

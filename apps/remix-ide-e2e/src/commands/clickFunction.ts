@@ -11,7 +11,7 @@ class ClickFunction extends EventEmitter {
     expectedInput?: NightwatchClickFunctionExpectedInput
   ): NightwatchBrowser {
     this.api
-      .waitForElementPresent('.instance *[data-title="' + fnFullName + '"]')
+      .waitForElementPresent('.instance *[data-bs-title="' + fnFullName + '"]')
       .perform(function (client, done) {
         client.execute(
           function () {
@@ -22,7 +22,7 @@ class ClickFunction extends EventEmitter {
           function () {
             if (expectedInput) {
               client.setValue(
-                '#runTabView input[data-title="' + expectedInput.types + '"]',
+                '#runTabView input[data-bs-title="' + expectedInput.types + '"]',
                 expectedInput.values,
                 (_) => _
               )
@@ -31,7 +31,7 @@ class ClickFunction extends EventEmitter {
           }
         )
       })
-      .scrollAndClick('.instance *[data-title="' + fnFullName + '"]')
+      .scrollAndClick('.instance *[data-bs-title="' + fnFullName + '"]')
       .pause(2000)
       .perform(() => {
         this.emit('complete')

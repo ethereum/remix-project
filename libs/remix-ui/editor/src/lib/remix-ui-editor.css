@@ -1,6 +1,6 @@
 .hover-row {
     white-space: pre;
-    background : var(--light);    
+    background : var(--bs-light);    
     font-weight : bold;
     font-family : monospace;
     font-size: smaller;
@@ -39,7 +39,7 @@ div.monaco-list-row > span.title {
 }
 
 .newChangesDecoration {
-    background-color: var(--ai) !important;
+    background-color: var(--custom-ai-color) !important;
     color: var(--white) !important;
     filter: opacity(0.1);
     font-weight: bolder;

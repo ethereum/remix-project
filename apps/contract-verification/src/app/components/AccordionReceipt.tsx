@@ -51,34 +51,34 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
 
       <div className={`${expanded ? '' : 'd-none'} px-2 pt-2 pb-3 small`}>
         <div>
-          <span className="font-weight-bold">Chain: </span>
+          <span className="fw-bold">Chain: </span>
           {chainName} ({contract.chainId})
         </div>
         <div>
-          <span className="font-weight-bold">File: </span>
+          <span className="fw-bold">File: </span>
           <span className="text-break">{contract.filePath}</span>
         </div>
         <div>
-          <span className="font-weight-bold">Submitted at: </span>
+          <span className="fw-bold">Submitted at: </span>
           {new Date(contract.date).toLocaleString()}
         </div>
 
         <div>
-          <span className="font-weight-bold">Verified at: </span>
+          <span className="fw-bold">Verified at: </span>
           <ReceiptsBody receipts={contract.receipts} />
         </div>
 
         {hasProxy && (
           <>
             <div className="mt-3">
-              <span className="font-weight-bold">Proxy Address: </span>
+              <span className="fw-bold">Proxy Address: </span>
               <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={contract.proxyAddress}>
                 <span>{shortenAddress(contract.proxyAddress)}</span>
               </CustomTooltip>
               <CopyToClipboard tip="Copy" content={contract.proxyAddress} direction={'top'} />
             </div>
             <div>
-              <span className="font-weight-bold">Proxy verified at: </span>
+              <span className="fw-bold">Proxy verified at: </span>
               <ReceiptsBody receipts={contract.proxyReceipts} />
             </div>
           </>
@@ -102,26 +102,33 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             tooltipTextClasses="text-capitalize"
             tooltipText={`Status: ${receipt.status}${receipt.message ? `, Message: ${receipt.message}` : ''}`}
           >
-            <span className="mr-2">
+            <span className="me-2">
               {['verified', 'partially verified', 'already verified'].includes(receipt.status) ?
                 <i className="fas fa-check text-success px-1"></i> :
-                receipt.status === 'fully verified' ?
+                receipt.status === 'exactly verified' || receipt.status === 'fully verified' ?
                   <i className="fas fa-check-double text-success px-1"></i> :
                   receipt.status === 'failed' ?
                     <i className="fas fa-xmark text-warning px-1"></i> :
                     ['pending', 'awaiting implementation verification'].includes(receipt.status) ?
-                      <i className="fas fa-spinner fa-spin"></i> :
-                      <i className="fas fa-question"></i>
+                      <i className="fas fa-spinner fa-spin px-1"></i> :
+                      <i className="fas fa-question px-1"></i>
               }
             </span>
           </CustomTooltip>
           <div className="d-flex flex-row w-100 justify-content-between">
-            <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
-              <span className="font-weight-bold pr-2">{receipt.verifierInfo.name}</span>
-            </CustomTooltip>
-            <div className="ml-1">
+            <div>
+              <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
+                <span className="fw-bold pe-2">{receipt.verifierInfo.name}</span>
+              </CustomTooltip>
+              {
+                !!receipt.receiptLookupUrl && <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText="View verification details">
+                  <a href={receipt.receiptLookupUrl} target="_blank" className="fa fas fa-receipt" rel="noreferrer"></a>
+                </CustomTooltip>
+              }
+            </div>
+            <div className="ms-1">
               {!!receipt.lookupUrl && receipt.verifierInfo.name === 'Blockscout' ?
-                <CopyToClipboard classList="pr-0 py-0" tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> :
+                <CopyToClipboard classList="pe-0 py-0" tip="Copy code URL" content={receipt.lookupUrl} direction="top" /> :
                 !!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square" rel="noreferrer"></a>
               }
             </div>

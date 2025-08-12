@@ -45,7 +45,7 @@ module.exports = {
       .verifyCallReturnValue('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', ['0:address: 0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108'])
   },
 
-  'Should keep the delegation status after reloae & switching accounts #group1': function (browser: NightwatchBrowser) {
+  'Should keep the delegation status after reload & switching accounts #group1': function (browser: NightwatchBrowser) {
     browser
       .refresh()
       .clickLaunchIcon('udapp')
@@ -60,6 +60,7 @@ module.exports = {
   'Should remove the delegation #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="delete-delegation"]')
+      .click('*[data-id="remixDRValueLabel"]')
       .click('*[data-id="delete-delegation"]')
       .modalFooterOKClick('udappNotify')
       .waitForElementNotPresent('*[data-id="delete-delegation"]')

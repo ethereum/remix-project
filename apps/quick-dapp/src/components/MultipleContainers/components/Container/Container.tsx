@@ -40,7 +40,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             '--columns': columns,
           } as React.CSSProperties
         }
-        className={`col pr-0 d-flex rounded container ${hover && 'hover'} ${
+        className={`col pe-0 d-flex rounded container ${hover && 'hover'} ${
           placeholder && 'placeholder'
         }`}
         onClick={onClick}

@@ -30,7 +30,7 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
                 _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
               }}
             >
-              <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{ width: '1.4rem' }}></span>
+              <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' ps-2'} style={{ width: '1.4rem' }}></span>
               <span className="px-2">
                 {props.kind === 'create' ? <FormattedMessage id={'filePanel.createLabel'} /> :<FormattedMessage id={'filePanel.' + props.kind} />}
               </span>
@@ -57,7 +57,7 @@ export function NavHamburgerMenuItem(props: HamburgerMenuItemProps) {
               _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
             }}
           >
-            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{ width: '1.4rem' }}></span>
+            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' ps-2'} style={{ width: '1.4rem' }}></span>
             <span className="px-2">
               <FormattedMessage id={'filePanel.' + props.kind} />
             </span>

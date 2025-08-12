@@ -111,8 +111,8 @@ const tests = {
   'Should run transaction (greet function) on Sepolia Test Network using MetaMask': function (browser: NightwatchBrowser) {
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clearConsole()
-      .waitForElementPresent('*[data-title="string _message"]')
-      .setValue('*[data-title="string _message"]', 'test')
+      .waitForElementPresent('*[data-bs-title="string _message"]')
+      .setValue('*[data-bs-title="string _message"]', 'test')
       .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
       .click('*[data-id="greet - transact (not payable)"]')
       .pause(1000)

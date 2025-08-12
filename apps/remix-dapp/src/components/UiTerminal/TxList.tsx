@@ -52,7 +52,7 @@ export const TxList = (props: any) => {
   return (
     <div
       id="journal"
-      className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 ml-2 mr-0 mt-auto"
+      className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 ms-2 me-0 mt-auto"
       data-id="terminalJournal"
     >
       {journalBlocks?.map((x: any, index: number) => {

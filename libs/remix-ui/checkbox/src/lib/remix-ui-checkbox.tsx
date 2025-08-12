@@ -1,7 +1,7 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, {CSSProperties} from 'react' //eslint-disable-line
 import './remix-ui-checkbox.css'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 
 /* eslint-disable-next-line */
 export interface RemixUiCheckboxProps {
@@ -42,7 +42,7 @@ export const RemixUiCheckbox = ({
   const childJSXWithTooltip = (
     <CustomTooltip tooltipText={title} tooltipId={`${name}Tooltip`} placement={tooltipPlacement}>
       <div
-        className={`listenOnNetwork_2A0YE0 custom-control custom-checkbox ${optionalClassName}`}
+        className={`listenOnNetwork_2A0YE0 form-check ${optionalClassName}`}
         style={
           {
             display: display,
@@ -52,9 +52,9 @@ export const RemixUiCheckbox = ({
         }
         onClick={onClick}
       >
-        <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="custom-control-input" checked={checked} disabled={disabled} />
-        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled}>
-          {name ? <div className="font-weight-bold">{itemName}</div> : ''}
+        <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="form-check-input" checked={checked} disabled={disabled} />
+        <label className="form-check-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled} htmlFor={id}>
+          {name ? <div className="fw-bold">{itemName}</div> : ''}
           {label}
         </label>
       </div>
@@ -62,7 +62,7 @@ export const RemixUiCheckbox = ({
   )
   const childJSX = (
     <div
-      className="listenOnNetwork_2A0YE0 custom-control custom-checkbox"
+      className="listenOnNetwork_2A0YE0 form-check"
       style={
         {
           display: display,
@@ -72,9 +72,9 @@ export const RemixUiCheckbox = ({
       }
       onClick={onClick}
     >
-      <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="custom-control-input" checked={checked} />
-      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
-        {name ? <div className="font-weight-bold">{itemName}</div> : ''}
+      <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="form-check-input" checked={checked} />
+      <label className="form-check-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
+        {name ? <div className="fw-bold">{itemName}</div> : ''}
         {label}
       </label>
     </div>

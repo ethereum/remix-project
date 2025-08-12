@@ -7,13 +7,13 @@ export function VersionList ({ currentVersion, versionList, downloadList, setVer
   const versionListKeys = Object.keys(versionList)
   return (
     <Dropdown>
-      <Dropdown.Toggle as={CircomVersionMenuToggle} id="circomVersionList" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control">
+      <Dropdown.Toggle as={CircomVersionMenuToggle} id="circomVersionList" className="btn btn-light btn-block w-100 d-inline-block border form-select">
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
           { versionList[currentVersion].name }
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu as={CircomVersionMenu} className="w-100 custom-dropdown-items overflow-hidden">
+      <Dropdown.Menu as={CircomVersionMenu} className="w-100 form-select overflow-hidden">
         {
           versionListKeys.reverse().map((version, index) => (
             <Dropdown.Item key={index} onClick={() => {
@@ -21,12 +21,12 @@ export function VersionList ({ currentVersion, versionList, downloadList, setVer
             }}>
               <div className='d-flex w-100 justify-content-between'>
                 <div>
-                  <span className={`fas fa-check text-success mr-2 ${currentVersion === version ? 'visible' : 'invisible'}`}></span>
+                  <span className={`fas fa-check text-success me-2 ${currentVersion === version ? 'visible' : 'invisible'}`}></span>
                   <span>
                     { isElectron() ? versionList[version].name.replace('wasm', '') : versionList[version].name }
                   </span>
                 </div>
-                { isElectron() ? downloadList.includes(version) ? <div className='far fa-arrow-circle-down'></div> : <div className='fas fa-arrow-circle-down text-success ml-auto'></div> : null }
+                { isElectron() ? downloadList.includes(version) ? <div className='far fa-arrow-circle-down'></div> : <div className='fas fa-arrow-circle-down text-success ms-auto'></div> : null }
               </div>
             </Dropdown.Item>
           ))

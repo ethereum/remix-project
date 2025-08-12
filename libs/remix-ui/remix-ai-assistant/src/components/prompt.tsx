@@ -83,7 +83,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           className="bg-light mb-1 p-2 border border-text w-75"
           style={{ borderRadius: '8px' }}
         >
-          <div className="text-uppercase ml-2 mb-2">Context</div>
+          <div className="text-uppercase ms-2 mb-2">Context</div>
           <GroupListMenu
             setChoice={setContextChoice}
             setShowOptions={setShowContextOptions}
@@ -96,11 +96,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       <div
         className="prompt-area d-flex flex-column mx-1 p-2 border border-text bg-light"
       >
-        <div className="d-flex justify-content-between mb-3 border border-right-0 border-left-0 border-top-0 border-bottom pb-1">
+        <div className="d-flex justify-content-between mb-3 border border-end-0 border-start-0 border-top-0 border-bottom pb-1">
           <button
             onClick={handleAddContext}
             data-id="composer-ai-add-context"
-            className="btn btn-dim btn-sm text-secondary small font-weight-light border border-text rounded"
+            className="btn btn-dim btn-sm text-secondary small fw-light border border-text rounded"
             ref={contextBtnRef}
           >
             <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
@@ -115,12 +115,12 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               delay={{ show: 1000, hide: 0 }}
             >
               <span
-                className="far fa-circle-info text-ai mr-1"
+                className="far fa-circle-info text-ai me-1"
                 onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
               ></span>
             </CustomTooltip>
             <span
-              className="badge align-self-center badge-info font-weight-light rounded"
+              className="badge align-self-center text-bg-info fw-light rounded"
             >
               AI Beta
             </span>
@@ -149,42 +149,29 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
           />
 
           <div className="d-flex justify-content-between">
-            <div className="d-flex">
-              <button
-                onClick={handleSetAssistant}
-                className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
-                ref={modelBtnRef}
-              >
-                {assistantChoice === null && 'Default'}
-                {assistantChoice === 'openai' && ' OpenAI'}
-                {assistantChoice === 'mistralai' && ' MistralAI'}
-                {assistantChoice === 'anthropic' && ' Anthropic'}
-                {assistantChoice === 'ollama' && ' Ollama'}
-                {'  '}
-                <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
-              </button>
-              {assistantChoice === 'ollama' && availableModels.length > 0 && (
-                <button
-                  onClick={handleSetModel}
-                  className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded ms-2"
-                  ref={modelSelectorBtnRef}
-                  data-id="ollama-model-selector"
-                >
-                  {selectedModel || 'Select Model'}
-                  {'  '}
-                  <span className={showModelOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
-                </button>
-              )}
-            </div>
+
+            <button
+              onClick={handleSetAssistant}
+              className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
+              ref={modelBtnRef}
+            >
+              {assistantChoice === null && 'Default'}
+              {assistantChoice === 'openai' && ' OpenAI'}
+              {assistantChoice === 'mistralai' && ' MistralAI'}
+              {assistantChoice === 'anthropic' && ' Anthropic'}
+              {assistantChoice === 'ollama' && ' Ollama'}
+              {'  '}
+              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+            </button>
             <button
               data-id="remix-ai-workspace-generate"
-              className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+              className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
               onClick={handleGenerateWorkspace}
             >
               {'@Generate'}
             </button>
             {/* <button
-              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm font-weight-light text-secondary mt-2 align-self-end disabled'}
+              className={input.length > 0 ? 'btn bg-ai border-text border btn-sm fw-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm fw-light text-secondary mt-2 align-self-end disabled'}
               style={{ backgroundColor: input.length > 0 ? '#2de7f3' : 'transparent' }}
               onClick={handleSend}
             >
@@ -199,18 +186,18 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               return (
                 <span
                   key={f}
-                  className="badge badge-info mr-1 aiContext-file text-success"
+                  className="badge text-bg-info me-1 aiContext-file text-success"
                   style={{ cursor: 'pointer' }}
                   onClick={clearContext}
                 >
                   {name}
-                  <i className="fa fa-times ms-1 ml-1" style={{ cursor: 'pointer' }}></i>
+                  <i className="fa fa-times ms-1 ms-1" style={{ cursor: 'pointer' }}></i>
                 </span>
               )
             })}
             {contextFiles.length > 6 && (
               <span
-                className="badge badge-info"
+                className="badge text-bg-info"
                 style={{ cursor: 'pointer' }}
                 onClick={clearContext}
               >
@@ -226,7 +213,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
 
 function TooltipContent () {
   return (
-    <ul className="list-unstyled p-2 mr-3">
+    <ul className="list-unstyled p-2 me-3">
       <li className="">
         {'- Use /w <prompt> : To manage or edit files within your workspace'}
       </li>

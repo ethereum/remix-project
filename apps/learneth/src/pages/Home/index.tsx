@@ -52,15 +52,15 @@ function HomePage(): JSX.Element {
                     >
                       {selectedRepo.entities[item.id].name}
                     </span>
-                    <Link onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', selectedRepo.entities[item.id].name])} to={`/list?id=${item.id}`} className="text-decoration-none float-right">
+                    <Link onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', selectedRepo.entities[item.id].name])} to={`/list?id=${item.id}`} className="text-decoration-none float-end">
                       <i className="fas fa-play-circle fa-lg" />
                     </Link>
                   </div>
                   <div className={`container-fluid bg-light pt-3 mt-2 ${isOpen(item.id) ? '' : 'description-collapsed'}`}>
-                    {levelMap[level] && <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
+                    {levelMap[level] && <p className="tag pt-2 pe-1 fw-bold small text-uppercase">{levelMap[level]}</p>}
 
                     {selectedRepo.entities[item.id].metadata.data.tags?.map((tag: string) => (
-                      <p key={tag} className="tag pr-1 font-weight-bold small text-uppercase">
+                      <p key={tag} className="tag pe-1 fw-bold small text-uppercase">
                         {tag}
                       </p>
                     ))}

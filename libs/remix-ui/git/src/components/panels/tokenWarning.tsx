@@ -5,7 +5,7 @@ export const TokenWarning = () => {
   const context = React.useContext(gitPluginContext)
   return (<>
     {(context.gitHubUser && context.gitHubUser.login) ? null :
-      <span className="text-warning text-left">
+      <span className="text-warning text-start">
         <span>Generate and add a Git token or login with GitHub. Tokens are added in </span><span className=" text-decoration-line-through messageTip" onClick={async () => {
         }}>settings.</span>
       </span>

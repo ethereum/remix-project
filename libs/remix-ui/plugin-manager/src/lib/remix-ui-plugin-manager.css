@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--light);
+  background-color: var(--bs-light);
   padding: 10px;
   position: sticky;
   top: 0;
@@ -38,7 +38,7 @@
   flex-direction: row;
 }
 .remixui_isStuck {
-  background-color: var(--primary);
+  background-color: var(--bs-primary);
   /* color:  */
 }
 .remixui_versionWarning {
