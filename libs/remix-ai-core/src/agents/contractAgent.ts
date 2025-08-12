@@ -36,6 +36,7 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
+    console.log('AI generated result', payload)
 
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
@@ -85,7 +86,7 @@ export class ContractAgent {
       this.contracts = {}
       const parsedFiles = payload
       this.oldPayload = payload
-      this.generationThreadID = parsedFiles['threadID']
+      this.generationThreadID = "" //parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
@@ -133,6 +134,7 @@ export class ContractAgent {
       await statusCallback?.('Finalizing workspace creation...')
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
+      console.log('error - ', error)
       await statusCallback?.('Error occurred, cleaning up...')
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0

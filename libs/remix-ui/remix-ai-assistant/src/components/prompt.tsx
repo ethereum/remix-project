@@ -150,19 +150,33 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
 
           <div className="d-flex justify-content-between">
 
-            <button
-              onClick={handleSetAssistant}
-              className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
-              ref={modelBtnRef}
-            >
-              {assistantChoice === null && 'Default'}
-              {assistantChoice === 'openai' && ' OpenAI'}
-              {assistantChoice === 'mistralai' && ' MistralAI'}
-              {assistantChoice === 'anthropic' && ' Anthropic'}
-              {assistantChoice === 'ollama' && ' Ollama'}
-              {'  '}
-              <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
-            </button>
+            <div className="d-flex">
+              <button
+                onClick={handleSetAssistant}
+                className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded"
+                ref={modelBtnRef}
+              >
+                {assistantChoice === null && 'Default'}
+                {assistantChoice === 'openai' && ' OpenAI'}
+                {assistantChoice === 'mistralai' && ' MistralAI'}
+                {assistantChoice === 'anthropic' && ' Anthropic'}
+                {assistantChoice === 'ollama' && ' Ollama'}
+                {'  '}
+                <span className={showAssistantOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+              </button>
+              {assistantChoice === 'ollama' && availableModels.length > 0 && (
+                <button
+                  onClick={handleSetModel}
+                  className="btn btn-text btn-sm small font-weight-light text-secondary mt-2 align-self-end border border-text rounded ms-2"
+                  ref={modelSelectorBtnRef}
+                  data-id="ollama-model-selector"
+                >
+                  {selectedModel || 'Select Model'}
+                  {'  '}
+                  <span className={showModelOptions ? "fa fa-caret-up" : "fa fa-caret-down"}></span>
+                </button>
+              )}
+            </div>
             <button
               data-id="remix-ai-workspace-generate"
               className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
