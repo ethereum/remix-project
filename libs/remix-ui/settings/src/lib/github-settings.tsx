@@ -83,7 +83,7 @@ export function GithubSettings(props: GithubSettingsProps) {
                 tip={intl.formatMessage({ id: 'settings.copy' })}
                 content={githubToken}
                 data-id="copyToClipboardCopyIcon"
-                className="far fa-copy ml-1 p-2 mt-1"
+                className="far fa-copy ms-1 p-2 mt-1"
                 direction={'top'}
               />
             </div>
@@ -112,7 +112,7 @@ export function GithubSettings(props: GithubSettingsProps) {
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={githubEmail} />
             <div className="d-flex justify-content-end pt-2">
               <input
-                className="btn btn-sm btn-primary ml-2"
+                className="btn btn-sm btn-primary ms-2"
                 id="savegisttoken"
                 data-id="settingsTabSaveGistToken"
                 onClick={saveGithubToken}
@@ -125,7 +125,7 @@ export function GithubSettings(props: GithubSettingsProps) {
                 tooltipId="removegisttokenTooltip"
                 placement="top-start"
               >
-                <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
+                <button className="btn btn-sm btn-secondary ms-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
                   <FormattedMessage id="settings.remove" />
                 </button>
               </CustomTooltip>

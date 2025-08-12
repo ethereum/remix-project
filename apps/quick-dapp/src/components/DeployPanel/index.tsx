@@ -64,7 +64,7 @@ function DeployPanel(): JSX.Element {
         size="sm"
         style={{ height: 32, width: 100 }}
         data-id="deleteDapp"
-        className="ml-3"
+        className="ms-3"
         onClick={() => {
           emptyInstance();
         }}
@@ -151,10 +151,10 @@ function DeployPanel(): JSX.Element {
             <FormattedMessage id="quickDapp.shareTo" />
           </Form.Label>
           <br />
-          <div className="d-inline-flex align-items-center custom-control custom-checkbox">
+          <div className="d-inline-flex align-items-center form-check">
             <input
               id="shareToTwitter"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               name="group1"
               value="twitter"
@@ -166,16 +166,16 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="shareToTwitter"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               Twitter
             </label>
           </div>
-          <div className="d-inline-flex align-items-center custom-control custom-checkbox ml-3">
+          <div className="d-inline-flex align-items-center form-check ms-3">
             <input
               id="shareToFacebook"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               name="group1"
               value="facebook"
@@ -187,7 +187,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="shareToFacebook"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               Facebook
@@ -202,7 +202,7 @@ function DeployPanel(): JSX.Element {
           <span
             data-id="useNatSpec"
             id="useNatSpec"
-            className="btn ai-switch pl-0 py-0"
+            className="btn ai-switch ps-0 py-0"
             onClick={async () => {
               getInfoFromNatSpec(!natSpec.checked);
             }}
@@ -225,10 +225,10 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.verifiedByEtherscan" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-check">
             <input
               id="verifiedByEtherscan"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               onChange={(e) => {
                 dispatch({
@@ -241,7 +241,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="verifiedByEtherscan"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               <FormattedMessage id="quickDapp.verified" />
@@ -252,10 +252,10 @@ function DeployPanel(): JSX.Element {
           <Form.Label className="text-uppercase mb-0">
             <FormattedMessage id="quickDapp.noTerminal" />
           </Form.Label>
-          <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+          <div className="d-flex py-1 align-items-center form-check">
             <input
               id="noTerminal"
-              className="form-check-input custom-control-input"
+              className="form-check-input"
               type="checkbox"
               onChange={(e) => {
                 dispatch({
@@ -268,7 +268,7 @@ function DeployPanel(): JSX.Element {
 
             <label
               htmlFor="noTerminal"
-              className="m-0 form-check-label custom-control-label"
+              className="m-0 form-check-label"
               style={{ paddingTop: 1 }}
             >
               <FormattedMessage id="quickDapp.no" />
@@ -284,14 +284,14 @@ function DeployPanel(): JSX.Element {
           disabled={!formVal.email || !formVal.password || !formVal.subdomain}
         >
           {deployState.loading && (
-            <i className="fas fa-spinner fa-spin mr-1"></i>
+            <i className="fas fa-spinner fa-spin me-1"></i>
           )}
           <FormattedMessage id="quickDapp.deploy" />
         </Button>
         <Button
           data-id="teardownDapp"
           variant="primary"
-          className="mt-3 ml-3"
+          className="mt-3 ms-3"
           disabled={!formVal.email || !formVal.password || !formVal.subdomain}
           // hide this button for now, just for e2e use
           style={{ display: 'none' }}
@@ -303,7 +303,7 @@ function DeployPanel(): JSX.Element {
           }}
         >
           {teardownState.loading && (
-            <i className="fas fa-spinner fa-spin mr-1"></i>
+            <i className="fas fa-spinner fa-spin me-1"></i>
           )}
           <FormattedMessage id="quickDapp.teardown" />
         </Button>

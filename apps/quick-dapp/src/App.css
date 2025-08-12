@@ -35,7 +35,7 @@
 
   @media (hover: hover) {
     &:hover {
-      background-color: var(--light);
+      background-color: var(--bs-light);
     }
   }
 
@@ -107,7 +107,7 @@
   cursor: pointer;
 }
 .cursor_pointer:hover {
-  color: var(--secondary);
+  color: var(--bs-secondary);
 }
 .custom-dropdown-items {
   padding: 0.25rem 0.25rem;

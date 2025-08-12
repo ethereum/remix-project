@@ -8,31 +8,6 @@ import React from 'react';
 export const themeMap: Record<string, any> = {
   Dark: { quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
   Light: { quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
-  Violet: { quality: 'light', url: 'assets/css/themes/remix-violet.css' },
-  Unicorn: { quality: 'light', url: 'assets/css/themes/remix-unicorn.css' },
-  Midcentury: {
-    quality: 'light',
-    url: 'assets/css/themes/remix-midcentury_hrzph3.css',
-  },
-  Black: { quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
-  Candy: { quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
-  HackerOwl: { quality: 'dark', url: 'assets/css/themes/remix-hacker_owl.css' },
-  Cerulean: {
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-cerulean.min.css',
-  },
-  Flatly: {
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-flatly.min.css',
-  },
-  Spacelab: {
-    quality: 'light',
-    url: 'assets/css/themes/bootstrap-spacelab.min.css',
-  },
-  Cyborg: {
-    quality: 'dark',
-    url: 'assets/css/themes/bootstrap-cyborg.min.css',
-  },
 };
 
 const CustomToggle = React.forwardRef(
@@ -61,10 +36,10 @@ const CustomToggle = React.forwardRef(
       className={className.replace('dropdown-toggle', '')}
     >
       <div className="d-flex">
-        <div className="mr-auto text-nowrap overflow-hidden">{children}</div>
+        <div className="me-auto text-nowrap overflow-hidden">{children}</div>
         {icon && (
-          <div className="pr-1">
-            <i className={`${icon} pr-1`}></i>
+          <div className="pe-1">
+            <i className={`${icon} pe-1`}></i>
           </div>
         )}
         <div>
@@ -128,14 +103,14 @@ export function ThemeUI() {
       <Dropdown className="w-100">
         <Dropdown.Toggle
           as={CustomToggle}
-          className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
+          className="btn btn-light btn-block w-100 d-inline-block border form-select"
           icon={''}
         >
           {theme} - {themeMap[theme].quality}
         </Dropdown.Toggle>
         <Dropdown.Menu
           as={CustomMenu}
-          className="w-100 custom-dropdown-items"
+          className="w-100 form-select"
           data-id="custom-dropdown-items"
         >
           {themeList.map((item) => (
@@ -147,7 +122,7 @@ export function ThemeUI() {
               data-id={`dropdown-item-${item}`}
             >
               {theme === item && (
-                <span className="fas fa-check text-success mr-2"></span>
+                <span className="fas fa-check text-success me-2"></span>
               )}
               {item} - {themeMap[item].quality}
             </Dropdown.Item>

@@ -130,7 +130,6 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
   case SET_SELECTED_ACCOUNT: {
     const payload: string = action.payload
-
     return {
       ...state,
       accounts: {

@@ -125,7 +125,7 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
           tooltipText="use require when the module doesn't support import statements"
         >
           <div>
-            <label className="pr-2 pt-2">Use 'require':</label>
+            <label className="pe-2 pt-2">Use 'require':</label>
             <FontAwesomeIcon className={useRequire ? 'text-success' : ''} onClick={toggleRequire} icon={useRequire ? faToggleOn : faToggleOff}></FontAwesomeIcon>
           </div>
         </CustomTooltip>

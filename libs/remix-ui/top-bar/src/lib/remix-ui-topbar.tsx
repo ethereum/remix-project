@@ -344,14 +344,14 @@ export function RemixUiTopbar () {
           >
             <span
             >
-              {currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-1">{props.mName}</span>}</span>
+              {currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-1">{props.mName}</span>}</span>
             <i className="fas fa-code-branch pt-1"></i>
           </div>
         ) : (
           <div
             className="d-flex justify-content-between"
           >
-            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-3">{props.mName}</span>}</span>
           </div>
         )}
       </>
@@ -395,7 +395,7 @@ export function RemixUiTopbar () {
             </Dropdown.Item>
             <i
               ref={subMenuIconRef}
-              className="fas fa-ellipsis-vertical pt-1 pr-2 top-bar-dropdownItem"
+              className="fas fa-ellipsis-vertical pt-1 pe-2 top-bar-dropdownItem"
               onClick={() => {
                 setShowSubMenuFlyOut(!showSubMenuFlyOut)
               }}
@@ -433,11 +433,11 @@ export function RemixUiTopbar () {
     >
       <div className="d-flex flex-row align-items-center justify-content-between w-100">
         <div
-          className="d-flex flex-row align-items-center justify-content-evenly m-1"
+          className="d-flex flex-row align-items-center m-1"
           style={{ minWidth: '33%' }}
         >
           <div
-            className="d-flex align-items-center justify-content-between mr-3 cursor-pointer"
+            className="d-flex align-items-center justify-content-between me-3 cursor-pointer"
             onClick={async () => {
               await plugin.call('tabs', 'focus', 'home')
               _paq.push(['trackEvent', 'topbar', 'header', 'Home'])
@@ -456,7 +456,7 @@ export function RemixUiTopbar () {
               <BasicLogo />
             </div>
             <div
-              className="text-primary ml-2 font-weight-light text-uppercase cursor-pointer"
+              className="text-primary ms-2 font-weight-light text-uppercase cursor-pointer"
               style={{ fontSize: '1.2rem' }}
               onClick={async () => {
                 await plugin.call('tabs', 'focus', 'home')
@@ -525,11 +525,11 @@ export function RemixUiTopbar () {
               />
             )}
           </>
-          <Dropdown className="ml-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
+          <Dropdown className="ms-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
-              className="btn-topbar btn-sm mr-5"
+              className="btn-topbar btn-sm me-5"
               data-id="topbar-themeIcon-toggle"
               style={{
                 padding: '0.35rem 0.5rem',
@@ -543,7 +543,7 @@ export function RemixUiTopbar () {
             >
               <i
                 className={
-                  `fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright text-white'} mr-2`
+                  `fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright text-white'} me-2`
                 }
                 onClick={() => {
                   setShowTheme(!showTheme)
@@ -553,7 +553,7 @@ export function RemixUiTopbar () {
             </Dropdown.Toggle>
             <Dropdown.Menu
               as={CustomTopbarMenu}
-              className="custom-dropdown-items text-decoration-none"
+              className="custom-dropdown-items text-decoration-none bg-light"
               data-id="topbar-thememenu-body"
               style={{
                 minWidth: '95px'
@@ -561,11 +561,11 @@ export function RemixUiTopbar () {
             >
               <Dropdown.Item
                 onClick={() => {
-                  plugin.call('theme', 'switchTheme', 'Flatly')
+                  plugin.call('theme', 'switchTheme', 'Light')
                 }}
                 data-id="topbar-themeIcon-light"
               >
-                <i className="fas fa-sun-bright mr-2"></i>
+                <i className="fas fa-sun-bright me-2"></i>
                 Light
               </Dropdown.Item>
               <Dropdown.Item
@@ -574,7 +574,7 @@ export function RemixUiTopbar () {
                 }}
                 data-id="topbar-themeIcon-dark"
               >
-                <i className="fas fa-moon mr-2"></i>
+                <i className="fas fa-moon me-2"></i>
                 Dark
               </Dropdown.Item>
             </Dropdown.Menu>

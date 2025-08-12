@@ -79,7 +79,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="fw-bold pe-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -96,7 +96,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="fw-bold pe-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -295,7 +295,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">
               <FormattedMessage id="solidity.contract" />
             </label>
-            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
+            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="form-select">
               {contractList.map(({ name, file }, index) => (
                 <option value={name} key={index}>
                   {name} ({file})
@@ -303,7 +303,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               ))}
             </select>
           </div>
-          <article className="mt-2 pb-0">
+          <article className="mt-2 pb-0 d-grid gap-2">
             <CustomTooltip
               placement={'auto-end'}
               tooltipId="runStaticAnalysisTooltip"
@@ -314,13 +314,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="runStaticAnalysis"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   runStaticAnalysis()
                 }}
               >
                 <span>
-                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorBlue.webp" />
+                  <img id="ssaLogo" className="remixui_storageLogo me-2" src="assets/img/staticAnalysisColorBlue.webp" />
                   <span>
                     <FormattedMessage id="solidity.runStaticAnalysis" />
                   </span>
@@ -337,13 +337,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="runSolidityScan"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   runSolidityScan()
                 }}
               >
                 <span>
-                  <img id="solscanLogo" className="remixui_storageLogo mr-2" src="assets/img/solidityScanLogo.webp" />
+                  <img id="solscanLogo" className="remixui_storageLogo me-2" src="assets/img/solidityScanLogo.webp" />
                   <span>
                     <FormattedMessage id="solidity.runSolidityScan" />
                   </span>
@@ -360,14 +360,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="publishOnIpfs"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   handlePublishToStorage('ipfs')
                 }}
               >
 
                 <span>
-                  <img id="ipfsLogo" className="remixui_storageLogo mr-2" src="assets/img/ipfs.webp" />
+                  <img id="ipfsLogo" className="remixui_storageLogo me-2" src="assets/img/ipfs.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> IPFS
                   </span>
@@ -384,13 +384,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 id="publishOnSwarm"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={() => {
                   handlePublishToStorage('swarm')
                 }}
               >
                 <span>
-                  <img id="swarmLogo" className="remixui_storageLogo mr-2" src="assets/img/swarmColor.webp" />
+                  <img id="swarmLogo" className="remixui_storageLogo me-2" src="assets/img/swarmColor.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Swarm
                   </span>
@@ -405,14 +405,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 data-id="compilation-details"
-                className="btn border btn-block"
+                className="btn border"
                 onClick={async () => {
                   details()
                   await (api as any).call('compilationDetails', 'showDetails', payload)
                 }}
               >
                 <span>
-                  <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
+                  <i className="fa-regular fa-memo-pad me-2 text-primary"></i>
                   <span>
                     <FormattedMessage id="solidity.compilationDetails" />
                   </span>
@@ -421,8 +421,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </CustomTooltip>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
-              <div className="input-group">
-                <div className="btn-group" role="group" aria-label="Copy to Clipboard">
+              <div className="input-group d-block">
+                <div className="btn-group float-end" role="group" aria-label="Copy to Clipboard">
                   <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copyABI' })} getContent={copyABI} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>

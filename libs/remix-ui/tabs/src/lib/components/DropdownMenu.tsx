@@ -53,7 +53,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
       </button>
 
       {open && (
-        <div className="custom-dropdown-panel" data-id={panelDataId || 'custom-dropdown-panel'}>
+        <div className="custom-dropdown-panel bg-light" data-id={panelDataId || 'custom-dropdown-panel'}>
           {items.map((item, idx) => (
             <div
               key={idx}
@@ -77,7 +77,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
                   {item.submenu.map((sub, subIdx) => (
                     <div
                       key={subIdx}
-                      className={`custom-dropdown-item ${sub.borderTop ? 'border-top' : ''} ${sub.borderBottom ? 'border-bottom' : ''}`}
+                      className={`custom-dropdown-item bg-light ${sub.borderTop ? 'border-top' : ''} ${sub.borderBottom ? 'border-bottom' : ''}`}
                       onClick={() => {
                         if (!disabled && sub.onClick){
                           sub.onClick()

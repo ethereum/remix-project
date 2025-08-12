@@ -60,7 +60,7 @@ export default function AIStatus(props: AIStatusProps) {
           {copilotActive === false ? 'RemixAI Copilot (disabled)' : 'RemixAI Copilot (enabled)'}
         </span>
       </CustomTooltip>
-      <div className="d-flex text-sm flex-row pr-2 text-white justify-content-center align-items-center">
+      <div className="d-flex text-sm flex-row pe-2 text-white justify-content-center align-items-center">
         <style>{`
           button.aiButton:focus {
             outline: none;
@@ -74,12 +74,12 @@ export default function AIStatus(props: AIStatusProps) {
           position: 'absolute',
           bottom: '1.5rem',
           right: '0.5rem',
-          color: 'var(--ai)',
+          color: 'var(--custom-ai-color)',
           alignItems: 'self-end',
         }}>
           {/* { visible &&
             <span className='p-1 text-info alert alert-secondary' style={{
-              boxShadow: "0 1px 7px var(--secondary)",
+              boxShadow: "0 1px 7px var(--bs-secondary)",
               zIndex: '200',
               marginRight: '1.8rem',
               marginBottom: '-7px'
@@ -94,7 +94,7 @@ export default function AIStatus(props: AIStatusProps) {
               width: '3rem',
               borderRadius: '50%',
               color: 'var(--ai)',
-              boxShadow: "0 1px 7px var(--secondary)"
+              boxShadow: "0 1px 7px var(--bs-secondary)"
             }}
             data-id="aiStatusButton"
             className='aiButton d-flex align-items-center h3 p-1'

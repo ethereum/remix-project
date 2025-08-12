@@ -25,7 +25,7 @@ export const CommandsNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-2 nav form-check-label">COMMANDS</label>
+          <label className="ps-2 nav form-check-label">COMMANDS</label>
         </span>
         <LoaderIndicator></LoaderIndicator>
       </div>

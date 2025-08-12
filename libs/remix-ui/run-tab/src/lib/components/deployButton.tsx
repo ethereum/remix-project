@@ -40,7 +40,7 @@ export function DeployButton(props: DeployButtonProps) {
                 key={index}
               >
                 {' '}
-                {props.selectedIndex === index ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span>}
+                {props.selectedIndex === index ? <span>&#10003; {title} </span> : <span className="ps-3">{title}</span>}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>

@@ -45,9 +45,9 @@ export const selectTheme = (theme) => ({
   borderRadius: 0,
   colors: {
     ...theme.colors,
-    primary25: 'var(--primary)',
-    primary: 'var(--primary)',
-    primary50: 'var(--primary)',
-    primary75: 'var(--primary)',
+    primary25: 'var(--bs-primary)',
+    primary: 'var(--bs-primary)',
+    primary50: 'var(--bs-primary)',
+    primary75: 'var(--bs-primary)',
   },
 })

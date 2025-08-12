@@ -55,7 +55,7 @@ export const Commits = () => {
             })}
           </div>
         </div>
-        {hasNextPage && <GitUIButton data-id='load-more-commits' disabledCondition={fetchIsDisabled()} className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
+        {hasNextPage && <GitUIButton data-id='load-more-commits' disabledCondition={fetchIsDisabled()} className="mb-1 ms-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
         </>
         : <div className="text-muted">No commits</div>}
     </>

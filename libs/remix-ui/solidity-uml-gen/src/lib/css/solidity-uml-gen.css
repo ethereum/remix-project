@@ -9,7 +9,7 @@
 }
 
 #solUmlMenuDropdown > div > ul > a:hover {
-  background-color: var(--secondary);
+  background-color: var(--bs-secondary);
   border-radius: 2px;
   color: var(--text)
 }

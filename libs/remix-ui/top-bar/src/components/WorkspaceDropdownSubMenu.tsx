@@ -23,7 +23,7 @@ export function WorkspaceDropdownSubMenu ({ menuItems, style }: WorkspaceDropdow
               >
                 <span className="d-flex justify-content-evenly align-items-center">
                   <i className={item.icon}></i>
-                  <span className="pl-2">{item.label}</span>
+                  <span className="ps-2">{item.label}</span>
                 </span>
               </Dropdown.Item>
             )
@@ -41,7 +41,7 @@ export function WorkspaceDropdownSubMenu ({ menuItems, style }: WorkspaceDropdow
               >
                 <span className="d-flex justify-content-evenly align-items-center text-danger">
                   <i className={item.icon}></i>
-                  <span className="pl-2">{item.label}</span>
+                  <span className="ps-2">{item.label}</span>
                 </span>
               </Dropdown.Item>
             ]
