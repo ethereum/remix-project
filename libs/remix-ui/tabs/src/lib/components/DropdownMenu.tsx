@@ -49,7 +49,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, disabled, onOpen, tr
         disabled={disabled}
         data-id={triggerDataId || 'custom-dropdown-trigger'}
       >
-        <i className="fas fa-angle-down" style={{ color: 'white' }}></i>
+        <i className="fas fa-angle-down"></i>
       </button>
 
       {open && (
