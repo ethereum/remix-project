@@ -1,24 +1,32 @@
-.description-collapsed{
-  height: 0px;
-  overflow: hidden;
-  word-wrap: break-word;
-  padding: 0px !important;
-  margin: 0px !important;
+.card {
+  position: relative;
+  border-radius: 0.75rem; 
 }
-
-.tag{
-  display: inline;
+.card-hover:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
-
-.arrow-icon{
-  width: 12px;
+@media (prefers-color-scheme: dark) {
+  .card-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(255, 255, 255, 0.075) !important;
+  }
+}
+.title-clamp-2{
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  font-size: 1.05rem;
+}
+.subtitle-clamp-1{
+  display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;
+  font-size: 0.8rem;
+}
+.body-clamp-4{
+  display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+  word-break: break-word;
+  font-size: 0.875rem;
+}
+.antenna-bar{
+  width: 4px;
+  margin-right: 3px;
+  border-radius: 2px;
   display: inline-block;
-  cursor: pointer;
 }
-
-.workshop-link {
-  cursor: pointer;
-}
-.workshop-link:hover {
-  text-decoration: underline;
-}
+.antenna-bar:last-child{ margin-right: 0; }
