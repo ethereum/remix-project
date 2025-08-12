@@ -163,9 +163,8 @@ export default class TabProxy extends Plugin {
       this.tabsApi.activateTab(name)
     })
 
-    this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
-      
-      if (location === 'mainPanel') {
+    this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description, show = true }) => {
+      if (location === 'mainPanel' && show) {
         this.addTab(
           name,
           displayName,
