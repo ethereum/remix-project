@@ -164,7 +164,7 @@ export default class TabProxy extends Plugin {
     })
 
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description, show = true }) => {
-      if (location === 'mainPanel' && show) {
+      if (location === 'mainPanel') {
         this.addTab(
           name,
           displayName,
@@ -180,7 +180,7 @@ export default class TabProxy extends Plugin {
           icon,
           description
         )
-        this.switchTab(name)
+        show && this.switchTab(name)
       }
     })
 
