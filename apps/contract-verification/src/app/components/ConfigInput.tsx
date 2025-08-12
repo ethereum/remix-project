@@ -37,7 +37,7 @@ export const ConfigInput: React.FC<ConfigInputProps> = ({ label, id, secret, ini
   }
 
   return (
-    <div className="form-group small mb-0">
+    <div className="small mb-0">
       <label className='mt-3' htmlFor={id}>{label}</label>
       <div className="d-flex flex-row justify-content-start">
         <input
