@@ -3092,15 +3092,15 @@ textarea.form-control-lg {
   --bs-btn-color: var(--bs-body-bg);
   --bs-btn-bg: #64c4ff;
   --bs-btn-border-color: #64c4ff;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #2f4d6c;
-  --bs-btn-hover-border-color: #2c4866;
+  --bs-btn-hover-color: var(--bs-body-bg);
+  --bs-btn-hover-bg: #64c4ff;
+  --bs-btn-hover-border-color: #64c4ff;
   --bs-btn-focus-shadow-rgb: 85, 115, 146;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #2c4866;
-  --bs-btn-active-border-color: #29445f;
+  --bs-btn-active-color: var(--bs-body-bg);
+  --bs-btn-active-bg: #64c4ff;
+  --bs-btn-active-border-color: #64c4ff;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-color: var(--bs-body-bg);
   --bs-btn-disabled-bg: #64c4ff;
   --bs-btn-disabled-border-color: #64c4ff;
 }
