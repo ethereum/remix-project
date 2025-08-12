@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SettingsActions, SettingsSection, SettingsState } from '../types'
 import { ToggleSwitch } from '@remix-ui/toggle'
 import { useIntl } from 'react-intl'
 import SelectDropdown from './select-dropdown'
+import { ThemeContext } from '@remix-ui/home-tab'
 
 type SettingsSectionUIProps = {
   section: SettingsSection,
@@ -12,6 +13,8 @@ type SettingsSectionUIProps = {
 
 export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, state, dispatch }) => {
   const [formUIData, setFormUIData] = useState<{ [key in keyof SettingsState]: Record<keyof SettingsState, string> }>({} as any)
+  const theme = useContext(ThemeContext)
+  const isDark = theme.name === 'dark'
   const intl = useIntl()
 
   useEffect(() => {
@@ -58,15 +61,15 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
 
   return (
     <>
-      <h3 className="text-white py-3">{section.label}</h3>
-      <span className="text-dark">{section.decription}</span>
+      <h4 className={`${isDark ? 'text-white' : 'text-black'} py-3`}>{section.label}</h4>
+      <span className={`${isDark ? 'text-white' : 'text-black'}`}>{section.decription}</span>
       {(section.subSections || []).map((subSection, subSectionIndex) => {
         const isLastItem = subSectionIndex === section.subSections.length - 1
 
         return (
           <div key={subSectionIndex} className='pt-5'>
-            {subSection.title && <h5 className="text-white">{subSection.title}</h5>}
-            <div className={`card text-light border ${isLastItem ? 'mb-4' : ''}`}>
+            {subSection.title && <h5 className={`${isDark ? 'text-white' : 'text-black'}`}>{subSection.title}</h5>}
+            <div className={`card ${isDark ? 'text-light' : 'text-dark'} border-0 ${isLastItem ? 'mb-4' : ''}`}>
               <div className="card-body">
                 {subSection.options.map((option, optionIndex) => {
                   const isFirstOption = optionIndex === 0
@@ -75,14 +78,14 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
                   const selectValue = state[option.name] && typeof state[option.name].value === 'string' ? state[option.name].value as string : ''
 
                   return (
-                    <div className={`card ${isLastOption ? 'pt-3 pb-0' : isFirstOption ? 'border-bottom pb-3' : 'border-bottom py-3'}`} key={optionIndex}>
+                    <div className={`card border-0 rounded-0 ${isLastOption ? 'pt-3 pb-0' : isFirstOption ? 'border-bottom pb-3' : 'border-bottom py-3'}`} key={optionIndex}>
                       <div className="d-flex align-items-center">
-                        <h5 className="text-white m-0">
+                        <h5 className={`${isDark ? 'text-white' : 'text-black'} m-0`}>
                           {option.label} {option.labelIcon && <i className={option.labelIcon}></i>}
                         </h5>
-                        <div className="ml-auto">
+                        <div className="ms-auto">
                           {option.type === 'toggle' && <ToggleSwitch id={option.name} isOn={toggleValue} onClick={() => handleToggle(option.name)} />}
-                          {option.type === 'select' && <div style={{ minWidth: '100px' }}><SelectDropdown value={selectValue} options={option.selectOptions} name={option.name} dispatch={dispatch as any} /></div>}
+                          {option.type === 'select' && <div style={{ minWidth: '110px' }}><SelectDropdown value={selectValue} options={option.selectOptions} name={option.name} dispatch={dispatch as any} /></div>}
                           {option.type === 'button' && <button className="btn btn-secondary btn-sm">{option.label}</button>}
                         </div>
                       </div>
@@ -101,7 +104,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
 
                         return state[toggleOption.name] && (
                           <div key={toggleOptionIndex}>
-                            <div className={`text-secondary ${isLastOption ? 'mt-2 mb-0' : 'my-2'}`}>
+                            <div className={`${isDark ? 'text-white' : 'text-black'} ${isLastOption ? 'mt-2 mb-0' : 'my-2'}`}>
                               <input
                                 name={toggleOption.name}
                                 data-id={`settingsTab${toggleOption.name}`}
