@@ -43,18 +43,18 @@ const SelectDropdown = ({ value, options, name, dispatch }: SelectDropdownProps)
 
   return (
     <Dropdown>
-      <Dropdown.Toggle as={CustomToggle} className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon="fas fa-caret-down" useDefaultIcon={false}>
+      <Dropdown.Toggle as={CustomToggle} className="btn-light btn-block w-100 d-inline-block border border-secondary form-control" icon="fas fa-caret-down text-secondary" useDefaultIcon={false}>
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
-          <div className="text-truncate">
+          <div className="text-truncate text-secondary">
             {<span data-id="selectedVersion">{value}</span>}
           </div>
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" data-id="custom-dropdown-items">
+      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light" data-id="custom-dropdown-items">
         {
           options.map((option) => (
-            <Dropdown.Item key={option.value} onSelect={() => handleChange(name, option.value)}>
+            <Dropdown.Item key={option.value} onClick={() => handleChange(name, option.value)}>
               <span>{option.label}</span>
             </Dropdown.Item>
           ))

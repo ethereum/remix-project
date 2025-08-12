@@ -25,6 +25,7 @@ import { initialState, settingReducer } from './settingsReducer'
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
+import { ThemeContext, themes } from '@remix-ui/home-tab'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Registry } from '@remix-project/remix-lib'
 import { GithubSettings } from './github-settings'
@@ -249,6 +250,30 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [search, setSearch] = useState('')
   const [filteredSections, setFilteredSections] = useState<SettingsSection[]>(settingsSections)
   const [filteredSection, setFilteredSection] = useState<SettingsSection>(settingsSections[0])
+  const [state, setState] = useState<{
+    themeQuality: { filter: string; name: string }
+  }>({
+    themeQuality: themes.light
+  })
+
+  useEffect(() => {
+    props.plugin.call('theme', 'currentTheme').then((theme) => {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
+        }
+      })
+    })
+    props.plugin.on('theme', 'themeChanged', (theme) => {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
+        }
+      })
+    })
+  }, [])
 
   useEffect(() => {
     if (search.length > 0) {
@@ -287,30 +312,30 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }, [search])
 
   return (
-    <>
+    <ThemeContext.Provider value={state.themeQuality}>
       {settingsState.toaster.value ? <Toaster message={settingsState.toaster.value as string} /> : null}
       <div className="container-fluid bg-light">
         <div className='pt-5'></div>
-        <div className='d-flex flex-row px-5 pb-4'>
-          <div className="input-group remix-settings-sidebar">
-            <h1 className="d-inline-block text-white" style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}>Settings</h1>
-            <div className='d-flex flex-fill'>
-              <span className="input-group-text"><i className="fa fa-search"></i></span>
-              <input type="text" className="form-control shadow-none h-100" placeholder="Search settings" style={{ minWidth: '200px', maxWidth: '515px' }} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className='d-flex flex-row pb-4'>
+          <div className="input-group ps-5 remix-settings-sidebar">
+            <h2 className={`d-inline-block pe-5 ${state.themeQuality.name === 'dark' ? 'text-white' : 'text-black'}`} style={{ minWidth: '7.8em' }}>Settings</h2>
+            <div className='d-flex flex-grow-1 remix-settings-search' style={{ maxWidth: '53.5em' }}>
+              <span className="input-group-text rounded-0 border-end-0 pe-0" style={{ backgroundColor: state.themeQuality.name === 'dark' ? 'var(--custom-onsurface-layer-4)' : 'var(--bs-body-bg)' }}><i className="fa fa-search"></i></span>
+              <input type="text" className="form-control shadow-none h-100 rounded-0 border-start-0 no-outline" placeholder="Search settings" style={{ minWidth: '21.5em', width: '100%' }} value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
         </div>
-        {filteredSections.length === 0 && <div className="text-info px-5 text-center" style={{ cursor: 'pointer' }}>No match found</div>}
+        {filteredSections.length === 0 && <div className="text-info text-center" style={{ cursor: 'pointer' }}>No match found</div>}
         <div className="d-flex flex-wrap align-items-stretch">
           {/* Sidebar */}
           <div
-            className="flex-column bg-transparent p-0 remix-settings-sidebar"
-            style={{ minWidth: '350px', maxWidth: '400px', flex: '0 0 370px' }}
+            className="flex-column bg-transparent p-0 px-5 remix-settings-sidebar"
+            style={{ maxWidth: '28.2em' }}
           >
-            <ul className="px-5 list-unstyled">
+            <ul className="list-unstyled">
               {filteredSections.map((section, index) => (
                 <li
-                  className={`nav-item ${index !== filteredSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? 'active text-white' : 'text-secondary'}`}
+                  className={`nav-item ${index !== filteredSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}
                   key={index}
                 >
                   <a
@@ -321,8 +346,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                       setFilteredSection(section)
                     }}
                   >
-                    <h3 className={`${selected === section.key ? 'active text-white' : 'text-secondary'}`}>{section.label}</h3>
-                    {selected !== section.key && <span style={{ fontSize: '0.7rem' }}>{section.decription}</span>}
+                    <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}>{section.label}</h4>
+                    {selected !== section.key && <span>{section.decription}</span>}
                   </a>
                 </li>
               ))}
@@ -331,15 +356,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           {/* Main Content */}
           <div
             className="flex-column p-0 flex-grow-1"
-            style={{ minWidth: 0, flexBasis: '300px', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
+            style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
           >
-            <div className="px-5 remix-settings-main remix-settings-main-vh" style={{ maxWidth: '650px', overflowY: 'auto', maxHeight: '58vh' }}>
+            <div className="remix-settings-main" style={{ maxWidth: '53.5em', overflowY: 'auto', maxHeight: '58vh' }}>
               <SettingsSectionUI section={filteredSection} state={settingsState} dispatch={dispatch} />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </ThemeContext.Provider>
   )
 }
 
