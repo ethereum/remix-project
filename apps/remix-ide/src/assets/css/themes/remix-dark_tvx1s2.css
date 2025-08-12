@@ -103,7 +103,7 @@
   --bs-tertiary-color-rgb: 255, 255, 255;
   --bs-tertiary-bg: #f8f9fa;
   --bs-tertiary-bg-rgb: 248, 249, 250;
-  --bs-heading-color: inherit;
+  --bs-heading-color: #fff;
   --bs-link-color: #747b90;
   --bs-link-color-rgb: 116, 123, 144;
   --bs-link-decoration: underline;
@@ -185,7 +185,7 @@
   --bs-danger-border-subtle: #8b2e24;
   --bs-light-border-subtle: #444;
   --bs-dark-border-subtle: #303030;
-  --bs-heading-color: inherit;
+  --bs-heading-color: #fff;
   --bs-link-color: #a2a3bd;
   --bs-link-hover-color: #b6b8d4;
   --bs-link-color-rgb: 162, 163, 189;
@@ -260,7 +260,8 @@ hr {
 h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   margin-top: 0;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 400;
+  font-family: inherit;
   line-height: 1.2;
   color: var(--bs-heading-color);
 }
