@@ -391,7 +391,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }}
         type="checkbox"
       />
-      <label data-id="debugGeneratedSourcesLabel" className="pt-1 form-check-label" htmlFor="debugGeneratedSourcesInput">
+      <label data-id="debugGeneratedSourcesLabel" className="form-check-label" htmlFor="debugGeneratedSourcesInput">
         <FormattedMessage id="debugger.useGeneratedSources" />
         (Solidity {'>='} v0.7.2)
       </label>
