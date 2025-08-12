@@ -37,7 +37,7 @@ export function RecorderUI(props: RecorderProps) {
     <div className="udapp_cardContainer py-1 list-group-item border-top border-bottom bg-dark" id="udappRecorderCard">
       <div className="udapp_recorderSection d-flex justify-content-between">
         <div className="d-flex justify-content-center align-items-center">
-          <label className="text-nowrap mt-1 udapp_recorderSectionLabel" onClick={toggleClass}>
+          <label className="text-nowrap udapp_recorderSectionLabel" onClick={toggleClass}>
             <FormattedMessage id="udapp.transactionsRecorded" />
           </label>
           <CustomTooltip
