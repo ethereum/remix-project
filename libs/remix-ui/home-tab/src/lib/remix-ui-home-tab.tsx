@@ -91,7 +91,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
               <HomeTabRecentWorkspaces plugin={plugin} />
               {/* {!(platform === appPlatformTypes.desktop) ? <HomeTabFile plugin={plugin} /> : <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>} */}
             </div>
-            <div className="col-lg-4 col-xl-7 col-sm-12" style={{ overflowY: 'auto', maxHeight: '63vh' }}>
+            <div className="col-lg-4 col-xl-7 col-sm-12" style={{ overflowY: 'auto', maxHeight: '61vh' }}>
               <HomeTabUpdates plugin={plugin} />
               <HomeTabFeaturedPlugins plugin={plugin} />
             </div>

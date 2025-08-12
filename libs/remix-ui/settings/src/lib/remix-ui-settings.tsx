@@ -319,7 +319,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <div className='d-flex flex-row pb-4'>
           <div className="input-group ps-5 remix-settings-sidebar">
             <h2 className={`d-inline-block pe-5 ${state.themeQuality.name === 'dark' ? 'text-white' : 'text-black'}`} style={{ minWidth: '7.8em' }}>Settings</h2>
-            <div className='d-flex flex-grow-1 remix-settings-search' style={{ maxWidth: '53.5em' }}>
+            <div className='d-flex flex-grow-1 remix-settings-search' style={{ maxWidth: '53.5em', minHeight: '4em' }}>
               <span className="input-group-text rounded-0 border-end-0 pe-0" style={{ backgroundColor: state.themeQuality.name === 'dark' ? 'var(--custom-onsurface-layer-4)' : 'var(--bs-body-bg)' }}><i className="fa fa-search"></i></span>
               <input type="text" className="form-control shadow-none h-100 rounded-0 border-start-0 no-outline" placeholder="Search settings" style={{ minWidth: '21.5em', width: '100%' }} value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>

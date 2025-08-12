@@ -24,7 +24,8 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version,
   permission: true,
-  maintainedBy: 'Remix'
+  maintainedBy: 'Remix',
+  show: false
 }
 
 export default class SettingsTab extends ViewPlugin {
