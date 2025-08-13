@@ -41,7 +41,7 @@ export const SettingsView = () => {
             <CustomTooltip tooltipText="Use Sourcify API v1 instead of v2. Necessary for alternative Sourcify instances that did not upgrade.">
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
-                  className="form-check-input custom-control-input"
+                  className="form-check-input ms-1"
                   type="checkbox"
                   id="sourcify-use-v1-api"
                   checked={chainSettings.verifiers['Sourcify']?.useV1API ?? false}
