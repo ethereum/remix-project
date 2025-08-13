@@ -37,6 +37,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
 
       dispatch({ type: 'SET_LOADING', payload: { name: name } })
       dispatch({ type: 'SET_VALUE', payload: { name: name, value: newValue } })
+      // _paq.push(['disableCookies'])
       if (!newValue && formUIData[name]) {
         Object.keys(formUIData[name]).forEach((key) => {
           dispatch({ type: 'SET_VALUE', payload: { name: key, value: '' } })
