@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppSelector } from '../../redux/hooks'
 import RepoImporter from '../../components/RepoImporter'
+import FiltersPanel from './FiltersPanel'
 import './index.css'
 
 type LevelKey = '1' | '2' | '3'
@@ -42,49 +43,154 @@ function MetaRight({ stepsLen, duration }: { stepsLen?: number; duration?: strin
   return parts.length ? <div className="text-muted small">{parts.join(' · ')}</div> : null
 }
 
+function useDebounced<T>(value: T, delay = 250) {
+  const [v, setV] = useState(value)
+  useEffect(() => { const id = setTimeout(() => setV(value), delay); return () => clearTimeout(id) }, [value, delay])
+  return v
+}
+
 export default function HomePage(): JSX.Element {
   const { list, detail, selectedId } = useAppSelector((s) => s.workshop)
   const selectedRepo = detail[selectedId]
 
-   return (
-    <div className="App">
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounced(search, 250)
+
+  const [showFilters, setShowFilters] = useState(false)
+  const [selectedLevels, setSelectedLevels] = useState<number[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  const allTags = useMemo(() => {
+    if (!selectedRepo) return []
+    const set = new Set<string>()
+    Object.keys(selectedRepo.group).forEach((levelKey) => {
+      (selectedRepo.group[levelKey] || []).forEach((item: any) => {
+        const entity = selectedRepo.entities[item.id] || {}
+        const tags: string[] = entity?.metadata?.data?.tags || []
+        tags.forEach(t => set.add(t))
+      })
+    })
+    return Array.from(set).sort((a, b) => a.localeCompare(b))
+  }, [selectedRepo])
+
+  const flatItems = useMemo(() => {
+    if (!selectedRepo) return []
+    const rows: Array<{
+      id: string
+      levelNum: number
+      levelText: string
+      name: string
+      subtitle: string
+      preview: string
+      stepsLen?: number
+      duration?: number | string
+      tags: string[]
+    }> = []
+    Object.keys(selectedRepo.group).forEach((levelKey) => {
+      const levelNum = Number(levelKey) || 1
+      const levelText = LEVEL_LABEL[levelKey as LevelKey] ?? 'Beginner'
+      const items = selectedRepo.group[levelKey] || []
+      items.forEach((item: any) => {
+        const entity = selectedRepo.entities[item.id] || {}
+        const tags: string[] = entity?.metadata?.data?.tags || []
+        const subtitle = tags.join(', ')
+        const stepsLen = entity?.steps?.length
+        const duration = entity?.metadata?.data?.duration
+        const preview = mdToPlain(entity?.description?.content || '', 280)
+        rows.push({
+          id: item.id,
+          levelNum, levelText,
+          name: entity?.name || '',
+          subtitle, preview, stepsLen, duration, tags
+        })
+      })
+    })
+    return rows
+  }, [selectedRepo])
+
+  const filtered = useMemo(() => {
+    let list = flatItems
+
+    const q = debouncedSearch.trim().toLowerCase()
+    if (q) {
+      list = list.filter(r => {
+        const hay = (r.name + ' ' + r.preview + ' ' + r.tags.join(' ')).toLowerCase()
+        return hay.includes(q)
+      })
+    }
+    if (selectedLevels.length) {
+      const set = new Set(selectedLevels)
+      list = list.filter(r => set.has(r.levelNum))
+    }
+    if (selectedTags.length) {
+      list = list.filter(r => r.tags.some(t => selectedTags.includes(t)))
+    }
+
+    return list
+  }, [flatItems, debouncedSearch, selectedLevels, selectedTags])
+
+  return (
+    <div id="learneth" className="App">
       <RepoImporter list={list} selectedRepo={selectedRepo || {}} />
+ 
+      <div className="container-fluid mb-3">
+        <hr className="hr-themed my-3"/>
+        <div className="remixui_pluginSearch" data-id="learneth-search-sticky">
+          <div className="d-flex w-100 mb-2">
+            <div className="search-bar-container w-100">
+              <i className="fas fa-search search-bar-icon" aria-hidden="true"></i>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="form-control form-control-sm remixui_pluginSearchInput pl-4"
+                placeholder=" Search"
+                data-id="learneth-search-input"
+              />
+            </div>
+
+            <button
+              onClick={() => setShowFilters(s => !s)}
+              className="btn btn-sm btn-secondary ml-2 d-flex align-items-center"
+              data-id="learneth-filter-button"
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8" className="mr-1">
+                <path d="M0.06 0.86C0.16 0.64 0.38 0.5 0.62 0.5h6.75c.24 0 .46.14.56.36.1.22.07.48-.09.66L5 5.01V7c0 .19-.11.36-.28.45-.17.09-.37.07-.52-.05l-1-.75c-.13-.1-.2-.25-.2-.4V5.01L0.14 1.52C-.01 1.33-.04 1.07.06.86z" fill="currentColor"/>
+              </svg>
+              <span>Filters</span>
+            </button>
+          </div>
+
+          {showFilters && (
+            <FiltersPanel
+              allTags={allTags}
+              selectedLevels={selectedLevels} setSelectedLevels={setSelectedLevels}
+              selectedTags={selectedTags} setSelectedTags={setSelectedTags}
+              onClear={() => { setSelectedLevels([]); setSelectedTags([]); }}
+            />
+          )}
+        </div>
+      </div>
 
       {selectedRepo && (
         <div className="container-fluid">
-          {Object.keys(selectedRepo.group).flatMap((levelKey: string) => {
-            const items = selectedRepo.group[levelKey]
-            const levelNum = Number(levelKey) || 1
-            const levelText = LEVEL_LABEL[levelKey as LevelKey] ?? 'Beginner'
-
-            return items.map((item: any) => {  
-              const entity = selectedRepo.entities[item.id] || {}
-              const id = item.id
-              const tags: string[] = entity?.metadata?.data?.tags || []
-              const subtitle = tags.join(', ')
-              const stepsLen = entity?.steps?.length
-              const duration = entity?.metadata?.data?.duration
-              const preview = mdToPlain(entity?.description?.content || '', 280)
-
-              return (
-                <article key={id} className="card card-hover mb-3 border border-secondary overflow-hidden">
-                  <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-secondary px-3 py-2">
-                    <div className="d-flex align-items-center">
-                      <Antenna level={levelNum} />
-                      <span className="text-muted small">{levelText}</span>
-                    </div>
-                    <MetaRight stepsLen={stepsLen} duration={duration} />
-                  </div>
-                  <div className="card-body">
-                    <h5 className="card-title mb-1 title-clamp-2">{entity?.name}</h5>
-                    {subtitle && <div className="text-muted subtitle-clamp-1">{subtitle}</div>}
-                    <p className="mt-2 mb-0 text-muted body-clamp-4">{preview}</p>
-                    <Link to={`/list?id=${id}`} className="stretched-link" />
-                  </div>
-                </article>
-              )
-            })
-          })}
+          {filtered.map((r) => (
+            <article key={r.id} className="card card-hover mb-3 border border-secondary overflow-hidden">
+              <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-secondary px-3 py-2">
+                <div className="d-flex align-items-center">
+                  <Antenna level={r.levelNum} />
+                  <span className="text-muted small">{r.levelText}</span>
+                </div>
+                <MetaRight stepsLen={r.stepsLen} duration={r.duration} />
+              </div>
+              <div className="card-body">
+                <h5 className="card-title mb-1 title-clamp-2">{r.name}</h5>
+                {!!r.subtitle && <div className="text-muted subtitle-clamp-1">{r.subtitle}</div>}
+                <p className="mt-2 mb-0 text-muted body-clamp-4">{r.preview}</p>
+                <Link to={`/list?id=${r.id}`} className="stretched-link" />
+              </div>
+            </article>
+          ))}
         </div>
       )}
     </div>
