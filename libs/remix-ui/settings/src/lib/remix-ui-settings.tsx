@@ -58,29 +58,29 @@ const settingsSections: SettingsSection[] = [
         title: 'Code editor',
         options: [{
           name: 'generate-contract-metadata',
-          label: 'Generate contract metadata',
-          description: 'Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.',
+          label: 'settings.generateContractMetadataText',
+          description: 'settings.generateContractMetadataTooltip',
           type: 'toggle'
         }, {
           name: 'auto-completion',
-          label: 'Enable code completion in editor',
+          label: 'settings.useAutoCompleteText',
           type: 'toggle'
         }, {
           name: 'show-gas',
-          label: 'Display gas estimates in editor',
+          label: 'settings.useShowGasInEditorText',
           type: 'toggle'
         }, {
           name: 'display-errors',
-          label: 'Display errors in editor while typing',
+          label: 'settings.displayErrorsText',
           type: 'toggle'
         }, {
           name: 'personal-mode',
-          label: 'Enable Personal Mode for web3 provider',
+          label: 'settings.enablePersonalModeText',
           labelIcon: 'fa fa-exclamation-triangle text-warning',
           type: 'toggle'
         }, {
           name: 'save-evm-state',
-          label: 'Save environment state',
+          label: 'settings.enableSaveEnvState',
           type: 'toggle'
         }]
       },
@@ -88,7 +88,7 @@ const settingsSections: SettingsSection[] = [
         title: 'Appearance',
         options: [{
           name: 'locale',
-          label: 'Language',
+          label: 'settings.locales',
           type: 'select',
           selectOptions: settingsConfig.locales.map((locale) => ({
             label: locale.name.toLocaleUpperCase() + '-' + locale.localeName,
@@ -313,8 +313,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       <div className="container-fluid bg-light">
         <div className='pt-5'></div>
         <div className='d-flex flex-row pb-4'>
-          <div className="input-group ps-5 remix-settings-sidebar">
-            <h2 className={`d-inline-block pe-5 ${state.themeQuality.name === 'dark' ? 'text-white' : 'text-black'}`} style={{ width: '7.8em' }}>Settings</h2>
+          <div data-id="settings-sidebar-header" className="input-group ps-5 remix-settings-sidebar">
+            <h2 className={`d-inline-block pe-5 ${state.themeQuality.name === 'dark' ? 'text-white' : 'text-black'}`} style={{ width: '7.8em' }}><FormattedMessage id="settings.displayName" /></h2>
             <div className='d-flex flex-grow-1 remix-settings-search' style={{ maxWidth: '53.5em', minHeight: '4em' }}>
               <span className="input-group-text rounded-0 border-end-0 pe-0" style={{ backgroundColor: state.themeQuality.name === 'dark' ? 'var(--custom-onsurface-layer-4)' : 'var(--bs-body-bg)' }}><i className="fa fa-search"></i></span>
               <input type="text" className="form-control shadow-none h-100 rounded-0 border-start-0 no-outline" placeholder="Search settings" style={{ minWidth: '21.5em', width: '100%' }} value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -335,6 +335,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                   key={index}
                 >
                   <a
+                    data-id={`settings-sidebar-${section.key}`}
                     className="nav-link p-0"
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
