@@ -331,7 +331,7 @@ export function ContractGUI(props: ContractGUIProps) {
           </div>
         </CustomTooltip>
         <input
-          className="form-control border-dark"
+          className="form-control border"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
           onChange={handleBasicInput}
@@ -366,7 +366,7 @@ export function ContractGUI(props: ContractGUIProps) {
                       ref={(el) => {
                         multiFields.current[index] = el
                       }}
-                      className="form-control border-dark"
+                      className="form-control border"
                       placeholder={inp.type}
                       data-id={`multiParamManagerInput${inp.name}`}
                       onChange={handleBasicInput}
