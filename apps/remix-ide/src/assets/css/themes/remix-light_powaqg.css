@@ -234,6 +234,10 @@ body {
   color: var(--custom-ai-color) !important;
 }
 
+.font-sm {
+  font-size: 0.875em;
+}
+
 hr {
   margin: 1rem 0;
   color: inherit;
@@ -2338,7 +2342,7 @@ textarea.form-control-lg {
   display: block;
   width: 100%;
   padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-  font-size: 1rem;
+  font-size: .875rem;
   font-weight: 400;
   line-height: 1.5;
   color: var(--bs-body-color);
@@ -3455,7 +3459,7 @@ textarea.form-control-lg {
   --bs-dropdown-padding-x: 0;
   --bs-dropdown-padding-y: 0.5rem;
   --bs-dropdown-spacer: 0.125rem;
-  --bs-dropdown-font-size: 1rem;
+  --bs-dropdown-font-size: .875rem;
   --bs-dropdown-color: var(--bs-body-color);
   --bs-dropdown-bg: var(--bs-body-bg);
   --bs-dropdown-border-color: #ced4da;
