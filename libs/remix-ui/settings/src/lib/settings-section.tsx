@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SettingsActions, SettingsSection, SettingsState } from '../types'
 import { ToggleSwitch } from '@remix-ui/toggle'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import SelectDropdown from './select-dropdown'
 import { ThemeContext } from '@remix-ui/home-tab'
 
@@ -61,8 +61,8 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
 
   return (
     <>
-      <h4 className={`${isDark ? 'text-white' : 'text-black'} py-3`}>{section.label}</h4>
-      <span className={`${isDark ? 'text-white' : 'text-black'}`}>{section.decription}</span>
+      <h4 className={`${isDark ? 'text-white' : 'text-black'} py-3`}>{<FormattedMessage id={section.label} />}</h4>
+      <span className={`${isDark ? 'text-white' : 'text-black'}`}>{<FormattedMessage id={section.decription} />}</span>
       {(section.subSections || []).map((subSection, subSectionIndex) => {
         const isLastItem = subSectionIndex === section.subSections.length - 1
 
@@ -80,8 +80,8 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
                   return (
                     <div className={`card border-0 rounded-0 ${isLastOption ? 'pt-3 pb-0' : isFirstOption ? 'border-bottom pb-3' : 'border-bottom py-3'}`} key={optionIndex}>
                       <div className="d-flex align-items-center">
-                        <h5 className={`${isDark ? 'text-white' : 'text-black'} m-0`}>
-                          {option.label} {option.labelIcon && <i className={option.labelIcon}></i>}
+                        <h5 data-id={`settingsTab${option.name}Label`} className={`${isDark ? 'text-white' : 'text-black'} m-0`}>
+                          <FormattedMessage id={option.label} /> {option.labelIcon && <i className={option.labelIcon}></i>}
                         </h5>
                         <div className="ms-auto">
                           {option.type === 'toggle' && <ToggleSwitch id={option.name} isOn={toggleValue} onClick={() => handleToggle(option.name)} />}
@@ -89,7 +89,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
                           {option.type === 'button' && <button className="btn btn-secondary btn-sm">{option.label}</button>}
                         </div>
                       </div>
-                      {option.description && <span className="text-secondary mt-1">{option.description}</span>}
+                      {option.description && <span className="text-secondary mt-1">{typeof option.description === 'string' ? <FormattedMessage id={option.description} /> : option.description}</span>}
                       {
                         option.footnote ? option.footnote.link ?
                           <a href={option.footnote.link} className={`mt-1 ${option.footnote.styleClass}`} target="_blank" rel="noopener noreferrer">{option.footnote.text}</a>
