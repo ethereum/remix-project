@@ -898,7 +898,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         </div>
         <div className="d-flex px-4 remixui_compilerConfigSection justify-content-between" onClick={toggleConfigurations}>
           <div className="d-flex">
-            <label className="mt-1 remixui_compilerConfigSection">
+            <label className="remixui_compilerConfigSection">
               <FormattedMessage id="solidity.advancedConfigurations" />
             </label>
           </div>

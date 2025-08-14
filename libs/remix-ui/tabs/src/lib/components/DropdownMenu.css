@@ -5,7 +5,7 @@
 }
 
 .custom-dropdown-trigger {
-    color: var(--text);
+    /* color: var(--text); */
     /* background: var(--custom-select, #2d2f3b); */
     padding: 4px 8px;
     border-left: 1px solid var(--bs-secondary);
