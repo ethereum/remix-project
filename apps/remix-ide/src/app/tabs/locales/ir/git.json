@@ -1,0 +1,21 @@
+{
+  "git.push": "ارسال",
+  "git.pull": "دریافت",
+  "git.commit": "تعهد",
+  "git.sync": "همگام سازی",
+  "git.syncchanges": "همگام سازی تغییرات",
+  "git.publish": "انتشار",
+  "git.ignore": "نادیده گرفتن",
+  "git.createBranch": "ایجاد شاخه",
+  "git.deleteBranch": "حذف شاخه",
+  "git.mergeBranch": "ادغام شاخه",
+  "git.rebaseBranch": "ریبیس شاخه",
+  "git.checkout": "بررسی",
+  "git.fetch": "واکشی",
+  "git.refresh": "تازه کردن",
+  "git.unstageall": "لغو مرحله بندی همه",
+  "git.stageall": "مرحله بندی همه",
+  "git.noremote": "این مخزن هیچ راه دوری ندارد",
+  "git.init": "مقداردهی اولیه مخزن",
+  "git.setup": "راه اندازی گیت"
+}

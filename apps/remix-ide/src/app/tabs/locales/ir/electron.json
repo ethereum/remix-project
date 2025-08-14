@@ -1,0 +1,7 @@
+{
+  "electron.openFolder": "باز کردن پوشه",
+  "electron.createProject": "ایجاد پروژه جدید",
+  "electron.recentFolders": "پوشه های اخیر",
+  "electron.gitClone": "کلون کردن یک مخزن گیت",
+  "electron.openFolderMessage": "برای استفاده از ویژگی های گیت، می توانید یک پوشه را باز کنید یا یک مخزن را کلون کنید."
+}

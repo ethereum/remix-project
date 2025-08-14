@@ -2,7 +2,7 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import enJson from './locales/en'
 import zhJson from './locales/zh'
 import esJson from './locales/es'
@@ -10,6 +10,7 @@ import frJson from './locales/fr'
 import itJson from './locales/it'
 import koJson from './locales/ko'
 import ruJson from './locales/ru'
+import irJson from './locales/ir'
 const _paq = window._paq = window._paq || []
 
 const locales = [
@@ -19,7 +20,8 @@ const locales = [
   { code: 'it', name: 'Italian', localeName: 'Italiano', messages: itJson },
   { code: 'ko', name: 'Korean', localeName: '한국인', messages: koJson },
   { code: 'ru', name: 'Russian', localeName: 'Русский', messages: ruJson },
-  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson }
+  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson },
+  { code: 'ir', name: 'Persian', localeName: 'فارسی', messages: irJson }
 ]
 
 const profile = {
@@ -31,7 +33,7 @@ const profile = {
 }
 
 export class LocaleModule extends Plugin {
-  constructor () {
+  constructor() {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
@@ -56,12 +58,12 @@ export class LocaleModule extends Plugin {
   }
 
   /** Return the active locale */
-  currentLocale () {
+  currentLocale() {
     return this.locales[this.active]
   }
 
   /** Returns all locales as an array */
-  getLocales () {
+  getLocales() {
     return Object.keys(this.locales).map(key => this.locales[key])
   }
 
@@ -69,7 +71,7 @@ export class LocaleModule extends Plugin {
    * Change the current locale
    * @param {string} [localeCode] - The code of the locale
    */
-  switchLocale (localeCode) {
+  switchLocale(localeCode) {
     localeCode = localeCode && localeCode.toLocaleLowerCase()
     if (localeCode && !Object.keys(this.locales).includes(localeCode)) {
       throw new Error(`Locale ${localeCode} doesn't exist`)
@@ -77,7 +79,7 @@ export class LocaleModule extends Plugin {
     const next = localeCode || this.active // Name
     if (next === this.active) return // --> exit out of this method
     _paq.push(['trackEvent', 'localeModule', 'switchTo', next])
-    
+
     const nextLocale = this.locales[next] // Locale
     if (!this.forced) this._deps.config.set('settings/locale', next)
 
