@@ -21,8 +21,8 @@
 }
 
 .inline-class {
-    background: var(--info) !important;
-    color: var(--white) !important;
+    background: var(--bs-info) !important;
+    color: var(--bs-white) !important;
     filter: opacity(0.5);
     font-weight: bolder;
 }
@@ -32,7 +32,7 @@ div.monaco-list-row > span.title {
 }
 
 .modifiedChangesDecoration {
-    background-color: var(--danger) !important;
+    background-color: var(--bs-danger) !important;
     color: var(--white) !important;
     filter: opacity(0.1);
     font-weight: bolder;
@@ -40,7 +40,7 @@ div.monaco-list-row > span.title {
 
 .newChangesDecoration {
     background-color: var(--custom-ai-color) !important;
-    color: var(--white) !important;
+    color: var(--bs-white) !important;
     filter: opacity(0.1);
     font-weight: bolder;
 }
