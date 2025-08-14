@@ -58,12 +58,12 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
       className={`${!state.isTxNumberValid ? 'disabled ' : ''} btn btn-primary btn-sm btn-block text-decoration-none`}
     >
       <button
-        className={`${!state.isTxNumberValid ? 'disabled ' : ''} btn btn-link btn-sm btn-block h-100 p-0 m-0 text-decoration-none`}
+        className={`${!state.isTxNumberValid ? 'disabled ' : ''} btn btn-primary btn-sm btn-block h-100 p-0 m-0 text-decoration-none`}
         id="load"
         onClick={handleSubmit}
         data-id="debuggerTransactionStartButton"
         disabled={!state.txNumber || !state.isTxNumberValid}
-        style={{ pointerEvents: 'none', color: 'white' }}
+        style={{ pointerEvents: 'none' }}
       >
         <span>
           <FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />

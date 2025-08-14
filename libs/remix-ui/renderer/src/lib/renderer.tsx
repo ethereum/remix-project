@@ -118,7 +118,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
               <span>{messageText}</span>
             </pre>
           )}
-          <div className="btn-close" data-id="renderer" onClick={handleClose}>
+          <div className="close" data-id="renderer" onClick={handleClose}>
             <i className="fas fa-times"></i>
           </div>
           <div className="d-flex pt-1 flex-row-reverse">
@@ -131,7 +131,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
             >
             </span>
             <span
-              className="button border ask-remix-ai-button text-ai btn-sm"
+              className="btn btn-sm text-ai"
               onClick={(event) => { event.preventDefault(); askGtp() }}
               style={{ borderColor: "var(--custom-ai-color)" }}
             >
