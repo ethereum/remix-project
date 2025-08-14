@@ -135,6 +135,8 @@
   --bs-form-invalid-color: #e74c3c;
   --bs-form-invalid-border-color: #e74c3c;
   --custom-ai-color: #1ea2aa;
+  --custom-onsurface-layer-1:#f8fafe;
+  --custom-onsurface-layer-2:#fff;
 }
 
 [data-bs-theme=dark] {
@@ -192,6 +194,8 @@
   --bs-form-invalid-color: #f1948a;
   --bs-form-invalid-border-color: #f1948a;
   --custom-ai-color: #2de7f3;
+  --custom-onsurface-layer-1:#f8fafe;
+  --custom-onsurface-layer-2:#fff;
 }
 
 *,
