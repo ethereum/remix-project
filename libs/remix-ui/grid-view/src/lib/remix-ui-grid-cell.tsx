@@ -104,7 +104,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                   >
                     <label
                       className='m-0 p-0 text-uppercase align-items-left fw-bold text-truncate overflow-hidden whitespace-nowrap'
-                      style={{ fontSize: '11px', lineHeight: '12px'}}
+                      style={{ fontSize: '11px', lineHeight: '12px' }}
                     >{ props.title }
                     </label>
                   </CustomTooltip>

@@ -139,7 +139,7 @@ export const ButtonNavigation = ({
               stepIntoForward && stepIntoForward()
             }}
             disabled={state.intoForwardDisabled}
-            style={{ pointerEvents: 'none'}}
+            style={{ pointerEvents: 'none' }}
           >
             <span className="fas fa-level-down-alt"></span>
           </button>
@@ -166,7 +166,7 @@ export const ButtonNavigation = ({
               stepOverForward && stepOverForward()
             }}
             disabled={state.overForwardDisabled}
-            style={{ pointerEvents: 'none'}}
+            style={{ pointerEvents: 'none' }}
           >
             <span className="fas fa-share"></span>
           </button>

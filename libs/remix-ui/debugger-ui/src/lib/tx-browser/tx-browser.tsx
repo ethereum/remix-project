@@ -63,7 +63,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
         onClick={handleSubmit}
         data-id="debuggerTransactionStartButton"
         disabled={!state.txNumber || !state.isTxNumberValid}
-        style={{ pointerEvents: 'none'}}
+        style={{ pointerEvents: 'none' }}
       >
         <span>
           <FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />
