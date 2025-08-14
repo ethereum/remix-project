@@ -14,7 +14,7 @@ export function FeedbackAlert ({ message, askGPT }: FeedbackAlertProps) {
     <RenderIf condition={showAlert}>
       <>
         <span> { message } </span>
-        <div className="close" data-id="renderer" onClick={handleCloseAlert}>
+        <div className="btn-close" data-id="renderer" onClick={handleCloseAlert}>
           <i className="fas fa-times"></i>
         </div>
         <div className="d-flex pt-1 flex-row-reverse">

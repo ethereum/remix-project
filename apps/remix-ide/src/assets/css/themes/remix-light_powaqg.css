@@ -5953,6 +5953,13 @@ textarea.form-control-lg {
   width: var(--bs-popover-arrow-width);
   height: var(--bs-popover-arrow-height);
 }
+.custom-popover .popover-arrow {
+  position: absolute;
+  display: block;
+  width: 10px;
+  height: 5px;
+  margin: 0 5px;
+}
 .popover .popover-arrow::before, .popover .popover-arrow::after {
   position: absolute;
   display: block;
