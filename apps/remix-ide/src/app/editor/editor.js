@@ -143,6 +143,10 @@ export default class Editor extends Plugin {
       this.currentFile = null
       this.renderComponent()
     })
+    this.on('tabs', 'switchApp', () => {
+      this.currentFile = null
+      this.renderComponent()
+    })
     try {
       this.currentThemeType = (await this.call('theme', 'currentTheme')).quality
     } catch (e) {
