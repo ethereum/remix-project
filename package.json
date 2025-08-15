@@ -191,6 +191,7 @@
     "react-bootstrap": "2.10.10",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.4",
+    "react-icons": "^5.5.0",
     "react-intl": "^6.0.4",
     "react-markdown": "^8.0.5",
     "react-multi-carousel": "^2.8.2",
