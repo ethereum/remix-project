@@ -13,6 +13,7 @@ import { HOME_TAB_NEW_UPDATES } from 'libs/remix-ui/home-tab/src/lib/components/
 import axios from 'axios'
 import { UpdateInfo } from 'libs/remix-ui/home-tab/src/lib/components/types/carouselTypes'
 import { GitPlugin } from '../plugins/git'
+import { getWorkspaces, WorkspaceType } from 'libs/remix-ui/workspace/src/lib/actions'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -20,7 +21,7 @@ const TopBarProfile = {
   description: '',
   version: packageJson.version,
   icon: '',
-  methods: [],
+  methods: ['getWorkspaces'],
   events: []
 }
 
@@ -32,7 +33,7 @@ export class Topbar extends Plugin {
   topbarExpandPath: string
   filePanel: FilePanel
   git: GitPlugin
-  workspaces: WorkspaceMetadata[]
+  workspaces: WorkspaceMetadata[] | WorkspaceType[]
   currentWorkspaceMetadata: WorkspaceMetadata
 
   constructor(filePanel: FilePanel, git: GitPlugin) {
@@ -52,9 +53,7 @@ export class Topbar extends Plugin {
   }
 
   async getWorkspaces() {
-    this.on('filePanel', 'setWorkspaces', (workspaces) => {
-      this.workspaces = workspaces
-    })
+    this.workspaces = await getWorkspaces()
     return this.workspaces
   }
 
