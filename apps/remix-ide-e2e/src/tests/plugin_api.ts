@@ -261,6 +261,7 @@ module.exports = {
   },
 
   'Should switch to file #group2': async function (browser: NightwatchBrowser) {
+    browser.clickLaunchIcon('filePanel')
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['contracts/1_Storage.sol']}, 'contracts/1_Storage.sol')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null, null)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['README.txt']}, 'README.txt')
