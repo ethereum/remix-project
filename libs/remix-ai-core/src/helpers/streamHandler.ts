@@ -206,3 +206,59 @@ export const HandleAnthropicResponse = async (streamResponse, cb: (streamText: s
     }
   }
 }
+
+export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText: string) => void, done_cb?: (result: string) => void) => {
+  const reader = streamResponse.body?.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let resultText = "";
+
+  if (!reader) { // normal response, not a stream
+    cb(streamResponse.result || streamResponse.response || "");
+    done_cb?.(streamResponse.result || streamResponse.response || "");
+    return;
+  }
+
+  try {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n').filter(line => line.trim());
+
+      for (const line of lines) {
+        try {
+          const parsed = JSON.parse(line);
+          let content = "";
+
+          if (parsed.response) {
+            // For /api/generate endpoint
+            content = parsed.response;
+          } else if (parsed.message?.content) {
+            // For /api/chat endpoint
+            content = parsed.message.content;
+          }
+
+          if (content) {
+            cb(content);
+            resultText += content;
+          }
+
+          if (parsed.done) {
+            done_cb?.(resultText);
+            return;
+          }
+        } catch (parseError) {
+          console.warn("⚠️ Ollama: Skipping invalid JSON line:", line);
+          continue;
+        }
+      }
+    }
+
+    done_cb?.(resultText);
+  } catch (error) {
+    console.error("⚠️ Ollama Stream error:", error);
+    done_cb?.(resultText);
+  }
+}
