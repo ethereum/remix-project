@@ -29,7 +29,6 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
       } catch (err) {
-        console.error('Failed to get current file', err)
         setCurrentFilePath('')
         setCurrentExt('')
       }
@@ -39,12 +38,17 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     getCurrentExt()
 
     plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
-
+    plugin.on('tabs', 'switchApp', async (name: string) => {
+      setCurrentExt('')
+    })
+    
     return () => {
       plugin.off('fileManager', 'currentFileChanged')
+      plugin.off('tabs', 'switchApp')
     }
 
   }, [plugin])
+  
 
   const handleExplain = async () => {
     if (!currentFilePath) {
