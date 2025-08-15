@@ -89,8 +89,8 @@ Production build will be served by default to `http://localhost:8080/` or `http:
 ## Docker:
 
 Prerequisites: 
-* Docker (https://docs.docker.com/desktop/)
-* Docker Compose (https://docs.docker.com/compose/install/)
+* [Docker](https://docs.docker.com/desktop/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Run with docker
 
