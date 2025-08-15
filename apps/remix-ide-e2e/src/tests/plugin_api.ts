@@ -302,7 +302,7 @@ module.exports = {
       '.prettierrc.json': { isDirectory: false }
     }, null, '/')
   },
-  'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
+  'Should get all workspaces #group2#pr': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{ name:"default_workspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
