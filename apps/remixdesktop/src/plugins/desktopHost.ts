@@ -147,13 +147,15 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
     console.log('CONNECTED TO REMOTE WEBSOCKET', this.webContentsId)
-  }
+  }  
 
-
-
-  async sendAsync(data: RequestArguments) {
+  async sendAsync(data: RequestArguments, callback?: (error: string, result?: any) => void) {
     if (!isConnected) {
       console.log('NOT CONNECTED', this.webContentsId)
+      if (callback) {
+        callback('Not connected to the remote websocket', null)
+        return
+      }
       return { error: 'Not connected to the remote websocket' }
     }
     console.log('SEND ASYNC', data, this.webContentsId, this.isInjected)
@@ -173,6 +175,12 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
 
       fs.appendFileSync(logFilePath, logEntry)
     }
+    
+    if (callback) {
+      console.log('SENDING BACK ASYNC', result, data, this.webContentsId, this.isInjected)
+      callback(null, result)
+      return
+    }      
     return result
   }
 }

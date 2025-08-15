@@ -244,9 +244,7 @@ export class DesktopClient extends ViewPlugin {
 
           console.log('Sending result back to server', result)
           this.ws.send(stringifyWithBigInt(result))
-
         } catch (e) {
-
           console.log('No provider...', parsed)
           this.ws.send(stringifyWithBigInt({
             jsonrpc: '2.0',
