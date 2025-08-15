@@ -42,10 +42,10 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
   const hasContracts = compilationOutput && Object.keys(compilationOutput).length > 0
 
   return (
-    <div className="form-group">
+    <div className="mb-3">
       <label htmlFor={id}><FormattedMessage id="contract-verification.contractDropdownLabel" defaultMessage={label} values={{ label }} /></label>
       <select value={selectedContract ? JSON.stringify(selectedContract) : ''}
-        className={`form-control form-select pe-4 ${!hasContracts ? 'disabled-cursor text-warning' : ''}`}
+        className={`form-select pe-4 mt-1 ${!hasContracts ? 'disabled-cursor text-warning' : ''}`}
         id={id}
         disabled={!hasContracts}
         onChange={handleSelectContract}

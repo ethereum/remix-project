@@ -295,7 +295,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   return (<>
-    <div ref={containerRef} className='h-100 ps-1'>
+    <div ref={containerRef} className='h-100 ps-1 mt-1'>
       <FlatTreeDrop
         dragSource={dragSource}
         getFlatTreeItem={getFlatTreeItem}
@@ -320,7 +320,7 @@ export const FlatTree = (props: FlatTreeProps) => {
             <Popover id='popover-basic'
               placement='top'
               ref={ref}
-              className='popover'
+              className='custom-popover'
               style={
                 {
                   position: 'fixed',
@@ -329,7 +329,7 @@ export const FlatTree = (props: FlatTreeProps) => {
                   minWidth: 'fit-content'
                 }
               }>
-              <Popover.Body className='text-wrap p-1 px-2 bg-secondary w-100'>
+              <Popover.Body className='text-wrap p-1 px-2 bg-body w-100'>
                 {mouseOverTarget && mouseOverTarget.path}
               </Popover.Body>
             </Popover>

@@ -220,8 +220,8 @@ div#composer-button {
   --nlux-Composer--Gap: 0;
 
   /* Override submit button colors */
-  --nlux-SubmitButton--BackgroundColor: var(--primary);
-  --nlux-SubmitButton-Active--BackgroundColor:var(--primary);
+  --nlux-SubmitButton--BackgroundColor: var(--bs-primary);
+  --nlux-SubmitButton-Active--BackgroundColor:var(--bs-primary);
   --nlux-SubmitButton-Disabled--BackgroundColor: var(--dark);
   --nlux-SubmitButton-Active--TextColor: var(--white);
   --nlux-SubmitButton-Disabled--TextColor: var(--text);

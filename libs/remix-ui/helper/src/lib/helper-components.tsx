@@ -163,14 +163,14 @@ export const CompileOptions = ({ autoCompile, hideWarnings, setCircuitAutoCompil
         <FormattedMessage id="circuit.autoCompile" />
       </label>
     </div>
-    <div className="mt-1 mb-2 circuit_warnings_box form-check">
+    <div className="mt-1 mb-2 form-check">
       <input
         className="form-check-input"
         onChange={(e) => setCircuitHideWarnings(e.target.checked)}
-        id="hideCircuitWarnings"
         type="checkbox"
         title="Hide warnings"
         checked={hideWarnings}
+        id="hideCircuitWarnings"
       />
       <label className="form-check-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
         <FormattedMessage id="solidity.hideWarnings" />

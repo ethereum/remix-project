@@ -144,7 +144,7 @@ export const Toaster = (props: ToasterProps) => {
             )}
           </span>
           <span style={{ alignSelf: 'baseline' }}>
-            <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={closeTheToaster}></button>
+            <button data-id="tooltipCloseButton" className="fas fa-times btn-close p-0 mt-2" onClick={closeTheToaster}></button>
           </span>
         </div>
       )}

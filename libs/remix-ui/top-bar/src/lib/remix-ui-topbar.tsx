@@ -561,7 +561,7 @@ export function RemixUiTopbar () {
             >
               <Dropdown.Item
                 onClick={() => {
-                  plugin.call('theme', 'switchTheme', 'Flatly')
+                  plugin.call('theme', 'switchTheme', 'Light')
                 }}
                 data-id="topbar-themeIcon-light"
               >

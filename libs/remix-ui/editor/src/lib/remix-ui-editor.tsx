@@ -215,10 +215,10 @@ export const EditorUI = (props: EditorUIProps) => {
     const lightColor = formatColor('--bs-light')
     const infoColor = formatColor('--bs-info')
     const darkColor = formatColor('--bs-dark')
-    const secondaryColor = formatColor('--bs-secondary')
+    const secondaryColor = formatColor('--bs-body-bg')
     const primaryColor = formatColor('--bs-primary')
     const textColor = formatColor('--text') || darkColor
-    const textbackground = formatColor('--text-background') || lightColor
+    const textbackground = formatColor('--bs-body-bg') || lightColor
     const blueColor = formatColor('--bs-blue')
     const successColor = formatColor('--bs-success')
     const warningColor = formatColor('--bs-warning')

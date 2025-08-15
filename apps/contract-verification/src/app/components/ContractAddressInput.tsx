@@ -24,9 +24,9 @@ export const ContractAddressInput: React.FC<ContractAddressInputProps> = ({ labe
   }
 
   return (
-    <div className="form-group">
+    <div className="mb-3">
       <label htmlFor={id}>{label}</label>
-      <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
+      {contractAddressError && <div className="text-danger">{contractAddressError}</div>}
       <input type="text" className="form-control" id={id} placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
     </div>
   )

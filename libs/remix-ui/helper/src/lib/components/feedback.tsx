@@ -19,7 +19,7 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
             <RenderIf condition={ (typeof feedback === "string") && showException }>
               <div className="circuit_feedback error alert alert-danger" data-id="circuit_feedback">
                 <span> <>{ feedback }</> </span>
-                <div className="btn-close" data-id="renderer" onClick={handleCloseException}>
+                <div className="close" data-id="renderer" onClick={handleCloseException}>
                   <i className="fas fa-times"></i>
                 </div>
                 <div className="d-flex pt-1 flex-row-reverse">

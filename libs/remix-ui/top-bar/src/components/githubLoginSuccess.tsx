@@ -18,7 +18,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
   return (
     <Dropdown
       as={ButtonGroup}
-      alignRight={true}
+      align="end"
       className="d-flex flex-nowrap"
     >
       <Button

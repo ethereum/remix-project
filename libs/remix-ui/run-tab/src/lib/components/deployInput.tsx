@@ -20,7 +20,7 @@ export function DeployInput(props: DeployInputProps) {
         tooltipText={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
       >
         <input
-          className="form-control"
+          className="form-control border"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
           onChange={props.handleBasicInput}
