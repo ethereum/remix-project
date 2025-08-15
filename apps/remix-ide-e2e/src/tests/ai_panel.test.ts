@@ -44,8 +44,8 @@ const tests = {
       .waitForCompilerLoaded()
       .addFile('Bad.sol', { content: 'errors' })
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('.ask-remix-ai-button')
-      .click('.ask-remix-ai-button')
+      .waitForElementVisible('*[data-id="ask-remix-ai-button"]')
+      .click('*[data-id="ask-remix-ai-button"]')
       .waitForElementVisible('*[data-id="remix-ai-assistant"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',

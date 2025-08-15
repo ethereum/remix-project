@@ -132,6 +132,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
             </span>
             <span
               className="btn btn-sm text-ai"
+              data-id="ask-remix-ai-button"
               onClick={(event) => { event.preventDefault(); askGtp() }}
               style={{ borderColor: "var(--custom-ai-color)" }}
             >
