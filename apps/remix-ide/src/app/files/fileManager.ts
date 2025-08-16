@@ -209,6 +209,12 @@ export default class FileManager extends Plugin {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
+      
+      const fileName = helper.extractNameFromKey(path)
+      if (fileName.length > 100) {
+        return
+      }
+      
       if (await this.exists(path)) {
         await this._handleIsFile(path, `Cannot write file ${path}`)
         return await this.setFileContent(path, data, options)
@@ -264,6 +270,12 @@ export default class FileManager extends Plugin {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
+      
+      const fileName = helper.extractNameFromKey(path)
+      if (fileName.length > 100) {
+        return
+      }
+      
       if (await this.exists(path)) {
         const newPath = await helper.createNonClashingNameAsync(path, this)
         const content = await this.setFileContent(newPath, data)
@@ -377,6 +389,12 @@ export default class FileManager extends Plugin {
       newPath = this.normalize(newPath)
       oldPath = this.limitPluginScope(oldPath)
       newPath = this.limitPluginScope(newPath)
+
+      const newFileName = helper.extractNameFromKey(newPath)
+      if (newFileName.length > 100) {
+        return
+      }
+      
       await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
       const isFile = await this.isFile(oldPath)
       const newPathExists = await this.exists(newPath)
