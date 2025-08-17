@@ -6,7 +6,7 @@ import { type ModelType } from '../store'
 import { router } from '../../App'
 
 // const apiUrl = 'http://localhost:3001';
-const apiUrl = 'https://static.220.14.12.49.clients.your-server.de:3000'
+const apiUrl = 'https://learneth.api.remix.live'
 
 export const repoMap = {
   en: {
