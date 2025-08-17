@@ -286,6 +286,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
         // callback to update parsing status with minimum display time
         const updateParsingStatus = (status: string): Promise<void> => {
+          console.log(status)
           setMessages(prev =>
             prev.map(m => (m.id === parsingId ? { ...m, content: `***${status}***` } : m))
           )

@@ -450,7 +450,8 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     if (options.stream_result) {
       return await this._streamInferenceRequest(payload, AIRequestType.GENERAL);
     } else {
-      return await this._makeRequest(payload, AIRequestType.GENERAL);
+      const req = await this._makeRequest(payload, AIRequestType.GENERAL);
+      return { result:req }
     }
   }
 
