@@ -4,6 +4,7 @@ import { discoverOllamaHost, listModels } from "./ollama";
 import { HandleOllamaResponse } from "../../helpers/streamHandler";
 import { sanitizeCompletionText } from "../../helpers/textSanitizer";
 import { FIMModelManager } from "./fimModelConfig";
+import { buildChatPrompt } from "../../prompts/promptBuilder";
 import {
   CONTRACT_PROMPT,
   WORKSPACE_PROMPT,
@@ -330,11 +331,11 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     }
   }
 
-  private _buildPayload(prompt: string, payload: any, system?: string) {
+  private _buildPayload(prompt: string, payload: any, system?: string, promptWithHistory?: any) {
     return {
       model: this.model_name,
       system: system || CHAT_PROMPT,
-      messages: [{ role: "user", content: prompt }, { role:"assistant", content:system }],
+      messages: promptWithHistory ? promptWithHistory : [{ role: "user", content: prompt }],
       ...payload
     };
   }
@@ -437,7 +438,10 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
   }
 
   async answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
-    const payload = this._buildPayload(prompt, options, CHAT_PROMPT);
+    const chatHistory = buildChatPrompt(prompt)
+    const payload = this._buildPayload(prompt, options, CHAT_PROMPT, chatHistory);
+    console.log("new payload is", payload)
+    console.log("chathistory", chatHistory)
     if (options.stream_result) {
       return await this._streamInferenceRequest(payload, AIRequestType.GENERAL);
     } else {

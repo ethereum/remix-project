@@ -327,7 +327,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           ...prev,
           { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), sentiment: 'none' }
         ])
-
+        console.log("processing reqwuest from", assistantChoice)
         switch (assistantChoice) {
         case 'openai':
           HandleOpenAIResponse(
@@ -369,7 +369,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
             (finalText: string) => {
-              //ChatHistory.pushHistory(trimmed, finalText) -> handled by ollama
+              ChatHistory.pushHistory(trimmed, finalText)
               setIsStreaming(false)
             }
           )
@@ -458,7 +458,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               }])
             } else {
               if (!selectedModel && models.length > 0) {
-                const defaultModel = models.find(m => m.includes('codellama') || m.includes('code')) || models[0]
+                const defaultModel = models.find(m => m.includes('codestral')) || models[0]
                 setSelectedModel(defaultModel)
               }
               // Show success message when Ollama is available
