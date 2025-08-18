@@ -62,7 +62,15 @@ export interface SettingsSection {
         name: keyof SettingsState,
         type: 'text' | 'password'
       }[],
-      toggleUIDescription?: string | JSX.Element
+      toggleUIDescription?: string | JSX.Element,
+      buttonOptions?: {
+        label: string,
+        action: 'link' | 'pluginCall',
+        link?: string,
+        pluginName?: string,
+        pluginMethod?: string,
+        pluginArgs?: string
+      }
     }[]
   }[]
 }
