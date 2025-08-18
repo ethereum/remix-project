@@ -33,3 +33,14 @@
 .dropdown-item {
   text-decoration: none !important;
 }
+a.no-wiggle-btn { display: inline-flex !important; }
+a.no-wiggle-btn:hover,
+a.no-wiggle-btn:focus,
+a.no-wiggle-btn:active {
+  text-decoration: none !important;
+  transform: none !important;
+  letter-spacing: normal !important;
+  padding: .5rem .75rem !important;
+  border-color: transparent !important;
+}
+a.no-wiggle-btn > * { transition: none !important; transform: none !important; }

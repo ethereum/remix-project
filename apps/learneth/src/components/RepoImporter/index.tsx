@@ -16,7 +16,7 @@ const CustomToggle = forwardRef<HTMLButtonElement, CustomToggleProps>(
       className="btn btn-secondary d-flex justify-content-between align-items-center w-100 custom-dropdown-toggle"
     >
       {children}
-      <i className="fas fa-caret-down"></i>
+      <i className="fas fa-caret-down"></i> 
     </button>
   )
 );
@@ -25,9 +25,9 @@ CustomToggle.displayName = 'CustomToggle';
 const CustomMenu = forwardRef<HTMLDivElement, { children?: ReactNode, className?: string }>(
   ({ children, className }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={className}
+      <div  
+        ref={ref} 
+        className={className} 
       >
         {children}
       </div>
