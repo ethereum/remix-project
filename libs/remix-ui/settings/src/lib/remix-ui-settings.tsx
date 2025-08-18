@@ -57,7 +57,8 @@ const settingsSections: SettingsSection[] = [
         }, {
           name: 'personal-mode',
           label: 'settings.enablePersonalModeText',
-          labelIcon: 'fa fa-exclamation-triangle text-warning',
+          labelIcon: 'ms-1 fa fa-exclamation-triangle text-warning',
+          labelIconTooltip: 'settings.enablePersonalModeTooltip',
           type: 'toggle'
         }, {
           name: 'save-evm-state',
