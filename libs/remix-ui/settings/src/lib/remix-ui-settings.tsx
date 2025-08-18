@@ -87,12 +87,12 @@ const settingsSections: SettingsSection[] = [
       }
     ]
   },
-  { key: 'analytics', label: 'settings.analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
+  { key: 'analytics', label: 'settings.analytics', decription: 'settings.analyticsDescription', subSections: [
     { options: [{
       name: 'matomo-analytics',
-      label: 'Matomo Analytics (no cookies)',
+      label: 'settings.matomoAnalyticsNoCookies',
       type: 'toggle',
-      description: 'Help improve Remix with anonymous usage data.',
+      description: 'settings.matomoAnalyticsNoCookiesDescription',
       footnote: {
         text: 'Learn more about analytics',
         link: 'https://remix.ethereum.org/',
@@ -100,9 +100,9 @@ const settingsSections: SettingsSection[] = [
       }
     }, {
       name: 'matomo-perf-analytics',
-      label: 'Matomo Analytics (with cookies)',
+      label: 'settings.matomoAnalyticsWithCookies',
       type: 'toggle',
-      description: 'Enable tracking with cookies for more detailed insights.',
+      description: 'settings.matomoAnalyticsWithCookiesDescription',
       footnote: {
         text: 'Manage Cookie Preferences',
         link: 'https://remix.ethereum.org/',
@@ -111,12 +111,12 @@ const settingsSections: SettingsSection[] = [
     }]
     }
   ]},
-  { key: 'ai', label: 'settings.ai', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: [
+  { key: 'ai', label: 'settings.ai', decription: 'settings.aiDescription', subSections: [
     {
       options: [{
         name: 'copilot/suggest/activate',
-        label: 'AI Copilot',
-        description: 'AI Copilot assists with code suggestions and improvements.',
+        label: 'settings.aiCopilot',
+        description: 'settings.aiCopilotDescription',
         type: 'toggle',
         footnote: {
           text: 'Learn more about AI Copilot',
@@ -145,17 +145,22 @@ const settingsSections: SettingsSection[] = [
       // },
       {
         name: 'ai-privacy-policy',
-        label: 'View Privacy Policy',
-        description: 'Understand how AI processes your data.',
-        type: 'button'
+        label: 'settings.aiPrivacyPolicy',
+        description: 'settings.aiPrivacyPolicyDescription',
+        type: 'button',
+        buttonOptions: {
+          label: 'settings.viewPrivacyPolicy',
+          action: 'link',
+          link: 'https://remix.ethereum.org/'
+        }
       }]
     }
   ]},
-  { key: 'services', label: 'settings.services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
+  { key: 'services', label: 'settings.services', decription: 'settings.servicesDescription', subSections: [
     {
       options: [{
         name: 'github-config',
-        label: 'Github Credentials',
+        label: 'settings.gitAccessTokenTitle',
         type: 'toggle',
         toggleUIDescription: <GitHubCredentialsDescription />,
         toggleUIOptions: [{
@@ -170,7 +175,7 @@ const settingsSections: SettingsSection[] = [
         }]
       }, {
         name: 'ipfs-config',
-        label: 'IPFS Settings',
+        label: 'settings.ipfs',
         type: 'toggle',
         toggleUIOptions: [{
           name: 'ipfs-url',
@@ -190,7 +195,7 @@ const settingsSections: SettingsSection[] = [
         }]
       }, {
         name: 'swarm-config',
-        label: 'Swarm Settings',
+        label: 'settings.swarm',
         type: 'toggle',
         toggleUIOptions: [{
           name: 'swarm-private-bee-address',
@@ -201,7 +206,7 @@ const settingsSections: SettingsSection[] = [
         }]
       }, {
         name: 'sindri-config',
-        label: 'Sindri Credentials',
+        label: 'settings.sindriAccessTokenTitle',
         type: 'toggle',
         toggleUIDescription: <SindriCredentialsDescription />,
         toggleUIOptions: [{
@@ -210,7 +215,7 @@ const settingsSections: SettingsSection[] = [
         }]
       },{
         name: 'etherscan-config',
-        label: 'Etherscan Access Token',
+        label: 'settings.etherscanTokenTitle',
         type: 'toggle',
         toggleUIDescription: <EtherscanConfigDescription />,
         toggleUIOptions: [{
@@ -324,8 +329,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                       setFilteredSection(section)
                     }}
                   >
-                    <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}>{section.label}</h4>
-                    {selected !== section.key && <span>{section.decription}</span>}
+                    <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}><FormattedMessage id={section.label} /></h4>
+                    {selected !== section.key && <span><FormattedMessage id={section.decription} /></span>}
                   </a>
                 </li>
               ))}

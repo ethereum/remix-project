@@ -11,6 +11,8 @@ type SettingsSectionUIProps = {
   dispatch: React.Dispatch<SettingsActions>
 }
 
+type ButtonOptions = SettingsSection['subSections'][0]['options'][0]['buttonOptions']
+
 export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, state, dispatch }) => {
   const [formUIData, setFormUIData] = useState<{ [key in keyof SettingsState]: Record<keyof SettingsState, string> }>({} as any)
   const theme = useContext(ThemeContext)
@@ -46,6 +48,12 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
       }
     } else {
       console.error('Setting does not exist: ', name)
+    }
+  }
+
+  const handleButtonClick = (buttonOptions: ButtonOptions) => {
+    if (buttonOptions.action === 'link') {
+      window.open(buttonOptions.link, '_blank')
     }
   }
 
@@ -87,7 +95,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
                         <div className="ms-auto">
                           {option.type === 'toggle' && <ToggleSwitch id={option.name} isOn={toggleValue} onClick={() => handleToggle(option.name)} />}
                           {option.type === 'select' && <div style={{ minWidth: '110px' }}><SelectDropdown value={selectValue} options={option.selectOptions} name={option.name} dispatch={dispatch as any} /></div>}
-                          {option.type === 'button' && <button className="btn btn-secondary btn-sm">{option.label}</button>}
+                          {option.type === 'button' && <button className="btn btn-secondary btn-sm" onClick={() => handleButtonClick(option.buttonOptions)}><FormattedMessage id={option.buttonOptions.label} /></button>}
                         </div>
                       </div>
                       {option.description && <span className="text-secondary mt-1">{typeof option.description === 'string' ? <FormattedMessage id={option.description} /> : option.description}</span>}
