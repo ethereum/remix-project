@@ -95,7 +95,7 @@ const settingsSections: SettingsSection[] = [
       description: 'settings.matomoAnalyticsNoCookiesDescription',
       footnote: {
         text: 'Learn more about analytics',
-        link: 'https://remix.ethereum.org/',
+        link: 'https://matomo.org/',
         styleClass: 'text-primary'
       }
     }, {
@@ -105,7 +105,7 @@ const settingsSections: SettingsSection[] = [
       description: 'settings.matomoAnalyticsWithCookiesDescription',
       footnote: {
         text: 'Manage Cookie Preferences',
-        link: 'https://remix.ethereum.org/',
+        link: 'https://matomo.org/',
         styleClass: 'text-primary'
       }
     }]
@@ -120,7 +120,7 @@ const settingsSections: SettingsSection[] = [
         type: 'toggle',
         footnote: {
           text: 'Learn more about AI Copilot',
-          link: 'https://remix.ethereum.org/',
+          link: 'https://remix-ide.readthedocs.io/en/latest/ai.html',
           styleClass: 'text-primary'
         }
       },
@@ -151,7 +151,7 @@ const settingsSections: SettingsSection[] = [
         buttonOptions: {
           label: 'settings.viewPrivacyPolicy',
           action: 'link',
-          link: 'https://remix.ethereum.org/'
+          link: 'https://remix-ide.readthedocs.io/en/latest/ai.html'
         }
       }]
     }
