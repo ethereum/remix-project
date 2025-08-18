@@ -50,7 +50,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
   }
 
   const handleFormUIData = (optionName: keyof SettingsState, toggleOptionName: keyof SettingsState, value: string) => {
-    setFormUIData({ ...formUIData, [optionName]: { ...formUIData[optionName], [toggleOptionName]: value } })
+    setFormUIData(formUIData => ({ ...formUIData, [optionName]: { ...formUIData[optionName], [toggleOptionName]: value } }))
   }
 
   const saveFormUIData = (optionName: keyof SettingsState) => {

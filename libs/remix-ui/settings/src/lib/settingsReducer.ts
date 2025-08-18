@@ -23,6 +23,11 @@ let ipfsConfig = config.get('settings/ipfs-config') || false
 let swarmConfig = config.get('settings/swarm-config') || false
 let sindriConfig = config.get('settings/sindri-config') || false
 let etherscanConfig = config.get('settings/etherscan-config') || false
+let generateContractMetadata = config.get('settings/generate-contract-metadata')
+let autoCompletion = config.get('settings/auto-completion')
+let showGas = config.get('settings/show-gas')
+let displayErrors = config.get('settings/display-errors')
+let saveEvmState = config.get('settings/save-evm-state')
 
 if (!githubConfig && (githubUserName || githubEmail || gistAccessToken)) {
   config.set('settings/github-config', true)
@@ -44,10 +49,30 @@ if (!etherscanConfig && etherscanAccessToken) {
   config.set('settings/etherscan-config', true)
   etherscanConfig = true
 }
+if (typeof generateContractMetadata !== 'boolean') {
+  config.set('settings/generate-contract-metadata', true)
+  generateContractMetadata = true
+}
+if (typeof autoCompletion !== 'boolean') {
+  config.set('settings/auto-completion', true)
+  autoCompletion = true
+}
+if (typeof showGas !== 'boolean') {
+  config.set('settings/show-gas', true)
+  showGas = true
+}
+if (typeof displayErrors !== 'boolean') {
+  config.set('settings/display-errors', true)
+  displayErrors = true
+}
+if (typeof saveEvmState !== 'boolean') {
+  config.set('settings/save-evm-state', true)
+  saveEvmState = true
+}
 
 export const initialState: SettingsState = {
   'generate-contract-metadata': {
-    value: config.get('settings/generate-contract-metadata') || false,
+    value: generateContractMetadata,
     isLoading: false
   },
   'text-wrap': {
@@ -67,15 +92,15 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'auto-completion': {
-    value: config.get('settings/auto-completion') || false,
+    value: autoCompletion,
     isLoading: false
   },
   'show-gas': {
-    value: config.get('settings/show-gas') || false,
+    value: showGas,
     isLoading: false
   },
   'display-errors': {
-    value: config.get('settings/display-errors') || false,
+    value: displayErrors,
     isLoading: false
   },
   'copilot/suggest/activate': {
@@ -83,7 +108,7 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'save-evm-state': {
-    value: config.get('settings/save-evm-state') || false,
+    value: saveEvmState,
     isLoading: false
   },
   'theme': {

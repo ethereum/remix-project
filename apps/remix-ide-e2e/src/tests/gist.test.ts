@@ -24,7 +24,6 @@ module.exports = {
     const gistid = '17ac9315bc065a3d95cf8dc1b28d71f8'
     browser
       .refreshPage()
-      .pause(10000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .waitForElementVisible('*[data-id="fileExplorerNewFilecreateNewFolder"]')
@@ -88,7 +87,6 @@ module.exports = {
 
   'Display Error Message For Invalid Gist ID #group1': '' + function (browser: NightwatchBrowser) {
     browser
-      .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
@@ -109,14 +107,15 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementVisible('[data-id="settingsTabRemoveGistToken"]')
-      .click('[data-id="settingsTabRemoveGistToken"]')
-      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="settings-sidebar-services"]')
+      .click('*[data-id="settings-sidebar-services"]')
+      .click('*[data-id="github-configSwitch"]')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials removed')
       .click('*[data-id="github-dropdown-toggle"]')
       .click('*[data-id="github-dropdown-item-publish-to-gist"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       // .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(10000)
       .perform((done) => {
         browser.getText('[data-id="fileSystemModalDialogModalBody-react"]', (result) => {
           console.log('result.value: ', result.value)
