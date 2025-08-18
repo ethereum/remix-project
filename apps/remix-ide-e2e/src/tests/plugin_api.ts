@@ -261,7 +261,6 @@ module.exports = {
   },
 
   'Should switch to file #group2': async function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('filePanel')
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['contracts/1_Storage.sol']}, 'contracts/1_Storage.sol')
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'contracts/1_Storage.sol', null, null)
     await clickAndCheckLog(browser, 'fileManager:switchFile', null, { event: 'currentFileChanged', args: ['README.txt']}, 'README.txt')
@@ -302,7 +301,7 @@ module.exports = {
       '.prettierrc.json': { isDirectory: false }
     }, null, '/')
   },
-  'Should get all workspaces #group2#pr': async function (browser: NightwatchBrowser) {
+  'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{ name:"default_workspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
