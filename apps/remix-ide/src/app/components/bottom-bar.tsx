@@ -41,14 +41,13 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     plugin.on('tabs', 'switchApp', async (name: string) => {
       setCurrentExt('')
     })
-    
+
     return () => {
       plugin.off('fileManager', 'currentFileChanged')
       plugin.off('tabs', 'switchApp')
     }
 
   }, [plugin])
-  
 
   const handleExplain = async () => {
     if (!currentFilePath) {
