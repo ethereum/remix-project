@@ -242,10 +242,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/activate', value: isChecked } })
     })
 
-    return () => {
-      props.plugin.off('theme', 'themeChanged')
-      props.plugin.off('settings', 'copilotChoiceUpdated')
-    }
   }, [])
 
   useEffect(() => {
