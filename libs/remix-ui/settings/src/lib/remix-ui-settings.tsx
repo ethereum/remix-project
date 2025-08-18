@@ -32,8 +32,8 @@ const settingsConfig = Registry.getInstance().get('settingsConfig').api
 const settingsSections: SettingsSection[] = [
   {
     key: 'general',
-    label: 'General Settings',
-    decription: 'Manage code editor settings, UI theme, language and analytics permissions.',
+    label: 'settings.generalSettings',
+    decription: 'settings.generalSettingsDescription',
     subSections: [
       {
         title: 'Code editor',
@@ -77,7 +77,7 @@ const settingsSections: SettingsSection[] = [
           }))
         }, {
           name: 'theme',
-          label: 'Theme',
+          label: 'settings.theme',
           type: 'select',
           selectOptions: settingsConfig.themes.map((theme) => ({
             label: theme.name + ' (' + theme.quality + ')',
@@ -87,7 +87,7 @@ const settingsSections: SettingsSection[] = [
       }
     ]
   },
-  { key: 'analytics', label: 'Analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
+  { key: 'analytics', label: 'settings.analytics', decription: 'Control how Remix uses AI and analytics to improve your experience.', subSections: [
     { options: [{
       name: 'matomo-analytics',
       label: 'Matomo Analytics (no cookies)',
@@ -111,7 +111,7 @@ const settingsSections: SettingsSection[] = [
     }]
     }
   ]},
-  { key: 'ai', label: 'Remix AI Assistant', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: [
+  { key: 'ai', label: 'settings.ai', decription: 'The Remix AI Assistant enhances your coding experience with smart suggestions and automated insights. Manage how AI interacts with your code and data.', subSections: [
     {
       options: [{
         name: 'copilot/suggest/activate',
@@ -151,7 +151,7 @@ const settingsSections: SettingsSection[] = [
       }]
     }
   ]},
-  { key: 'services', label: 'Connected Services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
+  { key: 'services', label: 'settings.services', decription: 'Configure the settings for connected services, including Github, IPFS, Swarm, Sidri and Etherscan.', subSections: [
     {
       options: [{
         name: 'github-config',

@@ -28,6 +28,7 @@
   "settings.save": "Save",
   "settings.remove": "Remove",
   "settings.themes": "Themes",
+  "settings.theme": "Theme",
   "settings.locales": "Language",
   "settings.swarm": "Swarm Settings",
   "settings.ipfs": "IPFS Settings",
@@ -47,5 +48,10 @@
   "settings.ipfs-project-id": "PROJECT ID",
   "settings.ipfs-project-secret": "PROJECT SECRET",
   "settings.analyticsInRemix": "Analytics in Remix IDE",
-  "settings.enableSaveEnvState": "Save environment state"
+  "settings.enableSaveEnvState": "Save environment state",
+  "settings.generalSettings": "General Settings",
+  "settings.analytics": "Analytics",
+  "settings.ai": "Remix AI Assistant",
+  "settings.services": "Connected Services",
+  "settings.generalSettingsDescription": "Manage code editor settings, UI theme, language and analytics permissions."
 }
