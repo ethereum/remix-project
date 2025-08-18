@@ -25,7 +25,7 @@ module.exports = {
       .waitForElementVisible('button[data-id="add-repository"]')
       .click('button[data-id="add-repository"]')
       .frameParent()
-      .clickLaunchIcon('filePanel')
+      // .clickLaunchIcon('filePanel')
       .waitForElementVisible({
         selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper')]",
         locateStrategy: 'xpath',
