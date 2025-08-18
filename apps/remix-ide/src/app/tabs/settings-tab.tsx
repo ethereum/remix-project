@@ -38,7 +38,6 @@ export default class SettingsTab extends ViewPlugin {
   element: HTMLDivElement
   public useMatomoAnalytics: any
   public useMatomoPerfAnalytics: boolean
-  public useCopilot: any
   dispatch: React.Dispatch<any> = () => {}
   constructor(config, editor) {
     super(profile)
@@ -55,7 +54,6 @@ export default class SettingsTab extends ViewPlugin {
     this.element.setAttribute('id', 'settingsTab')
     this.useMatomoAnalytics = null
     this.useMatomoPerfAnalytics = null
-    this.useCopilot = this.get('settings/copilot/suggest/activate')
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
@@ -99,7 +97,6 @@ export default class SettingsTab extends ViewPlugin {
 
   updateCopilotChoice(isChecked) {
     this.config.set('settings/copilot/suggest/activate', isChecked)
-    this.useCopilot = isChecked
     this.emit('copilotChoiceUpdated', isChecked)
     this.dispatch({
       ...this
@@ -107,7 +104,7 @@ export default class SettingsTab extends ViewPlugin {
   }
 
   getCopilotSetting(){
-    return this.useCopilot
+    return this.get('settings/copilot/suggest/activate')
   }
 
   updateMatomoAnalyticsChoice(isChecked) {

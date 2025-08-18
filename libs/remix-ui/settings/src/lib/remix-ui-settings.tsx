@@ -247,6 +247,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         }
       })
     })
+
     props.plugin.on('theme', 'themeChanged', (theme) => {
       setState((prevState) => {
         return {
@@ -255,6 +256,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         }
       })
     })
+
+    props.plugin.on('settings', 'copilotChoiceUpdated', (isChecked) => {
+      dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/activate', value: isChecked } })
+    })
+
+    return () => {
+      props.plugin.off('theme', 'themeChanged')
+      props.plugin.off('settings', 'copilotChoiceUpdated')
+    }
   }, [])
 
   useEffect(() => {
@@ -342,7 +352,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
           >
             <div className="remix-settings-main" style={{ maxWidth: '53.5em', overflowY: 'auto', maxHeight: '58vh' }}>
-              <SettingsSectionUI section={filteredSection} state={settingsState} dispatch={dispatch} />
+              <SettingsSectionUI plugin={props.plugin} section={filteredSection} state={settingsState} dispatch={dispatch} />
             </div>
           </div>
         </div>

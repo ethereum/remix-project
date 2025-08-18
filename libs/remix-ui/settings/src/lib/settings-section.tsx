@@ -4,8 +4,10 @@ import { ToggleSwitch } from '@remix-ui/toggle'
 import { FormattedMessage, useIntl } from 'react-intl'
 import SelectDropdown from './select-dropdown'
 import { ThemeContext } from '@remix-ui/home-tab'
+import type { ViewPlugin } from '@remixproject/engine-web'
 
 type SettingsSectionUIProps = {
+  plugin: ViewPlugin,
   section: SettingsSection,
   state: SettingsState,
   dispatch: React.Dispatch<SettingsActions>
@@ -13,7 +15,7 @@ type SettingsSectionUIProps = {
 
 type ButtonOptions = SettingsSection['subSections'][0]['options'][0]['buttonOptions']
 
-export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, state, dispatch }) => {
+export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, section, state, dispatch }) => {
   const [formUIData, setFormUIData] = useState<{ [key in keyof SettingsState]: Record<keyof SettingsState, string> }>({} as any)
   const theme = useContext(ThemeContext)
   const isDark = theme.name === 'dark'
@@ -46,6 +48,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ section, s
         })
         dispatch({ type: 'SET_TOAST_MESSAGE', payload: { value: 'Credentials removed' } })
       }
+      if (name === 'copilot/suggest/activate') plugin.emit('copilotChoiceUpdated', newValue)
     } else {
       console.error('Setting does not exist: ', name)
     }
