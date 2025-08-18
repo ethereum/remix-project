@@ -47,6 +47,7 @@ export interface SettingsSection {
       name: keyof SettingsState,
       label: string,
       labelIcon?: string,
+      labelIconTooltip?: string,
       description?: string | JSX.Element,
       footnote?: {
         text: string,

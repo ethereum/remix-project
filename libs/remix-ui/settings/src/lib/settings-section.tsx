@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import SelectDropdown from './select-dropdown'
 import { ThemeContext } from '@remix-ui/home-tab'
 import type { ViewPlugin } from '@remixproject/engine-web'
+import { CustomTooltip } from '@remix-ui/helper'
 
 type SettingsSectionUIProps = {
   plugin: ViewPlugin,
@@ -93,7 +94,11 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
                     <div className={`card border-0 rounded-0 ${isLastOption ? 'pt-3 pb-0' : isFirstOption ? 'border-bottom pb-3' : 'border-bottom py-3'}`} key={optionIndex}>
                       <div className="d-flex align-items-center">
                         <h5 data-id={`settingsTab${option.name}Label`} className={`${isDark ? 'text-white' : 'text-black'} m-0`}>
-                          <FormattedMessage id={option.label} /> {option.labelIcon && <i className={option.labelIcon}></i>}
+                          <FormattedMessage id={option.label} />
+                          {option.labelIconTooltip ?
+                            <CustomTooltip tooltipText={<FormattedMessage id={option.labelIconTooltip} />}><i className={option.labelIcon}></i></CustomTooltip> :
+                            option.labelIcon && <i className={option.labelIcon}></i>
+                          }
                         </h5>
                         <div className="ms-auto">
                           {option.type === 'toggle' && <ToggleSwitch id={option.name} isOn={toggleValue} onClick={() => handleToggle(option.name)} />}

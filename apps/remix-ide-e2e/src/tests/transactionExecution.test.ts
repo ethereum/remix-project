@@ -221,10 +221,12 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param3 from library"')
   },
 
-  'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4': function (browser: NightwatchBrowser) {
+  'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4 #pr': function (browser: NightwatchBrowser) {
     browser
       .addFile('Storage.sol', sources[6]['Storage.sol'])
+      .pause(1000)
       .addFile('Owner.sol', sources[6]['Owner.sol'])
+      .pause(1000)
       .clickLaunchIcon('udapp')
       .createContract('42, 24')
       .openFile('Storage.sol')
