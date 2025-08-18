@@ -124,25 +124,6 @@ const settingsSections: SettingsSection[] = [
           styleClass: 'text-primary'
         }
       },
-      // {
-      //   name: 'ai-analyze-context',
-      //   label: 'Allow AI to Analyze Code Context',
-      //   description: 'Enables deeper insights by analyzing your code structure.',
-      //   type: 'toggle',
-      //   footnote: {
-      //     text: 'Disabling this may reduce suggestion accuracy.',
-      //     styleClass: 'text-warning'
-      //   }
-      // },{
-      //   name: 'ai-external-api',
-      //   label: 'Use External API for AI Responses',
-      //   description: 'Sends anonymized prompts to OpenAI\'s API to enhance responses.',
-      //   type: 'toggle',
-      //   footnote: {
-      //     text: 'Disabling this will limit AI-generated suggestions.',
-      //     styleClass: 'text-warning'
-      //   }
-      // },
       {
         name: 'ai-privacy-policy',
         label: 'settings.aiPrivacyPolicy',
