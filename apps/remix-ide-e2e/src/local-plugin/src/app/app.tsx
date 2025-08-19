@@ -1,24 +1,28 @@
-import React, {useEffect, useState} from 'react'
-import {RemixPlugin} from './Client'
-import {Logger} from './logger'
-import {filePanelProfile} from '@remixproject/plugin-api'
-import {filSystemProfile} from '@remixproject/plugin-api'
-import {editorProfile} from '@remixproject/plugin-api'
-import {settingsProfile} from '@remixproject/plugin-api'
-import {networkProfile} from '@remixproject/plugin-api'
-import {udappProfile} from '@remixproject/plugin-api'
-import {compilerProfile} from '@remixproject/plugin-api'
-import {contentImportProfile} from '@remixproject/plugin-api'
-import {windowProfile} from '@remixproject/plugin-api'
-import {pluginManagerProfile} from '@remixproject/plugin-api'
-import {LibraryProfile, Profile} from '@remixproject/plugin-utils'
-
+import React, { useEffect, useState } from 'react'
+import { RemixPlugin } from './Client'
+import { Logger } from './logger'
+import { filePanelProfile } from '@remixproject/plugin-api'
+import { filSystemProfile } from '@remixproject/plugin-api'
+import { editorProfile } from '@remixproject/plugin-api'
+import { settingsProfile } from '@remixproject/plugin-api'
+import { networkProfile } from '@remixproject/plugin-api'
+import { udappProfile } from '@remixproject/plugin-api'
+import { compilerProfile } from '@remixproject/plugin-api'
+import { contentImportProfile } from '@remixproject/plugin-api'
+import { windowProfile } from '@remixproject/plugin-api'
+import { pluginManagerProfile } from '@remixproject/plugin-api'
+import { LibraryProfile, Profile } from '@remixproject/plugin-utils'
+import './app.css'
 
 export const dGitProfile: LibraryProfile<any> = {
   name: 'dgitApi',
   methods: ['status', 'log', 'commit', 'add', 'branches'],
 }
-import './app.css'
+
+export const topbarProfile: LibraryProfile<any> = {
+  name: 'topbar',
+  methods: ['getWorkspaces'],
+}
 
 const client = new RemixPlugin()
 
@@ -38,16 +42,17 @@ function App() {
     compilerProfile,
     udappProfile,
     contentImportProfile,
-    windowProfile
+    windowProfile,
+    topbarProfile
   ])
 
-  const handleChange = ({target}: any) => {
+  const handleChange = ({ target }: any) => {
     setPayload(target.value)
   }
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting', 'hardhat-provider', 'notification']
+      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting', 'hardhat-provider', 'notification', 'topbar']
 
       client.testCommand = async (data: any) => {
         methodLog(data)
@@ -123,7 +128,7 @@ function App() {
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
           return (
-            <button data-id={`${profile.name}:${method}`} key={method} className="btn btn-primary btn-sm ms-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
+            <button id={`${profile.name}-${method}-${profile.name}`} data-id={`${profile.name}-${method}`} key={method} className="btn btn-primary btn-sm ms-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
               {method}
             </button>
           )
@@ -140,9 +145,9 @@ function App() {
         return (
           <div key={profile.name} className="small border-bottom">
             <label className="text-uppercase">{profile.name}</label>
-            <br></br>
+            <br/>
             {methods}
-            <br></br>
+            <br/>
             {events ? <label>EVENTS:</label> : null}
             {events}
           </div>
