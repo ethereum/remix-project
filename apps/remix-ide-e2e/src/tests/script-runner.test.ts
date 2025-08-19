@@ -119,8 +119,10 @@ const tests = {
     browser
       .refreshPage()
       .openFile('scripts/deploy.ts')
+      .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
       .click('*[data-id="run-script-dropdown-trigger"]')
+      .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
       .waitForElementVisible('[data-id="sr-notloaded-default"]')
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
