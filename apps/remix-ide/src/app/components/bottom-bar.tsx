@@ -38,6 +38,10 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     getAI()
     getCurrentExt()
 
+    plugin.on('settings', 'copilotChoiceUpdated', (isChecked) => {
+      setAiSwitch(isChecked)
+    })
+
     plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
 
     return () => {

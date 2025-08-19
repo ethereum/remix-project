@@ -114,9 +114,10 @@ module.exports = {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementPresent('[data-id="settingsEnableSaveEnvStateLabel"]')
-      .scrollInto('[data-id="settingsEnableSaveEnvStateLabel"]')
-      .verify.elementPresent('[data-id="settingsEnableSaveEnvState"]:checked')
+      .waitForElementVisible('*[data-id="settings-sidebar-general"]')
+      .click('*[data-id="settings-sidebar-general"]')
+      .pause(100)
+      .waitForElementPresent('[data-id="save-evm-stateSwitch"] > .fa-toggle-on')
   },
 
   'Should deploy default storage contract; store value and ensure that state is saved. #group4 #group5': function (browser: NightwatchBrowser) {
@@ -156,9 +157,8 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementPresent('[data-id="settingsTabGenerateContractMetadataLabel"]')
-      .click('[data-id="settingsTabGenerateContractMetadataLabel"]')
-      .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
+      .waitForElementPresent('[data-id="generate-contract-metadataSwitch"]')
+      .click('[data-id="generate-contract-metadataSwitch"]')
       .clickLaunchIcon('solidity')
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'london')
@@ -186,9 +186,8 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementPresent('[data-id="settingsEnableSaveEnvStateLabel"]')
-      .click('[data-id="settingsEnableSaveEnvStateLabel"]')
-      .verify.elementNotPresent('[data-id="settingsEnableSaveEnvState"]:checked')
+      .waitForElementPresent('[data-id="save-evm-stateSwitch"]')
+      .click('[data-id="save-evm-stateSwitch"]')
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
       .pause(5000)

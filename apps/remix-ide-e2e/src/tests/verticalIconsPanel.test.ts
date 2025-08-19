@@ -28,7 +28,6 @@ module.exports = {
       // .click('*[data-id="verticalIconsKindsettings"]')
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .click('*[data-id="verticalIconsKindpluginManager"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
   }
 }
