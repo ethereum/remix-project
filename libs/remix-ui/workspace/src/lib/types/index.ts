@@ -50,11 +50,13 @@ export interface FileType {
 
 export type WorkspaceMetadata = {
   name: string
-  isGitRepo: boolean
+  isGitRepo?: boolean
   hasGitSubmodules?: boolean
   branches?: branch[]
   currentBranch?: branch
-  isGist: string
+  isGist?: string
+  isLocalhost?: boolean
+  absolutePath?: string
 }
 
 export type TemplateType = {
