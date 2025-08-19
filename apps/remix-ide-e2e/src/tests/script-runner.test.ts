@@ -20,9 +20,9 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
       .click('*[data-id="verticalIconsKindfilePanel"]')
-      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       // .click('*[data-id="treeViewDivtreeViewItemscripts"]')
-      .pause(3000)
+      // .pause(3000)
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
