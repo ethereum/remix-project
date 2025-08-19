@@ -47,7 +47,7 @@
       "configurations": {
         "development": {
           "buildTarget": "plugin_api:build:development",
-          "port": 2020
+          "port": 9999
         },
         "production": {
           "buildTarget": "plugin_api:build:production"
