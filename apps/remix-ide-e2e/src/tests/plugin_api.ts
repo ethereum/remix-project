@@ -246,7 +246,7 @@ module.exports = {
     await clickAndCheckLog(browser, 'fileManager-getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
   'Should open readme.txt #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt']}, 'README.txt')
+    await clickAndCheckLog(browser, 'fileManager-open', null, { event: 'currentFileChanged', args: ['README.txt']}, 'README.txt')
   },
   'Should have current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager-getCurrentFile', 'README.txt', null, null)
