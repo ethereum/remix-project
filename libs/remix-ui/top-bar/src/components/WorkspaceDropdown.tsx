@@ -300,6 +300,8 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           >
             <span className="pl-2 " onClick={() => {
               createWorkspace()
+              setShowMain(false)
+              setOpenSub(null)
             }}>
               <i className="fas fa-plus me-2"></i>
                 Create a new workspace
