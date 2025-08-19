@@ -25,25 +25,47 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
   const compileThen = async (nextAction: () => void) => {
     setCompileState('compiling')
 
-    setTimeout(async () => {
-      plugin.once('solidity', 'compilationFinished', (data) => {
-        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
-        if (hasErrors) {
-          setCompileState('idle')
-          plugin.call('notification', 'toast', 'Compilation failed')
-        } else {
-          setCompileState('compiled')
-          nextAction()
-        }
-      })
+    try {
+      await plugin.call('fileManager', 'saveCurrentFile')
+      await plugin.call('manager', 'activatePlugin', 'solidity')
+      
+      const mySeq = Date.now()
+      let watchdog: NodeJS.Timeout | null = null
+      
+      const onFinished = async () => {
+        if (watchdog) clearTimeout(watchdog)
+        
+        const fresh = await plugin.call('solidity', 'getCompilationResult').catch(() => null)
 
-      try {
-        await plugin.call('solidity', 'compile', tabPath)
-      } catch (e) {
-        console.error(e)
-        setCompileState('idle')
+        if (!fresh) {
+            setCompileState('idle')
+            plugin.call('notification', 'toast', 'Compilation failed (no result). See compiler output.')
+        } else {
+            const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
+            if (errs.length > 0) {
+              setCompileState('idle')
+              plugin.call('notification', 'toast', 'Compilation failed (errors). See compiler output.')
+            } else {
+              setCompileState('compiled');
+              nextAction();
+            }
+        }
+        try { plugin.off('solidity', 'compilationFinished', onFinished) } catch {}
       }
-    }, 0)
+
+      try { plugin.off('solidity', 'compilationFinished', onFinished) } catch {}
+      plugin.on('solidity', 'compilationFinished', onFinished);
+      
+      watchdog = setTimeout(() => {
+          onFinished()
+      }, 10000)
+
+      await plugin.call('solidity', 'compile', tabPath)
+
+    } catch (e) {
+      console.error(e)
+      setCompileState('idle')
+    }
   }
 
   const fetchScripts = async () => {
