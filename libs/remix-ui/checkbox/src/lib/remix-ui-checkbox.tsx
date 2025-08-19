@@ -53,7 +53,7 @@ export const RemixUiCheckbox = ({
         onClick={onClick}
       >
         <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="form-check-input" checked={checked} disabled={disabled} />
-        <label className="form-check-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled} htmlFor={id}>
+        <label className="form-check-label ms-1" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled} htmlFor={id}>
           {name ? <div className="fw-bold">{itemName}</div> : ''}
           {label}
         </label>
@@ -73,7 +73,7 @@ export const RemixUiCheckbox = ({
       onClick={onClick}
     >
       <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="form-check-input" checked={checked} />
-      <label className="form-check-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
+      <label className="form-check-label ms-1" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
         {name ? <div className="fw-bold">{itemName}</div> : ''}
         {label}
       </label>
