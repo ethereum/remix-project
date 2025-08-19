@@ -115,7 +115,7 @@ const tests = {
       .waitForElementVisible('[data-id="sr-notloaded-default"]')
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
   },
-  'reset to default after template#pr': function (browser: NightwatchBrowser) {
+  'reset to default after template': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
