@@ -525,11 +525,11 @@ export function RemixUiTopbar () {
               />
             )}
           </>
-          <Dropdown className="ms-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
+          <Dropdown className="ms-3" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
-              className="btn-topbar btn-sm me-5"
+              className="btn-topbar btn-sm me-3"
               data-id="topbar-themeIcon-toggle"
               style={{
                 padding: '0.35rem 0.5rem',
