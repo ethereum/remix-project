@@ -335,7 +335,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     return {
       model: this.model_name,
       system: system || CHAT_PROMPT,
-      messages: promptWithHistory ? promptWithHistory : [{ role: "user", content: prompt }],
+      messages: promptWithHistory ? promptWithHistory : [{ role: "assistant", content: system }, { role: "user", content: prompt }],
       ...payload
     };
   }
@@ -440,8 +440,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
   async answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
     const chatHistory = buildChatPrompt(prompt)
     const payload = this._buildPayload(prompt, options, CHAT_PROMPT, chatHistory);
-    console.log("new payload is", payload)
-    console.log("chathistory", chatHistory)
     if (options.stream_result) {
       return await this._streamInferenceRequest(payload, AIRequestType.GENERAL);
     } else {

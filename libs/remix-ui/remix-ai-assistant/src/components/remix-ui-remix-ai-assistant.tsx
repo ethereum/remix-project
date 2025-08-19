@@ -365,15 +365,25 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           // Add Anthropic handler here if available
           break;
         case 'ollama':
+        {
+          // Create a reasoning callback that updates the assistant message
+          const reasoningCallback = (status: string, clear: boolean=false) => {
+            setMessages(prev =>
+              prev.map(m => (m.id === assistantId ? { ...m, content: `${status}` } : m))
+            )
+          }
+
           HandleOllamaResponse(
             response,
             (chunk: string) => appendAssistantChunk(assistantId, chunk),
             (finalText: string) => {
               ChatHistory.pushHistory(trimmed, finalText)
               setIsStreaming(false)
-            }
+            },
+            reasoningCallback
           )
           break;
+        }
         default:
           HandleStreamResponse(
             response,

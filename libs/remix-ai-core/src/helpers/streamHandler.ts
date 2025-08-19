@@ -207,10 +207,11 @@ export const HandleAnthropicResponse = async (streamResponse, cb: (streamText: s
   }
 }
 
-export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText: string) => void, done_cb?: (result: string) => void) => {
+export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText: string) => void, done_cb?: (result: string) => void, reasoning_cb?: (result: string, clear: boolean) => void) => {
   const reader = streamResponse.body?.getReader();
   const decoder = new TextDecoder("utf-8");
   let resultText = "";
+  let inThinking = false;
 
   if (!reader) { // normal response, not a stream
     cb(streamResponse.result || streamResponse.response || "");
@@ -231,11 +232,20 @@ export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText:
         try {
           const parsed = JSON.parse(line);
           let content = "";
+          if (parsed.message?.thinking) {
+            reasoning_cb?.('***Thinking ...***', false)
+            inThinking = true
+            continue
+          }
 
           if (parsed.response) {
             // For /api/generate endpoint
             content = parsed.response;
           } else if (parsed.message?.content) {
+            if (inThinking) {
+              reasoning_cb?.("", true)
+              inThinking = false
+            }
             // For /api/chat endpoint
             content = parsed.message.content;
           }

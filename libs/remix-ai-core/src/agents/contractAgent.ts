@@ -146,7 +146,7 @@ export class ContractAgent {
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
       const rtvalue = this.plugin.remoteInferencer instanceof OllamaInferencer
-        ? "The selected Ollama model might not be supported. Please select another provider for this generation task!"
+        ? "The selected Ollama model might not be supported. Please select another provider for this generation task or try again!"
         : "Failed to generate secure code on user prompt! Please try again with a different prompt."
       return rtvalue
     } finally {
