@@ -71,6 +71,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
       const messageAI = `Vyper code: ${content}\n error message: ${message}\n explain why the error occurred and how to fix it.`
 
       await this.client.plugin.call('popupPanel', 'showPopupPanel', true)
+      await this.client.plugin.call('menuicons', 'select', 'remixaiassistant')
       setTimeout(async () => {
         await this.client.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', messageAI)
       }, 500)
