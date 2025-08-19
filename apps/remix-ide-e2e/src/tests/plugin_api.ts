@@ -175,7 +175,7 @@ module.exports = {
 
   // UDAPP
   'Should get accounts #group1': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
+    await clickAndCheckLog(browser, 'udapp-getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
   },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
@@ -230,7 +230,7 @@ module.exports = {
   // FILESYSTEM
 
   'Should get current workspace #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
+    await clickAndCheckLog(browser, 'filePanel-getCurrentWorkspace', { name: 'default_workspace', isLocalhost: false, absolutePath: '.workspaces/default_workspace' }, null, null)
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
@@ -304,7 +304,7 @@ module.exports = {
     }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'topbar:getWorkspaces', [{ name:"default_workspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
+    await clickAndCheckLog(browser, 'topbar-getWorkspaces', [{ name:"default_workspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }, { name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel-createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }]}, 'newspace')

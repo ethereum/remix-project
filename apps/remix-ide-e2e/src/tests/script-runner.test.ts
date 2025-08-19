@@ -93,9 +93,12 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="remixUIGSIntro to EIP-7702"')
+      .click('*[data-id="remixUIGSIntro to EIP-7702"')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
-      .scrollAndClick('*[data-id="create-introToEIP7702"]')
+      .click('*[data-id="create-introToEIP7702"]')
       .pause(5000)
       .modalFooterOKClick('TemplatesSelection')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
