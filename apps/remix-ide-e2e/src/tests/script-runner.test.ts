@@ -93,8 +93,10 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
+      .pause(1000)
       .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
+      .pause(1000)
       .waitForElementVisible('*[data-id="remixUIGSIntro to EIP-7702"')
       .click('*[data-id="remixUIGSIntro to EIP-7702"')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
