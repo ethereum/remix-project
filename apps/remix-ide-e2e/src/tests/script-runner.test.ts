@@ -118,7 +118,10 @@ const tests = {
   'reset to default after template': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
-      .openFile('scripts/deploy.ts')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
+      .click('*[data-id="treeViewLitreeViewItemscripts"')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
       .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
       .click('*[data-id="run-script-dropdown-trigger"]')
