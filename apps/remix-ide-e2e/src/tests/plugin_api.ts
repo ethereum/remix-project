@@ -318,11 +318,11 @@ module.exports = {
 
   'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel-renameWorkspace', null, null, ['default_workspace', 'renamed'])
-    await clickAndCheckLog(browser, 'filePanel-getWorkspaces', [{ name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"newspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"renamed",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
+    await clickAndCheckLog(browser, 'topbar-getWorkspaces', [{ name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"testspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"newspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"renamed",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
   },
   'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel-deleteWorkspace', null, null, ['testspace'])
-    await clickAndCheckLog(browser, 'filePanel-getWorkspaces', [{ name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"newspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"renamed",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
+    await clickAndCheckLog(browser, 'topbar-getWorkspaces', [{ name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"newspace",isGitRepo:false,hasGitSubmodules:false,isGist:null },{ name:"renamed",isGitRepo:false,hasGitSubmodules:false,isGist:null }], null, null)
   },
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
