@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import { CustomTopbarMenu } from '@remix-ui/helper'
+import { CustomTopbarMenu, CustomToggle } from '@remix-ui/helper'
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, ButtonGroup, Dropdown, Overlay, Popover } from 'react-bootstrap'
 import { remote } from '@remix-api'
@@ -144,28 +144,29 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
     <Dropdown
       as={ButtonGroup}
       style={{ minWidth: '70%' }}
-      className="d-flex"
+      className="d-flex rounded-md"
       id="workspacesSelect"
       data-id="workspacesSelect"
     >
       <Dropdown.Toggle
         as={CustomToggle}
-        className="btn btn-sm w-100 border"
+        className="btn btn-sm w-100 border position-relative"
         variant="secondary"
         data-id="workspacesMenuDropdown"
         icon={selectedWorkspace && selectedWorkspace.isGitRepo ? 'fas fa-code-branch' : null}
       >
         <div
           data-id="workspacesSelect-togglerText"
-          className="text-truncate d-flex flex-row align-items-center justify-content-between"
+          className="text-truncate position-absolute start-50 translate-middle"
         >
           {togglerText}
         </div>
       </Dropdown.Toggle>
       <Dropdown.Menu
-        style={{ minWidth: 320 }}
+        style={{ minWidth: '100%' }}
         className="px-2"
         data-id="topbar-custom-dropdown-items"
+        show={showMain}
       >
         {menuItems.map((item, idx) => {
           const id = idx + 1
@@ -225,7 +226,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                     }}
                     data-id="workspacesubMenuOverlay"
                   >
-                    <div className="border rounded w-75 px-1">
+                    <div className="border p-0 rounded w-75">
                       <div className="d-grid gap-0">
                         <Button
                           // variant="light"
@@ -297,9 +298,15 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           <Button
             className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg"
             data-id="workspacecreate"
-          >
-            <span className="pl-2 " onClick={() => {
+            onClick={(e) => {
               createWorkspace()
+              e.stopPropagation()
+              setOpenSub(null)
+            }}
+          >
+            <span className="pl-2 " onClick={(e) => {
+              createWorkspace()
+              e.stopPropagation()
               setShowMain(false)
               setOpenSub(null)
             }}>
