@@ -177,7 +177,6 @@ export class DesktopHostPluginClient extends ElectronBasePluginClient {
     }
     
     if (callback) {
-      console.log('SENDING BACK ASYNC', result, data, this.webContentsId, this.isInjected)
       callback(null, result)
       return
     }      
