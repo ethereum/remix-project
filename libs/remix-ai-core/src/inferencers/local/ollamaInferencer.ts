@@ -51,7 +51,9 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     try {
       const availableModels = await listModels();
       if (availableModels.length > 0 && !availableModels.includes(this.model_name)) {
-        this.model_name = availableModels[0];
+        // Prefer codestral model if available, otherwise use first available model
+        const defaultModel = availableModels.find(m => m.includes('codestral')) || availableModels[0];
+        this.model_name = defaultModel;
         console.log(`Auto-selected model: ${this.model_name}`);
       }
     } catch (error) {
@@ -340,6 +342,16 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     };
   }
 
+  private _buildCompletionPayload(prompt: string, system?:string) {
+    return {
+      model: this.model_name,
+      system: system || CHAT_PROMPT,
+      prompt: prompt,
+      stream: false,
+      stop:[]
+    };
+  }
+
   async buildCompletionPrompt(prfx:string, srfx:string) {
     const prompt = prfx + '<CURSOR>' + srfx;
     return `Complete the code at the <CURSOR> position. Provide only the code that should be inserted at the cursor position, without any explanations or markdown formatting:\n\n${prompt}`;
@@ -373,7 +385,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         prompt: prompt,
         suffix: promptAfter,
         stream: false,
-        ...options
+        stop:options.stop
       };
       console.log('using native FIM params', payload);
     } else if (hasTokenFIM) {
@@ -383,14 +395,15 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         model: this.model_name,
         prompt: fimPrompt,
         stream: false,
-        ...options
+        stop:options.stop
       };
       console.log('using token FIM params', payload);
     } else {
       // No FIM support, use completion prompt
       console.log(`Model ${this.model_name} does not support FIM, using completion prompt`);
       const completionPrompt = await this.buildCompletionPrompt(prompt, promptAfter);
-      payload = this._buildPayload(completionPrompt, options, CODE_COMPLETION_PROMPT);
+      payload = this._buildCompletionPayload(completionPrompt, CODE_COMPLETION_PROMPT);
+      payload.stop = options.stop
     }
 
     const result = await this._makeRequest(payload, AIRequestType.COMPLETION);

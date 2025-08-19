@@ -36,6 +36,18 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
+    if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
+      console.log("Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
+      // Extract JSON from markdown code blocks
+      if (payload.includes('```json') || payload.includes('```')) {
+        // Match ```json content ``` or ``` content ```
+        const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+          payload = jsonMatch[1].trim();
+        }
+      }
+      console.log("after Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
+    }
     console.log("Writing results with inferecer ollama: ", this.plugin.remoteInferencer instanceof OllamaInferencer)
     console.log('AI generated result', payload)
 
@@ -116,13 +128,16 @@ export class ContractAgent {
       if (!result.compilationSucceeded) {
         await statusCallback?.('Compilation failed, fixing errors...')
         // console.log('Compilation failed, trying again recursively ...')
-        const generatedContracts = genContrats.map(contract =>
+        console.log(genContrats)
+        const generatedContracts = (genContrats || []).map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
 
         // Format error files properly according to the schema
+        console.log(result.errfiles)
         const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
-          const errors = fileData.errors.map((err: any) =>
+          console.log(fileData)
+          const errors = (fileData.errors || []).map((err: any) =>
             `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
           ).join('\n  ');
           return `File: ${fileName}\n  ${errors}`;

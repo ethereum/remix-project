@@ -22,6 +22,14 @@ Ollama is a local AI model runner that allows you to run large language models o
 - **Code-optimized models**: Specialized models for coding tasks
 - **Fill-in-Middle (FIM) support**: Advanced code completion capabilities
 
+## Model compatible with the Remix IDE
+The folowing is a list of model compatible with the Remix IDE (both desktop and web). The models have been tested to provide acceptable results on mid-tier consumer GPUs. As operating Ollama independently, the user should understand the model performance criteria and their hardware specifications.
+
+- **codestral:latest**
+- **quen3-coder:latest**
+- **gpt-oss:latest**
+- **deepseek-coder-v2:latest** Great for code completion
+
 ## Restrictions
 The current integration does not allow agentic workflows. We strongly recommend running Ollama with hardware acceleration (e.g. GPUs) for best experience. The following features are not enabled when using Ollama, please fallback to remote providers.
 - **Contract generation**
@@ -110,8 +118,12 @@ ollama pull codestral:latest    # ~22GB, state-of-the-art code model
 
 #### **Quen Coder**
 ```bash
-ollama pull qwen2.5-coder:14b
-ollama pull qwen2.5-coder:3b
+ollama pull qwen3-coder:latest
+```
+
+#### **GPT-OSS**
+```bash
+ollama pull gpt-oss:latest
 ```
 
 #### **Code Gemma**

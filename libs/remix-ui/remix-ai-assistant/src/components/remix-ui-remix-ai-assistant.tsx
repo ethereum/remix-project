@@ -367,7 +367,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         case 'ollama':
         {
           // Create a reasoning callback that updates the assistant message
-          const reasoningCallback = (status: string, clear: boolean=false) => {
+          const reasoningCallback = (status: string) => {
             setMessages(prev =>
               prev.map(m => (m.id === assistantId ? { ...m, content: `${status}` } : m))
             )
@@ -470,6 +470,12 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               if (!selectedModel && models.length > 0) {
                 const defaultModel = models.find(m => m.includes('codestral')) || models[0]
                 setSelectedModel(defaultModel)
+                // Sync the default model with the backend
+                try {
+                  await props.plugin.call('remixAI', 'setModel', defaultModel)
+                } catch (error) {
+                  console.warn('Failed to set default model:', error)
+                }
               }
               // Show success message when Ollama is available
               setMessages(prev => [...prev, {
