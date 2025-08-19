@@ -187,7 +187,7 @@ module.exports = {
       .clickLaunchIcon('localPlugin')
       .useXpath()
       .frame(0)
-    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
+    await clickAndCheckLog(browser, 'udapp-setEnvironmentMode', null, null, { context: 'vm-berlin' })
     await browser
       .frameParent()
       .useCss()
@@ -201,7 +201,7 @@ module.exports = {
   // context menu item
 
   'Should create context menu item #group1': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:registerContextMenuItem', null, null, {
+    await clickAndCheckLog(browser, 'filePanel-registerContextMenuItem', null, null, {
       id: 'localPlugin',
       name: 'testCommand',
       label: 'testCommand',
@@ -234,7 +234,7 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', {
+    await clickAndCheckLog(browser, 'fileManager-readdir', {
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
@@ -243,23 +243,23 @@ module.exports = {
     }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
+    await clickAndCheckLog(browser, 'fileManager-getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
   },
   'Should open readme.txt #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:open', null, { event: 'currentFileChanged', args: ['README.txt']}, 'README.txt')
   },
   'Should have current file #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'README.txt', null, null)
+    await clickAndCheckLog(browser, 'fileManager-getCurrentFile', 'README.txt', null, null)
   },
   'Should create dir #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:mkdir', null, null, 'testdir')
-    await clickAndCheckLog(browser, 'fileManager:readdir', 'testdir', null, '/')
+    await clickAndCheckLog(browser, 'fileManager-mkdir', null, null, 'testdir')
+    await clickAndCheckLog(browser, 'fileManager-readdir', 'testdir', null, '/')
   },
   'Should get file #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:getFile', 'REMIX DEFAULT WORKSPACE', null, 'README.txt')
+    await clickAndCheckLog(browser, 'fileManager-getFile', 'REMIX DEFAULT WORKSPACE', null, 'README.txt')
   },
   'Should close all files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:closeAllFiles', null, { event: 'noFileSelected', args: []}, null)
+    await clickAndCheckLog(browser, 'fileManager-closeAllFiles', null, { event: 'noFileSelected', args: []}, null)
   },
 
   'Should switch to file #group2': async function (browser: NightwatchBrowser) {
