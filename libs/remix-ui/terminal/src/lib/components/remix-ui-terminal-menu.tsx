@@ -26,7 +26,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
     dispatch({ type: 'search', payload: arg0 })
   }
 
-  return (<div className='d-flex flex-row align-items-center'>
+  return (<div className='d-flex flex-row align-items-center h-100'>
     <CustomTooltip placement="top" tooltipId="terminalpendingTransactions" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
       <div className="mx-2">0</div>
     </CustomTooltip>
