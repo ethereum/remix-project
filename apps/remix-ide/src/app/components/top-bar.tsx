@@ -13,7 +13,8 @@ import { HOME_TAB_NEW_UPDATES } from 'libs/remix-ui/home-tab/src/lib/components/
 import axios from 'axios'
 import { UpdateInfo } from 'libs/remix-ui/home-tab/src/lib/components/types/carouselTypes'
 import { GitPlugin } from '../plugins/git'
-import { getWorkspaces, WorkspaceType } from 'libs/remix-ui/workspace/src/lib/actions'
+import { createWorkspace, deleteWorkspace, getWorkspaces, renameWorkspace, WorkspaceType } from 'libs/remix-ui/workspace/src/lib/actions'
+import { Registry } from '@remix-project/remix-lib'
 
 const TopBarProfile = {
   name: 'topbar',
@@ -21,8 +22,8 @@ const TopBarProfile = {
   description: '',
   version: packageJson.version,
   icon: '',
-  methods: ['getWorkspaces'],
-  events: []
+  methods: ['getWorkspaces', 'createWorkspace', 'renameWorkspace', 'deleteWorkspace', 'getCurrentWorkspace', 'setWorkspace'],
+  events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
 }
 
 export class Topbar extends Plugin {
@@ -35,10 +36,16 @@ export class Topbar extends Plugin {
   git: GitPlugin
   workspaces: WorkspaceMetadata[] | WorkspaceType[]
   currentWorkspaceMetadata: WorkspaceMetadata
+  registry: Registry
+  fileProviders: any
+  fileManager: any
 
   constructor(filePanel: FilePanel, git: GitPlugin) {
     super(TopBarProfile)
     this.filePanel = filePanel
+    this.registry = Registry.getInstance()
+    this.fileProviders = this.registry.get('fileproviders').api
+    this.fileManager = this.registry.get('filemanager').api
     this.git = git
     this.workspaces = []
     this.currentWorkspaceMetadata = null
@@ -52,16 +59,99 @@ export class Topbar extends Plugin {
 
   }
 
+  getCurrentWorkspace() {
+    return this.currentWorkspaceMetadata
+  }
+
   async getWorkspaces() {
     this.workspaces = await getWorkspaces()
     return this.workspaces
   }
 
-  async getCurrentWorkspaceMetadata() {
-    while (!this.currentWorkspaceMetadata) {
-      await new Promise(resolve => setTimeout(resolve, 100))
-      this.currentWorkspaceMetadata = await this.call('filePanel', 'getCurrentWorkspace')
+  async createWorkspace(workspaceName, workspaceTemplateName, isEmpty) {
+    // return new Promise((resolve, reject) => {
+    //   this.emit('createWorkspaceReducerEvent', workspaceName, workspaceTemplateName, isEmpty, (err, data) => {
+    //     if (err) reject(err)
+    //     else resolve(data || true)
+    //   })
+    // })
+    try {
+      await createWorkspace(workspaceName, workspaceTemplateName, isEmpty)
+      this.emit('workspaceCreated', workspaceName, workspaceTemplateName, isEmpty)
+    } catch (error) {
+      console.error('Error creating workspace:', error)
     }
+  }
+
+  async renameWorkspace(oldName, workspaceName) {
+    // return new Promise((resolve, reject) => {
+    //   this.emit('renameWorkspaceReducerEvent', oldName, workspaceName, (err, data) => {
+    //     if (err) reject(err)
+    //     else resolve(data || true)
+    //   })
+    // })
+    try {
+      await renameWorkspace(oldName, workspaceName)
+      this.emit('workspaceRenamed', oldName, workspaceName)
+    } catch (error) {
+      console.error('Error renaming workspace:', error)
+    }
+  }
+
+  async deleteWorkspace(workspaceName) {
+    // return new Promise((resolve, reject) => {
+    //   this.emit('deleteWorkspaceReducerEvent', workspaceName, (err, data) => {
+    //     if (err) reject(err)
+    //     else resolve(data || true)
+    //   })
+    // })
+    try {
+      await deleteWorkspace(workspaceName)
+      this.emit('workspaceDeleted', workspaceName)
+    } catch (error) {
+      console.error('Error deleting workspace:', error)
+    }
+  }
+
+  async getCurrentWorkspaceMetadata() {
+    this.currentWorkspaceMetadata = await this.fileManager.getCurrentWorkspace()
+    return this.currentWorkspaceMetadata
+  }
+
+  setWorkspace(workspace) {
+    const workspaceProvider = this.fileProviders.workspace
+    const current = this.currentWorkspaceMetadata
+    this.currentWorkspaceMetadata = {
+      name: workspace.name,
+      isLocalhost: workspace.isLocalhost,
+      absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}`,
+    }
+    if (this.currentWorkspaceMetadata.name !== current.name) {
+      this.saveRecent(workspace.name)
+    }
+    if (workspace.name !== ' - connect to localhost - ') {
+      localStorage.setItem('currentWorkspace', workspace.name)
+    }
+    this.emit('setWorkspace', workspace)
+  }
+  saveRecent(name: any) {
+    throw new Error('Method not implemented.')
+  }
+
+  switchToWorkspace(workspaceName) {
+    this.emit('switchToWorkspace', workspaceName)
+  }
+
+  workspaceRenamed(oldName, workspaceName) {
+    this.emit('workspaceRenamed', oldName, workspaceName)
+  }
+
+  workspaceDeleted(workspace) {
+    this.emit('workspaceDeleted', workspace)
+  }
+
+  workspaceCreated(workspace) {
+    this.emit('workspaceCreated', workspace)
   }
 
   async logInGithub () {
