@@ -233,7 +233,6 @@ export const TabsUI = (props: TabsUIProps) => {
 
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
     setCompileState('compiling')
-    await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
 
     await props.plugin.call('manager', 'activatePlugin', 'solidity')
     await props.plugin.call('menuicons', 'select', 'solidity')
@@ -241,7 +240,7 @@ export const TabsUI = (props: TabsUIProps) => {
       await props.plugin.call('solidity', 'compile', active().substr(active().indexOf('/') + 1, active().length))
       _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
 
-      setTimeout(() => {
+      setTimeout(async () => {
         let buttonId
         if (storageType === 'ipfs') {
           buttonId = 'publishOnIpfs'
@@ -254,13 +253,17 @@ export const TabsUI = (props: TabsUIProps) => {
         if (buttonToClick) {
           buttonToClick.click()
         } else {
-          props.plugin.call('notification', 'toast', 'Could not find the publish button.')
+          await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
         }
       }, 500)
 
     } catch (e) {
       console.error(e)
-      await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
+      await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+      await props.plugin.call('manager', 'activatePlugin', 'solidity')
+      await props.plugin.call('menuicons', 'select', 'solidity')
     }
 
     setCompileState('idle')
@@ -382,12 +385,14 @@ export const TabsUI = (props: TabsUIProps) => {
 
       if (!fresh) {
         setCompileState('idle')
-        props.plugin.call('notification', 'toast', 'Compilation failed (no result). See compiler output.')
+        await props.plugin.call('manager', 'activatePlugin', 'solidity')
+        await props.plugin.call('menuicons', 'select', 'solidity')
       } else {
         const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
         if (errs.length > 0) {
           setCompileState('idle')
-          props.plugin.call('notification', 'toast', 'Compilation failed (errors). See compiler output.')
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
         } else {
           setCompileState('compiled')
         }
@@ -454,13 +459,17 @@ export const TabsUI = (props: TabsUIProps) => {
           if (fresh) {
             const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
             setCompileState(errs.length ? 'idle' : 'compiled')
-            if (errs.length) props.plugin.call('notification', 'toast', 'Compilation failed (errors). See compiler output.')
+            if (errs.length) {
+              await props.plugin.call('manager', 'activatePlugin', 'solidity')
+              await props.plugin.call('menuicons', 'select', 'solidity')
+            } 
             settledSeqRef.current = mySeq
             return
           }
         }
         setCompileState('idle')
-        props.plugin.call('notification', 'toast', 'Compilation failed (errors). See compiler output.')
+        await props.plugin.call('manager', 'activatePlugin', 'solidity')
+        await props.plugin.call('menuicons', 'select', 'solidity')
         settledSeqRef.current = mySeq
         try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
       }, 3000)
