@@ -303,6 +303,10 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
               createWorkspace()
               setOpenSub(null)
             }}
+            style={{
+              backgroundColor: 'transparent',
+              color: 'inherit',
+            }}
           >
             <button className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg" onClick={(e) => {
               createWorkspace()
@@ -370,20 +374,27 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                 Connect to Localhost
             </span>
           </Dropdown.Item>
-          <Button className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
-            deleteAllWorkspaces()
-            setShowMain(false)
-            setOpenSub(null)
-          }}>
-            <span className="pl-2 text-white" onClick={() => {
+          <Dropdown.Item
+            style={{
+              backgroundColor: 'transparent',
+              color: 'inherit',
+            }}
+          >
+            <button className="w-100 btn btn-danger font-weight-light text-decoration-none" onClick={() => {
               deleteAllWorkspaces()
               setShowMain(false)
               setOpenSub(null)
             }}>
-              <i className="fas fa-trash-can me-2"></i>
+              <span className="pl-2 text-white" onClick={() => {
+                deleteAllWorkspaces()
+                setShowMain(false)
+                setOpenSub(null)
+              }}>
+                <i className="fas fa-trash-can me-2"></i>
                 Delete all Workspaces
-            </span>
-          </Button>
+              </span>
+            </button>
+          </Dropdown.Item>
         </div>
       </Dropdown.Menu>
     </Dropdown>
