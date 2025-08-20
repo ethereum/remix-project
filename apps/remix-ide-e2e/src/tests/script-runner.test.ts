@@ -100,10 +100,12 @@ const tests = {
       .waitForElementVisible('*[data-id="remixUIGSIntro to EIP-7702"')
       .click('*[data-id="remixUIGSIntro to EIP-7702"')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
+      //data-id="remixUIGSOpenZeppelin"
       .click('*[data-id="create-introToEIP7702"]')
       .pause(5000)
       .modalFooterOKClick('TemplatesSelection')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
+      .waitForElementVisible('*[data-path="contracts/Example7702.sol"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
@@ -120,11 +122,13 @@ const tests = {
       .refreshPage()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
       .click('*[data-id="treeViewLitreeViewItemscripts"')
+      .pause(1000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
-      .pause(500)
-      .click('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
+      .pause(1000)
+      .click('*[data-path="scripts/deploy.ts"]')
       .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
+      .pause(1000)
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
