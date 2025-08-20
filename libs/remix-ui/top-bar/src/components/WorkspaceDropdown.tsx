@@ -295,25 +295,22 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           )
         })}
         <div className="d-grid gap-2">
-          <Button
-            className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg"
+          <Dropdown.Item
             data-id="workspacecreate"
             onClick={(e) => {
               createWorkspace()
-              e.stopPropagation()
               setOpenSub(null)
             }}
           >
-            <span className="pl-2 " onClick={(e) => {
+            <button className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg" onClick={(e) => {
               createWorkspace()
-              e.stopPropagation()
               setShowMain(false)
               setOpenSub(null)
             }}>
               <i className="fas fa-plus me-2"></i>
                 Create a new workspace
-            </span>
-          </Button>
+            </button>
+          </Dropdown.Item>
           <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
           <Dropdown.Item onClick={() => {
             window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
