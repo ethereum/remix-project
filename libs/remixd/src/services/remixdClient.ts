@@ -251,20 +251,28 @@ export class RemixdClient extends PluginClient {
     const absPath = utils.absolutePath('./', path)
 
     if (!isRealPath(absPath)) return
-    this.watcher = chokidar.watch(path, { depth: 2, ignorePermissionErrors: true })
+    this.watcher = chokidar.watch(path, {
+      depth: 2,
+      ignorePermissionErrors: true,
+      ignoreInitial: false,
+      persistent: true,
+      usePolling: true,
+      awaitWriteFinish: {
+        stabilityThreshold: 200,
+        pollInterval: 100
+      }
+    })
     console.log('setup notifications for ' + path)
-    /* we can't listen on created file / folder
-    watcher.on('add', (f, stat) => {
-      isbinaryfile(f, (error, isBinary) => {
-        if (error) console.log(error)
-        console.log('add', f)
-        this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: isBinary, isFolder: false })
-      })
+    this.watcher.on('add', (f) => {
+      if (this.isLoaded) {
+        this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: false })
+      }
     })
-    watcher.on('addDir', (f, stat) => {
-      this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true })
+    this.watcher.on('addDir', (f) => {
+      if (this.isLoaded) {
+        this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true })
+      }
     })
-    */
     this.watcher.on('change', async (f: string) => {
       const path = pathModule.resolve(f)
       const currentContent = this.trackDownStreamUpdate[path]
