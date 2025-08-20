@@ -18,29 +18,36 @@ module.exports = {
       .clearValue('[data-id="pluginManagerComponentSearchInput"]')
   },
 
-  'Should activate and deactivate a plugin #group1 #pr': function (browser: NightwatchBrowser) {
-    let initialActiveCount: number
+  'Should activate and deactivate a plugin #group1 #pr': function (browser) {
+    let initialActiveCount
+    let toggleSel
 
     browser
       .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
       .click('[data-id="pluginManagerActiveTab"]')
-      .getText('[data-id="pluginManagerActiveCount"]', (result) => {
-        initialActiveCount = parseInt(result.value as string)
+      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+        initialActiveCount = parseInt(r.value)
       })
       .click('[data-id="pluginManagerInactiveTab"]')
-      .waitForElementVisible('[data-id="plugin-manager-plugin-card-solidityscan"]')
-      .click('[data-id="plugin-manager-plugin-card-solidityscan"] label')
-      .pause(2000)
+      .waitForElementVisible('[data-id^="plugin-manager-plugin-card-"] [id^="toggleSwitch-"]', 10000)
+      .getAttribute('[data-id^="plugin-manager-plugin-card-"] [id^="toggleSwitch-"]', 'id', (res) => {
+        toggleSel = `#${res.value}`
+      })
+      .perform(() => {
+        browser.waitForElementVisible(toggleSel, 5000).click(toggleSel)
+      })
+      .pause(1200)
       .click('[data-id="pluginManagerActiveTab"]')
-      .getText('[data-id="pluginManagerActiveCount"]', (result) => {
-        const newActiveCount = parseInt(result.value as string)
+      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+        const newActiveCount = parseInt(r.value)
         browser.assert.equal(newActiveCount, initialActiveCount + 1, `Active count should increase to ${initialActiveCount + 1}.`)
       })
-      .waitForElementVisible('[data-id="plugin-manager-plugin-card-solidityscan"]')
-      .click('[data-id="plugin-manager-plugin-card-solidityscan"] label')
-      .pause(2000)
-      .getText('[data-id="pluginManagerActiveCount"]', (result) => {
-        const finalActiveCount = parseInt(result.value as string)
+      .perform(() => {
+        browser.waitForElementVisible(toggleSel, 5000).click(toggleSel)
+      })
+      .pause(1200)
+      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+        const finalActiveCount = parseInt(r.value)
         browser.assert.equal(finalActiveCount, initialActiveCount, `Active count should return to ${initialActiveCount}.`)
       })
   },
@@ -56,13 +63,13 @@ module.exports = {
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
         initialAllCount = parseInt(result.value as string)
       })
-      .click('[data-id="filter-by-remix-switch"] label')
+      .click('[data-id="filter-by-remix-switch"]')
       .pause(1000)
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
         filteredCount = parseInt(result.value as string)
         browser.assert.ok(filteredCount < initialAllCount, `Filtered count (${filteredCount}) should be less than initial count (${initialAllCount}).`)
       })
-      .click('[data-id="filter-by-remix-switch"] label')
+      .click('[data-id="filter-by-remix-switch"]')
       .pause(1000)
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
         const finalCount = parseInt(result.value as string)
