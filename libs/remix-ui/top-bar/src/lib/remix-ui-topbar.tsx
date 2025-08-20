@@ -525,11 +525,11 @@ export function RemixUiTopbar () {
               />
             )}
           </>
-          <Dropdown className="ms-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
+          <Dropdown className="ms-3" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
-              className="btn-topbar btn-sm me-5"
+              className="btn-topbar btn-sm me-3"
               data-id="topbar-themeIcon-toggle"
               style={{
                 padding: '0.35rem 0.5rem',
@@ -583,7 +583,9 @@ export function RemixUiTopbar () {
             style={{ fontSize: '1.5rem', cursor: 'pointer' }}
             className=""
             onClick={async () => {
-              plugin.call('menuicons', 'select', 'settings')
+              const isActive = await plugin.call('manager', 'isActive', 'settings')
+              if (!isActive) await plugin.call('manager', 'activatePlugin', 'settings')
+              await plugin.call('tabs', 'focus', 'settings')
               _paq.push(['trackEvent', 'topbar', 'header', 'Settings'])
             }}
             data-id="topbar-settingsIcon"

@@ -194,42 +194,49 @@ export class RemixAIPlugin extends Plugin {
    * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
    */
   async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false, statusCallback?: (status: string) => Promise<void>): Promise<any> {
-    params.stream_result = false // enforce no stream result
-    params.threadId = newThreadID
-    params.provider = 'anthropic' // enforce all generation to be only on anthropic
-    useRag = false
-    _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
-    let userPrompt = ''
+    try {
+      params.stream_result = false // enforce no stream result
+      params.threadId = newThreadID
+      params.provider = 'anthropic' // enforce all generation to be only on anthropic
+      useRag = false
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
+      let userPrompt = ''
 
-    if (useRag) {
-      statusCallback?.('Fetching RAG context...')
-      try {
-        let ragContext = ""
-        const options = { headers: { 'Content-Type': 'application/json', } }
-        const response = await axios.post(endpointUrls.rag, { query: prompt, endpoint:"query" }, options)
-        if (response.data) {
-          ragContext = response.data.response
-          userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
-        } else {
-          console.log('Invalid response from RAG context API:', response.data)
+      if (useRag) {
+        statusCallback?.('Fetching RAG context...')
+        try {
+          let ragContext = ""
+          const options = { headers: { 'Content-Type': 'application/json', } }
+          const response = await axios.post(endpointUrls.rag, { query: prompt, endpoint:"query" }, options)
+          if (response.data) {
+            ragContext = response.data.response
+            userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
+          } else {
+            console.log('Invalid response from RAG context API:', response.data)
+          }
+        } catch (error) {
+          console.log('RAG context error:', error)
         }
-      } catch (error) {
-        console.log('RAG context error:', error)
+      } else {
+        userPrompt = prompt
       }
-    } else {
-      userPrompt = prompt
+      // Evaluate if this function requires any context
+      // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
+      await statusCallback?.('Generating new workspace with AI...\nThis might take some minutes. Please be patient!')
+      const result = await this.remoteInferencer.generate(userPrompt, params)
+
+      await statusCallback?.('Creating contracts and files...')
+      const genResult = await this.contractor.writeContracts(result, userPrompt, statusCallback)
+
+      if (genResult.includes('No payload')) return genResult
+      await this.call('menuicons', 'select', 'filePanel')
+      return genResult
+    } catch {
+      // not handled
+    } finally {
+      params.provider = this.assistantProvider
     }
-    // Evaluate if this function requires any context
-    // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
-    await statusCallback?.('Generating new workspace with AI...\nThis might take some minutes. Please be patient!')
-    const result = await this.remoteInferencer.generate(userPrompt, params)
 
-    await statusCallback?.('Creating contracts and files...')
-    const genResult = await this.contractor.writeContracts(result, userPrompt, statusCallback)
-
-    if (genResult.includes('No payload')) return genResult
-    await this.call('menuicons', 'select', 'filePanel')
-    return genResult
   }
 
   /**

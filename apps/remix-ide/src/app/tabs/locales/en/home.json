@@ -75,6 +75,7 @@
   "home.newFileTooltip": "Add a new file to a workspace",
   "home.createNewWorkspace": "Create a new workspace",
   "home.startLearning": "Start Learning",
-  "home.exploreAllPlugins": "Explore all plugins"
+  "home.exploreAllPlugins": "Explore all plugins",
+  "home.maintainedByRemix": "Maintained by Remix"
 }
 

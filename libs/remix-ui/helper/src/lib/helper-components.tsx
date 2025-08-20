@@ -1,6 +1,6 @@
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { CompileOptionsProps } from '../types/compilerTypes'
 import { CustomTooltip } from './components/custom-tooltip'
 import { extractNameFromKey } from './remix-ui-helper'
@@ -163,14 +163,14 @@ export const CompileOptions = ({ autoCompile, hideWarnings, setCircuitAutoCompil
         <FormattedMessage id="circuit.autoCompile" />
       </label>
     </div>
-    <div className="mt-1 mb-2 circuit_warnings_box form-check">
+    <div className="mt-1 mb-2 form-check">
       <input
         className="form-check-input"
         onChange={(e) => setCircuitHideWarnings(e.target.checked)}
-        id="hideCircuitWarnings"
         type="checkbox"
         title="Hide warnings"
         checked={hideWarnings}
+        id="hideCircuitWarnings"
       />
       <label className="form-check-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
         <FormattedMessage id="solidity.hideWarnings" />
@@ -218,3 +218,54 @@ export const CompileBtn = ({ plugin, appState, id, compileAction }: { plugin: an
     </button>
   </CustomTooltip>
 )
+
+export const gitAccessTokenLink = 'https://github.com/settings/tokens/new?scopes=gist,repo&description=Remix%20IDE%20Token'
+export const etherscanTokenLink = 'https://etherscan.io/myapikey'
+export const sindriAccessTokenLink = 'https://sindri.app'
+
+export const GitHubCredentialsDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.gitAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a href={gitAccessTokenLink} target="_blank" rel="noopener noreferrer" className="text-primary">{intl.formatMessage({ id: 'settings.gitAccessTokenText2' })}</a> <FormattedMessage id="settings.gitAccessTokenText3" />
+      </p>
+    </>
+  )
+}
+
+export const SindriCredentialsDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.sindriAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a href={sindriAccessTokenLink} target="_blank" rel="noopener noreferrer" className="text-primary">{intl.formatMessage({ id: 'settings.gitAccessTokenText2' })}</a> <FormattedMessage id="settings.sindriAccessTokenText2" />
+      </p>
+    </>
+  )
+}
+
+export const EtherscanConfigDescription = () => {
+  const intl = useIntl()
+
+  return (
+    <>
+      <p className="mb-1">
+        <FormattedMessage id="settings.etherscanAccessTokenText" />
+      </p>
+      <p className="mb-1">
+        <a className="text-primary" target="_blank" href={etherscanTokenLink}>
+          {intl.formatMessage({ id: 'settings.etherscanAccessTokenText2' })}
+        </a> <FormattedMessage id="settings.etherscanAccessTokenText3" />
+      </p>
+    </>
+  )
+}

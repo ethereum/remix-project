@@ -9,18 +9,15 @@ module.exports = {
 
   'Should display settings menu ': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
+      .waitForElementContainsText('[data-id="settings-sidebar-header"] h2', 'Settings')
   },
 
   'Should activate `generate contract metadata` ': function (browser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
-      .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
-      .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
-      .click('*[data-id="verticalIconsKindfilePanel"]')
-      .click('[data-id="treeViewLitreeViewItemcontracts"]')
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .waitForElementVisible('*[data-id="generate-contract-metadataSwitch"]')
+      .verify.elementPresent('[data-id="generate-contract-metadataSwitch"] .fa-toggle-on')
       .openFile('contracts/3_Ballot.sol')
       .click('*[data-id="verticalIconsKindsolidity"]')
       .pause(2000)
@@ -36,32 +33,30 @@ module.exports = {
   },
 
   'Should add new github access token ': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+    browser.waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
-      .click('*[data-id="settingsTabSaveGistToken"]')
+      .waitForElementVisible('*[data-id="settings-sidebar-services"]')
+      .click('*[data-id="settings-sidebar-services"]')
+      .pause(100)
+      .click('*[data-id="github-configSwitch"]')
+      .setValue('[data-id="settingsTabgist-access-token"]', '**********')
+      .click('[data-id="settingsTabSavegithub-config"]')
+      .pause(100)
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials updated')
       .pause(3000)
   },
 
-  'Should copy github access token to clipboard ': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .click('*[data-id="copyToClipboardCopyIcon"]')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      // .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1) , 5000)
-      // .assert.containsText('*[data-shared="tooltipPopup"]', 'Copied value to clipboard.')
-      // .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
-  },
-
   'Should remove github access token ': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .pause(1000)
-      .click('*[data-id="settingsTabRemoveGistToken"]')
+    browser
+      .click('*[data-id="github-configSwitch"]')
+      .pause(500)
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials removed')
-      .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
+      .waitForElementNotPresent('[data-id="settingsTabgist-access-token"]')
+      .click('*[data-id="github-configSwitch"]')
+      .pause(100)
+      .assert.containsText('[data-id="settingsTabgist-access-token"]', '')
   },
   // These e2e should be enabled after settings panel refactoring
   // 'Should load dark theme ': function (browser: NightwatchBrowser) {
@@ -91,27 +86,34 @@ module.exports = {
 
 
   'Should load zh locale ': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .scrollAndClick('*[data-id="settingsTabLocaleLabelzh"]')
+    browser.waitForElementVisible('*[data-id="settings-sidebar-general"]')
+      .click('*[data-id="settings-sidebar-general"]')
+      .pause(100)
+      .scrollAndClick('*[data-id="settingsTabDropdownTogglelocale"]')
+      .waitForElementVisible('[data-id="custom-dropdown-items"]')
+      .waitForElementVisible('[data-id="settingsTabDropdownItemzh"]')
+      .click('[data-id="settingsTabDropdownItemzh"]')
       .pause(2000)
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', '设置')
+      .assert.containsText('[data-id="settings-sidebar-header"] h2', '设置')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', '监听所有交易')
-      .assert.containsText('*[data-id="settingsTabGenerateContractMetadataLabel"]', '生成合约元数据')
-      .assert.containsText('*[data-id="settingsAutoCompleteLabel"]', '在编辑器中启用代码自动补全')
-      .assert.containsText('*[data-id="settingsShowGasLabel"]', '在编辑器中展示 gas 预算')
-      .assert.containsText('*[data-id="displayErrorsLabel"]', '编辑代码时展示错误提示')
+      .assert.containsText('*[data-id="settingsTabgenerate-contract-metadataLabel"]', '生成合约元数据')
+      .assert.containsText('*[data-id="settingsTabauto-completionLabel"]', '在编辑器中启用代码自动补全')
+      .assert.containsText('*[data-id="settingsTabshow-gasLabel"]', '在编辑器中展示 gas 预算')
+      .assert.containsText('*[data-id="settingsTabdisplay-errorsLabel"]', '编辑代码时展示错误提示')
   },
 
   'Should load en locale ': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .scrollAndClick('*[data-id="settingsTabLocaleLabelen"]')
+    browser.scrollAndClick('*[data-id="settingsTabDropdownTogglelocale"]')
+      .waitForElementVisible('[data-id="custom-dropdown-items"]')
+      .waitForElementVisible('[data-id="settingsTabDropdownItemen"]')
+      .click('[data-id="settingsTabDropdownItemen"]')
       .pause(2000)
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
+      .assert.containsText('[data-id="settings-sidebar-header"] h2', 'Settings')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', 'Listen on all transactions')
-      .assert.containsText('*[data-id="settingsTabGenerateContractMetadataLabel"]', 'Generate contract metadata')
-      .assert.containsText('*[data-id="settingsAutoCompleteLabel"]', 'Enable code completion in editor')
-      .assert.containsText('*[data-id="settingsShowGasLabel"]', 'Display gas estimates in editor')
-      .assert.containsText('*[data-id="displayErrorsLabel"]', 'Display errors in editor while typing')
+      .assert.containsText('*[data-id="settingsTabgenerate-contract-metadataLabel"]', 'Generate contract metadata')
+      .assert.containsText('*[data-id="settingsTabauto-completionLabel"]', 'Enable code completion in editor')
+      .assert.containsText('*[data-id="settingsTabshow-gasLabel"]', 'Display gas estimates in editor')
+      .assert.containsText('*[data-id="settingsTabdisplay-errorsLabel"]', 'Display errors in editor while typing')
   }
 }
 

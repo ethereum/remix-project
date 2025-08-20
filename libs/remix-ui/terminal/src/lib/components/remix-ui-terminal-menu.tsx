@@ -26,7 +26,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
     dispatch({ type: 'search', payload: arg0 })
   }
 
-  return (<div className='d-flex flex-row align-items-center'>
+  return (<div className='d-flex flex-row align-items-center h-100'>
     <CustomTooltip placement="top" tooltipId="terminalpendingTransactions" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
       <div className="mx-2">0</div>
     </CustomTooltip>
@@ -38,7 +38,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
     >
       <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork form-check">
         <input
-          className="form-check-input"
+          className="form-check-input mt-1"
           id="listenNetworkCheck"
           onChange={listenOnNetwork}
           type="checkbox"

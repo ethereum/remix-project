@@ -110,13 +110,13 @@ module.exports = {
       .executeScriptInTerminal('remix.exeCurrent()')
       .scrollToLine(33)
       .waitForElementPresent('.highlightLine34', 60000)
-      .checkElementStyle('.highlightLine34', 'background-color', 'rgba(0, 0, 0, 0)')
+      .checkElementStyle('.highlightLine34', 'background-color', 'rgb(52, 152, 219)')
       .scrollToLine(40)
       .waitForElementPresent('.highlightLine41', 60000)
-      .checkElementStyle('.highlightLine41', 'background-color', 'rgba(0, 0, 0, 0)')
+      .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
       .scrollToLine(50)
       .waitForElementPresent('.highlightLine51', 60000)
-      .checkElementStyle('.highlightLine51', 'background-color', 'rgba(0, 0, 0, 0)')
+      .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
   'Should remove 1 highlight from source code #group1':
@@ -132,8 +132,8 @@ module.exports = {
         .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
         .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
         .waitForElementNotPresent('.highlightLine33', 60000)
-        .checkElementStyle('.highlightLine41', 'background-color', 'rgba(0, 0, 0, 0)')
-        .checkElementStyle('.highlightLine51', 'background-color', 'rgba(0, 0, 0, 0)')
+        .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
+        .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
     },
 
   'Should remove all highlights from source code #group1': function (browser: NightwatchBrowser) {

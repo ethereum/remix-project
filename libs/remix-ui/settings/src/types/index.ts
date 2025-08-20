@@ -36,3 +36,92 @@ export interface SindriSettingsProps {
     setUnpersistedProperty: (key: string, value: string) => void
   }
 }
+
+export interface SettingsSection {
+  key: string
+  label: string
+  decription: string,
+  subSections: {
+    title?: string,
+    options: {
+      name: keyof SettingsState,
+      label: string,
+      labelIcon?: string,
+      labelIconTooltip?: string,
+      description?: string | JSX.Element,
+      footnote?: {
+        text: string,
+        link?: string,
+        styleClass?: string
+      },
+      type: 'toggle' | 'select' | 'button',
+      selectOptions?: {
+        label: string,
+        value: string
+      }[],
+      toggleUIOptions?: {
+        name: keyof SettingsState,
+        type: 'text' | 'password'
+      }[],
+      toggleUIDescription?: string | JSX.Element,
+      buttonOptions?: {
+        label: string,
+        action: 'link' | 'pluginCall',
+        link?: string,
+        pluginName?: string,
+        pluginMethod?: string,
+        pluginArgs?: string
+      }
+    }[]
+  }[]
+}
+
+interface ConfigState {
+  value: boolean | string,
+  isLoading: boolean
+}
+
+export interface SettingsState {
+  'generate-contract-metadata': ConfigState
+  'text-wrap': ConfigState
+  'personal-mode': ConfigState
+  'matomo-perf-analytics': ConfigState
+  'matomo-analytics': ConfigState
+  'auto-completion': ConfigState
+  'show-gas': ConfigState
+  'display-errors': ConfigState
+  'copilot/suggest/activate': ConfigState
+  'save-evm-state': ConfigState,
+  'theme': ConfigState,
+  'locale': ConfigState,
+  'github-config': ConfigState,
+  'ipfs-config': ConfigState,
+  'swarm-config': ConfigState,
+  'sindri-config': ConfigState,
+  'etherscan-config': ConfigState,
+  'gist-access-token': ConfigState,
+  'github-user-name': ConfigState,
+  'github-email': ConfigState,
+  'ipfs-url': ConfigState,
+  'ipfs-protocol': ConfigState,
+  'ipfs-port': ConfigState,
+  'ipfs-project-id': ConfigState,
+  'ipfs-project-secret': ConfigState,
+  'swarm-private-bee-address': ConfigState,
+  'swarm-postage-stamp-id': ConfigState,
+  'sindri-access-token': ConfigState,
+  'etherscan-access-token': ConfigState,
+  'ai-privacy-policy': ConfigState,
+  toaster: ConfigState
+}
+export interface SettingsActionPayloadTypes {
+  SET_VALUE: { name: string, value: boolean | string },
+  SET_LOADING: { name: string },
+  SET_TOAST_MESSAGE: { value: string }
+}
+export interface SettingsAction<T extends keyof SettingsActionPayloadTypes> {
+  type: T
+  payload: SettingsActionPayloadTypes[T]
+}
+
+export type SettingsActions = {[A in keyof SettingsActionPayloadTypes]: SettingsAction<A>}[keyof SettingsActionPayloadTypes]

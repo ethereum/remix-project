@@ -41,7 +41,10 @@ module.exports = {
       .pause(5000)
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
+      .waitForElementVisible('*[data-id="settings-sidebar-general"]')
+      .click('*[data-id="settings-sidebar-general"]')
+      .waitForElementPresent('[data-id="generate-contract-metadataSwitch"]')
+      .click('[data-id="generate-contract-metadataSwitch"]')
       .clickLaunchIcon('solidity')
       .click('#compileTabView button[data-id="compilerContainerCompileBtn"]') // that should generate the JSON artefact
       .clickLaunchIcon('udapp')

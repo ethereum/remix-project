@@ -823,7 +823,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             placement={'top'}
           >
             <a className="btn border text-decoration-none pe-0 d-flex w-50 ms-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
-              <label className="btn p-1 ms-2 m-0">
+              <label className="btn p-1 m-0">
                 <FormattedMessage id="solidityUnitTesting.howToUse" />
               </label>
             </a>
@@ -854,7 +854,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             </button>
           </CustomTooltip>
         </div>
-        <div className="d-flex align-items-center ms-1 me-3 ps-1  pb-2 mt-2 border-bottom form-check">
+        <div className="d-flex align-items-center ms-2 me-3 pb-2 mt-2 border-bottom form-check">
           <input
             id="checkAllTests"
             className="form-check-input"
@@ -866,19 +866,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           <label
             data-id="testTabCheckAllTests"
             htmlFor="checkAllTests"
-            className="form-check-label mb-0 ms-4 form-check-label text-nowrap"
+            className="form-check-label mb-0 ms-1 text-nowrap"
             style={{ paddingTop: '0.125rem' }}
           >
             {' '}
             <FormattedMessage id="solidityUnitTesting.selectAll" />{' '}
           </label>
         </div>
-        <div className="testList ms-1 pe-2 mt-0 border-bottom py-2">
+        <div className="testList ms-2 pe-2 mt-0 border-bottom py-2">
           {testFiles.length
             ? testFiles.map((testFileObj: TestObject, index) => {
               const elemId = `singleTest${testFileObj.fileName}`
               return (
-                <div className="d-flex align-items-center ps-1 form-check" key={index}>
+                <div className="d-flex align-items-center form-check" key={index}>
                   <input
                     className="singleTest form-check-input"
                     id={elemId}
@@ -889,7 +889,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                   <label
                     data-id="singleTest"
                     id={"id" + elemId}
-                    className="singleTestLabel text-nowrap mb-0 form-check-label ms-4 form-check-label text-nowrap"
+                    className="singleTestLabel text-nowrap mb-0 form-check-label ms-1 text-nowrap"
                     htmlFor={elemId}
                     style={{ paddingTop: '0.125rem' }}
                   >

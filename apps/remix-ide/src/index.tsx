@@ -2,6 +2,7 @@
 import React from 'react'
 import './index.css'
 import { ThemeModule } from './app/tabs/theme-module'
+import { LocaleModule } from './app/tabs/locale-module'
 import { Preload } from './app/components/preload'
 import { GitHubPopupCallback } from './app/pages/GitHubPopupCallback'
 import Config from './config'
@@ -18,6 +19,10 @@ import { createRoot } from 'react-dom/client'
   } catch (e) { }
   const theme = new ThemeModule()
   theme.initTheme()
+  const locale = new LocaleModule()
+  const settingsConfig = { themes: theme.getThemes(), locales: locale.getLocales() }
+
+  Registry.getInstance().put({ api: settingsConfig, name: 'settingsConfig' })
 
   const container = document.getElementById('root');
   const root = createRoot(container)
