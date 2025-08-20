@@ -93,19 +93,12 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
-      .pause(1000)
-      .waitForElementVisible('*[data-id="workspacecreate"]')
       .click('*[data-id="workspacecreate"]')
-      .pause(1000)
-      .waitForElementVisible('*[data-id="remixUIGSIntro to EIP-7702"')
-      .click('*[data-id="remixUIGSIntro to EIP-7702"')
+      .click('*[data-id="workspacesSelect"]')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
-      //data-id="remixUIGSOpenZeppelin"
-      .click('*[data-id="create-introToEIP7702"]')
-      .pause(5000)
+      .scrollAndClick('*[data-id="create-introToEIP7702"]')
       .modalFooterOKClick('TemplatesSelection')
-      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
-      .waitForElementVisible('*[data-path="contracts/Example7702.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
