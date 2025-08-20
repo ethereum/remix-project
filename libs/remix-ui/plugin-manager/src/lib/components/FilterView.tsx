@@ -30,8 +30,9 @@ const FilterView = ({ categoryMap, selectedCategories, setSelectedCategories }: 
     <div data-id="filter-panel" className="my-2 bg-light border rounded p-3">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <span className="font-weight-bold">Filters</span>
-        <button onClick={clearFilters} className="btn btn-sm btn-link text-primary p-0" data-id="clear-filters-btn">
-          <span className="font-weight-bold mr-1">&times;</span> Clear filters
+        <button onClick={clearFilters} className="btn btn-sm btn-link text-primary p-0 clear-filters-btn" data-id="clear-filters-btn">
+          <span className="clear-x me-1" aria-hidden>&times;</span>
+          <span className="clear-text">Clear filters</span>
         </button>
       </div>
       <div className="border-bottom">
@@ -45,10 +46,10 @@ const FilterView = ({ categoryMap, selectedCategories, setSelectedCategories }: 
               const categoryId = parseInt(id, 10)
               const checkboxId = `filter-checkbox-${categoryId}`
               return (
-                <div className="custom-control custom-checkbox mb-1" key={categoryId}>
+                <div className="custom-control custom-checkbox mb-2" key={categoryId}>
                   <input
                     type="checkbox"
-                    className="custom-control-input"
+                    className="custom-control-input me-1"
                     id={checkboxId}
                     data-id={checkboxId}
                     checked={selectedCategories.includes(categoryId)}

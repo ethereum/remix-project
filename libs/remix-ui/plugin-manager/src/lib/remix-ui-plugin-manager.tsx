@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Profile } from '@remixproject/plugin-utils'
-import React, { useState, useRef, useEffect } from 'react' // eslint-disable-line no-use-before-define
+import React, { useState, useRef, useEffect, useContext } from 'react' // eslint-disable-line no-use-before-define
+import { ThemeContext, themes } from './themeContext'
 import { RemixUiPluginManagerProps } from '../types'
 import PluginCard from './components/PluginCard'
 import RootView from './components/rootView'
@@ -68,6 +69,33 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   const tabsRef = useRef<HTMLDivElement>(null)
   const [selectedCategories, setSelectedCategories] = useState<number[]>([])
   const [loadingPlugins, setLoadingPlugins] = useState<string[]>([])
+
+  const [state, setState] = useState<{
+    themeQuality: { filter: string; name: string }
+  }>({
+    themeQuality: themes.light
+  })
+
+  useEffect(() => {
+    pluginComponent.call('theme', 'currentTheme').then((theme) => {
+      // update theme quality. To be used for for images
+      setState((prevState) => {
+        return {
+          ...prevState,
+          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
+        }
+      })
+    })
+    pluginComponent.on('theme', 'themeChanged', (theme) => {
+      // update theme quality. To be used for for images
+      setState((prevState) => {
+        return {
+          ...prevState,
+          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
+        }
+      })
+    })
+  }, [])
 
   useEffect(() => {
     const onActivation = (profile: Profile) => {
@@ -174,34 +202,66 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   }
 
   return (
-    <RootView 
-      pluginComponent={pluginComponent}
-      filterByRemix={filterByRemix}
-      setFilterByRemix={setFilterByRemix}
-      categoryMap={categoryMap}
-      selectedCategories={selectedCategories}
-      setSelectedCategories={setSelectedCategories}
-    >
-      <section data-id="pluginManagerComponentPluginManagerSection" className="px-3">
-        <nav ref={tabsRef} className="plugin-manager-tabs mt-2 d-flex flex-row">
-          <a data-id="pluginManagerAllTab" className={`nav-link ${activeTab === 'all' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>
-            <div className={activeTab === 'all' ? 'card-title' : ''}>
-              All plugins <span className="badge" data-id="pluginManagerAllCount">{allCount}</span>
-            </div>
-          </a>
-          <a data-id="pluginManagerActiveTab" className={`nav-link ${activeTab === 'active' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('active'); }}>
-            <div className={activeTab === 'active' ? 'card-title' : ''}>
-              Active <span className="badge" data-id="pluginManagerActiveCount">{activeCount}</span>
-            </div>
-          </a>
-          <a data-id="pluginManagerInactiveTab" className={`nav-link ${activeTab === 'inactive' ? 'active' : ''}`} href="#" onClick={(e) => { e.preventDefault(); setActiveTab('inactive'); }}>
-            <div className={activeTab === 'inactive' ? 'card-title' : ''}>
-              Inactive <span className="badge" data-id="pluginManagerInactiveCount">{inactiveCount}</span>
-            </div>
-          </a>
-        </nav>
-        <div className="g-3 mt-3">{renderPluginList()}</div>
-      </section>
-    </RootView>
+    <ThemeContext.Provider value={state.themeQuality}>
+      <RootView 
+        pluginComponent={pluginComponent}
+        filterByRemix={filterByRemix}
+        setFilterByRemix={setFilterByRemix}
+        categoryMap={categoryMap}
+        selectedCategories={selectedCategories}
+        setSelectedCategories={setSelectedCategories}
+      >
+        <section data-id="pluginManagerComponentPluginManagerSection" className="px-3">
+          <nav ref={tabsRef} className="plugin-manager-tabs mt-2 d-flex flex-row">
+            <a
+              data-id="pluginManagerAllTab"
+              className={`nav-link ${activeTab === 'all' ? 'active' : ''}`}
+              href="#"
+              onClick={(e) => { e.preventDefault(); setActiveTab('all') }}
+            >
+              All plugins{' '}
+              <span
+                className={`badge rounded-pill ${activeTab === 'all' ? 'bg-primary' : 'bg-secondary'}`}
+                data-id="pluginManagerAllCount"
+                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+              >
+                {allCount}
+              </span>
+            </a>
+            <a
+              data-id="pluginManagerActiveTab"
+              className={`nav-link ${activeTab === 'active' ? 'active' : ''}`}
+              href="#"
+              onClick={(e) => { e.preventDefault(); setActiveTab('active') }}
+            >
+              Active{' '}
+              <span
+                className={`badge rounded-pill ${activeTab === 'active' ? 'bg-primary' : 'bg-secondary'}`}
+                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+                data-id="pluginManagerActiveCount"
+              >
+                {activeCount}
+              </span>
+            </a>
+            <a
+              data-id="pluginManagerInactiveTab"
+              className={`nav-link ${activeTab === 'inactive' ? 'active' : ''}`}
+              href="#"
+              onClick={(e) => { e.preventDefault(); setActiveTab('inactive') }}
+            >
+              Inactive{' '}
+              <span
+                className={`badge rounded-pill ${activeTab === 'inactive' ? 'bg-primary' : 'bg-secondary'}`}
+                data-id="pluginManagerInactiveCount" 
+                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+              >
+                {inactiveCount}
+              </span>
+            </a>
+          </nav>
+          <div className="g-3 mt-3">{renderPluginList()}</div>
+        </section>
+      </RootView>
+    </ThemeContext.Provider>
   )
 }

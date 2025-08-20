@@ -142,7 +142,6 @@
   flex: 1;
   text-align: center;
   padding: 0.5rem 0.25rem;
-  color: var(--text-secondary); 
   background-color: transparent;
   border: none; 
   text-decoration: none;
@@ -151,21 +150,9 @@
   transition: color 0.2s ease-in-out;
   z-index: 1;
 }
-.plugin-manager-tabs .nav-link:hover {
-  color: var(--text-tertiary); 
-}
-.plugin-manager-tabs .nav-link.active {
-  color: var(--text-primary); 
-}
 .plugin-manager-tabs .nav-link .badge {
-  color: inherit;
-  opacity: 0.7;
-  font-weight: 400;
-  background-color: transparent;
-  transition: opacity 0.2s ease-in-out;
-}
-.plugin-manager-tabs .nav-link.active .badge {
   opacity: 1;
+  background-color: initial;  
 }
 #pluginManager .chevron-icon {
   transition: transform 0.2s ease-in-out;
@@ -181,4 +168,28 @@
   width: 1rem;
   height: 1rem;
   filter: invert(0.6);
+}
+#pluginManager .clear-filters-btn { 
+  text-decoration: none; 
+}
+#pluginManager .clear-filters-btn .clear-text { 
+  text-decoration: underline; 
+}
+#pluginManager .clear-filters-btn .clear-x {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+}
+#pluginManager .custom-control.custom-checkbox {
+  display: flex;
+  align-items: center;
+}
+#pluginManager .custom-control-input {
+  top: 0;
+  margin-top: 0;
+}
+#pluginManager .custom-control-label {
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
 }
