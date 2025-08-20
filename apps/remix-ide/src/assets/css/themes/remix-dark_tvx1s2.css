@@ -65,8 +65,8 @@
   --bs-secondary-bg-subtle: #dadada;
   --bs-success-bg-subtle: #ccf2e8;
   --bs-info-bg-subtle: #d6eaf8;
-  --bs-warning-bg-subtle: #fdebd0;
-  --bs-danger-bg-subtle: #fadbd8;
+  --bs-warning-bg-subtle: #C97539;
+  --bs-danger-bg-subtle: #ff7777;
   --bs-light-bg-subtle: #fcfcfd;
   --bs-dark-bg-subtle: #ced4da;
   --bs-primary-border-subtle: #afbdcc;
@@ -4971,15 +4971,15 @@ textarea.form-control-lg {
 }
 
 .alert-warning {
-  --bs-alert-color: var(--bs-warning-text-emphasis);
-  --bs-alert-bg: var(--bs-warning-bg-subtle);
+  --bs-alert-color: #FFD3B4;
+  --bs-alert-bg: rgba(201 117 57, 0.08);
   --bs-alert-border-color: var(--bs-warning-border-subtle);
   --bs-alert-link-color: var(--bs-warning-text-emphasis);
 }
 
 .alert-danger {
-  --bs-alert-color: var(--bs-danger-text-emphasis);
-  --bs-alert-bg: var(--bs-danger-bg-subtle);
+  --bs-alert-color: #FFB2B2;
+  --bs-alert-bg: rgba(255, 119, 119, 0.08);
   --bs-alert-border-color: var(--bs-danger-border-subtle);
   --bs-alert-link-color: var(--bs-danger-text-emphasis);
 }
