@@ -176,7 +176,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
               <div key={id} className="d-flex flex-row">
                 <Dropdown.Item
                   key={id}
-                  className="dropdown-item d-flex justify-content-between align-items-center position-relative"
+                  className="dropdown-item d-flex align-items-center position-relative"
                   onMouseDown={(e) => {
                     switchWorkspace(item.name)
                     e.preventDefault()
@@ -184,7 +184,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                   data-id={`dropdown-item-${item.name}`}
                 >
                   {item.isGitRepo && item.currentBranch && (
-                    <i className="fas fa-code-branch pt-1"></i>
+                    <i className="fas fa-code-branch pt-1 me-2"></i>
                   )}
                   <span className="pl-1">{item.name}</span>
                 </Dropdown.Item>
