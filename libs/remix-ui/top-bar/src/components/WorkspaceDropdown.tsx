@@ -168,128 +168,130 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
         data-id="topbar-custom-dropdown-items"
         show={showMain}
       >
-        {menuItems.map((item, idx) => {
-          const id = idx + 1
-          if (!iconRefs.current[id]) iconRefs.current[id] = { current: null }
-          return (
-            <div key={id} className="d-flex flex-row">
-              <Dropdown.Item
-                key={id}
-                className="dropdown-item d-flex justify-content-between align-items-center position-relative"
-                onMouseDown={(e) => {
-                  switchWorkspace(item.name)
-                  e.preventDefault()
-                } }
-                data-id={`dropdown-item-${item.name}`}
-              >
-                {item.isGitRepo && item.currentBranch && (
-                  <i className="fas fa-code-branch pt-1"></i>
-                )}
-                <span className="pl-1">{item.name}</span>
-              </Dropdown.Item>
-              <div className="d-flex align-items-center" id="submenu-activate-button">
-                <Button
-                  ref={(el) => (iconRefs.current[id].current = el)}
-                  variant="link"
-                  className="p-0 ms-2 text-muted submenu-trigger"
-                  aria-label={`More actions for ${item.name}`}
-                  onClick={(e) => {
+        <div id="scrollable-section" className="overflow-y-scroll" style={{ maxHeight: '160px' }}>
+          {menuItems.map((item, idx) => {
+            const id = idx + 1
+            if (!iconRefs.current[id]) iconRefs.current[id] = { current: null }
+            return (
+              <div key={id} className="d-flex flex-row">
+                <Dropdown.Item
+                  key={id}
+                  className="dropdown-item d-flex justify-content-between align-items-center position-relative"
+                  onMouseDown={(e) => {
+                    switchWorkspace(item.name)
                     e.preventDefault()
-                    e.stopPropagation()
-                    toggleSubmenu(id)
                   } }
-                  data-id="workspacesubMenuIcon"
+                  data-id={`dropdown-item-${item.name}`}
                 >
-                  <FiMoreVertical size={18} />
-                </Button>
-
-                <Overlay
-                  show={openSubmenuId === id}
-                  target={iconRefs.current[id].current}
-                  placement="right-start"
-                  container={document.body}
-                  popperConfig={{
-                    modifiers: [
-                      { name: "offset", options: { offset: [8, 12]} },
-                      { name: "preventOverflow", options: { boundary: "viewport", padding: 8 } },
-                      { name: 'flip', options: { enabled: false } }
-                    ],
-                  }}
-                  rootClose
-                  transition={false} //fix flickering and hopefully e2e as well
-                  onHide={() => setOpenSubmenuId(null)}
-                >
-                  <section
-                    id={`submenu-${id}`}
-                    style={{
-                      minWidth: 160,
-                    }}
-                    data-id="workspacesubMenuOverlay"
+                  {item.isGitRepo && item.currentBranch && (
+                    <i className="fas fa-code-branch pt-1"></i>
+                  )}
+                  <span className="pl-1">{item.name}</span>
+                </Dropdown.Item>
+                <div className="d-flex align-items-center" id="submenu-activate-button">
+                  <Button
+                    ref={(el) => (iconRefs.current[id].current = el)}
+                    variant="link"
+                    className="p-0 ms-2 text-muted submenu-trigger"
+                    aria-label={`More actions for ${item.name}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      toggleSubmenu(id)
+                    } }
+                    data-id="workspacesubMenuIcon"
                   >
-                    <div className="border p-0 rounded w-75">
-                      <div className="d-grid gap-0">
-                        <Button
+                    <FiMoreVertical size={18} />
+                  </Button>
+
+                  <Overlay
+                    show={openSubmenuId === id}
+                    target={iconRefs.current[id].current}
+                    placement="right-start"
+                    container={document.body}
+                    popperConfig={{
+                      modifiers: [
+                        { name: "offset", options: { offset: [8, 12]} },
+                        { name: "preventOverflow", options: { boundary: "viewport", padding: 8 } },
+                        { name: 'flip', options: { enabled: false } }
+                      ],
+                    }}
+                    rootClose
+                    transition={false} //fix flickering and hopefully e2e as well
+                    onHide={() => setOpenSubmenuId(null)}
+                  >
+                    <section
+                      id={`submenu-${id}`}
+                      style={{
+                        minWidth: 160,
+                      }}
+                      data-id="workspacesubMenuOverlay"
+                    >
+                      <div className="border p-0 rounded w-75">
+                        <div className="d-grid gap-0">
+                          <Button
                           // variant="light"
-                          className="border border-0 btn btn-sm btn-light d-flex align-items-center text-decoration-none"
-                          data-id="workspacesubMenuRename"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            renameCurrentWorkspace(item.name)
-                            setOpenSubmenuId(null)
-                          } }
-                          style={{
-                            color: 'var(--bs-body-color)'
-                          }}
-                        >
-                          <span className="me-2">
-                            <i className="far fa-edit" />
-                          </span>
-                          <span>Rename</span>
-                        </Button>
-                        <Button
-                          variant="light"
-                          size="sm"
-                          style={{
-                            color: 'var(--bs-body-color)'
-                          }}
-                          className="border border-0 d-flex align-items-center text-decoration-none"
-                          data-id="workspacesubMenuDownload"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            downloadCurrentWorkspace()
-                            setCurrentMenuItemName(item.name)
-                            setOpenSubmenuId(null)
-                          } }
-                        >
-                          <span className="me-2">
-                            <i className="fas fa-download" />
-                          </span>
-                          <span>Download</span>
-                        </Button>
-                        <Button
-                          variant="light"
-                          size="sm"
-                          style={{
-                            color: 'var(--bs-body-color)'
-                          }}
-                          className="border border-0 d-flex align-items-center text-decoration-none"
-                          data-id="workspacesubMenuDelete"
-                          onClick={(e) => {
-                            deleteCurrentWorkspace(item.name)
-                            e.stopPropagation()
-                            setOpenSubmenuId(null)
-                          } }
-                        >
-                          <span className="me-2">
-                            <i className="fas fa-trash" />
-                          </span>
-                          <span>Delete</span>
-                        </Button>
+                            className="border border-0 btn btn-sm btn-light d-flex align-items-center text-decoration-none"
+                            data-id="workspacesubMenuRename"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              renameCurrentWorkspace(item.name)
+                              setOpenSubmenuId(null)
+                            } }
+                            style={{
+                              color: 'var(--bs-body-color)'
+                            }}
+                          >
+                            <span className="me-2">
+                              <i className="far fa-edit" />
+                            </span>
+                            <span>Rename</span>
+                          </Button>
+                          <Button
+                            variant="light"
+                            size="sm"
+                            style={{
+                              color: 'var(--bs-body-color)'
+                            }}
+                            className="border border-0 d-flex align-items-center text-decoration-none"
+                            data-id="workspacesubMenuDownload"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              downloadCurrentWorkspace()
+                              setCurrentMenuItemName(item.name)
+                              setOpenSubmenuId(null)
+                            } }
+                          >
+                            <span className="me-2">
+                              <i className="fas fa-download" />
+                            </span>
+                            <span>Download</span>
+                          </Button>
+                          <Button
+                            variant="light"
+                            size="sm"
+                            style={{
+                              color: 'var(--bs-body-color)'
+                            }}
+                            className="border border-0 d-flex align-items-center text-decoration-none"
+                            data-id="workspacesubMenuDelete"
+                            onClick={(e) => {
+                              deleteCurrentWorkspace(item.name)
+                              e.stopPropagation()
+                              setOpenSubmenuId(null)
+                            } }
+                          >
+                            <span className="me-2">
+                              <i className="fas fa-trash" />
+                            </span>
+                            <span>Delete</span>
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </section>
-                </Overlay>
+                    </section>
+                  </Overlay>
+                </div>
               </div>
             </div>
           )
