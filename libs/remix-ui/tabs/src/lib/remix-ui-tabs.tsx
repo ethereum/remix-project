@@ -546,7 +546,6 @@ export const TabsUI = (props: TabsUIProps) => {
               <RunScriptDropdown
                 plugin={props.plugin}
                 onRun={handleRunScript}
-                onNotify={(msg) => console.log(msg)}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
             ) : (
@@ -556,7 +555,6 @@ export const TabsUI = (props: TabsUIProps) => {
                   compiledFileName={active()}
                   plugin={props.plugin}
                   disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                  onNotify={(msg) => console.log(msg)}
                   onRequestCompileAndPublish={handleCompileAndPublish}
                   setCompileState={setCompileState}
                 />

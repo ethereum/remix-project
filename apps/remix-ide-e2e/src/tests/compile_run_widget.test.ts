@@ -12,7 +12,7 @@ module.exports = {
     return []
   },
 
-  'Compile using the widget #group1': function (browser: NightwatchBrowser) {
+  'Compile using the widget #group1 #pr': function (browser: NightwatchBrowser) {
     browser
       .openFile('contracts/3_Ballot.sol')
       .click('[data-id="compile-action"]')
@@ -20,14 +20,14 @@ module.exports = {
       .verifyContracts(['Ballot'])
   },
 
-  'Run script using the widget #group2': function (browser: NightwatchBrowser) {
+  'Run script using the widget #group2 #pr': function (browser: NightwatchBrowser) {
     browser
       .openFile('scripts/deploy_with_web3.ts')
       .click('[data-id="compile-action"]')
       .waitForElementVisible('[data-id="compile_group"] i.fa-check', 10000)
   },
 
-  'Should activate Solidity Static Analysis and show "Solidity Analyzers" title from compile dropdown #group3': function (browser: NightwatchBrowser) {
+  'Should activate Solidity Static Analysis and show "Solidity Analyzers" title from compile dropdown #group3 #pr': function (browser: NightwatchBrowser) {
     browser
       .openFile('contracts/3_Ballot.sol')
       .click('[data-id="compile-dropdown-trigger"]')
@@ -42,7 +42,7 @@ module.exports = {
       .verifyContracts(['Ballot'])
   },
 
-  'Should run Solidity Scan and display results in terminal #group4': function (browser: NightwatchBrowser) {
+  'Should run Solidity Scan and display results in terminal #group4 #pr': function (browser: NightwatchBrowser) {
     browser
       .openFile('contracts/3_Ballot.sol')
       .click('[data-id="compile-dropdown-trigger"]')
