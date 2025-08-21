@@ -34,7 +34,7 @@ const pluginCategories: Record<string, number[]> = {
   'defender-deploy': [2, 3],
   'solidityStaticAnalysis': [1, 3],
   'solidityscan': [3],
-  
+
   // --- Deployment & Verification ---
   'buildbear': [2, 3], // Note: I assumed 'Testing & Security' maps to 'Security & Analysis'
   'wds-code-remix': [2, 6],
@@ -44,7 +44,7 @@ const pluginCategories: Record<string, number[]> = {
   'bif-udapp': [2],
   'klaytn-remix-plugin': [2],
   'tenderly': [2, 3, 7],
-  
+
   // --- Core Tools & Alternative Languages ---
   'debugger': [1, 3],
   'solidityUnitTesting': [1, 3],
@@ -101,9 +101,9 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
     const onActivation = (profile: Profile) => {
       setLoadingPlugins(prev => prev.filter(p => p !== profile.name))
     }
-    
+
     const client = pluginComponent as any
-    
+
     client.on('manager', 'activate', onActivation)
     client.on('manager', 'deactivate', onActivation)
 
@@ -182,16 +182,16 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
   const renderPluginList = () => {
     let pluginsToRender: Profile[] = []
     switch (activeTab) {
-      case 'active':
-        pluginsToRender = filteredPlugins.filter(p => pluginComponent.activePlugins.some(ap => ap.name === p.name))
-        break
-      case 'inactive':
-        pluginsToRender = filteredPlugins.filter(p => pluginComponent.inactivePlugins.some(ip => ip.name === p.name))
-        break
-      case 'all':
-      default:
-        pluginsToRender = filteredPlugins
-        break
+    case 'active':
+      pluginsToRender = filteredPlugins.filter(p => pluginComponent.activePlugins.some(ap => ap.name === p.name))
+      break
+    case 'inactive':
+      pluginsToRender = filteredPlugins.filter(p => pluginComponent.inactivePlugins.some(ip => ip.name === p.name))
+      break
+    case 'all':
+    default:
+      pluginsToRender = filteredPlugins
+      break
     }
 
     return pluginsToRender.map((profile, idx) => {
@@ -203,7 +203,7 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
 
   return (
     <ThemeContext.Provider value={state.themeQuality}>
-      <RootView 
+      <RootView
         pluginComponent={pluginComponent}
         filterByRemix={filterByRemix}
         setFilterByRemix={setFilterByRemix}
@@ -223,7 +223,7 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
               <span
                 className={`badge rounded-pill ${activeTab === 'all' ? 'bg-primary' : 'bg-secondary'}`}
                 data-id="pluginManagerAllCount"
-                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+                style={{ color: state.themeQuality.name === 'dark' ? 'white' : 'black' }}
               >
                 {allCount}
               </span>
@@ -237,7 +237,7 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
               Active{' '}
               <span
                 className={`badge rounded-pill ${activeTab === 'active' ? 'bg-primary' : 'bg-secondary'}`}
-                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+                style={{ color: state.themeQuality.name === 'dark' ? 'white' : 'black' }}
                 data-id="pluginManagerComponentActiveTilesCount"
               >
                 {activeCount}
@@ -252,8 +252,8 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
               Inactive{' '}
               <span
                 className={`badge rounded-pill ${activeTab === 'inactive' ? 'bg-primary' : 'bg-secondary'}`}
-                data-id="pluginManagerComponentInactiveTilesCount" 
-                style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
+                data-id="pluginManagerComponentInactiveTilesCount"
+                style={{ color: state.themeQuality.name === 'dark' ? 'white' : 'black' }}
               >
                 {inactiveCount}
               </span>

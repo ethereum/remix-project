@@ -33,7 +33,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
   const [showFilters, setShowFilters] = useState<boolean>(false)
-  
+
   const openModal = () => setVisible(false)
   const closeModal = () => setVisible(true)
 
@@ -41,20 +41,20 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
     pluginComponent.getAndFilterPlugins(filterPlugins)
   }, [filterPlugins])
 
- return (
+  return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
         <header className="form-group mb-0 d-flex flex-column bg-light plugins-header pt-3 pb-2 px-3">
           <div className="pb-3 mb-3 border-bottom w-100">
             <button onClick={openModal} className="btn btn-secondary btn-sm d-flex align-items-center justify-content-center w-100" data-id="pluginManagerComponentPluginSearchButton">
-              <img className="icon-pluginManager me-1" style={{filter: "invert(1)"}} src="assets/img/pluginManager.webp" alt="pluginManager" />
+              <img className="icon-pluginManager me-1" style={{ filter: "invert(1)" }} src="assets/img/pluginManager.webp" alt="pluginManager" />
               <FormattedMessage id="pluginManager.connectExternal" defaultMessage="Connect to an external plugin" />
             </button>
           </div>
 
           <div className="d-flex w-100 mb-2">
             <div className="search-bar-container w-100">
-              <img className="search-bar-icon" style={{filter: "invert(0.6)"}} src="assets/img/search_icon.webp" alt="Search" />
+              <img className="search-bar-icon" style={{ filter: "invert(0.6)" }} src="assets/img/search_icon.webp" alt="Search" />
               <input
                 type="text"
                 onChange={(event) => setFilterPlugin(event.target.value.toLowerCase())}
@@ -65,9 +65,9 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
               />
             </div>
 
-            <button 
-              onClick={() => setShowFilters(!showFilters)} 
-              className="btn btn-sm btn-secondary ml-2 d-flex align-items-center" 
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="btn btn-sm btn-secondary ml-2 d-flex align-items-center"
               data-id="pluginManagerComponentFilterButton"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none" className="me-1">
@@ -85,7 +85,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
           </div>
 
           {showFilters && (
-            <FilterView 
+            <FilterView
               categoryMap={categoryMap}
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
@@ -99,7 +99,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
               style={{ cursor: 'pointer' }}
             >
               Only maintained by Remix
-            </label> 
+            </label>
             <div data-id="filter-by-remix-switch">
               <ToggleSwitch
                 id="filter-by-remix-switch"

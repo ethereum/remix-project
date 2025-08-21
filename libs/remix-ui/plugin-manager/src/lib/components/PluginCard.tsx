@@ -43,7 +43,7 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
           />
         </div>
       </div>
-      
+
       <div className="d-flex flex-column justify-content-between h-100">
         <div className="p-3">
           <div className={`text-${(profile.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}>
