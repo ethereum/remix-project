@@ -29,7 +29,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
       } catch (err) {
-        console.error('Failed to get current file', err)
+        console.info('No current file selected.')
         setCurrentFilePath('')
         setCurrentExt('')
       }
