@@ -134,7 +134,6 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
               className="btn btn-ai"
               data-id="ask-remix-ai-button"
               onClick={(event) => { event.preventDefault(); askGtp() }}
-              style={{ borderColor: "var(--custom-ai-color)" }}
             >
               <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
               <span>Ask RemixAI</span>
