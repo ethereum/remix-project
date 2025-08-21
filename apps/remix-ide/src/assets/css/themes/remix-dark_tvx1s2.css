@@ -4925,6 +4925,120 @@ textarea.form-control-lg {
   top: -1px;
 }
 
+/* Old theme alert setting */
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+.alert-heading {
+  color: inherit;
+}
+.alert-link {
+  font-weight: 700;
+}
+.alert-dismissible {
+  padding-right: 4rem;
+}
+.alert-dismissible .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.75rem 1.25rem;
+  color: inherit;
+}
+.alert-primary {
+  color: #fff;
+  background-color: #5cbdee94;
+  border-color: #5CBDEE;
+}
+.alert-primary hr {
+  border-top-color: #a5d0df;
+}
+.alert-primary .alert-link {
+  color: #001a23;
+}
+.alert-secondary {
+  color: #fff;
+  background-color: #2a2c3f;
+  border-color: #2a2c3f;
+}
+.alert-secondary hr {
+  border-top-color: #c3c3cd;
+}
+.alert-secondary .alert-link {
+  color: #181920;
+}
+.alert-success {
+  color: #A2FFB0;
+  background: #27443f;
+  border: 1px solid #2b5f4b;
+}
+.alert-success hr {
+  border-top-color: #b3e6d3;
+}
+.alert-success .alert-link {
+  color: #0f392a;
+}
+.alert-info {
+  color: #88E2FF;
+  background: #273853;
+  border: 1px solid #2b476b;
+}
+.alert-info hr {
+  border-top-color: #b6c6d1;
+}
+.alert-info .alert-link {
+  color: #0d161d;
+}
+.alert-warning {
+  color: #FFB684;
+  background: #433337;
+  border: 1px solid #5e4037;
+}
+.alert-warning hr {
+  border-top-color: #ebcab4;
+}
+.alert-warning .alert-link {
+  color: #412613;
+}
+.alert-danger {
+  color: #FF8A8A;
+  background: #402938;
+  border: 1px solid #572c38;
+}
+.alert-danger hr {
+  border-top-color: #e4b7b7;
+}
+.alert-danger .alert-link {
+  color: #3a1414;
+}
+.alert-light {
+  color: #161721;
+  background-color: #d4d5d9;
+  border-color: #c3c4c9;
+}
+.alert-light hr {
+  border-top-color: #b6b7bd;
+}
+.alert-light .alert-link {
+  color: #020202;
+}
+.alert-dark {
+  color: #12121c;
+  background-color: #d3d3d7;
+  border-color: #c1c1c7;
+}
+.alert-dark hr {
+  border-top-color: #b4b4bb;
+}
+.alert-dark .alert-link {
+  color: #000;
+}
+
+/* alert settings came by default with them
 .alert {
   --bs-alert-bg: transparent;
   --bs-alert-padding-x: 1rem;
@@ -5018,7 +5132,7 @@ textarea.form-control-lg {
   --bs-alert-bg: var(--bs-dark-bg-subtle);
   --bs-alert-border-color: var(--bs-dark-border-subtle);
   --bs-alert-link-color: var(--bs-dark-text-emphasis);
-}
+} */
 
 @keyframes progress-bar-stripes {
   0% {
@@ -12168,7 +12282,7 @@ textarea.form-control-lg {
   text-decoration: none;
 }
 
-.alert {
+/* .alert {
   color: #fff;
   border: none;
 }
@@ -12200,7 +12314,7 @@ textarea.form-control-lg {
 }
 .alert-dark {
   background-color: #303030;
-}
+} */
 
 .tooltip {
   --bs-tooltip-bg: var(--bs-tertiary-bg);
