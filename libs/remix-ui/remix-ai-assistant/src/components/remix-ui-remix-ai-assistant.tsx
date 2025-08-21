@@ -50,6 +50,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   )
   const [availableModels, setAvailableModels] = useState<string[]>([])
   const [selectedModel, setSelectedModel] = useState<string | null>(null)
+  const [isOllamaFailureFallback, setIsOllamaFailureFallback] = useState(false)
 
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
@@ -327,7 +328,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           ...prev,
           { id: assistantId, role: 'assistant', content: '', timestamp: Date.now(), sentiment: 'none' }
         ])
-        console.log("processing reqwuest from", assistantChoice)
         switch (assistantChoice) {
         case 'openai':
           HandleOpenAIResponse(
@@ -438,15 +438,31 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     const fetchAssistantChoice = async () => {
       const choiceSetting = await props.plugin.call('remixAI', 'getAssistantProvider')
       if (choiceSetting !== assistantChoice) {
-        dispatchActivity('button', 'setAssistant')
-        setMessages([])
-        sendPrompt(`/setAssistant ${assistantChoice}`)
+        // Don't send success messages if this is a fallback from Ollama failure
+        if (!isOllamaFailureFallback) {
+          dispatchActivity('button', 'setAssistant')
+          setMessages([])
+          sendPrompt(`/setAssistant ${assistantChoice}`)
+          _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
+          // Log specific Ollama selection
+          if (assistantChoice === 'ollama') {
+            _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_provider_selected', `from:${choiceSetting || 'unknown'}`])
+          }
+        } else {
+          // This is a fallback, just update the backend silently
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_fallback_to_provider', `${assistantChoice}|from:${choiceSetting}`])
+          await props.plugin.call('remixAI', 'setAssistantProvider', assistantChoice)
+        }
         setAssistantChoice(assistantChoice || 'mistralai')
-        _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
+
+        // Reset the fallback flag after handling
+        if (isOllamaFailureFallback) {
+          setIsOllamaFailureFallback(false)
+        }
       }
     }
     fetchAssistantChoice()
-  }, [assistantChoice])
+  }, [assistantChoice, isOllamaFailureFallback])
 
   // Fetch available models everytime Ollama is selected
   useEffect(() => {
@@ -470,6 +486,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               if (!selectedModel && models.length > 0) {
                 const defaultModel = models.find(m => m.includes('codestral')) || models[0]
                 setSelectedModel(defaultModel)
+                _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_default_model_selected', `${defaultModel}|codestral|total:${models.length}`])
                 // Sync the default model with the backend
                 try {
                   await props.plugin.call('remixAI', 'setModel', defaultModel)
@@ -496,6 +513,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               timestamp: Date.now(),
               sentiment: 'none'
             }])
+            // Log Ollama unavailable event
+            _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_unavailable', 'switching_to_mistralai'])
+            // Set failure flag before switching back to prevent success message
+            setIsOllamaFailureFallback(true)
             // Automatically switch back to mistralai
             setAssistantChoice('mistralai')
           }
@@ -509,6 +530,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             timestamp: Date.now(),
             sentiment: 'none'
           }])
+          // Log Ollama connection error
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_connection_error', `${error.message || 'unknown'}|switching_to_mistralai`])
+          // Set failure flag before switching back to prevent success message
+          setIsOllamaFailureFallback(true)
           // Switch back to mistralai on error
           setAssistantChoice('mistralai')
         }
@@ -526,16 +551,20 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   }, [])
 
   const handleModelSelection = useCallback(async (modelName: string) => {
+    const previousModel = selectedModel
     setSelectedModel(modelName)
     setShowModelOptions(false)
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_model_selected', `${modelName}|from:${previousModel || 'none'}`])
     // Update the model in the backend
     try {
       await props.plugin.call('remixAI', 'setModel', modelName)
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_model_set_backend_success', modelName])
     } catch (error) {
       console.warn('Failed to set model:', error)
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_model_set_backend_failed', `${modelName}|${error.message || 'unknown'}`])
     }
     _paq.push(['trackEvent', 'remixAI', 'SetOllamaModel', modelName])
-  }, [props.plugin])
+  }, [props.plugin, selectedModel])
 
   // refresh context whenever selection changes (even if selector is closed)
   useEffect(() => {

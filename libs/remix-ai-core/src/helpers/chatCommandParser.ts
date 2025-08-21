@@ -77,6 +77,15 @@ export class ChatCommandParser {
   private async handleAssistant(provider: string, ref) {
     if (provider === 'openai' || provider === 'mistralai' || provider === 'anthropic' || provider === 'ollama') {
       try {
+        // Special handling for Ollama - check availability first
+        if (provider === 'ollama') {
+          const available = await isOllamaAvailable();
+          if (!available) {
+            // Don't set the provider if Ollama is not available
+            return `Failed to set AI Provider to \`${provider}\``; // Return empty string to suppress success message - error will be shown by UI
+          }
+        }
+
         await ref.props.call('remixAI', 'setAssistantProvider', provider);
         return "AI Provider set to `" + provider + "` successfully! "
       } catch (error) {
