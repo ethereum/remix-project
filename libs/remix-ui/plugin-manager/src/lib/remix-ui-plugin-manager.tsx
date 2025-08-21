@@ -238,7 +238,7 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
               <span
                 className={`badge rounded-pill ${activeTab === 'active' ? 'bg-primary' : 'bg-secondary'}`}
                 style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
-                data-id="pluginManagerActiveCount"
+                data-id="pluginManagerComponentActiveTilesCount"
               >
                 {activeCount}
               </span>
@@ -252,7 +252,7 @@ export const RemixUiPluginManager = ({ pluginComponent }: RemixUiPluginManagerPr
               Inactive{' '}
               <span
                 className={`badge rounded-pill ${activeTab === 'inactive' ? 'bg-primary' : 'bg-secondary'}`}
-                data-id="pluginManagerInactiveCount" 
+                data-id="pluginManagerComponentInactiveTilesCount" 
                 style={{color: state.themeQuality.name === 'dark' ? 'white' : 'black'}}
               >
                 {inactiveCount}

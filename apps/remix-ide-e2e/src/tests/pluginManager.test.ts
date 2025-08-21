@@ -14,39 +14,33 @@ module.exports = {
       .assert.visible('[data-id="pluginManagerComponentPluginManager"]', 'Plugin Manager component is visible.')
       .waitForElementVisible('[data-id="pluginManagerComponentSearchInput"]')
       .setValue('[data-id="pluginManagerComponentSearchInput"]', 'debugger')
-      .assert.visible('[data-id="plugin-manager-plugin-card-debugger"]', 'Debugger plugin card is visible after search.')
+      .waitForElementVisible('[data-id="pluginManagerComponentActiveTile"]', 5000)
+      .assert.containsText('[data-id="pluginManagerComponentActiveTile"]', 'Debugger')
       .clearValue('[data-id="pluginManagerComponentSearchInput"]')
   },
 
   'Should activate and deactivate a plugin #group1 #pr': function (browser) {
     let initialActiveCount
-    let toggleSel
 
     browser
       .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
       .click('[data-id="pluginManagerActiveTab"]')
-      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+      .getText('[data-id="pluginManagerComponentActiveTilesCount"]', (r) => {
         initialActiveCount = parseInt(r.value)
       })
       .click('[data-id="pluginManagerInactiveTab"]')
-      .waitForElementVisible('[data-id^="plugin-manager-plugin-card-"] [id^="toggleSwitch-"]', 10000)
-      .getAttribute('[data-id^="plugin-manager-plugin-card-"] [id^="toggleSwitch-"]', 'id', (res) => {
-        toggleSel = `#${res.value}`
-      })
-      .perform(() => {
-        browser.waitForElementVisible(toggleSel, 5000).click(toggleSel)
-      })
+      .waitForElementVisible('[data-id^="pluginManagerComponentActivateButton"]', 10000)
+      .click('css selector', '[data-id^="pluginManagerComponentActivateButton"]')
       .pause(1200)
       .click('[data-id="pluginManagerActiveTab"]')
-      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+      .getText('[data-id="pluginManagerComponentActiveTilesCount"]', (r) => {
         const newActiveCount = parseInt(r.value)
         browser.assert.equal(newActiveCount, initialActiveCount + 1, `Active count should increase to ${initialActiveCount + 1}.`)
       })
-      .perform(() => {
-        browser.waitForElementVisible(toggleSel, 5000).click(toggleSel)
-      })
+      .waitForElementVisible('[data-id^="pluginManagerComponentDeactivateButton"]', 10000)
+      .click('css selector', '[data-id^="pluginManagerComponentDeactivateButton"]')
       .pause(1200)
-      .getText('[data-id="pluginManagerActiveCount"]', (r) => {
+      .getText('[data-id="pluginManagerComponentActiveTilesCount"]', (r) => {
         const finalActiveCount = parseInt(r.value)
         browser.assert.equal(finalActiveCount, initialActiveCount, `Active count should return to ${initialActiveCount}.`)
       })

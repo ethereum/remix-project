@@ -46,7 +46,7 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
         <header className="form-group mb-0 d-flex flex-column bg-light plugins-header pt-3 pb-2 px-3">
           <div className="pb-3 mb-3 border-bottom w-100">
-            <button onClick={openModal} className="btn btn-secondary btn-sm d-flex align-items-center justify-content-center w-100" data-id="pluginManagerComponentConnectButton">
+            <button onClick={openModal} className="btn btn-secondary btn-sm d-flex align-items-center justify-content-center w-100" data-id="pluginManagerComponentPluginSearchButton">
               <img className="icon-pluginManager me-1" style={{filter: "invert(1)"}} src="assets/img/pluginManager.webp" alt="pluginManager" />
               <FormattedMessage id="pluginManager.connectExternal" defaultMessage="Connect to an external plugin" />
             </button>
