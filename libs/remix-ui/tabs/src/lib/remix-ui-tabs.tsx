@@ -70,7 +70,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
     return state
   }
 }
-const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
+const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr', 'yul']
 
 export const TabsUI = (props: TabsUIProps) => {
 
@@ -82,6 +82,10 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
   const appContext = useContext(AppContext)
+
+  const compileSeq = useRef(0)
+  const compileWatchdog = useRef<number | null>(null)
+  const settledSeqRef = useRef<number>(0)
 
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
 
@@ -193,7 +197,7 @@ export const TabsUI = (props: TabsUIProps) => {
       setFileDecorations
     })
     return () => {
-      tabsElement.current.removeEventListener('wheel', transformScroll)
+      if (tabsElement.current) tabsElement.current.removeEventListener('wheel', transformScroll)
     }
   }, [])
 
@@ -208,9 +212,27 @@ export const TabsUI = (props: TabsUIProps) => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
 
+  useEffect(() => {
+    if (!props.plugin || tabsState.selectedIndex < 0) return
+
+    const currentPath = props.tabs[tabsState.selectedIndex]?.name
+    if (!currentPath) return
+
+    const listener = (path: string) => {
+      if (currentPath.endsWith(path)) {
+        setCompileState('idle')
+      }
+    }
+
+    props.plugin.on('editor', 'contentChanged', listener)
+
+    return () => {
+      props.plugin.off('editor', 'contentChanged')
+    }
+  }, [tabsState.selectedIndex, props.plugin, props.tabs])
+
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
     setCompileState('compiling')
-    await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
 
     await props.plugin.call('manager', 'activatePlugin', 'solidity')
     await props.plugin.call('menuicons', 'select', 'solidity')
@@ -218,7 +240,7 @@ export const TabsUI = (props: TabsUIProps) => {
       await props.plugin.call('solidity', 'compile', active().substr(active().indexOf('/') + 1, active().length))
       _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
 
-      setTimeout(() => {
+      setTimeout(async () => {
         let buttonId
         if (storageType === 'ipfs') {
           buttonId = 'publishOnIpfs'
@@ -231,13 +253,17 @@ export const TabsUI = (props: TabsUIProps) => {
         if (buttonToClick) {
           buttonToClick.click()
         } else {
-          props.plugin.call('notification', 'toast', 'Could not find the publish button.')
+          await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
         }
       }, 500)
 
     } catch (e) {
       console.error(e)
-      await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
+      await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+      await props.plugin.call('manager', 'activatePlugin', 'solidity')
+      await props.plugin.call('menuicons', 'select', 'solidity')
     }
 
     setCompileState('idle')
@@ -307,17 +333,99 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }
 
+  const waitForFreshCompilationResult = async (
+    mySeq: number,
+    targetPath: string,
+    startMs: number,
+    maxWaitMs = 1500,
+    intervalMs = 120
+  ) => {
+    const norm = (p: string) => p.replace(/^\/+/, '')
+    const fileName = norm(targetPath).split('/').pop() || norm(targetPath)
+
+    const hasFile = (res: any) => {
+      if (!res) return false
+      const byContracts =
+        res.contracts && typeof res.contracts === 'object' &&
+        Object.keys(res.contracts).some(k => k.endsWith(fileName) || norm(k) === norm(targetPath))
+      const bySources =
+        res.sources && typeof res.sources === 'object' &&
+        Object.keys(res.sources).some(k => k.endsWith(fileName) || norm(k) === norm(targetPath))
+      return byContracts || bySources
+    }
+
+    let last: any = null
+    const until = startMs + maxWaitMs
+    while (Date.now() < until) {
+      if (mySeq !== compileSeq.current) return null
+      try {
+        const res = await props.plugin.call('solidity', 'getCompilationResult')
+        last = res
+        const ts = (res && (res.timestamp || res.timeStamp || res.time || res.generatedAt)) || null
+        const isFreshTime = typeof ts === 'number' ? ts >= startMs : true
+        if (res && hasFile(res) && isFreshTime) return res
+      } catch {}
+      await new Promise(r => setTimeout(r, intervalMs))
+    }
+    return last
+  }
+
+  const attachCompilationListener = (compilerName: string, mySeq: number, path: string, startedAt: number) => {
+    try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+
+    const onFinished = async (_success: boolean) => {
+      if (mySeq !== compileSeq.current || settledSeqRef.current === mySeq) return
+
+      if (compileWatchdog.current) {
+        clearTimeout(compileWatchdog.current)
+        compileWatchdog.current = null
+      }
+
+      const fresh = await waitForFreshCompilationResult(mySeq, path, startedAt)
+
+      if (!fresh) {
+        setCompileState('idle')
+        await props.plugin.call('manager', 'activatePlugin', 'solidity')
+        await props.plugin.call('menuicons', 'select', 'solidity')
+      } else {
+        const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
+        if (errs.length > 0) {
+          setCompileState('idle')
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
+        } else {
+          setCompileState('compiled')
+        }
+      }
+      settledSeqRef.current = mySeq
+      try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+    }
+    props.plugin.on(compilerName, 'compilationFinished', onFinished)
+  }
+
   const handleCompileClick = async () => {
     setCompileState('compiling')
     _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
 
     try {
-      const path = active().substr(active().indexOf('/') + 1, active().length)
+      const activePathRaw = active()
+      if (!activePathRaw || activePathRaw.indexOf('/') === -1) {
+        setCompileState('idle')
+        props.plugin.call('notification', 'toast', 'No file selected.')
+        return
+      }
+      const path = activePathRaw.substr(activePathRaw.indexOf('/') + 1)
 
       if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-        const content = await props.plugin.call('fileManager', 'readFile', path)
-        await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
-        setCompileState('compiled')
+        try {
+          const content = await props.plugin.call('fileManager', 'readFile', path)
+          await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+          setCompileState('compiled')
+        } catch (e) {
+          console.error(e)
+          props.plugin.call('notification', 'toast', `Script error: ${e.message}`)
+          setCompileState('idle')
+        }
         return
       }
 
@@ -334,21 +442,44 @@ export const TabsUI = (props: TabsUIProps) => {
         return
       }
 
-      props.plugin.once(compilerName, 'compilationFinished', (fileName, source, languageVersion, data) => {
-        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
+      await props.plugin.call('fileManager', 'saveCurrentFile')
+      await props.plugin.call('manager', 'activatePlugin', compilerName)
 
-        if (hasErrors) {
-          setCompileState('idle')
-        } else {
-          setCompileState('compiled')
+      const mySeq = ++compileSeq.current
+      const startedAt = Date.now()
+
+      attachCompilationListener(compilerName, mySeq, path, startedAt)
+
+      if (compileWatchdog.current) clearTimeout(compileWatchdog.current)
+      compileWatchdog.current = window.setTimeout(async () => {
+        if (mySeq !== compileSeq.current || settledSeqRef.current === mySeq) return
+        const maybe = await props.plugin.call('solidity', 'getCompilationResult').catch(() => null)
+        if (maybe) {
+          const fresh = await waitForFreshCompilationResult(mySeq, path, startedAt, 400, 120)
+          if (fresh) {
+            const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
+            setCompileState(errs.length ? 'idle' : 'compiled')
+            if (errs.length) {
+              await props.plugin.call('manager', 'activatePlugin', compilerName)
+              await props.plugin.call('menuicons', 'select', compilerName)
+            }
+            settledSeqRef.current = mySeq
+            return
+          }
         }
-      })
+        setCompileState('idle')
+        await props.plugin.call('manager', 'activatePlugin', compilerName)
+        await props.plugin.call('menuicons', 'select', compilerName)
+        settledSeqRef.current = mySeq
+        try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+      }, 3000)
 
       if (tabsState.currentExt === 'vy') {
         await props.plugin.call(compilerName, 'vyperCompileCustomAction')
       } else {
         await props.plugin.call(compilerName, 'compile', path)
       }
+
     } catch (e) {
       console.error(e)
       setCompileState('idle')
@@ -415,7 +546,6 @@ export const TabsUI = (props: TabsUIProps) => {
               <RunScriptDropdown
                 plugin={props.plugin}
                 onRun={handleRunScript}
-                onNotify={(msg) => console.log(msg)}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
             ) : (
@@ -425,7 +555,6 @@ export const TabsUI = (props: TabsUIProps) => {
                   compiledFileName={active()}
                   plugin={props.plugin}
                   disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                  onNotify={(msg) => console.log(msg)}
                   onRequestCompileAndPublish={handleCompileAndPublish}
                   setCompileState={setCompileState}
                 />

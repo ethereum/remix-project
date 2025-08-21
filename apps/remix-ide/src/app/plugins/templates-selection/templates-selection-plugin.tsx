@@ -308,6 +308,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                                 }
                               }}
                               className="btn btn-sm me-2 border border-primary"
+                              data-template-name={item.name}
                             >
                               {isElectron() ?
                                 <><i className='fa fa-folder-open me-1'></i>Create</> : 'Create'}

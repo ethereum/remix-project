@@ -479,7 +479,7 @@ export function RemixUiTopbar () {
             {currentReleaseVersion}
           </span>
         </div>
-        <div className="m-1" style={{ minWidth: '33%' }}>
+        <div className="m-1 justify-content-center d-flex align-self-center " style={{ minWidth: '33%' }}>
           <WorkspacesDropdown
             menuItems={menuItems}
             toggleDropdown={toggleDropdown}

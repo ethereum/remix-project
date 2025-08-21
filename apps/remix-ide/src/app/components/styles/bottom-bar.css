@@ -5,29 +5,6 @@
     background-color: var(--bs-light) !important;
     height: 32px;
 }
-  
-.explain-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 12px;
-    background: color-mix(in srgb, var(--custom-ai-color) 8%, transparent);;
-    color: var(--custom-ai-color);
-    border-radius: 4px;
-    font-family: 'Nunito Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: normal;
-    cursor: pointer;
-}
-
-.explain-btn span {
-    color: var(--custom-ai-color);
-}
-  
-.explain-btn:hover {
-    opacity: 0.8;
-}
 
 .explain-icon {
     width: 12px;

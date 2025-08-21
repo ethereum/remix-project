@@ -13,37 +13,106 @@ interface CompileDropdownProps {
   plugin?: any
   disabled?: boolean
   compiledFileName?: string
-  onNotify?: (msg: string) => void
   onOpen?: () => void
   onRequestCompileAndPublish?: (type: string) => void
   setCompileState: (state: 'idle' | 'compiling' | 'compiled') => void
 }
 
-export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugin, disabled, onNotify, onOpen, onRequestCompileAndPublish, compiledFileName, setCompileState }) => {
+export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugin, disabled, onOpen, onRequestCompileAndPublish, compiledFileName, setCompileState }) => {
   const [scriptFiles, setScriptFiles] = useState<string[]>([])
 
-  const compileThen = async (nextAction: () => void) => {
+  const compileThen = async (nextAction: () => void, actionName: string) => {
     setCompileState('compiling')
 
-    setTimeout(async () => {
-      plugin.once('solidity', 'compilationFinished', (data) => {
-        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
-        if (hasErrors) {
-          setCompileState('idle')
-          plugin.call('notification', 'toast', 'Compilation failed')
-        } else {
-          setCompileState('compiled')
-          nextAction()
-        }
-      })
+    try {
+      await plugin.call('fileManager', 'saveCurrentFile')
+      await plugin.call('manager', 'activatePlugin', 'solidity')
 
-      try {
-        await plugin.call('solidity', 'compile', tabPath)
-      } catch (e) {
-        console.error(e)
-        setCompileState('idle')
+      const startedAt = Date.now()
+      const targetPath = tabPath || ''
+
+      const waitForFreshCompilationResult = async (
+        path: string,
+        startMs: number,
+        maxWaitMs = 1500,
+        intervalMs = 120
+      ) => {
+        const norm = (p: string) => p.replace(/^\/+/, '')
+        const fileName = (norm(path).split('/').pop() || norm(path)).toLowerCase()
+        const hasFile = (res: any) => {
+          if (!res) return false
+          const inContracts =
+            res.contracts && typeof res.contracts === 'object' &&
+            Object.keys(res.contracts).some(k => k.toLowerCase().endsWith(fileName) || norm(k).toLowerCase() === norm(path).toLowerCase())
+          const inSources =
+            res.sources && typeof res.sources === 'object' &&
+            Object.keys(res.sources).some(k => k.toLowerCase().endsWith(fileName) || norm(k).toLowerCase() === norm(path).toLowerCase())
+          return inContracts || inSources
+        }
+
+        let last: any = null
+        const until = startMs + maxWaitMs
+        while (Date.now() < until) {
+          try {
+            const res = await plugin.call('solidity', 'getCompilationResult')
+            last = res
+            const ts = (res && (res.timestamp || res.timeStamp || res.time || res.generatedAt)) || null
+            const isFreshTime = typeof ts === 'number' ? ts >= startMs : true
+            if (res && hasFile(res) && isFreshTime) return res
+          } catch {}
+          await new Promise(r => setTimeout(r, intervalMs))
+        }
+        return last
       }
-    }, 0)
+
+      let settled = false
+      let watchdog: NodeJS.Timeout | null = null
+      const cleanup = () => {
+        try { plugin.off('solidity', 'compilationFinished', onFinished) } catch {}
+        if (watchdog) { clearTimeout(watchdog); watchdog = null }
+      }
+
+      const finishWithErrorUI = async () => {
+        setCompileState('idle')
+        await plugin.call('manager', 'activatePlugin', 'solidity')
+        await plugin.call('menuicons', 'select', 'solidity')
+        plugin.call('notification', 'toast', `Compilation failed, skipping '${actionName}'.`)
+      }
+
+      const onFinished = async () => {
+        if (settled) return
+        settled = true
+        cleanup()
+
+        const fresh = await waitForFreshCompilationResult(targetPath, startedAt).catch(() => null)
+        if (!fresh) {
+          await finishWithErrorUI()
+          return
+        }
+
+        const errs = Array.isArray(fresh.errors)
+          ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error')
+          : []
+
+        if (errs.length > 0) {
+          await finishWithErrorUI()
+          return
+        }
+
+        setCompileState('compiled')
+        nextAction()
+      }
+
+      plugin.on('solidity', 'compilationFinished', onFinished)
+
+      watchdog = setTimeout(() => { onFinished() }, 10000)
+
+      await plugin.call('solidity', 'compile', targetPath)
+
+    } catch (e) {
+      console.error(e)
+      setCompileState('idle')
+    }
   }
 
   const fetchScripts = async () => {
@@ -55,10 +124,8 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       }
       const tsFiles = Object.keys(files).filter(f => f.endsWith('.ts'))
       setScriptFiles(tsFiles)
-      onNotify?.(`Loaded ${tsFiles.length} script files`)
     } catch (err) {
       console.error("Failed to read scripts directory:", err)
-      onNotify?.("Failed to read scripts directory")
     }
   }
 
@@ -66,8 +133,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
     await compileThen(async () => {
       const content = await plugin.call('fileManager', 'readFile', path)
       await plugin.call('scriptRunnerBridge', 'execute', content, path)
-      onNotify?.(`Executed script: ${path}`)
-    })
+    }, 'Run Script')
   }
 
   const runRemixAnalysis = async () => {
@@ -78,8 +144,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
         await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
       }
       plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
-      onNotify?.("Ran Remix static analysis")
-    })
+    }, 'Run Remix Analysis')
   }
 
   const handleScanContinue = async () => {
@@ -87,7 +152,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       const firstSlashIndex = compiledFileName.indexOf('/')
       const finalPath = firstSlashIndex > 0 ? compiledFileName.substring(firstSlashIndex + 1) : compiledFileName
       await handleSolidityScan(plugin, finalPath)
-    })
+    }, 'Run Solidity Scan')
   }
 
   const runSolidityScan = async () => {
@@ -119,7 +184,6 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       await plugin.call('manager', 'activatePlugin', 'solidity')
     }
     plugin.call('menuicons', 'select', 'solidity')
-    onNotify?.("Ran Remix Solidity Compiler")
   }
 
   const items: MenuItem[] = [
@@ -139,7 +203,7 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       icon: <ArrowRightBig />,
       dataId: 'compile-run-analysis-menu-item',
       submenu: [
-        { label: 'Run Remix Analysis', icon: <AnalysisLogo />, onClick: runRemixAnalysis, dataId: 'run-remix-analysis-submenu-item' },
+        { label: 'Run Remix Analysis', icon: <SettingsLogo />, onClick: runRemixAnalysis, dataId: 'run-remix-analysis-submenu-item' },
         { label: 'Run Solidity Scan', icon: <SolidityScanLogo />, onClick: runSolidityScan, dataId: 'run-solidity-scan-submenu-item' }
       ]
     },

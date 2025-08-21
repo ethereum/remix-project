@@ -14,7 +14,7 @@ class ScrollInto extends EventEmitter {
 }
 
 function _scrollInto (browser: NightwatchBrowser, target: string, cb: VoidFunction): void {
-  browser.execute(function (target) {
+  browser.executeScript(function (target) {
     document.querySelector(target).scrollIntoView(({ block: 'center' }))
   }, [target], function () {
     cb()
