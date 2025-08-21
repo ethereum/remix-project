@@ -15,7 +15,7 @@ export function SetupExports () {
           <label className="circuit_inner_label form-check-label">
             <FormattedMessage id="circuit.provingScheme" />
           </label>
-          <div className="radio form-control custom-radio mb-1 form-check">
+          <div className="radio form-control custom-radio mb-1 form-check bg-body">
             <input
               type="radio"
               className="align-middle form-check-input"
@@ -30,7 +30,7 @@ export function SetupExports () {
               Groth16
             </label>
           </div>
-          <div className="radio form-control custom-radio form-check">
+          <div className="radio form-control custom-radio form-check bg-body">
             <input
               type="radio"
               className="align-middle form-check-input"
@@ -85,7 +85,7 @@ export function SetupExports () {
               onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFICATION_CONTRACT', payload: !circuitApp.appState.exportVerificationContract })}
               checked={circuitApp.appState.exportVerificationContract}
             />
-            <label className="form-check-label pt-1" htmlFor="circuitExportVerifierContract">
+            <label className="form-check-label" htmlFor="circuitExportVerifierContract">
               <FormattedMessage id="circuit.exportVerifierContract" />
             </label>
           </div>
@@ -98,7 +98,7 @@ export function SetupExports () {
               onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFICATION_KEY', payload: !circuitApp.appState.exportVerificationKey })}
               checked={circuitApp.appState.exportVerificationKey}
             />
-            <label className="form-check-label pt-1" htmlFor="circuitExportVerificationKey">
+            <label className="form-check-label" htmlFor="circuitExportVerificationKey">
               <FormattedMessage id="circuit.exportVerificationKey" />
             </label>
           </div>
