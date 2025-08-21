@@ -7,7 +7,7 @@ module.exports = {
     init(browser, done, undefined, false)
   },
 
-  'Should load Plugin Manager and search for a plugin #group1 #pr': function (browser: NightwatchBrowser) {
+  'Should load Plugin Manager and search for a plugin #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('pluginManager')
       .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
@@ -19,7 +19,7 @@ module.exports = {
       .clearValue('[data-id="pluginManagerComponentSearchInput"]')
   },
 
-  'Should activate and deactivate a plugin #group1 #pr': function (browser) {
+  'Should activate and deactivate a plugin #group1': function (browser) {
     let initialActiveCount
 
     browser
@@ -46,7 +46,7 @@ module.exports = {
       })
   },
 
-  'Should filter by "Only maintained by Remix" #group2 #pr': function (browser: NightwatchBrowser) {
+  'Should filter by "Only maintained by Remix" #group2': function (browser: NightwatchBrowser) {
     let initialAllCount: number
     let filteredCount: number
 
@@ -71,7 +71,7 @@ module.exports = {
       })
   },
 
-  'Should filter by category and clear filters #group2 #pr': function (browser: NightwatchBrowser) {
+  'Should filter by category and clear filters #group2': function (browser: NightwatchBrowser) {
     let initialAllCount: number
 
     browser
