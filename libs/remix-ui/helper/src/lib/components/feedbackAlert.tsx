@@ -22,14 +22,14 @@ export function FeedbackAlert ({ message, askGPT }: FeedbackAlertProps) {
             <CopyToClipboard content={message} className="p-0 m-0 far fa-copy error" direction={'top'} />
           </span>
           <button
-              className="btn btn-ai"
-              data-id="ask-remix-ai-button"
-              onClick={(event) => { 
-                event.stopPropagation() 
-                askGPT() }}
-            >
-              <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
-              <span>Ask RemixAI</span>
+            className="btn btn-ai"
+            data-id="ask-remix-ai-button"
+            onClick={(event) => {
+              event.stopPropagation()
+              askGPT() }}
+          >
+            <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
+            <span>Ask RemixAI</span>
           </button>
         </div>
       </>
