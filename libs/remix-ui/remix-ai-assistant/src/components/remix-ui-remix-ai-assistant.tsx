@@ -442,7 +442,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         if (!isOllamaFailureFallback) {
           dispatchActivity('button', 'setAssistant')
           setMessages([])
-          sendPrompt(`/setAssistant ${assistantChoice}`)
+          if (assistantChoice !== 'ollama') sendPrompt(`/setAssistant ${assistantChoice}`)
           _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
           // Log specific Ollama selection
           if (assistantChoice === 'ollama') {
