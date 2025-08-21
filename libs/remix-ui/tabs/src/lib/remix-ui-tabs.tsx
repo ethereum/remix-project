@@ -219,15 +219,15 @@ export const TabsUI = (props: TabsUIProps) => {
     if (!currentPath) return
 
     const listener = (path: string) => {
-      if (currentPath.endsWith(path)) { 
-          setCompileState('idle')
+      if (currentPath.endsWith(path)) {
+        setCompileState('idle')
       }
     }
 
     props.plugin.on('editor', 'contentChanged', listener)
 
     return () => {
-        props.plugin.off('editor', 'contentChanged')
+      props.plugin.off('editor', 'contentChanged')
     }
   }, [tabsState.selectedIndex, props.plugin, props.tabs])
 
@@ -376,9 +376,9 @@ export const TabsUI = (props: TabsUIProps) => {
     const onFinished = async (_success: boolean) => {
       if (mySeq !== compileSeq.current || settledSeqRef.current === mySeq) return
 
-      if (compileWatchdog.current) { 
-        clearTimeout(compileWatchdog.current) 
-        compileWatchdog.current = null 
+      if (compileWatchdog.current) {
+        clearTimeout(compileWatchdog.current)
+        compileWatchdog.current = null
       }
 
       const fresh = await waitForFreshCompilationResult(mySeq, path, startedAt)
@@ -437,9 +437,9 @@ export const TabsUI = (props: TabsUIProps) => {
         nr: 'noir-compiler'
       }[tabsState.currentExt]
 
-      if (!compilerName) { 
-        setCompileState('idle') 
-        return 
+      if (!compilerName) {
+        setCompileState('idle')
+        return
       }
 
       await props.plugin.call('fileManager', 'saveCurrentFile')
@@ -462,7 +462,7 @@ export const TabsUI = (props: TabsUIProps) => {
             if (errs.length) {
               await props.plugin.call('manager', 'activatePlugin', 'solidity')
               await props.plugin.call('menuicons', 'select', 'solidity')
-            } 
+            }
             settledSeqRef.current = mySeq
             return
           }
@@ -479,7 +479,7 @@ export const TabsUI = (props: TabsUIProps) => {
       } else {
         await props.plugin.call(compilerName, 'compile', path)
       }
-      
+
     } catch (e) {
       console.error(e)
       setCompileState('idle')
