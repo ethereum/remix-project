@@ -58,7 +58,7 @@ export function WitnessSection () {
               onChange={() => { dispatch({ type: 'SET_EXPORT_WTNS_JSON', payload: !exportWtnsJson }) }}
               checked={exportWtnsJson}
             />
-            <label className="form-check-label pt-1" htmlFor="circuitExportWtnsJson">
+            <label className="form-check-label" htmlFor="circuitExportWtnsJson">
               <FormattedMessage id="circuit.exportWtnsJson" />
             </label>
           </div>
