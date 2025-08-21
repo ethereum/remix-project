@@ -21,7 +21,7 @@ const FilterView = ({ categoryMap, selectedCategories, setSelectedCategories }: 
       : [...selectedCategories, categoryId]
     setSelectedCategories(newSelection)
   }
-  
+
   const clearFilters = () => {
     setSelectedCategories([])
   }
