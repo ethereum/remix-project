@@ -460,16 +460,16 @@ export const TabsUI = (props: TabsUIProps) => {
             const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
             setCompileState(errs.length ? 'idle' : 'compiled')
             if (errs.length) {
-              await props.plugin.call('manager', 'activatePlugin', 'solidity')
-              await props.plugin.call('menuicons', 'select', 'solidity')
+              await props.plugin.call('manager', 'activatePlugin', compilerName)
+              await props.plugin.call('menuicons', 'select', compilerName)
             }
             settledSeqRef.current = mySeq
             return
           }
         }
         setCompileState('idle')
-        await props.plugin.call('manager', 'activatePlugin', 'solidity')
-        await props.plugin.call('menuicons', 'select', 'solidity')
+        await props.plugin.call('manager', 'activatePlugin', compilerName)
+        await props.plugin.call('menuicons', 'select', compilerName)
         settledSeqRef.current = mySeq
         try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
       }, 3000)
