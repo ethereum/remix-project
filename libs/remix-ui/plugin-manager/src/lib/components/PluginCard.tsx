@@ -22,7 +22,7 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
   }
 
   return (
-    <article className="mb-3 card h-100" data-id={`plugin-manager-plugin-card-${profile.name}`}>
+    <article className="mb-3 card h-100" data-id={`pluginManagerComponentActiveTile`}>
       <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
         <div className='d-flex align-items-center px-2'>
           <RenderIf condition={isLoading}>
@@ -33,7 +33,15 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
           </RenderIf>
           <span className="fw-bold" style={{ color: isDark ? 'white' : 'black' }}>{profile.displayName || profile.name}</span>
         </div>
-        <ToggleSwitch id={`toggleSwitch-${profile.name}`} isOn={isActive} onClick={() => togglePlugin(profile.name)} />
+        <div
+          data-id={`pluginManagerComponent${isActive ? 'Deactivate' : 'Activate'}Button${profile.name}`}
+        >
+          <ToggleSwitch
+            id={`toggleSwitch-${profile.name}`}
+            isOn={isActive}
+            onClick={() => togglePlugin(profile.name)}
+          />
+        </div>
       </div>
       
       <div className="d-flex flex-column justify-content-between h-100">
