@@ -126,8 +126,6 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       // .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
-      .pause()
-      // .pause(100)
       .currentWorkspaceIs('workspace_blank')
       .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
