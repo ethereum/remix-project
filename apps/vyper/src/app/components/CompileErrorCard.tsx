@@ -25,7 +25,7 @@ export function CompileErrorCard(props: { output: VyperCompilationError, plugin:
             Ask RemixAI
           </span>
           <span className="ms-3 pt-1 py-1">
-            <CopyToClipboard content={props.output.message} className={`p-0 m-0 far fa-copy alert alert-danger`} direction={'top'} />
+            <CopyToClipboard content={props.output.message} className={`p-0 m-0 far fa-copy alert alert-danger border-0`} direction={'top'} />
           </span>
         </div>
       </div>
