@@ -75,12 +75,19 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     setLoadingPlugins(loadingPlugins.filter((id) => id !== pluginId))
   }
 
-  const handleFeaturedPluginActionClick = (pluginInfo: PluginInfo) => {
+  const handleFeaturedPluginActionClick = async (pluginInfo: PluginInfo) => {
     _paq.push(['trackEvent', 'hometab', 'featuredPluginsActionClick', pluginInfo.pluginTitle])
     if (pluginInfo.action.type === 'link') {
       window.open(pluginInfo.action.url, '_blank')
     } else if (pluginInfo.action.type === 'methodCall') {
-      plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
+      if (pluginInfo.action.pluginMethod === 'activatePlugin') {
+        console.log('pluginInfo--->', pluginInfo)
+        console.log('pluginInfo.action.pluginName--->', pluginInfo.action.pluginName)
+        console.log('pluginInfo.action.pluginMethod--->', pluginInfo.action.pluginMethod)
+        console.log('pluginInfo.action.pluginArgs--->', pluginInfo.action.pluginArgs)
+        await plugin.appManager.activatePlugin([pluginInfo.action.pluginName])
+        await plugin.call('menuicons', 'select', pluginInfo.action.pluginName)
+      } else plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
     }
   }
 
@@ -105,7 +112,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
             <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
           </div>
           <div className="px-3 pb-3">
-            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => handleFeaturedPluginActionClick(pluginInfo)}>
+            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={async () => await handleFeaturedPluginActionClick(pluginInfo)}>
               <i className="fa-solid fa-book me-1"></i>{pluginInfo.action.label}
             </button>
           </div>
