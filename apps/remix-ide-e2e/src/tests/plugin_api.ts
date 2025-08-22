@@ -418,11 +418,13 @@ module.exports = {
 
   // MODAL
 
-  'Should open alerts from script #group9': function (browser: NightwatchBrowser) {
+  'Should open alerts from script #group9 #pr': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
       .useCss()
       .addFile('test_modal.js', { content: testModalToasterApi })
+      .click('*[data-id="movePluginToLeft"]')
+      .clickLaunchIcon('filePanel')
       .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
       .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
