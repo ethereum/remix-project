@@ -81,10 +81,6 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
       window.open(pluginInfo.action.url, '_blank')
     } else if (pluginInfo.action.type === 'methodCall') {
       if (pluginInfo.action.pluginMethod === 'activatePlugin') {
-        console.log('pluginInfo--->', pluginInfo)
-        console.log('pluginInfo.action.pluginName--->', pluginInfo.action.pluginName)
-        console.log('pluginInfo.action.pluginMethod--->', pluginInfo.action.pluginMethod)
-        console.log('pluginInfo.action.pluginArgs--->', pluginInfo.action.pluginArgs)
         await plugin.appManager.activatePlugin([pluginInfo.action.pluginName])
         await plugin.call('menuicons', 'select', pluginInfo.action.pluginName)
       } else plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
