@@ -38,16 +38,14 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
-    const currentActivePlugin = await this.call('pinnedPanel', 'currentFocus')
-    if (currentActivePlugin === 'remixaiassistant') {
+    if (!localStorage.getItem('remixaiassistant_firstload_flag')) {
       this.call('sidePanel', 'pinView', this.profile)
       await this.call('layout', 'maximiseSidePanel')
     }
+    localStorage.setItem('remixaiassistant_firstload_flag', '1')
   }
 
-  onDeactivation() {
-
-  }
+  onDeactivation() {}
 
   async makePluginCall(pluginName: string, methodName: string, payload: any) {
     try {
