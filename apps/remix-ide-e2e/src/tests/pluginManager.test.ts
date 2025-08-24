@@ -51,7 +51,6 @@ module.exports = {
     let filteredCount: number
 
     browser
-      .clickLaunchIcon('pluginManager')
       .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
       .click('[data-id="pluginManagerAllTab"]')
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
