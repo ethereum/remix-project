@@ -33,14 +33,19 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
           </RenderIf>
           <span className="fw-bold" style={{ color: isDark ? 'white' : 'black' }}>{profile.displayName || profile.name}</span>
         </div>
-        <div
-          data-id={`pluginManagerComponent${isActive ? 'Deactivate' : 'Activate'}Button${profile.name}`}
-        >
-          <ToggleSwitch
-            id={`toggleSwitch-${profile.name}`}
-            isOn={isActive}
+        <div className="toggle-container">
+          <button
+            type="button"
+            className="btn btn-link p-0 m-0"
+            data-id={`pluginManagerComponent${isActive ? 'Deactivate' : 'Activate'}Button${profile.name}`}
             onClick={() => togglePlugin(profile.name)}
-          />
+            aria-label={`${isActive ? 'Deactivate' : 'Activate'} ${profile.displayName || profile.name}`}
+          >
+            <ToggleSwitch
+              id={`toggleSwitch-${profile.name}`}
+              isOn={isActive}
+            />
+          </button>
         </div>
       </div>
 
