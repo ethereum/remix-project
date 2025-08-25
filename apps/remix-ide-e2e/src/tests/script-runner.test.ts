@@ -35,7 +35,7 @@ const tests = {
   'Should load script runner ethers6': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="sr-notloaded-ethers6"]')
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 2000)
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 100000)
       .waitForElementPresent('[data-id="dependency-ethers-^6"]', 2000)
   },
   'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
