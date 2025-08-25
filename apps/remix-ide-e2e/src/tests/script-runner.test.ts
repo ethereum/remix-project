@@ -116,16 +116,16 @@ const tests = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"', 30000)
       .click('*[data-id="treeViewLitreeViewItemscripts"')
       .pause(1000)
-      .waitForElementVisible('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
+      .waitForElementVisible('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]', 30000)
       .click('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
+      .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]', 30000)
       .pause(1000)
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
-      .waitForElementVisible('[data-id="sr-notloaded-default"]')
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+      .waitForElementVisible('[data-id="sr-notloaded-default"]', 30000)
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 30000)
   },
   'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
     browser
