@@ -1,7 +1,7 @@
 .custom-dropdown-wrapper {
   position: relative;
   display: inline-block;
-  z-index: 1000;
+  z-index: 500;
 }
 
 .custom-dropdown-trigger {
