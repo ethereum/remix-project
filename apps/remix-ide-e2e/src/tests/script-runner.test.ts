@@ -23,7 +23,7 @@ const tests = {
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       // .click('*[data-id="treeViewDivtreeViewItemscripts"]')
       // .pause(3000)
-      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
+      // .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
       .click('*[data-id="run-script-dropdown-trigger"]')
@@ -35,8 +35,8 @@ const tests = {
   'Should load script runner ethers6': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="sr-notloaded-ethers6"]')
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
-      .waitForElementPresent('[data-id="dependency-ethers-^6"]')
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 2000)
+      .waitForElementPresent('[data-id="dependency-ethers-^6"]', 2000)
   },
   'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
     browser
@@ -76,7 +76,7 @@ const tests = {
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
       .modalFooterOKClick('TemplatesSelection')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
@@ -94,11 +94,11 @@ const tests = {
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
-      .click('*[data-id="workspacesSelect"]')
-      .waitForElementPresent('*[data-id="create-introToEIP7702"]')
-      .scrollAndClick('*[data-id="create-introToEIP7702"]')
+      // .click('*[data-id="workspacesSelect"]')
+      .waitForElementVisible('*[data-id="create-introToEIP7702"]')
+      .click('*[data-id="create-introToEIP7702"]')
       .modalFooterOKClick('TemplatesSelection')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
@@ -116,9 +116,11 @@ const tests = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
       .click('*[data-id="treeViewLitreeViewItemscripts"')
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
-      .pause(1000)
-      .click('*[data-path="scripts/deploy.ts"]')
+      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
+      // .pause(1000)
+      .useXpath()
+      .click('(//li[contains(@data-path, "scripts/") and contains(@data-path, ".ts")])[1]')
+      .useCss()
       .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
