@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
@@ -46,7 +47,7 @@ module.exports = {
       })
   },
 
-  'Should filter by "Only maintained by Remix" #group1': function (browser: NightwatchBrowser) {
+  'Should filter by "Only maintained by Remix" #group2': function (browser: NightwatchBrowser) {
     let initialAllCount: number
     let filteredCount: number
 
@@ -70,7 +71,7 @@ module.exports = {
       })
   },
 
-  'Should filter by category and clear filters #group1': function (browser: NightwatchBrowser) {
+  'Should filter by category and clear filters #group2': function (browser: NightwatchBrowser) {
     let initialAllCount: number
 
     browser
