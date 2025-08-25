@@ -418,7 +418,7 @@ module.exports = {
 
   // MODAL
 
-  'Should open alerts from script #group9 #pr': function (browser: NightwatchBrowser) {
+  'Should open alerts from script #group9': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
       .useCss()
