@@ -113,14 +113,11 @@ const tests = {
   'reset to default after template': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"', 30000)
       .click('*[data-id="treeViewLitreeViewItemscripts"')
       .pause(1000)
-      // .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
-      // .pause(1000)
-      .useXpath()
-      .click('(//li[contains(@data-path, "scripts/") and contains(@data-path, ".ts")])[1]')
-      .useCss()
+      .waitForElementVisible('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
+      .click('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
       .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
