@@ -2,7 +2,7 @@ import { AssistantParams } from "../types/models";
 import { workspaceAgent } from "./workspaceAgent";
 import { CompilationResult } from "../types/types";
 import { compilecontracts, compilationParams } from "../helpers/compile";
-
+import { OllamaInferencer } from "../inferencers/local/ollamaInferencer"
 const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Solidity compiler plugin. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
 
 export class ContractAgent {
@@ -36,6 +36,20 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
+    if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
+      console.log("Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
+      // Extract JSON from markdown code blocks
+      if (payload.includes('```json') || payload.includes('```')) {
+        // Match ```json content ``` or ``` content ```
+        const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+          payload = jsonMatch[1].trim();
+        }
+      }
+      console.log("after Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
+    }
+    console.log("Writing results with inferecer ollama: ", this.plugin.remoteInferencer instanceof OllamaInferencer)
+    console.log('AI generated result', payload)
 
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
@@ -78,15 +92,17 @@ export class ContractAgent {
           }
           return "Max attempts reached! Please try again with a different prompt."
         }
-        return "No payload, try again while considering changing the assistant provider to one of these choices `<openai|anthropic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
 
       await statusCallback?.('Processing generated files...')
       this.contracts = {}
-      const parsedFiles = payload
+      const parsedFiles = this.plugin.remoteInferencer instanceof OllamaInferencer ? JSON.parse(payload) : payload
       this.oldPayload = payload
-      this.generationThreadID = parsedFiles['threadID']
+      console.log("reading project name")
+      this.generationThreadID = this.plugin.remoteInferencer instanceof OllamaInferencer ? "" : parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
+      console.log("reading threadid ", this.plugin.remoteInferencer instanceof OllamaInferencer)
 
       this.nAttempts += 1
       if (this.nAttempts === 1) this.mainPrompt=userPrompt
@@ -97,6 +113,7 @@ export class ContractAgent {
 
       await statusCallback?.('Processing Solidity contracts...')
       const genContrats = []
+      console.log("getting contracts", parsedFiles.files)
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
           this.contracts[file.fileName] = { content: file.content }
@@ -104,18 +121,23 @@ export class ContractAgent {
         }
       }
 
+      console.log("compiling contracts")
       await statusCallback?.('Compiling contracts...')
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
+      console.log('compilation result', result)
       if (!result.compilationSucceeded) {
         await statusCallback?.('Compilation failed, fixing errors...')
         // console.log('Compilation failed, trying again recursively ...')
-        const generatedContracts = genContrats.map(contract =>
+        console.log(genContrats)
+        const generatedContracts = (genContrats || []).map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
 
         // Format error files properly according to the schema
+        console.log(result.errfiles)
         const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
-          const errors = fileData.errors.map((err: any) =>
+          console.log(fileData)
+          const errors = (fileData.errors || []).map((err: any) =>
             `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
           ).join('\n  ');
           return `File: ${fileName}\n  ${errors}`;
@@ -133,11 +155,15 @@ export class ContractAgent {
       await statusCallback?.('Finalizing workspace creation...')
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
+      console.log('error - ', error)
       await statusCallback?.('Error occurred, cleaning up...')
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
-      return "Failed to generate secure code on user prompt! Please try again with a different prompt."
+      const rtvalue = this.plugin.remoteInferencer instanceof OllamaInferencer
+        ? "The selected Ollama model might not be supported. Please select another provider for this generation task or try again!"
+        : "Failed to generate secure code on user prompt! Please try again with a different prompt."
+      return rtvalue
     } finally {
       this.nAttempts = 0
     }

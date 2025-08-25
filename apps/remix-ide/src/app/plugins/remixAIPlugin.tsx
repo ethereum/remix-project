@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine';
-import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams } from '@remix/remix-ai-core';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams, OllamaInferencer, isOllamaAvailable, getBestAvailableModel } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -18,7 +18,7 @@ const profile = {
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
     'resetChatRequestBuffer', 'setAssistantThrId',
-    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider'],
+    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider', 'setModel'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -368,8 +368,76 @@ export class RemixAIPlugin extends Plugin {
         AssistantParams.threadId = ''
       }
       this.assistantProvider = provider
+
+      // Switch back to remote inferencer for cloud providers -- important
+      if (this.remoteInferencer && this.remoteInferencer instanceof OllamaInferencer) {
+        this.remoteInferencer = new RemoteInferencer()
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+      }
+    } else if (provider === 'ollama') {
+      const isAvailable = await isOllamaAvailable();
+      if (!isAvailable) {
+        console.error('Ollama is not available. Please ensure Ollama is running.')
+        return
+      }
+
+      const bestModel = await getBestAvailableModel();
+      if (!bestModel) {
+        console.error('No Ollama models available. Please install a model first.')
+        return
+      }
+
+      // Switch to Ollama inferencer
+      this.remoteInferencer = new OllamaInferencer(bestModel);
+      this.remoteInferencer.event.on('onInference', () => {
+        this.isInferencing = true
+      })
+      this.remoteInferencer.event.on('onInferenceDone', () => {
+        this.isInferencing = false
+      })
+
+      if (this.assistantProvider !== provider){
+        // clear the threadIds
+        this.assistantThreadId = ''
+        GenerationParams.threadId = ''
+        CompletionParams.threadId = ''
+        AssistantParams.threadId = ''
+      }
+      this.assistantProvider = provider
+      console.log(`Ollama provider set with model: ${bestModel}`)
     } else {
       console.error(`Unknown assistant provider: ${provider}`)
+    }
+  }
+
+  async setModel(modelName: string) {
+    if (this.assistantProvider === 'ollama' && this.remoteInferencer instanceof OllamaInferencer) {
+      try {
+        const isAvailable = await isOllamaAvailable();
+        if (!isAvailable) {
+          console.error('Ollama is not available. Please ensure Ollama is running.')
+          return
+        }
+
+        this.remoteInferencer = new OllamaInferencer(modelName);
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+
+        console.log(`Ollama model changed to: ${modelName}`)
+      } catch (error) {
+        console.error('Failed to set Ollama model:', error)
+      }
+    } else {
+      console.warn(`setModel is only supported for Ollama provider. Current provider: ${this.assistantProvider}`)
     }
   }
 
