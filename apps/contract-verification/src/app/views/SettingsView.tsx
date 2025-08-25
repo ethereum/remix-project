@@ -47,7 +47,7 @@ export const SettingsView = () => {
                   checked={chainSettings.verifiers['Sourcify']?.useV1API ?? false}
                   onChange={(e) => handleChange('Sourcify', 'useV1API', e.target.checked)}
                 />
-                <label className="form-check-label custom-control-label" htmlFor="sourcify-use-v1-api">
+                <label className="form-check-label custom-control-label ms-1 pt-1" htmlFor="sourcify-use-v1-api">
                   Use V1 API
                 </label>
               </div>

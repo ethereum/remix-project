@@ -38,14 +38,13 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .setValue('[data-id="settingsTabGithubUsername"]', 'circleci')
-      .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
-      .click('[data-id="settingsTabSaveGistToken"]')
+      .setValue('[data-id="settingsTabgithub-user-name"]', 'circleci')
+      .setValue('[data-id="settingsTabgithub-email"]', 'remix@circleci.com')
+      .click('[data-id="settingsTabSavegithub-config"]')
   },
 
   'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
       // .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
       .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')

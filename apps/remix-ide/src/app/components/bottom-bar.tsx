@@ -29,6 +29,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
       } catch (err) {
+        console.info('No current file selected.')
         setCurrentFilePath('')
         setCurrentExt('')
       }
@@ -36,6 +37,10 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
 
     getAI()
     getCurrentExt()
+
+    plugin.on('settings', 'copilotChoiceUpdated', (isChecked) => {
+      setAiSwitch(isChecked)
+    })
 
     plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
     plugin.on('tabs', 'switchApp', async (name: string) => {
@@ -86,7 +91,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     <div className="bottom-bar border-top border-bottom">
       {getExplainLabel() && (
         <button
-          className="btn explain-btn"
+          className="btn btn-ai"
           onClick={handleExplain}
           disabled={explaining || !currentFilePath}
         >

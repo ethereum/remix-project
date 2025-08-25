@@ -20,9 +20,9 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
       .click('*[data-id="verticalIconsKindfilePanel"]')
-      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       // .click('*[data-id="treeViewDivtreeViewItemscripts"]')
-      .pause(2000)
+      // .pause(3000)
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
@@ -76,7 +76,6 @@ const tests = {
       .waitForElementPresent('*[data-id="create-semaphore"]')
       .scrollAndClick('*[data-id="create-semaphore"]')
       .modalFooterOKClick('TemplatesSelection')
-      .pause()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -95,6 +94,7 @@ const tests = {
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
+      .click('*[data-id="workspacesSelect"]')
       .waitForElementPresent('*[data-id="create-introToEIP7702"]')
       .scrollAndClick('*[data-id="create-introToEIP7702"]')
       .modalFooterOKClick('TemplatesSelection')
@@ -113,9 +113,17 @@ const tests = {
   'reset to default after template': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
-      .openFile('scripts/deploy.ts')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"')
+      .click('*[data-id="treeViewLitreeViewItemscripts"')
+      .pause(1000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy.ts"]')
+      .pause(1000)
+      .click('*[data-path="scripts/deploy.ts"]')
+      .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]')
+      .pause(1000)
       .click('*[data-id="run-script-dropdown-trigger"]')
+      .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
       .waitForElementVisible('[data-id="sr-notloaded-default"]')
       .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
