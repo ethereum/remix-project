@@ -47,7 +47,7 @@ module.exports = {
       })
   },
 
-  'Should filter by "Only maintained by Remix" #group2': function (browser: NightwatchBrowser) {
+  'Should filter by "Only maintained by Remix" #group1': function (browser: NightwatchBrowser) {
     let initialAllCount: number
     let filteredCount: number
 
@@ -71,7 +71,7 @@ module.exports = {
       })
   },
 
-  'Should filter by category and clear filters #group2': function (browser: NightwatchBrowser) {
+  'Should filter by category and clear filters #group1': function (browser: NightwatchBrowser) {
     let initialAllCount: number
 
     browser
