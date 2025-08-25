@@ -246,7 +246,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }, [])
 
   useEffect(() => {
-    console.log('search useeffect--->')
     if (search.length > 0) {
       const fuseTopLevel = new Fuse(settingsSections, {
         threshold: 0.1,
@@ -296,7 +295,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             </div>
           </div>
         </div>
-        {filteredSections.length === 0 && <div className="text-info text-center" style={{ cursor: 'pointer' }}>No match found</div>}
+        {filteredSections.length === 0 ? <div className="text-info text-center" style={{ cursor: 'pointer' }}>No match found</div> :
         <div className="d-flex flex-wrap align-items-stretch">
           {/* Sidebar */}
           <div
@@ -334,7 +333,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <SettingsSectionUI plugin={props.plugin} section={filteredSection} state={settingsState} dispatch={dispatch} />
             </div>
           </div>
-        </div>
+        </div> }
       </div>
     </ThemeContext.Provider>
   )
