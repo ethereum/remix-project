@@ -33,7 +33,7 @@ const settingsSections: SettingsSection[] = [
   {
     key: 'general',
     label: 'settings.generalSettings',
-    decription: 'settings.generalSettingsDescription',
+    description: 'settings.generalSettingsDescription',
     subSections: [
       {
         title: 'Code editor',
@@ -88,7 +88,7 @@ const settingsSections: SettingsSection[] = [
       }
     ]
   },
-  { key: 'analytics', label: 'settings.analytics', decription: 'settings.analyticsDescription', subSections: [
+  { key: 'analytics', label: 'settings.analytics', description: 'settings.analyticsDescription', subSections: [
     { options: [{
       name: 'matomo-analytics',
       label: 'settings.matomoAnalyticsNoCookies',
@@ -112,7 +112,7 @@ const settingsSections: SettingsSection[] = [
     }]
     }
   ]},
-  { key: 'ai', label: 'settings.ai', decription: 'settings.aiDescription', subSections: [
+  { key: 'ai', label: 'settings.ai', description: 'settings.aiDescription', subSections: [
     {
       options: [{
         name: 'copilot/suggest/activate',
@@ -138,7 +138,7 @@ const settingsSections: SettingsSection[] = [
       }]
     }
   ]},
-  { key: 'services', label: 'settings.services', decription: 'settings.servicesDescription', subSections: [
+  { key: 'services', label: 'settings.services', description: 'settings.servicesDescription', subSections: [
     {
       options: [{
         name: 'github-config',
@@ -246,10 +246,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }, [])
 
   useEffect(() => {
+    console.log('search useeffect--->')
     if (search.length > 0) {
       const fuseTopLevel = new Fuse(settingsSections, {
         threshold: 0.1,
-        keys: ['label', 'decription', 'subSections.label', 'subSections.decription', 'subSections.options.label', 'subSections.options.description', 'subSections.options.selectOptions.label', 'subSections.options.footnote.text']
+        keys: ['label', 'description', 'subSections.label', 'subSections.description', 'subSections.options.label', 'subSections.options.description', 'subSections.options.selectOptions.label', 'subSections.options.footnote.text']
       })
       const sectionResults = fuseTopLevel.search(search)
       const resultItems = sectionResults.map((result, index) => {
@@ -318,7 +319,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                     }}
                   >
                     <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}><FormattedMessage id={section.label} /></h4>
-                    {selected !== section.key && <span><FormattedMessage id={section.decription} /></span>}
+                    {selected !== section.key && <span><FormattedMessage id={section.description} /></span>}
                   </a>
                 </li>
               ))}

@@ -40,7 +40,7 @@ export interface SindriSettingsProps {
 export interface SettingsSection {
   key: string
   label: string
-  decription: string,
+  description: string,
   subSections: {
     title?: string,
     options: {
