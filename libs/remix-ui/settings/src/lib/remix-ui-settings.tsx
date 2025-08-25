@@ -296,44 +296,44 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
         </div>
         {filteredSections.length === 0 ? <div className="text-info text-center" style={{ cursor: 'pointer' }}>No match found</div> :
-        <div className="d-flex flex-wrap align-items-stretch">
-          {/* Sidebar */}
-          <div
-            className="flex-column bg-transparent p-0 px-5 remix-settings-sidebar"
-            style={{ width: '28.2em' }}
-          >
-            <ul className="list-unstyled">
-              {filteredSections.map((section, index) => (
-                <li
-                  className={`nav-item ${index !== filteredSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}
-                  key={index}
-                >
-                  <a
-                    data-id={`settings-sidebar-${section.key}`}
-                    className="nav-link p-0"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      setSelected(section.key)
-                      setFilteredSection(section)
-                    }}
+          <div className="d-flex flex-wrap align-items-stretch">
+            {/* Sidebar */}
+            <div
+              className="flex-column bg-transparent p-0 px-5 remix-settings-sidebar"
+              style={{ width: '28.2em' }}
+            >
+              <ul className="list-unstyled">
+                {filteredSections.map((section, index) => (
+                  <li
+                    className={`nav-item ${index !== filteredSections.length - 1 ? 'border-bottom' : ''} px-0 py-3 ${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}
+                    key={index}
                   >
-                    <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}><FormattedMessage id={section.label} /></h4>
-                    {selected !== section.key && <span><FormattedMessage id={section.description} /></span>}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          {/* Main Content */}
-          <div
-            className="flex-column p-0 flex-grow-1"
-            style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
-          >
-            <div className="remix-settings-main" style={{ maxWidth: '53.5em', overflowY: 'auto', maxHeight: '58vh' }}>
-              <SettingsSectionUI plugin={props.plugin} section={filteredSection} state={settingsState} dispatch={dispatch} />
+                    <a
+                      data-id={`settings-sidebar-${section.key}`}
+                      className="nav-link p-0"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setSelected(section.key)
+                        setFilteredSection(section)
+                      }}
+                    >
+                      <h4 className={`${selected === section.key ? state.themeQuality.name === 'dark' ? 'active text-white' : 'active text-black' : 'text-secondary'}`}><FormattedMessage id={section.label} /></h4>
+                      {selected !== section.key && <span><FormattedMessage id={section.description} /></span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </div> }
+            {/* Main Content */}
+            <div
+              className="flex-column p-0 flex-grow-1"
+              style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
+            >
+              <div className="remix-settings-main" style={{ maxWidth: '53.5em', overflowY: 'auto', maxHeight: '58vh' }}>
+                <SettingsSectionUI plugin={props.plugin} section={filteredSection} state={settingsState} dispatch={dispatch} />
+              </div>
+            </div>
+          </div> }
       </div>
     </ThemeContext.Provider>
   )
