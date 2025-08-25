@@ -3,7 +3,7 @@ import {Registry} from '@remix-project/remix-lib'
 var remixLib = require('@remix-project/remix-lib')
 var EventsDecoder = remixLib.execution.EventsDecoder
 
-export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
+export function makeUdapp (blockchain, compilersArtefacts, _logHtmlCallback) {
   // ----------------- Tx listener -----------------
   const _transactionReceipts = {}
   const transactionReceiptResolver = (tx, cb) => {
