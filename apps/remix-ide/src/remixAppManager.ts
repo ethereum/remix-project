@@ -28,7 +28,6 @@ let requiredModules = [
   'web3Provider',
   'scriptRunner',
   'scriptRunnerBridge',
-  'UIScriptRunner',
   'fetchAndCompile',
   'mainPanel',
   'hiddenPanel',
