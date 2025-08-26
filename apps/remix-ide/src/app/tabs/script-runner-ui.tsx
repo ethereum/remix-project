@@ -7,7 +7,7 @@ import { ScriptRunnerBridgePlugin } from '../plugins/script-runner-bridge'
 
 const profile: ViewProfile = {
   name: 'UIScriptRunner',
-  displayName: 'Script configuration',
+  displayName: 'Script configuration UI',
   methods: [],
   events: [],
   icon: 'assets/img/solid-gear-circle-play.svg',
