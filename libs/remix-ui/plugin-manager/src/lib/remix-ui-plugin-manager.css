@@ -54,12 +54,13 @@
 }
 
 .remixui_permissions {
+  flex-shrink: 0;
   position: sticky;
   bottom: 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 5px 20px;
+  padding: 10px 20px 20px 20px;
 }
 .remixui_permissions button {
   padding: 2px 5px;
@@ -92,8 +93,14 @@
   font-size: 1rem;
 }
 #pluginManager {
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  overflow: hidden;
+}
+#pluginManager .plugin-content {
+  flex: 1;
+  overflow-y: auto;
 }
 .search-bar-container {
   position: relative;

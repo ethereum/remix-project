@@ -109,7 +109,9 @@ function RootView({ pluginComponent, children, filterByRemix, setFilterByRemix, 
             </div>
           </div>
         </header>
-        {children}
+        <div className="plugin-content">
+          {children}
+        </div>
         <PermisssionsSettings />
       </div>
       <LocalPluginForm closeModal={closeModal} visible={visible} pluginManager={pluginComponent} />
