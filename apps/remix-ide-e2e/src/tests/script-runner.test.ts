@@ -35,7 +35,7 @@ const tests = {
   'Should load script runner ethers6': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="sr-notloaded-ethers6"]')
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 100000)
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 100000)
       .waitForElementPresent('[data-id="dependency-ethers-^6"]', 2000)
   },
   'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
@@ -116,16 +116,25 @@ const tests = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"', 30000)
       .click('*[data-id="treeViewLitreeViewItemscripts"')
       .pause(1000)
-      .waitForElementVisible('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]', 30000)
-      .click('*[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
+      .element('css selector', 'li[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]', function (res) {
+        if (res.status === 0) {
+          browser.click('li[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
+        } else {
+          browser
+            .click('li[data-id^="treeViewLitreeViewItemscripts/"]:not([data-id$=".ts"])')
+            .pause(500)
+            .waitForElementVisible('li[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]', 30000)
+            .click('li[data-id^="treeViewLitreeViewItemscripts/"][data-id$=".ts"]')
+        }
+      })
       .pause(1000)
       .waitForElementVisible('*[data-id="run-script-dropdown-trigger"]', 30000)
       .pause(1000)
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
-      .waitForElementVisible('[data-id="sr-notloaded-default"]', 30000)
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 30000)
+      .waitForElementVisible('label[data-id="sr-loaded-default"]', 30000)
+      .waitForElementVisible('label[data-id="sr-notloaded-ethers6"]', 30000)
   },
   'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
     browser
@@ -138,7 +147,7 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
       })
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]')
       .waitForElementPresent('[data-id="dependency-ethers-^6"]')
   },
 
