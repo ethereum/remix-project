@@ -442,7 +442,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         if (!isOllamaFailureFallback) {
           dispatchActivity('button', 'setAssistant')
           setMessages([])
-          if (assistantChoice !== 'ollama') sendPrompt(`/setAssistant ${assistantChoice}`)
+          sendPrompt(`/setAssistant ${assistantChoice}`)
           _paq.push(['trackEvent', 'remixAI', 'SetAIProvider', assistantChoice])
           // Log specific Ollama selection
           if (assistantChoice === 'ollama') {
@@ -490,18 +490,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                 // Sync the default model with the backend
                 try {
                   await props.plugin.call('remixAI', 'setModel', defaultModel)
+                  setMessages(prev => [...prev, {
+                    id: crypto.randomUUID(),
+                    role: 'assistant',
+                    content: `**Ollama connected successfully!**\n\nFound ${models.length} model${models.length > 1 ? 's' : ''}:\n${models.map(m => `• ${m}`).join('\n')}\n\nYou can now use local AI for code completion and assistance.`,
+                    timestamp: Date.now(),
+                    sentiment: 'none'
+                  }])
                 } catch (error) {
                   console.warn('Failed to set default model:', error)
                 }
               }
-              // Show success message when Ollama is available
-              setMessages(prev => [...prev, {
-                id: crypto.randomUUID(),
-                role: 'assistant',
-                content: `**Ollama connected successfully!**\n\nFound ${models.length} model${models.length > 1 ? 's' : ''}:\n${models.map(m => `• ${m}`).join('\n')}\n\nYou can now use local AI for code completion and assistance.`,
-                timestamp: Date.now(),
-                sentiment: 'none'
-              }])
             }
           } else {
             // Ollama is not available

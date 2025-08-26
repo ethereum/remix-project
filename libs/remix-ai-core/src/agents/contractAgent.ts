@@ -36,18 +36,6 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
-    if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
-      console.log("Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
-      // Extract JSON from markdown code blocks
-      if (payload.includes('```json') || payload.includes('```')) {
-        // Match ```json content ``` or ``` content ```
-        const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-        if (jsonMatch && jsonMatch[1]) {
-          payload = jsonMatch[1].trim();
-        }
-      }
-      console.log("after Sanitizing generation result on ollama", payload.includes('```json'), payload.includes('```'))
-    }
     console.log("Writing results with inferecer ollama: ", this.plugin.remoteInferencer instanceof OllamaInferencer)
     console.log('AI generated result', payload)
 
@@ -95,9 +83,25 @@ export class ContractAgent {
         return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
 
+      if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
+        console.log("Sanitizing generation result on ollama", typeof payload)
+        // Extract JSON from markdown code blocks
+        if (typeof payload === 'string' && (payload.includes('```json') || payload.includes('```'))) {
+          // Match ```json content ``` or ``` content ```
+          const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+          if (jsonMatch && jsonMatch[1]) {
+            payload = jsonMatch[1].trim();
+          }
+        }
+        if (typeof payload === 'string') {
+          payload = JSON.parse(payload)
+        }
+        console.log("after sanitizing generation result on ollama", typeof payload)
+      }
+
       await statusCallback?.('Processing generated files...')
       this.contracts = {}
-      const parsedFiles = this.plugin.remoteInferencer instanceof OllamaInferencer ? JSON.parse(payload) : payload
+      const parsedFiles = payload
       this.oldPayload = payload
       console.log("reading project name")
       this.generationThreadID = this.plugin.remoteInferencer instanceof OllamaInferencer ? "" : parsedFiles['threadID']
