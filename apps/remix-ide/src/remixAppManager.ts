@@ -28,6 +28,7 @@ let requiredModules = [
   'web3Provider',
   'scriptRunner',
   'scriptRunnerBridge',
+  'UIScriptRunner',
   'fetchAndCompile',
   'mainPanel',
   'hiddenPanel',
@@ -94,7 +95,8 @@ let requiredModules = [
   'remixAID',
   'remixaiassistant',
   'topbar',
-  'githubAuthHandler'
+  'githubAuthHandler',
+  'desktopClient'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
