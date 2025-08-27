@@ -28,8 +28,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
         setCurrentFilePath(path)
         const ext = path?.split('.').pop()?.toLowerCase() || ''
         setCurrentExt(ext)
-      } catch (err) {
-        console.info('No current file selected.')
+      } catch {
         setCurrentFilePath('')
         setCurrentExt('')
       }
@@ -38,32 +37,30 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     getAI()
     getCurrentExt()
 
-    plugin.on('settings', 'copilotChoiceUpdated', (isChecked) => {
-      setAiSwitch(isChecked)
-    })
+    const onCopilot = (isChecked: boolean) => setAiSwitch(!!isChecked)
 
+    plugin.on('settings', 'copilotChoiceUpdated', onCopilot)
     plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
 
     return () => {
+      plugin.off('settings', 'copilotChoiceUpdated')
       plugin.off('fileManager', 'currentFileChanged')
     }
-
   }, [plugin])
 
   const handleExplain = async () => {
     if (!currentFilePath) {
-      plugin.call('notification', 'toast', 'No file selected to explain.');
+      plugin.call('notification', 'toast', 'No file selected to explain.')
       return
     }
     setExplaining(true)
     try {
       await plugin.call('menuicons', 'select', 'remixaiassistant')
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
       const content = await plugin.call('fileManager', 'readFile', currentFilePath)
       await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-
     } catch (err) {
-      console.error("Explain failed:", err)
+      console.error('Explain failed:', err)
     }
     setExplaining(false)
   }
@@ -84,21 +81,22 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
   }
 
   return (
-    <div className="bottom-bar border-top border-bottom">
+    <div className="bottom-bar border-top border-bottom" data-id="bottomBarPanel">
       {getExplainLabel() && (
         <button
           className="btn btn-ai"
           onClick={handleExplain}
           disabled={explaining || !currentFilePath}
+          data-id="bottomBarExplainBtn"
         >
           <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
           <span>{getExplainLabel()}</span>
         </button>
       )}
       <div className="copilot-toggle">
-        <span className={aiSwitch ? "on" : ""}>AI copilot</span>
-        <label className="switch" data-id="copilot_toggle" >
-          <input type="checkbox" checked={aiSwitch} onChange={toggleAI}/>
+        <span className={aiSwitch ? 'on' : ''}>AI copilot</span>
+        <label className="switch" data-id="copilot_toggle">
+          <input type="checkbox" checked={aiSwitch} onChange={toggleAI} />
           <span className="slider"></span>
         </label>
       </div>

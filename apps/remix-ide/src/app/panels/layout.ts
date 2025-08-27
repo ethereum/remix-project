@@ -18,6 +18,7 @@ interface panels {
   tabs: panelState
   editor: panelState
   main: panelState
+  bottomBar: panelState
   terminal: panelState
 }
 
