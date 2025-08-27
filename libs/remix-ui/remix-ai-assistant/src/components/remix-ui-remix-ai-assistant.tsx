@@ -145,7 +145,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const refreshContext = useCallback(async (choice: typeof contextChoice) => {
     try {
       let files: string[] = []
-      _paq.push(['trackEvent', 'remixAI', 'AddingAIContext', choice])
       switch (choice) {
       case 'none':
         await props.plugin.call('remixAI', 'setContextFiles', { context: 'none' })
@@ -153,6 +152,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         break
       case 'current':
         {
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'AddingAIContext', choice])
           const f = await props.plugin.call('fileManager', 'getCurrentFile')
           if (f) files = [f]
           await props.plugin.call('remixAI', 'setContextFiles', { context: 'currentFile' })
@@ -160,6 +160,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         break
       case 'opened':
         {
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'AddingAIContext', choice])
           const res = await props.plugin.call('fileManager', 'getOpenedFiles')
           if (Array.isArray(res)) {
             files = res
@@ -171,6 +172,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         break
       case 'workspace':
         {
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'AddingAIContext', choice])
           await props.plugin.call('remixAI', 'setContextFiles', { context: 'workspace' })
           files = ['@workspace']
         }

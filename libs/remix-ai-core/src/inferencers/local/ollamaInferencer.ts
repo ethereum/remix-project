@@ -61,7 +61,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         const wasCodestralSelected = defaultModel.includes('codestral');
         this.model_name = defaultModel;
         _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_model_auto_selected', `${this.model_name}|codestral:${wasCodestralSelected}`]);
-        console.log(`Auto-selected model: ${this.model_name}`);
       }
       _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_initialize_success', this.model_name]);
     } catch (error) {
@@ -151,7 +150,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
 
           if (normalizedSignificant === normalizedSuffStart) {
             bestOverlapLength = significantEnd.length;
-            console.log(`Found semantic overlap: "${significantEnd}" matches "${suffixStart}"`);
             break;
           }
         }
@@ -161,7 +159,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     // Remove the overlapping part from the completion
     if (bestOverlapLength > 0) {
       const result = trimmedCompletion.slice(0, -bestOverlapLength);
-      console.log(`Removed ${bestOverlapLength} overlapping characters from completion`);
       return result;
     }
 
@@ -179,8 +176,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         const modelInfo = response.data;
         const template = modelInfo.template || '';
         const parameters = modelInfo.parameters || {};
-        console.log('model parameters', parameters)
-        console.log('model template', template)
 
         // Look for FIM/insert indicators in the template or model info
         const hasInsertSupport = template.includes('fim') ||
@@ -190,7 +185,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
                                 template.includes('.Suffix') ||
                                 parameters.stop?.includes('<fim_middle>')
 
-        console.log(`Model ${this.model_name} insert support:`, hasInsertSupport);
         return hasInsertSupport;
       }
     } catch (error) {
@@ -248,7 +242,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
       if (result.status === 200) {
         let text = "";
         if (rType === AIRequestType.COMPLETION) {
-          console.log('text before processing', result.data.response)
           const rawResponse = result.data.response || "";
 
           // Skip sanitization for any FIM-capable models (user-selected or API-detected)
@@ -256,11 +249,9 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
           const hasAnyFIM = userSelectedFIM || this.modelSupportsInsert;
 
           if (hasAnyFIM) {
-            console.log('Skipping sanitization for FIM-capable model')
             text = rawResponse;
           } else {
             text = sanitizeCompletionText(rawResponse);
-            console.log('text after sanitization', text)
           }
         } else {
           text = result.data.message?.content || "";
@@ -367,17 +358,12 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
   }
 
   async code_completion(prompt: string, promptAfter: string, ctxFiles: any, fileName: any, options: IParams = CompletionParams): Promise<any> {
-    console.log("Code completion called")
-
     // Store the suffix for overlap removal
     this.currentSuffix = promptAfter || "";
 
     let payload: any;
-
-    // Check FIM support: user selection first, then API detection for native FIM
     const userSelectedFIM = this.fimManager.supportsFIM(this.model_name);
 
-    // Check API for native FIM support if not user-selected
     if (!userSelectedFIM && this.modelSupportsInsert === null) {
       this.modelSupportsInsert = await this.checkModelInsertSupport();
     }
@@ -385,8 +371,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
     const hasNativeFIM = userSelectedFIM ? this.fimManager.usesNativeFIM(this.model_name) : this.modelSupportsInsert;
     const hasTokenFIM = userSelectedFIM && !this.fimManager.usesNativeFIM(this.model_name);
 
-    console.log("modelSupportsInsert;", this.modelSupportsInsert)
-    console.log("usesNativeFim;", this.fimManager.usesNativeFIM(this.model_name) )
     if (hasNativeFIM) {
       // Native FIM support (prompt/suffix parameters)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_fim_native', this.model_name]);
@@ -397,9 +381,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         stream: false,
         stop:options.stop
       };
-      console.log('using native FIM params', payload);
     } else if (hasTokenFIM) {
-      // Token-based FIM support
       _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_fim_token_based', this.model_name]);
       const fimPrompt = this.fimManager.buildFIMPrompt(prompt, promptAfter, this.model_name);
       payload = {
@@ -408,11 +390,8 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
         stream: false,
         stop:options.stop
       };
-      console.log('using token FIM params', payload);
     } else {
-      // No FIM support, use completion prompt
       _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_completion_no_fim', this.model_name]);
-      console.log(`Model ${this.model_name} does not support FIM, using completion prompt`);
       const completionPrompt = await this.buildCompletionPrompt(prompt, promptAfter);
       payload = this._buildCompletionPayload(completionPrompt, CODE_COMPLETION_PROMPT);
       payload.stop = options.stop
@@ -433,7 +412,6 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string, ctxFiles: any, fileName: any, options: IParams = GenerationParams): Promise<any> {
-    console.log("Code insertion called")
     _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_code_insertion', `model:${this.model_name}`]);
     // Delegate to code_completion which already handles suffix overlap removal
     return await this.code_completion(msg_pfx, msg_sfx, ctxFiles, fileName, options);

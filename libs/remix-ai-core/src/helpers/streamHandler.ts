@@ -260,7 +260,7 @@ export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText:
             return;
           }
         } catch (parseError) {
-          console.warn("⚠️ Ollama: Skipping invalid JSON line:", line);
+          console.warn("Ollama: Skipping invalid JSON line:", line);
           continue;
         }
       }
@@ -268,7 +268,7 @@ export const HandleOllamaResponse = async (streamResponse: any, cb: (streamText:
 
     done_cb?.(resultText);
   } catch (error) {
-    console.error("⚠️ Ollama Stream error:", error);
+    console.error("Ollama Stream error:", error);
     done_cb?.(resultText);
   }
 }

@@ -55,13 +55,10 @@ export class RemixAIPlugin extends Plugin {
   onActivation(): void {
 
     if (this.isOnDesktop) {
-      console.log('Activating RemixAIPlugin on desktop')
-      // this.on(this.remixDesktopPluginName, 'activated', () => {
       this.useRemoteInferencer = true
       this.initialize(null, null, null, this.useRemoteInferencer);
       // })
     } else {
-      console.log('Activating RemixAIPlugin on browser')
       this.useRemoteInferencer = true
       this.initialize()
     }
@@ -219,8 +216,6 @@ export class RemixAIPlugin extends Plugin {
     } else {
       userPrompt = prompt
     }
-    // Evaluate if this function requires any context
-    // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
     await statusCallback?.('Generating new workspace with AI...\nThis might take some minutes. Please be patient!')
     const result = await this.remoteInferencer.generate(userPrompt, params)
 
@@ -402,7 +397,6 @@ export class RemixAIPlugin extends Plugin {
         AssistantParams.threadId = ''
       }
       this.assistantProvider = provider
-      console.log(`Ollama provider set with model: ${bestModel}`)
     } else {
       console.error(`Unknown assistant provider: ${provider}`)
     }

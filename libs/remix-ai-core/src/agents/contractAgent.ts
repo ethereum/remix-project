@@ -36,9 +36,6 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
-    console.log("Writing results with inferecer ollama: ", this.plugin.remoteInferencer instanceof OllamaInferencer)
-    console.log('AI generated result', payload)
-
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
         await statusCallback?.('Preparing files for desktop...')
@@ -84,7 +81,6 @@ export class ContractAgent {
       }
 
       if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
-        console.log("Sanitizing generation result on ollama", typeof payload)
         // Extract JSON from markdown code blocks
         if (typeof payload === 'string' && (payload.includes('```json') || payload.includes('```'))) {
           // Match ```json content ``` or ``` content ```
@@ -96,17 +92,14 @@ export class ContractAgent {
         if (typeof payload === 'string') {
           payload = JSON.parse(payload)
         }
-        console.log("after sanitizing generation result on ollama", typeof payload)
       }
 
       await statusCallback?.('Processing generated files...')
       this.contracts = {}
       const parsedFiles = payload
       this.oldPayload = payload
-      console.log("reading project name")
       this.generationThreadID = this.plugin.remoteInferencer instanceof OllamaInferencer ? "" : parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
-      console.log("reading threadid ", this.plugin.remoteInferencer instanceof OllamaInferencer)
 
       this.nAttempts += 1
       if (this.nAttempts === 1) this.mainPrompt=userPrompt
@@ -117,7 +110,6 @@ export class ContractAgent {
 
       await statusCallback?.('Processing Solidity contracts...')
       const genContrats = []
-      console.log("getting contracts", parsedFiles.files)
       for (const file of parsedFiles.files) {
         if (file.fileName.endsWith('.sol')) {
           this.contracts[file.fileName] = { content: file.content }
@@ -125,22 +117,16 @@ export class ContractAgent {
         }
       }
 
-      console.log("compiling contracts")
       await statusCallback?.('Compiling contracts...')
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
-      console.log('compilation result', result)
       if (!result.compilationSucceeded) {
         await statusCallback?.('Compilation failed, fixing errors...')
-        // console.log('Compilation failed, trying again recursively ...')
-        console.log(genContrats)
         const generatedContracts = (genContrats || []).map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
 
         // Format error files properly according to the schema
-        console.log(result.errfiles)
         const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
-          console.log(fileData)
           const errors = (fileData.errors || []).map((err: any) =>
             `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
           ).join('\n  ');
@@ -159,7 +145,6 @@ export class ContractAgent {
       await statusCallback?.('Finalizing workspace creation...')
       return result.compilationSucceeded ? await writeAIResults(parsedFiles) : await writeAIResults(parsedFiles) + "\n\n" + COMPILATION_WARNING_MESSAGE
     } catch (error) {
-      console.log('error - ', error)
       await statusCallback?.('Error occurred, cleaning up...')
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
@@ -193,10 +178,8 @@ export class ContractAgent {
     try {
       const wspfiles = JSON.parse(await wspAgent.getCurrentWorkspaceFiles())
       const compResult:CompilationResult = await compilecontracts(wspfiles, this.plugin)
-      // console.log('fix workspace Compilation result:', compResult)
 
       if (compResult.compilationSucceeded) {
-        console.log('Compilation succeeded, no errors to fix')
         return 'Compilation succeeded, no errors to fix'
       }
 

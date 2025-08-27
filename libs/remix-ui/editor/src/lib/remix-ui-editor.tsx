@@ -906,7 +906,6 @@ export const EditorUI = (props: EditorUIProps) => {
             const params = GenerationParams
             params.stream_result = false
             const result = await props.plugin.call('remixAI', 'code_explaining', query, '', params)
-            console.log('documentation result', result)
             const output = result['result']
             const outputFunctionComments = extractFunctionComments(output, 1, false)
             const funcRange = await props.plugin.call('codeParser', "getLineColumnOfNode", { src: functionNode.src })

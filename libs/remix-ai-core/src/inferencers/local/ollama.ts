@@ -22,7 +22,6 @@ export async function discoverOllamaHost(): Promise<string | null> {
       if (res.status === 200) {
         discoveredOllamaHost = host;
         _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_host_discovered_success', `${host}`]);
-        console.log(`Ollama discovered on ${host}`);
         return host;
       }
     } catch (error) {
@@ -81,7 +80,6 @@ export async function pullModel(modelName: string): Promise<void> {
     await axios.post(`${host}/api/pull`, { name: modelName });
     const duration = Date.now() - startTime;
     _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_success', `${modelName}|duration:${duration}ms`]);
-    console.log(`Model ${modelName} pulled successfully`);
   } catch (error) {
     _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_error', `${modelName}|${error.message || 'unknown'}`]);
     console.error('Error pulling model:', error);

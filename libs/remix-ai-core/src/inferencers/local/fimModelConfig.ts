@@ -20,26 +20,7 @@ export const FIM_MODEL_CONFIGS: FIMModelConfig[] = [
     patterns: ["codestral"],
     supportsNativeFIM: true,
     description: "Mistral's code model with native FIM support"
-  },
-  // {
-  //   name: "starcoder",
-  //   patterns: ["starcoder"],
-  //   supportsNativeFIM: true,
-  //   description: "StarCoder models"
-  // },
-
-  // // Token-based FIM models
-  // {
-  //   name: "DeepSeek Coder",
-  //   patterns: ["deepseek-coder", "deepseek"],
-  //   supportsNativeFIM: false,
-  //   fimTokens: {
-  //     prefix: "<｜fim▁begin｜>",
-  //     suffix: "<｜fim▁hole｜>",
-  //     middle: "<｜fim▁end｜>"
-  //   },
-  //   description: "DeepSeek's code model with FIM support"
-  // }
+  }
 ];
 
 export class FIMModelManager {
