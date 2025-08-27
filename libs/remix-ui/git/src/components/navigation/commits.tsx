@@ -43,7 +43,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
   return (
     <>
       <div className={`d-flex justify-content-between ${activePanel === eventKey ? 'bg-light' : ''} ${ahead || behind? 'text-success':''}`}>
-        <span data-id={`commits-panel${ahead?'-ahead':''}${behind?'-behind':''}`} onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-100'>
+        <span data-id={`commits-panel${ahead?'-ahead':''}${behind?'-behind':''}`} onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-100 ms-1'>
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
