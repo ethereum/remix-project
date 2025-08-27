@@ -147,6 +147,24 @@ module.exports = {
       .verifyContracts(['test15', 'ERC20'], { wait: 30000 })
   },
 
+  'Test NPM Import (prefixed by `npm:` and remappings.txt), it should import from two different solidity version #group3 #pr': function (browser: NightwatchBrowser) {
+    browser
+      .setSolidityCompilerVersion('soljson-v0.8.30+commit.73712a01.js')
+      .waitForElementPresent({
+        selector: `//*[@data-id='compilerloaded' and @data-version='soljson-v0.8.30+commit.73712a01.js']`,
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
+      .clickLaunchIcon('filePanel')
+      .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
+      .addFile('remappings.txt', sources[10]['remappings.txt'])
+      .addFile('Untitled11.sol', sources[10]['Untitled11.sol'])
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .verifyContracts(['Address', 'Strings'], { wait: 30000 })
+  },
+
   'Test NPM Import (the version is specified in package.json) #group4': function (browser: NightwatchBrowser) {
     browser
       // clone https://github.com/yann300/remix-reward
@@ -208,5 +226,15 @@ const sources = [
       "@module_remapping": "npm:@openzeppelin/contracts@^4.9.0"
   }
 }` }
+  },
+  {
+    'Untitled11.sol': { content: `import "@openzeppelin/contracts@5.0.2/utils/Strings.sol";
+import "@openzeppelin/contracts@4.7.3/utils/Address.sol";` },
+    'remappings.txt': { content: `@openzeppelin/contracts@4.7.3/=npm:@openzeppelin/contracts@4.7.3/
+@openzeppelin/contracts@4.8.3/=npm:@openzeppelin/contracts@4.8.3/
+@openzeppelin/contracts@4.9.6/=npm:@openzeppelin/contracts@4.9.6/
+@openzeppelin/contracts@5.0.2/=npm:@openzeppelin/contracts@5.0.2/
+@openzeppelin/contracts@5.1.0/=npm:@openzeppelin/contracts@5.1.0/
+` }
   }
 ]
