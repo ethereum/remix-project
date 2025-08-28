@@ -51,7 +51,56 @@ const Model: ModelType = {
       const { list, detail } = yield select((state) => state.workshop)
 
       const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
-      const { data } = yield axios.get(url)
+
+      let data
+      try {
+        const response = yield axios.get(url)
+        data = response.data
+      } catch (error) {
+        console.error('Failed to load workshop:', error)
+
+        // Dismiss loading toast and show error
+        toast.dismiss()
+
+        // Extract detailed error message from response
+        let errorMessage = 'Failed to load workshop'
+        if (error.response?.data) {
+          // If the response contains plain text error details (like in the screenshot)
+          if (typeof error.response.data === 'string') {
+            errorMessage = error.response.data
+          }
+          // If the response has a structured error message
+          else if (error.response.data.message) {
+            errorMessage = error.response.data.message
+          }
+          // If the response has error details
+          else if (error.response.data.error) {
+            errorMessage = error.response.data.error
+          }
+        }
+        // Fallback to axios error message or generic error
+        else if (error.message) {
+          errorMessage = error.message
+        } else {
+          errorMessage = 'Network error occurred'
+        }
+
+        toast.error(errorMessage)
+
+        // Clean up loading state
+        yield put({
+          type: 'loading/save',
+          payload: {
+            screen: false,
+          },
+        })
+
+        // Track error event
+        ;(<any>window)._paq?.push(['trackEvent', 'learneth', 'load_repo_error', `${payload.name}/${payload.branch}`])
+
+        return // Exit early on error
+      }
+
       const repoId = `${payload.name}-${payload.branch}`
 
       for (let i = 0; i < data.ids.length; i++) {

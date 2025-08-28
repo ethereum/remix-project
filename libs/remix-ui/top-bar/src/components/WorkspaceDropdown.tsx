@@ -121,7 +121,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
     try {
       setTimeout(async () => {
         workspaces = await getWorkspaces()
-        const updated = workspaces.map((workspace) => {
+        const updated = (workspaces || []).map((workspace) => {
           (workspace as any).submenu = subItems
           return workspace as any
         })
