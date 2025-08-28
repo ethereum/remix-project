@@ -51,6 +51,7 @@ function HomePage(): JSX.Element {
                       }}
                     >
                       {selectedRepo.entities[item.id].name}
+                      {selectedRepo.entities[item.id].metadata.data.error? <p className="text-danger">{selectedRepo.entities[item.id].metadata.data.error} in {selectedRepo.entities[item.id].metadata.file}</p> : null}
                     </span>
                     <Link onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', selectedRepo.entities[item.id].name])} to={`/list?id=${item.id}`} className="text-decoration-none float-end">
                       <i className="fas fa-play-circle fa-lg" />
