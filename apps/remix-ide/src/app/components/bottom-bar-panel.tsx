@@ -10,7 +10,8 @@ const profile = {
   methods: [],
   events: [],
   description: 'Editor bottom bar (renders above dragbar-terminal)',
-  version: packageJson.version
+  version: packageJson.version,
+  kind: 'system'
 }
 
 export default class BottomBarPanel extends Plugin {
