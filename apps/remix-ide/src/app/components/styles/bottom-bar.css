@@ -5,6 +5,9 @@
     padding: 4px 16px;
     background-color: var(--bs-light) !important;
     height: 32px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .bottom-bar .explain-icon {
