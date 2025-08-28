@@ -31,7 +31,7 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     const handleFileChange = (path: string) => {
       setCurrentFilePath(path || '')
     }
-  
+
     getAI()
 
     const onCopilot = (isChecked: boolean) => setAiSwitch(!!isChecked)
