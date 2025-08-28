@@ -14,8 +14,8 @@ function BackButton({entity}: any) {
   const previousStep = entity && entity.steps[stepId - 1]
 
   return (
-    <nav className="navbar navbar-light bg-light justify-content-between pt-1 pb-1 ps-1">
-      <ul className="nav me-auto">
+    <nav className="navbar navbar-light bg-light d-flex justify-content-between pt-1 pb-1 ps-1">
+      <ul className="d-flex nav me-auto">
         <li className="nav-item">
           <div
             className="btn back"
@@ -40,7 +40,7 @@ function BackButton({entity}: any) {
         )}
       </ul>
       {isDetailPage && (
-        <form className="form-inline">
+        <form className="form d-flex">
           {stepId > 0 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId - 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'previous_step', `${entity.name}/${previousStep && previousStep.name}`])}>
               <i className="fas fa-chevron-left pe-1" />
