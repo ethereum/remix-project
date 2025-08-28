@@ -48,7 +48,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
 
       <div onClick={panelChange} style={{ cursor: 'pointer' }} className="container-fluid d-flex mb-3 small">
         <div className="d-flex pe-2 ps-2">
-          <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
+          <i className={`arrow-icon pt-2 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
         <div className="d-flex">Import another tutorial repo</div>
       </div>
