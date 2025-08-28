@@ -518,8 +518,6 @@ export function RemixUiTopbar () {
               />
             ) : (
               <GitHubLogin
-                onLoginSuccess={handleLoginSuccess}
-                onLoginError={handleLoginError}
                 cloneGitRepository={cloneGitRepository}
                 logOutOfGithub={logOutOfGithub}
               />

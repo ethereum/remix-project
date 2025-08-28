@@ -1,141 +1,59 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import axios from 'axios'
+import React, { useContext, useState, useCallback, useEffect } from 'react'
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import { CustomTopbarMenu } from '@remix-ui/helper'
 import { publishToGist } from 'libs/remix-ui/workspace/src/lib/actions'
+import { AppContext } from '@remix-ui/app'
+import { gitUIPanels } from 'libs/remix-ui/git/src/types'
 
 const _paq = window._paq || []
 
-interface GitHubUser {
-  login: string;
-  avatar_url?: string;
-  html_url?: string;
-  isConnected: boolean;
-}
-
 interface GitHubLoginProps {
-  onLoginSuccess: (user: GitHubUser, token: string) => void
-  onLoginError: (error: string) => void
-  clientIdEndpoint?: string
-  tokenExchangeEndpoint?: string
   cloneGitRepository: () => void
   logOutOfGithub: () => void
 }
 
 export const GitHubLogin: React.FC<GitHubLoginProps> = ({
-  onLoginSuccess,
-  onLoginError,
   cloneGitRepository,
-  logOutOfGithub,
-  clientIdEndpoint = 'https://github-login-proxy.api.remix.live/client',
-  tokenExchangeEndpoint = 'https://github-login-proxy.api.remix.live/login/oauth/access_token'
+  logOutOfGithub
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [popupError, setPopupError] = useState(false);
-  const popupRef = useRef<Window | null>(null);
+  const appContext = useContext(AppContext)
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Get GitHub OAuth client ID based on hostname
-  const getClientId = async (): Promise<string> => {
-    try {
-      const host = window.location.hostname;
-      const response = await axios.get(`${clientIdEndpoint}/${host}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      return response.data.client_id;
-    } catch (error) {
-      throw new Error('Failed to fetch GitHub client ID');
-    }
-  };
+  // Get the GitHub user state from app context
+  const gitHubUser = appContext?.appState?.gitHubUser
+  const isConnected = gitHubUser?.isConnected
 
-  // Handle popup-based OAuth login
-  const openPopupLogin = useCallback(async () => {
-    setIsLoading(true);
-    setPopupError(false);
+  // Simple login handler that delegates to the dgit plugin
+  const handleLogin = useCallback(async () => {
+    if (isLoading) return
+
+    setIsLoading(true)
 
     try {
-      const clientId = await getClientId();
-      const redirectUri = `${window.location.origin}/?source=github`
-      const scope = 'repo gist user:email read:user';
-
-      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`;
-
-      const popup = window.open(url, '_blank', 'width=600,height=700');
-      if (!popup) {
-        throw new Error('Popup blocked or failed to open');
+      // Check if dgit plugin is active and activate if needed
+      const isActive = await appContext.appManager.call('manager', 'isActive', 'dgit')
+      if (!isActive) {
+        await appContext.appManager.call('manager', 'activatePlugin', 'dgit')
       }
-      popupRef.current = popup;
 
-      // Listen for messages from the popup
-      const messageListener = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
+      // Open the GitHub panel in the git plugin and let it handle the login
+      await appContext.appManager.call('menuicons', 'select', 'dgit')
+      await appContext.appManager.call('dgit', 'open', gitUIPanels.GITHUB)
 
-        if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
-          const token = event.data.token;
-          await handleLoginSuccess(token);
-          window.removeEventListener('message', messageListener);
-          popup?.close();
-        } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
-          setPopupError(true);
-          setIsLoading(false);
-          onLoginError(event.data.error);
-          window.removeEventListener('message', messageListener);
-          popup?.close();
-        }
-      };
-
-      window.addEventListener('message', messageListener);
     } catch (error) {
-      setIsLoading(false);
-      setPopupError(true);
-      onLoginError(error instanceof Error ? error.message : 'Login failed');
+      console.error('Failed to open GitHub login:', error)
+    } finally {
+      setIsLoading(false)
     }
-  }, [onLoginSuccess, onLoginError, clientIdEndpoint]);
+  }, [appContext, isLoading])
 
-  // Handle successful login
-  const handleLoginSuccess = async (token: string) => {
-    try {
-      // Load GitHub user data
-      const userData = await loadGitHubUser(token);
-
-      // Save token to localStorage
-      localStorage.setItem('github_token', token);
-
-      setIsLoading(false);
-      onLoginSuccess(userData, token);
-    } catch (error) {
-      setIsLoading(false);
-      onLoginError('Failed to load user data');
-    }
-  };
-
-  // Load GitHub user data from token
-  const loadGitHubUser = async (token: string): Promise<GitHubUser> => {
-    const response = await axios.get('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    return {
-      login: response.data.login,
-      avatar_url: response.data.avatar_url,
-      html_url: response.data.html_url,
-      isConnected: true
-    };
-  };
-
-  // Check if user is already logged in
+  // Monitor GitHub user state changes to stop loading when connection is established
   useEffect(() => {
-    const token = localStorage.getItem('github_token');
-    if (token) {
-      handleLoginSuccess(token);
+    if (isConnected && isLoading) {
+      setIsLoading(false)
     }
-  }, []);
+  }, [isConnected, isLoading])
 
   return (
     <Dropdown
@@ -149,14 +67,19 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
           fontSize: '0.8rem',
           padding: '0.35rem 0.5rem',
         }}
-        onClick={openPopupLogin}
-        disabled={isLoading}
+        onClick={isConnected ? undefined : handleLogin}
+        disabled={isLoading || isConnected}
       >
         {isLoading ? (
           <>
             <i className="fas fa-spinner fa-spin me-1"></i>
-            <span>Connecting...</span>
+            <span>Opening...</span>
           </>
+        ) : isConnected ? (
+          <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
+            <i className="fab fa-github me-1"></i>
+            <span>{gitHubUser.login}</span>
+          </div>
         ) : (
           <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
             <i className="fab fa-github me-1"></i>
@@ -170,7 +93,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
         variant="outline-secondary"
         className="btn-topbar btn-sm"
         data-id="github-dropdown-toggle"
-        // disabled={true}
+        disabled={!isConnected}
       >
       </Dropdown.Toggle>
       <Dropdown.Menu
