@@ -7,8 +7,7 @@ import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
 import { endpointUrls } from "@remix-endpoints-helper";
 import isElectron from "is-electron";
-import { set } from "lodash";
-import { use } from "chai";
+import { startGitHubLogin, getDeviceCodeFromGitHub, connectWithDeviceCode } from "../../lib/gitLoginActions";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -21,119 +20,49 @@ export const GetDeviceCode = () => {
 
   const popupRef = useRef<Window | null>(null)
 
-  // Dynamically select the GitHub OAuth client ID based on the hostname
-  const getClientId = async () => {
-    const host = isElectron() ? 'desktop' : window.location.hostname
-    // fetch it with axios from `${endpointUrls.gitHubLoginProxy}/client-id?host=${host}`
-    try {
-      const response = await axios.get(`${endpointUrls.gitHubLoginProxy}/client/${host}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      })
-      return response.data.client_id
-    }
-    catch (error) {
-      throw new Error('Failed to fetch GitHub client ID')
-    }
-
-  }
-
   const openPopupLogin = useCallback(async () => {
-
-    if (isElectron()) {
-      setDesktopIsLoading(true)
-      pluginActions.loginWithGitHub()
-      return
-    }
-
-    const clientId = await getClientId()
-    const redirectUri = `${window.location.origin}/?source=github`
-    const scope = 'repo gist user:email read:user'
-
-    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`
-
-    const popup = window.open(url, '_blank', 'width=600,height=700')
-    if (!popup) {
-      console.warn('Popup blocked or failed to open, falling back to device code flow.')
-      await getDeviceCodeFromGitHub()
-      return
-    }
-    popupRef.current = popup
-
-    const messageListener = async (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return
-
-      if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
-        const token = event.data.token
-        await pluginActions.saveToken(token)
-        await actions.loadGitHubUserFromToken()
+    try {
+      if (isElectron()) {
+        setDesktopIsLoading(true)
+      }
+      
+      await startGitHubLogin()
+      
+      if (!isElectron()) {
         setAuthorized(true)
-        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
-        window.removeEventListener('message', messageListener)
-        popup?.close()
-      } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
+      }
+    } catch (error) {
+      console.error('GitHub login failed:', error)
+      if (isElectron()) {
+        setDesktopIsLoading(false)
+      } else {
         setPopupError(true)
-        window.removeEventListener('message', messageListener)
-        popup?.close()
+        // Fallback to device code flow
+        await handleGetDeviceCode()
       }
     }
+  }, [])
 
-    window.addEventListener('message', messageListener)
-  }, [actions, pluginActions])
-
-  const getDeviceCodeFromGitHub = async () => {
+  const handleGetDeviceCode = async () => {
     setDesktopIsLoading(false)
     setPopupError(false)
-    await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
     setAuthorized(false)
-    // Send a POST request
-    const response = await axios({
-      method: 'post',
-      url: `${endpointUrls.github}/login/device/code`,
-      data: {
-        client_id: '2795b4e41e7197d6ea11',
-        scope: 'repo gist user:email read:user'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-    });
-
-    // convert response to json
-    const githubrespone = await response.data;
-
-    setGitHubResponse(githubrespone)
+    
+    try {
+      const githubResponse = await getDeviceCodeFromGitHub()
+      setGitHubResponse(githubResponse)
+    } catch (error) {
+      console.error('Failed to get device code:', error)
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
+    }
   }
 
   const connectApp = async () => {
-    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUB)
-    // poll https://github.com/login/oauth/access_token
-    const accestokenresponse = await axios({
-      method: 'post',
-      url: `${endpointUrls.github}/login/oauth/access_token`,
-      data: {
-        client_id: '2795b4e41e7197d6ea11',
-        device_code: gitHubResponse.device_code,
-        grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-    });
-
-    // convert response to json
-    const response = await accestokenresponse.data;
-
-    if (response.access_token) {
+    try {
+      await connectWithDeviceCode(gitHubResponse.device_code)
       setAuthorized(true)
-      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
-      await pluginActions.saveToken(response.access_token)
-      await actions.loadGitHubUserFromToken()
-    } else {
+    } catch (error) {
+      console.error('Failed to connect with device code:', error)
       await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
     }
   }
@@ -162,7 +91,7 @@ export const GetDeviceCode = () => {
         {popupError && !gitHubResponse && !authorized && (
           <div className="alert alert-warning mt-2" role="alert">
             GitHub login failed. You can continue using another method.
-            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={getDeviceCodeFromGitHub}>
+            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={handleGetDeviceCode}>
               Use another method
             </button>
           </div>
@@ -171,7 +100,7 @@ export const GetDeviceCode = () => {
           <i className="fas fa-spinner fa-spin fa-2x mt-1"></i>
           <div className="alert alert-warning mt-2" role="alert">
             In case of issues, you can try another method.
-            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={getDeviceCodeFromGitHub}>
+            <button className='btn btn-outline-primary btn-sm mt-2 w-100' onClick={handleGetDeviceCode}>
               Use another method
             </button>
           </div>

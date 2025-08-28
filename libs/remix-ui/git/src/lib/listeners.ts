@@ -9,6 +9,7 @@ import { CustomRemixApi } from "@remix-api";
 import { saveToken, sendToMatomo, statusChanged } from "./pluginActions";
 import { appPlatformTypes } from "@remix-ui/app";
 import { AppAction } from "@remix-ui/app";
+import { setLoginPlugin, startGitHubLogin } from "./gitLoginActions";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
@@ -43,6 +44,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   loadFileQueue = new AsyncDebouncedQueue()
 
   setPlugin(viewPlugin, gitDispatcher, appDispatcher)
+  
+  // Initialize the login plugin reference
+  setLoginPlugin(viewPlugin)
 
   plugin.on("fileManager", "fileSaved", async (file: string) => {
     loadFileQueue.enqueue(async () => {
@@ -205,6 +209,19 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 
   plugin.on('dgit' as any, 'init', async () => {
     init()
+  })
+
+  plugin.on('dgit' as any, 'startLogin', async () => {
+    try {
+      await startGitHubLogin()
+    } catch (error) {
+      console.error('Failed to start GitHub login from dgit plugin:', error)
+      // Optionally show error to user
+      gitDispatch(setLog({
+        message: `GitHub login failed: ${error.message}`,
+        type: "error"
+      }))
+    }
   })
 
   plugin.on('githubAuthHandler', 'onLogin', async (data: { token: string }) => {
