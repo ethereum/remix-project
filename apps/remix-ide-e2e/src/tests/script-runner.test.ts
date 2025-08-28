@@ -20,6 +20,7 @@ const tests = {
     browser
       .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
       .click('*[data-id="verticalIconsKindfilePanel"]')
+      .openFile('scripts/deploy_with_ethers.ts')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemscripts/deploy_with_ethers.ts"]')
       // .click('*[data-id="treeViewDivtreeViewItemscripts"]')
       // .pause(3000)
