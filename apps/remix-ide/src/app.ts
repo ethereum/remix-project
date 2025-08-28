@@ -110,6 +110,7 @@ import Editor from './app/editor/editor'
 import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
 import { Plugin } from '@remixproject/engine'
+import BottomBarPanel from './app/components/bottom-bar-panel'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -526,7 +527,9 @@ class AppComponent {
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor)//, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, this.topBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel, this.popupPanel])
+    const bottomBarPanel = new BottomBarPanel()
+
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, this.topBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel, this.popupPanel, bottomBarPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
@@ -573,6 +576,7 @@ class AppComponent {
       tabs: { plugin: tabProxy, active: true },
       editor: { plugin: editor, active: true },
       main: { plugin: appPanel, active: false },
+      bottomBar: { plugin: bottomBarPanel, active: true },
       terminal: { plugin: terminal, active: true, minimized: false }
     }
   }
@@ -607,6 +611,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['topbar'])
     await this.appManager.activatePlugin(['statusBar'])
+    await this.appManager.activatePlugin(['bottomBar'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['pinnedPanel'])
     await this.appManager.activatePlugin(['popupPanel'])
