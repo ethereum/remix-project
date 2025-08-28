@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Dropdown, Form, Tooltip, OverlayTrigger } from 'react-bootstrap'
+import { Button, Dropdown, Form } from 'react-bootstrap'
+import { CustomTooltip } from "@remix-ui/helper"
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import './index.css'
 
@@ -85,9 +86,9 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
               <Form.Label className="me-2" htmlFor="name">
                 REPO
               </Form.Label>
-              <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>
+              <CustomTooltip placement="right" tooltipId="learnethQuestionIconTooltip" tooltipText='i.e. username/repository'>
                 <i className="fas fa-question-circle" />
-              </OverlayTrigger>
+              </CustomTooltip>
               <Form.Control
                 id="name"
                 required
