@@ -6,6 +6,8 @@ interface BottomBarProps {
   plugin: Plugin
 }
 
+const SUPPORTED_EXTENSIONS = ['sol', 'vy', 'circom', 'js', 'ts']
+
 export const BottomBar = ({ plugin }: BottomBarProps) => {
   const [explaining, setExplaining] = useState(false)
   const [aiSwitch, setAiSwitch] = useState(true)
@@ -22,29 +24,36 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       }
     }
 
-    const getCurrentExt = async () => {
-      try {
-        const path = await plugin.call('fileManager', 'getCurrentFile')
-        setCurrentFilePath(path)
-        const ext = path?.split('.').pop()?.toLowerCase() || ''
-        setCurrentExt(ext)
-      } catch {
-        setCurrentFilePath('')
-        setCurrentExt('')
-      }
+    const handleExtChange = (ext: string) => {
+      setCurrentExt(ext || '')
     }
 
+    const handleFileChange = (path: string) => {
+      setCurrentFilePath(path || '')
+    }
+  
     getAI()
-    getCurrentExt()
 
     const onCopilot = (isChecked: boolean) => setAiSwitch(!!isChecked)
 
+    plugin.on('tabs', 'extChanged', handleExtChange)
+
     plugin.on('settings', 'copilotChoiceUpdated', onCopilot)
-    plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
+    plugin.on('fileManager', 'currentFileChanged', handleFileChange)
+
+    plugin.call('fileManager', 'getCurrentFile').then(path => {
+      handleFileChange(path)
+      const ext = path?.split('.').pop()?.toLowerCase() || ''
+      handleExtChange(ext)
+    }).catch(() => {
+      handleFileChange('')
+      handleExtChange('')
+    })
 
     return () => {
-      plugin.off('settings', 'copilotChoiceUpdated')
+      plugin.off('tabs', 'extChanged')
       plugin.off('fileManager', 'currentFileChanged')
+      plugin.off('settings', 'copilotChoiceUpdated')
     }
   }, [plugin])
 
@@ -80,19 +89,21 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     return ''
   }
 
+  if (!SUPPORTED_EXTENSIONS.includes(currentExt)) {
+    return null
+  }
+
   return (
     <div className="bottom-bar border-top border-bottom" data-id="bottomBarPanel">
-      {getExplainLabel() && (
-        <button
-          className="btn btn-ai"
-          onClick={handleExplain}
-          disabled={explaining || !currentFilePath}
-          data-id="bottomBarExplainBtn"
-        >
-          <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
-          <span>{getExplainLabel()}</span>
-        </button>
-      )}
+      <button
+        className="btn btn-ai"
+        onClick={handleExplain}
+        disabled={explaining || !currentFilePath}
+        data-id="bottomBarExplainBtn"
+      >
+        <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
+        <span>{getExplainLabel()}</span>
+      </button>
       <div className="copilot-toggle">
         <span className={aiSwitch ? 'on' : ''}>AI copilot</span>
         <label className="switch" data-id="copilot_toggle">
