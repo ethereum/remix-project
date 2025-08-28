@@ -11,8 +11,8 @@
       padding-left: 3em !important;
     }
   }
-
-@media (max-width: 1399.98px) {
+/* For 13-inch Mac */
+@media (max-width: 1460px) {
     .remix-settings-sidebar {
       min-width: 0 !important;
       max-width: 50% !important;
