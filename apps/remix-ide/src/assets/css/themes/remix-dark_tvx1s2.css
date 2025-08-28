@@ -110,7 +110,7 @@
   --bs-link-hover-color: #525765;
   --bs-link-hover-color-rgb: 82, 87, 101;
   --bs-code-color: #e83e8c;
-  --bs-highlight-color: #fff;
+  --bs-highlight-color: #222336;
   --bs-highlight-bg: #fdebd0;
   --bs-border-width: 1px;
   --bs-border-style: solid;
@@ -397,7 +397,7 @@ small, .small {
 }
 
 mark, .mark {
-  padding: 0.1875em;
+  padding: 0.1875em !important;
   color: var(--bs-highlight-color);
   background-color: var(--bs-highlight-bg);
 }
@@ -3119,7 +3119,7 @@ textarea.form-control-lg {
   color: var(--bs-btn-disabled-color);
   pointer-events: none;
   background-color: var(--bs-btn-disabled-bg);
-  border-color: var(--bs-btn-disabled-border-color);
+  /* border-color: var(--bs-btn-disabled-border-color); */
   opacity: var(--bs-btn-disabled-opacity);
 }
 

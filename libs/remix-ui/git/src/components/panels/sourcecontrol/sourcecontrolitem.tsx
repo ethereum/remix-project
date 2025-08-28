@@ -52,7 +52,7 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
   if (!file.statusNames || file.statusNames.length === 0) return null
 
   return (<>
-    <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center">
+    <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center mt-2">
       <div className='pointer gitfile long-and-truncated' onClick={async () => await fileClick(file)}>
         <span className='fw-bold long-and-truncated'>{path.basename(file.filename)}</span>
         <div className='text-secondary long-and-truncated'> {file.filename}</div>
