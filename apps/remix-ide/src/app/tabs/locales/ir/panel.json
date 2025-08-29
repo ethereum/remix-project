@@ -1,0 +1,13 @@
+{
+  "panel.author": "نویسنده",
+  "panel.maintainedBy": "نگهداری توسط",
+  "panel.documentation": "مستندات",
+  "panel.description": "توضیحات",
+  "panel.maintainedByRemix": "نگهداری توسط Remix",
+  "panel.pinnedMsg": "برای انتقال افزونه به پنل سمت راست کلیک کنید",
+  "panel.unPinnedMsg": "برای بازگرداندن افزونه به پنل سمت چپ کلیک کنید",
+  "panel.maintainedExternally": "توسط Remix نگهداری نمی شود",
+  "panel.pluginInfo": "اطلاعات افزونه",
+  "panel.linkToDoc": "پیوند به مستندات",
+  "panel.makeAnissue": "ایجاد یک مشکل"
+}

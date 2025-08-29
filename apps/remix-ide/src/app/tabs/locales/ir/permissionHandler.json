@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "همه مجوزها بازنشانی شده اند.",
+  "permissionHandler.rememberText": "تغییر کرده است و",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} می خواهد به \"{method}\" از \"{to}\" دسترسی داشته باشد`",
+  "permissionHandler.description": "توضیحات",
+  "permissionHandler.noDescriptionProvided": "هیچ توضیحی ارائه نشده است",
+  "permissionHandler.makeSureYouTrustThisPlugin": "قبل از پردازش این تماس، مطمئن شوید که به این افزونه اعتماد دارید. اگر انتخاب کنید که انتخاب را برای این تماس خاص به خاطر بسپارید، مقدار فقط برای جلسه فعلی حفظ خواهد شد.",
+  "permissionHandler.rememberThisChoice": "این انتخاب را به خاطر بسپار",
+  "permissionHandler.resetAllPermissions": "بازنشانی همه مجوزها",
+  "permissionHandler.permissionNeededFor": "مجوز مورد نیاز برای {to}",
+  "permissionHandler.accept": "پذیرفتن",
+  "permissionHandler.decline": "رد کردن"
+}
