@@ -11,13 +11,17 @@ const pinnedPanel = {
   displayName: 'Pinned Panel',
   description: 'Remix IDE pinned panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView', 'highlight']
+  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView', 'highlight', 'closePlugin', 'maximizePlugin',
+    'getClosedPlugin'
+  ],
+  events: ['pluginClosed', 'pluginMaximized']
 }
 
 export class PinnedPanel extends AbstractPanel {
   dispatch: React.Dispatch<any> = () => {}
   loggedState: Record<string, any>
   highlightStamp: number
+  closedPlugin: any
 
   constructor() {
     super(pinnedPanel)
@@ -35,6 +39,9 @@ export class PinnedPanel extends AbstractPanel {
   }
 
   async pinView (profile, view) {
+    if (this.closedPlugin) {
+      this.maximizePlugin(this.closedPlugin)
+    }
     const activePlugin = this.currentFocus()
 
     if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`)
@@ -62,6 +69,26 @@ export class PinnedPanel extends AbstractPanel {
     this.emit('unPinnedPlugin', profile)
   }
 
+  getClosedPlugin() {
+    return this.closedPlugin
+  }
+
+  async closePlugin (profile) {
+    const pinnedPanel = document.querySelector('#pinned-panel')
+    pinnedPanel.classList.add('d-none')
+    this.closedPlugin = profile
+    this.events.emit('pluginClosed', profile)
+    this.emit('pluginClosed', profile)
+  }
+
+  async maximizePlugin (profile) {
+    const pinnedPanel = document.querySelector('#pinned-panel')
+    pinnedPanel.classList.remove('d-none')
+    this.closedPlugin = null
+    this.events.emit('pluginMaximized', profile)
+    this.emit('pluginMaximized', profile)
+  }
+
   highlight () {
     this.highlightStamp = Date.now()
     this.renderComponent()
@@ -78,7 +105,7 @@ export class PinnedPanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} { ...state } />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)} closePlugin={this.closePlugin.bind(this)} maximizePlugin={this.maximizePlugin.bind(this)}></RemixUIPanelHeader>} { ...state } />
   }
 
   renderComponent() {

@@ -146,6 +146,7 @@ export function isNative(name) {
     'foundry-provider',
     'basic-http-provider',
     'tabs',
+    'pinnedPanel',
     'doc-gen',
     'doc-viewer',
     'circuit-compiler',
