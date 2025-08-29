@@ -35,6 +35,7 @@ let requiredModules = [
   'menuicons',
   'filePanel',
   'terminal',
+  'bottomBar',
   'statusBar',
   'settings',
   'pluginManager',

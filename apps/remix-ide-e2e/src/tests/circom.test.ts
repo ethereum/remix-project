@@ -57,6 +57,7 @@ module.exports = {
       .click('[data-id="compute_witness_btn"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
+      .pause(5000)
       .openFile('circuits/.bin/simple_js/simple.wtn')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wtn"]')

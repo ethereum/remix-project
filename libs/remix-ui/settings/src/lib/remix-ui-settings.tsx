@@ -327,7 +327,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             {/* Main Content */}
             <div
               className="flex-column p-0 flex-grow-1"
-              style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '100%' }}
+              style={{ minWidth: 0, flexBasis: '27.3em', flexGrow: 1, flexShrink: 1, maxWidth: '50%' }}
             >
               <div className="remix-settings-main" style={{ maxWidth: '53.5em', overflowY: 'auto', maxHeight: '58vh' }}>
                 <SettingsSectionUI plugin={props.plugin} section={filteredSection} state={settingsState} dispatch={dispatch} />

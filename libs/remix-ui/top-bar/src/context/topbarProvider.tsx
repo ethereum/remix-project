@@ -76,14 +76,6 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   const [focusToaster, setFocusToaster] = useState<string>('')
   const [toasters, setToasters] = useState<string[]>([])
 
-  const dispatchInitWorkspace = async () => {
-    await initWorkspace(plugin.filePanel)(fsDispatch)
-  }
-
-  useEffect(() => {
-    dispatchInitWorkspace()
-  }, [])
-
   useEffect(() => {
     if (modals.length > 0) {
       setFocusModal(() => {
@@ -159,7 +151,6 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
     plugin: plugin as unknown as Topbar,
     modal,
     toast,
-    dispatchInitWorkspace,
   }
 
   return (

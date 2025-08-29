@@ -35,6 +35,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts')
       .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .clickLaunchIcon('solidity')
       .click('*[id="compileBtn"]')
