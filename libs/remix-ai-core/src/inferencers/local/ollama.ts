@@ -1,39 +1,123 @@
 import axios from 'axios';
 
-const OLLAMA_HOST = 'http://localhost:11434';
+const _paq = (window._paq = window._paq || [])
+
+// default Ollama ports to check (11434 is the legacy/standard port)
+const OLLAMA_PORTS = [11434, 11435, 11436];
+const OLLAMA_BASE_HOST = 'http://localhost';
+
+let discoveredOllamaHost: string | null = null;
+
+export async function discoverOllamaHost(): Promise<string | null> {
+  if (discoveredOllamaHost) {
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_host_cache_hit', discoveredOllamaHost]);
+    return discoveredOllamaHost;
+  }
+
+  for (const port of OLLAMA_PORTS) {
+    const host = `${OLLAMA_BASE_HOST}:${port}`;
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_port_check', `${port}`]);
+    try {
+      const res = await axios.get(`${host}/api/tags`, { timeout: 2000 });
+      if (res.status === 200) {
+        discoveredOllamaHost = host;
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_host_discovered_success', `${host}`]);
+        return host;
+      }
+    } catch (error) {
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_port_connection_failed', `${port}:${error.message || 'unknown'}`]);
+      continue; // next port
+    }
+  }
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_host_discovery_failed', 'no_ports_available']);
+  return null;
+}
 
 export async function isOllamaAvailable(): Promise<boolean> {
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_availability_check', 'checking']);
+  const host = await discoverOllamaHost();
+  const isAvailable = host !== null;
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_availability_result', `available:${isAvailable}`]);
+  return isAvailable;
+}
+
+export async function listModels(): Promise<string[]> {
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_list_models_start', 'fetching']);
+  const host = await discoverOllamaHost();
+  if (!host) {
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_list_models_failed', 'no_host']);
+    throw new Error('Ollama is not available');
+  }
+
   try {
-    const res = await axios.get(`${OLLAMA_HOST}/api/tags`);
-    return res.status === 200;
+    const res = await axios.get(`${host}/api/tags`);
+    return res.data.models.map((model: any) => model.name);
+  } catch (error) {
+    throw new Error('Failed to list Ollama models');
+  }
+}
+
+export function getOllamaHost(): string | null {
+  return discoveredOllamaHost;
+}
+
+export function resetOllamaHost(): void {
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_reset_host', discoveredOllamaHost || 'null']);
+  discoveredOllamaHost = null;
+}
+
+export async function pullModel(modelName: string): Promise<void> {
+  // in case the user wants to pull a model from registry
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_start', modelName]);
+  const host = await discoverOllamaHost();
+  if (!host) {
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_failed', `${modelName}|no_host`]);
+    throw new Error('Ollama is not available');
+  }
+
+  try {
+    const startTime = Date.now();
+    await axios.post(`${host}/api/pull`, { name: modelName });
+    const duration = Date.now() - startTime;
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_success', `${modelName}|duration:${duration}ms`]);
+  } catch (error) {
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_pull_model_error', `${modelName}|${error.message || 'unknown'}`]);
+    console.error('Error pulling model:', error);
+    throw new Error(`Failed to pull model: ${modelName}`);
+  }
+}
+
+export async function validateModel(modelName: string): Promise<boolean> {
+  try {
+    const models = await listModels();
+    return models.includes(modelName);
   } catch (error) {
     return false;
   }
 }
 
-export async function listModels(): Promise<string[]> {
-  const res = await axios.get(`${OLLAMA_HOST}/api/tags`);
-  return res.data.models.map((model: any) => model.name);
-}
+export async function getBestAvailableModel(): Promise<string | null> {
+  _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_get_best']);
+  try {
+    const models = await listModels();
+    if (models.length === 0) return null;
 
-export async function setSystemPrompt(model: string, prompt: string): Promise<any> {
-  const payload = {
-    model,
-    system: prompt,
-    messages: [],
-  };
-  const res = await axios.post(`${OLLAMA_HOST}/api/chat`, payload);
-  return res.data;
-}
+    // Prefer code-focused models for IDE
+    const codeModels = models.filter(m =>
+      m.includes('codestral') ||
+      m.includes('code') ||
+      m.includes('deepseek-coder') ||
+      m.includes('starcoder')
+    );
 
-export async function chatWithModel(model: string, systemPrompt: string, userMessage: string): Promise<string> {
-  const payload = {
-    model,
-    system: systemPrompt,
-    messages: [
-      { role: 'user', content: userMessage }
-    ],
-  };
-  const res = await axios.post(`${OLLAMA_HOST}/api/chat`, payload);
-  return res.data.message?.content || '[No response]';
+    if (codeModels.length > 0) {
+      return codeModels[0];
+    }
+    // TODO get model stats and get best model
+    return models[0];
+  } catch (error) {
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_get_best_model_error', error.message || 'unknown']);
+    console.error('Error getting best available model:', error);
+    return null;
+  }
 }

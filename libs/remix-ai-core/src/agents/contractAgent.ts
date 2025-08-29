@@ -2,7 +2,7 @@ import { AssistantParams } from "../types/models";
 import { workspaceAgent } from "./workspaceAgent";
 import { CompilationResult } from "../types/types";
 import { compilecontracts, compilationParams } from "../helpers/compile";
-
+import { OllamaInferencer } from "../inferencers/local/ollamaInferencer"
 const COMPILATION_WARNING_MESSAGE = '⚠️**Warning**: The compilation failed. Please check the compilation errors in the Solidity compiler plugin. Enter `/continue` or `/c` if you want Remix AI to try again until a compilable solution is generated?'
 
 export class ContractAgent {
@@ -36,7 +36,6 @@ export class ContractAgent {
   async writeContracts(payload, userPrompt, statusCallback?: (status: string) => Promise<void>) {
     await statusCallback?.('Getting current workspace info...')
     const currentWorkspace = await this.plugin.call('filePanel', 'getCurrentWorkspace')
-
     const writeAIResults = async (parsedResults) => {
       if (this.plugin.isOnDesktop) {
         await statusCallback?.('Preparing files for desktop...')
@@ -78,14 +77,28 @@ export class ContractAgent {
           }
           return "Max attempts reached! Please try again with a different prompt."
         }
-        return "No payload, try again while considering changing the assistant provider to one of these choices `<openai|anthropic|mistralai>`"
+        return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
+      }
+
+      if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
+        // Extract JSON from markdown code blocks
+        if (typeof payload === 'string' && (payload.includes('```json') || payload.includes('```'))) {
+          // Match ```json content ``` or ``` content ```
+          const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+          if (jsonMatch && jsonMatch[1]) {
+            payload = jsonMatch[1].trim();
+          }
+        }
+        if (typeof payload === 'string') {
+          payload = JSON.parse(payload)
+        }
       }
 
       await statusCallback?.('Processing generated files...')
       this.contracts = {}
       const parsedFiles = payload
       this.oldPayload = payload
-      this.generationThreadID = parsedFiles['threadID']
+      this.generationThreadID = this.plugin.remoteInferencer instanceof OllamaInferencer ? "" : parsedFiles['threadID']
       this.workspaceName = parsedFiles['projectName']
 
       this.nAttempts += 1
@@ -108,14 +121,13 @@ export class ContractAgent {
       const result:CompilationResult = await compilecontracts(this.contracts, this.plugin)
       if (!result.compilationSucceeded) {
         await statusCallback?.('Compilation failed, fixing errors...')
-        // console.log('Compilation failed, trying again recursively ...')
-        const generatedContracts = genContrats.map(contract =>
+        const generatedContracts = (genContrats || []).map(contract =>
           `File: ${contract.fileName}\n${contract.content}`
         ).join('\n\n');
 
         // Format error files properly according to the schema
         const formattedErrorFiles = Object.entries(result.errfiles).map(([fileName, fileData]: [string, any]) => {
-          const errors = fileData.errors.map((err: any) =>
+          const errors = (fileData.errors || []).map((err: any) =>
             `Error at ${err.errorStart}-${err.errorEnd}: ${err.errorMessage}`
           ).join('\n  ');
           return `File: ${fileName}\n  ${errors}`;
@@ -137,7 +149,10 @@ export class ContractAgent {
       this.deleteWorkspace(this.workspaceName )
       this.nAttempts = 0
       await this.plugin.call('filePanel', 'switchToWorkspace', currentWorkspace)
-      return "Failed to generate secure code on user prompt! Please try again with a different prompt."
+      const rtvalue = this.plugin.remoteInferencer instanceof OllamaInferencer
+        ? "The selected Ollama model might not be supported. Please select another provider for this generation task or try again!"
+        : "Failed to generate secure code on user prompt! Please try again with a different prompt."
+      return rtvalue
     } finally {
       this.nAttempts = 0
     }
@@ -163,10 +178,8 @@ export class ContractAgent {
     try {
       const wspfiles = JSON.parse(await wspAgent.getCurrentWorkspaceFiles())
       const compResult:CompilationResult = await compilecontracts(wspfiles, this.plugin)
-      // console.log('fix workspace Compilation result:', compResult)
 
       if (compResult.compilationSucceeded) {
-        console.log('Compilation succeeded, no errors to fix')
         return 'Compilation succeeded, no errors to fix'
       }
 

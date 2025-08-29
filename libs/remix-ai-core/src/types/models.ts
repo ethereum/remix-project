@@ -77,7 +77,7 @@ const GenerationParams:IParams = {
   temperature: 0.5,
   topK: 40,
   topP: 0.92,
-  max_new_tokens: 2000,
+  max_new_tokens: 20000,
   stream_result: false,
   stream: false,
   model: "",

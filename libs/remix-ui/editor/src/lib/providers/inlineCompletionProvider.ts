@@ -1,6 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
-import { JsonStreamParser, CompletionParams } from '@remix/remix-ai-core';
+import { CompletionParams } from '@remix/remix-ai-core';
 import * as monaco from 'monaco-editor';
 import {
   AdaptiveRateLimiter,
@@ -53,8 +53,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     const currentTime = Date.now();
 
-    // Check rate limiting
-    if (!this.rateLimiter.shouldAllowRequest(currentTime)) {
+    // Check rate limiting (bypass for Ollama since it runs locally)
+    const assistantProvider = await this.props.plugin.call('remixAI', 'getAssistantProvider')
+    if (assistantProvider !== 'ollama' && !this.rateLimiter.shouldAllowRequest(currentTime)) {
       return { items: []};
     }
 

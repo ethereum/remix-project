@@ -84,7 +84,16 @@ export class workspaceAgent {
   async writeGenerationResults(payload, statusCallback?: (status: string) => Promise<void>) {
     try {
       await statusCallback?.('Processing workspace modifications...')
-      let modifiedFilesMarkdown = '# Modified Files\n'
+      if (typeof payload === 'string' && (payload.includes('```json') || payload.includes('```'))) {
+        const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+          payload = jsonMatch[1].trim();
+        }
+      }
+      if (typeof payload === 'string') {
+        payload = JSON.parse(payload)
+      }
+      let modifiedFilesMarkdown = '### List of Modified Files\n'
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
         // const fileContent = await this.plugin.call('codeFormatter', 'format', file.fileName, file.content, true);
@@ -95,7 +104,7 @@ export class workspaceAgent {
       await statusCallback?.('Workspace modifications complete!')
       return modifiedFilesMarkdown
     } catch (error) {
-      console.error('Error writing generation results:', error);
+      console.warn('Error writing generation results:', error);
       return 'No files modified'
     }
   }
