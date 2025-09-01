@@ -112,6 +112,27 @@ export function RemixUiTopbar () {
     }
   }, [global.fs.browser.workspaces, global.fs.browser.workspaces.length])
 
+  useEffect(() => {
+    plugin.on('theme', 'themeChanged', (theme) => {
+      setCurrentTheme(theme)
+    })
+    return () => {
+      plugin.off('theme', 'themeChanged')
+    }
+  }, [])
+
+  useEffect(() => {
+    async function loadCurrentTheme() {
+      try {
+        const ct = await plugin.call('theme', 'currentTheme')
+        setCurrentTheme(ct)
+      } catch (error) {
+        console.error("Error fetching current theme:", error)
+      }
+    }
+    loadCurrentTheme()
+  }, []);
+
   const subItems = useMemo(() => {
     return [
       { label: 'Rename', onClick: renameCurrentWorkspace, icon: 'far fa-edit' },
@@ -284,20 +305,6 @@ export function RemixUiTopbar () {
     )
   }
 
-  const getCurrentTheme = async () => {
-    const theme = await plugin.call('theme', 'currentTheme')
-    return theme
-  }
-
-  useEffect(() => {
-    plugin.on('theme', 'themeChanged', (theme) => {
-      setCurrentTheme(theme)
-    })
-    return () => {
-      plugin.off('theme', 'themeChanged')
-    }
-  }, [])
-
   const renameModalMessage = (workspaceName?: string) => {
     return (
       <div className='d-flex flex-column'>
@@ -332,8 +339,7 @@ export function RemixUiTopbar () {
     )
   }
 
-  const checkIfLightTheme = (themeName: string) =>
-    themeName.includes('dark') || themeName.includes('black') || themeName.includes('hackerOwl') ? false : true
+  const checkIfLightTheme = (themeName: string) => themeName.includes('dark') ? false : true
 
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
     return (
@@ -536,8 +542,6 @@ export function RemixUiTopbar () {
                 fontSize: '0.8rem'
               }}
               onClick={async () => {
-                const theme = await getCurrentTheme()
-                setCurrentTheme(theme)
                 setShowTheme(!showTheme)
               }}
             >
