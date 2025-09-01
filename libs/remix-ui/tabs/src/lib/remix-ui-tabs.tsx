@@ -508,7 +508,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div
-      className={`remix-ui-tabs justify-content-between border-0 header nav-tabs ${
+      className={`remix-ui-tabs justify-content-between  border-0 header nav-tabs ${
         appContext.appState.connectedToDesktop === desktopConnectionType .disabled ? 'd-flex' : 'd-none'
       }`}
       data-id="tabs-component"
@@ -624,15 +624,7 @@ export const TabsUI = (props: TabsUIProps) => {
             <TabPanel key={tab.name}></TabPanel>
           ))}
         </Tabs>
-        {closedPlugin && <div className="d-flex my-auto" style={{ height: '1rem', width: '1rem', marginLeft: '37rem' }}>
-          <CustomTooltip placement="left-start" tooltipText="Restore closed plugin">
-            <i
-              className="fa-solid fa-expand-wide fs-4"
-              data-id="restoreClosedPlugin"
-              onClick={() => props.plugin.call('pinnedPanel', 'maximizePlugin')}
-            ></i>
-          </CustomTooltip>
-        </div>}
+
       </div>
     </div>
   )
