@@ -136,13 +136,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               </a>
             </span>
           )}
-
-          {plugin?.profile?.documentation && (
-            <a href={plugin.profile.documentation} target="_blank" rel="noreferrer" className="btn btn-secondary w-100 d-flex align-items-center justify-content-center text-decoration-none">
-              <i className="fas fa-book me-2"></i>
-              <FormattedMessage id="panel.openDocumentation" defaultMessage="Open documentation" />
-            </a>
-          )}
         </div>
       </div>
 
