@@ -33,11 +33,9 @@ export default class TabProxy extends Plugin {
     })
 
     this.on('pinnedPanel', 'pluginClosed', (profile) => {
-      console.log('pluginClosed')
       this.event.emit('pluginIsClosed', profile)
     })
     this.on('pinnedPanel', 'pluginMaximized', (profile) => {
-      console.log('pluginMaximized')
       this.event.emit('pluginIsMaximized', profile)
     })
 
