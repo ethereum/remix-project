@@ -624,9 +624,13 @@ export const TabsUI = (props: TabsUIProps) => {
             <TabPanel key={tab.name}></TabPanel>
           ))}
         </Tabs>
-        {closedPlugin && <div className="d-flex my-auto py-1" style={{ height: '1rem', width: '1rem' }}>
-          <CustomTooltip placement="right-start" tooltipText="Restore closed plugin">
-            <i className="fa-solid fa-expand-wide" onClick={() => props.plugin.call('pinnedPanel', 'maximizePlugin')}></i>
+        {closedPlugin && <div className="d-flex my-auto" style={{ height: '1rem', width: '1rem', marginLeft: '37rem' }}>
+          <CustomTooltip placement="left-start" tooltipText="Restore closed plugin">
+            <i
+              className="fa-solid fa-expand-wide fs-4"
+              data-id="restoreClosedPlugin"
+              onClick={() => props.plugin.call('pinnedPanel', 'maximizePlugin')}
+            ></i>
           </CustomTooltip>
         </div>}
       </div>
