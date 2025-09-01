@@ -78,7 +78,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                 <>
                   <RenderIf condition={plugin.pinned}>
                     <>
-                      <div className='d-flex' data-id="movePluginToLeft" onClick={unPinPlugin}>
+                      <div className='d-flex' data-id="movePluginToLeft" data-pinnedplugin={`movePluginToLeft-${plugin.profile.name}`} onClick={unPinPlugin}>
                         <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
                           <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
                         </CustomTooltip>
@@ -93,7 +93,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                     </>
                   </RenderIf>
                   <RenderIfNot condition={plugin.pinned}>
-                    <div className='d-flex' data-id="movePluginToRight" onClick={pinPlugin}>
+                    <div className='d-flex' data-id="movePluginToRight" data-pinnedplugin={`movePluginToRight-${plugin.profile.name}`} onClick={pinPlugin}>
                       <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
                         <i aria-hidden="true" className="mt-1 px-1 ps-2 fak fa-fa-dock-r"></i>
                       </CustomTooltip>

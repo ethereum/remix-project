@@ -115,7 +115,7 @@ export const TabsUI = (props: TabsUIProps) => {
       setMaximized(true)
     })
   }, [])
-  console.log(maximized)
+
   // Toggle the copilot in editor when clicked to update in status bar
   useEffect(() => {
     const run = async () => {
