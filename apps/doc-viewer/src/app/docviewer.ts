@@ -5,14 +5,15 @@ import EventEmitter from 'events'
 export class DocViewer extends PluginClient {
   mdFile: string
   eventEmitter: EventEmitter
-  refreshId: any
+  refreshId: ReturnType<typeof setInterval> | null = null
+
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
-    this.methods = ['viewDocs']
+    (this as any).methods = ['viewDocs']
     createClient(this)
     this.mdFile = ''
-    this.onload()
+    this.onload?.()
   }
 
   private async refresh() {
