@@ -450,7 +450,7 @@ export class OllamaInferencer extends RemoteInferencer implements ICompletions, 
 
   async answer(prompt: string, options: IParams = GenerationParams): Promise<any> {
     _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_chat_answer', `model:${this.model_name}|stream:${!!options.stream_result}`]);
-    const chatHistory = buildChatPrompt(prompt)
+    const chatHistory = buildChatPrompt()
     const payload = this._buildPayload(prompt, options, CHAT_PROMPT, chatHistory);
     if (options.stream_result) {
       return await this._streamInferenceRequest(payload, AIRequestType.GENERAL);
