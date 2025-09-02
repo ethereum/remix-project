@@ -54,6 +54,10 @@ const settingsSections: SettingsSection[] = [
           name: 'display-errors',
           label: 'settings.displayErrorsText',
           type: 'toggle'
+        },{
+          name: 'text-wrap',
+          label: 'settings.wordWrapText',
+          type: 'toggle'
         }, {
           name: 'personal-mode',
           label: 'settings.enablePersonalModeText',
