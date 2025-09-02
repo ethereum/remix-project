@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {Link, useLocation, useNavigate} from 'react-router-dom'
-import {Button, Modal, Tooltip, OverlayTrigger} from 'react-bootstrap'
+import {Button, Modal } from 'react-bootstrap'
+import { CustomTooltip } from "@remix-ui/helper"
 import './index.scss'
 
 function BackButton({entity}: any) {
@@ -14,8 +15,8 @@ function BackButton({entity}: any) {
   const previousStep = entity && entity.steps[stepId - 1]
 
   return (
-    <nav className="navbar navbar-light bg-light justify-content-between pt-1 pb-1 ps-1">
-      <ul className="nav me-auto">
+    <nav className="navbar navbar-light bg-light d-flex justify-content-between pt-1 pb-1 ps-1">
+      <ul className="d-flex nav me-auto">
         <li className="nav-item">
           <div
             className="btn back"
@@ -24,23 +25,27 @@ function BackButton({entity}: any) {
             }}
             role="button"
           >
-            <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">Leave tutorial</Tooltip>}>
+            <CustomTooltip
+              placement={"right"}
+              tooltipId="learnethHomeIconTooltip"
+              tooltipText='Leave tutorial'
+            >
               <i className="fas fa-home ps-1" />
-            </OverlayTrigger>
+            </CustomTooltip>
           </div>
         </li>
         {isDetailPage && (
           <li className="nav-item">
-            <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-rightTutorialMenu">Tutorial menu</Tooltip>}>
+            <CustomTooltip placement="right" tooltipId="learnethBarsIconTooltip" tooltipText='Tutorial menu'>
               <Link className="btn" to={`/list?id=${entity.id}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'back_to_menu_step', entity && entity.name])}>
                 <i className="fas fa-bars" />
               </Link>
-            </OverlayTrigger>
+            </CustomTooltip>
           </li>
         )}
       </ul>
       {isDetailPage && (
-        <form className="form-inline">
+        <form className="form d-flex">
           {stepId > 0 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId - 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'previous_step', `${entity.name}/${previousStep && previousStep.name}`])}>
               <i className="fas fa-chevron-left pe-1" />
@@ -49,7 +54,7 @@ function BackButton({entity}: any) {
           {stepId + 1}/{entity && <div className="">{entity.steps.length}</div>}
           {stepId < entity.steps.length - 1 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId + 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'next_step', `${entity.name}/${nextStep && nextStep.name}`])} >
-              <i className="fas fa-chevron-right ps-1" />
+              <i className="fas fa-chevron-right ps-1 pe-1" />
             </Link>
           )}
         </form>

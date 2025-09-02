@@ -112,11 +112,11 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'theme': {
-    value: defaultTheme.name,
+    value: defaultTheme ? defaultTheme.name : "Dark",
     isLoading: false
   },
   'locale': {
-    value: defaultLocale.localeName,
+    value: defaultLocale ? defaultLocale.localeName : "English",
     isLoading: false
   },
   'github-config': {

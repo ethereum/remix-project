@@ -19,6 +19,7 @@ module.exports = {
   },
   'Should not be able to flatten contract without imports': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .pause(1000)
       .click('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')

@@ -10,7 +10,6 @@ import EventManager from '../../lib/events'
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 import { RemixUiXterminals } from '@remix-ui/xterm'
-import { BottomBar } from '../components/bottom-bar'
 
 const KONSOLES = []
 
@@ -143,7 +142,6 @@ export default class Terminal extends Plugin {
   updateComponent(state) {
     return (
       <>
-        <BottomBar plugin={this} />
         <RemixUITerminalWrapper
           plugin={state.plugin}
           onReady={state.onReady}
