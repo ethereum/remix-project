@@ -83,9 +83,9 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                           <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
                         </CustomTooltip>
                       </div>
-                      <CustomTooltip placement="bottom-end" tooltipText="Close Plugin">
+                      <CustomTooltip placement="bottom-end" tooltipText="Hide pinned Plugin">
                         <i
-                          className="fa-solid fa-xmark ms-2 fs-5"
+                          className="fa-solid fa-compress ms-2 fs-5"
                           onClick={closePlugin}
                           data-id="closePinnedPlugin"
                         ></i>

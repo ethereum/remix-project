@@ -524,7 +524,7 @@ export function RemixUiTopbar () {
           className="d-flex flex-row align-items-center justify-content-end flex-nowrap"
           style={{ minWidth: '33%' }}
         >
-          {closedPlugin && <div className="d-flex my-auto me-4" style={{ height: '1rem', width: '1rem' }}>
+          {/* {closedPlugin && <div className="d-flex my-auto me-4" style={{ height: '1rem', width: '1rem' }}>
             <CustomTooltip placement="left-start" tooltipText={`Open ${closedPlugin.displayName} plugin`}>
               <i
                 className="fa-solid fa-expand-wide fs-4 text-info"
@@ -532,7 +532,7 @@ export function RemixUiTopbar () {
                 onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
               ></i>
             </CustomTooltip>
-          </div>}
+          </div>} */}
           <>
             {user ? (
               <GithubLoginSuccess
@@ -618,6 +618,16 @@ export function RemixUiTopbar () {
           >
             <i className="fa fa-cog"></i>
           </span>
+
+          {closedPlugin && <div className="d-flex ms-4" >
+            <CustomTooltip placement="bottom-start" tooltipText={`Show ${closedPlugin.displayName} plugin`}>
+              <i
+                className="fa-solid fa-expand-wide fs-4 text-info"
+                data-id="restoreClosedPlugin"
+                onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
+              ></i>
+            </CustomTooltip>
+          </div>}
         </div>
       </div>
     </section>
