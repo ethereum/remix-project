@@ -1,7 +1,8 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import { Options } from 'prettier';
-import sol from './code-format/index'
+// import sol from './code-format/index'
+import sol from 'prettier-plugin-solidity'
 import path from 'path'
 import yaml from 'js-yaml'
 import toml from 'toml'
