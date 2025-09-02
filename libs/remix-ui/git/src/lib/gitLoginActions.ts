@@ -91,7 +91,7 @@ const startWebPopupLogin = async (): Promise<void> => {
     };
 
     window.addEventListener('message', messageListener);
-    
+
     // Check if popup was closed without authentication
     const checkClosed = setInterval(() => {
       if (popup?.closed) {
@@ -106,7 +106,7 @@ const startWebPopupLogin = async (): Promise<void> => {
 // Device code flow fallback (can be called from components if needed)
 export const getDeviceCodeFromGitHub = async (): Promise<any> => {
   await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE);
-  
+
   const response = await axios({
     method: 'post',
     url: `${endpointUrls.github}/login/device/code`,
@@ -147,5 +147,17 @@ export const connectWithDeviceCode = async (deviceCode: string): Promise<void> =
     await loadGitHubUserFromToken();
   } else {
     throw new Error('Failed to get access token from device code');
+  }
+};
+
+// Disconnect from GitHub
+export const disconnectFromGitHub = async (): Promise<void> => {
+  try {
+    await sendToMatomo(gitMatomoEventTypes.DISCONNECTFROMGITHUB);
+    await saveToken(null);
+    await loadGitHubUserFromToken();
+  } catch (error) {
+    console.error('Failed to disconnect from GitHub:', error);
+    throw error;
   }
 };

@@ -9,7 +9,7 @@ import { CustomRemixApi } from "@remix-api";
 import { saveToken, sendToMatomo, statusChanged } from "./pluginActions";
 import { appPlatformTypes } from "@remix-ui/app";
 import { AppAction } from "@remix-ui/app";
-import { setLoginPlugin, startGitHubLogin } from "./gitLoginActions";
+import { setLoginPlugin, startGitHubLogin, disconnectFromGitHub } from "./gitLoginActions";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
@@ -44,7 +44,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   loadFileQueue = new AsyncDebouncedQueue()
 
   setPlugin(viewPlugin, gitDispatcher, appDispatcher)
-  
   // Initialize the login plugin reference
   setLoginPlugin(viewPlugin)
 
@@ -211,7 +210,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     init()
   })
 
-  plugin.on('dgit' as any, 'startLogin', async () => {
+  plugin.on('dgit' as any, 'login', async () => {
     try {
       await startGitHubLogin()
     } catch (error) {
@@ -219,6 +218,19 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       // Optionally show error to user
       gitDispatch(setLog({
         message: `GitHub login failed: ${error.message}`,
+        type: "error"
+      }))
+    }
+  })
+
+  plugin.on('dgit' as any, 'disconnect', async () => {
+    try {
+      await disconnectFromGitHub()
+    } catch (error) {
+      console.error('Failed to disconnect from GitHub from dgit plugin:', error)
+      // Optionally show error to user
+      gitDispatch(setLog({
+        message: `GitHub disconnect failed: ${error.message}`,
         type: "error"
       }))
     }

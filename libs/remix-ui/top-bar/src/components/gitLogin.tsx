@@ -1,8 +1,7 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { useContext, useState, useCallback, useEffect } from 'react'
+import React, { useContext, useCallback } from 'react'
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import { CustomTopbarMenu } from '@remix-ui/helper'
-import { publishToGist } from 'libs/remix-ui/workspace/src/lib/actions'
 import { AppContext } from '@remix-ui/app'
 
 const _paq = window._paq || []
@@ -10,40 +9,30 @@ const _paq = window._paq || []
 interface GitHubLoginProps {
   cloneGitRepository: () => void
   logOutOfGithub: () => void
+  loginWithGitHub: () => Promise<void>
+  publishToGist: () => void
 }
 
 export const GitHubLogin: React.FC<GitHubLoginProps> = ({
   cloneGitRepository,
-  logOutOfGithub
+  logOutOfGithub,
+  publishToGist,
+  loginWithGitHub
 }) => {
   const appContext = useContext(AppContext)
-  const [isLoading, setIsLoading] = useState(false)
 
   // Get the GitHub user state from app context
   const gitHubUser = appContext?.appState?.gitHubUser
   const isConnected = gitHubUser?.isConnected
 
-  // Simple login handler that delegates to the app context
+  // Simple login handler that delegates to the prop function
   const handleLogin = useCallback(async () => {
-    if (isLoading) return
-
-    setIsLoading(true)
-
     try {
-      await appContext.loginWithGitHub()
+      await loginWithGitHub()
     } catch (error) {
       console.error('Failed to start GitHub login:', error)
-    } finally {
-      setIsLoading(false)
     }
-  }, [appContext, isLoading])
-
-  // Monitor GitHub user state changes to stop loading when connection is established
-  useEffect(() => {
-    if (isConnected && isLoading) {
-      setIsLoading(false)
-    }
-  }, [isConnected, isLoading])
+  }, [loginWithGitHub])
 
   return (
     <Dropdown
@@ -52,23 +41,25 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
     >
       <Button
         className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
+        variant={ isConnected ? 'primary' : null }
         data-id="github-dropdown-toggle-login"
         style={{
           fontSize: '0.8rem',
           padding: '0.35rem 0.5rem',
         }}
         onClick={isConnected ? undefined : handleLogin}
-        disabled={isLoading || isConnected}
+        disabled={isConnected}
       >
-        {isLoading ? (
-          <>
-            <i className="fas fa-spinner fa-spin me-1"></i>
-            <span>Opening...</span>
-          </>
-        ) : isConnected ? (
+        {isConnected ? (
           <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
             <i className="fab fa-github me-1"></i>
             <span>{gitHubUser.login}</span>
+            <img src={gitHubUser.avatar_url} alt="Avatar" className="ms-1" style={{
+              width: '25px',
+              height: '25px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+            }}/>
           </div>
         ) : (
           <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
@@ -83,7 +74,6 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
         variant="outline-secondary"
         className="btn-topbar btn-sm"
         data-id="github-dropdown-toggle"
-        disabled={!isConnected}
       >
       </Dropdown.Toggle>
       <Dropdown.Menu
@@ -97,28 +87,32 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
           <i className="fab fa-github me-2"></i>
           <span>Clone</span>
         </Dropdown.Item>
-        <Dropdown.Item
-          data-id="github-dropdown-item-publish-to-gist"
-          onClick={async () => {
-            await publishToGist()
-            _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
-          }}
-        >
-          <i className="fab fa-github me-2"></i>
-          <span>Publish to Gist</span>
-        </Dropdown.Item>
-        <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
-        <Dropdown.Item
-          data-id="github-dropdown-item-disconnect"
-          onClick={async () => {
-            await logOutOfGithub()
-            _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
-          }}
-          className="text-danger"
-        >
-          <i className="fas fa-sign-out-alt me-2"></i>
-          <span>Disconnect</span>
-        </Dropdown.Item>
+        {isConnected && (
+          <>
+            <Dropdown.Item
+              data-id="github-dropdown-item-publish-to-gist"
+              onClick={async () => {
+                await publishToGist()
+                _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
+              }}
+            >
+              <i className="fab fa-github me-2"></i>
+              <span>Publish to Gist</span>
+            </Dropdown.Item>
+            <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
+            <Dropdown.Item
+              data-id="github-dropdown-item-disconnect"
+              onClick={async () => {
+                await logOutOfGithub()
+                _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
+              }}
+              className="text-danger"
+            >
+              <i className="fas fa-sign-out-alt me-2"></i>
+              <span>Disconnect</span>
+            </Dropdown.Item>
+          </>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );

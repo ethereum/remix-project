@@ -199,27 +199,7 @@ const RemixApp = (props: IRemixAppUi) => {
     showEnter: props.app.showEnter,
     modal: props.app.notification,
     appState: appState,
-    appStateDispatch: appStateDispatch,
-    loginWithGitHub: async () => {
-      try {
-        // Activate dgit plugin if not active
-        const isActive = await props.app.appManager.call('manager', 'isActive', 'dgit')
-        if (!isActive) {
-          await props.app.appManager.call('manager', 'activatePlugin', 'dgit')
-        }
-
-        // Emit the startLogin event to trigger the abstracted login logic
-        await props.app.appManager.call('dgit', 'startLogin')
-      } catch (error) {
-        console.error('Failed to trigger GitHub login:', error)
-        // Optionally show a user-friendly error
-        props.app.notification.alert({
-          id: 'github-login-error',
-          title: 'Login Error',
-          message: 'Failed to start GitHub login. Please try again.'
-        })
-      }
-    }
+    appStateDispatch: appStateDispatch
   }
 
   const handleUserChosenType = async (type) => {

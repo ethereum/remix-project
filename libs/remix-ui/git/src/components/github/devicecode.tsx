@@ -7,7 +7,7 @@ import { sendToMatomo } from "../../lib/pluginActions";
 import { gitMatomoEventTypes } from "../../types";
 import { endpointUrls } from "@remix-endpoints-helper";
 import isElectron from "is-electron";
-import { startGitHubLogin, getDeviceCodeFromGitHub, connectWithDeviceCode } from "../../lib/gitLoginActions";
+import { startGitHubLogin, getDeviceCodeFromGitHub, connectWithDeviceCode, disconnectFromGitHub } from "../../lib/gitLoginActions";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -25,9 +25,7 @@ export const GetDeviceCode = () => {
       if (isElectron()) {
         setDesktopIsLoading(true)
       }
-      
       await startGitHubLogin()
-      
       if (!isElectron()) {
         setAuthorized(true)
       }
@@ -47,7 +45,7 @@ export const GetDeviceCode = () => {
     setDesktopIsLoading(false)
     setPopupError(false)
     setAuthorized(false)
-    
+
     try {
       const githubResponse = await getDeviceCodeFromGitHub()
       setGitHubResponse(githubResponse)
@@ -73,12 +71,14 @@ export const GetDeviceCode = () => {
     }
   },[context.gitHubUser])
 
-  const disconnect = async () => {
-    await sendToMatomo(gitMatomoEventTypes.DISCONNECTFROMGITHUB)
-    setAuthorized(false)
-    setGitHubResponse(null)
-    await pluginActions.saveToken(null)
-    await actions.loadGitHubUserFromToken()
+  const handleDisconnect = async () => {
+    try {
+      await disconnectFromGitHub()
+      setAuthorized(false)
+      setGitHubResponse(null)
+    } catch (error) {
+      console.error('Failed to disconnect from GitHub:', error)
+    }
   }
 
   return (
@@ -131,7 +131,7 @@ export const GetDeviceCode = () => {
         (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
             <button data-id='disconnect-github' className='btn btn-primary mt-1 w-100' onClick={async () => {
-              disconnect()
+              handleDisconnect()
             }}>Disconnect</button>
           </div> : null
       }

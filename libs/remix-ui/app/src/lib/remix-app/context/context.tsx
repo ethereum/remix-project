@@ -11,7 +11,6 @@ export type appProviderContextType = {
   modal: any
   appState: AppState
   appStateDispatch: React.Dispatch<AppAction>
-  loginWithGitHub: () => Promise<void>
 }
 
 export enum appPlatformTypes {
