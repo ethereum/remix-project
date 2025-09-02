@@ -5,7 +5,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { appPlatformTypes } from '@remix-ui/app'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Placement } from 'react-bootstrap/esm/types'
 import { branch } from '@remix-api'
 
 export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
@@ -50,11 +50,13 @@ export interface FileType {
 
 export type WorkspaceMetadata = {
   name: string
-  isGitRepo: boolean
+  isGitRepo?: boolean
   hasGitSubmodules?: boolean
   branches?: branch[]
   currentBranch?: branch
-  isGist: string
+  isGist?: string
+  isLocalhost?: boolean
+  absolutePath?: string
 }
 
 export type TemplateType = {

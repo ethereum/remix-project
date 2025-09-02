@@ -145,7 +145,7 @@ const App = () => {
                 <div className="pb-2 border-bottom">
                   <Form>
                     <div className="d-flex flex-row justify-content-around mb-1 mt-2">
-                      <div className={`custom-control custom-radio ${state.environment === 'remote' ? 'd-flex' : 'd-flex cursor-status'}`}>
+                      <div className={`form-control custom-radio ${state.environment === 'remote' ? 'd-flex' : 'd-flex cursor-status'} bg-body`}>
                         <input
                           type="radio"
                           id="remote-compiler"
@@ -154,15 +154,14 @@ const App = () => {
                           value={state.environment}
                           checked={state.environment === 'remote'}
                           onChange={() => setEnvironment('remote')}
-                          className={`custom-control-input ${state.environment === 'remote' ? 'd-flex mr-1' : 'd-flex mr-1 cursor-status'}`}
+                          className={`form-check-input ${state.environment === 'remote' ? 'd-flex me-1' : 'd-flex me-1 cursor-status'}`}
                         />
                         <label
                           htmlFor="remote-compiler"
-                          className="form-check-label custom-control-label"
-                          style={{ paddingTop: '0.19rem' }}
+                          className="form-check-label"
                         >Remote Compiler</label>
                       </div>
-                      <div className={`custom-control custom-radio ${state.environment === 'local' ? 'mr-2' : `cursor-status`}`}>
+                      <div className={`form-control custom-radio ${state.environment === 'local' ? 'me-2' : `cursor-status`} bg-body p-0 mt-1`}>
                         <input
                           id="local-compiler"
                           data-id="local-compiler"
@@ -171,12 +170,11 @@ const App = () => {
                           name="local"
                           value={state.environment}
                           onChange={() => setEnvironment('local')}
-                          className={`custom-control-input  ${state.environment === 'local' ? '' : `cursor-status`}`}
+                          className={`form-check-input  ${state.environment === 'local' ? '' : `cursor-status`} me-1`}
                         />
                         <label
                           htmlFor="local-compiler"
-                          className="form-check-label custom-control-label"
-                          style={{ paddingTop: '0.19rem' }}
+                          className="form-check-label"
                         >Local Compiler</label>
                       </div>
                     </div>

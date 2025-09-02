@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAccordionToggle } from 'react-bootstrap/AccordionToggle'
+import { useAccordionButton } from 'react-bootstrap/AccordionButton' 
 
 export type CustomAccordionToggleProps = {
   children: React.ReactNode
@@ -10,7 +10,7 @@ export type CustomAccordionToggleProps = {
 export default function CustomAccordionToggle({ children, eventKey }: CustomAccordionToggleProps) {
   const [toggleAccordion, setToggleAccordion] = useState(false)
 
-  const decoratedOnClick = useAccordionToggle(eventKey, () =>
+  const decoratedOnClick = useAccordionButton(eventKey, () =>
     setToggleAccordion(!toggleAccordion)
   )
 

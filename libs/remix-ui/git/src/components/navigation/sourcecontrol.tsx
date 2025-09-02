@@ -26,12 +26,12 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
   return (
     <>
       <div className={'d-flex align-items-center justify-content-between ' + (activePanel === eventKey ? 'bg-light' : '')}>
-        <span data-id='sourcecontrol-panel' onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'
+        <span data-id='sourcecontrol-panel' onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75 ms-1'
         >
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="nav pl-2 form-check-label">SOURCE CONTROL</label>
+          <label className="nav ps-2 form-check-label">SOURCE CONTROL</label>
           <LoaderIndicator></LoaderIndicator>
 
         </span>

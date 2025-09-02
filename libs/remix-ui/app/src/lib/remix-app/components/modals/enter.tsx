@@ -18,8 +18,8 @@ const EnterDialog = (props: EnterDialogProps) => {
   return (
     <div
       data-id={`EnterModalDialogContainer-react`}
-      data-backdrop="static"
-      data-keyboard="false"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
       className={"modal  " + modalClass}
       role="dialog"
     >
@@ -40,10 +40,10 @@ const EnterDialog = (props: EnterDialogProps) => {
             </div>
           </div>
           <div className="modal-body text-break remixModalBody d-flex flex-column p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
-            <button className="btn btn-secondary text-left" data-id="beginnerbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Beginner)}}><FormattedMessage id="remixApp.enterText3" /></button>
-            <button className="btn btn-secondary my-1 text-left" data-id="prototyperbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Prototyper)}}><FormattedMessage id="remixApp.enterText4" /></button>
-            <button className="btn btn-secondary text-left" data-id="advanceUserbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Advance)}}><FormattedMessage id="remixApp.enterText5" /></button>
-            <button className="btn btn-secondary mt-1 text-left" data-id="productionbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Production)}}><FormattedMessage id="remixApp.enterText6" /></button>
+            <button className="btn btn-secondary text-start" data-id="beginnerbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Beginner)}}><FormattedMessage id="remixApp.enterText3" /></button>
+            <button className="btn btn-secondary my-1 text-start" data-id="prototyperbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Prototyper)}}><FormattedMessage id="remixApp.enterText4" /></button>
+            <button className="btn btn-secondary text-start" data-id="advanceUserbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Advance)}}><FormattedMessage id="remixApp.enterText5" /></button>
+            <button className="btn btn-secondary mt-1 text-start" data-id="productionbtn" style={{ minWidth: "100px" }} onClick={() => {enterAs(UsageTypes.Production)}}><FormattedMessage id="remixApp.enterText6" /></button>
           </div>
         </div>
       </div>

@@ -3,8 +3,8 @@
 import React, { useRef, useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
-import { Placement } from 'react-bootstrap/esm/Overlay'
 import { ThemeContext } from '../themeContext'
+import { Placement } from 'react-bootstrap/esm/types'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 type HometabIconSection = {
@@ -47,7 +47,7 @@ const iconButtons: HometabIconSection[] = [
   {
     textToolip: <FormattedMessage id="home.joinUsOnDiscord" />,
     matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'discord'],
-    urlLink: 'https://discord.gg/ATKsctCS2F',
+    urlLink: 'https://discord.gg/hEUgg24WhH',
     iconClass: 'fa-discord',
     placement: 'top'
   }
@@ -70,10 +70,10 @@ function HomeTabTitle() {
   return (
     <div className="card mb-3 p-5 rounded overflow-hidden border">
       <img src="assets/img/remix-link-illustration.svg" className="home-tab-banner" alt="Remix Logo" style={{ position: 'absolute', top: '-200px', left: '125px', width: 400, height: 400, zIndex: 0 }} />
-      <div style={{ backgroundColor: 'var(--body-bg)', opacity: 0.8, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}></div>
+      <div style={{ backgroundColor: 'var(--bs-body-bg)', opacity: 0.8, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}></div>
       <div style={{ zIndex: 2 }}>
         <div className="mb-0 d-flex align-items-center">
-          <div className="ml-2 d-flex">
+          <div className="ms-2 d-flex">
             <div onClick={() => playRemi()}>
               <svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100" style={{ height: '40px' }}>
                 <path fill={`${isDark ? 'white' : 'black'}`} d="M91.84,35a.09.09,0,0,1-.1-.07,41,41,0,0,0-79.48,0,.09.09,0,0,1-.1.07C9.45,35,1,35.35,1,42.53c0,8.56,1,16,6,20.32,2.16,1.85,5.81,2.3,9.27,2.22a44.4,44.4,0,0,0,6.45-.68.09.09,0,0,0,.06-.15A34.81,34.81,0,0,1,17,45c0-.1,0-.21,0-.31a35,35,0,0,1,70,0c0,.1,0,.21,0,.31a34.81,34.81,0,0,1-5.78,19.24.09.09,0,0,0,.06.15,44.4,44.4,0,0,0,6.45.68c3.46.08,7.11-.37,9.27-2.22,5-4.27,6-11.76,6-20.32C103,35.35,94.55,35,91.84,35Z" />
@@ -83,7 +83,7 @@ function HomeTabTitle() {
             </div>
             <audio id="remiAudio" muted={false} src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3" ref={remiAudioEl}></audio>
           </div>
-          <span className={`h-80 text-uppercase pl-2 ${isDark ? 'text-white' : 'text-black'}`} style={{ fontSize: 'xx-large', fontFamily: 'Noah, sans-serif' }}>
+          <span className={`h-80 text-uppercase ps-2 ${isDark ? 'text-white' : 'text-black'}`} style={{ fontSize: 'xx-large', fontFamily: 'Noah, sans-serif' }}>
         Remix
           </span>
         </div>
@@ -97,7 +97,7 @@ function HomeTabTitle() {
                 tooltipId="overlay-tooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={button.textToolip}
-                tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+                tooltipTextClasses="border bg-light text-dark p-1 pe-3"
               >
                 <button
                   key={index}

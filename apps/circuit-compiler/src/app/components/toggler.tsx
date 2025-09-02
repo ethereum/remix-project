@@ -17,7 +17,7 @@ export function Toggler ({ children, title, dataId, show = false, icon, iconTool
     <div className="pt-2 border-top pb-2">
       <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations} data-id={dataId}>
         <div className="d-flex">
-          <label className="mt-1 circuit_config_section">
+          <label className="circuit_config_section">
             <FormattedMessage id={title} />
             { icon ? iconTooltip ? (
               <CustomTooltip
@@ -26,9 +26,9 @@ export function Toggler ({ children, title, dataId, show = false, icon, iconTool
                 tooltipClasses="text-nowrap"
                 tooltipText={iconTooltip}
               >
-                <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span>
+                <span className={`${icon} border-0 p-0 ms-2`} aria-hidden="true"></span>
               </CustomTooltip>) :
-              <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span> : null }
+              <span className={`${icon} border-0 p-0 ms-2`} aria-hidden="true"></span> : null }
           </label>
         </div>
         <div>

@@ -75,12 +75,15 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     setLoadingPlugins(loadingPlugins.filter((id) => id !== pluginId))
   }
 
-  const handleFeaturedPluginActionClick = (pluginInfo: PluginInfo) => {
+  const handleFeaturedPluginActionClick = async (pluginInfo: PluginInfo) => {
     _paq.push(['trackEvent', 'hometab', 'featuredPluginsActionClick', pluginInfo.pluginTitle])
     if (pluginInfo.action.type === 'link') {
       window.open(pluginInfo.action.url, '_blank')
     } else if (pluginInfo.action.type === 'methodCall') {
-      plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
+      if (pluginInfo.action.pluginMethod === 'activatePlugin') {
+        await plugin.appManager.activatePlugin([pluginInfo.action.pluginName])
+        await plugin.call('menuicons', 'select', pluginInfo.action.pluginName)
+      } else plugin.call(pluginInfo.action.pluginName, pluginInfo.action.pluginMethod, pluginInfo.action.pluginArgs)
     }
   }
 
@@ -90,10 +93,10 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
         <div className="d-flex align-items-center px-2 justify-content-between border-bottom">
           <div className='d-flex align-items-center px-2'>
             <RenderIf condition={loadingPlugins.includes(pluginInfo.pluginId)}>
-              <i className="fad fa-spinner fa-spin mr-2"></i>
+              <i className="fad fa-spinner fa-spin me-2"></i>
             </RenderIf>
             <RenderIfNot condition={loadingPlugins.includes(pluginInfo.pluginId)}>
-              { pluginInfo.iconClass ? <i className={`${pluginInfo.iconClass} mr-2`}></i> : <i className="fa-solid fa-file-book mr-2"></i> }
+              { pluginInfo.iconClass ? <i className={`${pluginInfo.iconClass} me-2`}></i> : <i className="fa-solid fa-file-book me-2"></i> }
             </RenderIfNot>
             <span className="fw-bold" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.pluginTitle}</span>
           </div>
@@ -101,12 +104,12 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
         </div>
         <div className="d-flex flex-column justify-content-between h-100">
           <div className="p-3">
-            <div className={`text-${(pluginInfo.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved mr-2"></i><FormattedMessage id="home.maintainedBy"/> {pluginInfo.maintainedBy || 'Community'}</div>
+            <div className={`text-${(pluginInfo.maintainedBy || '').toLowerCase() === 'remix' ? 'success' : 'dark'} mb-1`}><i className="fa-solid fa-shield-halved me-2"></i><FormattedMessage id="home.maintainedBy"/> {pluginInfo.maintainedBy || 'Community'}</div>
             <div className="small mb-2" style={{ color: isDark ? 'white' : 'black' }}>{pluginInfo.description}</div>
           </div>
           <div className="px-3 pb-3">
-            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={() => handleFeaturedPluginActionClick(pluginInfo)}>
-              <i className="fa-solid fa-book mr-1"></i>{pluginInfo.action.label}
+            <button className="btn btn-light btn-sm w-100 text-decoration-none border" onClick={async () => await handleFeaturedPluginActionClick(pluginInfo)}>
+              <i className="fa-solid fa-book me-1"></i>{pluginInfo.action.label}
             </button>
           </div>
         </div>

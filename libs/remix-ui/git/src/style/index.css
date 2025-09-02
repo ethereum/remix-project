@@ -18,7 +18,7 @@
 }
 
 .commit-navigation:hover {
-    background-color: var(--custom-select);
+    background-color: var(--custom-onsurface-layer-2);
 }
 
 .commitdetailsitem {
@@ -26,11 +26,11 @@
 }
 
 .gitfile:hover              {
-    background-color             : var(--custom-select);
+    background-color             : var(--custom-onsurface-layer-2);
 }
 
 hr {
-    background-color: var(--custom-select);
+    background-color: var(--custom-onsurface-layer-2);
 }
 
 .messageTip {

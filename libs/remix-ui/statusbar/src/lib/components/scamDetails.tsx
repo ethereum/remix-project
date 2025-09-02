@@ -26,20 +26,20 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
         height: 'fit-content',
         transform: 'translate(88.5px, -80px)',
         willChange: 'transform',
-        boxShadow: "0 1px 7px var(--secondary)"
+        boxShadow: "0 1px 7px var(--bs-secondary)"
       } }
       className="py-2 px-4 pb-0 mb-0 d-flex alert alert-warning border border-warning"
     >
-      <span className="align-self-center pl-2 mt-1">
-        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far fa-exclamation-triangle"></i>
+      <span className="align-self-center ps-2 mt-1">
+        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pe-2 far fa-exclamation-triangle"></i>
       </span>
-      <div className="d-flex flex-column pr-2 py-2">
+      <div className="d-flex flex-column pe-2 py-2">
         {scamAlerts && scamAlerts.map((alert, index) => (
-          <span className="pl-2 mt-1" key={`${alert.url}${index}`}>
+          <span className="ps-2 mt-1" key={`${alert.url}${index}`}>
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />
               : (<><FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} /> :
                 <a
-                  className={`remixui_home_text text-decoration-none pl-1`}
+                  className={`remixui_home_text text-decoration-none ps-1`}
                   onClick={() => {
                     index === 1 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])
                     index === 2 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])

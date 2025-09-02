@@ -1,87 +1,89 @@
 .custom-dropdown-wrapper {
-    position: relative;
-    display: inline-block;
-    z-index: 1000;
+  position: relative;
+  display: inline-block;
+  z-index: 500;
 }
 
 .custom-dropdown-trigger {
-    color: var(--text);
-    /* background: var(--custom-select, #2d2f3b); */
-    padding: 4px 8px;
-    border-left: 1px solid var(--secondary);
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    height: 28px;
-    font-size: 11px;
-    font-weight: 700;
+  padding: 4px 8px;
+  border-left: 1px solid var(--bs-border-color, var(--bs-secondary));
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  height: 28px;
+  font-size: 11px;
+  font-weight: 700;
 }
 
-.custom-dropdown-panel {
-    background: var(--custom-select);
-    border: 1px solid var(--secondary);
-    border-radius: 4px;
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    color: var(--text);
-    padding: 0;
+.custom-dropdown-panel.dropdown-menu {
+  padding: 0;
+  min-width: auto;
+  z-index: 1310;
+  isolation: isolate;
+  background-color: var(--bs-dropdown-bg, var(--bs-body-bg)) !important;
+  color: var(--bs-dropdown-color, var(--bs-body-color));
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius, .375rem);
+  box-shadow: var(--bs-box-shadow, 0 .5rem 1rem rgba(0,0,0,.15));
 }
 
-.custom-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 8px 16px;
-    color: var(--text);
-    cursor: pointer;
-    white-space: nowrap;
-    position: relative
+.custom-dropdown-item.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--bs-dropdown-link-color, var(--bs-body-color));
+  white-space: nowrap;
+  position: relative;
+  padding: 8px 16px;
+  background-color: transparent;
 }
 
 .custom-dropdown-item-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    display: block;
-    align-self: center;
-    line-height: 1;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+  line-height: 1;
 }
-
 .custom-dropdown-item > span:not(.custom-dropdown-item-icon) {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    margin-right: 12px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
 }
-
 .custom-dropdown-item .custom-dropdown-item-icon:last-child {
-    margin-left: auto;
+  margin-left: auto;
 }
 
-.custom-dropdown-item:hover {
-    background: var(--secondary);
+.custom-dropdown-item.dropdown-item:hover,
+.custom-dropdown-submenu .custom-dropdown-item.dropdown-item:hover,
+.custom-dropdown-item.dropdown-item:focus,
+.custom-dropdown-submenu .custom-dropdown-item.dropdown-item:focus {
+  background-color: var(--bs-dropdown-link-hover-bg) !important;
+  color: var(--bs-dropdown-link-hover-color, var(--bs-body-color)) !important;
+  outline: none;
+  z-index: 1330;
 }
 
-.custom-dropdown-submenu {
-    position: absolute;
-    top: 0;
-    left: 100%;
-    background: var(--custom-select);
-    border: 1px solid var(--secondary);
-    border-radius: 4px;
-    min-width: 200px;
-    color: var(--text);
-}
+.custom-dropdown-item.disabled { opacity: 0.4; pointer-events: none; }
+.custom-dropdown-item.border-top { border-top: 1px solid var(--bs-border-color); }
+.custom-dropdown-item.border-bottom { border-bottom: 1px solid var(--bs-border-color); }
 
-.custom-dropdown-item.disabled {
-    opacity: 0.4;
-    pointer-events: none;
-}
+.custom-dropdown-item.has-submenu { position: relative; }
+.custom-dropdown-submenu.dropdown-menu {
+  position: absolute;
+  top: 0;
+  left: calc(100% - var(--bs-border-width, 1px));
+  min-width: 200px;
+  padding: 0;
+  z-index: 1320;
+  transform: translateZ(0);
+  box-shadow: var(--bs-box-shadow);
 
-.custom-dropdown-item.border-top {
-    border-top: 1px solid var(--secondary);
+  background-color: var(--bs-dropdown-bg, var(--bs-body-bg)) !important;
+  color: var(--bs-dropdown-color, var(--bs-body-color));
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius, .375rem);
 }
-
-.custom-dropdown-item.border-bottom {
-    border-bottom: 1px solid var(--secondary);
+.custom-dropdown-submenu .custom-dropdown-item.bg-light {
+  background-color: transparent !important;
 }

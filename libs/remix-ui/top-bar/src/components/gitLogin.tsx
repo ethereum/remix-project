@@ -140,7 +140,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
   return (
     <Dropdown
       as={ButtonGroup}
-      alignRight={true}
+      align="end"
     >
       <Button
         className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
@@ -154,12 +154,12 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
       >
         {isLoading ? (
           <>
-            <i className="fas fa-spinner fa-spin mr-1"></i>
+            <i className="fas fa-spinner fa-spin me-1"></i>
             <span>Connecting...</span>
           </>
         ) : (
           <div className="d-flex flex-nowrap align-items-center flex-row justify-content-center">
-            <i className="fab fa-github mr-1"></i>
+            <i className="fab fa-github me-1"></i>
             <span>Login with GitHub</span>
           </div>
         )}
@@ -175,13 +175,13 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
       </Dropdown.Toggle>
       <Dropdown.Menu
         as={CustomTopbarMenu}
-        className="custom-dropdown-items w-75 text-decoration-none"
+        className="custom-dropdown-items w-75 text-decoration-none bg-light"
       >
         <Dropdown.Item
           data-id="github-dropdown-item-clone"
           onClick={cloneGitRepository}
         >
-          <i className="fab fa-github mr-2"></i>
+          <i className="fab fa-github me-2"></i>
           <span>Clone</span>
         </Dropdown.Item>
         <Dropdown.Item
@@ -191,7 +191,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
             _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
           }}
         >
-          <i className="fab fa-github mr-2"></i>
+          <i className="fab fa-github me-2"></i>
           <span>Publish to Gist</span>
         </Dropdown.Item>
         <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
@@ -203,7 +203,7 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
           }}
           className="text-danger"
         >
-          <i className="fas fa-sign-out-alt mr-2"></i>
+          <i className="fas fa-sign-out-alt me-2"></i>
           <span>Disconnect</span>
         </Dropdown.Item>
       </Dropdown.Menu>

@@ -167,6 +167,7 @@ function HomePage(): JSX.Element {
                 <div className="d-flex align-items-center">
                   <Antenna level={r.levelNum} />
                   <span className="small fw-medium text-body-emphasis">{r.levelText}</span>
+
                 </div>
                 <MetaRight stepsLen={r.stepsLen} duration={r.duration} />
               </div>

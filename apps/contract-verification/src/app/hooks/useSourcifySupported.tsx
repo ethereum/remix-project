@@ -14,7 +14,13 @@ export function useSourcifySupported(selectedChain: Chain, chainSettings: ChainS
     }
 
     const queriedChainId = selectedChain.chainId
-    const chainsUrl = new URL(sourcifyApi + '/chains')
+    let chainsUrl: URL
+    try {
+      chainsUrl = new URL(sourcifyApi + '/chains')
+    } catch (error) {
+      console.error('Invalid Sourcify API URL:', sourcifyApi, error)
+      return
+    }
 
     fetch(chainsUrl.href, { method: 'GET' })
       .then((response) => response.json())

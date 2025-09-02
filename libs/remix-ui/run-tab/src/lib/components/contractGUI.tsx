@@ -62,7 +62,7 @@ export function ContractGUI(props: ContractGUIProps) {
       setButtonOptions({
         title: title + ' - call',
         content: 'call',
-        classList: 'btn-info',
+        classList: 'btn-primary',
         dataId: title + ' - call'
       })
     } else if (props.funcABI.stateMutability === 'payable' || props.funcABI.payable) {
@@ -293,7 +293,7 @@ export function ContractGUI(props: ContractGUIProps) {
     setShowDropdown(isOpen)
   }
 
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddressChange = (e) => {
     const address = e.target.value
 
     setProxyAddress(address)
@@ -319,11 +319,11 @@ export function ContractGUI(props: ContractGUIProps) {
                 : buttonOptions.title
           }
         >
-          <div className="d-flex p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
+          <div className="d-flex p-0 wrapperElement" onClick={handleActionClick} data-id={`${buttonOptions.dataId}-wrapper`} data-bs-title={`${buttonOptions.title}-wrapper`}>
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
               data-id={`${buttonOptions.dataId}`}
-              data-title={`${buttonOptions.title}`}
+              data-bs-title={`${buttonOptions.title}`}
               disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !== '' && basicInput === '')}
             >
               {title}
@@ -331,11 +331,11 @@ export function ContractGUI(props: ContractGUIProps) {
           </div>
         </CustomTooltip>
         <input
-          className="form-control"
+          className="form-control border"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
           onChange={handleBasicInput}
-          data-title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
+          data-bs-title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           ref={basicInputRef}
           style={{
             height: '2rem',
@@ -366,7 +366,7 @@ export function ContractGUI(props: ContractGUIProps) {
                       ref={(el) => {
                         multiFields.current[index] = el
                       }}
-                      className="form-control"
+                      className="form-control border"
                       placeholder={inp.type}
                       data-id={`multiParamManagerInput${inp.name}`}
                       onChange={handleBasicInput}
@@ -411,16 +411,16 @@ export function ContractGUI(props: ContractGUIProps) {
       {props.deployOption && (props.deployOption || []).length > 0 ? (
         <>
           <div className="d-flex justify-content-between mt-3">
-            <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+            <div className="d-flex py-1 align-items-center form-check">
               <input
                 id="deployWithProxy"
                 data-id="contractGUIDeployWithProxy"
-                className="form-check-input custom-control-input"
+                className="form-check-input"
                 type="checkbox"
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-              <label htmlFor="deployWithProxy" data-id="contractGUIDeployWithProxyLabel" className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign">
+              <label htmlFor="deployWithProxy" data-id="contractGUIDeployWithProxyLabel" className="m-0 form-check-label w-100 form-check-label udapp_checkboxAlign">
                 <FormattedMessage id="udapp.deployWithProxy" />
               </label>
             </div>
@@ -433,12 +433,12 @@ export function ContractGUI(props: ContractGUIProps) {
             </div>
           </div>
           {props.initializerOptions && props.initializerOptions.initializeInputs ? (
-            <div className={`pl-4 flex-column ${toggleDeployProxy ? 'd-flex' : 'd-none'}`}>
+            <div className={`ps-4 flex-column ${toggleDeployProxy ? 'd-flex' : 'd-none'}`}>
               <div className={`flex-column 'd-flex'}`}>
                 {props.initializerOptions.inputs.inputs.map((inp, index) => {
                   return (
                     <div className="mb-2" key={index}>
-                      <label className="mt-2 text-left d-block" htmlFor={inp.name}>
+                      <label className="mt-2 text-start d-block" htmlFor={inp.name}>
                         {' '}
                         {inp.name}:{' '}
                       </label>
@@ -458,16 +458,16 @@ export function ContractGUI(props: ContractGUIProps) {
             </div>
           ) : null}
           <div className="d-flex justify-content-between">
-            <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+            <div className="d-flex py-1 align-items-center form-check">
               <input
                 id="upgradeImplementation"
                 data-id="contractGUIUpgradeImplementation"
-                className="form-check-input custom-control-input"
+                className="form-check-input"
                 type="checkbox"
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              <label htmlFor="upgradeImplementation" data-id="contractGUIUpgradeImplementationLabel" className="m-0 form-check-label custom-control-label udapp_checkboxAlign">
+              <label htmlFor="upgradeImplementation" data-id="contractGUIUpgradeImplementationLabel" className="m-0 form-check-label udapp_checkboxAlign">
                 <FormattedMessage id="udapp.upgradeWithProxy" />
               </label>
             </div>
@@ -475,7 +475,7 @@ export function ContractGUI(props: ContractGUIProps) {
               <i className={!toggleUpgradeImp ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
             </span>
           </div>
-          <div className={`pl-4 flex-column ${toggleUpgradeImp ? 'd-flex' : 'd-none'}`}>
+          <div className={`ps-4 flex-column ${toggleUpgradeImp ? 'd-flex' : 'd-none'}`}>
             <div data-id="proxy-dropdown-items">
               <Dropdown onToggle={toggleDropdown} show={showDropdown}>
                 <Dropdown.Toggle
@@ -487,7 +487,7 @@ export function ContractGUI(props: ContractGUIProps) {
                 />
 
                 {props.proxy.deployments.length > 0 && (
-                  <Dropdown.Menu as={ProxyDropdownMenu} className="w-100 custom-dropdown-items" style={{ overflow: 'hidden' }}>
+                  <Dropdown.Menu as={ProxyDropdownMenu} className="w-100 form-select" style={{ overflow: 'hidden' }}>
                     {props.proxy.deployments.map((deployment, index) => (
                       <CustomTooltip
                         placement={'right'}
@@ -507,7 +507,7 @@ export function ContractGUI(props: ContractGUIProps) {
                             {proxyAddress === deployment.address ? (
                               <span>&#10003; {deployment.contractName + ' ' + shortenProxyAddress(deployment.address)} </span>
                             ) : (
-                              <span className="pl-3">{deployment.contractName + ' ' + shortenProxyAddress(deployment.address)}</span>
+                              <span className="ps-3">{deployment.contractName + ' ' + shortenProxyAddress(deployment.address)}</span>
                             )}
                           </span>
                         </Dropdown.Item>

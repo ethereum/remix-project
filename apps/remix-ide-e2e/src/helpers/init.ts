@@ -28,7 +28,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .verifyLoad()
     .enableClipBoard()
     .perform((done) => {
-      browser.execute(function () { // hide tooltips
+      browser.execute(function () { // hide tooltips for Bootstrap 5
         function addStyle(styleString) {
           const style = document.createElement('style');
           style.textContent = styleString;
@@ -36,13 +36,38 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         }
 
         addStyle(`
-          .popover {
-            display:none !important;
+          .popover,
+          .tooltip,
+          .bs-popover-auto,
+          .bs-tooltip-auto,
+          .bs-popover-top,
+          .bs-popover-bottom,
+          .bs-popover-start,
+          .bs-popover-end,
+          .bs-tooltip-top,
+          .bs-tooltip-bottom,
+          .bs-tooltip-start,
+          .bs-tooltip-end {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
           }
           #scamDetails {
-            display:none !important;
+            display: none !important;
           }
-          `);
+        `);
+
+        // Additionally, programmatically disable all Bootstrap 5 tooltips
+        if ((window as any).bootstrap && typeof (window as any).bootstrap.Tooltip === 'function') {
+          const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+          tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            try {
+              const tooltipInstance = (window as any).bootstrap.Tooltip.getInstance(tooltipTriggerEl) || new (window as any).bootstrap.Tooltip(tooltipTriggerEl);
+              tooltipInstance.disable && tooltipInstance.disable();
+              tooltipInstance.hide && tooltipInstance.hide();
+            } catch (e) {}
+          });
+        }
       }, [], done())
     })
     .perform(() => {
@@ -101,9 +126,13 @@ function initModules(browser: NightwatchBrowser, callback: VoidFunction) {
     .scrollAndClick('[data-id="verticalIconsKindfilePanel"]')
     .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
     .click('*[data-id="topbar-settingsIcon"]')
-    .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
-    .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
-    .click('[data-id="settingsTabSaveGistToken"]')
+    .click('*[data-id="generate-contract-metadataSwitch"]')
+    .pause(100)
+    .click('*[data-id="settings-sidebar-services"]')
+    .pause(100)
+    .click('*[data-id="github-configSwitch"]')
+    .setValue('[data-id="settingsTabgist-access-token"]', process.env.gist_token)
+    .click('[data-id="settingsTabSavegithub-config"]')
     .waitForElementVisible('*[data-id="topbar-themeIcon-toggle"]')
     .click('*[data-id="topbar-themeIcon-toggle"]')
     .waitForElementVisible('*[data-id="topbar-themeIcon-light"]')

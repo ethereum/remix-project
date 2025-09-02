@@ -9,19 +9,22 @@ import { values } from 'lodash'
 import { AppContext } from '@remix-ui/app'
 import { desktopConnectionType } from '@remix-api'
 import { CompileDropdown, RunScriptDropdown } from '@remix-ui/tabs'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import TabProxy from 'apps/remix-ide/src/app/panels/tab-proxy'
 
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
 export interface TabsUIProps {
   tabs: Array<Tab>
-  plugin: Plugin
+  plugin: TabProxy
   onSelect: (index: number) => void
   onClose: (index: number) => void
   onZoomOut: () => void
   onZoomIn: () => void
   onReady: (api: any) => void
   themeQuality: string
+  maximize: boolean
 }
 
 export interface Tab {
@@ -70,7 +73,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
     return state
   }
 }
-const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr']
+const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr', 'yul']
 
 export const TabsUI = (props: TabsUIProps) => {
 
@@ -83,6 +86,12 @@ export const TabsUI = (props: TabsUIProps) => {
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
   const appContext = useContext(AppContext)
 
+  const compileSeq = useRef(0)
+  const compileWatchdog = useRef<number | null>(null)
+  const settledSeqRef = useRef<number>(0)
+  const [maximized, setMaximized] = useState<boolean>(false)
+  const [closedPlugin, setClosedPlugin] = useState<any>(null)
+
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
 
   useEffect(() => {
@@ -93,6 +102,19 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
+
+  useEffect(() => {
+    props.plugin.event.on('pluginIsClosed', (profile) => {
+      setClosedPlugin(profile)
+      if (maximized) {
+        setMaximized(false)
+      }
+    })
+    props.plugin.event.on('pluginIsMaximized', () => {
+      setClosedPlugin(null)
+      setMaximized(true)
+    })
+  }, [])
 
   // Toggle the copilot in editor when clicked to update in status bar
   useEffect(() => {
@@ -129,7 +151,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const renderTab = (tab: Tab, index) => {
-    const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
+    const classNameImg = 'my-1 me-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
     return (
@@ -142,7 +164,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 me-1 iconImage" src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -169,6 +191,8 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
+    const ext = getExt(name)
+    props.plugin.emit('extChanged', ext)
     dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name) })
   }
 
@@ -193,7 +217,7 @@ export const TabsUI = (props: TabsUIProps) => {
       setFileDecorations
     })
     return () => {
-      tabsElement.current.removeEventListener('wheel', transformScroll)
+      if (tabsElement.current) tabsElement.current.removeEventListener('wheel', transformScroll)
     }
   }, [])
 
@@ -208,9 +232,27 @@ export const TabsUI = (props: TabsUIProps) => {
     setCompileState('idle')
   }, [tabsState.selectedIndex])
 
+  useEffect(() => {
+    if (!props.plugin || tabsState.selectedIndex < 0) return
+
+    const currentPath = props.tabs[tabsState.selectedIndex]?.name
+    if (!currentPath) return
+
+    const listener = (path: string) => {
+      if (currentPath.endsWith(path)) {
+        setCompileState('idle')
+      }
+    }
+
+    props.plugin.on('editor', 'contentChanged', listener)
+
+    return () => {
+      props.plugin.off('editor', 'contentChanged')
+    }
+  }, [tabsState.selectedIndex, props.plugin, props.tabs])
+
   const handleCompileAndPublish = async (storageType: 'ipfs' | 'swarm') => {
     setCompileState('compiling')
-    await props.plugin.call('notification', 'toast', `Switching to Solidity Compiler to publish...`)
 
     await props.plugin.call('manager', 'activatePlugin', 'solidity')
     await props.plugin.call('menuicons', 'select', 'solidity')
@@ -218,7 +260,7 @@ export const TabsUI = (props: TabsUIProps) => {
       await props.plugin.call('solidity', 'compile', active().substr(active().indexOf('/') + 1, active().length))
       _paq.push(['trackEvent', 'editor', 'publishFromEditor', storageType])
 
-      setTimeout(() => {
+      setTimeout(async () => {
         let buttonId
         if (storageType === 'ipfs') {
           buttonId = 'publishOnIpfs'
@@ -231,13 +273,17 @@ export const TabsUI = (props: TabsUIProps) => {
         if (buttonToClick) {
           buttonToClick.click()
         } else {
-          props.plugin.call('notification', 'toast', 'Could not find the publish button.')
+          await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
         }
       }, 500)
 
     } catch (e) {
       console.error(e)
-      await props.plugin.call('notification', 'toast', `Error publishing: ${e.message}`)
+      await props.plugin.call('notification', 'toast', `Compilation failed, skipping 'Publish'.`)
+      await props.plugin.call('manager', 'activatePlugin', 'solidity')
+      await props.plugin.call('menuicons', 'select', 'solidity')
     }
 
     setCompileState('idle')
@@ -307,17 +353,99 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }
 
+  const waitForFreshCompilationResult = async (
+    mySeq: number,
+    targetPath: string,
+    startMs: number,
+    maxWaitMs = 1500,
+    intervalMs = 120
+  ) => {
+    const norm = (p: string) => p.replace(/^\/+/, '')
+    const fileName = norm(targetPath).split('/').pop() || norm(targetPath)
+
+    const hasFile = (res: any) => {
+      if (!res) return false
+      const byContracts =
+        res.contracts && typeof res.contracts === 'object' &&
+        Object.keys(res.contracts).some(k => k.endsWith(fileName) || norm(k) === norm(targetPath))
+      const bySources =
+        res.sources && typeof res.sources === 'object' &&
+        Object.keys(res.sources).some(k => k.endsWith(fileName) || norm(k) === norm(targetPath))
+      return byContracts || bySources
+    }
+
+    let last: any = null
+    const until = startMs + maxWaitMs
+    while (Date.now() < until) {
+      if (mySeq !== compileSeq.current) return null
+      try {
+        const res = await props.plugin.call('solidity', 'getCompilationResult')
+        last = res
+        const ts = (res && (res.timestamp || res.timeStamp || res.time || res.generatedAt)) || null
+        const isFreshTime = typeof ts === 'number' ? ts >= startMs : true
+        if (res && hasFile(res) && isFreshTime) return res
+      } catch {}
+      await new Promise(r => setTimeout(r, intervalMs))
+    }
+    return last
+  }
+
+  const attachCompilationListener = (compilerName: string, mySeq: number, path: string, startedAt: number) => {
+    try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+
+    const onFinished = async (_success: boolean) => {
+      if (mySeq !== compileSeq.current || settledSeqRef.current === mySeq) return
+
+      if (compileWatchdog.current) {
+        clearTimeout(compileWatchdog.current)
+        compileWatchdog.current = null
+      }
+
+      const fresh = await waitForFreshCompilationResult(mySeq, path, startedAt)
+
+      if (!fresh) {
+        setCompileState('idle')
+        await props.plugin.call('manager', 'activatePlugin', 'solidity')
+        await props.plugin.call('menuicons', 'select', 'solidity')
+      } else {
+        const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
+        if (errs.length > 0) {
+          setCompileState('idle')
+          await props.plugin.call('manager', 'activatePlugin', 'solidity')
+          await props.plugin.call('menuicons', 'select', 'solidity')
+        } else {
+          setCompileState('compiled')
+        }
+      }
+      settledSeqRef.current = mySeq
+      try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+    }
+    props.plugin.on(compilerName, 'compilationFinished', onFinished)
+  }
+
   const handleCompileClick = async () => {
     setCompileState('compiling')
     _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
 
     try {
-      const path = active().substr(active().indexOf('/') + 1, active().length)
+      const activePathRaw = active()
+      if (!activePathRaw || activePathRaw.indexOf('/') === -1) {
+        setCompileState('idle')
+        props.plugin.call('notification', 'toast', 'No file selected.')
+        return
+      }
+      const path = activePathRaw.substr(activePathRaw.indexOf('/') + 1)
 
       if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-        const content = await props.plugin.call('fileManager', 'readFile', path)
-        await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
-        setCompileState('compiled')
+        try {
+          const content = await props.plugin.call('fileManager', 'readFile', path)
+          await props.plugin.call('scriptRunnerBridge', 'execute', content, path)
+          setCompileState('compiled')
+        } catch (e) {
+          console.error(e)
+          props.plugin.call('notification', 'toast', `Script error: ${e.message}`)
+          setCompileState('idle')
+        }
         return
       }
 
@@ -334,21 +462,44 @@ export const TabsUI = (props: TabsUIProps) => {
         return
       }
 
-      props.plugin.once(compilerName, 'compilationFinished', (fileName, source, languageVersion, data) => {
-        const hasErrors = data.errors && data.errors.filter(e => e.severity === 'error').length > 0
+      await props.plugin.call('fileManager', 'saveCurrentFile')
+      await props.plugin.call('manager', 'activatePlugin', compilerName)
 
-        if (hasErrors) {
-          setCompileState('idle')
-        } else {
-          setCompileState('compiled')
+      const mySeq = ++compileSeq.current
+      const startedAt = Date.now()
+
+      attachCompilationListener(compilerName, mySeq, path, startedAt)
+
+      if (compileWatchdog.current) clearTimeout(compileWatchdog.current)
+      compileWatchdog.current = window.setTimeout(async () => {
+        if (mySeq !== compileSeq.current || settledSeqRef.current === mySeq) return
+        const maybe = await props.plugin.call('solidity', 'getCompilationResult').catch(() => null)
+        if (maybe) {
+          const fresh = await waitForFreshCompilationResult(mySeq, path, startedAt, 400, 120)
+          if (fresh) {
+            const errs = Array.isArray(fresh.errors) ? fresh.errors.filter((e: any) => (e.severity || e.type) === 'error') : []
+            setCompileState(errs.length ? 'idle' : 'compiled')
+            if (errs.length) {
+              await props.plugin.call('manager', 'activatePlugin', compilerName)
+              await props.plugin.call('menuicons', 'select', compilerName)
+            }
+            settledSeqRef.current = mySeq
+            return
+          }
         }
-      })
+        setCompileState('idle')
+        await props.plugin.call('manager', 'activatePlugin', compilerName)
+        await props.plugin.call('menuicons', 'select', compilerName)
+        settledSeqRef.current = mySeq
+        try { props.plugin.off(compilerName, 'compilationFinished') } catch {}
+      }, 3000)
 
       if (tabsState.currentExt === 'vy') {
         await props.plugin.call(compilerName, 'vyperCompileCustomAction')
       } else {
         await props.plugin.call(compilerName, 'compile', path)
       }
+
     } catch (e) {
       console.error(e)
       setCompileState('idle')
@@ -357,7 +508,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div
-      className={`remix-ui-tabs justify-content-between border-0 header nav-tabs ${
+      className={`remix-ui-tabs justify-content-between  border-0 header nav-tabs ${
         appContext.appState.connectedToDesktop === desktopConnectionType .disabled ? 'd-flex' : 'd-none'
       }`}
       data-id="tabs-component"
@@ -401,7 +552,7 @@ export const TabsUI = (props: TabsUIProps) => {
                     compileState === 'compiled' ? "fas fa-check"
                       : "fas fa-play"
                   }></i>
-                  <span className="ml-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
+                  <span className="ms-2" style={{ lineHeight: "12px", position: "relative", top: "1px" }}>
                     {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
                       ? (compileState === 'compiling' ? "Run script" :
                         compileState === 'compiled' ? "Run script" : "Run script")
@@ -415,7 +566,6 @@ export const TabsUI = (props: TabsUIProps) => {
               <RunScriptDropdown
                 plugin={props.plugin}
                 onRun={handleRunScript}
-                onNotify={(msg) => console.log(msg)}
                 disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
               />
             ) : (
@@ -425,7 +575,6 @@ export const TabsUI = (props: TabsUIProps) => {
                   compiledFileName={active()}
                   plugin={props.plugin}
                   disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                  onNotify={(msg) => console.log(msg)}
                   onRequestCompileAndPublish={handleCompileAndPublish}
                   setCompileState={setCompileState}
                 />
@@ -433,12 +582,12 @@ export const TabsUI = (props: TabsUIProps) => {
             )}
           </div>
 
-          <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+          <div className="d-flex border-start ms-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
-              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
+              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
             </CustomTooltip>
             <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
-              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
+              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark ps-2 pe-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
             </CustomTooltip>
           </div>
         </div>
@@ -453,6 +602,8 @@ export const TabsUI = (props: TabsUIProps) => {
           onSelect={(index) => {
             props.onSelect(index)
             currentIndexRef.current = index
+            const ext = getExt(props.tabs[currentIndexRef.current].name)
+            props.plugin.emit('extChanged', ext)
             dispatch({
               type: 'SELECT_INDEX',
               payload: index,
@@ -473,8 +624,8 @@ export const TabsUI = (props: TabsUIProps) => {
             <TabPanel key={tab.name}></TabPanel>
           ))}
         </Tabs>
-      </div>
 
+      </div>
     </div>
   )
 }

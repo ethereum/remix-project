@@ -39,7 +39,7 @@ function testConstantFunction(
   cb: VoidFunction
 ) {
   browser
-    .waitForElementPresent('.instance *[data-title="' + fnFullName + '"]')
+    .waitForElementPresent('.instance *[data-bs-title="' + fnFullName + '"]')
     .perform(function (client, done) {
       client.execute(
         function () {
@@ -51,10 +51,10 @@ function testConstantFunction(
           if (expectedInput) {
             client
               .waitForElementPresent(
-                '#runTabView input[data-title="' + expectedInput.types + '"]'
+                '#runTabView input[data-bs-title="' + expectedInput.types + '"]'
               )
               .setValue(
-                '#runTabView input[data-title="' + expectedInput.types + '"]',
+                '#runTabView input[data-bs-title="' + expectedInput.types + '"]',
                 expectedInput.values
               )
           }
@@ -62,7 +62,7 @@ function testConstantFunction(
         }
       )
     })
-    .click(`#instance${address} *[data-title="${fnFullName}"]`)
+    .click(`#instance${address} *[data-bs-title="${fnFullName}"]`)
     .pause(1000)
     .waitForElementPresent(
       '#instance' + address + ' .udapp_contractActionsContainer .udapp_value'

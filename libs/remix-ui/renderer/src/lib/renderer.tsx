@@ -96,7 +96,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
       }
       const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
 
-      await plugin.call('popupPanel', 'showPopupPanel', true)
+      await plugin.call('menuicons' as any, 'select', 'remixaiassistant')
       setTimeout(async () => {
         await plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
       }, 500)
@@ -122,21 +122,22 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
             <i className="fas fa-times"></i>
           </div>
           <div className="d-flex pt-1 flex-row-reverse">
-            <span className="ml-3 pt-1 py-1" >
+            <span className="ms-3 pt-1 py-1" >
               <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
             </span>
             <span
-              className="position-relative text-ai text-sm pl-0 pr-2"
+              className="position-relative text-ai text-sm ps-0 pe-2"
               style={{ fontSize: "x-small", alignSelf: "end" }}
             >
             </span>
-            <span
-              className="button border ask-remix-ai-button text-ai btn-sm"
+            <button
+              className="btn btn-ai"
+              data-id="ask-remix-ai-button"
               onClick={(event) => { event.preventDefault(); askGtp() }}
-              style={{ borderColor: "var(--ai)" }}
             >
-              Ask RemixAI
-            </span>
+              <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
+              <span>Ask RemixAI</span>
+            </button>
 
           </div>
         </div>

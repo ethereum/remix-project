@@ -20,6 +20,7 @@ import { IDgitPlugin } from "./plugins/dgitplugin-api"
 import { IPopupPanelAPI } from "./plugins/popuppanel-api"
 import { IDesktopClient } from "./plugins/desktop-client"
 import { IGitHubAuthHandlerApi } from "./plugins/githubAuthHandler-api"
+import { ITopbarApi } from "./plugins/topbar-api"
 
 export interface ICustomRemixApi extends IRemixApi {
   popupPanel: IPopupPanelAPI
@@ -32,6 +33,7 @@ export interface ICustomRemixApi extends IRemixApi {
   fileManager: IExtendedFileSystem
   isogit: IGitApi,
   terminal: IExtendedTerminalApi
+  topbar: ITopbarApi
   fs: IFs
   filePanel: IFilePanelApi
   sidePanel: ISidePanelApi

@@ -9,7 +9,6 @@ export const FileSystemContext = createContext<{
   fs: any,
   plugin: any,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
-  dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
   dispatchRemoveInputField:(path: string) => Promise<void>,

@@ -26,7 +26,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
     dispatch({ type: 'search', payload: arg0 })
   }
 
-  return (<div className='d-flex flex-row align-items-center'>
+  return (<div className='d-flex flex-row align-items-center h-100'>
     <CustomTooltip placement="top" tooltipId="terminalpendingTransactions" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
       <div className="mx-2">0</div>
     </CustomTooltip>
@@ -36,16 +36,16 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
       tooltipClasses="text-nowrap"
       tooltipText={terminalState.isVM ? intl.formatMessage({ id: 'terminal.listenVM' }) : intl.formatMessage({ id: 'terminal.listenTitle' })}
     >
-      <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
+      <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork form-check">
         <input
-          className="custom-control-input"
+          className="form-check-input mt-1"
           id="listenNetworkCheck"
           onChange={listenOnNetwork}
           type="checkbox"
           disabled={terminalState.isVM}
         />
         <label
-          className="form-check-label custom-control-label text-nowrap"
+          className="form-check-label text-nowrap"
           style={{ paddingTop: '0.125rem' }}
           htmlFor="listenNetworkCheck"
           data-id="listenNetworkCheckInput"

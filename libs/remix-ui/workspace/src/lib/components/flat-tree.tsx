@@ -268,7 +268,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
           {getIndentLevelDiv(file.path)}
 
-          <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
+          <div className={`ps-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pe-2 caret caret_tv`} `}></div>
           {focusEdit && file.path && focusEdit.element === file.path ?
             <FlatTreeItemInput
               editModeOff={editModeOff}
@@ -278,7 +278,7 @@ export const FlatTree = (props: FlatTreeProps) => {
               draggable={true}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
-              className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+              className={`ms-1 ps-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
               data-label-type={file.isDirectory ? 'folder' : 'file'}
               data-label-path={`${file.path}`}
               key={index}>
@@ -295,7 +295,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   return (<>
-    <div ref={containerRef} className='h-100 pl-1'>
+    <div ref={containerRef} className='h-100 ps-1 mt-1'>
       <FlatTreeDrop
         dragSource={dragSource}
         getFlatTreeItem={getFlatTreeItem}
@@ -320,7 +320,7 @@ export const FlatTree = (props: FlatTreeProps) => {
             <Popover id='popover-basic'
               placement='top'
               ref={ref}
-              className='popover'
+              className='custom-popover'
               style={
                 {
                   position: 'fixed',
@@ -329,9 +329,9 @@ export const FlatTree = (props: FlatTreeProps) => {
                   minWidth: 'fit-content'
                 }
               }>
-              <Popover.Content className='text-wrap p-1 px-2 bg-secondary w-100'>
+              <Popover.Body className='text-wrap p-1 px-2 bg-body w-100'>
                 {mouseOverTarget && mouseOverTarget.path}
-              </Popover.Content>
+              </Popover.Body>
             </Popover>
           }
           <Virtuoso

@@ -41,7 +41,7 @@ export function WitnessSection () {
         <>
           {
             signalInputs.map((input, index) => (
-              <div className="mb-2 ml-0" key={index}>
+              <div className="mb-2 ms-0" key={index}>
                 <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
                   <FormattedMessage id="circuit.signalInput" /> { input }
                 </label>
@@ -49,16 +49,16 @@ export function WitnessSection () {
               </div>
             ))
           }
-          <div className="custom-control custom-checkbox">
+          <div className="form-check">
             <input
-              className="custom-control-input"
+              className="form-check-input"
               type="checkbox"
               title="Export Witness As JSON"
               id="circuitExportWtnsJson"
               onChange={() => { dispatch({ type: 'SET_EXPORT_WTNS_JSON', payload: !exportWtnsJson }) }}
               checked={exportWtnsJson}
             />
-            <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportWtnsJson">
+            <label className="form-check-label" htmlFor="circuitExportWtnsJson">
               <FormattedMessage id="circuit.exportWtnsJson" />
             </label>
           </div>
@@ -69,7 +69,7 @@ export function WitnessSection () {
             data-id="compute_witness_btn"
           >
             <RenderIf condition={status === 'computing'}>
-              <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+              <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
             </RenderIf>
             <FormattedMessage id="circuit.compute" />
           </button>

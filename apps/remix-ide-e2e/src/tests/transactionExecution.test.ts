@@ -224,12 +224,14 @@ module.exports = {
   'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('Storage.sol', sources[6]['Storage.sol'])
+      .pause(1000)
       .addFile('Owner.sol', sources[6]['Owner.sol'])
+      .pause(1000)
       .clickLaunchIcon('udapp')
       .createContract('42, 24')
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-title="uint256 p"]', 10000)
+      .waitForElementVisible('*[data-bs-title="uint256 p"]', 10000)
       .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })

@@ -15,7 +15,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   }
 
   return (
-    <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
+    <div className="udapp_instanceContainer mt-2 border-0 list-group-item bg-dark">
       <div className="d-flex justify-content-between align-items-center p-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts text-nowrap" data-id="deployedContracts">
@@ -23,7 +23,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           </label>
         </CustomTooltip>
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="numOfDeployedInstancesTooltip" tooltipText="Number of deployed contracts">
-          <div className="badge badge-pill badge-primary text-center ml-2 mb-1" data-id="deployedContractsBadge">{instanceList.length}</div>
+          <div className="badge rounded-pill text-bg-primary text-center ms-2" data-id="deployedContractsBadge">{instanceList.length}</div>
         </CustomTooltip>
         <div className="w-100"></div>
         {instanceList.length > 0 ? (
@@ -33,7 +33,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
           >
-            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="far fa-trash-alt udapp_icon me-1 mb-2" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
           </CustomTooltip>
         ) : null}
       </div>

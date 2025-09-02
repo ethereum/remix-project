@@ -10,16 +10,16 @@ export function GenerateProof () {
 
   return (
     <div className="flex-column d-flex">
-      <div className="mt-2 custom-control custom-checkbox">
+      <div className="mt-2 form-check">
         <input
-          className="custom-control-input"
+          className="form-check-input"
           type="checkbox"
           title="Export Verifier Calldata"
           id="circuitExportVerifierCalldata"
           onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFIER_CALLDATA', payload: !circuitApp.appState.exportVerifierCalldata })}
           checked={circuitApp.appState.exportVerifierCalldata}
         />
-        <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportVerifierCalldata">
+        <label className="form-check-label" htmlFor="circuitExportVerifierCalldata">
           <FormattedMessage id="circuit.exportVerifierCalldata" />
         </label>
       </div>
@@ -30,7 +30,7 @@ export function GenerateProof () {
         data-id="generateProofBtn"
       >
         <RenderIf condition={status === 'proving'}>
-          <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+          <i className="fas fa-sync fa-spin me-2" aria-hidden="true"></i>
         </RenderIf>
         <FormattedMessage id="circuit.generateProof" />
       </button>

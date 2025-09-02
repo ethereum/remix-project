@@ -160,7 +160,7 @@ export const PushPull = () => {
       </div>: null}
       <div className="btn-group w-100 mt-2" role="group">
 
-        <GitUIButton data-id='sourcecontrol-pull' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
+        <GitUIButton data-id='sourcecontrol-pull' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => pull()} className="btn btn-primary me-1">Pull</GitUIButton>
         <GitUIButton data-id='sourcecontrol-push' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
@@ -203,9 +203,9 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <div className="pt-3 d-flex align-items-center remixui_compilerConfig custom-control custom-checkbox">
-        <input checked={force} onChange={e => onForceChange(e)} className="form-check-input custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
-        <label className="form-check-label custom-control-label " htmlFor="forcepush">Force push</label>
+      <div className="pt-3 d-flex align-items-center remixui_compilerConfig form-check">
+        <input checked={force} onChange={e => onForceChange(e)} className="form-check-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+        <label className="form-check-label ms-1" htmlFor="forcepush">Force push</label>
       </div>
 
     </>)

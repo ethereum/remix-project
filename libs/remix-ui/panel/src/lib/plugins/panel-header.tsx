@@ -8,7 +8,9 @@ const _paq = (window._paq = window._paq || [])
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
   pinView?: (profile: PluginRecord['profile'], view: PluginRecord['view']) => void,
-  unPinView?: (profile: PluginRecord['profile']) => void
+  unPinView?: (profile: PluginRecord['profile']) => void,
+  closePlugin?: (profile: PluginRecord['profile']) => void,
+  maximizePlugin?: (profile: PluginRecord['profile']) => void
 }
 const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [plugin, setPlugin] = useState<PluginRecord>()
@@ -38,7 +40,11 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
     _paq.push(['trackEvent', 'PluginPanel', 'pinToLeft', plugin.profile.name])
   }
 
-  const tooltipChild = <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+  const closePlugin = async () => {
+    props.closePlugin && props.closePlugin(plugin.profile)
+  }
+
+  const tooltipChild = <i className={`px-1 ms-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
 
   return (
     <header className="d-flex flex-column">
@@ -71,16 +77,25 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               <RenderIfNot condition={plugin.profile.name === 'filePanel'}>
                 <>
                   <RenderIf condition={plugin.pinned}>
-                    <div className='d-flex' data-id="movePluginToLeft" onClick={unPinPlugin}>
-                      <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
-                        <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
+                    <>
+                      <div className='d-flex' data-id="movePluginToLeft" data-pinnedplugin={`movePluginToLeft-${plugin.profile.name}`} onClick={unPinPlugin}>
+                        <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
+                          <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
+                        </CustomTooltip>
+                      </div>
+                      <CustomTooltip placement="bottom-end" tooltipText="Hide pinned Plugin">
+                        <i
+                          className="fa-solid fa-compress ms-2 fs-5"
+                          onClick={closePlugin}
+                          data-id="closePinnedPlugin"
+                        ></i>
                       </CustomTooltip>
-                    </div>
+                    </>
                   </RenderIf>
                   <RenderIfNot condition={plugin.pinned}>
-                    <div className='d-flex' data-id="movePluginToRight" onClick={pinPlugin}>
+                    <div className='d-flex' data-id="movePluginToRight" data-pinnedplugin={`movePluginToRight-${plugin.profile.name}`} onClick={pinPlugin}>
                       <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
-                        <i aria-hidden="true" className="mt-1 px-1 pl-2 fak fa-fa-dock-r"></i>
+                        <i aria-hidden="true" className="mt-1 px-1 ps-2 fak fa-fa-dock-r"></i>
                       </CustomTooltip>
                     </div>
                   </RenderIfNot>
@@ -90,53 +105,40 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           }
         </div>
       </div>
-      <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
-        {plugin?.profile?.author && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.author" />:
-            </label>
-            <span> {plugin?.profile.author} </span>
-          </span>
-        )}
-        {plugin?.profile?.maintainedBy && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.maintainedBy" />:
-            </label>
-            <span> {plugin?.profile.maintainedBy} </span>
-          </span>
-        )}
-        {plugin?.profile?.documentation && (
-          <span className="d-flex flex-row align-items-center">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.documentation" />:
-            </label>
-            <span>
-              <CustomTooltip placement="right-end" tooltipId="linkToDocsTooltip" tooltipClasses=" text-nowrap " tooltipText={<FormattedMessage id="panel.linkToDoc" />}>
-                <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" target="_blank" rel="noreferrer">
-                  <i aria-hidden="true" className="fas fa-book"></i>
-                </a>
-              </CustomTooltip>
+      <div className={`mx-3 mb-2 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
+        <div className="bg-light p-3 rounded">
+          <div className="border-bottom pb-2 mb-2 font-weight-bold card-title">
+            <FormattedMessage id="panel.pluginDetails" defaultMessage="Plugin details" />
+          </div>
+
+          {plugin?.profile?.maintainedBy && (
+            <div className="d-flex align-items-center mb-3">
+              <span className={`font-weight-bold ${plugin.profile.maintainedBy.toLowerCase() === 'remix' ? 'text-success' : ''}`}>
+                Maintained by {plugin.profile.maintainedBy}
+              </span>
+              <i className={`fa-solid fa-shield-halved ms-2 ${plugin.profile.maintainedBy.toLowerCase() === 'remix' ? 'text-success' : 'text-body-secondary'}`}></i>
+            </div>
+          )}
+
+          {plugin?.profile?.description && (
+            <div className="mb-3">
+              <label className="text-body-secondary d-block mb-1">
+                <FormattedMessage id="panel.description" />
+              </label>
+              <span className="small">{plugin.profile.description}</span>
+            </div>
+          )}
+
+          {plugin?.profile?.repo && (
+            <span className="d-flex flex-row align-items-center d-block mb-1">
+              <a href={plugin?.profile?.repo} target="_blank" rel="noreferrer">
+                <FormattedMessage id="panel.makeAnissue" />
+              </a>
             </span>
-          </span>
-        )}
-        {plugin?.profile?.description && (
-          <span className="d-flex flex-row align-items-baseline">
-            <label className="mb-0 pr-2">
-              <FormattedMessage id="panel.description" />:
-            </label>
-            <span> {plugin?.profile.description} </span>
-          </span>
-        )}
-        {plugin?.profile?.repo && (
-          <span className="d-flex flex-row align-items-center">
-            <a href={plugin?.profile?.repo} target="_blank" rel="noreferrer">
-              <FormattedMessage id="panel.makeAnissue" />
-            </a>
-          </span>
-        )}
+          )}
+        </div>
       </div>
+
     </header>
   )
 }

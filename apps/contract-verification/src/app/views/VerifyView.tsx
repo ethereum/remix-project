@@ -152,7 +152,7 @@ export const VerifyView = () => {
         } else {
           response = await verifier.verify(newSubmittedContract, compilerAbstract)
         }
-        const { status, message, receiptId, lookupUrl } = response
+        const { status, message, receiptId, lookupUrl, receiptLookupUrl } = response
         receipt.status = status
         receipt.message = message
         if (lookupUrl) {
@@ -160,6 +160,9 @@ export const VerifyView = () => {
         }
         if (receiptId) {
           receipt.receiptId = receiptId
+        }
+        if (receiptLookupUrl) {
+          receipt.receiptLookupUrl = receiptLookupUrl
         }
       } catch (e) {
         const err = e as Error
@@ -202,10 +205,10 @@ export const VerifyView = () => {
         abiEncodingError={abiEncodingError}
         setAbiEncodingError={setAbiEncodingError}
       />}
-      <div className="pt-3">
-        <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-          <input id="has-proxy" className="form-check-input custom-control-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
-          <label htmlFor="has-proxy" className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }}>
+      <div className="pt-1">
+        <div className="d-flex align-items-center form-check">
+          <input id="has-proxy" className="form-check-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
+          <label htmlFor="has-proxy" className="ms-1 form-check-label" style={{ paddingTop: '2px' }}>
             <FormattedMessage id="contract-verification.proxyInputLabel" defaultMessage={'The deployed contract is behind a proxy'} />
           </label>
         </div>
@@ -226,9 +229,9 @@ export const VerifyView = () => {
 
           return (
             <div key={verifierId} className="pt-2">
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              <div className="d-flex align-items-center form-check">
                 <input
-                  className="form-check-input custom-control-input"
+                  className="form-check-input mb-1"
                   type="checkbox"
                   id={`verifier-${verifierId}`}
                   checked={!!enabledVerifiers[verifierId]}
@@ -237,13 +240,13 @@ export const VerifyView = () => {
                 />
                 <label
                   htmlFor={`verifier-${verifierId}`}
-                  className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}
-                  style={{ fontSize: '1rem', color: 'var(--text)' }}
+                  className={`ms-1 form-check-label large  fw-bold${!disabledVerifier ? '' : ' text-secondary'}`}
+                  style={{ fontSize: '1rem' }}
                 >
                   {verifierId}
                 </label>
               </div>
-              <div className="d-flex flex-column align-items-start pl-4">
+              <div className="d-flex flex-column align-items-start ps-4">
                 {!chainSettings ? (
                   ''
                 ) : !validConfiguration(chainSettings, verifierId) ? (

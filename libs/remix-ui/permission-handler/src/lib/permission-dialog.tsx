@@ -87,7 +87,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
         {pluginMessage()}
         {sensitiveCall ? (
           <p className="text-warning">
-            <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
+            <i className="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
             <FormattedMessage id="permissionHandler.makeSureYouTrustThisPlugin" />
           </p>
         ) : (

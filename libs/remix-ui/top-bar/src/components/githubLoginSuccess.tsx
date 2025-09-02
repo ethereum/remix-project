@@ -18,7 +18,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
   return (
     <Dropdown
       as={ButtonGroup}
-      alignRight={true}
+      align="end"
       className="d-flex flex-nowrap"
     >
       <Button
@@ -27,7 +27,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
         style={{ fontSize: '0.8rem' }}
       >
         <span>{user.login}</span>
-        <img src={user.avatar_url} alt="Avatar" className="ml-1" style={{
+        <img src={user.avatar_url} alt="Avatar" className="ms-1" style={{
           width: '25px',
           height: '25px',
           borderRadius: '50%',
@@ -46,13 +46,13 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
       </Dropdown.Toggle>
       <Dropdown.Menu
         as={CustomTopbarMenu}
-        className="custom-dropdown-items w-75 text-decoration-none"
+        className="custom-dropdown-items w-75 text-decoration-none bg-light"
       >
         <Dropdown.Item
           data-id="github-dropdown-item-clone"
           onClick={cloneGitRepository}
         >
-          <i className="fab fa-github mr-2"></i>
+          <i className="fab fa-github me-2"></i>
           <span>Clone</span>
         </Dropdown.Item>
         <Dropdown.Item
@@ -62,7 +62,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
             _paq.push(['trackEvent', 'topbar', 'GIT', 'publishToGist'])
           }}
         >
-          <i className="fab fa-github mr-2"></i>
+          <i className="fab fa-github me-2"></i>
           <span>Publish to Gist</span>
         </Dropdown.Item>
         <Dropdown.Divider style={{ pointerEvents: 'none' }} className="border" />
@@ -74,7 +74,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
           }}
           className="text-danger"
         >
-          <i className="fas fa-sign-out-alt mr-2"></i>
+          <i className="fas fa-sign-out-alt me-2"></i>
           <span>Disconnect</span>
         </Dropdown.Item>
       </Dropdown.Menu>

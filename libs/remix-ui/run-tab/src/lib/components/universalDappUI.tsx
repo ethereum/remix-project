@@ -221,8 +221,8 @@ export function UniversalDappUI(props: UdappProps) {
 
   const label = (key: string | number, value: string) => {
     return (
-      <div className="d-flex mt-2 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
+      <div className="d-flex mt-2 flex-row label_item align-items-baseline">
+        <label className="small fw-bold mb-0 pe-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )
@@ -249,17 +249,17 @@ export function UniversalDappUI(props: UdappProps) {
 
   return (
     <div
-      className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`}
+      className={`instance udapp_instance udapp_run-instance border-dark mt-1 ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`}
       id={`instance${address}`}
       data-shared="universalDappUiInstance"
       data-id={props.instance.isPinned ? `pinnedInstance${address}` : `unpinnedInstance${address}`}
     >
-      <div className="udapp_title pb-0 alert alert-secondary">
-        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{ padding: "0.45rem" }}>
+      <div className="udapp_title pb-0">
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander p-1" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
         <div className="input-group udapp_nameNbuts">
-          <div className="udapp_titleText input-group-prepend">
+          <div className="udapp_titleText input-group-text p-0 bg-transparent">
             { props.instance.isPinned ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.instance.isPinned ? `Pinned for network: ${props.plugin.REACT_API.chainId}, at:  ${new Date(props.instance.pinnedAt).toLocaleString()}` : '' }>
               <span className="input-group-text udapp_spanTitleText">
                 {props.instance.name} at {shortenAddress(address)}
@@ -268,21 +268,21 @@ export function UniversalDappUI(props: UdappProps) {
               {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>) }
           </div>
-          <div className="btn" style={{ padding: '0.15rem' }}>
+          <div className="btn p-0">
             <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyAddress' })} content={address} direction={'top'} />
           </div>
-          { props.instance.isPinned ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
+          { props.instance.isPinned ? ( <div className="btn p-0">
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
               <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={unpinContract}></i>
             </CustomTooltip>
-          </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
+          </div> ) : ( <div className="btn p-0">
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
               <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
             </CustomTooltip>
           </div> )
           }
         </div>
-        <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
+        <div className="btn p-0">
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
             <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
           </CustomTooltip>
@@ -381,10 +381,10 @@ export function UniversalDappUI(props: UdappProps) {
               { // receive method added to solidity v0.6.x. use this as diff.
                 props.solcVersion.canReceive === false ? (
                   <a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
-                    <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                    <i aria-hidden="true" className="fas fa-info my-2 me-1"></i>
                   </a>
                 ) :<a href={`https://docs.soliditylang.org/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-                  <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                  <i aria-hidden="true" className="fas fa-info my-2 me-1"></i>
                 </a>
               }
             </CustomTooltip>

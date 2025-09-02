@@ -11,12 +11,14 @@ export const CustomToggle = React.forwardRef(
       children,
       onClick,
       icon,
-      className = ''
+      className = '',
+      useDefaultIcon = true
     }: {
       children: React.ReactNode
       onClick: (e) => void
       icon: string
       className: string
+      useDefaultIcon?: boolean
     },
     ref: Ref<HTMLButtonElement>
   ) => (
@@ -29,15 +31,22 @@ export const CustomToggle = React.forwardRef(
       className={className.replace('dropdown-toggle', '')}
     >
       <div className="d-flex align-items-center">
-        <div className="mr-auto text-nowrap text-truncate overflow-hidden" data-id={`dropdown-content`}>{children}</div>
-        {icon && (
-          <div className="pr-1">
-            <i className={`${icon} pr-1`}></i>
+        <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm" data-id={`dropdown-content`}>{children}</div>
+        {icon ? useDefaultIcon ? (
+          <div className="pe-1">
+            <i className={`${icon} pe-1`}></i>
+          </div>
+        ) : (
+          <div className="pe-1">
+            <i className={`${icon} pe-1`}></i>
+          </div>
+        ) : null}
+
+        {useDefaultIcon && (
+          <div className="pe-1">
+            <i className="fad fa-sort-circle"></i>
           </div>
         )}
-        <div>
-          <i className="fad fa-sort-circle"></i>
-        </div>
       </div>
     </button>
   )
@@ -63,13 +72,13 @@ export const CustomIconsToggle = React.forwardRef(
         e.preventDefault()
         onClick()
       }}
-      className={`${className.replace('dropdown-toggle', '')} mr-1 mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow remixuimenuicon_hamburger_menu fs-3`}
+      className={`${className.replace('dropdown-toggle', '')} me-1 mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow remixuimenuicon_hamburger_menu fs-3`}
       data-id="workspaceMenuDropdown"
     >
       {icon && (
         <CustomTooltip
           placement={'top'}
-          tooltipClasses="text-nowrap text-left"
+          tooltipClasses="text-nowrap text-start"
           tooltipId="remixHamburgerTooltip"
           tooltipText={<FormattedMessage id="filePanel.workspaceActions" />}
         >

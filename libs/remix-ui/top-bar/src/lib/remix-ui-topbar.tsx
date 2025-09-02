@@ -17,6 +17,8 @@ import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
 import { GitHubCallback } from '../topbarUtils/gitOauthHandler'
 import { GitHubLogin } from '../components/gitLogin'
 import GithubLoginSuccess from '../components/githubLoginSuccess'
+import { CustomTooltip } from 'libs/remix-ui/helper/src/lib/components/custom-tooltip'
+import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 
 const _paq = window._paq || []
 
@@ -25,7 +27,7 @@ export function RemixUiTopbar () {
   const [showDropdown, setShowDropdown] = useState(false)
   const platform = useContext(platformContext)
   const global = useContext(TopbarContext)
-  const plugin = global.plugin as any
+  const plugin = global.plugin
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ROOT_PATH = '/'
@@ -44,6 +46,8 @@ export function RemixUiTopbar () {
   useOnClickOutside([themeIconRef], () => setShowTheme(false))
   const workspaceRenameInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
+  const [closedPlugin, setClosedPlugin] = useState<any>(null)
+  const [maximized, setMaximized] = useState<boolean>(false)
 
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -89,6 +93,19 @@ export function RemixUiTopbar () {
   }, [])
 
   useEffect(() => {
+    plugin.event.on('pluginIsClosed', (profile) => {
+      setClosedPlugin(profile)
+      if (maximized) {
+        setMaximized(false)
+      }
+    })
+    plugin.event.on('pluginIsMaximized', () => {
+      setClosedPlugin(null)
+      setMaximized(true)
+    })
+  }, [])
+
+  useEffect(() => {
     if (global.fs.mode === 'browser') {
       if (global.fs.browser.currentWorkspace) {
         setCurrentWorkspace(global.fs.browser.currentWorkspace)
@@ -112,6 +129,27 @@ export function RemixUiTopbar () {
     }
   }, [global.fs.browser.workspaces, global.fs.browser.workspaces.length])
 
+  useEffect(() => {
+    plugin.on('theme', 'themeChanged', (theme) => {
+      setCurrentTheme(theme)
+    })
+    return () => {
+      plugin.off('theme', 'themeChanged')
+    }
+  }, [])
+
+  useEffect(() => {
+    async function loadCurrentTheme() {
+      try {
+        const ct = await plugin.call('theme', 'currentTheme')
+        setCurrentTheme(ct)
+      } catch (error) {
+        console.error("Error fetching current theme:", error)
+      }
+    }
+    loadCurrentTheme()
+  }, []);
+
   const subItems = useMemo(() => {
     return [
       { label: 'Rename', onClick: renameCurrentWorkspace, icon: 'far fa-edit' },
@@ -121,8 +159,8 @@ export function RemixUiTopbar () {
     ]
   }, [])
 
-  const updateMenuItems = (workspaces?: WorkspaceMetadata[]) => {
-    const menuItems = (workspaces || plugin.getWorkspaces()).map((workspace) => ({
+  const updateMenuItems = async (workspaces?: WorkspaceMetadata[]) => {
+    const menuItems = (workspaces || await plugin.getWorkspaces()).map((workspace) => ({
       name: workspace.name,
       isGitRepo: workspace.isGitRepo,
       isGist: workspace.isGist,
@@ -284,20 +322,6 @@ export function RemixUiTopbar () {
     )
   }
 
-  const getCurrentTheme = async () => {
-    const theme = await plugin.call('theme', 'currentTheme')
-    return theme
-  }
-
-  useEffect(() => {
-    plugin.on('theme', 'themeChanged', (theme) => {
-      setCurrentTheme(theme)
-    })
-    return () => {
-      plugin.off('theme', 'themeChanged')
-    }
-  }, [])
-
   const renameModalMessage = (workspaceName?: string) => {
     return (
       <div className='d-flex flex-column'>
@@ -332,8 +356,7 @@ export function RemixUiTopbar () {
     )
   }
 
-  const checkIfLightTheme = (themeName: string) =>
-    themeName.includes('dark') || themeName.includes('black') || themeName.includes('hackerOwl') ? false : true
+  const checkIfLightTheme = (themeName: string) => themeName.includes('dark') ? false : true
 
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
     return (
@@ -344,14 +367,14 @@ export function RemixUiTopbar () {
           >
             <span
             >
-              {currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-1">{props.mName}</span>}</span>
+              {currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-1">{props.mName}</span>}</span>
             <i className="fas fa-code-branch pt-1"></i>
           </div>
         ) : (
           <div
             className="d-flex justify-content-between"
           >
-            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="ps-3">{props.mName}</span>}</span>
           </div>
         )}
       </>
@@ -395,7 +418,7 @@ export function RemixUiTopbar () {
             </Dropdown.Item>
             <i
               ref={subMenuIconRef}
-              className="fas fa-ellipsis-vertical pt-1 pr-2 top-bar-dropdownItem"
+              className="fas fa-ellipsis-vertical pt-1 pe-2 top-bar-dropdownItem"
               onClick={() => {
                 setShowSubMenuFlyOut(!showSubMenuFlyOut)
               }}
@@ -433,11 +456,11 @@ export function RemixUiTopbar () {
     >
       <div className="d-flex flex-row align-items-center justify-content-between w-100">
         <div
-          className="d-flex flex-row align-items-center justify-content-evenly m-1"
+          className="d-flex flex-row align-items-center m-1"
           style={{ minWidth: '33%' }}
         >
           <div
-            className="d-flex align-items-center justify-content-between mr-3 cursor-pointer"
+            className="d-flex align-items-center justify-content-between me-3 cursor-pointer"
             onClick={async () => {
               await plugin.call('tabs', 'focus', 'home')
               _paq.push(['trackEvent', 'topbar', 'header', 'Home'])
@@ -456,7 +479,7 @@ export function RemixUiTopbar () {
               <BasicLogo />
             </div>
             <div
-              className="text-primary ml-2 font-weight-light text-uppercase cursor-pointer"
+              className="text-primary ms-2 font-weight-light text-uppercase cursor-pointer"
               style={{ fontSize: '1.2rem' }}
               onClick={async () => {
                 await plugin.call('tabs', 'focus', 'home')
@@ -479,7 +502,7 @@ export function RemixUiTopbar () {
             {currentReleaseVersion}
           </span>
         </div>
-        <div className="m-1" style={{ minWidth: '33%' }}>
+        <div className="m-1 justify-content-center d-flex align-self-center " style={{ minWidth: '33%' }}>
           <WorkspacesDropdown
             menuItems={menuItems}
             toggleDropdown={toggleDropdown}
@@ -507,6 +530,15 @@ export function RemixUiTopbar () {
           className="d-flex flex-row align-items-center justify-content-end flex-nowrap"
           style={{ minWidth: '33%' }}
         >
+          {/* {closedPlugin && <div className="d-flex my-auto me-4" style={{ height: '1rem', width: '1rem' }}>
+            <CustomTooltip placement="left-start" tooltipText={`Open ${closedPlugin.displayName} plugin`}>
+              <i
+                className="fa-solid fa-expand-wide fs-4 text-info"
+                data-id="restoreClosedPlugin"
+                onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
+              ></i>
+            </CustomTooltip>
+          </div>} */}
           <>
             {user ? (
               <GithubLoginSuccess
@@ -525,25 +557,23 @@ export function RemixUiTopbar () {
               />
             )}
           </>
-          <Dropdown className="ml-5" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
+          <Dropdown className="ms-3" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
               as={Button}
               variant="outline-secondary"
-              className="btn-topbar btn-sm mr-5"
+              className="btn-topbar btn-sm me-3"
               data-id="topbar-themeIcon-toggle"
               style={{
                 padding: '0.35rem 0.5rem',
                 fontSize: '0.8rem'
               }}
               onClick={async () => {
-                const theme = await getCurrentTheme()
-                setCurrentTheme(theme)
                 setShowTheme(!showTheme)
               }}
             >
               <i
                 className={
-                  `fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright text-white'} mr-2`
+                  `fas ${currentTheme && currentTheme.name.includes('Dark') ? 'fa-moon' : 'fa-sun-bright text-white'} me-2`
                 }
                 onClick={() => {
                   setShowTheme(!showTheme)
@@ -553,7 +583,7 @@ export function RemixUiTopbar () {
             </Dropdown.Toggle>
             <Dropdown.Menu
               as={CustomTopbarMenu}
-              className="custom-dropdown-items text-decoration-none"
+              className="custom-dropdown-items text-decoration-none bg-light"
               data-id="topbar-thememenu-body"
               style={{
                 minWidth: '95px'
@@ -561,11 +591,11 @@ export function RemixUiTopbar () {
             >
               <Dropdown.Item
                 onClick={() => {
-                  plugin.call('theme', 'switchTheme', 'Flatly')
+                  plugin.call('theme', 'switchTheme', 'Light')
                 }}
                 data-id="topbar-themeIcon-light"
               >
-                <i className="fas fa-sun-bright mr-2"></i>
+                <i className="fas fa-sun-bright me-2"></i>
                 Light
               </Dropdown.Item>
               <Dropdown.Item
@@ -574,7 +604,7 @@ export function RemixUiTopbar () {
                 }}
                 data-id="topbar-themeIcon-dark"
               >
-                <i className="fas fa-moon mr-2"></i>
+                <i className="fas fa-moon me-2"></i>
                 Dark
               </Dropdown.Item>
             </Dropdown.Menu>
@@ -583,13 +613,25 @@ export function RemixUiTopbar () {
             style={{ fontSize: '1.5rem', cursor: 'pointer' }}
             className=""
             onClick={async () => {
-              plugin.call('menuicons', 'select', 'settings')
+              const isActive = await plugin.call('manager', 'isActive', 'settings')
+              if (!isActive) await plugin.call('manager', 'activatePlugin', 'settings')
+              await plugin.call('tabs', 'focus', 'settings')
               _paq.push(['trackEvent', 'topbar', 'header', 'Settings'])
             }}
             data-id="topbar-settingsIcon"
           >
             <i className="fa fa-cog"></i>
           </span>
+
+          {closedPlugin && <div className="d-flex ms-4" >
+            <CustomTooltip placement="bottom-start" tooltipText={`Show ${closedPlugin.displayName} plugin`}>
+              <i
+                className="fa-solid fa-expand-wide fs-4 text-info"
+                data-id="restoreClosedPlugin"
+                onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
+              ></i>
+            </CustomTooltip>
+          </div>}
         </div>
       </div>
     </section>

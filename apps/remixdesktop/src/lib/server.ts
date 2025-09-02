@@ -74,7 +74,7 @@ function setupMessageHandler(ws: WebSocket, eventEmitter: EventEmitter) {
           }
         } else {
           // No error; resolve with result
-          pendingReq.resolve(parsed.result)
+          pendingReq.resolve(parsed)
         }
       } else {
         // If there's no matching pending request, you can decide to ignore or handle differently

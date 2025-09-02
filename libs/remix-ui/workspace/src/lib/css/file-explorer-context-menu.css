@@ -4,7 +4,7 @@
   position: fixed;
   border-radius: 2px;
   z-index: 1000;
-  box-shadow: 0 0 4px var(--dark);
+  box-shadow: 0 0 4px var(--bs-dark);
 }
 .remixui_contextContainer:focus {
     outline: none;
@@ -12,12 +12,12 @@
 .remixui_liitem
 {
   cursor: pointer;
-  color: var(--text-dark);
-  background-color: var(--light);
+  color: var(--bs-dark);
+  background-color: var(--bs-light);
 }
 .remixui_liitem:hover
 {
-  background-color:  var(--secondary);
+  background-color:  var(--custom-onsurface-layer-2);
 }
 #remixui_menuitems
 {

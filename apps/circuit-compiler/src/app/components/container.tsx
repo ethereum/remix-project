@@ -77,7 +77,7 @@ export function Container () {
           full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
-        await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
+        await circuitApp.plugin.call('menuicons' as any, 'select', 'remixaiassistant')
         setTimeout(async () => {
           await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
         }, 500)
@@ -87,7 +87,7 @@ export function Container () {
           full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
-        await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
+        await circuitApp.plugin.call('menuicons' as any, 'select', 'remixaiassistant')
         setTimeout(async () => {
           await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
         }, 500)
@@ -99,7 +99,7 @@ export function Container () {
       full circom error: ${JSON.stringify(report, null, 2)}
       explain why the error occurred and how to fix it.
       `
-      await circuitApp.plugin.call('popupPanel' as any, 'showPopupPanel', true)
+      await circuitApp.plugin.call('menuicons' as any, 'select', 'remixaiassistant')
       setTimeout(async () => {
         await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
       }, 500)
@@ -124,7 +124,7 @@ export function Container () {
               tooltipClasses="text-nowrap"
               tooltipText='See compiler license'
             >
-              <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+              <span className="far fa-file-certificate border-0 p-0 ms-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} downloadList={circuitApp.appState.versionDownloadList} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
