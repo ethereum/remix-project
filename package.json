@@ -182,8 +182,8 @@
     "octokit": "^3.1.2",
     "path-browserify": "^1.0.1",
     "permissionless": "0.2.25",
-    "prettier": "^2.8.4",
-    "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "prettier": "^3.6.2",
+    "prettier-plugin-solidity": "^2.1.0",
     "ra-data-graphql": "^4.16.11",
     "raw-loader": "^4.0.2",
     "react": "^18.2.0",
@@ -216,6 +216,7 @@
     "signale": "^1.4.0",
     "snarkjs": "^0.7.0",
     "sol2uml": "^2.4.3",
+    "solidity-comments-extractor": "^0.0.8",
     "string-similarity": "^4.0.4",
     "svg2pdf.js": "^2.2.1",
     "text-encoding": "^0.7.0",
@@ -409,5 +410,6 @@
     "@ethereumjs/util": "^10.0.0",
     "@ethereumjs/vm": "^10.0.0",
     "@ethereumjs/binarytree": "^10.0.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
