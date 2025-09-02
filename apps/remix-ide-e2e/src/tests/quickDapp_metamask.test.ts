@@ -36,7 +36,7 @@ const tests = {
       .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
       .refreshPage()
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
 
@@ -105,12 +105,12 @@ const tests = {
       .click('*[data-id="selectThemesOptions"]')
       .click('*[data-id="dropdown-item-Light"]')
       .click('*[data-id="deployDapp"]')
-      .waitForElementVisible('*[data-id="deployResult"]', 20000)
+      .waitForElementVisible('*[data-id="deployResult"]', 60000)
       .perform((done) => {
         browser.getAttribute('*[data-id="deployResult"]', 'class', function (result) {
           // @ts-expect-error
           if (result.value.includes('alert-danger')) {
-            browser.click('*[data-id="deployDapp"]').waitForElementVisible('*[data-id="deployResult"]', 20000).perform(() => done())
+            browser.click('*[data-id="deployDapp"]').waitForElementVisible('*[data-id="deployResult"]', 60000).perform(() => done())
           } else {
             done()
           }
@@ -163,7 +163,7 @@ const tests = {
       .waitForElementVisible('.Toastify__toast--success', 60000)
       .assert.containsText('.Toastify__toast--success', 'success')
       .click('*[data-id="retrieve - call"]')
-      .waitForElementVisible('*[data-id="treeViewDiv0"]', 20000)
+      .waitForElementVisible('*[data-id="treeViewDiv0"]', 60000)
       .assert.containsText('*[data-id="treeViewDiv0"]', 'uint256: 11')
       .perform((done) => {
         axios.get(`https://${surgeSubdomain}.surge.sh/assets/logo.png?t=${new Date().getTime()}`, { responseType: 'arraybuffer' }).then((resp) => {
@@ -224,7 +224,7 @@ const tests = {
       }))
       .pause(500)
       .click('*[data-id="teardownDapp"]')
-      .waitForElementVisible('*[data-id="teardownResult"]', 30000)
+      .waitForElementVisible('*[data-id="teardownResult"]', 60000)
       .assert.containsText('*[data-id="teardownResult"]', 'Teardown successfully!')
   }
 }

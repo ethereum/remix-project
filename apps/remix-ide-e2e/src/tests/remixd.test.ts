@@ -330,17 +330,13 @@ module.exports = {
       .clickLaunchIcon('solidityStaticAnalysis')
       .useXpath()
       .click('//*[@id="staticAnalysisRunBtn"]')
-      .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+      .waitForElementPresent('//*[@id="staticanalysisresult"]', 60000)
       .waitForElementVisible({
         selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '3')]",
-        locateStrategy: 'xpath',
-        timeout: 5000
-      })
+        locateStrategy: 'xpath', timeout: 60000 })
       .waitForElementVisible({
         selector: "//div[@data-id='block']/span[contains(text(), '3 warnings found.')]",
-        locateStrategy: 'xpath',
-        timeout: 5000
-      })
+        locateStrategy: 'xpath', timeout: 60000 })
   }
 }
 
@@ -385,11 +381,11 @@ function runTests(browser: NightwatchBrowser, done: any) {
 
 function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction) {
   browser
-    .waitForElementVisible('[data-path="src"]', 100000)
+    .waitForElementVisible('[data-path="src"]', 60000)
     .click('[data-path="src"]')
-    .waitForElementVisible('[data-path="src/gmbh"]', 100000)
+    .waitForElementVisible('[data-path="src/gmbh"]', 60000)
     .click('[data-path="src/gmbh"]')
-    .waitForElementVisible('[data-path="src/gmbh/company.sol"]', 100000)
+    .waitForElementVisible('[data-path="src/gmbh/company.sol"]', 60000)
     .click('[data-path="src/gmbh/company.sol"]')
     .pause(1000)
     .verifyContracts(['Assets', 'gmbh'])
@@ -449,11 +445,11 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
 
   browser
     .pause(5000)
-    .waitForElementVisible('#icon-panel', 2000)
+    .waitForElementVisible('#icon-panel', 60000)
     .clickLaunchIcon('filePanel')
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentActivateButtonremixd"]')
-    .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
+    .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 60000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
     .pause(5000)

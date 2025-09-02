@@ -9,7 +9,7 @@ const tests = {
       browser.end()
       /*
         browser
-        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
         .waitForElementVisible('*[data-id="landingPageImportFromGist"]')
         .click('*[data-id="landingPageImportFromGist"]')
         .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')

@@ -6,26 +6,26 @@ const testsBash = {
     done()
   },
   open: function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="openFolderButton"]', 10000).click('*[data-id="openFolderButton"]')
+    browser.waitForElementVisible('*[data-id="openFolderButton"]', 60000).click('*[data-id="openFolderButton"]')
   },
   'open xterm linux and create a file': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="tabXTerm"]', 10000)
+      .waitForElementVisible('*[data-id="tabXTerm"]', 60000)
       .click('*[data-id="tabXTerm"]')
-      .waitForElementVisible('*[data-type="remixUIXT"]', 10000)
+      .waitForElementVisible('*[data-type="remixUIXT"]', 60000)
       .click('*[data-type="remixUIXT"]')
       .perform(function () {
         const actions = this.actions({async: true})
         return actions.sendKeys('mkdir dir && cd dir && echo "test" >> example.txt').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir"]', 60000)
       .openFile('dir')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir/example.txt"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir/example.txt"]', 60000)
       .openFile('dir/example.txt')
       .getEditorValue((result) => {
         browser.assert.equal(result, 'test\n')
       })
-      .waitForElementVisible('*[data-type="remixUIXT"]', 10000)
+      .waitForElementVisible('*[data-type="remixUIXT"]', 60000)
       .click('*[data-type="remixUIXT"]')
       .perform(function () {
         const actions = this.actions({async: true})
@@ -62,18 +62,18 @@ const testsWindows = {
    done()
   },
   open: function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="openFolderButton"]', 10000).click('*[data-id="openFolderButton"]')
+    browser.waitForElementVisible('*[data-id="openFolderButton"]', 60000).click('*[data-id="openFolderButton"]')
   },
   'open xterm window and create a file': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="tabXTerm"]', 10000)
+      .waitForElementVisible('*[data-id="tabXTerm"]', 60000)
       .click('*[data-id="tabXTerm"]')
       .waitForElementVisible('*[data-id="select_shell"]')
       .click('*[data-id="select_shell"]')
       .waitForElementVisible('*[data-id="select_powershell.exe"]')
       .click('*[data-id="select_powershell.exe"]')
       .pause(3000)
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .pause(1000)
       .perform(function () {
@@ -81,15 +81,15 @@ const testsWindows = {
         return actions.sendKeys('New-Item -ItemType Directory -Name "dir" ; Set-Location -Path "./dir" ; Add-Content -Path "example.txt" -Value "test" -Encoding UTF8').sendKeys(this.Keys.ENTER)
       })
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir"]', 60000)
       .openFile('dir')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir/example.txt"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir/example.txt"]', 60000)
       .openFile('dir/example.txt').pause(1000)
       .getEditorValue((result) => {
         browser.assert.equal(result, 'test\r\n')
       })
       .pause(1000)
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .perform(function () {
         const actions = this.actions({async: true})

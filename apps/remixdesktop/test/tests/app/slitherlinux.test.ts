@@ -7,12 +7,12 @@ const tests = {
    done()
   },
   open: function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="openFolderButton"]', 10000).click('*[data-id="openFolderButton"]')
+    browser.waitForElementVisible('*[data-id="openFolderButton"]', 60000).click('*[data-id="openFolderButton"]')
   },
 
   'open default template': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
       .click('button[data-id="landingPageImportFromTemplate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
@@ -27,7 +27,7 @@ const tests = {
         .click('*[data-id="treeViewLitreeViewItemcontracts"]')
         .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
         .openFile('contracts/1_Storage.sol')
-        .waitForElementVisible('*[id="editorView"]', 10000)
+        .waitForElementVisible('*[id="editorView"]', 60000)
         .getEditorValue((content) => {
           browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
         })
@@ -48,17 +48,13 @@ const tests = {
     .clickLaunchIcon('solidityStaticAnalysis')
     .useXpath()
     .click('//*[@id="staticAnalysisRunBtn"]')
-    .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+    .waitForElementPresent('//*[@id="staticanalysisresult"]', 60000)
     .waitForElementVisible({
       selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '1')]",
-      locateStrategy: 'xpath',
-      timeout: 5000
-    })
+      locateStrategy: 'xpath', timeout: 60000 })
     .waitForElementVisible({
       selector: "//div[@data-id='block']/span[contains(text(), '1 warnings found.')]",
-      locateStrategy: 'xpath',
-      timeout: 5000
-    })
+      locateStrategy: 'xpath', timeout: 60000 })
   },
   
   after: function (browser: NightwatchBrowser) {

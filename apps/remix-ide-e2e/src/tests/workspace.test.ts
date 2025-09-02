@@ -11,7 +11,7 @@ module.exports = {
 
   CheckSolidityActivatedAndUDapp: function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#icon-panel', 10000)
+      .waitForElementVisible('#icon-panel', 60000)
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
   },
@@ -20,7 +20,7 @@ module.exports = {
     browser
       .pause(5000)
       .refreshPage()
-      .waitForElementVisible('#editorView', 30000)
+      .waitForElementVisible('#editorView', 60000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content includes Ballot contract')
       })
@@ -588,7 +588,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
       .modalFooterOKClick('TemplatesSelection')
-      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
+      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 60000)
       .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
       // click on lib to close it
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')

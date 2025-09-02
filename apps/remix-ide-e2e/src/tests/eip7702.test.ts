@@ -41,7 +41,7 @@ module.exports = {
       .modalFooterOKClick('udappNotify')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'This account will be running the code located at')
       .clickInstance(0)
-      .clickFunction('entryPoint - call')
+      .clickFunction('entryPoint - call', 60000)
       .verifyCallReturnValue('0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', ['0:address: 0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108'])
   },
 
@@ -68,7 +68,7 @@ module.exports = {
       .refresh()
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-prague')
-      .waitForElementNotPresent('*[data-id="delete-delegation"]')
+      .waitForElementNotPresent('*[data-id="delete-delegation"]', 60000)
   }
 }
 

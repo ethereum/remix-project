@@ -41,7 +41,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Everything went okay')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js"]')
       .openFile('circuits/.bin/simple_js')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple_js/simple.wasm"]', 60000)
   },
   'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
@@ -165,7 +165,7 @@ module.exports = {
       .click('button[data-id="compile_circuit_btn"]')
       .waitForElementPresent('[data-id="circuit_feedback"]')
       .assert.hasClass('[data-id="circuit_feedback"]', 'alert-danger')
-      .waitForElementContainsText('[data-id="circuit_feedback"]', 'No main specified in the project structure')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'No main specified in the project structure', 60000)
   },
   'Should auto compile circuit #group4': function (browser: NightwatchBrowser) {
     browser

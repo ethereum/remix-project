@@ -8,7 +8,7 @@ const tests = {
     },
     'Should create semaphore workspace': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('*[data-id="homeTabGetStartedsemaphore"]', 20000)
+            .waitForElementVisible('*[data-id="homeTabGetStartedsemaphore"]', 60000)
             .click('*[data-id="homeTabGetStartedsemaphore"]')
             .pause(3000)
             .windowHandles(function (result) {

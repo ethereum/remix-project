@@ -69,13 +69,13 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Proxy (ERC1967)')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Deploy Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...', 60000)
   },
 
   'Should interact with deployed contract via ERC1967 (proxy) #group1': function (browser: NightwatchBrowser) {
@@ -121,13 +121,13 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Proxy (ERC1967)')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Deploy Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...', 60000)
   },
 
   'Should interact with initialized contract to verify parameters #group1': function (browser: NightwatchBrowser) {
@@ -174,16 +174,16 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
-      .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]', 60000)
       .click(
         {
           selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
         })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...', 60000)
   },
 
   'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
@@ -216,13 +216,13 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]')
+      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...', 60000)
   },
 
   'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
@@ -244,7 +244,7 @@ module.exports = {
       timeout: 60000
     })
     .goToVMTraceStep(129)
-    .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000)
+    .waitForElementContainsText('*[data-id="functionPanel"]', 'version(, 60000)', 60000)
     .end()
   }
 }

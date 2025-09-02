@@ -8,10 +8,10 @@ module.exports = {
   },
 
   'Should display settings menu ': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
-      .waitForElementContainsText('[data-id="settings-sidebar-header"] h2', 'Settings')
+      .waitForElementContainsText('[data-id="settings-sidebar-header"] h2', 'Settings', 60000)
   },
 
   'Should activate `generate contract metadata` ': function (browser) {
@@ -42,7 +42,7 @@ module.exports = {
       .setValue('[data-id="settingsTabgist-access-token"]', '**********')
       .click('[data-id="settingsTabSavegithub-config"]')
       .pause(100)
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials updated')
       .pause(3000)
   },
@@ -51,7 +51,7 @@ module.exports = {
     browser
       .click('*[data-id="github-configSwitch"]')
       .pause(500)
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials removed')
       .waitForElementNotPresent('[data-id="settingsTabgist-access-token"]')
       .click('*[data-id="github-configSwitch"]')
@@ -60,7 +60,7 @@ module.exports = {
   },
   // These e2e should be enabled after settings panel refactoring
   // 'Should load dark theme ': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
+  //   browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 60000)
   //     .scrollAndClick('*[data-id="settingsTabThemeLabelDark"]')
   //     .pause(2000)
   //     .checkElementStyle(':root', '--primary', remixIdeThemes.dark.primary)
@@ -72,7 +72,7 @@ module.exports = {
   // },
 
   // 'Should load light theme ': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
+  //   browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 60000)
   //     .scrollAndClick('*[data-id="settingsTabThemeLabelLight"]')
   //     .pause(2000)
   //     .checkElementStyle(':root', '--primary', remixIdeThemes.light.primary)

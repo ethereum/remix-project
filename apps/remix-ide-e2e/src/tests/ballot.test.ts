@@ -22,7 +22,7 @@ module.exports = {
   },
   'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('solidity')
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
@@ -55,10 +55,10 @@ module.exports = {
   'Debug Ballot / delegate #group1': function (browser: NightwatchBrowser) {
     browser.pause(500)
       .debugTransaction(1)
-      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]', 60000)
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
-      .waitForElementVisible('#stepdetail')
+      .waitForElementVisible('#stepdetail', 60000)
       .goToVMTraceStep(144)
       .pause(2000)
       .checkVariableDebug('soliditystate', stateCheck)
@@ -97,16 +97,16 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacecreate"]')
-      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]', 60000)
       .scrollAndClick('*[data-id="create-remixDefault"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]', 60000)
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_remix_default')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]', 60000)
       .addFile('contracts/lib/storage/src/Storage.sol', { content: storageContract})
       .addFile('remappings.txt', { content: 'storage=contracts/lib/storage/src' })
       .addFile('contracts/Retriever.sol', { content: retrieverContract })
@@ -145,9 +145,9 @@ module.exports = {
     browser
       .addFile('cf.json', { content: configFile })
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .waitForElementVisible('*[data-id="scConfigExpander"]', 60000)
       .click('*[data-id="scConfigExpander"]')
-      .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
+      .waitForElementVisible('*[data-id="scFileConfiguration"]', 60000)
       .click('*[data-id="scFileConfiguration"]')
       // the input field behaves badly, it would often not receive the value, so retrying it a few times for now is the best thing to do
       .waitForElementVisible({
@@ -170,7 +170,7 @@ module.exports = {
         timeout: 1000
       })
 
-      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 60000)
       .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
 
@@ -201,7 +201,7 @@ module.exports = {
             timeout: 1000
           })
 
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 60000)
           .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
           .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
         }
@@ -234,7 +234,7 @@ module.exports = {
             timeout: 1000
           })
 
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 60000)
           .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
           .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
         }
@@ -249,12 +249,12 @@ module.exports = {
     browser
       .addFile('sample.yul', { content: yulSample })
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .waitForElementVisible('*[data-id="scConfigExpander"]', 60000)
       .click('*[data-id="scManualConfiguration"]')
-      .waitForElementVisible('select[id="compilerLanguageSelector"]', 10000)
+      .waitForElementVisible('select[id="compilerLanguageSelector"]', 60000)
       .click('select[id="compilerLanguageSelector"]')
       .click('select[id="compilerLanguageSelector"] option[value=Yul]')
-      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 65000)
+      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 60000)
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)

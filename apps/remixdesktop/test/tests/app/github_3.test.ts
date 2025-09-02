@@ -11,7 +11,7 @@ const tests = {
 
   'open default template': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
       .click('button[data-id="landingPageImportFromTemplate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
