@@ -88,8 +88,6 @@ export function RemixUiTopbar () {
       const [url, currentReleaseVersion] = await plugin.getLatestReleaseNotesUrl()
       setLatestReleaseNotesUrl(url)
       setCurrentReleaseVersion(currentReleaseVersion)
-      const theme = await getCurrentTheme()
-      setCurrentTheme(theme)
     }
     run()
   }, [])
