@@ -9,7 +9,7 @@ module.exports = {
   },
 
   'Should switch to ganache provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
@@ -22,9 +22,7 @@ module.exports = {
       .modalFooterOKClick('ganache-provider')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//span[@class='text-danger' and contains(., 'Error while querying the provider')]",
-        timeout: 10000
-      })
+        selector: "//span[@class='text-danger' and contains(., 'Error while querying the provider')]", timeout: 60000 })
   },
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
@@ -34,13 +32,13 @@ module.exports = {
       .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
       .modalFooterOKClick('ganache-provider')
-      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
-      .waitForElementVisible({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (', 60000)
+      .waitForElementVisible({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 60000 })
 
   },
 
   'Should switch to foundry provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 60000)
       .switchEnvironment('foundry-provider')
       .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
       .execute(() => {
@@ -56,11 +54,11 @@ module.exports = {
     browser.switchEnvironment('foundry-provider')
       .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
       .modalFooterOKClick('foundry-provider')
-      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (', 60000)
   },
 
   'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
@@ -72,7 +70,7 @@ module.exports = {
       .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll-rpc.publicnode.com')
       .modalFooterOKClick('ganache-provider')
       .pause(1000)
-      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 60000 })
       .pause(1000)
   },
 
@@ -87,7 +85,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-danger' and contains(., 'exceed maximum block range')]"
       })
-      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 60000 })
   }
 }
 

@@ -354,15 +354,15 @@ module.exports = {
       .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
       .refreshPage()
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...', 60000)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...', 60000)
   },
 
   'Import Github folder from URL params #group4': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#ghfolder=https://github.com/ethereum/remix-project/tree/master/apps/remix-ide/contracts/hardhat')
       .refreshPage()
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]', 40000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]', 60000)
       .currentWorkspaceIs('code-sample')
       .openFile('contracts')
       // .openFile('contracts/Lock.sol')

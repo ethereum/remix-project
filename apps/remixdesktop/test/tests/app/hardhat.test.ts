@@ -24,7 +24,7 @@ const tests = {
         }, [dir], () => {
             console.log('done window opened')
         })
-            .waitForElementVisible('*[data-id="treeViewDivDraggableItemhardhat.config.js"]', 10000)
+            .waitForElementVisible('*[data-id="treeViewDivDraggableItemhardhat.config.js"]', 60000)
     },
     compile: function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {

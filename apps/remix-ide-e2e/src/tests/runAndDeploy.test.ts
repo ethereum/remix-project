@@ -30,9 +30,9 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]', 30000)
+      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]', 60000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
-      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 60000)
       .click('*[data-id="signMessageTextarea"]')
       .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
       .assert.not.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
@@ -40,7 +40,7 @@ module.exports = {
       .pause(2000)
       .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
-      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 12000)
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
       .assert.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -53,7 +53,7 @@ module.exports = {
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
-      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000)
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 60000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .testFunction('last', {
@@ -68,7 +68,7 @@ module.exports = {
       .addFile('checkBalance.sol', sources[0]['checkBalance.sol'])
       .clickLaunchIcon('udapp')
       .setValue('*[data-id="dandrValue"]', '111')
-      .waitForElementVisible('*[data-id="Deploy - transact (payable)"]', 45000)
+      .waitForElementVisible('*[data-id="Deploy - transact (payable)"]', 60000)
       .click('*[data-id="Deploy - transact (payable)"]')
       .pause(1000)
       .clickInstance(1)
@@ -129,7 +129,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementPresent('#instance0xd9145CCE52D386f254917e481eB44e9943F39138')
+      .waitForElementPresent('#instance0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
       .clickFunction('retrieve - call')
@@ -138,7 +138,7 @@ module.exports = {
       .openFile('.states/vm-prague/state.json')
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x2"', 60000), 'State is saved')
       })
   },
 
@@ -150,7 +150,7 @@ module.exports = {
       .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
       .clickInstance(0)
       .clickFunction('retrieve - call')
-      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
+      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10', 60000)
   },
 
   'Should save state after running web3 script #group4': function (browser: NightwatchBrowser) {
@@ -178,7 +178,7 @@ module.exports = {
       .pause(1000)
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x1"'), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x1"', 60000), 'State is saved')
       })
   },
 

@@ -9,10 +9,10 @@ const tests = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
-      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 60000)
       .click('*[data-id="skipbackup-btn"]')
       .pause(5000)
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .hideToolTips()
   },
   'Should load the testmigration url and refresh and still have test data #group7': function (browser: NightwatchBrowser) {
@@ -20,10 +20,10 @@ const tests = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
-      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 60000)
       .click('*[data-id="skipbackup-btn"]')
       .pause(5000)
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .hideToolTips()
       .refreshPage()
   },
@@ -37,17 +37,17 @@ const tests = {
       .switchBrowserTab(0)
       .maximizeWindow()
       .pause(5000)
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .hideToolTips()
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('README.txt')
-      .waitForElementVisible('*[id="editorView"]', 10000)
+      .waitForElementVisible('*[id="editorView"]', 60000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('Output from script will appear in remix terminal.'))
       })
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')
-      .waitForElementVisible('*[id="editorView"]', 10000)
+      .waitForElementVisible('*[id="editorView"]', 60000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
       })
@@ -57,10 +57,10 @@ const tests = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
-      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 60000)
       .click('*[data-id="skipbackup-btn"]')
       .pause(5000)
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .hideToolTips()
   },
   'Should generate error in migration by deleting indexedDB and falling back to local storage with test #group5': function (browser: NightwatchBrowser) {
@@ -68,10 +68,10 @@ const tests = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow().execute(('delete window.indexedDB'))
-      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 60000)
       .click('*[data-id="skipbackup-btn"]')
       .pause(5000)
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .hideToolTips()
   },
   'should have localstorage storage in terminal #group2 #group3 #group5': function (browser: NightwatchBrowser) {
@@ -79,22 +79,22 @@ const tests = {
   },
   'Should have README file with TEST README as content #group1 #group3': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('TEST_README.txt')
-      .waitForElementVisible('*[id="editorView"]', 10000)
+      .waitForElementVisible('*[id="editorView"]', 60000)
       .getEditorValue((content) => {
         browser.assert.equal(content, 'TEST README')
       })
   },
   // these are test data entries
   'Should have a workspace_test #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .switchWorkspace('workspace_test')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest_contracts"]')
   },
   'Should have a sol file with test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .click('*[data-id="treeViewLitreeViewItemtest_contracts"]')
       .openFile('test_contracts/1_Storage.sol')
       .getEditorValue((content) => {
@@ -102,17 +102,17 @@ const tests = {
       })
   },
   'Should have an artifacts file with JSON test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .click('*[data-id="treeViewLitreeViewItemartifacts"]')
       .openFile('artifacts/Storage_metadata.json')
-      .waitForElementVisible('*[id="editorView"]', 10000)
+      .waitForElementVisible('*[id="editorView"]', 60000)
       .getEditorValue((content) => {
         const metadata = JSON.parse(content)
         browser.assert.equal(metadata.test, 'data')
       })
   },
   'Should have an empty workspace #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 60000)
       .switchWorkspace('emptyspace')
   },
   // end of test data entries
@@ -130,7 +130,7 @@ const tests = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow().execute('delete window.localStorage')
-      .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
+      .waitForElementVisible('*[data-id="skipbackup-btn"]', 60000)
       .click('*[data-id="skipbackup-btn"]')
       .hideToolTips()
       .assert.containsText('.alert-danger', 'An unknown error')

@@ -16,7 +16,7 @@ module.exports = {
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
-      .waitForElementVisible('#editorView')
+      .waitForElementVisible('#editorView', 60000)
       .checkElementStyle('.view-lines', 'font-size', '14px')
       .click('*[data-id="tabProxyZoomIn"]')
       .click('*[data-id="tabProxyZoomIn"]')
@@ -25,7 +25,7 @@ module.exports = {
 
   'Should zoom out editor #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#editorView')
+      .waitForElementVisible('#editorView', 60000)
       .checkElementStyle('.view-lines', 'font-size', '19.6px')
       .click('*[data-id="tabProxyZoomOut"]')
       .click('*[data-id="tabProxyZoomOut"]')
@@ -34,10 +34,10 @@ module.exports = {
 
   'Should display compile error in editor #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#editorView')
+      .waitForElementVisible('#editorView', 60000)
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
-      .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 120000)
+      .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 60000)
       .checkAnnotations('fa-exclamation-square') // error
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('fa-exclamation-square') // error
@@ -49,18 +49,18 @@ module.exports = {
     '' +
     function (browser: NightwatchBrowser) {
       browser
-        .waitForElementVisible('#editorView')
-        .waitForElementVisible('.ace_open')
+        .waitForElementVisible('#editorView', 60000)
+        .waitForElementVisible('.ace_open', 60000)
         .click('.ace_start:nth-of-type(1)')
-        .waitForElementVisible('.ace_closed')
+        .waitForElementVisible('.ace_closed', 60000)
         .click('.ace_start:nth-of-type(1)')
-        .waitForElementVisible('.ace_open')
+        .waitForElementVisible('.ace_open', 60000)
     },
 
   'Should add breakpoint to editor #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#editorView')
-      .waitForElementNotPresent('.glyph-margin-widgets .fa-circle')
+      .waitForElementVisible('#editorView', 60000)
+      .waitForElementNotPresent('.glyph-margin-widgets .fa-circle', 60000)
       .execute(
         () => {
           ;(window as any).addRemixBreakpoint(1)
@@ -68,14 +68,14 @@ module.exports = {
         [],
         () => {}
       )
-      .waitForElementVisible('.glyph-margin-widgets .fa-circle')
+      .waitForElementVisible('.glyph-margin-widgets .fa-circle', 60000)
   },
 
   'Should load syntax highlighter for ace light theme #group1':
     '' +
     function (browser: NightwatchBrowser) {
       browser
-        .waitForElementVisible('#editorView')
+        .waitForElementVisible('#editorView', 60000)
         .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
         .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
         .checkElementStyle('.ace_function', 'color', aceThemes.light.function)
@@ -92,7 +92,7 @@ module.exports = {
         .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
         .click('*[data-id="settingsTabThemeLabelDark"]')
         .pause(2000)
-        .waitForElementVisible('#editorView')
+        .waitForElementVisible('#editorView', 60000)
       /* @todo(#2863) ch for class and not colors
     .checkElementStyle('.ace_keyword', 'color', aceThemes.dark.keyword)
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)

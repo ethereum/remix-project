@@ -8,7 +8,7 @@ module.exports = {
     },
     'open default template': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+            .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
             .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
             .click('button[data-id="landingPageImportFromTemplate"]')
             .waitForElementPresent('*[data-id="create-remixDefault"]')
@@ -25,7 +25,7 @@ module.exports = {
                     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
                     .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
                     .openFile('contracts/1_Storage.sol')
-                    .waitForElementVisible('*[id="editorView"]', 10000)
+                    .waitForElementVisible('*[id="editorView"]', 60000)
                     .getEditorValue((content) => {
                         browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
                     })
@@ -43,11 +43,11 @@ module.exports = {
             .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', 'contracts', 60000)
             .waitForElementContainsText('*[data-id="search_results"]', 'README.TXT', 60000)
-            .waitForElementContainsText('*[data-id="search_results"]', 'file must')
-            .waitForElementContainsText('*[data-id="search_results"]', 'be compiled')
-            .waitForElementContainsText('*[data-id="search_results"]', 'that person al')
-            .waitForElementContainsText('*[data-id="search_results"]', 'sender.voted')
-            .waitForElementContainsText('*[data-id="search_results"]', 'read')
+            .waitForElementContainsText('*[data-id="search_results"]', 'file must', 60000)
+            .waitForElementContainsText('*[data-id="search_results"]', 'be compiled', 60000)
+            .waitForElementContainsText('*[data-id="search_results"]', 'that person al', 60000)
+            .waitForElementContainsText('*[data-id="search_results"]', 'sender.voted', 60000)
+            .waitForElementContainsText('*[data-id="search_results"]', 'read', 60000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 7)
             })

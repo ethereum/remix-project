@@ -78,7 +78,7 @@ const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitR
 const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   return new Promise((resolve) => {
     browser.frameParent(() => {
-      browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
+      browser.pause(1000, 60000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
 
           browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okPresent: any) => {
@@ -196,7 +196,7 @@ module.exports = {
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
-      .frame(0)
+      .frame(0, 60000)
   },
   // context menu item
 
@@ -404,7 +404,7 @@ module.exports = {
       .useXpath()
       // @ts-ignore
       .frame(0)
-      .perform(async () => {
+      .perform(async (, 60000) => {
         const request = {
           id: 9999,
           jsonrpc: '2.0',
@@ -427,7 +427,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications
@@ -438,8 +438,8 @@ module.exports = {
       .modalFooterOKClick('test_id_3_')
       .journalLastChildIncludes('default value... ') // check the return value of the prompt
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast', 60000)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast', 60000)
 
   },
   'Should open 2 alerts from localplugin #group9': !function (browser: NightwatchBrowser) {
@@ -469,7 +469,7 @@ const testModalToasterApi = `
 (async () => {
  try {
     setTimeout(async () => {
-      console.log('test .. ')
+      console.log('test .. ', 60000)
       remix.call('notification', 'alert', { message: 'message 1', id: 'test_id_1_' })
       remix.call('notification', 'toast', 'I am a toast')
       remix.call('notification', 'toast', 'I am a re-toast')

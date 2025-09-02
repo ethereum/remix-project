@@ -56,7 +56,7 @@ module.exports = {
   'Test EIP 712 Signature': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
-      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 60000)
       .click('*[data-id="sign-eip-712"]')
       .waitForElementVisible('*[data-id="udappNotify-modal-footer-ok-react"]')
       .modalFooterOKClick('udappNotify')

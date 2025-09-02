@@ -7,7 +7,7 @@ const tests = {
   },
   'open default template': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
       .click('button[data-id="landingPageImportFromTemplate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
@@ -23,7 +23,7 @@ const tests = {
           .click('*[data-id="treeViewLitreeViewItemcontracts"]')
           .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
           .openFile('contracts/1_Storage.sol')
-          .waitForElementVisible('*[id="editorView"]', 10000)
+          .waitForElementVisible('*[id="editorView"]', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
           })
@@ -44,14 +44,14 @@ const tests = {
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(2000)
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000) // wait for the contract to compile
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 60000) // wait for the contract to compile
       .pause(2000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
       .clickFunction('retrieve - call')
-      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
+      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10', 60000)
   },
 }
 

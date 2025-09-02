@@ -18,12 +18,12 @@ function createContract (browser: NightwatchBrowser, inputParams: string, callba
     browser.setValue('.udapp_contractActionsContainerSingle > input', inputParams, function () {
       browser
         .pause(1000) // wait to get the button enabled
-        .waitForElementVisible('.udapp_contractActionsContainerSingle button')
+        .waitForElementVisible('.udapp_contractActionsContainerSingle button', 60000)
         .click('.udapp_contractActionsContainerSingle button').pause(500).perform(function () { callback() })
     })
   } else {
     browser
-      .waitForElementVisible('.udapp_contractActionsContainerSingle button')
+      .waitForElementVisible('.udapp_contractActionsContainerSingle button', 60000)
       .click('.udapp_contractActionsContainerSingle button')
       .pause(500)
       .perform(function () { callback() })

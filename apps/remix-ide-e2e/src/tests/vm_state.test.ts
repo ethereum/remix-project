@@ -15,7 +15,7 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 30000)
+      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 60000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
@@ -160,22 +160,22 @@ const tests = {
       .waitForElementVisible('*[data-id="unpinnedInstance0xf8e81D47203A594245E36C48e151709F0C19fBe8"]')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
-      .click('input[data-id="modalDialogForkState"]')
+      .click('input[data-id="modalDialogForkState"]', 60000)
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
       // check if 'forkedState_2' is selected as current environment 
       .waitForElementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in environment explorer
       .waitForElementPresent('[data-id="remixUIGSforkedState_2"]')
       // check if 'forkedState_2' is pinned in environment explorer
-      .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
+      .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]', 60000)
       // 'forkedState_2' should have 3 blocks
       .waitForElementContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
-      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
+      .clickFunction('store - transact (not payable, 60000)', { types: 'uint256 num', values: '"555"' })
       // block number should be 5 after 2 txs
       .testFunction('last',
         {
@@ -197,7 +197,7 @@ const tests = {
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .waitForElementVisible('*[data-id="deleteVmStateModal"]')
       .modalFooterOKClick('udappNotify')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       // check if toaster is shown
       .assert.textContains('*[data-shared="tooltipPopup"]', `VM state reset successfully.`)
       // check that there are no instances

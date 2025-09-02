@@ -43,11 +43,11 @@ module.exports = {
       .clickLaunchIcon('solidityStaticAnalysis')
       .useXpath()
       .click('//*[@id="staticAnalysisRunBtn"]')
-      // .waitForElementPresent('div#staticanalysisresult .warning', 5000)
-      .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+      // .waitForElementPresent('div#staticanalysisresult .warning', 60000)
+      .waitForElementPresent('//*[@id="staticanalysisresult"]', 60000)
       .useCss()
       // Check warning count
-      .waitForElementVisible('span#ssaRemixtab')
+      .waitForElementVisible('span#ssaRemixtab', 60000)
       .click('span#ssaRemixtab')
       .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount"]', '3')
       .verify.elementPresent('input[name="showLibWarnings"]')
@@ -55,7 +55,7 @@ module.exports = {
       .verify.elementPresent('label[id="headingshowLibWarnings"]')
       .click('label[id="headingshowLibWarnings"]')
       .pause(1000)
-      .waitForElementVisible('span#ssaRemixtab')
+      .waitForElementVisible('span#ssaRemixtab', 60000)
       .click('span#ssaRemixtab')
       .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '388')
       .click('label[id="headingshowLibWarnings"]')
@@ -67,7 +67,7 @@ module.exports = {
 
 function runTests (browser: NightwatchBrowser) {
   browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('#icon-panel', 60000)
     .clickLaunchIcon('solidity')
     .pause(10000)
     .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])

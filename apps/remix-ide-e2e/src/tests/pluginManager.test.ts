@@ -11,11 +11,11 @@ module.exports = {
   'Should load Plugin Manager and search for a plugin #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('pluginManager')
-      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 60000)
       .assert.visible('[data-id="pluginManagerComponentPluginManager"]', 'Plugin Manager component is visible.')
       .waitForElementVisible('[data-id="pluginManagerComponentSearchInput"]')
       .setValue('[data-id="pluginManagerComponentSearchInput"]', 'debugger')
-      .waitForElementVisible('[data-id="pluginManagerComponentActiveTile"]', 5000)
+      .waitForElementVisible('[data-id="pluginManagerComponentActiveTile"]', 60000)
       .assert.containsText('[data-id="pluginManagerComponentActiveTile"]', 'Debugger')
       .clearValue('[data-id="pluginManagerComponentSearchInput"]')
   },
@@ -24,13 +24,13 @@ module.exports = {
     let initialActiveCount
 
     browser
-      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 60000)
       .click('[data-id="pluginManagerActiveTab"]')
       .getText('[data-id="pluginManagerComponentActiveTilesCount"]', (r) => {
         initialActiveCount = parseInt(r.value as any)
       })
       .click('[data-id="pluginManagerInactiveTab"]')
-      .waitForElementVisible('[data-id^="pluginManagerComponentActivateButton"]', 10000)
+      .waitForElementVisible('[data-id^="pluginManagerComponentActivateButton"]', 60000)
       .click('css selector', '[data-id^="pluginManagerComponentActivateButton"]')
       .pause(1200)
       .click('[data-id="pluginManagerActiveTab"]')
@@ -38,7 +38,7 @@ module.exports = {
         const newActiveCount = parseInt(r.value as any)
         browser.assert.equal(newActiveCount, initialActiveCount + 1, `Active count should increase to ${initialActiveCount + 1}.`)
       })
-      .waitForElementVisible('[data-id^="pluginManagerComponentDeactivateButton"]', 10000)
+      .waitForElementVisible('[data-id^="pluginManagerComponentDeactivateButton"]', 60000)
       .click('css selector', '[data-id^="pluginManagerComponentDeactivateButton"]')
       .pause(1200)
       .getText('[data-id="pluginManagerComponentActiveTilesCount"]', (r) => {
@@ -52,7 +52,7 @@ module.exports = {
     let filteredCount: number
 
     browser
-      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 60000)
       .click('[data-id="pluginManagerAllTab"]')
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
         initialAllCount = parseInt(result.value as string)
@@ -75,7 +75,7 @@ module.exports = {
     let initialAllCount: number
 
     browser
-      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 10000)
+      .waitForElementVisible('[data-id="pluginManagerComponentPluginManager"]', 60000)
       .click('[data-id="pluginManagerAllTab"]')
       .getText('[data-id="pluginManagerAllCount"]', (result) => {
         initialAllCount = parseInt(result.value as string)

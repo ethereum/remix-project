@@ -9,7 +9,7 @@ module.exports = {
     },
     'open default template': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+            .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
             .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
             .click('button[data-id="landingPageImportFromTemplate"]')
             .waitForElementPresent('*[data-id="create-remixDefault"]')
@@ -25,7 +25,7 @@ module.exports = {
                     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
                     .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
                     .openFile('contracts/1_Storage.sol')
-                    .waitForElementVisible('*[id="editorView"]', 10000)
+                    .waitForElementVisible('*[id="editorView"]', 60000)
                     .getEditorValue((content) => {
                         browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
                     })

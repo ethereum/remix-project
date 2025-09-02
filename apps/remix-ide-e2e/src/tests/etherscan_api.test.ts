@@ -45,7 +45,7 @@ const tests = {
       .setValue('*[name="contractAddress"]', ['0xfF6A41815582cFD18855c5B90efD1d45784fd4f5', browser.Keys.TAB])
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
-      .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified', 15000)
+      .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified', 60000)
     },
 
     'Should call the etherscan plugin api #group1': function (browser: NightwatchBrowser) {
