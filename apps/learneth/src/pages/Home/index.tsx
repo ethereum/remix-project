@@ -11,11 +11,11 @@ const LEVEL_LABEL: Record<LevelKey, string> = { '1': 'Beginner', '2': 'Intermedi
 function Antenna({ level }: { level: number }) {
   const active = Math.min(Math.max(level, 0), 3)
   return (
-    <span className="d-inline-flex align-items-end mr-2">
-      {[0,1,2].map(i => (
+    <span className="d-inline-flex align-items-end me-2">
+      {[0, 1, 2].map(i => (
         <span key={i}
           className={`antenna-bar ${i < active ? 'bg-primary' : 'bg-secondary'}`}
-          style={{ height: `${8 + i*4}px` }} />
+          style={{ height: `${8 + i * 4}px` }} />
       ))}
     </span>
   )
@@ -49,13 +49,12 @@ function useDebounced<T>(value: T, delay = 250) {
   return v
 }
 
-export default function HomePage(): JSX.Element {
-  const { list, detail, selectedId } = useAppSelector((s) => s.workshop)
+function HomePage(): JSX.Element {
+  const { list, detail, selectedId } = useAppSelector((state) => state.workshop)
   const selectedRepo = detail[selectedId]
 
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounced(search, 250)
-
   const [showFilters, setShowFilters] = useState(false)
   const [selectedLevels, setSelectedLevels] = useState<number[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -63,12 +62,9 @@ export default function HomePage(): JSX.Element {
   const allTags = useMemo(() => {
     if (!selectedRepo) return []
     const set = new Set<string>()
-    Object.keys(selectedRepo.group).forEach((levelKey) => {
-      (selectedRepo.group[levelKey] || []).forEach((item: any) => {
-        const entity = selectedRepo.entities[item.id] || {}
-        const tags: string[] = entity?.metadata?.data?.tags || []
-        tags.forEach(t => set.add(t))
-      })
+    Object.values(selectedRepo.entities).forEach((entity: any) => {
+      const tags: string[] = entity?.metadata?.data?.tags || []
+      tags.forEach(t => set.add(t))
     })
     return Array.from(set).sort((a, b) => a.localeCompare(b))
   }, [selectedRepo])
@@ -76,32 +72,29 @@ export default function HomePage(): JSX.Element {
   const flatItems = useMemo(() => {
     if (!selectedRepo) return []
     const rows: Array<{
-      id: string
-      levelNum: number
-      levelText: string
-      name: string
-      subtitle: string
-      preview: string
-      stepsLen?: number
-      duration?: number | string
-      tags: string[]
+      id: string; levelNum: number; levelText: string; name: string
+      subtitle: string; preview: string; stepsLen?: number;
+      duration?: number | string; tags: string[];
     }> = []
     Object.keys(selectedRepo.group).forEach((levelKey) => {
       const levelNum = Number(levelKey) || 1
       const levelText = LEVEL_LABEL[levelKey as LevelKey] ?? 'Beginner'
       const items = selectedRepo.group[levelKey] || []
+
       items.forEach((item: any) => {
         const entity = selectedRepo.entities[item.id] || {}
-        const tags: string[] = entity?.metadata?.data?.tags || []
-        const subtitle = tags.join(', ')
-        const stepsLen = entity?.steps?.length
-        const duration = entity?.metadata?.data?.duration
-        const preview = mdToPlain(entity?.description?.content || '', 280)
+        if (!entity) return
+        const tags: string[] = entity.metadata?.data?.tags || []
         rows.push({
           id: item.id,
-          levelNum, levelText,
-          name: entity?.name || '',
-          subtitle, preview, stepsLen, duration, tags
+          levelNum,
+          levelText,
+          name: entity.name || '',
+          subtitle: tags.join(', '),
+          preview: mdToPlain(entity.description?.content || '', 280),
+          stepsLen: entity.steps?.length,
+          duration: entity.metadata?.data?.duration,
+          tags
         })
       })
     })
@@ -110,13 +103,9 @@ export default function HomePage(): JSX.Element {
 
   const filtered = useMemo(() => {
     let list = flatItems
-
     const q = debouncedSearch.trim().toLowerCase()
     if (q) {
-      list = list.filter(r => {
-        const hay = (r.name + ' ' + r.preview + ' ' + r.tags.join(' ')).toLowerCase()
-        return hay.includes(q)
-      })
+      list = list.filter(r => (r.name + ' ' + r.preview + ' ' + r.tags.join(' ')).toLowerCase().includes(q))
     }
     if (selectedLevels.length) {
       const set = new Set(selectedLevels)
@@ -125,16 +114,14 @@ export default function HomePage(): JSX.Element {
     if (selectedTags.length) {
       list = list.filter(r => r.tags.some(t => selectedTags.includes(t)))
     }
-
     return list
   }, [flatItems, debouncedSearch, selectedLevels, selectedTags])
 
   return (
-    <div id="learneth" className="App">
+    <div id="learneth" className="App mb-5">
       <RepoImporter list={list} selectedRepo={selectedRepo || {}} />
- 
       <div className="container-fluid mb-3">
-        <hr className="hr-themed my-3"/>
+        <hr className="my-3"/>
         <div className="remixui_pluginSearch" data-id="learneth-search-sticky">
           <div className="d-flex w-100 mb-2">
             <div className="search-bar-container w-100">
@@ -143,18 +130,18 @@ export default function HomePage(): JSX.Element {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="form-control form-control-sm remixui_pluginSearchInput pl-4"
-                placeholder=" Search"
+                className="form-control form-control-sm remixui_pluginSearchInput ps-4"
+                placeholder="Search tutorials..."
                 data-id="learneth-search-input"
               />
             </div>
 
             <button
               onClick={() => setShowFilters(s => !s)}
-              className="btn btn-sm btn-secondary ml-2 d-flex align-items-center"
+              className="btn btn-sm btn-secondary ms-2 d-flex align-items-center"
               data-id="learneth-filter-button"
             >
-              <svg width="8" height="8" viewBox="0 0 8 8" className="mr-1">
+              <svg width="8" height="8" viewBox="0 0 8 8" className="me-1">
                 <path d="M0.06 0.86C0.16 0.64 0.38 0.5 0.62 0.5h6.75c.24 0 .46.14.56.36.1.22.07.48-.09.66L5 5.01V7c0 .19-.11.36-.28.45-.17.09-.37.07-.52-.05l-1-.75c-.13-.1-.2-.25-.2-.4V5.01L0.14 1.52C-.01 1.33-.04 1.07.06.86z" fill="currentColor"/>
               </svg>
               <span>Filters</span>
@@ -175,19 +162,19 @@ export default function HomePage(): JSX.Element {
       {selectedRepo && (
         <div className="container-fluid">
           {filtered.map((r) => (
-            <article key={r.id} className="card card-hover mb-3 border border-secondary overflow-hidden">
-              <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-secondary px-3 py-2">
+            <article key={r.id} className="card card-hover mb-3 border overflow-hidden">
+              <div className="card-header d-flex justify-content-between align-items-center bg-transparent px-3 py-2">
                 <div className="d-flex align-items-center">
                   <Antenna level={r.levelNum} />
-                  <span className="text-muted small">{r.levelText}</span>
+                  <span className="small fw-medium text-body-emphasis">{r.levelText}</span>
                 </div>
                 <MetaRight stepsLen={r.stepsLen} duration={r.duration} />
               </div>
               <div className="card-body">
-                <h5 className="card-title mb-1 title-clamp-2">{r.name}</h5>
-                {!!r.subtitle && <div className="text-muted subtitle-clamp-1">{r.subtitle}</div>}
+                <h5 className="card-title mb-1 title-clamp-2 text-body-emphasis">{r.name}</h5>
+                {!!r.subtitle && <p className="text-body-secondary small mb-2 subtitle-clamp-1 text-body-emphasis">{r.subtitle}</p>}
                 <p className="mt-2 mb-0 text-muted body-clamp-4">{r.preview}</p>
-                <Link to={`/list?id=${r.id}`} className="stretched-link" />
+                <Link to={`/list?id=${r.id}`} className="stretched-link" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', r.name])}/>
               </div>
             </article>
           ))}
@@ -196,3 +183,5 @@ export default function HomePage(): JSX.Element {
     </div>
   )
 }
+
+export default HomePage

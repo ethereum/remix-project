@@ -1,26 +1,14 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import remarkGfm from 'remark-gfm'
 import BackButton from '../../components/BackButton'
 import SlideIn from '../../components/SlideIn'
 import { useAppSelector } from '../../redux/hooks'
 import './index.scss'
 
 const LEVEL_LABEL: Record<'1'|'2'|'3', string> = { '1': 'Beginner', '2': 'Intermediate', '3': 'Advanced' }
-
-function mdToPlain(text: string, maxLen = 220) {
-  if (!text) return ''
-  let t = text
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`[^`]*`/g, ' ')
-    .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
-    .replace(/<\/?[^>]+>/g, ' ')
-    .replace(/^#+\s+/gm, '')
-    .replace(/[*_>#-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-  return t.length > maxLen ? t.slice(0, maxLen - 1) + '…' : t
-}
 
 const Antenna = ({ level }: { level: number }) => {
   const active = Math.min(Math.max(level, 0), 3)
@@ -37,17 +25,6 @@ const Antenna = ({ level }: { level: number }) => {
   )
 }
 
-const ChecklistIcon = () => (
-  <svg className="stat-svg" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M4 7l2 2 3-3" className="chk" />
-    <rect x="11" y="6" width="9" height="2" className="ln" rx="1" />
-    <path d="M4 13l2 2 3-3" className="chk" />
-    <rect x="11" y="12" width="9" height="2" className="ln" rx="1" />
-    <path d="M4 19l2 2 3-3" className="chk" />
-    <rect x="11" y="18" width="9" height="2" className="ln" rx="1" />
-  </svg>
-)
-
 export default function StepListPage(): JSX.Element {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
@@ -57,6 +34,8 @@ export default function StepListPage(): JSX.Element {
   const entity = repo?.entities?.[id] || {}
 
   const navigate = useNavigate()
+
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const { levelNum, levelText } = useMemo(() => { 
     let found: string | undefined
@@ -71,14 +50,12 @@ export default function StepListPage(): JSX.Element {
 
   const steps = entity?.steps || []
   const stepsLen = steps.length
-  const durationH = entity?.metadata?.data?.duration
-  const prerequisites = entity?.metadata?.data?.prerequisites || 'None'
-  const subtitleTags: string[] = entity?.metadata?.data?.tags || []
-  const subtitle = subtitleTags.join(', ')
-  const description =
-    entity?.description?.content ? mdToPlain(entity.description.content, 260)
-    : entity?.text ? mdToPlain(entity.text, 260)
-    : ''
+
+  const fullDescription = entity?.text || entity?.description?.content || ''
+  const needsExpansionButton = fullDescription.length > 200
+
+  const TRUNCATE_LENGTH = 150
+  const needsTruncation = fullDescription.length > TRUNCATE_LENGTH
 
   const stepMinutes = (step: any): string => {
     const m = step?.metadata?.data?.minutes ?? step?.metadata?.data?.durationMinutes
@@ -86,7 +63,7 @@ export default function StepListPage(): JSX.Element {
   }
 
   return (
-    <>
+    <div className="mb-5">
       <div className="fixed-top">
         <div className="bg-light">
           <BackButton />
@@ -98,13 +75,25 @@ export default function StepListPage(): JSX.Element {
       <div className="container-fluid">
         <article className="card course-hero mb-3 border border-secondary">
           <div className="card-body">
-            <h2 className="h4 mb-2">{entity?.name}</h2>
-            {!!subtitle && <div className="text-muted mb-2">{subtitle}</div>}
-            {!!description && <p className="text-muted mb-3">{description}</p>}
+            <h2 className="h4 mb-2">{entity?.name}</h2> 
+            <div className={`description-wrapper ${!isExpanded && needsExpansionButton ? 'truncated' : ''}`}>
+              <Markdown className={'small'} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
+                {fullDescription}
+              </Markdown>
+            </div>
+
+            {needsTruncation && (
+              <button 
+                className="btn btn-link more-button p-0"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? 'less' : 'more'}
+              </button>
+            )}
 
             <button
               type="button"
-              className="btn btn-cta no-wiggle-btn btn-sm w-100 d-flex align-items-center justify-content-center"
+              className="btn btn-primary no-wiggle-btn btn-sm w-100 d-flex align-items-center justify-content-center mt-3"
               onClick={() => {
                 (window as any)._paq?.push(['trackEvent', 'learneth', 'start_course', id])
                 navigate(`/detail?id=${id}&stepId=0`)
@@ -115,49 +104,25 @@ export default function StepListPage(): JSX.Element {
             </button>
           </div>
         </article>
-
-        <section className="stats-row row mb-3">
-          <div className="col-6 col-md-3">
-            <div className="stat">
-              <i className="fas fa-hourglass-half stat-icon" aria-hidden="true" />
-              <div>
-                <div className="stat-label">Complete time</div>
-                <div className="stat-value">
-                  {durationH ? `${durationH} hour${Number(durationH) > 1 ? 's' : ''}` : '—'}
-                </div>
-              </div>
+ 
+        <section className="stats-row">
+          <div className="stat">
+            <Antenna level={levelNum} />  
+            <div>
+              <div className="stat-label">Level</div>
+              <div className="stat-value">{levelText}</div>
             </div>
           </div>
-          <div className="col-6 col-md-3">
-            <div className="stat">
-              <i className="fas fa-book stat-icon" aria-hidden="true" />
-              <div>
-                <div className="stat-label">Chapters</div>
-                <div className="stat-value">{stepsLen || 0}</div>
-              </div>
-            </div> 
+          <div className="stat">
+            <i className="fas fa-book stat-icon" aria-hidden="true" />
+            <div>
+              <div className="stat-label">Chapters</div>
+              <div className="stat-value">{stepsLen || 0}</div>
+            </div>
           </div> 
-          <div className="col-6 col-md-3">
-            <div className="stat">
-              <Antenna level={levelNum} />  
-              <div>
-                <div className="stat-label">Level</div>
-                <div className="stat-value">{levelText}</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-6 col-md-3">
-            <div className="stat">
-              <ChecklistIcon />
-              <div>
-                <div className="stat-label">Prerequisites</div>
-                <div className="stat-value">{prerequisites || 'None'}</div>
-              </div>
-            </div>
-          </div>
         </section>
 
-        <hr className="hr-themed my-3" />
+        <hr className="hr-themed mb-3 mt-0" />
 
         <div className="d-flex align-items-baseline justify-content-between mb-2">
           <h3 className="h6 m-0">Syllabus</h3>
@@ -183,6 +148,6 @@ export default function StepListPage(): JSX.Element {
           </div>
         </SlideIn>
       </div>
-    </>
+    </div>
   )
 }

@@ -2,45 +2,45 @@
   width: 3px;
   display: inline-block;
 }
+.repo-importer-container {
+  font-size: 0.825rem;
+}
+
+.repo-importer-container .btn,
+.repo-importer-container .form-control {
+  font-size: 0.75rem;
+}
+
+.repo-importer-container .form-control {
+  padding: 0.375rem 0.75rem;
+}
+
+.panel-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
 .repo-label {
-  font-size: 0.8rem;
-  font-weight: bold;
+  font-size: 0.625rem;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--text-secondary);
+  margin-bottom: 0.3rem;
 }
-.custom-dropdown-toggle {
-  text-align: left;
+
+.repo-label .fa-question-circle {
+  transform: translateY(-1px);
 }
+
+.repo-importer-container .dropdown-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  font-size: 0.75rem;
+}
+
 .hr-themed {
-  border-top-color: var(--secondary);
+  border-color: var(--secondary);
+  opacity: .25;
 }
-.custom-dark-dropdown .dropdown-menu {
-  background-color: var(--custom-select) !important;
-  border-color: var(--bs-secondary-border-color);
-}
-.custom-dark-dropdown .dropdown-item, 
-.custom-dark-menu .dropdown-item div {
-  color: var(--bs-light);
-}
-.custom-dark-dropdown .dropdown-item:hover,
-.custom-dark-dropdown .dropdown-item:focus {
-  background-color: var(--bs-secondary-border-color); 
-  color: var(--bs-light);
-}
-.dropdown-menu.show {
-  background-color: var(--custom-select) !important; 
-}
-.dropdown-item {
-  text-decoration: none !important;
-}
-a.no-wiggle-btn { display: inline-flex !important; }
-a.no-wiggle-btn:hover,
-a.no-wiggle-btn:focus,
-a.no-wiggle-btn:active {
-  text-decoration: none !important;
-  transform: none !important;
-  letter-spacing: normal !important;
-  padding: .5rem .75rem !important;
-  border-color: transparent !important;
-}
-a.no-wiggle-btn > * { transition: none !important; transform: none !important; }
