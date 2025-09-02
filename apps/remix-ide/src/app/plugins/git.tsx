@@ -8,7 +8,7 @@ const profile = {
   name: 'dgit',
   displayName: 'Git',
   description: 'Git plugin for Remix',
-  methods: ['open', 'init'],
+  methods: ['open', 'init', 'startLogin'],
   events: [''],
   version: packageJson.version,
   maintainedBy: 'Remix',
@@ -39,6 +39,10 @@ export class GitPlugin extends ViewPlugin {
 
   render() {
     return <div id='gitTab'><GitUI plugin={this} /></div>
+  }
+
+  async startLogin(){
+    this.emit('startLogin')
   }
 
 }

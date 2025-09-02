@@ -4,7 +4,6 @@ import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import { CustomTopbarMenu } from '@remix-ui/helper'
 import { publishToGist } from 'libs/remix-ui/workspace/src/lib/actions'
 import { AppContext } from '@remix-ui/app'
-import { gitUIPanels } from 'libs/remix-ui/git/src/types'
 
 const _paq = window._paq || []
 
@@ -24,25 +23,16 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
   const gitHubUser = appContext?.appState?.gitHubUser
   const isConnected = gitHubUser?.isConnected
 
-  // Simple login handler that delegates to the dgit plugin
+  // Simple login handler that delegates to the app context
   const handleLogin = useCallback(async () => {
     if (isLoading) return
 
     setIsLoading(true)
 
     try {
-      // Check if dgit plugin is active and activate if needed
-      const isActive = await appContext.appManager.call('manager', 'isActive', 'dgit')
-      if (!isActive) {
-        await appContext.appManager.call('manager', 'activatePlugin', 'dgit')
-      }
-
-      // Open the GitHub panel in the git plugin and let it handle the login
-      await appContext.appManager.call('menuicons', 'select', 'dgit')
-      await appContext.appManager.call('dgit', 'open', gitUIPanels.GITHUB)
-
+      await appContext.loginWithGitHub()
     } catch (error) {
-      console.error('Failed to open GitHub login:', error)
+      console.error('Failed to start GitHub login:', error)
     } finally {
       setIsLoading(false)
     }
