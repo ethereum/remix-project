@@ -17,6 +17,8 @@ import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
 import { GitHubCallback } from '../topbarUtils/gitOauthHandler'
 import { GitHubLogin } from '../components/gitLogin'
 import GithubLoginSuccess from '../components/githubLoginSuccess'
+import { CustomTooltip } from 'libs/remix-ui/helper/src/lib/components/custom-tooltip'
+import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 
 const _paq = window._paq || []
 
@@ -25,7 +27,7 @@ export function RemixUiTopbar () {
   const [showDropdown, setShowDropdown] = useState(false)
   const platform = useContext(platformContext)
   const global = useContext(TopbarContext)
-  const plugin = global.plugin as any
+  const plugin = global.plugin
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ROOT_PATH = '/'
@@ -44,6 +46,8 @@ export function RemixUiTopbar () {
   useOnClickOutside([themeIconRef], () => setShowTheme(false))
   const workspaceRenameInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
+  const [closedPlugin, setClosedPlugin] = useState<any>(null)
+  const [maximized, setMaximized] = useState<boolean>(false)
 
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +90,19 @@ export function RemixUiTopbar () {
       setCurrentReleaseVersion(currentReleaseVersion)
     }
     run()
+  }, [])
+
+  useEffect(() => {
+    plugin.event.on('pluginIsClosed', (profile) => {
+      setClosedPlugin(profile)
+      if (maximized) {
+        setMaximized(false)
+      }
+    })
+    plugin.event.on('pluginIsMaximized', () => {
+      setClosedPlugin(null)
+      setMaximized(true)
+    })
   }, [])
 
   useEffect(() => {
@@ -142,8 +159,8 @@ export function RemixUiTopbar () {
     ]
   }, [])
 
-  const updateMenuItems = (workspaces?: WorkspaceMetadata[]) => {
-    const menuItems = (workspaces || plugin.getWorkspaces()).map((workspace) => ({
+  const updateMenuItems = async (workspaces?: WorkspaceMetadata[]) => {
+    const menuItems = (workspaces || await plugin.getWorkspaces()).map((workspace) => ({
       name: workspace.name,
       isGitRepo: workspace.isGitRepo,
       isGist: workspace.isGist,
@@ -513,6 +530,15 @@ export function RemixUiTopbar () {
           className="d-flex flex-row align-items-center justify-content-end flex-nowrap"
           style={{ minWidth: '33%' }}
         >
+          {/* {closedPlugin && <div className="d-flex my-auto me-4" style={{ height: '1rem', width: '1rem' }}>
+            <CustomTooltip placement="left-start" tooltipText={`Open ${closedPlugin.displayName} plugin`}>
+              <i
+                className="fa-solid fa-expand-wide fs-4 text-info"
+                data-id="restoreClosedPlugin"
+                onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
+              ></i>
+            </CustomTooltip>
+          </div>} */}
           <>
             {user ? (
               <GithubLoginSuccess
@@ -596,6 +622,16 @@ export function RemixUiTopbar () {
           >
             <i className="fa fa-cog"></i>
           </span>
+
+          {closedPlugin && <div className="d-flex ms-4" >
+            <CustomTooltip placement="bottom-start" tooltipText={`Show ${closedPlugin.displayName} plugin`}>
+              <i
+                className="fa-solid fa-expand-wide fs-4 text-info"
+                data-id="restoreClosedPlugin"
+                onClick={() => plugin.call('pinnedPanel', 'maximizePlugin')}
+              ></i>
+            </CustomTooltip>
+          </div>}
         </div>
       </div>
     </section>
