@@ -139,23 +139,21 @@ export const HandleMistralAIResponse = async (streamResponse, cb: (streamText: s
     buffer = decoder.decode(value, { stream: true });
 
     const lines = buffer.split("\n");
-    buffer = lines.pop() ?? ""; // Keep the unfinished line for next chunk
     for (const line of lines) {
       if (line.startsWith("data: ")) {
         const jsonStr = line.replace(/^data: /, "").trim();
+        if (jsonStr === "[DONE]") {
+          done_cb?.(resultText, threadId);
+          return;
+        }
+
         try {
           const json = JSON.parse(jsonStr);
-          threadId = json?.conversation_id || threadId;
+          threadId = json?.id || threadId;
 
-          if (json.type === 'conversation.response.done') {
-            done_cb?.(resultText, threadId);
-            return;
-          }
-
-          if (typeof json.content === "string") {
-            cb(json.content);
-            resultText += json.content;
-          }
+          const content = json.choices[0].delta.content
+          cb(content);
+          resultText += content;
         } catch (e) {
           console.error("⚠️ MistralAI Stream parse error:", e);
         }

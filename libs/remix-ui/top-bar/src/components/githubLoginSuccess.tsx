@@ -46,7 +46,7 @@ export default function GithubLoginSuccess ({ user, handleLogout, cloneGitReposi
       </Dropdown.Toggle>
       <Dropdown.Menu
         as={CustomTopbarMenu}
-        className="custom-dropdown-items w-75 text-decoration-none"
+        className="custom-dropdown-items w-75 text-decoration-none bg-light"
       >
         <Dropdown.Item
           data-id="github-dropdown-item-clone"

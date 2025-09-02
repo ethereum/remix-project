@@ -6,6 +6,8 @@ interface BottomBarProps {
   plugin: Plugin
 }
 
+const SUPPORTED_EXTENSIONS = ['sol', 'vy', 'circom', 'js', 'ts']
+
 export const BottomBar = ({ plugin }: BottomBarProps) => {
   const [explaining, setExplaining] = useState(false)
   const [aiSwitch, setAiSwitch] = useState(true)
@@ -22,48 +24,52 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
       }
     }
 
-    const getCurrentExt = async () => {
-      try {
-        const path = await plugin.call('fileManager', 'getCurrentFile')
-        setCurrentFilePath(path)
-        const ext = path?.split('.').pop()?.toLowerCase() || ''
-        setCurrentExt(ext)
-      } catch (err) {
-        console.error('Failed to get current file', err)
-        setCurrentFilePath('')
-        setCurrentExt('')
-      }
+    const handleExtChange = (ext: string) => {
+      setCurrentExt(ext || '')
+    }
+
+    const handleFileChange = (path: string) => {
+      setCurrentFilePath(path || '')
     }
 
     getAI()
-    getCurrentExt()
 
-    plugin.on('settings', 'copilotChoiceUpdated', (isChecked) => {
-      setAiSwitch(isChecked)
+    const onCopilot = (isChecked: boolean) => setAiSwitch(!!isChecked)
+
+    plugin.on('tabs', 'extChanged', handleExtChange)
+
+    plugin.on('settings', 'copilotChoiceUpdated', onCopilot)
+    plugin.on('fileManager', 'currentFileChanged', handleFileChange)
+
+    plugin.call('fileManager', 'getCurrentFile').then(path => {
+      handleFileChange(path)
+      const ext = path?.split('.').pop()?.toLowerCase() || ''
+      handleExtChange(ext)
+    }).catch(() => {
+      handleFileChange('')
+      handleExtChange('')
     })
 
-    plugin.on('fileManager', 'currentFileChanged', getCurrentExt)
-
     return () => {
+      plugin.off('tabs', 'extChanged')
       plugin.off('fileManager', 'currentFileChanged')
+      plugin.off('settings', 'copilotChoiceUpdated')
     }
-
   }, [plugin])
 
   const handleExplain = async () => {
     if (!currentFilePath) {
-      plugin.call('notification', 'toast', 'No file selected to explain.');
+      plugin.call('notification', 'toast', 'No file selected to explain.')
       return
     }
     setExplaining(true)
     try {
       await plugin.call('menuicons', 'select', 'remixaiassistant')
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
       const content = await plugin.call('fileManager', 'readFile', currentFilePath)
-      await plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-
+      await plugin.call('remixAI', 'chatPipe', 'code_explaining', content + "\n\nExplain briefly the snipped above!")
     } catch (err) {
-      console.error("Explain failed:", err)
+      console.error('Explain failed:', err)
     }
     setExplaining(false)
   }
@@ -83,22 +89,25 @@ export const BottomBar = ({ plugin }: BottomBarProps) => {
     return ''
   }
 
+  if (!SUPPORTED_EXTENSIONS.includes(currentExt)) {
+    return null
+  }
+
   return (
-    <div className="bottom-bar border-top border-bottom">
-      {getExplainLabel() && (
-        <button
-          className="btn btn-ai"
-          onClick={handleExplain}
-          disabled={explaining || !currentFilePath}
-        >
-          <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
-          <span>{getExplainLabel()}</span>
-        </button>
-      )}
+    <div className="bottom-bar border-top border-bottom" data-id="bottomBarPanel">
+      <button
+        className="btn btn-ai"
+        onClick={handleExplain}
+        disabled={explaining || !currentFilePath}
+        data-id="bottomBarExplainBtn"
+      >
+        <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="explain-icon" />
+        <span>{getExplainLabel()}</span>
+      </button>
       <div className="copilot-toggle">
-        <span className={aiSwitch ? "on" : ""}>AI copilot</span>
-        <label className="switch" data-id="copilot_toggle" >
-          <input type="checkbox" checked={aiSwitch} onChange={toggleAI}/>
+        <span className={aiSwitch ? 'on' : ''}>AI copilot</span>
+        <label className="switch" data-id="copilot_toggle">
+          <input type="checkbox" checked={aiSwitch} onChange={toggleAI} />
           <span className="slider"></span>
         </label>
       </div>

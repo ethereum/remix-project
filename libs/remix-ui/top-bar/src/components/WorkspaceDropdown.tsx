@@ -121,7 +121,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
     try {
       setTimeout(async () => {
         workspaces = await getWorkspaces()
-        const updated = workspaces.map((workspace) => {
+        const updated = (workspaces || []).map((workspace) => {
           (workspace as any).submenu = subItems
           return workspace as any
         })
@@ -211,7 +211,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                     container={document.body}
                     popperConfig={{
                       modifiers: [
-                        { name: "offset", options: { offset: [8, 12]} },
+                        { name: "offset", options: { offset: [8, 22]} },
                         { name: "preventOverflow", options: { boundary: "viewport", padding: 8 } },
                         { name: 'flip', options: { enabled: false } }
                       ],
@@ -227,11 +227,11 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                       }}
                       data-id="workspacesubMenuOverlay"
                     >
-                      <div className="border p-0 rounded w-75">
+                      <div className="p-0 rounded w-75 border-warning">
                         <div className="d-grid gap-0">
                           <Button
-                          // variant="light"
-                            className="border border-0 btn btn-sm btn-light d-flex align-items-center text-decoration-none"
+                            variant="light"
+                            className="border d-flex align-items-center text-decoration-none rounded-start-0"
                             data-id="workspacesubMenuRename"
                             size="sm"
                             onClick={(e) => {
@@ -240,7 +240,11 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                               setOpenSubmenuId(null)
                             } }
                             style={{
-                              color: 'var(--bs-body-color)'
+                              color: 'var(--bs-body-color)',
+                              borderBottomRightRadius: 0,
+                              borderTopRightRadius: 4,
+                              borderTopLeftRadius: 20,
+                              borderBottomLeftRadius: 4,
                             }}
                           >
                             <span className="me-2">
@@ -254,7 +258,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                             style={{
                               color: 'var(--bs-body-color)'
                             }}
-                            className="border border-0 d-flex align-items-center text-decoration-none"
+                            className="border border-top-0 border-bottom-0 d-flex align-items-center text-decoration-none rounded-0"
                             data-id="workspacesubMenuDownload"
                             onClick={(e) => {
                               e.stopPropagation()
@@ -272,9 +276,13 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
                             variant="light"
                             size="sm"
                             style={{
-                              color: 'var(--bs-body-color)'
+                              color: 'var(--bs-body-color)',
+                              borderBottomRightRadius: 4,
+                              borderTopRightRadius: 0,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 4,
                             }}
-                            className="border border-0 d-flex align-items-center text-decoration-none"
+                            className="border d-flex align-items-center text-decoration-none"
                             data-id="workspacesubMenuDelete"
                             onClick={(e) => {
                               deleteCurrentWorkspace(item.name)

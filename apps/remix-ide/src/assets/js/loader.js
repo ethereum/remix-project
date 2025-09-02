@@ -44,6 +44,7 @@ function trackDomain(domainToTrack, u, paqName) {
 }
 
 if (window.electronAPI) {
+  // desktop
   window.electronAPI.canTrackMatomo().then((canTrack) => {
     if (!canTrack) {
       console.log('Matomo tracking is disabled on Dev mode')
@@ -63,7 +64,8 @@ if (window.electronAPI) {
     }
   })
 } else {
-  if (domainOnPremToTrack) {
+  // live site but we don't track localhost
+  if (domainOnPremToTrack && window.location.hostname !== 'localhost') {
     trackDomain(domainOnPremToTrack, 'https://matomo.remix.live/matomo/', '_paq')    
   }
 }

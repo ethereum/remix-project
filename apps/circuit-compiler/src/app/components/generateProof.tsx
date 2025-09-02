@@ -19,7 +19,7 @@ export function GenerateProof () {
           onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFIER_CALLDATA', payload: !circuitApp.appState.exportVerifierCalldata })}
           checked={circuitApp.appState.exportVerifierCalldata}
         />
-        <label className="form-check-label pt-1" htmlFor="circuitExportVerifierCalldata">
+        <label className="form-check-label" htmlFor="circuitExportVerifierCalldata">
           <FormattedMessage id="circuit.exportVerifierCalldata" />
         </label>
       </div>

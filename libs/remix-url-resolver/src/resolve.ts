@@ -257,6 +257,15 @@ export class RemixURLResolver {
       },
       {
         type: 'npm',
+        match: (url) => {
+          if (url && url.startsWith('npm:')) {
+            return [url.replace('npm:', '')]
+          }
+        },
+        handle: (match) => this.handleNpmImport(match[0])
+      },
+      {
+        type: 'npm',
         match: (url) => { return /^[^/][^\n"?:*<>|]*$/g.exec(url) }, // match a typical relative path
         handle: (match) => this.handleNpmImport(match[0])
       }

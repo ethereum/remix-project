@@ -35,6 +35,7 @@ let requiredModules = [
   'menuicons',
   'filePanel',
   'terminal',
+  'bottomBar',
   'statusBar',
   'settings',
   'pluginManager',
@@ -94,7 +95,8 @@ let requiredModules = [
   'remixAID',
   'remixaiassistant',
   'topbar',
-  'githubAuthHandler'
+  'githubAuthHandler',
+  'desktopClient'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)

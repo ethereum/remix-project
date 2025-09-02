@@ -83,8 +83,7 @@ export class Web3ProviderModule extends Plugin {
               resolve(message)
             }
             try {
-              const t = await provider.sendAsync(payload)
-              resultFn(null, t)
+              resultFn(null, await provider.sendAsync(payload))
             } catch (e) {
               resultFn(e.error ? e.error : e)
             }

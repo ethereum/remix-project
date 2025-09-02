@@ -839,7 +839,7 @@ export const EditorUI = (props: EditorUIProps) => {
         if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
           inlineCompletionProvider.currentCompletion.onAccepted()
           inlineCompletionProvider.currentCompletion.accepted = true
-          _paq.push(['trackEvent', 'ai', 'remixAI', inlineCompletionProvider.currentCompletion.task + '_accepted'])
+          _paq.push(['trackEvent', 'ai', 'remixAI', 'Copilot_Completion_Accepted'])
         }
       }
     });

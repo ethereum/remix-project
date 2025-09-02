@@ -75,7 +75,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
   return (
     <>
       <h4 className={`${isDark ? 'text-white' : 'text-black'} py-3`}>{<FormattedMessage id={section.label} />}</h4>
-      <span className={`${isDark ? 'text-white' : 'text-black'}`}>{<FormattedMessage id={section.decription} />}</span>
+      <span className={`${isDark ? 'text-white' : 'text-black'}`}>{<FormattedMessage id={section.description} />}</span>
       {(section.subSections || []).map((subSection, subSectionIndex) => {
         const isLastItem = subSectionIndex === section.subSections.length - 1
 

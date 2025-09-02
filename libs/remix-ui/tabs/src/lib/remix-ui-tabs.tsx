@@ -173,6 +173,8 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
+    const ext = getExt(name)
+    props.plugin.emit('extChanged', ext)
     dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name) })
   }
 
@@ -582,6 +584,8 @@ export const TabsUI = (props: TabsUIProps) => {
           onSelect={(index) => {
             props.onSelect(index)
             currentIndexRef.current = index
+            const ext = getExt(props.tabs[currentIndexRef.current].name)
+            props.plugin.emit('extChanged', ext)
             dispatch({
               type: 'SELECT_INDEX',
               payload: index,
