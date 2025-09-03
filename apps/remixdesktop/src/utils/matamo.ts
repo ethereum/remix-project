@@ -36,7 +36,7 @@ export function trackEvent(category: string, action: string, name: string, value
 
     //console.log('Matomo tracking params:', params.toString());
 
-    fetch(`https://matomo.remix.live/matomo//matomo.php?${params.toString()}`, {
+    fetch(`https://matomo.remix.live/matomo/matomo.php?${params.toString()}`, {
       method: 'GET'
     }).then(async res => {
       if (res.ok) {
