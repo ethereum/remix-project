@@ -50,6 +50,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
         dispatch({ type: 'SET_TOAST_MESSAGE', payload: { value: 'Credentials removed' } })
       }
       if (name === 'copilot/suggest/activate') plugin.emit('copilotChoiceUpdated', newValue)
+      if (name === 'text-wrap') plugin.emit('textWrapChoiceUpdated', newValue)
     } else {
       console.error('Setting does not exist: ', name)
     }

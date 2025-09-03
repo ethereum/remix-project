@@ -54,6 +54,10 @@ const settingsSections: SettingsSection[] = [
           name: 'display-errors',
           label: 'settings.displayErrorsText',
           type: 'toggle'
+        },{
+          name: 'text-wrap',
+          label: 'settings.wordWrapText',
+          type: 'toggle'
         }, {
           name: 'personal-mode',
           label: 'settings.enablePersonalModeText',
@@ -232,6 +236,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     props.plugin.on('theme', 'themeChanged', (theme) => {
       setState((prevState) => {
+        dispatch({ type: 'SET_VALUE', payload: { name: 'theme', value: theme.name } })
         return {
           ...prevState,
           themeQuality: theme.quality === 'dark' ? themes.dark : themes.light

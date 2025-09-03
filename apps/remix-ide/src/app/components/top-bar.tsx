@@ -30,7 +30,7 @@ export class Topbar extends Plugin {
   dispatch: React.Dispatch<any> = () => { }
   appStateDispatch: React.Dispatch<AppAction> = () => { }
   htmlElement: HTMLDivElement
-  events: EventEmitter
+  event: EventEmitter
   topbarExpandPath: string
   filePanel: FilePanel
   git: GitPlugin
@@ -44,6 +44,7 @@ export class Topbar extends Plugin {
     super(TopBarProfile)
     this.filePanel = filePanel
     this.registry = Registry.getInstance()
+    this.event = new EventEmitter()
     this.fileProviders = this.registry.get('fileproviders').api
     this.fileManager = this.registry.get('filemanager').api
     this.git = git
@@ -52,6 +53,12 @@ export class Topbar extends Plugin {
   }
 
   onActivation(): void {
+    this.on('pinnedPanel', 'pluginClosed', (profile) => {
+      this.event.emit('pluginIsClosed', profile)
+    })
+    this.on('pinnedPanel', 'pluginMaximized', (profile) => {
+      this.event.emit('pluginIsMaximized', profile)
+    })
     this.renderComponent()
   }
 
@@ -69,12 +76,6 @@ export class Topbar extends Plugin {
   }
 
   async createWorkspace(workspaceName, workspaceTemplateName, isEmpty) {
-    // return new Promise((resolve, reject) => {
-    //   this.emit('createWorkspaceReducerEvent', workspaceName, workspaceTemplateName, isEmpty, (err, data) => {
-    //     if (err) reject(err)
-    //     else resolve(data || true)
-    //   })
-    // })
     try {
       await createWorkspace(workspaceName, workspaceTemplateName, isEmpty)
       this.emit('workspaceCreated', workspaceName, workspaceTemplateName, isEmpty)
@@ -84,12 +85,6 @@ export class Topbar extends Plugin {
   }
 
   async renameWorkspace(oldName, workspaceName) {
-    // return new Promise((resolve, reject) => {
-    //   this.emit('renameWorkspaceReducerEvent', oldName, workspaceName, (err, data) => {
-    //     if (err) reject(err)
-    //     else resolve(data || true)
-    //   })
-    // })
     try {
       await renameWorkspace(oldName, workspaceName)
       this.emit('workspaceRenamed', oldName, workspaceName)
@@ -99,12 +94,6 @@ export class Topbar extends Plugin {
   }
 
   async deleteWorkspace(workspaceName) {
-    // return new Promise((resolve, reject) => {
-    //   this.emit('deleteWorkspaceReducerEvent', workspaceName, (err, data) => {
-    //     if (err) reject(err)
-    //     else resolve(data || true)
-    //   })
-    // })
     try {
       await deleteWorkspace(workspaceName)
       this.emit('workspaceDeleted', workspaceName)

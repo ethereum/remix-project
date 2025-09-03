@@ -22,6 +22,7 @@ export default class TabProxy extends Plugin {
     this.loadedTabs = []
     this.dispatch = null
     this.themeQuality = 'dark'
+    this.maximize = false
   }
 
   async onActivation () {
@@ -29,6 +30,13 @@ export default class TabProxy extends Plugin {
       this.themeQuality = theme.quality
       // update invert for all icons
       this.renderComponent()
+    })
+
+    this.on('pinnedPanel', 'pluginClosed', (profile) => {
+      this.event.emit('pluginIsClosed', profile)
+    })
+    this.on('pinnedPanel', 'pluginMaximized', (profile) => {
+      this.event.emit('pluginIsMaximized', profile)
     })
 
     this.on('fileManager', 'filesAllClosed', () => {
@@ -357,6 +365,7 @@ export default class TabProxy extends Plugin {
       onZoomOut={state.onZoomOut}
       onReady={state.onReady}
       themeQuality={state.themeQuality}
+      maximize={this.maximize}
     />
   }
 
