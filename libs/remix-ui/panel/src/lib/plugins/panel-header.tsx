@@ -8,7 +8,9 @@ const _paq = (window._paq = window._paq || [])
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
   pinView?: (profile: PluginRecord['profile'], view: PluginRecord['view']) => void,
-  unPinView?: (profile: PluginRecord['profile']) => void
+  unPinView?: (profile: PluginRecord['profile']) => void,
+  closePlugin?: (profile: PluginRecord['profile']) => void,
+  maximizePlugin?: (profile: PluginRecord['profile']) => void
 }
 const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [plugin, setPlugin] = useState<PluginRecord>()
@@ -36,6 +38,10 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const unPinPlugin = () => {
     props.unPinView && props.unPinView(plugin.profile)
     _paq.push(['trackEvent', 'PluginPanel', 'pinToLeft', plugin.profile.name])
+  }
+
+  const closePlugin = async () => {
+    props.closePlugin && props.closePlugin(plugin.profile)
   }
 
   const tooltipChild = <i className={`px-1 ms-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
@@ -71,14 +77,23 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               <RenderIfNot condition={plugin.profile.name === 'filePanel'}>
                 <>
                   <RenderIf condition={plugin.pinned}>
-                    <div className='d-flex' data-id="movePluginToLeft" onClick={unPinPlugin}>
-                      <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
-                        <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
+                    <>
+                      <div className='d-flex' data-id="movePluginToLeft" data-pinnedplugin={`movePluginToLeft-${plugin.profile.name}`} onClick={unPinPlugin}>
+                        <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
+                          <i aria-hidden="true" className="mt-1 px-2 fak fa-fa-dock-l"></i>
+                        </CustomTooltip>
+                      </div>
+                      <CustomTooltip placement="bottom-end" tooltipText="Hide pinned Plugin">
+                        <i
+                          className="fa-solid fa-compress ms-2 fs-5"
+                          onClick={closePlugin}
+                          data-id="closePinnedPlugin"
+                        ></i>
                       </CustomTooltip>
-                    </div>
+                    </>
                   </RenderIf>
                   <RenderIfNot condition={plugin.pinned}>
-                    <div className='d-flex' data-id="movePluginToRight" onClick={pinPlugin}>
+                    <div className='d-flex' data-id="movePluginToRight" data-pinnedplugin={`movePluginToRight-${plugin.profile.name}`} onClick={pinPlugin}>
                       <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
                         <i aria-hidden="true" className="mt-1 px-1 ps-2 fak fa-fa-dock-r"></i>
                       </CustomTooltip>
@@ -120,13 +135,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                 <FormattedMessage id="panel.makeAnissue" />
               </a>
             </span>
-          )}
-
-          {plugin?.profile?.documentation && (
-            <a href={plugin.profile.documentation} target="_blank" rel="noreferrer" className="btn btn-secondary w-100 d-flex align-items-center justify-content-center text-decoration-none">
-              <i className="fas fa-book me-2"></i>
-              <FormattedMessage id="panel.openDocumentation" defaultMessage="Open documentation" />
-            </a>
           )}
         </div>
       </div>
