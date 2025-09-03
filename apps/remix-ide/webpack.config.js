@@ -64,6 +64,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     zlib: require.resolve('browserify-zlib'),
     'assert/strict': require.resolve('assert/'),
     fs: false,
+    'fs/promises': false,
     module: false,
     tls: false,
     net: false,
