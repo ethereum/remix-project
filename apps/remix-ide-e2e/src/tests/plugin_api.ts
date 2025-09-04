@@ -78,7 +78,7 @@ const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitR
 const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
   return new Promise((resolve) => {
     browser.frameParent(() => {
-      browser.pause(1000, 60000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
+      browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
 
           browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okPresent: any) => {
@@ -196,7 +196,7 @@ module.exports = {
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
-      .frame(0, 60000)
+      .frame(0)
   },
   // context menu item
 
@@ -404,7 +404,7 @@ module.exports = {
       .useXpath()
       // @ts-ignore
       .frame(0)
-      .perform(async (, 60000) => {
+      .perform(async () => {
         const request = {
           id: 9999,
           jsonrpc: '2.0',
@@ -469,7 +469,7 @@ const testModalToasterApi = `
 (async () => {
  try {
     setTimeout(async () => {
-      console.log('test .. ', 60000)
+      console.log('test .. ')
       remix.call('notification', 'alert', { message: 'message 1', id: 'test_id_1_' })
       remix.call('notification', 'toast', 'I am a toast')
       remix.call('notification', 'toast', 'I am a re-toast')

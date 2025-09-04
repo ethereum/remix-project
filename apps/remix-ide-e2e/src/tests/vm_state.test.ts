@@ -193,7 +193,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(10000)
       .assert.textContains('*[data-id="deployedContractsBadge"]', '1')
-      .click(('*[data-id="delete-state-icon"]'))
+      .click('*[data-id="delete-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .waitForElementVisible('*[data-id="deleteVmStateModal"]')
       .modalFooterOKClick('udappNotify')

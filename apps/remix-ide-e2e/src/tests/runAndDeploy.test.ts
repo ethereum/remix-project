@@ -138,7 +138,7 @@ module.exports = {
       .openFile('.states/vm-prague/state.json')
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x2"', 60000), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
       })
   },
 
@@ -178,7 +178,7 @@ module.exports = {
       .pause(1000)
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x1"', 60000), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x1"'), 'State is saved')
       })
   },
 
