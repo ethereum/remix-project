@@ -38,6 +38,8 @@ export interface PromptAreaProps {
   aiAssistantGroupList: groupListType[]
   textareaRef?: React.RefObject<HTMLTextAreaElement>
   maximizePanel: () => Promise<void>
+  aiMode: 'ask' | 'edit'
+  setAiMode: React.Dispatch<React.SetStateAction<'ask' | 'edit'>>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -73,7 +75,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   aiContextGroupList,
   aiAssistantGroupList,
   textareaRef,
-  maximizePanel
+  maximizePanel,
+  aiMode,
+  setAiMode
 }) => {
 
   return (
@@ -109,7 +113,32 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
-          <div className="d-flex justify-content-center align-items-center">
+          <div className="d-flex justify-content-center align-items-center gap-2">
+            {/* Ask/Edit Mode Toggle */}
+            <div className="btn-group btn-group-sm" role="group">
+              <button
+                type="button"
+                className={`btn ${aiMode === 'ask' ? 'btn-primary' : 'btn-outline-secondary'} px-2`}
+                onClick={() => {
+                  setAiMode('ask')
+                  _paq.push(['trackEvent', 'remixAI', 'ModeSwitch', 'ask'])
+                }}
+                title="Ask mode - Chat with AI"
+              >
+                Ask
+              </button>
+              <button
+                type="button"
+                className={`btn ${aiMode === 'edit' ? 'btn-primary' : 'btn-outline-secondary'} px-2`}
+                onClick={() => {
+                  setAiMode('edit')
+                  _paq.push(['trackEvent', 'remixAI', 'ModeSwitch', 'edit'])
+                }}
+                title="Edit mode - Edit workspace code"
+              >
+                Edit
+              </button>
+            </div>
             <CustomTooltip
               tooltipText={<TooltipContent />}
               delay={{ show: 1000, hide: 0 }}
@@ -145,7 +174,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             onKeyDown={e => {
               if (e.key === 'Enter' && !isStreaming) handleSend()
             }}
-            placeholder="Ask me anything, add workspace files..."
+            placeholder={
+              aiMode === 'ask'
+                ? "Ask me anything, add workspace files..."
+                : "Describe the workspace you want to generate..."
+            }
           />
 
           <div className="d-flex justify-content-between">
