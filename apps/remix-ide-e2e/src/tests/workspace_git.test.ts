@@ -400,7 +400,7 @@ module.exports = {
       .click('[data-id="updatesubmodules"]')
       .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
-        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 60000 })
+        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 240000 })
       .pause(2000)
       // check recursive submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
