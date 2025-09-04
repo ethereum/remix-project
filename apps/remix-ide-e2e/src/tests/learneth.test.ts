@@ -20,8 +20,6 @@ module.exports = {
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonLearnEth"]')
       .clickLaunchIcon('LearnEth')
       .waitForElementVisible('iframe[id="plugin-LearnEth"]', 10000)
-      .frame('iframe[id="plugin-LearnEth"]')
-      .waitForElementVisible('iframe', 10000)
       .frame(0)
       .waitForElementVisible('[data-id="learneth-search-input"]', 10000)
       .assert.visible('[data-id="learneth-search-input"]', 'LearnEth search input is visible.')
@@ -33,8 +31,6 @@ module.exports = {
     browser
       .clickLaunchIcon('LearnEth')
       .waitForElementVisible('iframe[id="plugin-LearnEth"]', 10000)
-      .frame('iframe[id="plugin-LearnEth"]')
-      .waitForElementVisible('iframe', 10000)
       .frame(0)
       .waitForElementVisible('[data-id="learneth-search-input"]', 10000)
       .setValue('[data-id="learneth-search-input"]', 'ERC20')
