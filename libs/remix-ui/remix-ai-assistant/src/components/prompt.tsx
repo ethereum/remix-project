@@ -177,7 +177,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             placeholder={
               aiMode === 'ask'
                 ? "Ask me anything, add workspace files..."
-                : "Describe the workspace you want to generate..."
+                : "Edit my codebase, generate new contracts ..."
             }
           />
 
@@ -215,7 +215,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
               onClick={handleGenerateWorkspace}
             >
-              {'@Generate'}
+              {'Create new project with AI'}
             </button>
             {/* <button
               className={input.length > 0 ? 'btn bg-ai border-text border btn-sm fw-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm fw-light text-secondary mt-2 align-self-end disabled'}
