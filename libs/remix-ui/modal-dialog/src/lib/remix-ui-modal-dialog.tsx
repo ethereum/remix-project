@@ -115,7 +115,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             {props.okLabel && (
               <button
                 data-id={`${props.id}-modal-footer-ok-react`}
-                className={'modal-ok btn btn-sm ' + (props.okBtnClass ? props.okBtnClass : state.toggleBtn ? 'border-primary' : 'border-secondary')}
+                className={'modal-ok btn btn-sm ' + (props.okBtnClass ? props.okBtnClass : state.toggleBtn ? 'btn-primary' : 'btn-secondary')}
                 disabled={props.validation && !props.validation.valid}
                 onClick={() => {
                   if (props.validation && !props.validation.valid) return
@@ -130,7 +130,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             {props.cancelLabel && (
               <button
                 data-id={`${props.id}-modal-footer-cancel-react`}
-                className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'border-secondary' : 'border-primary')}
+                className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'btn-secondary' : 'btn-primary')}
                 data-bs-dismiss="modal"
                 onClick={() => {
                   if (props.cancelFn) props.cancelFn(AppModalCancelTypes.click)

@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine';
-import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams } from '@remix/remix-ai-core';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams, OllamaInferencer, isOllamaAvailable, getBestAvailableModel } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -18,7 +18,7 @@ const profile = {
     "code_insertion", "error_explaining", "vulnerability_check", 'generate',
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending',
     'resetChatRequestBuffer', 'setAssistantThrId',
-    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider'],
+    'getAssistantThrId', 'getAssistantProvider', 'setAssistantProvider', 'setModel'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -55,13 +55,10 @@ export class RemixAIPlugin extends Plugin {
   onActivation(): void {
 
     if (this.isOnDesktop) {
-      console.log('Activating RemixAIPlugin on desktop')
-      // this.on(this.remixDesktopPluginName, 'activated', () => {
       this.useRemoteInferencer = true
       this.initialize(null, null, null, this.useRemoteInferencer);
       // })
     } else {
-      console.log('Activating RemixAIPlugin on browser')
       this.useRemoteInferencer = true
       this.initialize()
     }
@@ -194,49 +191,40 @@ export class RemixAIPlugin extends Plugin {
    * - If `useRag` is `true`, the function fetches additional context from a RAG API and prepends it to the user prompt.
    */
   async generate(prompt: string, params: IParams=AssistantParams, newThreadID:string="", useRag:boolean=false, statusCallback?: (status: string) => Promise<void>): Promise<any> {
-    try {
-      params.stream_result = false // enforce no stream result
-      params.threadId = newThreadID
-      params.provider = 'anthropic' // enforce all generation to be only on anthropic
-      useRag = false
-      _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
-      let userPrompt = ''
+    params.stream_result = false // enforce no stream result
+    params.threadId = newThreadID
+    params.provider = 'anthropic' // enforce all generation to be only on anthropic
+    useRag = false
+    _paq.push(['trackEvent', 'ai', 'remixAI', 'GenerateNewAIWorkspace'])
+    let userPrompt = ''
 
-      if (useRag) {
-        statusCallback?.('Fetching RAG context...')
-        try {
-          let ragContext = ""
-          const options = { headers: { 'Content-Type': 'application/json', } }
-          const response = await axios.post(endpointUrls.rag, { query: prompt, endpoint:"query" }, options)
-          if (response.data) {
-            ragContext = response.data.response
-            userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
-          } else {
-            console.log('Invalid response from RAG context API:', response.data)
-          }
-        } catch (error) {
-          console.log('RAG context error:', error)
+    if (useRag) {
+      statusCallback?.('Fetching RAG context...')
+      try {
+        let ragContext = ""
+        const options = { headers: { 'Content-Type': 'application/json', } }
+        const response = await axios.post(endpointUrls.rag, { query: prompt, endpoint:"query" }, options)
+        if (response.data) {
+          ragContext = response.data.response
+          userPrompt = "Using the following context: ```\n\n" + JSON.stringify(ragContext) + "```\n\n" + userPrompt
+        } else {
+          console.log('Invalid response from RAG context API:', response.data)
         }
-      } else {
-        userPrompt = prompt
+      } catch (error) {
+        console.log('RAG context error:', error)
       }
-      // Evaluate if this function requires any context
-      // console.log('Generating code for prompt:', userPrompt, 'and threadID:', newThreadID)
-      await statusCallback?.('Generating new workspace with AI...\nThis might take some minutes. Please be patient!')
-      const result = await this.remoteInferencer.generate(userPrompt, params)
-
-      await statusCallback?.('Creating contracts and files...')
-      const genResult = await this.contractor.writeContracts(result, userPrompt, statusCallback)
-
-      if (genResult.includes('No payload')) return genResult
-      await this.call('menuicons', 'select', 'filePanel')
-      return genResult
-    } catch {
-      // not handled
-    } finally {
-      params.provider = this.assistantProvider
+    } else {
+      userPrompt = prompt
     }
+    await statusCallback?.('Generating new workspace with AI...\nThis might take some minutes. Please be patient!')
+    const result = await this.remoteInferencer.generate(userPrompt, params)
 
+    await statusCallback?.('Creating contracts and files...')
+    const genResult = await this.contractor.writeContracts(result, userPrompt, statusCallback)
+
+    if (genResult.includes('No payload')) return genResult
+    await this.call('menuicons', 'select', 'filePanel')
+    return genResult
   }
 
   /**
@@ -368,8 +356,75 @@ export class RemixAIPlugin extends Plugin {
         AssistantParams.threadId = ''
       }
       this.assistantProvider = provider
+
+      // Switch back to remote inferencer for cloud providers -- important
+      if (this.remoteInferencer && this.remoteInferencer instanceof OllamaInferencer) {
+        this.remoteInferencer = new RemoteInferencer()
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+      }
+    } else if (provider === 'ollama') {
+      const isAvailable = await isOllamaAvailable();
+      if (!isAvailable) {
+        console.error('Ollama is not available. Please ensure Ollama is running.')
+        return
+      }
+
+      const bestModel = await getBestAvailableModel();
+      if (!bestModel) {
+        console.error('No Ollama models available. Please install a model first.')
+        return
+      }
+
+      // Switch to Ollama inferencer
+      this.remoteInferencer = new OllamaInferencer(bestModel);
+      this.remoteInferencer.event.on('onInference', () => {
+        this.isInferencing = true
+      })
+      this.remoteInferencer.event.on('onInferenceDone', () => {
+        this.isInferencing = false
+      })
+
+      if (this.assistantProvider !== provider){
+        // clear the threadIds
+        this.assistantThreadId = ''
+        GenerationParams.threadId = ''
+        CompletionParams.threadId = ''
+        AssistantParams.threadId = ''
+      }
+      this.assistantProvider = provider
     } else {
       console.error(`Unknown assistant provider: ${provider}`)
+    }
+  }
+
+  async setModel(modelName: string) {
+    if (this.assistantProvider === 'ollama' && this.remoteInferencer instanceof OllamaInferencer) {
+      try {
+        const isAvailable = await isOllamaAvailable();
+        if (!isAvailable) {
+          console.error('Ollama is not available. Please ensure Ollama is running.')
+          return
+        }
+
+        this.remoteInferencer = new OllamaInferencer(modelName);
+        this.remoteInferencer.event.on('onInference', () => {
+          this.isInferencing = true
+        })
+        this.remoteInferencer.event.on('onInferenceDone', () => {
+          this.isInferencing = false
+        })
+
+        console.log(`Ollama model changed to: ${modelName}`)
+      } catch (error) {
+        console.error('Failed to set Ollama model:', error)
+      }
+    } else {
+      console.warn(`setModel is only supported for Ollama provider. Current provider: ${this.assistantProvider}`)
     }
   }
 
