@@ -9,7 +9,7 @@ import { CustomTooltip } from "@remix-ui/helper"
 
 const DEFAULT_SUGGESTIONS = [
   'What is a modifier?',
-  'What is a UniSwap hook?',
+  'What is a Uniswap hook?',
   'What is a ZKP?'
 ]
 
@@ -31,20 +31,6 @@ const AiChatIntro = (props) => {
             RemixAI provides you personalized guidance as you build. It can break down concepts,
             answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`<prompt>: `}</span>
-          <span>ask your question</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/w <prompt>: `}</span>
-          <span>modify your code</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/c <prompt>: `}</span>
-          <span>continue fixing compilation</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/g <prompt>: `}</span>
-          <span>generate a new workspace</span></div>
-      </div>
       <div className="d-flex flex-column mt-3">
         {DEFAULT_SUGGESTIONS.map((s, index) => (
           <button
