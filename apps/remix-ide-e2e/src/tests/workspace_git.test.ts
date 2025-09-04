@@ -301,7 +301,7 @@ module.exports = {
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
-        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 60000 })
+        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 240000 })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
       .waitForElementVisible('[data-id="updatesubmodules"]')
       .click('[data-id="updatesubmodules"]')

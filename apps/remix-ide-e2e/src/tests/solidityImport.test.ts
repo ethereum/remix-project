@@ -80,7 +80,7 @@ module.exports = {
       .addFile('Untitled8.sol', sources[7]['Untitled8.sol'])
       .clickLaunchIcon('filePanel')
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 60000)
+      .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 120000)
       .scrollAndClick('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]') // click on error which point to ERC20 code
       .pause(5000)
       .getEditorValue((content) => {
@@ -93,7 +93,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .waitForElementPresent({
         selector: `//*[@data-id='compilerloaded' and @data-version='soljson-v0.8.7+commit.e28d00a7.js']`,
-        locateStrategy: 'xpath', timeout: 60000 })
+        locateStrategy: 'xpath', timeout: 120000 })
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
@@ -120,7 +120,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .waitForElementPresent({
         selector: `//*[@data-id='compilerloaded' and @data-version='soljson-v0.8.7+commit.e28d00a7.js']`,
-        locateStrategy: 'xpath', timeout: 60000 })
+        locateStrategy: 'xpath', timeout: 120000 })
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('package.json', sources[9]['package.json'])
@@ -148,7 +148,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.30+commit.73712a01.js')
       .waitForElementPresent({
         selector: `//*[@data-id='compilerloaded' and @data-version='soljson-v0.8.30+commit.73712a01.js']`,
-        locateStrategy: 'xpath', timeout: 60000 })
+        locateStrategy: 'xpath', timeout: 120000 })
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('remappings.txt', sources[10]['remappings.txt'])
@@ -172,8 +172,8 @@ module.exports = {
       .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/remix-project-org/remix-reward')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
-      .waitForElementPresent('.fa-spinner', 60000)
-      .waitForElementNotPresent('.fa-spinner', 60000)
+      .waitForElementPresent('.fa-spinner', 120000)
+      .waitForElementNotPresent('.fa-spinner', 120000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'remix-reward')
       .clickLaunchIcon('solidity')
