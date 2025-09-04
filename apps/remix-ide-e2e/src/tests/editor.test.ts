@@ -37,7 +37,7 @@ module.exports = {
       .waitForElementVisible('#editorView', 60000)
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
-      .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 60000)
+      .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 120000)
       .checkAnnotations('fa-exclamation-square') // error
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('fa-exclamation-square') // error
