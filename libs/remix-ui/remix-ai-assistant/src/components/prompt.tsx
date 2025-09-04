@@ -107,7 +107,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small fw-light border border-text rounded"
             ref={contextBtnRef}
           >
-            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'Select Context'}</span>}
             {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
             {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
             {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
@@ -176,7 +176,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             }}
             placeholder={
               aiMode === 'ask'
-                ? "Ask me anything, add workspace files..."
+                ? "Select context and ask me anything!"
                 : "Edit my codebase, generate new contracts ..."
             }
           />
