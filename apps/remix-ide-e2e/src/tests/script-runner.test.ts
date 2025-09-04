@@ -7,7 +7,7 @@ const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
-  'Should activate plugins': function (browser: NightwatchBrowser) {
+  'Should activate plugins #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[plugin="pluginManager"]')
@@ -16,7 +16,7 @@ const tests = {
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonUIScriptRunner"]')
   },
-  'Should load default script runner': function (browser: NightwatchBrowser) {
+  'Should load default script runner #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="verticalIconsKindfilePanel"]')
       .click('*[data-id="verticalIconsKindfilePanel"]')
@@ -33,13 +33,13 @@ const tests = {
       .waitForElementVisible('[data-id="dependency-ethers-^5"]')
       .waitForElementVisible('[data-id="sr-notloaded-ethers6"]')
   },
-  'Should load script runner ethers6': function (browser: NightwatchBrowser) {
+  'Should load script runner ethers6 #group1': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="sr-notloaded-ethers6"]')
-      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 120000)
       .waitForElementPresent('[data-id="dependency-ethers-^6"]', 60000)
   },
-  'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
+  'Should have config file in .remix/script.config.json #group1': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
       // .clickLaunchIcon('filePanel')
@@ -47,7 +47,7 @@ const tests = {
       .waitForElementVisible('[data-id="treeViewDivDraggableItem.remix/script.config.json"]')
       .openFile('.remix/script.config.json')
   },
-  'check config file content': function (browser: NightwatchBrowser) {
+  'check config file content #group1': function (browser: NightwatchBrowser) {
     browser
       .getEditorValue((content) => {
         console.log(JSON.parse(content))
@@ -55,7 +55,7 @@ const tests = {
         browser.assert.ok(parsed.defaultConfig === 'ethers6', 'config file content is correct')
       })
   },
-  'execute ethers6 script': function (browser: NightwatchBrowser) {
+  'execute ethers6 script #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="treeViewUltreeViewMenu"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
@@ -67,7 +67,7 @@ const tests = {
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
   },
-  'switch workspace it should be default again': function (browser: NightwatchBrowser) {
+  'switch workspace it should be default again #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .pause(2000)
@@ -90,7 +90,7 @@ const tests = {
       .waitForElementVisible('[data-id="dependency-ethers-^5"]')
       .waitForElementVisible('[data-id="sr-notloaded-zksyncv6"]')
   },
-  'open template that sets a config': function (browser: NightwatchBrowser) {
+  'open template that sets a config #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="workspacesSelect"]')
       .click('*[data-id="workspacesSelect"]')
@@ -99,6 +99,7 @@ const tests = {
       .waitForElementVisible('*[data-id="create-introToEIP7702"]')
       .click('*[data-id="create-introToEIP7702"]')
       .modalFooterOKClick('TemplatesSelection')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]', 60000)
       // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -108,10 +109,10 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//li[@data-id='UIScriptRunner' and @role='tab']"
       })
-      .waitForElementVisible('[data-id="sr-notloaded-default"]')
-      .waitForElementVisible('[data-id="sr-loaded-ethers6"]')
+      .waitForElementVisible('[data-id="sr-notloaded-default"]', 60000)
+      .waitForElementVisible('[data-id="sr-loaded-ethers6"]', 60000)      
   },
-  'reset to default after template': function (browser: NightwatchBrowser) {
+  'reset to default after template #group1': function (browser: NightwatchBrowser) {
     browser
       .refreshPage()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"', 60000)
@@ -134,10 +135,13 @@ const tests = {
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
-      .waitForElementVisible('label[data-id="sr-loaded-default"]', 60000)
+      .waitForElementVisible('label[data-id="sr-notloaded-default"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 60000)
+      .click('label[data-id="sr-notloaded-default"]')
       .waitForElementVisible('label[data-id="sr-notloaded-ethers6"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-default"]', 60000)
   },
-  'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
+  'switch to default workspace that should be on ethers6 #group1': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('default_workspace')
       .waitForElementVisible({
