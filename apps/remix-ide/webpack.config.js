@@ -137,6 +137,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     })
   )
 
+  config.plugins.push(
+    new webpack.IgnorePlugin({ resourceRegExp: /^node:/ })
+  )
+
   // source-map loader
   config.module.rules.push({
     test: /\.js$/,
