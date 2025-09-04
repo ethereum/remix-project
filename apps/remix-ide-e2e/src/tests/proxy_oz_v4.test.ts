@@ -240,7 +240,7 @@ module.exports = {
       timeout: 60000
     })
     .goToVMTraceStep(146)
-    .waitForElementContainsText('*[data-id="functionPanel"]', 'version(, 60000)', 60000) 
+    .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000) 
     .end()
   }
 }

@@ -304,7 +304,7 @@ module.exports = {
         selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 60000 })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
       .waitForElementVisible('[data-id="updatesubmodules"]')
-      .click('[data-id="updatesubmodules"]', 60000)
+      .click('[data-id="updatesubmodules"]')
       .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
@@ -397,7 +397,7 @@ module.exports = {
       .waitForElementPresent('[data-id="workspaceGit-origin/main"]')
       .click('[data-id="workspaceGit-origin/main"]')
       .waitForElementVisible('[data-id="updatesubmodules"]')
-      .click('[data-id="updatesubmodules"]', 60000)
+      .click('[data-id="updatesubmodules"]')
       .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 60000 })

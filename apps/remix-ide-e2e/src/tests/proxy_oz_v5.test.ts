@@ -169,7 +169,7 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]', 60000)
       .click(
@@ -211,7 +211,7 @@ module.exports = {
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .click('[data-id="udappNotify-modal-footer-ok-react"]', 60000)
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
@@ -239,7 +239,7 @@ module.exports = {
       timeout: 60000
     })
     .goToVMTraceStep(129)
-    .waitForElementContainsText('*[data-id="functionPanel"]', 'version(, 60000)', 60000)
+    .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000)
     .end()
   }
 }
