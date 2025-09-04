@@ -1,4 +1,5 @@
 
+import { Registry } from '@remix-project/remix-lib';
 import { monacoTypes } from '@remix-ui/editor';
 import { commitChange } from '@remix-ui/git';
 export interface Action {
@@ -115,6 +116,16 @@ export const reducerActions = (models = initialState, action: Action) => {
 }
 
 export const reducerListener = (plugin, dispatch, monaco, editors: any[], events) => {
+  const config = Registry.getInstance().get('config').api
+  const wordWrap = config.get('settings/text-wrap')
+
+  dispatch({
+    type: 'SET_WORDWRAP',
+    payload: { wrap: wordWrap },
+    monaco,
+    editors
+  })
+
   plugin.on('editor', 'addModel', (value, language, uri, readOnly) => {
     dispatch({
       type: 'ADD_MODEL',
@@ -192,7 +203,7 @@ export const reducerListener = (plugin, dispatch, monaco, editors: any[], events
     })
   })
 
-  plugin.on('editor', 'setWordWrap', (wrap) => {
+  plugin.on('settings', 'textWrapChoiceUpdated', (wrap) => {
     dispatch({
       type: 'SET_WORDWRAP',
       payload: { wrap },
