@@ -65,7 +65,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200', 60000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passed: 2', 60000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failed: 1', 60000)
-      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAILMyTest (tests/simple_storage_test.sol, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAILMyTest (tests/simple_storage_test.sol)', 60000)
       // '.failed_tests_simple_storage_test_solMyTest' is the class for 'FAIL' label
       .verify.elementPresent('.failed_tests_simple_storage_test_solMyTest')
   },
@@ -77,7 +77,7 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
       .click('*[data-id="testTabCheckAllTests"]')
-      .clickElementAtPosition('.singleTestLabel', 60000)
+      .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/ks2b_test.sol', 60000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists', 60000)
@@ -93,7 +93,7 @@ module.exports = {
   'Should stop unit tests during test execution` #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
-      .clickElementAtPosition('.singleTestLabel', 60000)
+      .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .click('*[data-id="testTabRunTestsTabStopAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'tests/Ballot_test.sol', 60000)
@@ -113,7 +113,7 @@ module.exports = {
       .clickElementAtPosition('.singleTestLabel', 2)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 60000)
-      .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s, 60000) in your test file', 60000)
+      .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 60000)
       .click('#solidityUnittestsOutput *[data-id="tests/compilationError_test.sol"]')
       .pause(1000)
       .getEditorValue((content) => browser.assert.ok(content.indexOf('contract failOnCompilation {') !== -1))
@@ -291,12 +291,12 @@ module.exports = {
       .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
       .click('#Check_winning_proposal_failed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
       .waitForElementVisible('*[data-id="dropdownPanelSolidityLocals"]').pause(1000)
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'No data available', 60000)
       .goToVMTraceStep(316)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed(, 60000)', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalFailed()', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'vote(proposal)', 60000)
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//*[@data-id='treeViewDivtreeViewItemsender' and contains(.,'Ballot.Voter')]"
@@ -305,10 +305,10 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting').pause(2000)
       .scrollAndClick('#Check_winning_proposal_passed')
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
       .goToVMTraceStep(1451)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalPassed()', 60000)
       // remix_test.sol should be opened in editor
       .getEditorValue((content) => browser.assert.ok(content.indexOf('library Assert {') !== -1))
       .click('*[id="debuggerTransactionStartButtonContainer"]') // stop debugging
@@ -321,7 +321,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .goToVMTraceStep(1151)
       .waitForElementContainsText('*[data-id="functionPanel"]', 'equal(a, b, message)', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinningProposalAgain()', 60000)
       //.pause(5000)
       .click('*[id="debuggerTransactionStartButtonContainer"]') // stop debugging
       .openFile('tests/ballotFailedDebug_test.sol')
@@ -331,9 +331,9 @@ module.exports = {
       .scrollAndClick('#Check_winnin_proposal_with_return_value')
       .pause(5000)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
       .goToVMTraceStep(321)
-      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue(, 60000)', 60000)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'checkWinninProposalWithReturnValue()', 60000)
       .clickLaunchIcon('filePanel')
       .pause(2000)
       .openFile('tests/ballotFailedDebug_test.sol')

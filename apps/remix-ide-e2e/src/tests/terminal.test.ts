@@ -217,7 +217,7 @@ module.exports = {
           .executeScriptInTerminal('remix.execute(\'scripts/test_filtering_event.ts\')', 60000) // re-emit the event
           .waitForElementContainsText('*[data-id="terminalJournal"]', '2', 60000)
           .waitForElementContainsText('*[data-id="terminalJournal"]', 'false')
-      }, 60000)
+      })
 
   },
 

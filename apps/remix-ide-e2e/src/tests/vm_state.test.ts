@@ -160,7 +160,7 @@ const tests = {
       .waitForElementVisible('*[data-id="unpinnedInstance0xf8e81D47203A594245E36C48e151709F0C19fBe8"]')
       .click('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
-      .click('input[data-id="modalDialogForkState"]', 60000)
+      .click('input[data-id="modalDialogForkState"]')
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)

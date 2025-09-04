@@ -143,7 +143,7 @@ module.exports = {
       .switchWorkspace('awesome-remix')
       .switchWorkspace('awesome-remix1')
       .switchWorkspace('awesome-remix2')
-      .switchWorkspace('awesome-remix3', 60000)
+      .switchWorkspace('awesome-remix3')
   },
 
   'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
@@ -191,7 +191,7 @@ module.exports = {
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev', 60000)
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production', 60000)
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/setup')
-      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ', 60000)
+      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
   },
 
   'Should a checkout to a remote branch #group3': function (browser: NightwatchBrowser) {
@@ -203,7 +203,7 @@ module.exports = {
       .pause(5000)
       .waitForElementPresent('[data-id="treeViewDivtreeViewItemdev.ts"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ', 60000)
+      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ')
   },
 
   'Should search for a branch (local and remote) #group3': function (browser: NightwatchBrowser) {
@@ -229,7 +229,7 @@ module.exports = {
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
-      .expect.element('[data-id="workspaceGit-newLocalBranch"]').text.to.contain('✓ ', 60000)
+      .expect.element('[data-id="workspaceGit-newLocalBranch"]').text.to.contain('✓ ')
   },
 
   'Should checkout to an existing local branch #group3': function (browser: NightwatchBrowser) {
@@ -259,7 +259,7 @@ module.exports = {
       .click('[data-id="switchBranch-modal-footer-cancel-react"]')
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ', 60000)
+      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
   },
 
   'Should force checkout to a branch with existing local changes #group3': function (browser: NightwatchBrowser) {
@@ -272,7 +272,7 @@ module.exports = {
       .click('[data-id="switchBranch-modal-footer-ok-react"]')
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ', 60000)
+      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ')
   },
 
   // GIT BRANCHES E2E END
@@ -380,7 +380,7 @@ module.exports = {
       .click('[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="dropdown-item-test-branch-submodule"]')
       .waitForElementVisible('*[data-id="dropdown-item-default_workspace"]')
-      .click('*[data-id="dropdown-item-default_workspace"]', 60000)
+      .click('*[data-id="dropdown-item-default_workspace"]')
   },
   'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
     browser
