@@ -175,7 +175,7 @@ const tests = {
       .waitForElementContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
-      .clickFunction('store - transact (not payable, 60000)', { types: 'uint256 num', values: '"555"' })
+      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
       // block number should be 5 after 2 txs
       .testFunction('last',
         {

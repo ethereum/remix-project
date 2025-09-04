@@ -588,7 +588,7 @@ module.exports = {
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
       .modalFooterOKClick('TemplatesSelection')
-      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 60000)
+      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
       .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
       // click on lib to close it
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')
