@@ -40,13 +40,9 @@ export const GitHubLogin: React.FC<GitHubLoginProps> = ({
       align="end"
     >
       <Button
-        className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between"
-        variant={ isConnected ? 'primary' : null }
+        className="btn btn-topbar btn-sm border d-flex flex-nowrap align-items-center justify-content-between github-login"
+        variant={ null }
         data-id="github-dropdown-toggle-login"
-        style={{
-          fontSize: '0.8rem',
-          padding: '0.35rem 0.5rem',
-        }}
         onClick={isConnected ? undefined : handleLogin}
         disabled={isConnected}
       >

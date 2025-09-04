@@ -9,7 +9,7 @@ import { endpointUrls } from "@remix-endpoints-helper";
 import isElectron from "is-electron";
 import { startGitHubLogin, getDeviceCodeFromGitHub, connectWithDeviceCode, disconnectFromGitHub } from "../../lib/gitLoginActions";
 
-export const GetDeviceCode = () => {
+export const ConnectToGitHub = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
@@ -21,6 +21,7 @@ export const GetDeviceCode = () => {
   const popupRef = useRef<Window | null>(null)
 
   const openPopupLogin = useCallback(async () => {
+    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBBUTTON)
     try {
       if (isElectron()) {
         setDesktopIsLoading(true)

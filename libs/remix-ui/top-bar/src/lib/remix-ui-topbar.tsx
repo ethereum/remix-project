@@ -288,13 +288,13 @@ export function RemixUiTopbar() {
 
   const loginWithGitHub = async () => {
     global.plugin.call('dgit', 'login')
-    _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
+    _paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
   }
 
   const logOutOfGithub = async () => {
     global.plugin.call('dgit', 'logOut')
 
-    _paq.push(['trackEvent', 'Workspace', 'GIT', 'logout'])
+    _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
   }
 
   const handleTypingUrl = () => {

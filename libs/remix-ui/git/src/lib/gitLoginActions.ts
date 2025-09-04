@@ -58,9 +58,10 @@ const startWebPopupLogin = async (): Promise<void> => {
   const scope = 'repo gist user:email read:user';
 
   const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code`;
-
+  await sendToMatomo(gitMatomoEventTypes.OPENLOGINMODAL)
   const popup = window.open(url, '_blank', 'width=600,height=700');
   if (!popup) {
+    await sendToMatomo(gitMatomoEventTypes.LOGINMODALFAIL);
     console.warn('Popup blocked or failed to open, falling back to device code flow.');
     throw new Error('Popup blocked - please allow popups for this site or use device code flow');
   }
@@ -84,6 +85,7 @@ const startWebPopupLogin = async (): Promise<void> => {
           reject(error);
         }
       } else if (event.data.type === 'GITHUB_AUTH_FAILURE') {
+        await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL);
         window.removeEventListener('message', messageListener);
         popup?.close();
         reject(new Error('GitHub authentication failed'));
@@ -106,47 +108,62 @@ const startWebPopupLogin = async (): Promise<void> => {
 // Device code flow fallback (can be called from components if needed)
 export const getDeviceCodeFromGitHub = async (): Promise<any> => {
   await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE);
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${endpointUrls.github}/login/device/code`,
+      data: {
+        client_id: '2795b4e41e7197d6ea11',
+        scope: 'repo gist user:email read:user'
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    });
+    await sendToMatomo(gitMatomoEventTypes.GET_GITHUB_DEVICECODE_SUCCESS);
+    return response.data;
 
-  const response = await axios({
-    method: 'post',
-    url: `${endpointUrls.github}/login/device/code`,
-    data: {
-      client_id: '2795b4e41e7197d6ea11',
-      scope: 'repo gist user:email read:user'
-    },
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-  });
+  } catch (error) {
+    await sendToMatomo(gitMatomoEventTypes.GET_GITHUB_DEVICECODE_FAIL);
+    throw new Error('Failed to get device code from GitHub');
 
-  return response.data;
+  }
+
 };
 
 // Connect using device code
 export const connectWithDeviceCode = async (deviceCode: string): Promise<void> => {
-  const response = await axios({
-    method: 'post',
-    url: `${endpointUrls.github}/login/oauth/access_token`,
-    data: {
-      client_id: '2795b4e41e7197d6ea11',
-      device_code: deviceCode,
-      grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-    },
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-  });
+  await sendToMatomo(gitMatomoEventTypes.DEVICECODEAUTH);
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${endpointUrls.github}/login/oauth/access_token`,
+      data: {
+        client_id: '2795b4e41e7197d6ea11',
+        device_code: deviceCode,
+        grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    });
 
-  const data = response.data;
+    const data = response.data;
 
-  if (data.access_token) {
-    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS);
-    await saveToken(data.access_token);
-    await loadGitHubUserFromToken();
-  } else {
-    throw new Error('Failed to get access token from device code');
+    if (data.access_token) {
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS);
+      await sendToMatomo(gitMatomoEventTypes.DEVICE_CODE_AUTH_SUCCESS);
+      await saveToken(data.access_token);
+      await loadGitHubUserFromToken();
+    } else {
+      await sendToMatomo(gitMatomoEventTypes.DEVICE_CODE_AUTH_FAIL);
+      throw new Error('Failed to get access token from device code');
+    }
+  } catch (error) {
+    await sendToMatomo(gitMatomoEventTypes.DEVICE_CODE_AUTH_FAIL);
+    throw new Error('Failed to connect with device code');
   }
 };
 
