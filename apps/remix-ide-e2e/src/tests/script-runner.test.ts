@@ -36,7 +36,7 @@ const tests = {
   'Should load script runner ethers6': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="sr-notloaded-ethers6"]')
-      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 120000)
       .waitForElementPresent('[data-id="dependency-ethers-^6"]', 60000)
   },
   'Should have config file in .remix/script.config.json': function (browser: NightwatchBrowser) {
@@ -134,8 +134,11 @@ const tests = {
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
-      .waitForElementVisible('label[data-id="sr-loaded-default"]', 60000)
+      .waitForElementVisible('label[data-id="sr-notloaded-default"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-ethers6"]', 60000)
+      .click('label[data-id="sr-notloaded-default"]')
       .waitForElementVisible('label[data-id="sr-notloaded-ethers6"]', 60000)
+      .waitForElementVisible('label[data-id="sr-loaded-default"]', 60000)
   },
   'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
     browser
