@@ -622,7 +622,7 @@ export const TabsUI = (props: TabsUIProps) => {
             <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
-            <TabPanel key={tab.name}></TabPanel>
+            <TabPanel className={tab.show ? '' : 'd-none'} key={tab.name}></TabPanel>
           ))}
         </Tabs>
 

@@ -343,15 +343,27 @@ export default class TabProxy extends Plugin {
     if(!this.loadedTabs.find(tab => tab.name === name)) return // prevent removing tab that doesn't exist
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
       if (!previous && tab.name === name) {
-        if(index - 1  >= 0 && this.loadedTabs[index - 1])
-          previous = this.loadedTabs[index - 1]
-        else if (index + 1 && this.loadedTabs[index + 1])
-          previous = this.loadedTabs[index + 1]
+        previous = this.getPreviousVisibleTab(index)
+        if (!previous) previous = this.getNextVisibleTab(index)
       }
       return tab.name !== name
     })
     this.renderComponent()
     if (previous) this.switchTab(previous.name)
+  }
+
+  getPreviousVisibleTab (index) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (this.loadedTabs[i].show) return this.loadedTabs[i]
+    }
+    return null
+  }
+
+  getNextVisibleTab (index) {
+    for (let i = index + 1; i < this.loadedTabs.length; i++) {
+      if (this.loadedTabs[i].show) return this.loadedTabs[i]
+    }
+    return null
   }
 
   addHandler (type, fn) {
