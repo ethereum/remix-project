@@ -139,15 +139,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 Edit
               </button>
             </div>
-            <CustomTooltip
-              tooltipText={<TooltipContent />}
-              delay={{ show: 1000, hide: 0 }}
-            >
-              <span
-                className="far fa-circle-info text-ai me-1"
-                onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
-              ></span>
-            </CustomTooltip>
             <span
               className="badge align-self-center text-bg-info fw-light rounded"
             >
@@ -258,18 +249,3 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   )
 }
 
-function TooltipContent () {
-  return (
-    <ul className="list-unstyled p-2 me-3">
-      <li className="">
-        {'- Use /w <prompt> : To manage or edit files within your workspace'}
-      </li>
-      <li className="">
-        {'- Alternatively, you may type your question directly below.'}
-      </li>
-      <li className="">
-        {'-See Ollama Setup Guide'}
-      </li>
-    </ul>
-  )
-}
