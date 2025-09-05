@@ -51,6 +51,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [availableModels, setAvailableModels] = useState<string[]>([])
   const [selectedModel, setSelectedModel] = useState<string | null>(null)
   const [isOllamaFailureFallback, setIsOllamaFailureFallback] = useState(false)
+  const [aiMode, setAiMode] = useState<'ask' | 'edit'>('ask')
 
   const historyRef = useRef<HTMLDivElement | null>(null)
   const modelBtnRef = useRef(null)
@@ -416,11 +417,23 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     },
     [isStreaming, props.plugin]
   )
+  const handleGenerateWorkspaceWithPrompt = useCallback(async (prompt: string) => {
+    dispatchActivity('button', 'generateWorkspace')
+    if (prompt && prompt.trim()) {
+      await sendPrompt(`/workspace ${prompt.trim()}`)
+      _paq.push(['trackEvent', 'remixAI', 'GenerateNewAIWorkspaceFromEditMode', prompt])
+    }
+  }, [sendPrompt])
 
   const handleSend = useCallback(async () => {
-    await sendPrompt(input)
+    if (aiMode === 'ask') {
+      await sendPrompt(input)
+    } else if (aiMode === 'edit') {
+      // Call generateWorkspace for edit mode with the current input
+      await handleGenerateWorkspaceWithPrompt(input)
+    }
     setInput('')
-  }, [input, sendPrompt])
+  }, [input, sendPrompt, aiMode, handleGenerateWorkspaceWithPrompt])
 
   // Added handlers for special command buttons (assumed to exist)
   const handleAddContext = useCallback(() => {
@@ -734,6 +747,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           aiContextGroupList={aiContextGroupList}
           aiAssistantGroupList={aiAssistantGroupList}
           textareaRef={textareaRef}
+          aiMode={aiMode}
+          setAiMode={setAiMode}
         />
       </section>
     </div>
