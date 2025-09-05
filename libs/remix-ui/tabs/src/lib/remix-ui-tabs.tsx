@@ -615,14 +615,14 @@ export const TabsUI = (props: TabsUIProps) => {
         >
           <TabList className="d-flex flex-row align-items-center">
             {props.tabs.map((tab, i) => (
-              tab.show && <Tab className="" key={tab.name} data-id={tab.id}>
+              <Tab className={tab.show ? '' : 'd-none'} key={tab.name} data-id={tab.id}>
                 {renderTab(tab, i)}
               </Tab>
             ))}
             <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
-            tab.show && <TabPanel key={tab.name}></TabPanel>
+            <TabPanel key={tab.name}></TabPanel>
           ))}
         </Tabs>
 
