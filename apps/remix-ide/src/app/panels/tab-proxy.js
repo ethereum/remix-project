@@ -211,7 +211,10 @@ export default class TabProxy extends Plugin {
 
   focus (name) {
     this.emit('switchApp', name)
-    this.loadedTabs.find(tab => tab.name === name).show = true
+    const tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+    if (tabIndex !== -1) {
+      this.loadedTabs[tabIndex].show = true
+    }
     this.tabsApi.activateTab(name)
   }
 
