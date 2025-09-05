@@ -212,8 +212,8 @@ export class SourcifyVerifier extends AbstractVerifier {
     // Extract contract path from fully qualified name (path can include colons)
     const splitIdentifier = fullyQualifiedName.split(':')
     const contractPath = splitIdentifier.slice(0, -1).join(':')
-
     for (const [filePath, fileData] of Object.entries(sources)) {
+      if (filePath.startsWith('..')) continue
       const path = `${filePrefix}/sources/${filePath}`
       result.push({ path, content: fileData.content })
       if (filePath === contractPath) {

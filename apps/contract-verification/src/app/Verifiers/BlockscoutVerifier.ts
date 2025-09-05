@@ -38,11 +38,11 @@ export class BlockscoutVerifier extends EtherscanVerifier {
     const result: SourceFile[] = []
     const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
-    const targetFilePath = `${filePrefix}/${blockscoutSource.FileName}`
+    const targetFilePath = `${filePrefix}/${blockscoutSource.FileName.startsWith('..') ? blockscoutSource.FileName.replace('../', '') : blockscoutSource.FileName}`
     result.push({ content: blockscoutSource.SourceCode, path: targetFilePath })
 
     for (const additional of blockscoutSource.AdditionalSources ?? []) {
-      result.push({ content: additional.SourceCode, path: `${filePrefix}/${additional.Filename}` })
+      if(!additional.Filename.startsWith('..')) result.push({ content: additional.SourceCode, path: `${filePrefix}/${additional.Filename}` })
     }
 
     return { sourceFiles: result, targetFilePath }
