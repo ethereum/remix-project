@@ -152,7 +152,7 @@ export class SourcifyV1Verifier extends AbstractVerifier {
         }
       }
 
-      if (filePath) {
+      if (filePath && !filePath.startsWith('..')) {
         result.push({ path: `${filePrefix}/${filePath}`, content: file.content })
       }
 
