@@ -34,6 +34,7 @@ export interface Tab {
   name: string
   title: string
   tooltip: string
+  show: boolean
 }
 export interface TabsUIApi {
   activateTab: (name: string) => void
@@ -95,7 +96,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const [compileState, setCompileState] = useState<'idle' | 'compiling' | 'compiled'>('idle')
 
   useEffect(() => {
-    if (props.tabs[tabsState.selectedIndex]) {
+    if (props.tabs[tabsState.selectedIndex] && props.tabs[tabsState.selectedIndex].show) {
       tabsRef.current[tabsState.selectedIndex].scrollIntoView({
         behavior: 'smooth',
         block: 'center'
@@ -614,14 +615,14 @@ export const TabsUI = (props: TabsUIProps) => {
         >
           <TabList className="d-flex flex-row align-items-center">
             {props.tabs.map((tab, i) => (
-              <Tab className="" key={tab.name} data-id={tab.id}>
+              <Tab className={tab.show ? '' : 'd-none'} key={tab.name} data-id={tab.id}>
                 {renderTab(tab, i)}
               </Tab>
             ))}
             <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
-            <TabPanel key={tab.name}></TabPanel>
+            <TabPanel className={tab.show ? '' : 'd-none'} key={tab.name}></TabPanel>
           ))}
         </Tabs>
 
