@@ -178,7 +178,7 @@ export class FetchAndCompile extends Plugin {
     const { config, compilationTargets, version } = data
     /*
     * If the remappings are defined in the config, we need to update them to point to the targetPath
-    * it's beeing disabled for the moment.
+    * it's being disabled for the moment.
     */
     /*if (config && config.settings && config.settings.remappings) {
       console.log(config.settings.remappings)
