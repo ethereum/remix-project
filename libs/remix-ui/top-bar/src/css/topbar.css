@@ -14,6 +14,11 @@
   color: #fff;
 }
 
+.github-login {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
 .btn-topbar:hover {
   background-color: #3F4455;
   color: #fff;

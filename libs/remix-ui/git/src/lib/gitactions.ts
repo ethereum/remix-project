@@ -912,3 +912,6 @@ export const clearGitLog = async () => {
 export const setStorage = async (storage: storage) => {
   dispatch(setStoragePayload(storage))
 }
+
+// Re-export the login function for external use
+export { startGitHubLogin } from './gitLoginActions'

@@ -21,7 +21,7 @@ import { RemotesNavigation } from './navigation/remotes'
 import { Remotes } from './panels/remotes'
 import { GitHubNavigation } from './navigation/github'
 import { loaderReducer } from '../state/loaderReducer'
-import { GetDeviceCode } from './github/devicecode'
+import { ConnectToGitHub } from './github/devicecode'
 import { LogNavigation } from './navigation/log'
 import LogViewer from './panels/log'
 import { SourceControlBase } from './buttons/sourceControlBase'
@@ -241,7 +241,7 @@ export const GitUI = (props: IGitUi) => {
                   <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
                   <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
                     <div className="px-2 py-2">
-                      <GetDeviceCode></GetDeviceCode>
+                      <ConnectToGitHub></ConnectToGitHub>
                       <hr></hr>
                       <GitHubCredentials></GitHubCredentials>
                     </div>

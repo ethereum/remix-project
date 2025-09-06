@@ -1,9 +1,9 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React, { MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import BasicLogo from '../components/BasicLogo'
 import '../css/topbar.css'
-import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
-import { CustomMenu, CustomToggle, CustomTopbarMenu } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
+import { Button, Dropdown } from 'react-bootstrap'
+import { CustomToggle, CustomTopbarMenu } from 'libs/remix-ui/helper/src/lib/components/custom-dropdown'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { appPlatformTypes, platformContext } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -11,18 +11,14 @@ import { TopbarContext } from '../context/topbarContext'
 import { WorkspacesDropdown } from '../components/WorkspaceDropdown'
 import { useOnClickOutside } from 'libs/remix-ui/remix-ai-assistant/src/components/onClickOutsideHook'
 import { cloneRepository, deleteWorkspace, fetchWorkspaceDirectory, deleteAllWorkspaces as deleteAllWorkspacesAction, handleDownloadFiles, handleDownloadWorkspace, handleExpandPath, publishToGist, renameWorkspace, restoreBackupZip, switchToWorkspace } from 'libs/remix-ui/workspace/src/lib/actions'
-import { gitUIPanels } from 'libs/remix-ui/git/src/types'
-import { loginWithGitHub, setPlugin } from 'libs/remix-ui/git/src/lib/pluginActions'
 import { GitHubUser } from 'libs/remix-api/src/lib/types/git'
 import { GitHubCallback } from '../topbarUtils/gitOauthHandler'
 import { GitHubLogin } from '../components/gitLogin'
-import GithubLoginSuccess from '../components/githubLoginSuccess'
 import { CustomTooltip } from 'libs/remix-ui/helper/src/lib/components/custom-tooltip'
-import { Topbar } from 'apps/remix-ide/src/app/components/top-bar'
 
 const _paq = window._paq || []
 
-export function RemixUiTopbar () {
+export function RemixUiTopbar() {
   const intl = useIntl()
   const [showDropdown, setShowDropdown] = useState(false)
   const platform = useContext(platformContext)
@@ -183,7 +179,7 @@ export function RemixUiTopbar () {
         intl.formatMessage({ id: 'filePanel.workspace.rename' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
@@ -198,7 +194,7 @@ export function RemixUiTopbar () {
         intl.formatMessage({ id: 'filePanel.workspace.download' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
@@ -212,7 +208,7 @@ export function RemixUiTopbar () {
         intl.formatMessage({ id: 'filePanel.workspace.delete' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
@@ -252,7 +248,7 @@ export function RemixUiTopbar () {
         intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
@@ -290,10 +286,15 @@ export function RemixUiTopbar () {
     )
   }
 
+  const loginWithGitHub = async () => {
+    global.plugin.call('dgit', 'login')
+    _paq.push(['trackEvent', 'topbar', 'GIT', 'login'])
+  }
+
   const logOutOfGithub = async () => {
-    await global.plugin.call('menuicons', 'select', 'dgit');
-    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
-    _paq.push(['trackEvent', 'Workspace', 'GIT', 'logout'])
+    global.plugin.call('dgit', 'logOut')
+
+    _paq.push(['trackEvent', 'topbar', 'GIT', 'logout'])
   }
 
   const handleTypingUrl = () => {
@@ -305,8 +306,8 @@ export function RemixUiTopbar () {
       global.modal(
         intl.formatMessage({ id: 'filePanel.workspace.clone' }),
         intl.formatMessage({ id: 'filePanel.workspace.cloneMessage' }),
-        intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
-        () => {},
+        intl.formatMessage({ id: (platform !== appPlatformTypes.desktop) ? 'filePanel.ok' : 'filePanel.selectFolder' }),
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
@@ -316,7 +317,7 @@ export function RemixUiTopbar () {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
       cloneModalMessage(),
-      intl.formatMessage({ id:  (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
+      intl.formatMessage({ id: (platform !== appPlatformTypes.desktop) ? 'filePanel.ok' : 'filePanel.selectFolder' }),
       handleTypingUrl,
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
@@ -358,7 +359,7 @@ export function RemixUiTopbar () {
 
   const checkIfLightTheme = (themeName: string) => themeName.includes('dark') ? false : true
 
-  const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
+  const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string }) => {
     return (
       <>
         {props.isGitRepo ? (
@@ -391,7 +392,7 @@ export function RemixUiTopbar () {
         intl.formatMessage({ id: 'filePanel.workspace.switch' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
+        () => { },
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
@@ -402,7 +403,7 @@ export function RemixUiTopbar () {
 
     return (
       <>
-        { global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+        {global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
           <div
             key={index}
             className="d-flex justify-content-between w-100"
@@ -540,22 +541,12 @@ export function RemixUiTopbar () {
             </CustomTooltip>
           </div>} */}
           <>
-            {user ? (
-              <GithubLoginSuccess
-                user={user}
-                handleLogout={handleLogout}
-                cloneGitRepository={cloneGitRepository}
-                publishToGist={publishToGist}
-                logOutOfGithub={logOutOfGithub}
-              />
-            ) : (
-              <GitHubLogin
-                onLoginSuccess={handleLoginSuccess}
-                onLoginError={handleLoginError}
-                cloneGitRepository={cloneGitRepository}
-                logOutOfGithub={logOutOfGithub}
-              />
-            )}
+            <GitHubLogin
+              cloneGitRepository={cloneGitRepository}
+              logOutOfGithub={logOutOfGithub}
+              publishToGist={publishToGist}
+              loginWithGitHub={loginWithGitHub}
+            />
           </>
           <Dropdown className="ms-3" data-id="topbar-themeIcon" show={showTheme} ref={themeIconRef}>
             <Dropdown.Toggle
