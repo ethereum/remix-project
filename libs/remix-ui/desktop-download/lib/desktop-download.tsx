@@ -301,7 +301,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                   // Allow the default link behavior
                 }}
               >
-                <i className="far fa-desktop"></i>
+                <i className={getPlatformIcon(detectedDownload.platform)}></i>
                 <span>
                   <FormattedMessage 
                     id="desktopDownload.downloadSpan" 
@@ -360,7 +360,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                   rel="noopener noreferrer"
                   onClick={() => trackDownloadClick(detectedDownload.platform, detectedDownload.filename, 'compact')}
                 >
-                  <i className="far fa-desktop"></i>
+                  <i className={getPlatformIcon(detectedDownload.platform)}></i>
                   <span>
                     <FormattedMessage 
                       id="desktopDownload.downloadCompactFull" 
