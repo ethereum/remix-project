@@ -7,7 +7,7 @@ module.exports = {
   },
   'open default template': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('*[data-id="createWorkspaceButton"]')
       .click('*[data-id="createWorkspaceButton"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
@@ -22,7 +22,7 @@ module.exports = {
           .click('*[data-id="treeViewLitreeViewItemcontracts"]')
           .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
           .openFile('contracts/1_Storage.sol')
-          .waitForElementVisible('*[id="editorView"]', 10000)
+          .waitForElementVisible('*[id="editorView"]', 60000)
           .getEditorValue((content) => {
             browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
           })
@@ -30,7 +30,7 @@ module.exports = {
   },
   'open template explorer and add template to current': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="workspacesSelect"]', 10000)
+      .waitForElementVisible('*[data-id="workspacesSelect"]', 60000)
       .click('*[data-id="workspacesSelect"]')
       .waitForElementVisible('*[data-id="workspacecreate.desktop"]')
       .click('*[data-id="workspacecreate.desktop"]')

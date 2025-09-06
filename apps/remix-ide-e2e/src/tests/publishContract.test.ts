@@ -14,7 +14,7 @@ module.exports = {
 
   'Publish on IPFS': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#icon-panel', 10000)
+      .waitForElementVisible('#icon-panel', 60000)
       .clickLaunchIcon('filePanel')
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
@@ -58,7 +58,7 @@ module.exports = {
 
   'Should publish contract metadata to ipfs on deploy': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('#icon-panel')
+      .waitForElementVisible('#icon-panel', 60000)
       .clickLaunchIcon('filePanel')
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('udapp')

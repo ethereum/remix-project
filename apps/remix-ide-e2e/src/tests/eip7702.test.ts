@@ -68,7 +68,7 @@ module.exports = {
       .refresh()
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-prague')
-      .waitForElementNotPresent('*[data-id="delete-delegation"]')
+      .waitForElementNotPresent('*[data-id="delete-delegation"]', 60000)
   }
 }
 

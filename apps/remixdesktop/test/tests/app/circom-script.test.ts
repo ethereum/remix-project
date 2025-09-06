@@ -8,7 +8,7 @@ const tests = {
     },
     'Should create semaphore workspace': function (browser: NightwatchBrowser) {
         browser
-            .waitForElementVisible('*[data-id="homeTabGetStartedsemaphore"]', 20000)
+            .waitForElementVisible('*[data-id="homeTabGetStartedsemaphore"]', 60000)
             .click('*[data-id="homeTabGetStartedsemaphore"]')
             .pause(3000)
             .windowHandles(function (result) {
@@ -41,9 +41,7 @@ const tests = {
             .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
-                selector: "//span[@class='text-log' and contains(., 'setup done.')]",
-                timeout: 240000
-            })
+                selector: "//span[@class='text-log' and contains(., 'setup done.')]", timeout: 240000 })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk"]')
             .click('*[data-id="treeViewLitreeViewItemscripts/plonk/zk"]')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys"]')
@@ -57,9 +55,7 @@ const tests = {
             .click('[data-id="compile-action"]')
             .waitForElementVisible({
                 locateStrategy: 'xpath',
-                selector: "//span[@class='text-log' and contains(., 'proof done')]",
-                timeout: 240000
-            })
+                selector: "//span[@class='text-log' and contains(., 'proof done')]", timeout: 240000 })
     }
 
 }

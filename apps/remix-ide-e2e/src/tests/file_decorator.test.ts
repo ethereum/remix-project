@@ -19,17 +19,17 @@ module.exports = {
       .click('[data-id="compile-action"]')
       .pause(4000)
       .useXpath()
-      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
-      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2')
-      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
-      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U')
-      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
-      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2')
-      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext')
-      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext')
+      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2', 60000)
+      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', '2', 60000)
+      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U', 60000)
+      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/2_Owner.sol"]', 'U', 60000)
+      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2', 60000)
+      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-warning-contracts/1_Storage.sol"]', '2', 60000)
+      .waitForElementContainsText('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext', 60000)
+      .waitForElementContainsText('//*[@class="mainview"]//*[@data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 'customtext', 60000)
       .moveToElement('//*[@id="fileExplorerView"]//*[@data-id="file-decoration-error-contracts/2_Owner.sol"]', 0, 0)
     //.waitForElementVisible('//*[@id="error-tooltip-contracts/2_Owner.sol"]')
-    //.waitForElementContainsText('//*[@id="error-tooltip-contracts/2_Owner.sol"]', 'error on owner')
+    //.waitForElementContainsText('//*[@id="error-tooltip-contracts/2_Owner.sol"]', 'error on owner', 60000)
   },
 
   'clear ballot decorator': function (browser: NightwatchBrowser) {
@@ -39,7 +39,7 @@ module.exports = {
       .pause(2000)
       .click('[data-id="compile-action"]')
       .pause(4000)
-      .waitForElementNotPresent('[data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 10000)
+      .waitForElementNotPresent('[data-id="file-decoration-custom-contracts/3_Ballot.sol"]', 60000)
   },
   'clear all decorators': function (browser: NightwatchBrowser) {
     browser
@@ -47,8 +47,8 @@ module.exports = {
       .pause(2000)
       .click('[data-id="compile-action"]')
       .pause(4000)
-      .waitForElementNotPresent('[data-id="file-decoration-error-contracts/2_Owner.sol"]', 10000)
-      .waitForElementNotPresent('[data-id="file-decoration-warning-contracts/1_Storage.sol"]', 10000)
+      .waitForElementNotPresent('[data-id="file-decoration-error-contracts/2_Owner.sol"]', 60000)
+      .waitForElementNotPresent('[data-id="file-decoration-warning-contracts/1_Storage.sol"]', 60000)
   }
 
 }

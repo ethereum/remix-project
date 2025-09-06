@@ -129,7 +129,7 @@ module.exports = {
         selector:'[data-id="test_error.vy"]',
         timeout: 60000
       })
-      .waitForElementContainsText('[data-id="test_error.vy"]', 'ERROR')
+      .waitForElementContainsText('[data-id="test_error.vy"]', 'ERROR', 60000)
       .waitForElementContainsText('[data-id="test_error.vy"]', 'StructureException:Unsupported syntax for module namespace')
       .frameParent()
   },

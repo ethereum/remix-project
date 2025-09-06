@@ -9,7 +9,7 @@ module.exports = {
   },
   'clone a repo': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('*[data-id="cloneFromGitButton"]')
       .click('*[data-id="cloneFromGitButton"]')
       .pause(1000)

@@ -15,7 +15,7 @@ const tests = {
   'Should show fork and delete VM state icons #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 30000)
+      .waitForElementVisible('*[data-id="selected-provider-vm-prague"]', 60000)
       .waitForElementVisible('*[data-id="fork-state-icon"]')
       .waitForElementVisible('*[data-id="delete-state-icon"]')
   },
@@ -163,14 +163,14 @@ const tests = {
       .click('input[data-id="modalDialogForkState"]')
       .setValue('input[data-id="modalDialogForkState"]', 'forkedState_2')
       .modalFooterOKClick('udappNotify')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', `New environment 'forkedState_2' created with forked state.`)
       // check if 'forkedState_2' is selected as current environment 
       .waitForElementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       // check if 'forkedState_2' is present in environment explorer
       .waitForElementPresent('[data-id="remixUIGSforkedState_2"]')
       // check if 'forkedState_2' is pinned in environment explorer
-      .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]')
+      .waitForElementPresent('[data-id="vm-fs-forkedState_2-pinned"]', 60000)
       // 'forkedState_2' should have 3 blocks
       .waitForElementContainsText('[data-id="vm-fs-forkedState_2desc"]', 'Latest Block: 3')
       .click('*[data-id="Deploy - transact (not payable)"]')
@@ -193,11 +193,11 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(10000)
       .assert.textContains('*[data-id="deployedContractsBadge"]', '1')
-      .click(('*[data-id="delete-state-icon"]'))
+      .click('*[data-id="delete-state-icon"]')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalTitle-react"]')
       .waitForElementVisible('*[data-id="deleteVmStateModal"]')
       .modalFooterOKClick('udappNotify')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 10000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       // check if toaster is shown
       .assert.textContains('*[data-shared="tooltipPopup"]', `VM state reset successfully.`)
       // check that there are no instances

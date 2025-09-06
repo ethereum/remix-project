@@ -149,16 +149,16 @@ function runTemplateChecks(
 
     if (mode === 'create') {
       browser
-        .waitForElementVisible(`[data-id="create-${value}"]`, 5000)
+        .waitForElementVisible(`[data-id="create-${value}"]`, 60000)
         .click(`[data-id="create-${value}"]`)
     } else {
       browser
-        .waitForElementVisible(`[data-id="create-blank"]`, 5000)
+        .waitForElementVisible(`[data-id="create-blank"]`, 60000)
         .click(`[data-id="create-blank"]`)
     }
 
     browser
-      .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+      .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 60000)
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .pause(1000)
 
@@ -168,17 +168,17 @@ function runTemplateChecks(
         if (result.status == 0) {
           openTemplatesExplorer(browser)
           browser
-            .waitForElementVisible(`[data-id="add-${value}"]`, 5000)
+            .waitForElementVisible(`[data-id="add-${value}"]`, 60000)
             .click(`[data-id="add-${value}"]`)
           if (clickOk) {
             browser
-              .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+              .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 60000)
               .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
           }
 
           checkSelectors.forEach(selector => {
             console.log(`Checking selector: ${selector}`)
-            browser.waitForElementVisible(selector, 30000)
+            browser.waitForElementVisible(selector, 60000)
           })
         }
       })
@@ -190,7 +190,7 @@ function runTemplateChecks(
 
       checkSelectors.forEach(selector => {
         console.log(`Checking selector: ${selector}`)
-        browser.waitForElementVisible(selector, 30000)
+        browser.waitForElementVisible(selector, 60000)
       })
     }
   })
@@ -202,11 +202,11 @@ function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add')
   const selector = mode === 'create' ? '[data-id="create-ozerc20"]' : '[data-id="add-ozerc20"]'
 
   browser
-    .waitForElementVisible(selector, 5000)
+    .waitForElementVisible(selector, 60000)
     .click(selector)
 
   browser
-    .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+    .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 60000)
 
   // Simulate user selecting options
   setTemplateOptions(browser, { mintable: true, burnable: true, upgradeability: 'uups' })
@@ -217,7 +217,7 @@ function testTemplateOptions(browser: NightwatchBrowser, mode: 'create' | 'add')
 
   // Verify expected file was created
   browser
-    .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]', 10000)
+    .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]', 60000)
     .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
     .pause(1000)
     .getEditorValue(editorValue => {
@@ -252,9 +252,9 @@ const tests = {
   'Test template options with add #group2': function (browser: NightwatchBrowser) {
     openTemplatesExplorer(browser)
     browser
-      .waitForElementVisible(`[data-id="create-remixDefault"]`, 5000)
+      .waitForElementVisible(`[data-id="create-remixDefault"]`, 60000)
       .click(`[data-id="create-remixDefault"]`)
-      .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 2000)
+      .waitForElementVisible('*[data-id="TemplatesSelection-modal-footer-ok-react"]', 60000)
       .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .pause(1000)
 

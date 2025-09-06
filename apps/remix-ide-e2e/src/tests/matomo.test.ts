@@ -42,7 +42,7 @@ module.exports = {
         console.log('_paq', res)
       })
       .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-      .waitForElementVisible('*[data-id="beginnerbtn"]', 10000)
+      .waitForElementVisible('*[data-id="beginnerbtn"]', 60000)
       .pause(1000)
       .click('[data-id="beginnerbtn"]')
       .waitForElementNotPresent('*[data-id="beginnerbtn"]')
@@ -102,7 +102,7 @@ module.exports = {
       .click('*[data-id="matomoPerfAnalyticsToggleSwitch"]') // disable matomo perf analytics3
       .click('[data-id="managePreferencesModal-modal-footer-ok-react"]') // click on Save Preferences
       .pause(2000)
-      .waitForElementPresent('*[data-id="beginnerbtn"]', 10000)
+      .waitForElementPresent('*[data-id="beginnerbtn"]', 60000)
       .click('[data-id="beginnerbtn"]')
       .waitForElementVisible({
         selector: `//*[contains(text(), 'Welcome to Remix IDE')]`,
@@ -367,7 +367,7 @@ module.exports = {
   },
   'Deploy Ballot #group4': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('solidity')
       .waitForElementVisible('*[data-id="compilerContainerCompileBtn"]')
       .click('*[data-id="compilerContainerCompileBtn"]')

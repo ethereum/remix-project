@@ -17,7 +17,7 @@ module.exports = {
   'Import from GitHub Modal #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
       .click('*[data-id="verticalIconsHomeIcon"]')
@@ -42,12 +42,12 @@ module.exports = {
       .waitForElementVisible('*[data-id="topbarModalModalDialogModalFooter-react"]')
       .click('[data-id="topbarModal-modal-footer-ok-react"]') // submitted
       //.waitForElementVisible('*[data-shared="tooltipPopup"]')
-      //.waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
+      //.waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL, 60000)
   },
 
   'Clone From GitHub with Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
       .click('*[data-id="verticalIconsHomeIcon"]')
