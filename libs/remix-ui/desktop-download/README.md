@@ -92,3 +92,26 @@ Release data is cached in localStorage for 30 minutes to reduce GitHub API calls
 - react-intl (for internationalization)
 - Bootstrap CSS classes (for styling)
 - FontAwesome icons (for platform icons)
+
+## Internationalization
+
+The component is fully internationalized using react-intl. Translation strings are located in:
+
+- `apps/remix-ide/src/app/tabs/locales/en/desktopDownload.json` - All translation keys for the component
+
+### Translation Keys
+
+| Key | Default Message | Description |
+|-----|-----------------|-------------|
+| `desktopDownload.loading` | "Loading desktop app info..." | Loading state message |
+| `desktopDownload.error` | "Unable to load desktop app. Check the {link} for downloads." | Error fallback message |
+| `desktopDownload.title` | "Remix Desktop" | Main title in full layout |
+| `desktopDownload.releaseDate` | "Released {date}" | Release date display |
+| `desktopDownload.downloadSpan` | "Download Remix Desktop {platform} {version}" | Span variant with platform |
+| `desktopDownload.downloadSpanGeneric` | "Download Remix Desktop {version}" | Span variant without platform |
+| `desktopDownload.downloadCompactFull` | "Download Remix Desktop {platform} {version}" | Compact button with platform |
+| `desktopDownload.downloadCompactGeneric` | "Download Remix Desktop {version}" | Compact button without platform |
+| `desktopDownload.downloadButton` | "Download for {platform}" | Full layout button text |
+| `desktopDownload.viewReleases` | "View Downloads" | Fallback button text |
+| `desktopDownload.otherVersions` | "Other versions and platforms" | Link to releases page |
+| `desktopDownload.noAutoDetect` | "Available for Windows, macOS, and Linux" | Platform availability message |
