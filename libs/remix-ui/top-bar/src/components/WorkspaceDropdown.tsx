@@ -328,7 +328,7 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           </Dropdown.Item>
           <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
           <Dropdown.Item>
-            <DesktopDownload style={{ color: '#D678FF' }} variant="span" />
+            <DesktopDownload style={{ color: '#D678FF' }} variant="span" trackingContext="dropdown" />
           </Dropdown.Item>
           <Dropdown.Item onClick={() => {
             downloadWorkspaces()
