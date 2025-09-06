@@ -510,12 +510,12 @@ export class InferenceManager implements ICompletions {
       console.log('model not ready yet')
       return
     }
-    params.chatHistory = params.provider === 'anthropic' ? buildChatPrompt(prompt) : []
+    params.chatHistory = params.provider === 'anthropic' ? buildChatPrompt() : []
 
     if (params.stream_result) {
       return this._streamInferenceRequest('answer', { prompt:userPrompt, ...params })
     } else {
-      return this._makeInferenceRequest('answer', { prompt, ...params }, AIRequestType.GENERAL)
+      return this._makeInferenceRequest('answer', { prompt: userPrompt, ...params }, AIRequestType.GENERAL)
     }
   }
 
