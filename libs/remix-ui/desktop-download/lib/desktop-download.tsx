@@ -3,11 +3,14 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import './desktop-download.css'
 
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
+
 interface DesktopDownloadProps {
   className?: string
   compact?: boolean
-  variant?: 'button' | 'span'
+  variant?: 'button' | 'span' | 'auto'
   style?: React.CSSProperties
+  trackingContext?: string // Context for Matomo tracking (e.g., 'hometab', 'dropdown', 'navbar')
 }
 
 interface ReleaseAsset {
@@ -35,7 +38,13 @@ const GITHUB_API_URL = 'https://api.github.com/repos/remix-project-org/remix-des
 const CACHE_KEY = 'remix-desktop-release-cache'
 const CACHE_DURATION = 30 * 60 * 1000 // 30 minutes in milliseconds
 
-export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = '', compact = true, variant = 'button', style = {} }) => {
+export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ 
+  className = '', 
+  compact = true, 
+  variant = 'button', 
+  style = {},
+  trackingContext = 'unknown' 
+}) => {
   const [releaseData, setReleaseData] = useState<ReleaseData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -181,6 +190,17 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
     }
   }
 
+  // Track download click events
+  const trackDownloadClick = (platform?: string, filename?: string, variant?: string) => {
+    const trackingData = [
+      'trackEvent', 
+      'desktopDownload', 
+      `${trackingContext}-${variant || 'button'}`, 
+      platform ? `${platform}-${filename}` : 'releases-page'
+    ]
+    _paq.push(trackingData)
+  }
+
   // Load release data on component mount
   useEffect(() => {
     const loadReleaseData = async () => {
@@ -277,6 +297,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
                 style={{ color: 'inherit' }}
                 onClick={(e) => {
                   e.stopPropagation()
+                  trackDownloadClick(detectedDownload.platform, detectedDownload.filename, 'span')
                   // Allow the default link behavior
                 }}
               >
@@ -337,6 +358,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
                   className="btn btn-sm btn-primary d-flex align-items-center gap-2"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackDownloadClick(detectedDownload.platform, detectedDownload.filename, 'compact')}
                 >
                   <i className="far fa-desktop"></i>
                   <span>
@@ -379,6 +401,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
                   className="btn btn-sm btn-primary d-flex align-items-center gap-2"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackDownloadClick(undefined, undefined, 'compact-fallback')}
                 >
                   <i className="far fa-desktop"></i>
                   <span>
@@ -433,6 +456,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
                   className="btn btn-primary d-flex align-items-center gap-2"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackDownloadClick(detectedDownload.platform, detectedDownload.filename, 'full')}
                 >
                   <i className={getPlatformIcon(detectedDownload.platform)}></i>
                   <span>
@@ -471,6 +495,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ className = ''
                 className="btn btn-primary d-flex align-items-center gap-2"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackDownloadClick(undefined, undefined, 'full-fallback')}
               >
                 <i className="fas fa-external-link-alt"></i>
                 <span>

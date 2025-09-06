@@ -19,11 +19,14 @@ import { DesktopDownload } from '@remix-ui/desktop-download'
 function MyComponent() {
   return (
     <div>
-      {/* Compact layout (default) */}
-      <DesktopDownload />
+      {/* Compact layout with tracking */}
+      <DesktopDownload trackingContext="navbar" />
       
       {/* Full layout */}
-      <DesktopDownload compact={false} />
+      <DesktopDownload compact={false} trackingContext="home" />
+      
+      {/* Span variant for dropdowns */}
+      <DesktopDownload variant="span" trackingContext="dropdown" />
     </div>
   )
 }
@@ -63,10 +66,29 @@ Perfect for dropdown items or anywhere you need a simple link without button sty
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | `''` | Additional CSS classes to apply to the component |
-| `compact` | `boolean` | `true` | Whether to use compact single-line layout or full multi-line layout |
-| `variant` | `'button' \| 'span'` | `'button'` | Whether to render as a button or as a simple span/link |
-| `style` | `React.CSSProperties` | `{}` | Inline styles to apply to the root component |
+| `className` | `string` | `''` | Additional CSS classes |
+| `compact` | `boolean` | `true` | Use compact layout |
+| `variant` | `'button' \| 'span'` | `'button'` | Display variant |
+| `style` | `CSSProperties` | `{}` | Inline styles |
+| `trackingContext` | `string` | `'unknown'` | Context for Matomo analytics (e.g., 'hometab', 'dropdown', 'navbar') |
+
+## Analytics Tracking
+
+The component includes automatic Matomo analytics tracking for all download interactions. Set the `trackingContext` prop to identify where the component is used:
+
+```tsx
+<DesktopDownload trackingContext="hometab" />
+```
+
+**Tracking Events:**
+- Category: `desktopDownload`
+- Action: `{context}-{variant}` (e.g., `hometab-compact`, `dropdown-span`)
+- Name: `{platform}-{filename}` or `releases-page` for fallbacks
+
+**Examples:**
+- `['trackEvent', 'desktopDownload', 'hometab-compact', 'linux-remix-desktop_1.1.0_amd64.deb']`
+- `['trackEvent', 'desktopDownload', 'dropdown-span', 'windows-remix-desktop-1.1.0-setup.exe']`
+- `['trackEvent', 'desktopDownload', 'navbar-full-fallback', 'releases-page']`
 
 ## Platform Support
 
