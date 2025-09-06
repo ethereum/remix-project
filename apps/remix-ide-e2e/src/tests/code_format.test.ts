@@ -80,10 +80,8 @@ proposalNames.push(bytes32("candidate1"));
 }`
 
 const formattedContract = `pragma solidity >=0.4.22 <0.9.0;
-
 contract unfomattedContract {
     bytes32[] proposalNames;
-
     function beforeAll() public {
         proposalNames.push(bytes32("candidate1"));
         ballotToTest = new Ballot(proposalNames);
@@ -91,10 +89,8 @@ contract unfomattedContract {
 }`
 
 const formattedWithTabWidth2 = `pragma solidity >=0.4.22 <0.9.0;
-
 contract unfomattedContract {
   bytes32[] proposalNames;
-
   function beforeAll() public {
     proposalNames.push(bytes32("candidate1"));
     ballotToTest = new Ballot(proposalNames);

@@ -1,7 +1,6 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import { Options } from 'prettier';
-import sol from './code-format/index'
+import { Options } from 'prettier'
 import path from 'path'
 import yaml from 'js-yaml'
 import toml from 'toml'
@@ -82,6 +81,7 @@ export class CodeFormat extends Plugin {
       this.babel = await import('prettier/parser-babel')
       this.espree = await import('prettier/parser-espree')
       this.yml = await import('prettier/parser-yaml')
+      this.sol = (await import('prettier-plugin-solidity')).default
     }
 
     try {
@@ -92,7 +92,7 @@ export class CodeFormat extends Plugin {
       }
       switch (path.extname(file)) {
       case '.sol':
-        parserName = 'solidity-parse'
+        parserName = 'slang'
         break
       case '.ts':
         parserName = 'typescript'
@@ -231,7 +231,7 @@ export class CodeFormat extends Plugin {
             }
           }
         })
-        const validParsers = ['typescript', 'babel', 'espree', 'solidity-parse', 'json', 'yaml', 'solidity-parse']
+        const validParsers = ['typescript', 'babel', 'espree', 'json', 'yaml', 'slang']
         if (override && override.options && override.options.parser) {
           if (validParsers.includes(override.options.parser)) {
             parserName = override.options.parser
@@ -249,8 +249,8 @@ export class CodeFormat extends Plugin {
         }
       }
 
-      const result = this.prettier.format(content, {
-        plugins: [sol as any, this.ts, this.babel, this.espree, this.yml],
+      const result = await this.prettier.format(content, {
+        plugins: [this.sol, this.ts, this.babel, this.espree, this.yml],
         parser: parserName,
         ...options
       })
@@ -260,6 +260,7 @@ export class CodeFormat extends Plugin {
       return result
     } catch (e) {
       // do nothing
+      console.error(e)
     }
   }
 

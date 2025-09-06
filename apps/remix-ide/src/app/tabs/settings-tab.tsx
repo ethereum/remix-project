@@ -66,7 +66,7 @@ export default class SettingsTab extends ViewPlugin {
 
   render() {
     return (
-      <div id="settingsTab" className="bg-light">
+      <div id="settingsTab" className="bg-light overflow-hidden">
         <PluginViewWrapper plugin={this} />
       </div>
     )
