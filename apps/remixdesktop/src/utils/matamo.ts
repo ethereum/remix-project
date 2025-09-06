@@ -18,7 +18,7 @@ export function trackEvent(category: string, action: string, name: string, value
     console.log('trackEvent', category, action, name, value, ua, new_visit);
 
     const params = new URLSearchParams({
-      idsite: '35',
+      idsite: '4',
       rec: '1',
       new_visit: new_visit ? new_visit.toString() : '0',
       e_c: category,
@@ -36,7 +36,7 @@ export function trackEvent(category: string, action: string, name: string, value
 
     //console.log('Matomo tracking params:', params.toString());
 
-    fetch(`https://ethereumfoundation.matomo.cloud/matomo.php?${params.toString()}`, {
+    fetch(`https://matomo.remix.live/matomo/matomo.php?${params.toString()}`, {
       method: 'GET'
     }).then(async res => {
       if (res.ok) {
