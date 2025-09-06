@@ -7,7 +7,13 @@
 }
 
 .desktop-download.compact .btn {
-  white-space: nowrap;
+  white-space: normal; /* Allow text wrapping */
+  text-align: center;
+  line-height: 1.3;
+  min-height: 2.5rem; /* Ensure consistent button height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .desktop-download.compact .text-muted {
@@ -39,6 +45,9 @@
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s ease;
+  white-space: normal; /* Allow text wrapping on all buttons */
+  text-align: center;
+  line-height: 1.3;
 }
 
 .desktop-download .btn:hover {
