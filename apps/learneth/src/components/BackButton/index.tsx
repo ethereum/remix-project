@@ -1,96 +1,78 @@
-import React, {useState} from 'react'
-import {Link, useLocation, useNavigate} from 'react-router-dom'
-import {Button, Modal } from 'react-bootstrap'
-import { CustomTooltip } from "@remix-ui/helper"
+import React from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Dropdown } from 'react-bootstrap'
 import './index.scss'
 
-function BackButton({entity}: any) {
-  const navigate = useNavigate()
+function BackButton({ entity }: any) {
   const location = useLocation()
-  const [show, setShow] = useState(false)
   const isDetailPage = location.pathname === '/detail'
+  
   const queryParams = new URLSearchParams(location.search)
   const stepId = Number(queryParams.get('stepId'))
-  const nextStep = entity && entity.steps[stepId + 1]
-  const previousStep = entity && entity.steps[stepId - 1]
+  const currentStep = entity?.steps?.[stepId]
+
+  const tutorialId = entity?.id || queryParams.get('id')
 
   return (
-    <nav className="navbar navbar-light bg-light d-flex justify-content-between pt-1 pb-1 ps-1">
-      <ul className="d-flex nav me-auto">
-        <li className="nav-item">
-          <div
-            className="btn back"
-            onClick={() => {
-              setShow(true)
-            }}
-            role="button"
-          >
-            <CustomTooltip
-              placement={"right"}
-              tooltipId="learnethHomeIconTooltip"
-              tooltipText='Leave tutorial'
-            >
-              <i className="fas fa-home ps-1" />
-            </CustomTooltip>
-          </div>
-        </li>
-        {isDetailPage && (
-          <li className="nav-item">
-            <CustomTooltip placement="right" tooltipId="learnethBarsIconTooltip" tooltipText='Tutorial menu'>
-              <Link className="btn" to={`/list?id=${entity.id}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'back_to_menu_step', entity && entity.name])}>
-                <i className="fas fa-bars" />
-              </Link>
-            </CustomTooltip>
-          </li>
+    <div className="learneth-top-nav p-2">
+      <div className="d-flex justify-content-between align-items-center">
+        <Link to="/home" className="btn nav-button d-flex align-items-center">
+          <i className="fas fa-chevron-left"></i>
+          <span>Tutorials list</span>
+        </Link>
+
+        {isDetailPage && entity?.steps && (
+          <Dropdown>
+            <Dropdown.Toggle className="btn nav-button d-flex align-items-center" id="syllabus-dropdown">
+              <i className="fas fa-list-ul me-2"></i>
+              <span>Syllabus</span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="syllabus-dropdown-menu">
+              <div className="px-3 pt-2 pb-1 d-flex justify-content-between">
+                <h6 className="fw-bold mb-0">Syllabus</h6>
+                <span className="small text-muted">{entity.steps.length} chapters</span>
+              </div>
+              <Dropdown.Divider />
+              {entity.steps.map((step: any, index: number) => (
+                <Dropdown.Item as={Link} to={`/detail?id=${entity.id}&stepId=${index}`} key={index} className="syllabus-item">
+                  <i className="far fa-file-alt me-2"></i>
+                  <span>{step.name}</span>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
         )}
-      </ul>
-      {isDetailPage && (
-        <form className="form d-flex">
-          {stepId > 0 && (
-            <Link to={`/detail?id=${entity.id}&stepId=${stepId - 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'previous_step', `${entity.name}/${previousStep && previousStep.name}`])}>
-              <i className="fas fa-chevron-left pe-1" />
+      </div>
+
+      {isDetailPage && currentStep && (
+        <>
+          <hr className="nav-divider my-2" />
+          <div className="chapter-nav d-flex justify-content-between align-items-center">
+            <Link 
+              to={`/detail?id=${entity.id}&stepId=${stepId - 1}`} 
+              className={`btn chapter-arrow ${stepId === 0 ? 'disabled' : ''}`}
+            >
+              <i className="fas fa-chevron-left"></i>
             </Link>
-          )}
-          {stepId + 1}/{entity && <div className="">{entity.steps.length}</div>}
-          {stepId < entity.steps.length - 1 && (
-            <Link to={`/detail?id=${entity.id}&stepId=${stepId + 1}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'next_step', `${entity.name}/${nextStep && nextStep.name}`])} >
-              <i className="fas fa-chevron-right ps-1 pe-1" />
+
+            <div className="text-center">
+              <div className="chapter-title">{currentStep.name}</div>
+              <div className="chapter-pagination small text-muted">
+                {stepId + 1} / {entity.steps.length}
+              </div>
+            </div>
+
+            <Link 
+              to={`/detail?id=${entity.id}&stepId=${stepId + 1}`} 
+              className={`btn chapter-arrow ${stepId >= entity.steps.length - 1 ? 'disabled' : ''}`}
+            >
+              <i className="fas fa-chevron-right"></i>
             </Link>
-          )}
-        </form>
+          </div>
+        </>
       )}
-      <Modal
-        show={show}
-        onHide={() => {
-          setShow(false)
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Leave tutorial</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to leave the tutorial?</Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShow(false)
-            }}
-          >
-            No
-          </Button>
-          <Button
-            variant="success"
-            onClick={() => {
-              setShow(false)
-              navigate('/home');
-              (window as any)._paq.push(['trackEvent', 'learneth', 'leave_tutorial', entity && entity.name])
-            }}
-          >
-            Yes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </nav>
+    </div>
   )
 }
 
