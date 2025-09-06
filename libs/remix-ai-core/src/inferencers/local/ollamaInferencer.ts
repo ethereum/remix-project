@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 import { RemoteInferencer } from "../remote/remoteInference";
 
-const _paq = (window._paq = window._paq || [])
+const _paq = (typeof window !== 'undefined' && (window as any)._paq) ? (window as any)._paq : []
 const defaultErrorMessage = `Unable to get a response from Ollama server`;
 
 export class OllamaInferencer extends RemoteInferencer implements ICompletions, IGeneration {
