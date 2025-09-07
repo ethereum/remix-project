@@ -186,7 +186,8 @@ export default class TabProxy extends Plugin {
             this.call('manager', 'deactivatePlugin', name)
           },
           icon,
-          description
+          description,
+          show
         )
         show && this.switchTab(name)
       }
@@ -210,6 +211,10 @@ export default class TabProxy extends Plugin {
 
   focus (name) {
     this.emit('switchApp', name)
+    const tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+    if (tabIndex !== -1) {
+      this.loadedTabs[tabIndex].show = true
+    }
     this.tabsApi.activateTab(name)
   }
 
@@ -259,7 +264,7 @@ export default class TabProxy extends Plugin {
    * @param {string} description
    * @returns
    */
-  addTab (name, title, switchTo, close, icon, description = '') {
+  addTab (name, title, switchTo, close, icon, description = '', show = true) {
     if (this._handlers[name]) return this.renderComponent()
 
     if ((name.endsWith('.vy') && icon === undefined) || title.includes('Vyper')) {
@@ -290,7 +295,8 @@ export default class TabProxy extends Plugin {
             title,
             icon,
             tooltip: name,
-            iconClass: getPathIcon(name)
+            iconClass: getPathIcon(name),
+            show
           })
           formatPath.shift()
           if (formatPath.length > 0) {
@@ -307,7 +313,8 @@ export default class TabProxy extends Plugin {
                 title: duplicateTabTitle,
                 icon,
                 tooltip: duplicateTabTooltip || duplicateTabTitle,
-                iconClass: getPathIcon(duplicateTabName)
+                iconClass: getPathIcon(duplicateTabName),
+                show
               }
             }
           }
@@ -321,7 +328,8 @@ export default class TabProxy extends Plugin {
         title,
         icon,
         tooltip: description || title,
-        iconClass: getPathIcon(name)
+        iconClass: getPathIcon(name),
+        show
       })
     }
 
@@ -335,15 +343,27 @@ export default class TabProxy extends Plugin {
     if(!this.loadedTabs.find(tab => tab.name === name)) return // prevent removing tab that doesn't exist
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
       if (!previous && tab.name === name) {
-        if(index - 1  >= 0 && this.loadedTabs[index - 1])
-          previous = this.loadedTabs[index - 1]
-        else if (index + 1 && this.loadedTabs[index + 1])
-          previous = this.loadedTabs[index + 1]
+        previous = this.getPreviousVisibleTab(index)
+        if (!previous) previous = this.getNextVisibleTab(index)
       }
       return tab.name !== name
     })
     this.renderComponent()
     if (previous) this.switchTab(previous.name)
+  }
+
+  getPreviousVisibleTab (index) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (this.loadedTabs[i].show) return this.loadedTabs[i]
+    }
+    return null
+  }
+
+  getNextVisibleTab (index) {
+    for (let i = index + 1; i < this.loadedTabs.length; i++) {
+      if (this.loadedTabs[i].show) return this.loadedTabs[i]
+    }
+    return null
   }
 
   addHandler (type, fn) {
