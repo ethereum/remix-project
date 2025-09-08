@@ -24,7 +24,6 @@
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-secondary);
   margin-bottom: 0.3rem;
 }
 
@@ -41,6 +40,6 @@
 }
 
 .hr-themed {
-  border-color: var(--secondary);
+  border-color: var(--bs-secondary);
   opacity: .25;
 }

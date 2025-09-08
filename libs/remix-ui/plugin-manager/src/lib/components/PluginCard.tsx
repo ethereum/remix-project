@@ -36,12 +36,11 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
         <div className="toggle-container">
           <div
             data-id={`pluginManagerComponent${isActive ? 'Deactivate' : 'Activate'}Button${profile.name}`}
-            onClick={() => togglePlugin(profile.name)}
             aria-label={`${isActive ? 'Deactivate' : 'Activate'} ${profile.displayName || profile.name}`}>
             <ToggleSwitch
               id={`toggleSwitch-${profile.name}`}
               isOn={isActive}
-              onClick={()=>{}}
+              onClick={() => togglePlugin(profile.name)}
             />
           </div>
         </div>

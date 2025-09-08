@@ -45,7 +45,7 @@ a:hover {
   }
   
   &:hover {
-    border-color: var(--primary);
+    border-color: var(--bs-primary);
   }
 }
 
@@ -57,7 +57,7 @@ a:hover {
   &:hover, &:active, &:focus {
     background-color: var(--bs-body-bg) !important;
     color: var(--bs-body-color) !important;
-    border-color: var(--primary) !important;
+    border-color: var(--bs-primary) !important;
     box-shadow: none !important;
   }
 
@@ -132,7 +132,7 @@ a:hover {
       bottom: 5px;
       left: 5px;
       width: 3px;
-      background-color: var(--primary);
+      background-color: var(--bs-primary);
       border-radius: 3px;
     }
   }
