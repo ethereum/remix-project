@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const _paq = (window._paq = window._paq || [])
+const _paq = (typeof window !== 'undefined' && (window as any)._paq) ? (window as any)._paq : []
 
 // default Ollama ports to check (11434 is the legacy/standard port)
 const OLLAMA_PORTS = [11434, 11435, 11436];
