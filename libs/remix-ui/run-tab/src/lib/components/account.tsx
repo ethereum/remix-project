@@ -332,7 +332,7 @@ export function AccountUI(props: AccountProps) {
         <FormattedMessage id="udapp.enterAMessageToSign" />
         <textarea
           id="prompt_text"
-          className="bg-light text-dark form-control"
+          className="bg-light form-control"
           data-id="signMessageTextarea"
           style={{ width: '100%' }}
           rows={4}
