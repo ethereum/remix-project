@@ -38,7 +38,8 @@ export class BlockscoutVerifier extends EtherscanVerifier {
     const result: SourceFile[] = []
     const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
-    const targetFilePath = `${filePrefix}/${blockscoutSource.FileName.startsWith('..') ? '' : blockscoutSource.FileName}`
+    let targetFilePath
+    if (!blockscoutSource.FileName.startsWith('..')) targetFilePath = `${filePrefix}/${blockscoutSource.FileName}`
     result.push({ content: blockscoutSource.SourceCode, path: targetFilePath })
 
     for (const additional of blockscoutSource.AdditionalSources ?? []) {
