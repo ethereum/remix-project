@@ -14,7 +14,7 @@ module.exports = {
   beforeEach: function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('filePanel')
   },
- 'Should load LearnEth plugin and display tutorials #group1 #pr': function (browser: NightwatchBrowser) {
+ 'Should load LearnEth plugin and display tutorials #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonLearnEth"]')
@@ -27,7 +27,7 @@ module.exports = {
       .frameParent()
       .frameParent()
   },
-  'Should filter tutorials by using search #group1 #pr': function (browser: NightwatchBrowser) {
+  'Should filter tutorials by using search #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('LearnEth')
       .waitForElementVisible('iframe[id="plugin-LearnEth"]', 10000)
