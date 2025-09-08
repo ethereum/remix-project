@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertModal, AppModal, AppState } from '../interface'
+import { AlertModal, AppModal, AppState, TemplateExplorerModal } from '../interface'
 import { ModalInitialState } from '../state/modals'
 import { AppAction } from '../actions/app'
 
@@ -26,6 +26,7 @@ export interface dispatchModalInterface {
   modal: (data: AppModal) => void
   toast: (message: string | JSX.Element) => void
   alert: (data: AlertModal) => void
+  templateExplorer: (data: TemplateExplorerModal) => void
   handleHideModal: () => void
   handleToaster: () => void
 }
@@ -34,6 +35,7 @@ export const dispatchModalContext = React.createContext<dispatchModalInterface>(
   modal: (data: AppModal) => {},
   toast: (message: string | JSX.Element) => {},
   alert: (data: AlertModal) => {},
+  templateExplorer: (data: TemplateExplorerModal) => {},
   handleHideModal: () => {},
   handleToaster: () => {}
 })

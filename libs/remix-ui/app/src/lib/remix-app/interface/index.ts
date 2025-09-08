@@ -1,5 +1,7 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { branch, desktopConnection, GitHubUser } from '@remix-api'
 import { AppModalCancelTypes, ModalTypes } from '../types'
+import { Template, TemplateGroup, TemplateOption } from 'libs/remix-ui/workspace/src/lib/utils/constants'
 
 export type ValidationResult = {
     valid: boolean,
@@ -47,6 +49,39 @@ export interface forceChoiceModal {
   id: string
   title?: string,
   message: string | JSX.Element,
+}
+
+export interface TemplateExplorerModal {
+  id: string
+  title?: string,
+  message: JSX.Element,
+  workspaceName: string,
+  modifyWorkspaceName: boolean,
+  workspaceDescription: string,
+  workspaceTemplateOptions: TemplateOption,
+  workspaceTemplateGroup: TemplateGroup,
+  workspaceTemplate: Template,
+  timestamp?: number
+  hide?: boolean
+  validationFn?: (value: string) => ValidationResult
+  // eslint-disable-next-line no-undef
+  okLabel: string | JSX.Element
+  okFn?: (value?:any) => void
+  cancelLabel?: string | JSX.Element
+  cancelFn?: (reason?: AppModalCancelTypes) => void,
+  modalType?: ModalTypes,
+  modalParentClass?: string
+  defaultValue?: string
+  hideFn?: () => void,
+  resolve?: (value?:any) => void,
+  next?: () => void,
+  data?: any,
+  showCancelIcon?: boolean,
+  preventBlur?: boolean
+  placeholderText?: string
+  searchTerm?: string
+  workspaceTags?: string[]
+  modifyWorkspace?: boolean
 }
 
 export interface AppState {

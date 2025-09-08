@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react'
 import { useIntl, IntlShape } from 'react-intl'
 import { modalActionTypes } from '../actions/modals'
-import { AlertModal, AppModal } from '../interface'
+import { AlertModal, AppModal, TemplateExplorerModal } from '../interface'
 import { modalReducer } from '../reducer/modals'
 import { ModalInitialState } from '../state/modals'
 import { ModalTypes } from '../types'
@@ -51,6 +51,38 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
     })
   }
 
+  const templateExplorer = (modalData: TemplateExplorerModal) => {
+    dispatch({
+      type: modalActionTypes.setTemplateExplorer,
+      payload: {
+        id: modalData.id,
+        title: modalData.title,
+        message: modalData.message,
+        okLabel: modalData.okLabel,
+        okFn: modalData.okFn,
+        cancelLabel: modalData.cancelLabel,
+        cancelFn: modalData.cancelFn,
+        timestamp: modalData.timestamp,
+        hide: modalData.hide,
+        validationFn: modalData.validationFn,
+        resolve: modalData.resolve,
+        next: modalData.next,
+        data: modalData.data,
+        showCancelIcon: modalData.showCancelIcon,
+        preventBlur: modalData.preventBlur,
+        placeholderText: modalData.placeholderText,
+        workspaceTemplateGroup: modalData.workspaceTemplateGroup,
+        workspaceTemplate: modalData.workspaceTemplate,
+        workspaceTemplateOptions: modalData.workspaceTemplateOptions,
+        workspaceName: modalData.workspaceName,
+        modifyWorkspaceName: modalData.modifyWorkspaceName,
+        workspaceDescription: modalData.workspaceDescription,
+        workspaceTags: modalData.workspaceTags,
+        modifyWorkspace: modalData.modifyWorkspace
+      }
+    })
+  }
+
   const alert = (modalData: AlertModal) => {
     return modal({
       id: modalData.id,
@@ -85,7 +117,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
   }
 
   return (
-    <dispatchModalContext.Provider value={{ modal, toast, alert, handleHideModal, handleToaster }}>
+    <dispatchModalContext.Provider value={{ modal, toast, alert, handleHideModal, handleToaster, templateExplorer }}>
       <modalContext.Provider value={{ modals, toasters, focusModal, focusToaster }}>{children}</modalContext.Provider>
     </dispatchModalContext.Provider>
   )

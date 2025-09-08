@@ -1,8 +1,10 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { Plugin } from '@remixproject/engine'
 import { LibraryProfile, MethodApi, StatusEvents } from '@remixproject/plugin-utils'
 import { AppModal } from '@remix-ui/app'
 import { AlertModal } from '@remix-ui/app'
 import { dispatchModalInterface } from '@remix-ui/app'
+import { TemplateExplorerModal } from 'libs/remix-ui/app/src/lib/remix-app/interface'
 
 interface INotificationApi {
   events: StatusEvents
@@ -10,6 +12,7 @@ interface INotificationApi {
     modal: (args: AppModal) => void
     alert: (args: AlertModal) => void
     toast: (message: string) => void
+    templateExplorer: (args: TemplateExplorerModal) => void
   }
 }
 
@@ -17,7 +20,7 @@ const profile: LibraryProfile<INotificationApi> = {
   name: 'notification',
   displayName: 'Notification',
   description: 'Displays notifications',
-  methods: ['modal', 'alert', 'toast']
+  methods: ['modal', 'alert', 'toast', 'templateExplorer']
 }
 
 export class NotificationPlugin extends Plugin implements MethodApi<INotificationApi> {
@@ -32,6 +35,10 @@ export class NotificationPlugin extends Plugin implements MethodApi<INotificatio
 
   async modal(args: AppModal) {
     return this.dispatcher.modal(args)
+  }
+
+  async templateExplorer(args: TemplateExplorerModal) {
+    return this.dispatcher.templateExplorer(args)
   }
 
   async alert(args: AlertModal) {
