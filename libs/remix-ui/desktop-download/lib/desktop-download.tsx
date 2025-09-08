@@ -282,7 +282,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
     <div className={`desktop-download ${compact ? 'compact' : 'full'} ${variant === 'span' ? 'span-variant' : ''} ${className}`} style={style}>
       {variant === 'span' ? (
         // Span variant - for use in dropdown items
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center">
           {detectedDownload ? (
             <CustomTooltip
               placement="top"
@@ -291,7 +291,7 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
             >
               <a
                 href={detectedDownload.url}
-                className="text-decoration-none d-flex align-items-center gap-2"
+                className="text-decoration-none d-flex align-items-center"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: 'inherit' }}
