@@ -43,6 +43,7 @@ export interface ModalState {
     toasters: {message: (string | JSX.Element), timestamp: number }[],
     focusModal: AppModal,
     focusToaster: {message: (string | JSX.Element), timestamp: number }
+    focusTemplateExplorer: TemplateExplorerModal
 }
 
 export interface forceChoiceModal {

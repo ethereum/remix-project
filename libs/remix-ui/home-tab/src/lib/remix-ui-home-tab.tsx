@@ -77,6 +77,18 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   //   return (<></>)
   // }
 
+  const openTemplateExplorer = async () => {
+    console.log('openTemplateExplorer')
+    await plugin.call('notification', 'templateExplorer', {
+      id: 'templateExplorer',
+      title: 'Explore all templates',
+      message: <div>Explore all templates</div>,
+      okLabel: 'Explore all templates',
+      okFn: () => {}
+    })
+    _paq.push(['trackEvent', 'hometab', 'header', 'Explore all templates'])
+  }
+
   return (
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={state.themeQuality}>
@@ -85,6 +97,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <div className="d-flex w-100 m-3 justify-content-end">
               <button className="btn btn-secondary btn-md me-3" onClick={startLearnEth}><i className="fa-solid fa-book me-1"></i><FormattedMessage id="home.startLearning" /></button>
               <button data-id="landingPageImportFromTemplate" className="btn btn-primary btn-md me-2" onClick={openTemplateSelection}><i className="fa-solid fa-plus me-1"></i><FormattedMessage id="home.createNewWorkspace" /></button>
+              <button className="btn btn-secondary btn-md me-3" onClick={openTemplateExplorer}><i className="fa-solid fa-book me-1"></i>Open Template Explorer</button>
             </div>
             <div className="col-lg-8 col-xl-5 col-sm-12 mb-4">
               <HomeTabTitle />

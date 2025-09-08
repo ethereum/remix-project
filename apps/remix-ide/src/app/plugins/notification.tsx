@@ -38,6 +38,7 @@ export class NotificationPlugin extends Plugin implements MethodApi<INotificatio
   }
 
   async templateExplorer(args: TemplateExplorerModal) {
+    console.log('templateExplorer', args)
     return this.dispatcher.templateExplorer(args)
   }
 

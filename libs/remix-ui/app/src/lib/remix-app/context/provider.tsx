@@ -14,7 +14,7 @@ declare global {
 }
 
 export const ModalProvider = ({ children = [], reducer = modalReducer, initialState = ModalInitialState } = {}) => {
-  const [{ modals, toasters, focusModal, focusToaster }, dispatch] = useReducer(reducer, initialState)
+  const [{ modals, toasters, focusModal, focusToaster, focusTemplateExplorer }, dispatch] = useReducer(reducer, initialState)
 
   const onNextFn = async () => {
     dispatch({
@@ -118,7 +118,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
 
   return (
     <dispatchModalContext.Provider value={{ modal, toast, alert, handleHideModal, handleToaster, templateExplorer }}>
-      <modalContext.Provider value={{ modals, toasters, focusModal, focusToaster }}>{children}</modalContext.Provider>
+      <modalContext.Provider value={{ modals, toasters, focusModal, focusToaster, focusTemplateExplorer }}>{children}</modalContext.Provider>
     </dispatchModalContext.Provider>
   )
 }
@@ -140,4 +140,12 @@ export const useDialogs = () => {
 
 export const useDialogDispatchers = () => {
   return React.useContext(dispatchModalContext)
+}
+
+export function defaultFocusTemplateExplorer () {
+  return (
+    <>
+      <p className="fs-3 text-center">Template Explorer</p>
+    </>
+  )
 }
