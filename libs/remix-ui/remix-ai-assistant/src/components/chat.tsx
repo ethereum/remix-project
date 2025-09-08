@@ -2,16 +2,14 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import copy from "copy-to-clipboard"
 import { ChatMessage, assistantAvatar } from "../lib/types"
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { CustomTooltip } from "@remix-ui/helper"
-
-const DEFAULT_SUGGESTIONS = [
-  'What is a modifier?',
-  'What is a UniSwap hook?',
-  'What is a ZKP?'
-]
+import { 
+  sampleConversationStarters, 
+  type ConversationStarter 
+} from "../lib/conversationStarters"
 
 // ChatHistory component
 export interface ChatHistoryComponentProps {
@@ -22,38 +20,43 @@ export interface ChatHistoryComponentProps {
   historyRef: React.RefObject<HTMLDivElement>
 }
 
-const AiChatIntro = (props) => {
+interface AiChatIntroProps {
+  sendPrompt: (prompt: string) => void
+}
+
+const AiChatIntro: React.FC<AiChatIntroProps> = ({ sendPrompt }) => {
+  const [conversationStarters, setConversationStarters] = useState<ConversationStarter[]>([])
+
+  useEffect(() => {
+    // Sample new conversation starters when component mounts
+    const starters = sampleConversationStarters()
+    setConversationStarters(starters)
+  }, [])
+
+  const refreshStarters = () => {
+    const newStarters = sampleConversationStarters()
+    setConversationStarters(newStarters)
+  }
+
   return (
     <div className="assistant-landing d-flex flex-column mx-1 align-items-center justify-content-center text-center h-100 w-100">
       <img src={assistantAvatar} alt="RemixAI logo" style={{ width: '120px' }} className="mb-3 container-img" />
       <h5 className="mb-2">RemixAI</h5>
       <p className="mb-4" style={{ fontSize: '0.9rem' }}>
-            RemixAI provides you personalized guidance as you build. It can break down concepts,
-            answer questions about blockchain technology and assist you with your smart contracts.
+        RemixAI provides you personalized guidance as you build. It can break down concepts,
+        answer questions about blockchain technology and assist you with your smart contracts.
       </p>
-      <div className="d-flex flex-column" style={{ fontSize: '0.9rem' }}>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`<prompt>: `}</span>
-          <span>ask your question</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/w <prompt>: `}</span>
-          <span>modify your code</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/c <prompt>: `}</span>
-          <span>continue fixing compilation</span></div>
-        <div className="d-flex flex-row align-items-center">
-          <span className="font-italic m-1">{`/g <prompt>: `}</span>
-          <span>generate a new workspace</span></div>
-      </div>
-      <div className="d-flex flex-column mt-3">
-        {DEFAULT_SUGGESTIONS.map((s, index) => (
+
+      {/* Dynamic Conversation Starters */}
+      <div className="d-flex flex-column mt-3" style={{ maxWidth: '400px' }}>
+        {conversationStarters.map((starter, index) => (
           <button
-            key={s}
-            data-id={`remix-ai-assistant-starter-${index}`}
+            key={`${starter.level}-${index}`}
+            data-id={`remix-ai-assistant-starter-${starter.level}-${index}`}
             className="btn btn-secondary mb-2 w-100 text-start"
-            onClick={() => props.sendPrompt(s)}
+            onClick={() => sendPrompt(starter.question)}
           >
-            <i className="fa-kit fa-remixai me-2"></i>{s}
+            {starter.question}
           </button>
         ))}
       </div>
