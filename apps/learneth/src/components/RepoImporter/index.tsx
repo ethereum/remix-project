@@ -107,7 +107,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
                   <Form.Label className="repo-label d-flex align-items-center" htmlFor="name">
                     REPO REFERENCE
                     <CustomTooltip placement="top" tooltipId="learnethQuestionIconTooltip" tooltipText='i.e. username/repository'>
-                      <i className="fas fa-question-circle ms-2" />
+                      <i className="fas fa-question-circle ms-1" />
                     </CustomTooltip>
                   </Form.Label>
                   <Form.Control

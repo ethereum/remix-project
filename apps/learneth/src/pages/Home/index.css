@@ -61,3 +61,6 @@
 #learneth .remixui_pluginSearchInput { 
   height: 38px; 
 }
+#learneth .text-primary {
+  filter: brightness(150%);
+}

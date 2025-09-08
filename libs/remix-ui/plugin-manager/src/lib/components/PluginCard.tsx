@@ -41,6 +41,7 @@ function PluginCard({ profile, isActive, isLoading, togglePlugin }: PluginCardPr
             <ToggleSwitch
               id={`toggleSwitch-${profile.name}`}
               isOn={isActive}
+              onClick={()=>{}}
             />
           </div>
         </div>

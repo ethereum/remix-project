@@ -61,12 +61,14 @@ function HomePage(): JSX.Element {
 
   const allTags = useMemo(() => {
     if (!selectedRepo) return []
-    const set = new Set<string>()
+    const tagSet = new Set<string>()
     Object.values(selectedRepo.entities).forEach((entity: any) => {
       const tags: string[] = entity?.metadata?.data?.tags || []
-      tags.forEach(t => set.add(t))
+      tags.forEach(t => {
+        tagSet.add(t === 'Remix-IDE' ? 'Remix' : t)
+      })
     })
-    return Array.from(set).sort((a, b) => a.localeCompare(b))
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b))
   }, [selectedRepo])
 
   const flatItems = useMemo(() => {
@@ -112,13 +114,17 @@ function HomePage(): JSX.Element {
       list = list.filter(r => set.has(r.levelNum))
     }
     if (selectedTags.length) {
-      list = list.filter(r => r.tags.some(t => selectedTags.includes(t)))
+      const filterTags = new Set(selectedTags)
+      if (filterTags.has('Remix')) {
+        filterTags.add('Remix-IDE')
+      }
+      list = list.filter(r => r.tags.some(t => filterTags.has(t)))
     }
     return list
   }, [flatItems, debouncedSearch, selectedLevels, selectedTags])
 
   return (
-    <div id="learneth" className="App mb-5">
+    <div id="learneth" className="App mb-5 container-fluid">
       <RepoImporter list={list} selectedRepo={selectedRepo || {}} />
       <div className="container-fluid mb-3">
         <hr className="my-3"/>
@@ -161,24 +167,30 @@ function HomePage(): JSX.Element {
 
       {selectedRepo && (
         <div className="container-fluid">
-          {filtered.map((r) => (
-            <article key={r.id} className="card card-hover mb-3 border overflow-hidden">
-              <div className="card-header d-flex justify-content-between align-items-center bg-transparent px-3 py-2">
-                <div className="d-flex align-items-center">
-                  <Antenna level={r.levelNum} />
-                  <span className="small fw-medium text-body-emphasis">{r.levelText}</span>
-
+          {filtered.length > 0 ? (
+            filtered.map((r) => (
+              <article key={r.id} className="card card-hover mb-3 border overflow-hidden">
+                <div className="card-header d-flex justify-content-between align-items-center bg-transparent px-3 py-2">
+                  <div className="d-flex align-items-center">
+                    <Antenna level={r.levelNum} />
+                    <span className="small fw-medium text-body-emphasis">{r.levelText}</span>
+                  </div>
+                  <MetaRight stepsLen={r.stepsLen} duration={r.duration} />
                 </div>
-                <MetaRight stepsLen={r.stepsLen} duration={r.duration} />
-              </div>
-              <div className="card-body">
-                <h5 className="card-title mb-1 title-clamp-2 text-body-emphasis">{r.name}</h5>
-                {!!r.subtitle && <p className="text-body-secondary small mb-2 subtitle-clamp-1 text-body-emphasis">{r.subtitle}</p>}
-                <p className="mt-2 mb-0 text-muted body-clamp-4">{r.preview}</p>
-                <Link to={`/list?id=${r.id}`} className="stretched-link" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', r.name])}/>
-              </div>
-            </article>
-          ))}
+                <div className="card-body">
+                  <h5 className="card-title mb-1 title-clamp-2 text-body-emphasis">{r.name}</h5>
+                  {!!r.subtitle && <p className="text-body-secondary small mb-2 subtitle-clamp-1 text-body-emphasis">{r.subtitle}</p>}
+                  <p className="mt-2 mb-0 text-muted body-clamp-4">{r.preview}</p>
+                  <Link to={`/list?id=${r.id}`} className="stretched-link" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', r.name])}/>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="text-center text-muted mt-5 p-3">
+              <h5 className="fw-bold">No tutorials found</h5>
+              <p className="mb-0">Please try adjusting your search or filter criteria.</p>
+            </div>
+          )}
         </div>
       )}
     </div>

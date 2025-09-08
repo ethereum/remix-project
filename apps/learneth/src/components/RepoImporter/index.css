@@ -29,7 +29,7 @@
 }
 
 .repo-label .fa-question-circle {
-  transform: translateY(-1px);
+  transform: translateY(1px);
 }
 
 .repo-importer-container .dropdown-item {
