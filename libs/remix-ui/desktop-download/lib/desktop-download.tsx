@@ -38,12 +38,12 @@ const GITHUB_API_URL = 'https://api.github.com/repos/remix-project-org/remix-des
 const CACHE_KEY = 'remix-desktop-release-cache'
 const CACHE_DURATION = 30 * 60 * 1000 // 30 minutes in milliseconds
 
-export const DesktopDownload: React.FC<DesktopDownloadProps> = ({ 
-  className = '', 
-  compact = true, 
-  variant = 'button', 
+export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
+  className = '',
+  compact = true,
+  variant = 'button',
   style = {},
-  trackingContext = 'unknown' 
+  trackingContext = 'unknown'
 }) => {
   const [releaseData, setReleaseData] = useState<ReleaseData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -63,13 +63,13 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
     try {
       const cached = localStorage.getItem(CACHE_KEY)
       if (!cached) return null
-      
+
       const { data, timestamp } = JSON.parse(cached)
       if (Date.now() - timestamp > CACHE_DURATION) {
         localStorage.removeItem(CACHE_KEY)
         return null
       }
-      
+
       return data
     } catch {
       localStorage.removeItem(CACHE_KEY)
@@ -103,42 +103,42 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
     let preferredAsset: ReleaseAsset | null = null
 
     if (os === 'windows') {
-      preferredAsset = assets.find(asset => 
-        asset.name.toLowerCase().includes('setup') && 
+      preferredAsset = assets.find(asset =>
+        asset.name.toLowerCase().includes('setup') &&
         asset.name.toLowerCase().includes('.exe')
       ) || null
     } else if (os === 'macos') {
       // Check if user is on Apple Silicon (M1/M2/etc.)
-      const isAppleSilicon = navigator.userAgent.includes('Macintosh') && 
-        (navigator.userAgent.includes('ARM') || 
+      const isAppleSilicon = navigator.userAgent.includes('Macintosh') &&
+        (navigator.userAgent.includes('ARM') ||
          /Mac OS X 10_1[5-9]|Mac OS X 1[1-9]|macOS/.test(navigator.userAgent))
-      
+
       // Prefer ARM64 version for newer Macs, Intel version for older ones
       if (isAppleSilicon) {
-        preferredAsset = assets.find(asset => 
-          asset.name.toLowerCase().includes('.dmg') && 
+        preferredAsset = assets.find(asset =>
+          asset.name.toLowerCase().includes('.dmg') &&
           asset.name.toLowerCase().includes('arm64')
         ) || null
       }
-      
+
       // Fallback to any dmg if ARM64 not found or not Apple Silicon
       if (!preferredAsset) {
-        preferredAsset = assets.find(asset => 
-          asset.name.toLowerCase().includes('.dmg') && 
+        preferredAsset = assets.find(asset =>
+          asset.name.toLowerCase().includes('.dmg') &&
           !asset.name.toLowerCase().includes('arm64')
-        ) || assets.find(asset => 
+        ) || assets.find(asset =>
           asset.name.toLowerCase().includes('.dmg')
         ) || null
       }
     } else if (os === 'linux') {
       // Prefer .deb for most Linux distributions
-      preferredAsset = assets.find(asset => 
+      preferredAsset = assets.find(asset =>
         asset.name.toLowerCase().includes('.deb')
       ) || null
-      
+
       // Fallback to AppImage if no .deb found
       if (!preferredAsset) {
-        preferredAsset = assets.find(asset => 
+        preferredAsset = assets.find(asset =>
           asset.name.toLowerCase().includes('.appimage')
         ) || null
       }
@@ -173,29 +173,29 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
   // Get platform-specific icon
   const getPlatformIcon = (platform: string): string => {
     switch (platform) {
-      case 'windows': return 'fab fa-windows'
-      case 'macos': return 'fab fa-apple'
-      case 'linux': return 'fab fa-linux'
-      default: return 'fas fa-desktop'
+    case 'windows': return 'fab fa-windows'
+    case 'macos': return 'fab fa-apple'
+    case 'linux': return 'fab fa-linux'
+    default: return 'fas fa-desktop'
     }
   }
 
   // Get platform display name
   const getPlatformName = (platform: string): string => {
     switch (platform) {
-      case 'windows': return 'Windows'
-      case 'macos': return 'macOS'
-      case 'linux': return 'Linux'
-      default: return platform.charAt(0).toUpperCase() + platform.slice(1)
+    case 'windows': return 'Windows'
+    case 'macos': return 'macOS'
+    case 'linux': return 'Linux'
+    default: return platform.charAt(0).toUpperCase() + platform.slice(1)
     }
   }
 
   // Track download click events
   const trackDownloadClick = (platform?: string, filename?: string, variant?: string) => {
     const trackingData = [
-      'trackEvent', 
-      'desktopDownload', 
-      `${trackingContext}-${variant || 'button'}`, 
+      'trackEvent',
+      'desktopDownload',
+      `${trackingContext}-${variant || 'button'}`,
       platform ? `${platform}-${filename}` : 'releases-page'
     ]
     _paq.push(trackingData)
@@ -257,14 +257,14 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
     return (
       <div className={`text-muted ${className}`}>
         <small>
-          <FormattedMessage 
-            id="desktopDownload.error" 
+          <FormattedMessage
+            id="desktopDownload.error"
             defaultMessage="Unable to load desktop app. Check the {link} for downloads."
             values={{
               link: (
-                <a 
-                  href="https://github.com/remix-project-org/remix-desktop/releases" 
-                  target="_blank" 
+                <a
+                  href="https://github.com/remix-project-org/remix-desktop/releases"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-decoration-none"
                 >
@@ -303,10 +303,10 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
               >
                 <i className={getPlatformIcon(detectedDownload.platform)}></i>
                 <span>
-                  <FormattedMessage 
-                    id="desktopDownload.downloadSpan" 
+                  <FormattedMessage
+                    id="desktopDownload.downloadSpan"
                     defaultMessage="Download Remix Desktop {platform} {version}"
-                    values={{ 
+                    values={{
                       platform: getPlatformName(detectedDownload.platform),
                       version: releaseData.tag_name
                     }}
@@ -333,8 +333,8 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
               >
                 <i className="far fa-desktop"></i>
                 <span>
-                  <FormattedMessage 
-                    id="desktopDownload.downloadSpanGeneric" 
+                  <FormattedMessage
+                    id="desktopDownload.downloadSpanGeneric"
                     defaultMessage="Download Remix Desktop {version}"
                     values={{ version: releaseData.tag_name }}
                   />
@@ -362,10 +362,10 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                 >
                   <i className={getPlatformIcon(detectedDownload.platform)}></i>
                   <span>
-                    <FormattedMessage 
-                      id="desktopDownload.downloadCompactFull" 
+                    <FormattedMessage
+                      id="desktopDownload.downloadCompactFull"
                       defaultMessage="Download Remix Desktop {platform} {version}"
-                      values={{ 
+                      values={{
                         platform: getPlatformName(detectedDownload.platform),
                         version: releaseData.tag_name
                       }}
@@ -375,14 +375,14 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
               </CustomTooltip>
               <div className="text-muted">
                 <small>
-                  <a 
-                    href={releaseData.html_url} 
-                    target="_blank" 
+                  <a
+                    href={releaseData.html_url}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-decoration-none text-muted"
                   >
-                    <FormattedMessage 
-                      id="desktopDownload.otherVersions" 
+                    <FormattedMessage
+                      id="desktopDownload.otherVersions"
                       defaultMessage="Other versions and platforms"
                     />
                   </a>
@@ -405,8 +405,8 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                 >
                   <i className="far fa-desktop"></i>
                   <span>
-                    <FormattedMessage 
-                      id="desktopDownload.downloadCompactGeneric" 
+                    <FormattedMessage
+                      id="desktopDownload.downloadCompactGeneric"
                       defaultMessage="Download Remix Desktop {version}"
                       values={{ version: releaseData.tag_name }}
                     />
@@ -415,8 +415,8 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
               </CustomTooltip>
               <div className="text-muted">
                 <small>
-                  <FormattedMessage 
-                    id="desktopDownload.noAutoDetect" 
+                  <FormattedMessage
+                    id="desktopDownload.noAutoDetect"
                     defaultMessage="Available for Windows, macOS, and Linux"
                   />
                 </small>
@@ -433,11 +433,11 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
             </h5>
             <span className="badge bg-primary">{releaseData.tag_name}</span>
           </div>
-          
+
           <div className="text-muted mb-2">
             <small>
-              <FormattedMessage 
-                id="desktopDownload.releaseDate" 
+              <FormattedMessage
+                id="desktopDownload.releaseDate"
                 defaultMessage="Released {date}"
                 values={{ date: formatDate(releaseData.published_at) }}
               />
@@ -460,28 +460,28 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                 >
                   <i className={getPlatformIcon(detectedDownload.platform)}></i>
                   <span>
-                    <FormattedMessage 
-                      id="desktopDownload.downloadButton" 
+                    <FormattedMessage
+                      id="desktopDownload.downloadButton"
                       defaultMessage="Download for {platform}"
-                      values={{ 
+                      values={{
                         platform: getPlatformName(detectedDownload.platform)
                       }}
                     />
                   </span>
                 </a>
               </CustomTooltip>
-              
+
               <div className="text-muted">
                 <small>
                   {formatSize(detectedDownload.size)} • {' '}
-                  <a 
-                    href={releaseData.html_url} 
-                    target="_blank" 
+                  <a
+                    href={releaseData.html_url}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-decoration-none text-muted"
                   >
-                    <FormattedMessage 
-                      id="desktopDownload.otherVersions" 
+                    <FormattedMessage
+                      id="desktopDownload.otherVersions"
                       defaultMessage="Other versions and platforms"
                     />
                   </a>
@@ -502,11 +502,11 @@ export const DesktopDownload: React.FC<DesktopDownloadProps> = ({
                   <FormattedMessage id="desktopDownload.viewReleases" defaultMessage="View Downloads" />
                 </span>
               </a>
-              
+
               <div className="text-muted">
                 <small>
-                  <FormattedMessage 
-                    id="desktopDownload.noAutoDetect" 
+                  <FormattedMessage
+                    id="desktopDownload.noAutoDetect"
                     defaultMessage="Available for Windows, macOS, and Linux"
                   />
                 </small>
