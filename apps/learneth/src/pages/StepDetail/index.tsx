@@ -108,90 +108,92 @@ function StepDetailPage() {
       </div>
       {clonedStep.test?.content ? (
         <>
-          <nav className="nav nav-pills nav-fill">
-            {errorLoadingFile ? (
-              <button
-                className="nav-item rounded-0 nav-link btn btn-warning test"
-                onClick={() => {
-                  dispatch({
-                    type: 'remixide/displayFile',
-                    payload: clonedStep,
-                  })
-                }}
-              >
-                Load the file
-              </button>
-            ) : (
-              <>
-                {!errorLoadingFile ? (
-                  <>
-                    <button
-                      className="nav-item rounded-0 nav-link btn btn-info test"
-                      onClick={() => {
-                        dispatch({
-                          type: 'remixide/testStep',
-                          payload: clonedStep,
-                        })
-                      }}
-                    >
-                      Check Answer
-                    </button>
-                    {clonedStep.answer?.content && (
+          <div className="mt-3 px-2">
+            <nav className="nav nav-pills nav-fill">
+              {errorLoadingFile ? (
+                <button
+                  className="nav-item rounded-0 nav-link btn btn-warning test"
+                  onClick={() => {
+                    dispatch({
+                      type: 'remixide/displayFile',
+                      payload: clonedStep,
+                    })
+                  }}
+                >
+                  Load the file
+                </button>
+              ) : (
+                <>
+                  {!errorLoadingFile ? (
+                    <>
                       <button
-                        className="nav-item rounded-0 nav-link btn btn-warning test"
+                        className="nav-item rounded-0 nav-link btn btn-info test"
                         onClick={() => {
                           dispatch({
-                            type: 'remixide/showAnswer',
+                            type: 'remixide/testStep',
                             payload: clonedStep,
                           })
                         }}
                       >
-                        Show answer
+                        Check Answer
                       </button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {!errorLoadingFile && (
-                      <>
+                      {clonedStep.answer?.content && (
                         <button
-                          className="nav-item rounded-0 nav-link btn btn-success test"
+                          className="nav-item rounded-0 nav-link btn btn-warning test"
                           onClick={() => {
-                            navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
+                            dispatch({
+                              type: 'remixide/showAnswer',
+                              payload: clonedStep,
+                            })
                           }}
                         >
-                          Next
+                          Show answer
                         </button>
-                        {clonedStep.answer?.content && (
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {!errorLoadingFile && (
+                        <>
                           <button
-                            className="nav-item rounded-0 nav-link btn btn-warning test"
+                            className="nav-item rounded-0 nav-link btn btn-success test"
                             onClick={() => {
-                              dispatch({
-                                type: 'remixide/showAnswer',
-                                payload: clonedStep,
-                              })
+                              navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
                             }}
                           >
-                            Show answer
+                            Next
                           </button>
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-              </>
+                          {clonedStep.answer?.content && (
+                            <button
+                              className="nav-item rounded-0 nav-link btn btn-warning test"
+                              onClick={() => {
+                                dispatch({
+                                  type: 'remixide/showAnswer',
+                                  payload: clonedStep,
+                                })
+                              }}
+                            >
+                              Show answer
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </nav>
+            {success && (
+              <button
+                className="w-100 rounded-0 nav-item nav-link btn btn-success"
+                onClick={() => {
+                  navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
+                }}
+              >
+                Next
+              </button>
             )}
-          </nav>
-          {success && (
-            <button
-              className="w-100 rounded-0 nav-item nav-link btn btn-success"
-              onClick={() => {
-                navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
-              }}
-            >
-              Next
-            </button>
-          )}
+          </div>
           <div id="errors">
             {success && (
               <div className="alert rounded-0 alert-success mb-0 mt-0" role="alert">
@@ -216,43 +218,45 @@ function StepDetailPage() {
         </>
       ) : (
         <>
-          <nav className="nav nav-pills nav-fill">
-            {!errorLoadingFile && clonedStep.answer?.content && (
+          <div className="mt-3 px-2">
+            <nav className="nav nav-pills nav-fill">
+              {!errorLoadingFile && clonedStep.answer?.content && (
+                <button
+                  className="nav-item rounded-0 nav-link btn btn-warning test"
+                  onClick={() => {
+                    dispatch({
+                      type: 'remixide/showAnswer',
+                      payload: clonedStep,
+                    })
+                  }}
+                >
+                  Show answer
+                </button>
+              )}
+            </nav>
+            {stepId < steps.length - 1 && (
               <button
-                className="nav-item rounded-0 nav-link btn btn-warning test"
+                className="w-100 btn btn-success mt-3"
                 onClick={() => {
-                  dispatch({
-                    type: 'remixide/showAnswer',
-                    payload: clonedStep,
-                  })
+                  navigate(`/detail?id=${id}&stepId=${stepId + 1}`);
+                  (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_next', `${id}/${stepId + 1}`])
                 }}
               >
-                Show answer
+                Next
               </button>
             )}
-          </nav>
-          {stepId < steps.length - 1 && (
-            <button
-              className="w-100 btn btn-success"
-              onClick={() => {
-                navigate(`/detail?id=${id}&stepId=${stepId + 1}`);
-                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_next', `${id}/${stepId + 1}`])
-              }}
-            >
-              Next
-            </button>
-          )}
-          {stepId === steps.length - 1 && (
-            <button
-              className="w-100 btn btn-success"
-              onClick={() => {
-                navigate(`/list?id=${id}`);
-                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_finish', id])
-              }}
-            >
-              Finish tutorial
-            </button>
-          )}
+            {stepId === steps.length - 1 && (
+              <button
+                className="w-100 btn btn-success"
+                onClick={() => {
+                  navigate(`/list?id=${id}`);
+                  (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_finish', id])
+                }}
+              >
+                Finish tutorial
+              </button>
+            )}
+          </div>
         </>
       )}
     </div>
