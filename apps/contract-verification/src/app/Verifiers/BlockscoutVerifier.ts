@@ -40,6 +40,8 @@ export class BlockscoutVerifier extends EtherscanVerifier {
 
     let targetFilePath
     if (!blockscoutSource.FileName.startsWith('..')) targetFilePath = `${filePrefix}/${blockscoutSource.FileName}`
+    else targetFilePath = `${filePrefix}/targetFile.sol`
+
     result.push({ content: blockscoutSource.SourceCode, path: targetFilePath })
 
     for (const additional of blockscoutSource.AdditionalSources ?? []) {

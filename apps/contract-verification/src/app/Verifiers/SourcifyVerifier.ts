@@ -213,12 +213,13 @@ export class SourcifyVerifier extends AbstractVerifier {
     const splitIdentifier = fullyQualifiedName.split(':')
     const contractPath = splitIdentifier.slice(0, -1).join(':')
     for (const [filePath, fileData] of Object.entries(sources)) {
-      if (filePath.startsWith('..')) continue
+      if (filePath.startsWith('..')) {
+        if (filePath === contractPath) targetFilePath = `${filePrefix}/sources/targetFile.sol`
+        else continue
+      }
       const path = `${filePrefix}/sources/${filePath}`
       result.push({ path, content: fileData.content })
-      if (filePath === contractPath) {
-        targetFilePath = path
-      }
+      if (filePath === contractPath) targetFilePath = path
     }
 
     return { sourceFiles: result, targetFilePath }
