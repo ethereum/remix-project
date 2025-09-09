@@ -112,6 +112,8 @@ export interface SettingsState {
   'sindri-access-token': ConfigState,
   'etherscan-access-token': ConfigState,
   'ai-privacy-policy': ConfigState,
+  'ollama-config': ConfigState,
+  'ollama-endpoint': ConfigState,
   toaster: ConfigState
 }
 export interface SettingsActionPayloadTypes {

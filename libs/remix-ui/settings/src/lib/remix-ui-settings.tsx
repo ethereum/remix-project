@@ -139,6 +139,16 @@ const settingsSections: SettingsSection[] = [
           action: 'link',
           link: 'https://remix-ide.readthedocs.io/en/latest/ai.html'
         }
+      },
+      {
+        name: 'ollama-config',
+        label: 'settings.ollamaConfig',
+        description: 'settings.ollamaConfigDescription',
+        type: 'toggle',
+        toggleUIOptions: [{
+          name: 'ollama-endpoint',
+          type: 'text'
+        }]
       }]
     }
   ]},

@@ -65,5 +65,8 @@
   "settings.aiCopilotDescription": "AI Copilot assists with code suggestions and improvements.",
   "settings.aiPrivacyPolicy": "AI Privacy & Data Usage",
   "settings.viewPrivacyPolicy": "View Privacy Policy",
-  "settings.aiPrivacyPolicyDescription": "Understand how AI processes your data."
+  "settings.aiPrivacyPolicyDescription": "Understand how AI processes your data.",
+  "settings.ollamaConfig": "Ollama Configuration",
+  "settings.ollamaConfigDescription": "Configure Ollama endpoint for local AI model integration",
+  "settings.ollama-endpoint": "ENDPOINT URL"
 }

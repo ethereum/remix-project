@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine';
-import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams, OllamaInferencer, isOllamaAvailable, getBestAvailableModel } from '@remix/remix-ai-core';
+import { IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, AssistantParams, CodeExplainAgent, SecurityAgent, CompletionParams, OllamaInferencer, isOllamaAvailable, getBestAvailableModel, resetOllamaHostOnSettingsChange } from '@remix/remix-ai-core';
 import { CodeCompletionAgent, ContractAgent, workspaceAgent, IContextType } from '@remix/remix-ai-core';
 import axios from 'axios';
 import { endpointUrls } from "@remix-endpoints-helper"
@@ -53,6 +53,10 @@ export class RemixAIPlugin extends Plugin {
   }
 
   onActivation(): void {
+    // Expose Ollama reset function globally for settings integration
+    if (typeof window !== 'undefined') {
+      (window as any).resetOllamaHostOnSettingsChange = resetOllamaHostOnSettingsChange;
+    }
 
     if (this.isOnDesktop) {
       this.useRemoteInferencer = true
