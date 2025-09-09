@@ -26,6 +26,8 @@ h1 {
   text-align: left;
   font-size: 1.2rem !important;
   word-break: break-word;
+  margin-top: 7rem !important;
+
 }
 
 markdown {
@@ -51,4 +53,22 @@ markdown {
   }
 }
 
+.nav .nav-link.btn-info {
+  background-color: var(--bs-info);
+  color: white;
+}
 
+.nav .nav-link.btn-warning {
+  background-color: var(--bs-warning);
+  color: #000;
+}
+
+.nav .nav-link.btn-success {
+  background-color: var(--bs-success);
+  color: white;
+}
+
+.nav .nav-link[class*="btn-"]:hover {
+  filter: brightness(90%);
+  transition: filter 0.2s ease-in-out;
+}
