@@ -38,6 +38,8 @@ export interface PromptAreaProps {
   aiAssistantGroupList: groupListType[]
   textareaRef?: React.RefObject<HTMLTextAreaElement>
   maximizePanel: () => Promise<void>
+  aiMode: 'ask' | 'edit'
+  setAiMode: React.Dispatch<React.SetStateAction<'ask' | 'edit'>>
 }
 
 const _paq = (window._paq = window._paq || [])
@@ -73,7 +75,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   aiContextGroupList,
   aiAssistantGroupList,
   textareaRef,
-  maximizePanel
+  maximizePanel,
+  aiMode,
+  setAiMode
 }) => {
 
   return (
@@ -103,22 +107,38 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             className="btn btn-dim btn-sm text-secondary small fw-light border border-text rounded"
             ref={contextBtnRef}
           >
-            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'@ Add Context'}</span>}
+            <span>{}</span>{contextChoice === 'none' && <span data-id="aiContext-file">{'Select Context'}</span>}
             {contextChoice === 'workspace' && <span data-id="aiContext-workspace">{'Workspace'}</span>}
             {contextChoice === 'opened' && <span data-id="aiContext-opened">{'Open Files'}</span>}
             {contextChoice === 'current' && <span data-id="aiContext-current">{'Current File'}</span>}
           </button>
 
-          <div className="d-flex justify-content-center align-items-center">
-            <CustomTooltip
-              tooltipText={<TooltipContent />}
-              delay={{ show: 1000, hide: 0 }}
-            >
-              <span
-                className="far fa-circle-info text-ai me-1"
-                onMouseEnter={() => _paq.push(['trackEvent', 'remixAI', 'AICommandTooltip', 'User clicked on AI command info'])}
-              ></span>
-            </CustomTooltip>
+          <div className="d-flex justify-content-center align-items-center gap-2">
+            {/* Ask/Edit Mode Toggle */}
+            <div className="btn-group btn-group-sm" role="group">
+              <button
+                type="button"
+                className={`btn ${aiMode === 'ask' ? 'btn-primary' : 'btn-outline-secondary'} px-2`}
+                onClick={() => {
+                  setAiMode('ask')
+                  _paq.push(['trackEvent', 'remixAI', 'ModeSwitch', 'ask'])
+                }}
+                title="Ask mode - Chat with AI"
+              >
+                Ask
+              </button>
+              <button
+                type="button"
+                className={`btn ${aiMode === 'edit' ? 'btn-primary' : 'btn-outline-secondary'} px-2`}
+                onClick={() => {
+                  setAiMode('edit')
+                  _paq.push(['trackEvent', 'remixAI', 'ModeSwitch', 'edit'])
+                }}
+                title="Edit mode - Edit workspace code"
+              >
+                Edit
+              </button>
+            </div>
             <span
               className="badge align-self-center text-bg-info fw-light rounded"
             >
@@ -145,7 +165,11 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             onKeyDown={e => {
               if (e.key === 'Enter' && !isStreaming) handleSend()
             }}
-            placeholder="Ask me anything, add workspace files..."
+            placeholder={
+              aiMode === 'ask'
+                ? "Select context and ask me anything!"
+                : "Edit my codebase, generate new contracts ..."
+            }
           />
 
           <div className="d-flex justify-content-between">
@@ -182,7 +206,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               className="btn btn-text btn-sm small fw-light text-secondary mt-2 align-self-end border border-text rounded"
               onClick={handleGenerateWorkspace}
             >
-              {'@Generate'}
+              {'Create new workspace with AI'}
             </button>
             {/* <button
               className={input.length > 0 ? 'btn bg-ai border-text border btn-sm fw-light text-secondary mt-2 align-self-end' : 'btn btn-text border-text border btn-sm fw-light text-secondary mt-2 align-self-end disabled'}
@@ -225,18 +249,3 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   )
 }
 
-function TooltipContent () {
-  return (
-    <ul className="list-unstyled p-2 me-3">
-      <li className="">
-        {'- Use /w <prompt> : To manage or edit files within your workspace'}
-      </li>
-      <li className="">
-        {'- Alternatively, you may type your question directly below.'}
-      </li>
-      <li className="">
-        {'-See Ollama Setup Guide'}
-      </li>
-    </ul>
-  )
-}

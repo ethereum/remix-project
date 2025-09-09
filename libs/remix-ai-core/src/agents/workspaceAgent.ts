@@ -93,16 +93,51 @@ export class workspaceAgent {
       if (typeof payload === 'string') {
         payload = JSON.parse(payload)
       }
-      let modifiedFilesMarkdown = '### List of Modified Files\n'
+      let modifiedFilesMarkdown = '#### **List of Modified Files**\n'
+      let createdFilesMarkdown = '#### **List of Created Files**\n'
+      let hasCreatedFiles = false
+
       for (const file of payload.files) {
         if (!Object.values(SupportedFileExtensions).some(ext => file.fileName.endsWith(ext))) continue;
-        // const fileContent = await this.plugin.call('codeFormatter', 'format', file.fileName, file.content, true);
-        await statusCallback?.(`Showing diff for ${file.fileName}...`)
-        await this.plugin.call('editor', 'showCustomDiff', file.fileName, file.content)
-        modifiedFilesMarkdown += `- ${file.fileName}\n`
+
+        try {
+          const fileExists = await this.plugin.call('fileManager', 'exists', file.fileName)
+
+          if (fileExists) {
+            await this.plugin.call('editor', 'showCustomDiff', file.fileName, file.content)
+            modifiedFilesMarkdown += `- ${file.fileName}\n`
+          } else {
+            await statusCallback?.(`Creating file ${file.fileName}...`)
+
+            const dirPath = file.fileName.substring(0, file.fileName.lastIndexOf('/'))
+            if (dirPath && dirPath.length > 0) {
+              try {
+                await this.plugin.call('fileManager', 'mkdir', dirPath)
+              } catch (mkdirError) {
+                // Directory already exist, just continue
+              }
+            }
+
+            await this.plugin.call('fileManager', 'writeFile', file.fileName, "")
+            await new Promise(resolve => setTimeout(resolve, 2000)) // wait so the content is written before diffing
+            await this.plugin.call('editor', 'showCustomDiff', file.fileName, file.content)
+            createdFilesMarkdown += `- ${file.fileName}\n`
+            hasCreatedFiles = true
+          }
+        } catch (fileError) {
+          console.warn(`Error processing file ${file.fileName}:`, fileError)
+        }
       }
+
       await statusCallback?.('Workspace modifications complete!')
-      return modifiedFilesMarkdown
+
+      // Build result markdown
+      let result = modifiedFilesMarkdown
+      if (hasCreatedFiles) {
+        result += '\n' + createdFilesMarkdown
+      }
+
+      return result || 'No files modified'
     } catch (error) {
       console.warn('Error writing generation results:', error);
       return 'No files modified'
