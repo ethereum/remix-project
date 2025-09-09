@@ -3,12 +3,10 @@ import remarkGfm from "remark-gfm"
 import copy from "copy-to-clipboard"
 import { ChatMessage, assistantAvatar } from "../lib/types"
 import React, { useState, useEffect } from 'react'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { CustomTooltip } from "@remix-ui/helper"
-import { 
-  sampleConversationStarters, 
-  type ConversationStarter 
+import {
+  sampleConversationStarters,
+  type ConversationStarter
 } from "../lib/conversationStarters"
 
 // ChatHistory component

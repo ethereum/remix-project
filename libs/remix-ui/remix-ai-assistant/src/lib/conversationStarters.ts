@@ -100,7 +100,6 @@ export function sampleConversationStartersWithSeed(seed?: number): ConversationS
   };
 
   const actualSeed = seed ?? Date.now();
-  
   const beginnerQuestions = CONVERSATION_STARTERS.filter(q => q.level === 'beginner');
   const intermediateQuestions = CONVERSATION_STARTERS.filter(q => q.level === 'intermediate');
   const expertQuestions = CONVERSATION_STARTERS.filter(q => q.level === 'expert');
