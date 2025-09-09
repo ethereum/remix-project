@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { ThemeContext } from '../themeContext'
 import { Placement } from 'react-bootstrap/esm/types'
+import { DesktopDownload } from 'libs/remix-ui/desktop-download' // eslint-disable-line @nrwl/nx/enforce-module-boundaries
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 type HometabIconSection = {
@@ -47,7 +48,7 @@ const iconButtons: HometabIconSection[] = [
   {
     textToolip: <FormattedMessage id="home.joinUsOnDiscord" />,
     matomoTrackingEntry: ['trackEvent', 'hometab', 'titleCard', 'discord'],
-    urlLink: 'https://discord.gg/hEUgg24WhH',
+    urlLink: 'https://discord.gg/KhDtC8mGqx',
     iconClass: 'fa-discord',
     placement: 'top'
   }
@@ -115,6 +116,7 @@ function HomeTabTitle() {
           <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-ide.readthedocs.io/en/latest" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'titleCard', 'documentation'])}><FormattedMessage id="home.documentation" /></a>
           <a className="btn btn-secondary bg-dark text-decoration-none col-md-5" style={{ fontSize: '0.7rem', minWidth: '125px', color: isDark ? 'white' : 'black' }} href="https://remix-project.org" target="_blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'titleCard', 'webSite'])}><FormattedMessage id="home.website" /></a>
         </div>
+        <DesktopDownload className='mt-3' compact trackingContext="hometab" />
       </div>
     </div>
   )
