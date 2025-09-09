@@ -44,7 +44,7 @@ export const CONVERSATION_STARTERS: ConversationStarter[] = [
   { question: "Explain an underflow in Solidity", level: "expert", category: "blockchain" },
   { question: "What are some tools that can help with security?", level: "expert", category: "blockchain" },
   { question: "Explain the Transparent upgradeable contract", level: "expert", category: "blockchain" },
-  { question: "What the difference between an ERC and an EIP?", level: "expert", category: "blockchain" }
+  { question: "What the difference between an ERC and an EIP?", level: "expert", category: "blockchain" },
   { question: "How to work with EIP 7702?", level: "expert", category: "blockchain" },
   { question: "How to work a EIP 4337 Smart Account", level: "expert", category: "blockchain" },
 ];
