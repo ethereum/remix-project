@@ -273,22 +273,22 @@ export class EtherscanVerifier extends AbstractVerifier {
         parsedFiles = JSON.parse(source.SourceCode.substring(1, source.SourceCode.length - 1)).sources
       } catch (e) {}
     }
-
     if (parsedFiles) {
       const result: SourceFile[] = []
       let targetFilePath = ''
       for (const [fileName, fileObj] of Object.entries<any>(parsedFiles)) {
+        if (fileName.startsWith('..')) {
+          if (fileName.endsWith(`/${source.ContractName}.sol`)) targetFilePath = `${filePrefix}/targetFile.sol`
+          else continue
+        }
         const path = `${filePrefix}/${fileName}`
 
         result.push({ path, content: fileObj.content })
 
-        if (path.endsWith(`/${source.ContractName}.sol`)) {
-          targetFilePath = path
-        }
+        if (path.endsWith(`/${source.ContractName}.sol`)) targetFilePath = path
       }
       return { sourceFiles: result, targetFilePath }
     }
-
     // Parsing to JSON failed, SourceCode is the code itself
     const targetFilePath = `${filePrefix}/${source.ContractName}.sol`
     const sourceFiles: SourceFile[] = [{ content: source.SourceCode, path: targetFilePath }]
