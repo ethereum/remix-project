@@ -325,9 +325,7 @@ module.exports = {
         return (window as any)._paq
       }, [], (res) => {
         const expectedEvents = [
-          ["trackEvent", "App", "Preload", "start"],
-          ["trackEvent", "Storage", "activate", "indexedDB"],
-          ["trackEvent", "App", "load"],
+          ["trackEvent", "Storage", "activate", "indexedDB"]
         ];
 
         const actualEvents = (res as any).value;

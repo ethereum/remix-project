@@ -184,7 +184,10 @@ const Model: ModelType = {
           }
         }
       }
-      (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
+      // we don't need to track the default repos
+      if (payload.name !== 'ethereum/remix-workshops' && payload.name !== 'remix-project-org/remix-workshops') {
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
+      }
     },
     *resetAll({ payload }, { put }) {
       yield put({
