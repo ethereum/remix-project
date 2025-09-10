@@ -9,7 +9,6 @@ import {
   type ConversationStarter
 } from "../lib/conversationStarters"
 
-
 // ChatHistory component
 export interface ChatHistoryComponentProps {
   messages: ChatMessage[]
