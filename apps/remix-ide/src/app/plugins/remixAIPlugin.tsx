@@ -423,7 +423,6 @@ export class RemixAIPlugin extends Plugin {
           this.isInferencing = false
         })
 
-        console.log(`Ollama model changed to: ${modelName}`)
       } catch (error) {
         console.error('Failed to set Ollama model:', error)
       }

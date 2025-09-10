@@ -40,13 +40,15 @@ export async function discoverOllamaHost(): Promise<string | null> {
         _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_configured_endpoint_success', configuredEndpoint]);
         return configuredEndpoint;
       }
+      return null;
     } catch (error) {
       _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_configured_endpoint_failed', `${configuredEndpoint}:${error.message || 'unknown'}`]);
       // Fall back to discovery if configured endpoint fails
+      return null;
     }
   }
 
-  // Fall back to port discovery if no configured endpoint or it failed
+  // Fall back to port discovery if no configured endpoint
   for (const port of OLLAMA_PORTS) {
     const host = `${OLLAMA_BASE_HOST}:${port}`;
     _paq.push(['trackEvent', 'ai', 'remixAI', 'ollama_port_check', `${port}`]);
