@@ -1,18 +1,16 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EnvironmentProps } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { DropdownLabel } from './dropdownLabel'
-import { setExecutionContext } from '../actions/account'
 import SubmenuPortal from './subMenuPortal'
 
 const _paq = (window._paq = window._paq || [])
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const vmStateName = useRef('')
-
   const providers = props.providers.providerList
 
   const remixVMs = providers.filter(p => p.config.isVM)
@@ -169,7 +167,11 @@ export function EnvironmentUI(props: EnvironmentProps) {
         </CustomTooltip> }
       </label>
       <div className="" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
-        <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
+        <Dropdown
+          id="selectExEnvOptions"
+          data-id="settingsSelectEnvOptions"
+          className="udapp_selectExEnvOptions"
+        >
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border form-select" icon={null}>
             {/* {isL2(currentProvider && currentProvider.displayName)} */}
             <DropdownLabel label={currentProvider && currentProvider.displayName} bridges={bridges} currentProvider={currentProvider} envLabel={props.envLabel} runTabState={props.udappState} setExecutionEnv={props.setExecutionContext} isL2={isL2} plugin={props.runTabPlugin} />

@@ -66,6 +66,7 @@
   "udapp.createSmartAccountDesc2":"These wallets offer features like multi-signature for extra security, gasless transactions where users can pay fees with other tokens, and custom transaction rules for added flexibility.",
   "udapp.createSmartAccountDesc3":"Your Smart Account will be created with the below account as owner. ",
   "udapp.createSmartAccountDesc4":"This account will be used to interact with your Smart Account for signing or sending transaction.",
+  "udapp.createSmartAccountDesc5":"Important: Before signing, please ensure the active account in your connected wallet (e.g., MetaMask) matches the address below.",
   "udapp.continue": "Continue",
   "udapp.authorize": "Authorize",
   "udapp.createNewAccount": "Create a new account",
