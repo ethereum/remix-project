@@ -10,7 +10,7 @@
 [![Documentation Status](https://readthedocs.org/projects/remix-ide/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/graphs/contributors)
-[![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
+[![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/remix-project-org/awesome-remix)
 [![GitHub](https://img.shields.io/github/license/ethereum/remix-project)](https://github.com/ethereum/remix-project/blob/master/LICENSE)
 [![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/KhDtC8mGqx)
 [![X Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=x&color=green)](https://x.com/ethereumremix)
@@ -264,7 +264,7 @@ parameters:
 
 - Official website: https://remix-project.org
 - Official documentation: https://remix-ide.readthedocs.io/en/latest/
-- Curated list of Remix resources: https://github.com/ethereum/awesome-remix
+- Curated list of Remix resources: https://github.com/remix-project-org/awesome-remix
 - Medium: https://medium.com/remix-ide
 - X: https://x.com/ethereumremix
 - Join Discord: https://discord.gg/KhDtC8mGqx
