@@ -92,7 +92,22 @@ export default function SubmenuPortal({
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
           >
-            {children}
+            {React.Children.map(children, (child) => {
+              if (!React.isValidElement(child)) return child
+              const originalOnClick = (child as any).props.onClick
+
+              return React.cloneElement(child, {
+                onClick: () => {
+                  if (originalOnClick) {
+                    originalOnClick()
+                  }
+                  setOpen(false)
+                  // if (onClose) {
+                  //   onClose()
+                  // }
+                },
+              } as any)
+            })}
           </div>,
           document.body
         )
