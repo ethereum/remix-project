@@ -54,9 +54,7 @@ export class RemixAIPlugin extends Plugin {
 
   onActivation(): void {
     // Expose Ollama reset function globally for settings integration
-    if (typeof window !== 'undefined') {
-      (window as any).resetOllamaHostOnSettingsChange = resetOllamaHostOnSettingsChange;
-    }
+    resetOllamaHostOnSettingsChange();
 
     if (this.isOnDesktop) {
       this.useRemoteInferencer = true

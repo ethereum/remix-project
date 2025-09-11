@@ -1,6 +1,6 @@
 import { Registry } from '@remix-project/remix-lib'
 import { SettingsActions, SettingsState } from '../types'
-
+import { resetOllamaHostOnSettingsChange } from '@remix/remix-ai-core';
 const config = Registry.getInstance().get('config').api
 const settingsConfig = Registry.getInstance().get('settingsConfig').api
 const defaultTheme = config.get('settings/theme') ? settingsConfig.themes.find((theme) => theme.name.toLowerCase() === config.get('settings/theme').toLowerCase()) : settingsConfig.themes[0]
@@ -219,10 +219,7 @@ export const settingReducer = (state: SettingsState, action: SettingsActions): S
     // Reset Ollama host cache when endpoint is changed
     if (action.payload.name === 'ollama-endpoint') {
       try {
-        // Check if the resetOllamaHostOnSettingsChange function is available globally
-        if (typeof window !== 'undefined' && (window as any).resetOllamaHostOnSettingsChange) {
-          (window as any).resetOllamaHostOnSettingsChange();
-        }
+        resetOllamaHostOnSettingsChange();
       } catch (error) {
         // Ignore errors - Ollama functionality is optional
       }
