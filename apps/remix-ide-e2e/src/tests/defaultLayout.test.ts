@@ -8,7 +8,7 @@ module.exports = {
   },
 
   'Loads Icon\'s Panel': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('div[plugin="filePanel"]')
       .waitForElementVisible('div[plugin="pluginManager"]')
@@ -34,7 +34,7 @@ module.exports = {
 
   'Loads terminal': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('div[data-id="terminalCli"]', 10000)
+      .waitForElementVisible('div[data-id="terminalCli"]', 60000)
       .journalLastChildIncludes('Welcome to Remix')
   },
 

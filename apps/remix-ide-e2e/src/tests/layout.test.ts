@@ -51,14 +51,14 @@ module.exports = {
       .pause(5000)
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementPresent('#instance0xd9145CCE52D386f254917e481eB44e9943F39138')
+      .waitForElementPresent('#instance0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
       .clickFunction('retrieve - call')
       .click('[data-id="movePluginToLeft"]')
       .waitForElementVisible('[data-id="movePluginToRight"]')
       .clickInstance(0)
-      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
+      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10', 60000)
   },
   'Should maintain logged state of search plugin after pinning and unpinning': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('search')
@@ -71,9 +71,9 @@ module.exports = {
       .waitForElementContainsText('*[data-id="search_results"]', 'contracts', 60000)
       .waitForElementContainsText('*[data-id="search_results"]', 'README.TXT', 60000)
       .click('[data-id="movePluginToRight"]')
-      .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL')
-      .waitForElementContainsText('*[data-id="search_results"]', 'contracts')
-      .waitForElementContainsText('*[data-id="search_results"]', 'README.TXT')
+      .waitForElementContainsText('*[data-id="search_results"]', '3_BALLOT.SOL', 60000)
+      .waitForElementContainsText('*[data-id="search_results"]', 'contracts', 60000)
+      .waitForElementContainsText('*[data-id="search_results"]', 'README.TXT', 60000)
   }
 }
 

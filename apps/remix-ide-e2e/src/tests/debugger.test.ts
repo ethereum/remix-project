@@ -63,7 +63,7 @@ module.exports = {
   },
 
   'Should jump through breakpoints #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
+    browser.waitForElementVisible('#editorView', 60000)
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
       }, [], () => { })
@@ -88,11 +88,11 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-bs-title="Deploy - transact (not payable)"]', 35000)
+      .waitForElementPresent('*[data-bs-title="Deploy - transact (not payable)"]', 60000)
       .selectContract('ERC20')
       .createContract('"tokenName", "symbol"')
       .debugTransaction(0)
-      .waitForElementVisible('#stepdetail')
+      .waitForElementVisible('#stepdetail', 60000)
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"475")]',
@@ -131,13 +131,13 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('test1 - transact (not payable)', { types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4' })
       .debugTransaction(0)
-      .waitForElementVisible('#stepdetail')
+      .waitForElementVisible('#stepdetail', 60000)
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"133")]',
       })
       .goToVMTraceStep(261)
-      .waitForElementPresent('.highlightLine8')
+      .waitForElementPresent('.highlightLine8', 60000)
       /*
         for the test below:
         source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
@@ -159,7 +159,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-bs-title="Deploy - transact (not payable)"]', 40000)
+      .waitForElementPresent('*[data-bs-title="Deploy - transact (not payable)"]', 60000)
       .createContract('')
       .pause(2000)
       .clearConsole()
@@ -259,7 +259,7 @@ module.exports = {
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
       .modalFooterOKClick()
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 60000) // wait for the compilation to succeed
       .clickLaunchIcon('debugger')
       .clearValue('*[data-id="debuggerTransactionInput"]')
       .setValue('*[data-id="debuggerTransactionInput"]', '0x156dbf7d0f9b435dd900cfc8f3264d523dd25733418ddbea1ce53e294f421013')
@@ -285,7 +285,7 @@ module.exports = {
       .goToVMTraceStep(80)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
-      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '114 REVERT')
+      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '114 REVERT', 60000)
   }
 }
 

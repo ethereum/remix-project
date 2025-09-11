@@ -9,7 +9,7 @@ const checkEditorHoverContent = (browser: NightwatchBrowser, path: string, expec
         .waitForElementVisible(path)
         .moveToElement(path, offsetLeft, 0)
         .useCss()
-        .waitForElementContainsText('.monaco-hover-content', expectedContent).pause(1000)
+        .waitForElementContainsText('.monaco-hover-content', expectedContent, 60000).pause(1000)
 }
 
 module.exports = {

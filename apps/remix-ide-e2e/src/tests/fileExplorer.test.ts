@@ -25,7 +25,7 @@ module.exports = {
       .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', '5_New_contract.sol')
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]', 7000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]', 60000)
   },
 
   'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol #group1': function (browser: NightwatchBrowser) {

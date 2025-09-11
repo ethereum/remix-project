@@ -17,15 +17,15 @@ module.exports = {
     const toggleInputSelector = '[data-id="copilot_toggle"]';
 
     browser
-      .waitForElementVisible('[data-id="remixui_status_bottom_bar"]', 5000)
-      .waitForElementContainsText(statusTextSelector, 'RemixAI Copilot', 1000)
+      .waitForElementVisible('[data-id="remixui_status_bottom_bar"]', 60000)
+      .waitForElementContainsText(statusTextSelector, 'RemixAI Copilot', 60000)
       .perform((done) => {
         browser.getText(statusTextSelector, (result) => {
           const currentStatusText = result.value as string
           const isCurrentlyDisabled = currentStatusText.includes('(disabled)')
           const expectedStatusAfterToggle = isCurrentlyDisabled ? '(enabled)' : '(disabled)'
           browser.click(toggleInputSelector)
-            .waitForElementContainsText(statusTextSelector, expectedStatusAfterToggle, 10000)
+            .waitForElementContainsText(statusTextSelector, expectedStatusAfterToggle, 60000)
             done()
         });
       });

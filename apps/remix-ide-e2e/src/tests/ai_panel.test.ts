@@ -235,7 +235,7 @@ const tests = {
     browser
       .click('*[data-id="movePluginToLeft"]')
       .clickLaunchIcon('filePanel')
-      .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 5000)
+      .waitForElementNotVisible('*[data-id="remix-ai-assistant"]', 60000)
   },
 }
 

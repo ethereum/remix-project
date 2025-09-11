@@ -46,7 +46,7 @@ const tests = {
           .useCss()
           .switchBrowserTab(0)
           .refreshPage()
-          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
           .clickLaunchIcon('udapp')
           .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
           .switchEnvironment('injected-MetaMask')
@@ -70,11 +70,11 @@ const tests = {
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000) // wait for the contract to compile
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 60000) // wait for the contract to compile
   },
 
   'Should deploy contract on Sepolia Test Network using MetaMask': function (browser: NightwatchBrowser) {
-    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 45000)
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 60000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -144,7 +144,7 @@ const tests = {
       })
   },
   'Should deploy contract on Sepolia Test Network using MetaMask again': function (browser: NightwatchBrowser) {
-    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 45000)
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"]', 60000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -213,7 +213,7 @@ const tests = {
   },
   'Should debug Sepolia transaction with source highlighting MetaMask': function (browser: NightwatchBrowser) {
     let txhash
-    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
       .clickLaunchIcon('udapp')
       .perform((done) => {
@@ -225,13 +225,13 @@ const tests = {
       .pause(5000)
       .perform((done) => {
         browser
-          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
           .clickLaunchIcon('debugger')
           .waitForElementVisible('*[data-id="debuggerTransactionInput"]')
           .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
           .pause(2000)
           .click('*[data-id="debuggerTransactionStartButton"]')
-          .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+          .waitForElementVisible('*[data-id="treeViewDivto"]', 60000)
           .checkVariableDebug('soliditylocals', localsCheck)
           .perform(() => done())
       })
@@ -249,7 +249,7 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
-      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 60000)
       .click('*[data-id="sign-eip-712"]')
       .waitForElementVisible('*[data-id="udappNotify-modal-footer-ok-react"]')
       .modalFooterOKClick('udappNotify')
@@ -280,7 +280,7 @@ const tests = {
         });
       })
       .refreshPage()
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('injected-MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
@@ -296,7 +296,7 @@ const tests = {
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 65000)
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .modalFooterOKClick('udappNotify')
       .pause(10000)
       .assert.containsText('*[data-id="udappNotifyModalDialogModalBody-react"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')

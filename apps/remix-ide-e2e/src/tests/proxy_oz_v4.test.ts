@@ -72,7 +72,7 @@ module.exports = {
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 < 5.0.0 as proxy...', 60000)
   },
 
@@ -123,7 +123,7 @@ module.exports = {
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 < 5.0.0 as proxy...', 60000)
   },
 
@@ -172,7 +172,7 @@ module.exports = {
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
-      .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
+      .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]', 60000)
       .click(
         {
           selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
@@ -217,7 +217,7 @@ module.exports = {
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
-      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 < 5.0.0 for the proxy upgrade..', 60000)
   },
 

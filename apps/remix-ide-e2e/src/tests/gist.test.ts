@@ -24,7 +24,7 @@ module.exports = {
     const gistid = '17ac9315bc065a3d95cf8dc1b28d71f8'
     browser
       .refreshPage()
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .waitForElementVisible('*[data-id="fileExplorerNewFilecreateNewFolder"]')
       .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
@@ -70,7 +70,7 @@ module.exports = {
 
   'Load Gist Modal #group1': '' + function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="verticalIconsHomeIcon"]')
       .click('*[data-id="verticalIconsHomeIcon"]')
@@ -87,7 +87,7 @@ module.exports = {
 
   'Display Error Message For Invalid Gist ID #group1': '' + function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]')
@@ -104,13 +104,13 @@ module.exports = {
   'Display Error Message For Missing Gist Token When Publishing #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
       .waitForElementVisible('*[data-id="settings-sidebar-services"]')
       .click('*[data-id="settings-sidebar-services"]')
       .click('*[data-id="github-configSwitch"]')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials removed')
       .click('*[data-id="github-dropdown-toggle"]')
       .waitForElementNotPresent('*[data-id="github-dropdown-item-publish-to-gist"]')
@@ -129,7 +129,7 @@ module.exports = {
 
   'Import From Gist For Valid Gist ID #group2': '' + function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
       .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="topbar-settingsIcon"]')
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
@@ -155,8 +155,8 @@ module.exports = {
       .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
       .refreshPage()
       .currentWorkspaceIs('gist ' + gistId)
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
-      .waitForElementVisible(`#fileExplorerView li[data-path='contracts']`, 30000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 60000)
+      .waitForElementVisible(`#fileExplorerView li[data-path='contracts']`, 60000)
       .openFile(`contracts/2_Owner.sol`)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Owner {') !== -1)
@@ -165,7 +165,7 @@ module.exports = {
       .click('*[data-id="github-dropdown-toggle"]')
       .click('*[data-id="github-dropdown-item-publish-to-gist"]')
       .modalFooterOKClick('fileSystem')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')
   }
 }

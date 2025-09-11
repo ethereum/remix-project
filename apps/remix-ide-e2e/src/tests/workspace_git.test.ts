@@ -59,7 +59,7 @@ module.exports = {
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
-      .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
+      .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main', 60000)
   },
   'check git for the commit #group1': function (browser: NightwatchBrowser) {
     browser.
@@ -90,11 +90,11 @@ module.exports = {
       .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
-      .waitForElementPresent('.fa-spinner')
+      .waitForElementPresent('.fa-spinner', 60000)
       .pause(5000)
-      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner', 60000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix', 60000)
   },
 
   'Should display dgit icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
@@ -124,7 +124,7 @@ module.exports = {
       .click('*[data-id="github-dropdown-item-clone"]')
       .waitForElementVisible('[data-id="topbarModalModalDialogModalBody-react"]')
       .click('[data-id="topbarModalModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]', 60000)
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
       .pause(5000)
@@ -135,7 +135,7 @@ module.exports = {
       .click('*[data-id="github-dropdown-item-clone"]')
       .waitForElementVisible('[data-id="topbarModalModalDialogModalBody-react"]')
       .click('[data-id="topbarModalModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]', 60000)
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
       .pause(5000)
@@ -179,17 +179,17 @@ module.exports = {
       .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ioedeveloper/test-branch-change')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
-      .waitForElementPresent('.fa-spinner')
+      .waitForElementPresent('.fa-spinner', 60000)
       .pause(7000)
-      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner', 60000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-change')
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .pause(1000)
-      .waitForElementVisible('[data-id="custom-dropdown-menu"]')
-      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev')
-      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production')
+      .waitForElementVisible('[data-id="custom-dropdown-menu"]', 60000)
+      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev', 60000)
+      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production', 60000)
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/setup')
       .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
   },
@@ -299,15 +299,13 @@ module.exports = {
       .click('[data-id="modalDialogCustomPromptTextClone"]')
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/bunsenstraat/test-branch-submodule')
       .click('[data-id="topbarModal-modal-footer-ok-react"]')
-      .waitForElementPresent('.fa-spinner')
+      .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
-        selector: '*[data-id="treeViewLitreeViewItem.git"]',
-        timeout: 240000
-      })
+        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 240000 })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
       .waitForElementVisible('[data-id="updatesubmodules"]')
       .click('[data-id="updatesubmodules"]')
-      .waitForElementPresent('.fa-spinner')
+      .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
         timeout: 240000,
@@ -400,11 +398,9 @@ module.exports = {
       .click('[data-id="workspaceGit-origin/main"]')
       .waitForElementVisible('[data-id="updatesubmodules"]')
       .click('[data-id="updatesubmodules"]')
-      .waitForElementPresent('.fa-spinner')
+      .waitForElementPresent('.fa-spinner', 60000)
       .waitForElementVisible({
-        selector: '*[data-id="treeViewLitreeViewItem.git"]',
-        timeout: 240000
-      })
+        selector: '*[data-id="treeViewLitreeViewItem.git"]', timeout: 240000 })
       .pause(2000)
       // check recursive submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')

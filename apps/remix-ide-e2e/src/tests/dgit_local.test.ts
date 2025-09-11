@@ -143,9 +143,7 @@ module.exports = {
       .click('*[data-id="commits-panel"]')
       .waitForElementPresent({
         selector: `//*[@data-id="commit-summary-testcommit2-"]`,
-        locateStrategy: 'xpath',
-        timeout: 60000
-      }).pause(2000)
+        locateStrategy: 'xpath', timeout: 60000 }).pause(2000)
   },
   'check the log for testcommit2 #group1': async function (browser: NightwatchBrowser) {
     const logs = await getGitLog('/tmp/git/bare.git')
@@ -340,9 +338,7 @@ module.exports = {
       })
       .waitForElementVisible({
         selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-current-branch-master']",
-        locateStrategy: 'xpath',
-        timeout: 60000
-      })
+        locateStrategy: 'xpath', timeout: 60000 })
   },
   'check if test file is gone #group2': function (browser: NightwatchBrowser) {
     browser

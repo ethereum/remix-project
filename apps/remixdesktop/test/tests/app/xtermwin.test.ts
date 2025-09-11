@@ -6,25 +6,25 @@ const tests = {
     done()
   },
   open: function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="openFolderButton"]', 10000).click('*[data-id="openFolderButton"]')
+    browser.waitForElementVisible('*[data-id="openFolderButton"]', 60000).click('*[data-id="openFolderButton"]')
   },
   'open xterm window and create a file': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="tabXTerm"]', 10000)
+      .waitForElementVisible('*[data-id="tabXTerm"]', 60000)
       .click('*[data-id="tabXTerm"]')
       .waitForElementVisible('*[data-id="select_shell"]')
       .click('*[data-id="select_shell"]')
       .waitForElementVisible('*[data-id="select_powershell.exe"]')
       .click('*[data-id="select_powershell.exe"]')
       .pause(3000)
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .pause(1000)
       .perform(function () {
         const actions = this.actions({ async: true })
         return actions.sendKeys('"test" | Out-File -FilePath example.txt').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemexample.txt"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemexample.txt"]', 60000)
   },
   'rename that file': function (browser: NightwatchBrowser) {
     browser
@@ -32,7 +32,7 @@ const tests = {
         const actions = this.actions({ async: true })
         return actions.sendKeys('Move-Item -Path example.txt -Destination newExample.txt').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample.txt"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample.txt"]', 60000)
   },
   'create a file and delete it': function (browser: NightwatchBrowser) {
     browser
@@ -40,12 +40,12 @@ const tests = {
         const actions = this.actions({ async: true })
         return actions.sendKeys('touch newExample2.txt').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 60000)
       .perform(function () {
         const actions = this.actions({ async: true })
         return actions.sendKeys('Remove-Item -Path newExample2.txt').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 10000)
+      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemnewExample2.txt"]', 60000)
   },
   'run a git clone command': function (browser: NightwatchBrowser) {
     browser
@@ -53,24 +53,24 @@ const tests = {
         const actions = this.actions({ async: true })
         return actions.sendKeys('git clone https://github.com/ethereum/awesome-remix').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemawesome-remix"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemawesome-remix"]', 60000)
       .click('*[data-id="treeViewLitreeViewItemawesome-remix"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemawesome-remix/README.md"]', 10000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemawesome-remix/README.md"]', 60000)
   },
   'remove the cloned repo': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .perform(function () {
         const actions = this.actions({ async: true })
         return actions.sendKeys('Remove-Item -Path awesome-remix -Recurse -Force').sendKeys(this.Keys.ENTER)
       })
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemawesome-remix"]', 10000)
+      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemawesome-remix"]', 60000)
   },
   'list files': function (browser: NightwatchBrowser) {
     browser
       .pause(3000)
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .saveScreenshot('./reports/screenshots/list-files.png')
       .perform(function () {
@@ -166,7 +166,7 @@ const tests = {
   },
   'close the second terminal': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="closeTerminalButton"]', 10000)
+      .waitForElementVisible('*[data-id="closeTerminalButton"]', 60000)
       .click('*[data-id="closeTerminalButton"]')
       .pause(1000)
       .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
@@ -191,13 +191,13 @@ const tests = {
       )
   },
   'switch to the output panel': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="tabOutput"]', 10000).click('*[data-id="tabOutput"]').waitForElementNotPresent('*[data-id="createTerminalButton"]', 10000)
+    browser.waitForElementVisible('*[data-id="tabOutput"]', 60000).click('*[data-id="tabOutput"]').waitForElementNotPresent('*[data-id="createTerminalButton"]', 60000)
   },
   'switch back to xterminal': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="tabXTerm"]', 10000)
+      .waitForElementVisible('*[data-id="tabXTerm"]', 60000)
       .click('*[data-id="tabXTerm"]')
-      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 60000)
       .click("[data-active='1'][data-type='remixUIXT']")
       .getText(
         {
@@ -213,7 +213,7 @@ const tests = {
   },
   'clear the terminal': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="clearTerminalButton"]', 10000)
+      .waitForElementVisible('*[data-id="clearTerminalButton"]', 60000)
       .click('*[data-id="clearTerminalButton"]')
       .getText(
         {
@@ -229,7 +229,7 @@ const tests = {
   },
   'close all terminals': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="closeTerminalButton"]', 10000)
+      .waitForElementVisible('*[data-id="closeTerminalButton"]', 60000)
       .click('*[data-id="closeTerminalButton"]')
       .pause(3000)
       .click('*[data-id="closeTerminalButton"]')

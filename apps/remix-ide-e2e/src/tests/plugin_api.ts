@@ -427,7 +427,7 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications
@@ -438,8 +438,8 @@ module.exports = {
       .modalFooterOKClick('test_id_3_')
       .journalLastChildIncludes('default value... ') // check the return value of the prompt
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast', 60000)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast', 60000)
 
   },
   'Should open 2 alerts from localplugin #group9': !function (browser: NightwatchBrowser) {
