@@ -11,7 +11,7 @@ module.exports = {
   'Should switch to ganache provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
-      .switchEnvironmentWithSubmenu('ganache-provider')
+      .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
 
       .execute(() => {
@@ -29,9 +29,9 @@ module.exports = {
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironmentWithSubmenu('vm-cancun')
+      .switchEnvironment('vm-cancun')
       .pause(2000)
-      .switchEnvironmentWithSubmenu('ganache-provider')
+      .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
       .modalFooterOKClick('ganache-provider')
       .waitForElementNotVisible('*[data-id="ganache-providerModalDialogContainer-react"]', 15000)
@@ -40,7 +40,7 @@ module.exports = {
 
   'Should switch to foundry provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-      .switchEnvironmentWithSubmenu('foundry-provider')
+      .switchEnvironment('foundry-provider')
       .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
@@ -51,7 +51,7 @@ module.exports = {
       .pause(1000)
   },
   'Should switch to foundry provider, use the default foundry URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
-    browser.switchEnvironmentWithSubmenu('foundry-provider')
+    browser.switchEnvironment('foundry-provider')
       .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
       .modalFooterOKClick('foundry-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
@@ -60,7 +60,7 @@ module.exports = {
   'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
-      .switchEnvironmentWithSubmenu('ganache-provider')
+      .switchEnvironment('ganache-provider')
       .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
 
       .execute(() => {
