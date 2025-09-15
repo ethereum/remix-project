@@ -1,0 +1,69 @@
+.generic-modal-background {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.generic-modal-container {
+  border-radius: 10px;
+  display: flex;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+}
+
+.generic-modal-close-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.generic-modal-close-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.hover-cursor {
+  cursor: pointer;
+}
+
+.hover-cursor:hover {
+  cursor: pointer;
+  border: 2px dashed var(--bs-info-border-subtle);
+}
+
+.generic-modal-close-button:hover {
+  background-color: transparent;
+}
+
+.generic-modal-close-button:focus {
+  background-color: transparent;
+}
+
+.generic-modal-close-button:active {
+  background-color: transparent;
+}
+
+.generic-modal-close-button:disabled {
+  background-color: transparent;
+}
+
+.generic-modal-close-button:focus-visible {
+  background-color: transparent;
+}
+
+.explora-topcard {
+  cursor: pointer;
+}
+
+.explora-topcard:hover {
+  border-color: pink;
+  cursor: pointer !important;
+}

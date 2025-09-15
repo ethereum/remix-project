@@ -111,6 +111,7 @@ import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
 import { Plugin } from '@remixproject/engine'
 import BottomBarPanel from './app/components/bottom-bar-panel'
+import { TemplateExplorerModalPlugin } from './app/plugins/remix-generic-modal'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -157,6 +158,7 @@ class AppComponent {
   popupPanel: PopupPanel
   statusBar: StatusBar
   topBar: Topbar
+  templateExplorerModal: TemplateExplorerModalPlugin
   settings: SettingsTab
   params: any
   desktopClientMode: boolean
@@ -401,6 +403,8 @@ class AppComponent {
 
     const templateSelection = new TemplatesSelectionPlugin()
 
+    const templateExplorerModal = new TemplateExplorerModalPlugin()
+
     const walletConnect = new WalletConnect()
 
     this.engine.register([
@@ -456,6 +460,7 @@ class AppComponent {
       pluginStateLogger,
       matomo,
       templateSelection,
+      templateExplorerModal,
       scriptRunnerUI,
       remixAI,
       remixAiAssistant,

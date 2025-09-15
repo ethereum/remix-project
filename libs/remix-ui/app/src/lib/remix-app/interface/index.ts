@@ -42,8 +42,8 @@ export interface ModalState {
     modals: AppModal[],
     toasters: {message: (string | JSX.Element), timestamp: number }[],
     focusModal: AppModal,
-    focusToaster: {message: (string | JSX.Element), timestamp: number }
-    focusTemplateExplorer: TemplateExplorerModal
+    focusToaster: {message: (string | JSX.Element), timestamp: number },
+    focusTemplateExplorer: GenericModal
 }
 
 export interface forceChoiceModal {
@@ -52,18 +52,27 @@ export interface forceChoiceModal {
   message: string | JSX.Element,
 }
 
-export interface TemplateExplorerModal {
-  id: string
-  title?: string,
-  message: JSX.Element,
+export interface TemplateExplorerGenericData {
   workspaceName: string,
   modifyWorkspaceName: boolean,
   workspaceDescription: string,
   workspaceTemplateOptions: TemplateOption,
   workspaceTemplateGroup: TemplateGroup,
   workspaceTemplate: Template,
+  workspaceTags: string[]
+  searchTerm?: string
+  modifyWorkspace?: boolean
+}
+
+export interface GenericModal {
+  id: string
+  title?: JSX.Element,
+  message: JSX.Element,
+  footer?: JSX.Element,
+  genericData?: any,
   timestamp?: number
   hide?: boolean
+  showModal?: boolean
   validationFn?: (value: string) => ValidationResult
   // eslint-disable-next-line no-undef
   okLabel: string | JSX.Element
@@ -80,9 +89,8 @@ export interface TemplateExplorerModal {
   showCancelIcon?: boolean,
   preventBlur?: boolean
   placeholderText?: string
-  searchTerm?: string
-  workspaceTags?: string[]
-  modifyWorkspace?: boolean
+  width?: string
+  height?: string
 }
 
 export interface AppState {
@@ -93,5 +101,6 @@ export interface AppState {
     showPopupPanel: boolean
     connectedToDesktop: desktopConnection
     desktopClientConnected: desktopConnection
+    genericModalState?: GenericModal
 }
 

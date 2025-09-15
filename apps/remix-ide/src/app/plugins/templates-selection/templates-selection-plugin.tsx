@@ -272,7 +272,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 if (!item.opts) {
                   return (
                     <RemixUIGridCell
-                      plugin={this}
+                      // plugin={this}
                       title={item.displayName}
                       key={item.name || index}
                       id={item.name}
@@ -353,7 +353,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 }
               })}
               {template.name === 'Cookbook' && <RemixUIGridCell
-                plugin={this}
+                // plugin={this}
                 title={"More from Cookbook"}
                 key={"cookbookMore"}
                 id={"cookBookMore"}

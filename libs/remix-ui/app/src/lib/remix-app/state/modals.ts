@@ -21,8 +21,9 @@ export const ModalInitialState: ModalState = {
   focusTemplateExplorer: {
     id: '',
     hide: true,
-    title: '',
+    title: defaultFocusTemplateExplorer(),
     message: defaultFocusTemplateExplorer(),
+    footer: defaultFocusTemplateExplorer(),
     validationFn: () => { return { valid: true, message: '' } },
     okLabel: '',
     okFn: () => { },
@@ -31,11 +32,6 @@ export const ModalInitialState: ModalState = {
     showCancelIcon: false,
     preventBlur: false,
     placeholderText: '',
-    workspaceName: '',
-    modifyWorkspaceName: false,
-    workspaceDescription: '',
-    workspaceTemplateOptions: {},
-    workspaceTemplateGroup: {} as TemplateGroup,
-    workspaceTemplate: {} as Template,
+    genericData: {}
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
@@ -16,6 +17,7 @@ import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
 import isElectron from 'is-electron'
 import { desktopConnectionType } from '@remix-api'
+import { RemixUiGenericModal } from 'libs/remix-ui/generic-modal/src/lib/remix-ui-generic-modal'
 
 declare global {
   interface Window {
@@ -52,7 +54,19 @@ const RemixApp = (props: IRemixAppUi) => {
   const [appState, appStateDispatch] = useReducer(appReducer, {
     ...appInitialState,
     showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron(),
-    connectedToDesktop: props.app.desktopClientMode ? desktopConnectionType .disconnected : desktopConnectionType .disabled
+    connectedToDesktop: props.app.desktopClientMode ? desktopConnectionType .disconnected : desktopConnectionType .disabled,
+    genericModalState: {
+      id: '',
+      title: <div>Default Title</div>,
+      message: <div>Default Message</div>,
+      footer: <div>Default Footer</div>,
+      okLabel: 'Default Ok Label',
+      okFn: () => { },
+      cancelLabel: 'Default Cancel Label',
+      cancelFn: () => { },
+      width: '892px',
+      height: '768px'
+    }
   })
 
   useEffect(() => {
@@ -302,6 +316,7 @@ const RemixApp = (props: IRemixAppUi) => {
             </div>
             <AppDialogs></AppDialogs>
             <DialogViewPlugin></DialogViewPlugin>
+            {appState.genericModalState.showModal && <RemixUiGenericModal appState={appState} dispatch={appStateDispatch} plugin={props.app.templateExplorerModal}></RemixUiGenericModal>}
           </AppProvider>
         </onLineContext.Provider>
       </platformContext.Provider>

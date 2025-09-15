@@ -4,7 +4,6 @@ import { LibraryProfile, MethodApi, StatusEvents } from '@remixproject/plugin-ut
 import { AppModal } from '@remix-ui/app'
 import { AlertModal } from '@remix-ui/app'
 import { dispatchModalInterface } from '@remix-ui/app'
-import { TemplateExplorerModal } from 'libs/remix-ui/app/src/lib/remix-app/interface'
 
 interface INotificationApi {
   events: StatusEvents
@@ -12,7 +11,7 @@ interface INotificationApi {
     modal: (args: AppModal) => void
     alert: (args: AlertModal) => void
     toast: (message: string) => void
-    templateExplorer: (args: TemplateExplorerModal) => void
+
   }
 }
 
@@ -20,7 +19,7 @@ const profile: LibraryProfile<INotificationApi> = {
   name: 'notification',
   displayName: 'Notification',
   description: 'Displays notifications',
-  methods: ['modal', 'alert', 'toast', 'templateExplorer']
+  methods: ['modal', 'alert', 'toast']
 }
 
 export class NotificationPlugin extends Plugin implements MethodApi<INotificationApi> {
@@ -35,11 +34,6 @@ export class NotificationPlugin extends Plugin implements MethodApi<INotificatio
 
   async modal(args: AppModal) {
     return this.dispatcher.modal(args)
-  }
-
-  async templateExplorer(args: TemplateExplorerModal) {
-    console.log('templateExplorer', args)
-    return this.dispatcher.templateExplorer(args)
   }
 
   async alert(args: AlertModal) {
