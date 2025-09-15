@@ -39,10 +39,8 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
   const handleToggle = (name: string) => {
     if (state[name]) {
       const newValue = !state[name].value
-
       dispatch({ type: 'SET_LOADING', payload: { name: name } })
       dispatch({ type: 'SET_VALUE', payload: { name: name, value: newValue } })
-      // _paq.push(['disableCookies'])
       if (!newValue && formUIData[name]) {
         Object.keys(formUIData[name]).forEach((key) => {
           dispatch({ type: 'SET_VALUE', payload: { name: key, value: '' } })
@@ -50,6 +48,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
         dispatch({ type: 'SET_TOAST_MESSAGE', payload: { value: 'Credentials removed' } })
       }
       if (name === 'copilot/suggest/activate') plugin.emit('copilotChoiceUpdated', newValue)
+      if (name === 'matomo-perf-analytics') plugin.call('settings', 'updateMatomoPerfAnalyticsChoice', newValue)
       if (name === 'text-wrap') plugin.emit('textWrapChoiceUpdated', newValue)
     } else {
       console.error('Setting does not exist: ', name)
