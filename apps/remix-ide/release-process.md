@@ -1,6 +1,6 @@
 This document describes:
  - how to update remix.ethereum.org.
- - how to update remix-alpha.ethereum.org.
+ - how to update alpha.remix.live
  - how to release remix IDE.
 
 # Remix IDE Release
@@ -47,7 +47,7 @@ This is not strictly speaking a release. Updating the remix site is done through
 
  CircleCI will build automatically and remix.ethereum.org will be updated
 
-# remix-alpha.ethereum.org update
+# alpha.remix.live update
 
-remix-alpha.ethereum.org is automatically updated every time commits are pushed to master
+alpha.remix.live is automatically updated every time commits are pushed to master
  

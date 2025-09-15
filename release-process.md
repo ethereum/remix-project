@@ -5,11 +5,11 @@ This document includes the release instructions for:
  - Publishing `remixd` to NPM
  - Publishing remix libraries to NPM
  - Updating Remix's live version on remix.ethereum.org
- - Updating Remix's alpha version on remix-alpha.ethereum.org
- - Updating Remix's beta version on remix-beta.ethereum.org
+ - Updating Remix's alpha version on `alpha.remix.live`
+ - Updating Remix's beta version on `beta.remix.live`
 
 ## Feature Freeze
-Once feature freeze is done, `remix_beta` should be updated to the latest master which will automatically update `remix-beta.ethereum.org` through a CI job.
+Once feature freeze is done, `remix_beta` should be updated to the latest master which will automatically update `beta.remix.live` through a CI job.
 
 Use this unified command:
 
@@ -23,7 +23,7 @@ or individually:
  - `git push -f origin remix_beta`
  
 ## Testing
-Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself: https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 
+Testing is performed after the Feature Freeze on `beta.remix.live`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself: https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 
 
 Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 
@@ -141,4 +141,4 @@ or individually:
  
 ## Remix IDE Alpha Release
 
-remix-alpha.ethereum.org is automatically updated every time a commit is pushed to `master` branch
+`alpha.remix.live` is automatically updated every time a commit is pushed to `master` branch
