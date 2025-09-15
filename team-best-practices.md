@@ -10,7 +10,7 @@ This document link to other specialized best practices (like coding best practic
 
 Related links:
  - Public Website: https://remix-project.org
- - Awesome Remix: https://github.com/ethereum/awesome-remix
+ - Awesome Remix: https://github.com/remix-project-org/awesome-remix
  - Remix basic FAQ: https://hackmd.io/KVooMJhWRImCGq6zkDgW9A
  - Remix live: https://remix.ethereum.org
  - Remix alpha live: https://remix-alpha.ethereum.org

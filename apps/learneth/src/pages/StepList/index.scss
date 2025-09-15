@@ -1,144 +1,242 @@
-:host {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+.menuspacer { margin-top: 52px; }
 
-header {
-  padding: 10px 5px;
-}
-
-.menuspacer{
-  margin-top: 52px;
-}
-
-.steplink {
-  text-decoration: none;
-}
-
-.title{
-  pointer-events: none;
-}
-
-h1 {
-  text-align: left;
-  font-size: 1.2rem !important;
-  word-break: break-word;
-}
-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .start {
-    padding: 5px 25px;
-    animation: jittery 2s 0.5s infinite;
-    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.5);
-    color: white;
-    cursor: pointer;
+.course-hero {
+  border-radius: .75rem;
+  border: 1px solid var(--bs-secondary);
+  .card-body { padding: 1rem; }
+  .h4 {
+    font-size: 1.1rem;
+  }
+  .description-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
   }
 }
 
-footer {
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
+.no-wiggle-btn {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  min-height: 38px;
+  padding: .5rem .75rem;
+  border: 1px solid transparent;
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: none !important;
+}
+.no-wiggle-btn:hover,
+.no-wiggle-btn:focus,
+.no-wiggle-btn:active {
+  padding: .5rem .75rem !important;
+  border-color: transparent !important;
+  transform: none !important;
+  text-decoration: none !important;
+}
+.no-wiggle-btn > * {
+  transition: none !important;
+  transform: none !important;
+  letter-spacing: normal !important;
+}
+.no-wiggle-icon { 
+  width: 1em; 
+  text-align: center; 
+  transform: translateY(1px);
+}
+.more-button {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.no-wiggle-label { 
+  text-decoration: none !important; 
+}
+.btn-cta {
+  background-color: var(--bs-primary);
+  border-color: transparent;
+}
+.btn-cta:hover,
+.btn-cta:focus,
+.btn-cta:active {
+  background-color: var(--bs-primary);
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  margin-bottom: 1rem;
+
+  --stat-ico: 18px;
+  --stat-gap: 9px;
+
+  .stat {
+    display: grid;
+    align-items: center;
+    margin-bottom: 1rem;
+    grid-template-columns: var(--stat-ico) 1fr;
+    column-gap: var(--stat-gap);
+  }
+  .stat > :first-child {
+    width: var(--stat-ico);
+    height: var(--stat-ico);
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+  }
+  .stat-icon {
+    width: var(--stat-ico); 
+    height: var(--stat-ico);
+    margin-right: 0;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    vertical-align: middle;
+    font-size: calc(var(--stat-ico) - 2px);
+    line-height: 1;
+    opacity: .95;
+  }
+  .stat-label {
+    font-size: .65rem;
+    letter-spacing: .02em;
+  }
+  .stat-value {
+    font-size: .65rem;
+  }
+}
+
+.syllabus-list .list-group-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--bs-secondary-border-color);
+  border-left: 0; border-right: 0;
+  padding: .75rem .875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.syllabus-list .list-group-item + .list-group-item {
+  margin-top: .5rem;
+  border-radius: .5rem;
+}
+.syllabus-list .list-group-item:first-child {
+  border-radius: .5rem;
+}
+.syllabus-list .list-group-item:hover {
+  text-decoration: none;
+  background: rgba(255,255,255,0.04);
+}
+
+h1, h2, h3, .title { word-break: break-word; }
+h1 { 
+  text-align: left; 
+  font-size: 1.2rem !important; 
+}
+.steplink { 
+  text-decoration: none; 
+}
+.title { 
+  pointer-events: none; 
+}
+
+.hr-themed { 
+  opacity: .4; 
+}
+
+.slide-in { 
+  animation: slideIn .5s forwards; 
+  visibility: hidden; 
+}
+@keyframes slideIn {
+  0% { 
+    transform: translateY(-100%); 
+    visibility: visible; 
+  }
+  100% { 
+    transform: translateY(0); 
+    visibility: visible; 
+  }
+}
+@-webkit-keyframes slideIn {
+  0% { 
+    transform: translateY(-100%); 
+    visibility: visible; 
+  }
+  100% { 
+    transform: translateY(0); 
+    visibility: visible; 
+  }
 }
 
 @keyframes jittery {
-  5%,
-  50% {
-    transform: scale(1);
-    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.5);
-  }
-  10% {
-    transform: scale(0.9);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  }
-  15% {
-    transform: scale(1.15);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
-  20% {
-    transform: scale(1.15) rotate(-5deg);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
-  25% {
-    transform: scale(1.15) rotate(5deg);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
-  30% {
-    transform: scale(1.15) rotate(-3deg);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
-  35% {
-    transform: scale(1.15) rotate(2deg);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
-  40% {
-    transform: scale(1.15) rotate(0);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  }
+  5%, 50% { transform: scale(1); box-shadow: 0 0 1px 0 rgba(0,0,0,.5); }
+  10% { transform: scale(.9); box-shadow: 0 10px 20px rgba(0,0,0,.19), 0 6px 6px rgba(0,0,0,.23); }
+  15% { transform: scale(1.15); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
+  20% { transform: scale(1.15) rotate(-5deg); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
+  25% { transform: scale(1.15) rotate(5deg); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
+  30% { transform: scale(1.15) rotate(-3deg); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
+  35% { transform: scale(1.15) rotate(2deg); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
+  40% { transform: scale(1.15) rotate(0); box-shadow: 0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22); }
 }
 
-.slide-in {
-  animation: slideIn 0.5s forwards;
-  visibility: hidden;
+.antenna {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.antenna-bar {
+  width: 3px;
+  margin-right: 2.5px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.antenna-bar:last-child { margin-right: 0; }
+
+.stat-label { 
+  font-size: .75rem; 
+  letter-spacing: .02em;
+}
+.stat-value { 
+  font-size: .95rem; 
+}
+.stat-svg {
+  width: 18px; height: 18px;
+  margin-right: 0;
+  vertical-align: middle;
+  transform: scale(1.3);
+  transform-origin: center;
+}
+.stat-svg .chk {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.stat-svg .ln {
+  fill: var(--bs-secondary-border-color, rgba(255,255,255,.25));
 }
 
-@keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    visibility: visible;
-  }
-  100% {
-    transform: translateY(0);
-    visibility: visible;
-  }
-}
+.description-wrapper {
+  line-height: 1.5;
 
-@-moz-keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    visibility: visible;
+  p:last-child, h1:last-child, h2:last-child, h3:last-child, ul:last-child, ol:last-child {
+    margin-bottom: 0;
   }
-  100% {
-    transform: translateY(0);
-    visibility: visible;
+  
+  &.truncated {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-}
-
-@-webkit-keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    visibility: visible;
+  h2 {
+    font-size: 0.8rem !important;
   }
-  100% {
-    transform: translateY(0);
-    visibility: visible;
-  }
-}
-
-@-o-keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    visibility: visible;
-  }
-  100% {
-    transform: translateY(0);
-    visibility: visible;
-  }
-}
-
-@-ms-keyframes slideIn {
-  0% {
-    transform: translateY(-100%);
-    visibility: visible;
-  }
-  100% {
-    transform: translateY(0);
-    visibility: visible;
+  p {
+    font-size: 0.8rem;
   }
 }

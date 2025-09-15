@@ -1,0 +1,14 @@
+{
+  "desktopDownload.loading": "Loading desktop app info...",
+  "desktopDownload.error": "Unable to load desktop app. Check the {link} for downloads.",
+  "desktopDownload.title": "Remix Desktop",
+  "desktopDownload.releaseDate": "Released {date}",
+  "desktopDownload.downloadSpan": "Download Remix Desktop {platform} {version}",
+  "desktopDownload.downloadSpanGeneric": "Download Remix Desktop {version}",
+  "desktopDownload.downloadCompactFull": "Download Remix Desktop {platform} {version}",
+  "desktopDownload.downloadCompactGeneric": "Download Remix Desktop {version}",
+  "desktopDownload.downloadButton": "Download for {platform}",
+  "desktopDownload.viewReleases": "View Downloads",
+  "desktopDownload.otherVersions": "Other versions and platforms",
+  "desktopDownload.noAutoDetect": "Available for Windows, macOS, and Linux"
+}
