@@ -70,12 +70,12 @@ export default class DGitProvider extends Plugin<any, CustomRemixApi> {
     // Refresh token: ghr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (40 chars)
 
     const tokenPatterns = [
-      /^ghp_[A-Za-z0-9]{36}$/,     // Personal Access Token (classic)
+      /^ghp_[A-Za-z0-9]{36}$/, // Personal Access Token (classic)
       /^github_pat_[A-Za-z0-9_]{22,255}$/, // Personal Access Token (fine-grained)
-      /^gho_[A-Za-z0-9]{36}$/,     // OAuth token
-      /^ghs_[A-Za-z0-9]{36}$/,     // GitHub App token
-      /^ghu_[A-Za-z0-9]{36}$/,     // GitHub App installation token
-      /^ghr_[A-Za-z0-9]{36}$/,     // Refresh token
+      /^gho_[A-Za-z0-9]{36}$/, // OAuth token
+      /^ghs_[A-Za-z0-9]{36}$/, // GitHub App token
+      /^ghu_[A-Za-z0-9]{36}$/, // GitHub App installation token
+      /^ghr_[A-Za-z0-9]{36}$/, // Refresh token
     ]
 
     // Check if token matches any known GitHub token pattern
@@ -661,7 +661,6 @@ export default class DGitProvider extends Plugin<any, CustomRemixApi> {
         return null
       }
 
-
       const octokit = new Octokit({
         auth: input.token,
         retry: { enabled: false }
@@ -673,8 +672,7 @@ export default class DGitProvider extends Plugin<any, CustomRemixApi> {
         }
       })
 
-
-      let emails = { data: [] }
+      let emails = { data: []}
       try {
         emails = await octokit.request('GET /user/emails')
       } catch (emailError) {
@@ -701,8 +699,6 @@ export default class DGitProvider extends Plugin<any, CustomRemixApi> {
       return null
     }
   }
-
-
 
   async remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]> {
     try {
