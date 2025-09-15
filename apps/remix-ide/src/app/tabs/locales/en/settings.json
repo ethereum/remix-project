@@ -59,7 +59,7 @@
   "settings.servicesDescription": "Configure the settings for connected services, including Github, IPFS, Swarm, Sindri and Etherscan.",
   "settings.matomoAnalyticsNoCookies": "Matomo Analytics (necessary, no cookies)",
   "settings.matomoAnalyticsNoCookiesDescription": "Help improve Remix with anonymous usage data.",
-  "settings.matomoAnalyticsWithCookies": "Matomo Analytics (with cookies)",
+  "settings.matomoAnalyticsWithCookies": "Matomo Performance Analytics (with cookies)",
   "settings.matomoAnalyticsWithCookiesDescription": "Enable tracking with cookies for more detailed insights.",
   "settings.aiCopilot": "AI Copilot",
   "settings.aiCopilotDescription": "AI Copilot assists with code suggestions and improvements.",
