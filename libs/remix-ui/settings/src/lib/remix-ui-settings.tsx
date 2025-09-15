@@ -96,13 +96,9 @@ const settingsSections: SettingsSection[] = [
     { options: [{
       name: 'matomo-analytics',
       label: 'settings.matomoAnalyticsNoCookies',
+      headerClass: 'text-secondary',
       type: 'toggle',
       description: 'settings.matomoAnalyticsNoCookiesDescription',
-      footnote: {
-        text: 'Learn more about analytics',
-        link: 'https://matomo.org/',
-        styleClass: 'text-primary'
-      }
     }, {
       name: 'matomo-perf-analytics',
       label: 'settings.matomoAnalyticsWithCookies',
