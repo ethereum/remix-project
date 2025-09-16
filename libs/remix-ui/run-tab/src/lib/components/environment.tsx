@@ -246,16 +246,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 ))}
               </SubmenuPortal>
             )}
-
-            <Dropdown.Divider className="border-secondary" />
-
-            <Dropdown.Item
-              key={10000}
-              onClick={() => { props.setExecutionContext({ context: 'item-another-chain' }) }}
-              data-id="dropdown-item-another-chain"
-            >
-              <span className="">Customize this list...</span>
-            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
