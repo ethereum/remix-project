@@ -18,6 +18,7 @@ class switchEnvironment extends EventEmitter {
           if (shouldWait) {
             browser
               .waitForElementVisible(`[data-id="selected-provider-${providerName}"]`, 15000)
+              .pause(1000)
               .perform(() => done())
           } else {
             done()
@@ -126,23 +127,12 @@ class switchEnvironment extends EventEmitter {
 
           attemptSelect(this.api, provider, returnWhenInitialized, () => {
             waitForSelectedOrModal(this.api, provider, 10000, (ok) => {
-              if (ok) return done()
-
-              this.api.isPresent({
-                selector: `*[data-id="${provider}ModalDialogContainer-react"]`,
-                suppressNotFoundErrors: true,
-                timeout: 0
-              }, (hasModal) => {
-                if (!hasModal.value) {
-                  ensureDropdownClosed(this.api)
-                }
-                this.api
-                  .pinGrid(provider, true)
-                  .click('[data-id="settingsSelectEnvOptions"] button')
-                attemptSelect(this.api, provider, returnWhenInitialized, () => {
-                  waitForSelectedOrModal(this.api, provider, 10000, () => done())
-                })
-              })
+              if (ok) {
+                return done()
+              } else {
+                this.api.assert.fail(`Environment "${provider}" could not be selected or found in the dropdown.`)
+                done()
+              }
             })
           })
         })
