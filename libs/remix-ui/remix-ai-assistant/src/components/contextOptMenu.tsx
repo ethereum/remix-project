@@ -6,6 +6,7 @@ export interface GroupListMenuProps {
   choice: AiContextType | AiAssistantType | any
   setShowOptions: Dispatch<React.SetStateAction<boolean>>
   groupList: groupListType[]
+  themeTracker?: any
 }
 
 export default function GroupListMenu(props: GroupListMenuProps) {
@@ -15,7 +16,7 @@ export default function GroupListMenu(props: GroupListMenuProps) {
       {props.groupList.map((item, index) => (
         <button
           key={`${item.label}-${index}`}
-          className="btn btn-light"
+          className={`btn btn-light ${props.themeTracker?.name === 'Dark' ? 'border border-dark' : ''}`}
           data-id={item.dataId}
           onClick={() => {
             props.setChoice(item.stateValue)
