@@ -111,7 +111,7 @@ import Terminal from './app/panels/terminal'
 import TabProxy from './app/panels/tab-proxy.js'
 import { Plugin } from '@remixproject/engine'
 import BottomBarPanel from './app/components/bottom-bar-panel'
-import { TemplateExplorerModalPlugin } from './app/plugins/remix-generic-modal'
+import { TemplateExplorerModalPlugin } from './app/plugins/remix-template-explorer-modal'
 
 const _paq = (window._paq = window._paq || [])
 

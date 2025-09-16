@@ -1,4 +1,4 @@
-.generic-modal-background {
+.template-explorer-modal-background {
   position: fixed;
   display: flex;
   justify-content: center;
@@ -10,20 +10,20 @@
   background-color: transparent;
 }
 
-.generic-modal-container {
+.template-explorer-modal-container {
   border-radius: 10px;
   display: flex;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   flex-direction: column;
 }
 
-.generic-modal-close-container {
+.template-explorer-modal-close-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.generic-modal-close-button {
+.template-explorer-modal-close-button {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -39,23 +39,23 @@
   border: 2px dashed var(--bs-info-border-subtle);
 }
 
-.generic-modal-close-button:hover {
+.template-explorer-modal-close-button:hover {
   background-color: transparent;
 }
 
-.generic-modal-close-button:focus {
+.template-explorer-modal-close-button:focus {
   background-color: transparent;
 }
 
-.generic-modal-close-button:active {
+.template-explorer-modal-close-button:active {
   background-color: transparent;
 }
 
-.generic-modal-close-button:disabled {
+.template-explorer-modal-close-button:disabled {
   background-color: transparent;
 }
 
-.generic-modal-close-button:focus-visible {
+.template-explorer-modal-close-button:focus-visible {
   background-color: transparent;
 }
 

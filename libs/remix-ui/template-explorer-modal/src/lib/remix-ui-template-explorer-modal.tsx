@@ -1,10 +1,10 @@
 import React from 'react'
-import './remix-ui-generic-modal.css'
+import './remix-ui-template-explorer-modal.css'
 import { appActionTypes, AppState } from '@remix-ui/app'
 import { TopCard, TopCardProps } from '../components/topCard'
 import { TemplateExplorerBody } from '../components/template-explorer-body'
 
-export interface RemixUiGenericModalProps {
+export interface RemixUiTemplateExplorerModalProps {
   dispatch: any
   appState: AppState
   plugin: any
@@ -35,13 +35,13 @@ const topCards: TopCardProps[] = [
 
 ]
 
-export function RemixUiGenericModal (props: RemixUiGenericModalProps) {
+export function RemixUiTemplateExplorerModal (props: RemixUiTemplateExplorerModalProps) {
 
   return (
-    <section className="generic-modal-background" style={{ zIndex: 8888 }}>
-      <div className="generic-modal-container border bg-dark p-2" style={{ width: props.appState.genericModalState.width, height: props.appState.genericModalState.height }}>
-        <div className="generic-modal-close-container bg-dark">
-          <button className="generic-modal-close-button" onClick={() => props.dispatch({ type: appActionTypes.showGenericModal, payload: false })}>
+    <section className="template-explorer-modal-background" style={{ zIndex: 8888 }}>
+      <div className="template-explorer-modal-container border bg-dark p-2" style={{ width: props.appState.genericModalState.width, height: props.appState.genericModalState.height }}>
+        <div className="template-explorer-modal-close-container bg-dark">
+          <button className="template-explorer-modal-close-button" onClick={() => props.dispatch({ type: appActionTypes.showGenericModal, payload: false })}>
             <i className="fa-solid fa-xmark"></i>
           </button>
         </div>
