@@ -9,6 +9,7 @@ import { getWorkspaces } from 'libs/remix-ui/workspace/src/lib/actions'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import path from 'path'
+import { DesktopDownload } from 'libs/remix-ui/desktop-download'
 
 interface Branch {
   name: string
@@ -459,19 +460,8 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
             </button>
           </Dropdown.Item>
           <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-          <Dropdown.Item onClick={() => {
-            window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
-            setShowMain(false)
-            setOpenSub(null)
-          }}>
-            <span className="pl-2" style={{ color: '#D678FF' }} onClick={() => {
-              window.open('https://github.com/remix-project-org/remix-desktop/releases', '_blank')
-              setShowMain(false)
-              setOpenSub(null)
-            }}>
-              <i className="far fa-desktop me-2"></i>
-                Download Remix Desktop
-            </span>
+          <Dropdown.Item>
+            <DesktopDownload style={{ color: '#D678FF' }} variant="span" trackingContext="dropdown" />
           </Dropdown.Item>
           <Dropdown.Item onClick={() => {
             downloadWorkspaces()

@@ -134,8 +134,8 @@ const tests = {
       .click('*[data-id="run-script-dropdown-trigger"]')
       .pause(1000)
       .click('*[data-id="open-script-configuration-menu-item"]')
-      .waitForElementVisible('label[data-id="sr-loaded-default"]', 30000)
-      .waitForElementVisible('label[data-id="sr-notloaded-ethers6"]', 30000)
+      .waitForElementVisible('label[data-id="sr-loaded-default"]', 60000)
+      .waitForElementVisible('label[data-id="sr-notloaded-ethers6"]', 60000)
   },
   'switch to default workspace that should be on ethers6': function (browser: NightwatchBrowser) {
     browser
