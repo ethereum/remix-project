@@ -161,7 +161,8 @@ export const createInstance = async (
   mainnetPrompt: MainnetPrompt,
   isOverSizePrompt: (values: OverSizeLimit) => JSX.Element,
   args,
-  deployMode: DeployMode[]) => {
+  deployMode: DeployMode[],
+  isVerifyChecked: boolean) => {
   const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
   const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
   const statusCb = (msg: string) => {
@@ -180,12 +181,50 @@ export const createInstance = async (
     const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
-    if (plugin.REACT_API.ipfsChecked) {
-      _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', plugin.REACT_API.networkName])
-      publishToStorage('ipfs', selectedContract)
+  
+    if (isVerifyChecked) {
+      _paq.push(['trackEvent', 'udapp', 'DeployAndVerify', plugin.REACT_API.networkName])
+      try {
+        await publishToStorage('ipfs', selectedContract)
+      } catch (e) {
+        const errorMsg = `Could not publish contract metadata to IPFS. Continuing with verification... (Error: ${e.message})`
+        const errorLog = logBuilder(errorMsg)
+        terminalLogger(plugin, errorLog)
+      }
+
+      const msg = `Contract deployed successfully at ${addressToString(address)}. Starting verification process...`
+      const log = logBuilder(msg)
+      terminalLogger(plugin, log)
+
+      const etherscanApiKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+
+      const status = plugin.blockchain.getCurrentNetworkStatus();
+      if (status.error || !status.network) {
+        const errorMsg = `Could not get network status for verification: ${status.error || 'Unknown error'}`
+        const errorLog = logBuilder(errorMsg)
+        terminalLogger(plugin, errorLog)
+        return
+      }
+
+      const chainId = status.network.id
+
+      const verificationData = {
+        chainId: chainId,
+        contractAddress: addressToString(address),
+        contractName: selectedContract.name,
+        compilationResult: await plugin.compilersArtefacts.getCompilerAbstract(selectedContract.contract.file),
+        constructorArgs: args,
+        etherscanApiKey: etherscanApiKey
+      }
+
+      console.log({verificationData})
+
+      plugin.call('contract-verification', 'verifyOnDeploy', verificationData)
+
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
+
     if (isProxyDeployment) {
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
 

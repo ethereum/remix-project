@@ -1,16 +1,18 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
+
 import EventManager from 'events'
-import { VERIFIERS, type ChainSettings, type ContractVerificationSettings, type LookupResponse, type VerifierIdentifier } from './types'
+import { VERIFIERS, type ChainSettings, type ContractVerificationSettings, type LookupResponse, type VerifierIdentifier, SubmittedContract } from './types'
 import { mergeChainSettingsWithDefaults, validConfiguration } from './utils'
 import { getVerifier } from './Verifiers'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 export class ContractVerificationPluginClient extends PluginClient {
   public internalEvents: EventManager
 
   constructor() {
     super()
-    this.methods = ['lookupAndSave']
+    this.methods = ['lookupAndSave', 'verifyOnDeploy']
     this.internalEvents = new EventManager()
     createClient(this)
     this.onload()
@@ -59,6 +61,81 @@ export class ContractVerificationPluginClient extends PluginClient {
       await this.call('fileManager', 'open', lookupResponse.targetFilePath)
     } catch (err) {
       throw new Error(`Error focusing file ${lookupResponse.targetFilePath}: ${err.message}`)
+    }
+  }
+
+  verifyOnDeploy = async (data: any): Promise<void> => {
+    try {
+      await this.call('terminal', 'log', { type: 'info', value: 'Verification process started...' })
+
+      const { chainId, contractAddress, contractName, compilationResult, constructorArgs, etherscanApiKey } = data
+      
+      if (!chainId) throw new Error("Chain ID was not provided.")
+
+      const submittedContract: SubmittedContract = {
+        id: `${chainId}-${contractAddress}`, 
+        address: contractAddress,
+        chainId: chainId,
+        filePath: Object.keys(compilationResult.data.contracts).find(path => path in compilationResult.source.sources),
+        contractName: contractName,
+        abiEncodedConstructorArgs: constructorArgs,
+        date: new Date().toISOString(),
+        receipts: []
+      }
+
+      const compilerAbstract: CompilerAbstract = compilationResult
+
+      const userSettings = this.getUserSettingsFromLocalStorage()
+      const chainSettings = mergeChainSettingsWithDefaults(chainId, userSettings)
+
+      await this._verifyWithProvider('Sourcify', submittedContract, compilerAbstract, chainId, chainSettings)
+      
+      if (etherscanApiKey) {
+        if (!chainSettings.verifiers.Etherscan) chainSettings.verifiers.Etherscan = {}
+        chainSettings.verifiers.Etherscan.apiKey = etherscanApiKey
+        await this._verifyWithProvider('Etherscan', submittedContract, compilerAbstract, chainId, chainSettings)
+      } else {
+        await this.call('terminal', 'log', { type: 'warn', value: 'Etherscan verification skipped: API key not found in global Settings.' })
+      }
+
+      await this._verifyWithProvider('Routescan', submittedContract, compilerAbstract, chainId, chainSettings)
+      await this._verifyWithProvider('Blockscout', submittedContract, compilerAbstract, chainId, chainSettings)
+
+    } catch (error) {
+      await this.call('terminal', 'log', { type: 'error', value: `An unexpected error occurred during verification: ${error.message}` })
+    }
+  }
+
+  private _verifyWithProvider = async (
+    providerName: VerifierIdentifier, 
+    submittedContract: SubmittedContract, 
+    compilerAbstract: CompilerAbstract, 
+    chainId: string, 
+    chainSettings: ChainSettings
+  ): Promise<void> => {
+    try {
+      if (validConfiguration(chainSettings, providerName)) {
+        await this.call('terminal', 'log', { type: 'info', value: `Verifying with ${providerName}...` })
+        
+        const verifierSettings = chainSettings.verifiers[providerName]
+        const verifier = getVerifier(providerName, verifierSettings)
+        
+        if (verifier && typeof verifier.verify === 'function') {
+            const result = await verifier.verify(submittedContract, compilerAbstract)
+            
+            let successMessage = `${providerName} verification successful! Status: ${result.status}`
+            if (result.receiptId) successMessage += `, Receipt ID: ${result.receiptId}`
+            await this.call('terminal', 'log', { type: 'info', value: successMessage })
+            
+            if (result.lookupUrl) {
+                await this.call('terminal', 'log', { type: 'html', value: `Check status: <a href="${result.lookupUrl}" target="_blank">${providerName} Link</a>` })
+            }
+        } else {
+            await this.call('terminal', 'log', { type: 'warn', value: `${providerName} verifier is not properly configured or does not support direct verification.` })
+        }
+      }
+    } catch (e) {
+      await this.call('terminal', 'log', { type: 'error', value: `${providerName} verification failed: ${e.message}` })
     }
   }
 
