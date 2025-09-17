@@ -129,8 +129,8 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   useEffect(() => {
     if (platform === appPlatformTypes.desktop) {
       // Fetch recent folders after a delay to ensure workspace is initialized
-      const timeout = setTimeout(fetchRecentFolders, 1000)
-      return () => clearTimeout(timeout)
+      fetchRecentFolders()
+
     }
   }, [platform])
 

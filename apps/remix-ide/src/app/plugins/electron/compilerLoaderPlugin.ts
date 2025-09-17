@@ -51,7 +51,7 @@ export class compilerLoaderPlugin extends Plugin {
 export class compilerLoaderPluginDesktop extends ElectronPlugin {
   constructor() {
     super(profile)
-    this.methods = []
+    this.methods = methods
   }
 
   async onActivation(): Promise<void> {

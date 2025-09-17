@@ -7,6 +7,6 @@ export class electronConfig extends ElectronPlugin {
       name: 'electronconfig',
       description: 'electronconfig',
     })
-    this.methods = []
+    this.methods = ['readConfig']
   }
 }
