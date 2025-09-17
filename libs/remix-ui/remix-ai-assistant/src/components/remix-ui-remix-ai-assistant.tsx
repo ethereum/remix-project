@@ -715,7 +715,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               setChoice={handleModelSelection}
               setShowOptions={setShowModelOptions}
               choice={selectedModel}
-              themeTracker={themeTracker}
               groupList={availableModels.map(model => ({
                 label: model,
                 bodyText: `Use ${model} model`,
