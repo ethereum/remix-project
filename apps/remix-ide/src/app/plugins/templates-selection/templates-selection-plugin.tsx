@@ -265,10 +265,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 item.templateType = TEMPLATE_METADATA[item.value]
 
                 if (item.templateType && item.templateType.desktopCompatible === false && isElectron()) {
-                  return (<></>)
+                  return <React.Fragment key={item.name || index}></React.Fragment>
                 }
 
-                if (item.templateType && item.templateType.disabled === true) return
+                if (item.templateType && item.templateType.disabled === true) return null
                 if (!item.opts) {
                   return (
                     <RemixUIGridCell
