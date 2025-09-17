@@ -219,7 +219,6 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
           className="btn btn-sm w-100 border position-relative"
           variant="secondary"
           data-id="workspacesMenuDropdown"
-          icon="fas fa-folder-open"
         >
           <div
             data-id="workspacesSelect-togglerText"
