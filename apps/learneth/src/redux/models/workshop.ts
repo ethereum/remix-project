@@ -10,15 +10,15 @@ const apiUrl = 'https://learneth.api.remix.live'
 
 export const repoMap = {
   en: {
-    name: 'ethereum/remix-workshops',
+    name: 'remix-project-org/remix-workshops',
     branch: 'master',
   },
   zh: {
-    name: 'ethereum/remix-workshops',
+    name: 'remix-project-org/remix-workshops',
     branch: 'zh',
   },
   es: {
-    name: 'ethereum/remix-workshops',
+    name: 'remix-project-org/remix-workshops',
     branch: 'es',
   },
 }
