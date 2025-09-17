@@ -10,6 +10,7 @@ import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import path from 'path'
 import { DesktopDownload } from 'libs/remix-ui/desktop-download'
+import { ElectronWorkspaceMenu } from './ElectronWorkspaceMenu'
 
 interface Branch {
   name: string
@@ -188,13 +189,20 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
   const toggleSub = (idx: number) =>
     setOpenSub(prev => (prev === idx ? null : idx))
 
+
+
+
+
   const openFolder = async () => {
+    console.log('Opening folder...')
     try {
       await global.plugin.call('fs', 'openFolderInSameWindow')
     } catch (error) {
       console.error('Error opening folder:', error)
     }
   }
+
+
 
   // Render simplified dropdown for desktop
   if (platform === appPlatformTypes.desktop) {
@@ -220,53 +228,12 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
             {togglerText}
           </div>
         </Dropdown.Toggle>
-        <Dropdown.Menu
-          style={{ minWidth: '100%' }}
-          className="px-2"
-          data-id="topbar-custom-dropdown-items"
-          show={showMain}
-        >
-          <div className="d-grid gap-2">
-            <Dropdown.Item
-              data-id="workspaceOpenFolder"
-              onClick={(e) => {
-                openFolder()
-                setShowMain(false)
-              }}
-              style={{
-                backgroundColor: 'transparent',
-                color: 'inherit',
-              }}
-            >
-              <button className="w-100 btn btn-primary font-weight-light text-decoration-none mb-2 rounded-lg" onClick={(e) => {
-                openFolder()
-                setShowMain(false)
-              }}>
-                <i className="fas fa-folder-open me-2"></i>
-                Open Folder
-              </button>
-            </Dropdown.Item>
-            <Dropdown.Item
-              data-id="workspacecreate"
-              onClick={(e) => {
-                createWorkspace()
-                setShowMain(false)
-              }}
-              style={{
-                backgroundColor: 'transparent',
-                color: 'inherit',
-              }}
-            >
-              <button className="w-100 btn btn-outline-primary font-weight-light text-decoration-none mb-2 rounded-lg" onClick={(e) => {
-                createWorkspace()
-                setShowMain(false)
-              }}>
-                <i className="fas fa-plus me-2"></i>
-                Create New Project
-              </button>
-            </Dropdown.Item>
-          </div>
-        </Dropdown.Menu>
+        <ElectronWorkspaceMenu 
+          showMain={showMain}
+          setShowMain={setShowMain}
+          openFolder={openFolder}
+          createWorkspace={createWorkspace}
+        />
       </Dropdown>
     )
   }
