@@ -115,7 +115,7 @@ export const ElectronWorkspaceMenu: React.FC<ElectronWorkspaceMenuProps> = ({
                           e.currentTarget.style.opacity = '0.75'
                         }}
                       >
-                        <i className="fas fa-external-link-alt"></i>
+                        <i className="fas fa-clone"></i>
                       </Button>
                     </CustomTooltip>
                     <CustomTooltip 
@@ -139,7 +139,7 @@ export const ElectronWorkspaceMenu: React.FC<ElectronWorkspaceMenuProps> = ({
                           e.currentTarget.style.opacity = '0.75'
                         }}
                       >
-                        <i className="fas fa-folder-open"></i>
+                        <i className="fas fa-eye"></i>
                       </Button>
                     </CustomTooltip>
                   </div>

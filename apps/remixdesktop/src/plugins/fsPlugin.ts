@@ -574,7 +574,17 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
-    let path = isAbsolutePath? action.path[0] : this.fixPath(action.path[0])
+    let path: string
+    
+    // Handle missing or empty path array
+    if (!action.path || action.path.length === 0 || !action.path[0] || action.path[0] === '') {
+      path = this.workingDir || process.cwd()
+    } else if (isAbsolutePath) {
+      path = action.path[0]
+    } else {
+      path = this.fixPath(action.path[0])
+    }
+    
     shell.showItemInFolder(convertPathToLocalFileSystem(path))
   }
 

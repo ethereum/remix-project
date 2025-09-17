@@ -252,6 +252,22 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeRecentElectronFolder(path)
   }
 
+  const dispatchOpenElectronFolderInNewWindow = async (path: string) => {
+    try {
+      await plugin.call('fs', 'openFolder', path)
+    } catch (error) {
+      console.error('Error opening folder in new window:', error)
+    }
+  }
+
+  const dispatchRevealElectronFolderInExplorer = async (path: string | null) => {
+    try {
+      await plugin.call('fs', 'revealInExplorer', { path: [path] }, true)
+    } catch (error) {
+      console.error('Error revealing folder in explorer:', error)
+    }
+  }
+
   const dispatchUpdateGitSubmodules = async () => {
     await updateGitSubmodules()
   }
@@ -382,6 +398,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchOpenElectronFolder,
     dispatchGetElectronRecentFolders,
     dispatchRemoveRecentFolder,
+    dispatchOpenElectronFolderInNewWindow,
+    dispatchRevealElectronFolderInExplorer,
     dispatchUpdateGitSubmodules
   }
   return (

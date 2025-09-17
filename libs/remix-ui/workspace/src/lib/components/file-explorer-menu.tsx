@@ -60,6 +60,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'fa-brands fa-git-alt',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      },
+      {
+        action: 'revealInExplorer',
+        title: 'Reveal workspace in explorer',
+        icon: 'fas fa-eye',
+        placement: 'top',
+        platforms: [appPlatformTypes.desktop]
       }
     ].filter(
       (item) =>
@@ -194,6 +201,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       } else if (action === 'importFromHttps') {
                         _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromHttps('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+                      } else if (action === 'revealInExplorer') {
+                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                        props.revealInExplorer()
                       } else {
                         state.actions[action]()
                       }
