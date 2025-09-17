@@ -797,8 +797,29 @@ export class Blockchain extends Plugin {
       (_) => this.executionContext.currentblockGasLimit()
     )
 
+    const logTransaction = (txhash, origin) => {
+      this.detectNetwork((error, network) => {
+        console.log(`transaction sent: ${txhash}`, network)
+        if (network && network.id) {
+          _paq.push(['trackEvent', 'udapp', `sendTransaction-from-${origin}`, `${txhash}-${network.id}`])
+        } else {
+          try {
+            const networkString = JSON.stringify(network)
+            _paq.push(['trackEvent', 'udapp', `sendTransaction-from-${origin}`, `${txhash}-${networkString}`])
+          } catch (e) {
+            _paq.push(['trackEvent', 'udapp', `sendTransaction-from-${origin}`, `${txhash}-unknownnetwork`])
+          }
+        }
+      })
+    }
+
+    this.on('web3Provider', 'transactionBroadcasted', (txhash) => {
+      logTransaction(txhash, 'plugin')
+    })
+
     web3Runner.event.register('transactionBroadcasted', (txhash, isUserOp) => {
       if (isUserOp) _paq.push(['trackEvent', 'udapp', 'safeSmartAccount', `txBroadcastedFromSmartAccount`])
+      logTransaction(txhash, 'gui')
       this.executionContext.detectNetwork(async (error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
