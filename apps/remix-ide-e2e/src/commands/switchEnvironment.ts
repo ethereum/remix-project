@@ -1,3 +1,4 @@
+'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
@@ -80,29 +81,27 @@ class switchEnvironment extends EventEmitter {
             }
             browser
               .execute(function(xpath) {
-                  const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-                  if (element) {
-                    const event = new MouseEvent('mouseover', { 'view': window, 'bubbles': true, 'cancelable': true })
-                    element.dispatchEvent(event)
-                  }
-                }, 
-                [submenuXPath]
-              )
+                const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+                if (element) {
+                  const event = new MouseEvent('mouseover', { 'view': window, 'bubbles': true, 'cancelable': true })
+                  element.dispatchEvent(event)
+                }
+              },
+              [submenuXPath]
+            )
               .useCss()
-              .waitForElementVisible(
-              `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`,
-              5000,
-              undefined,
-              false,
-              (result) => {
-                if (result.status === 0) {
+              .isPresent({
+                selector: `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`,
+                suppressNotFoundErrors: true,
+                timeout: 2000
+              }, (inPortal) => {
+                if (inPortal.value) {
                   clickAndMaybeWait(browser, `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`, providerName, shouldWait)
                   onDone()
                 } else {
                   tryOne(i + 1)
                 }
-              }
-            )
+              })
           })
       }
       tryOne(0)
@@ -133,19 +132,21 @@ class switchEnvironment extends EventEmitter {
       .perform((done) => {
         this.api.isPresent({ selector: `[data-id="selected-provider-${provider}"]`, suppressNotFoundErrors: true, timeout: 1000 }, (result) => {
           if (result.value) return done()
-
+          
           this.api.click('[data-id="settingsSelectEnvOptions"] button')
-
-          attemptSelect(this.api, provider, returnWhenInitialized, () => {
-            waitForSelectedOrModal(this.api, provider, 10000, (ok) => {
-              if (ok) {
-                return done()
-              } else {
-                this.api.assert.fail(`Environment "${provider}" could not be selected or found in the dropdown.`)
-                done()
-              }
+            .waitForElementVisible('body .dropdown-menu.show', 3000)
+            .perform(() => {
+              attemptSelect(this.api, provider, returnWhenInitialized, () => {
+                waitForSelectedOrModal(this.api, provider, 10000, (ok) => {
+                  if (ok) {
+                    return done()
+                  } else {
+                    this.api.assert.fail(`Environment "${provider}" could not be selected or found in the dropdown.`)
+                    done()
+                  }
+                })
+              })
             })
-          })
         })
       })
       .perform(() => this.emit('complete'))
