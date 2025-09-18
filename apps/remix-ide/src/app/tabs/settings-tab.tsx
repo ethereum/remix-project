@@ -129,6 +129,7 @@ export default class SettingsTab extends ViewPlugin {
     // set timestamp to local storage to track when the user has given consent
     localStorage.setItem('matomo-analytics-consent', Date.now().toString())
     this.useMatomoPerfAnalytics = isChecked
+    this.emit('matomoPerfAnalyticsChoiceUpdated', isChecked)
     if (!isChecked) {
       // revoke tracking consent for performance data
       _paq.push(['disableCookies'])
