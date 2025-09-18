@@ -244,6 +244,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       dispatch({ type: 'SET_VALUE', payload: { name: 'copilot/suggest/activate', value: isChecked } })
     })
 
+    props.plugin.on('settings', 'matomoPerfAnalyticsChoiceUpdated', (isChecked) => {
+      dispatch({ type: 'SET_VALUE', payload: { name: 'matomo-perf-analytics', value: isChecked } })
+    })
+
   }, [])
 
   useEffect(() => {
