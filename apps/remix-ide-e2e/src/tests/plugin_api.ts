@@ -183,7 +183,6 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('udapp')
-      .pinGrid('vm-berlin', true)
       .clickLaunchIcon('localPlugin')
       .useXpath()
       .frame(0)
