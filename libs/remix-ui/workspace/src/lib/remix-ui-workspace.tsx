@@ -1151,7 +1151,7 @@ export function Workspace() {
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs','importFromHttps', 'initializeWorkspaceAsGitRepo']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs','importFromHttps', 'initializeWorkspaceAsGitRepo', 'revealInExplorer']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1226,7 +1226,7 @@ export function Workspace() {
               {global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost && (
                 <FileExplorer
                   name="localhost"
-                  menuItems={['createNewFile', 'createNewFolder']}
+                  menuItems={['createNewFile', 'createNewFolder', 'revealInExplorer']}
                   contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                   files={global.fs.localhost.files}

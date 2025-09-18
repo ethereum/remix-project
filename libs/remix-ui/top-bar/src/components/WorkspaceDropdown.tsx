@@ -7,7 +7,10 @@ import { FiMoreVertical } from 'react-icons/fi'
 import { TopbarContext } from '../context/topbarContext'
 import { getWorkspaces } from 'libs/remix-ui/workspace/src/lib/actions'
 import { WorkspaceMetadata } from 'libs/remix-ui/workspace/src/lib/types'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import path from 'path'
 import { DesktopDownload } from 'libs/remix-ui/desktop-download'
+import { ElectronWorkspaceMenu } from './ElectronWorkspaceMenu'
 
 interface Branch {
   name: string
@@ -78,8 +81,10 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
   const [showMain, setShowMain] = useState(false)
   const [openSub, setOpenSub] = useState<number | null>(null)
   const global = useContext(TopbarContext)
+  const platform = useContext(platformContext)
   const [openSubmenuId, setOpenSubmenuId] = useState(null);
   const iconRefs = useRef({});
+  const [currentWorkingDir, setCurrentWorkingDir] = useState<string>('')
 
   const toggleSubmenu = (id) => {
     setOpenSubmenuId((current) => (current === id ? null : id));
@@ -101,37 +106,80 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
     ]
   }, [])
 
+  // For desktop platform, listen to working directory changes
   useEffect(() => {
-    global.plugin.on('filePanel', 'setWorkspace', async(workspace) => {
-      setTogglerText(workspace.name)
-      let workspaces = []
-      const fromLocalStore = localStorage.getItem('currentWorkspace')
-      workspaces = await getWorkspaces()
-      const current = workspaces.find((workspace) => workspace.name === fromLocalStore)
-      setSelectedWorkspace(current)
-    })
+    if (platform === appPlatformTypes.desktop) {
+      const getWorkingDir = async () => {
+        try {
+          const workingDir = await global.plugin.call('fs', 'getWorkingDir')
+          setCurrentWorkingDir(workingDir)
+          if (workingDir) {
+            const dirName = path.basename(workingDir)
+            setTogglerText(dirName || workingDir)
+          } else {
+            setTogglerText('No project open')
+          }
+        } catch (error) {
+          console.error('Error getting working directory:', error)
+          setTogglerText('No project open')
+        }
+      }
 
-    return () => {
-      global.plugin.off('filePanel', 'setWorkspace')
+      // Listen for working directory changes
+      global.plugin.on('fs', 'workingDirChanged', (dir: string) => {
+        setCurrentWorkingDir(dir)
+        if (dir) {
+          const dirName = path.basename(dir)
+          setTogglerText(dirName || dir)
+        } else {
+          setTogglerText('No project open')
+        }
+      })
+
+      // Get initial working directory
+      getWorkingDir()
+
+      return () => {
+        global.plugin.off('fs', 'workingDirChanged')
+      }
     }
-  }, [global.plugin.filePanel.currentWorkspaceMetadata])
+  }, [platform, global.plugin])
 
   useEffect(() => {
-    let workspaces: any[] = []
-
-    try {
-      setTimeout(async () => {
+    if (platform !== appPlatformTypes.desktop) {
+      global.plugin.on('filePanel', 'setWorkspace', async(workspace) => {
+        setTogglerText(workspace.name)
+        let workspaces = []
+        const fromLocalStore = localStorage.getItem('currentWorkspace')
         workspaces = await getWorkspaces()
-        const updated = (workspaces || []).map((workspace) => {
-          (workspace as any).submenu = subItems
-          return workspace as any
-        })
-        setMenuItems(updated)
-      }, 150)
-    } catch (error) {
-      console.info('Error fetching workspaces:', error)
+        const current = workspaces.find((workspace) => workspace.name === fromLocalStore)
+        setSelectedWorkspace(current)
+      })
+
+      return () => {
+        global.plugin.off('filePanel', 'setWorkspace')
+      }
     }
-  }, [togglerText, openSubmenuId])
+  }, [global.plugin.filePanel.currentWorkspaceMetadata, platform])
+
+  useEffect(() => {
+    if (platform !== appPlatformTypes.desktop) {
+      let workspaces: any[] = []
+
+      try {
+        setTimeout(async () => {
+          workspaces = await getWorkspaces()
+          const updated = (workspaces || []).map((workspace) => {
+            (workspace as any).submenu = subItems
+            return workspace as any
+          })
+          setMenuItems(updated)
+        }, 150)
+      } catch (error) {
+        console.info('Error fetching workspaces:', error)
+      }
+    }
+  }, [togglerText, openSubmenuId, platform])
 
   useClickOutside([mainRef, ...subRefs], () => {
     setShowMain(false)
@@ -141,6 +189,57 @@ export const WorkspacesDropdown: React.FC<WorkspacesDropdownProps> = ({ menuItem
   const toggleSub = (idx: number) =>
     setOpenSub(prev => (prev === idx ? null : idx))
 
+
+
+
+
+  const openFolder = async () => {
+    console.log('Opening folder...')
+    try {
+      await global.plugin.call('fs', 'openFolderInSameWindow')
+    } catch (error) {
+      console.error('Error opening folder:', error)
+    }
+  }
+
+
+
+  // Render simplified dropdown for desktop
+  if (platform === appPlatformTypes.desktop) {
+    return (
+      <Dropdown
+        as={ButtonGroup}
+        style={{ minWidth: '70%' }}
+        className="d-flex rounded-md"
+        id="workspacesSelect"
+        data-id="workspacesSelect"
+      >
+        <Dropdown.Toggle
+          as={CustomToggle}
+          className="btn btn-sm w-100 border position-relative"
+          variant="secondary"
+          data-id="workspacesMenuDropdown"
+        >
+          <div
+            data-id="workspacesSelect-togglerText"
+            className="text-truncate position-absolute start-50 translate-middle"
+          >
+            {togglerText}
+          </div>
+        </Dropdown.Toggle>
+        <ElectronWorkspaceMenu 
+          showMain={showMain}
+          setShowMain={setShowMain}
+          openFolder={openFolder}
+          createWorkspace={createWorkspace}
+        />
+      </Dropdown>
+    )
+  }
+
+  // Original web dropdown implementation
+
+  // Original web dropdown implementation
   return (
     <Dropdown
       as={ButtonGroup}

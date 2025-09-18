@@ -189,6 +189,7 @@ export interface FileExplorerMenuProps {
   importFromHttps: any
   connectToLocalFileSystem?: any
   handleGitInit?: () => Promise<void>
+  revealInExplorer?: () => void
   tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {

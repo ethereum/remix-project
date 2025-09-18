@@ -45,7 +45,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const treeRef = useRef<HTMLDivElement>(null)
   const [cutActivated, setCutActivated] = useState(false)
 
-  const { plugin } = useContext(FileSystemContext)
+  const { plugin, dispatchRevealElectronFolderInExplorer } = useContext(FileSystemContext)
   const [filesSelected, setFilesSelected] = useState<string[]>([])
   const feWindow = (window as any)
 
@@ -616,6 +616,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   importFromIpfs={props.importFromIpfs}
                   importFromHttps={props.importFromHttps}
                   handleGitInit={handleGitInit}
+                  revealInExplorer={() => dispatchRevealElectronFolderInExplorer(null)}
                 />
               </div>
             </span>

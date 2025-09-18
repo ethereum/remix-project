@@ -33,7 +33,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
       <button id="tabOutput" data-id="tabOutput" className={`xtermButton btn btn-sm border-secondary me-2 border ${!xtermState.showOutput ? '' : 'd-flex btn-secondary'}`} onClick={selectOutput}>
         Output
       </button>
-      <button data-id="tabXTerm" id="tabXTerm" className={`xtermButton btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'd-block' : 'd-none'}  ${xtermState.showOutput ? 'd-none' : 'btn-secondary'}`}
+      <button data-id="tabXTerm" id="tabXTerm" className={`xtermButton btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'd-block' : 'd-none'} ${xtermState.showOutput ? '' : 'btn-secondary'}`}
         onClick={async(e) => await showTerminal(e)}>
         <span className="far fa-terminal border-0 ms-1"></span>
       </button>

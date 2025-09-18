@@ -52,6 +52,8 @@ export const FileSystemContext = createContext<{
   dispatchOpenElectronFolder: (path: string) => Promise<void>
   dispatchGetElectronRecentFolders: () => Promise<void>
   dispatchRemoveRecentFolder: (path: string) => Promise<void>
+  dispatchOpenElectronFolderInNewWindow: (path: string) => Promise<void>
+  dispatchRevealElectronFolderInExplorer: (path: string) => Promise<void>
   dispatchUpdateGitSubmodules: () => Promise<void>
     }>(null)
 

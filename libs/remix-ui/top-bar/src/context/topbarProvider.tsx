@@ -5,6 +5,7 @@ import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 import { browserReducer, browserInitialState } from 'libs/remix-ui/workspace/src/lib/reducers/workspace'
 import { branch } from '@remix-ui/git'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import {
   initWorkspace,
   fetchDirectory,
@@ -62,6 +63,7 @@ export interface TopbarProviderProps {
 
 export const TopbarProvider = (props: TopbarProviderProps) => {
   const { plugin } = props
+  const platform = useContext(platformContext)
   const [fs, fsDispatch] = useReducer(browserReducer, browserInitialState)
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
@@ -75,6 +77,62 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
   const [modals, setModals] = useState<Modal[]>([])
   const [focusToaster, setFocusToaster] = useState<string>('')
   const [toasters, setToasters] = useState<string[]>([])
+  const [recentFolders, setRecentFolders] = useState<string[]>([])
+
+  const fetchRecentFolders = async () => {
+    try {
+      const folders = await plugin.call('fs', 'getRecentFolders')
+      setRecentFolders(folders || [])
+    } catch (error) {
+      console.error('Error fetching recent folders:', error)
+      setRecentFolders([])
+    }
+  }
+
+  const openRecentFolder = async (path: string) => {
+    try {
+      await plugin.call('fs', 'setWorkingDir', path)
+      // Refresh recent folders list since order might have changed
+      setTimeout(fetchRecentFolders, 200)
+    } catch (error) {
+      console.error('Error opening recent folder:', error)
+    }
+  }
+
+  const openRecentFolderInNewWindow = async (path: string) => {
+    try {
+      await plugin.call('fs', 'openFolder', path)
+    } catch (error) {
+      console.error('Error opening recent folder in new window:', error)
+    }
+  }
+
+  const removeRecentFolder = async (path: string) => {
+    try {
+      await plugin.call('fs', 'removeRecentFolder', path)
+      // Refresh the recent folders list
+      setTimeout(fetchRecentFolders, 100)
+    } catch (error) {
+      console.error('Error removing recent folder:', error)
+    }
+  }
+
+  const revealRecentFolderInExplorer = async (path: string) => {
+    try {
+      await plugin.call('fs', 'revealInExplorer', { path: [path] }, true)
+    } catch (error) {
+      console.error('Error revealing folder in explorer:', error)
+    }
+  }
+
+  // Fetch recent folders on desktop platform initialization
+  useEffect(() => {
+    if (platform === appPlatformTypes.desktop) {
+      // Fetch recent folders after a delay to ensure workspace is initialized
+      fetchRecentFolders()
+
+    }
+  }, [platform])
 
   useEffect(() => {
     if (modals.length > 0) {
@@ -151,6 +209,12 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
     plugin: plugin as unknown as Topbar,
     modal,
     toast,
+    recentFolders,
+    fetchRecentFolders,
+    openRecentFolder,
+    openRecentFolderInNewWindow,
+    removeRecentFolder,
+    revealRecentFolderInExplorer
   }
 
   return (
