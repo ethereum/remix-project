@@ -33,7 +33,6 @@ export default class SettingsTab extends ViewPlugin {
   editor: any
   private _deps: {
     themeModule: any
-    localeModule: any
   }
   element: HTMLDivElement
   public useMatomoAnalytics: any
@@ -48,7 +47,6 @@ export default class SettingsTab extends ViewPlugin {
     this.editor = editor
     this._deps = {
       themeModule: Registry.getInstance().get('themeModule').api,
-      localeModule: Registry.getInstance().get('localeModule').api
     }
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
@@ -82,7 +80,6 @@ export default class SettingsTab extends ViewPlugin {
         useMatomoPerfAnalytics={state.useMatomoPerfAnalytics}
         useCopilot={state.useCopilot}
         themeModule={state._deps.themeModule}
-        localeModule={state._deps.localeModule}
       />
     )
   }

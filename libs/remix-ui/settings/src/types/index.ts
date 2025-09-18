@@ -94,7 +94,6 @@ export interface SettingsState {
   'copilot/suggest/activate': ConfigState
   'save-evm-state': ConfigState,
   'theme': ConfigState,
-  'locale': ConfigState,
   'github-config': ConfigState,
   'ipfs-config': ConfigState,
   'swarm-config': ConfigState,
