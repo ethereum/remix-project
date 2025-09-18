@@ -141,15 +141,22 @@ const tests = {
       .clickLaunchIcon('filePanel')
   },
   'Should show fork states provider in environment dropdown & make txs using forked state #group1': function (browser: NightwatchBrowser) {
+    const remixVMSpanXPath = "//span[contains(@class,'dropdown-item') and normalize-space()='Remix VM']"
     browser
       .clickLaunchIcon('udapp')
       .waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
       .click('[data-id="settingsSelectEnvOptions"] button')
-      .useXpath()
-      .moveToElement("//span[contains(@class,'dropdown-item') and normalize-space()='Remix VM']", 5, 5)
-      .useCss()
+      .execute(function(xpath) {
+          const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+          if (element) {
+            const event = new MouseEvent('mouseover', { 'view': window, 'bubbles': true, 'cancelable': true })
+            element.dispatchEvent(event)
+          }
+        },
+        [remixVMSpanXPath]
+      )
       .waitForElementVisible(`[data-id="dropdown-item-vm-fs-forkedState_1"]`)
-      .click('[data-id="settingsSelectEnvOptions"] button') 
+      .click('[data-id="settingsSelectEnvOptions"] button')
       .switchEnvironment('vm-prague')
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
@@ -170,12 +177,18 @@ const tests = {
       .assert.elementPresent('*[data-id="selected-provider-vm-fs-forkedState_2"]')
       
       .click('[data-id="settingsSelectEnvOptions"] button')
-      .useXpath()
-      .moveToElement("//span[contains(@class,'dropdown-item') and normalize-space()='Remix VM']", 5, 5)
-      .useCss()
+      .execute(function(xpath) {
+          const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+          if (element) {
+            const event = new MouseEvent('mouseover', { 'view': window, 'bubbles': true, 'cancelable': true })
+            element.dispatchEvent(event)
+          }
+        },
+        [remixVMSpanXPath]
+      )
+
       .waitForElementVisible(`[data-id="dropdown-item-vm-fs-forkedState_2"]`)
       .click('[data-id="settingsSelectEnvOptions"] button')
-      
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '"555"' })
