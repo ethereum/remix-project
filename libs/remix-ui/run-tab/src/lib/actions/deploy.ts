@@ -174,16 +174,16 @@ export const createInstance = async (
   const finalCb = async (error, contractObject, address) => {
     if (error) {
       const log = logBuilder(error)
-
       return terminalLogger(plugin, log)
     }
+    
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
     const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
-
     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
-  
+
     if (isVerifyChecked) {
       _paq.push(['trackEvent', 'udapp', 'DeployAndVerify', plugin.REACT_API.networkName])
+      
       try {
         await publishToStorage('ipfs', selectedContract)
       } catch (e) {
@@ -196,30 +196,44 @@ export const createInstance = async (
       const log = logBuilder(msg)
       terminalLogger(plugin, log)
 
-      const etherscanApiKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+      try {
+        const status = plugin.blockchain.getCurrentNetworkStatus()
+        if (status.error || !status.network) {
+          throw new Error(`Could not get network status: ${status.error || 'Unknown error'}`)
+        }
+        const currentChainId = parseInt(status.network.id)
 
-      const status = plugin.blockchain.getCurrentNetworkStatus();
-      if (status.error || !status.network) {
-        const errorMsg = `Could not get network status for verification: ${status.error || 'Unknown error'}`
+        const response = await fetch('https://chainid.network/chains.json')
+        if (!response.ok) throw new Error('Could not fetch chains list from chainid.network.')
+        const allChains = await response.json()
+        const currentChain = allChains.find(chain => chain.chainId === currentChainId)
+
+        if (!currentChain) {
+          const errorMsg = `The current network (Chain ID: ${currentChainId}) is not supported for verification via this plugin. Please switch to a supported network like Sepolia or Mainnet.`
+          const errorLog = logBuilder(errorMsg)
+          terminalLogger(plugin, errorLog)
+          return
+        }
+
+        const etherscanApiKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+
+        const verificationData = {
+          chainId: currentChainId.toString(),
+          currentChain: currentChain,
+          contractAddress: addressToString(address),
+          contractName: selectedContract.name,
+          compilationResult: await plugin.compilersArtefacts.getCompilerAbstract(selectedContract.contract.file),
+          constructorArgs: args,
+          etherscanApiKey: etherscanApiKey
+        }
+
+        await plugin.call('contract-verification', 'verifyOnDeploy', verificationData)
+
+      } catch (e) {
+        const errorMsg = `Verification setup failed: ${e.message}`
         const errorLog = logBuilder(errorMsg)
         terminalLogger(plugin, errorLog)
-        return
       }
-
-      const chainId = status.network.id
-
-      const verificationData = {
-        chainId: chainId,
-        contractAddress: addressToString(address),
-        contractName: selectedContract.name,
-        compilationResult: await plugin.compilersArtefacts.getCompilerAbstract(selectedContract.contract.file),
-        constructorArgs: args,
-        etherscanApiKey: etherscanApiKey
-      }
-
-      console.log({verificationData})
-
-      plugin.call('contract-verification', 'verifyOnDeploy', verificationData)
 
     } else {
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
@@ -227,7 +241,6 @@ export const createInstance = async (
 
     if (isProxyDeployment) {
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
-
       plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
     } else if (isContractUpgrade) {
       plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, addressToString(address), contractObject)

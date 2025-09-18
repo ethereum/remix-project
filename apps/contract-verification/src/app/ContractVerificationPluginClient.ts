@@ -2,7 +2,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 
 import EventManager from 'events'
-import { VERIFIERS, type ChainSettings, type ContractVerificationSettings, type LookupResponse, type VerifierIdentifier, SubmittedContract } from './types'
+import { VERIFIERS, type ChainSettings,Chain, type ContractVerificationSettings, type LookupResponse, type VerifierIdentifier, SubmittedContract } from './types'
 import { mergeChainSettingsWithDefaults, validConfiguration } from './utils'
 import { getVerifier } from './Verifiers'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
@@ -68,9 +68,9 @@ export class ContractVerificationPluginClient extends PluginClient {
     try {
       await this.call('terminal', 'log', { type: 'info', value: 'Verification process started...' })
 
-      const { chainId, contractAddress, contractName, compilationResult, constructorArgs, etherscanApiKey } = data
+      const { chainId, currentChain, contractAddress, contractName, compilationResult, constructorArgs, etherscanApiKey } = data
       
-      if (!chainId) throw new Error("Chain ID was not provided.")
+      if (!currentChain) throw new Error("Chain data was not provided.")
 
       const submittedContract: SubmittedContract = {
         id: `${chainId}-${contractAddress}`, 
@@ -88,19 +88,28 @@ export class ContractVerificationPluginClient extends PluginClient {
       const userSettings = this.getUserSettingsFromLocalStorage()
       const chainSettings = mergeChainSettingsWithDefaults(chainId, userSettings)
 
-      await this._verifyWithProvider('Sourcify', submittedContract, compilerAbstract, chainId, chainSettings)
-      
-      if (etherscanApiKey) {
-        if (!chainSettings.verifiers.Etherscan) chainSettings.verifiers.Etherscan = {}
-        chainSettings.verifiers.Etherscan.apiKey = etherscanApiKey
-        await this._verifyWithProvider('Etherscan', submittedContract, compilerAbstract, chainId, chainSettings)
-      } else {
-        await this.call('terminal', 'log', { type: 'warn', value: 'Etherscan verification skipped: API key not found in global Settings.' })
+      if (validConfiguration(chainSettings, 'Sourcify')) {
+        await this._verifyWithProvider('Sourcify', submittedContract, compilerAbstract, chainId, chainSettings)
       }
 
-      await this._verifyWithProvider('Routescan', submittedContract, compilerAbstract, chainId, chainSettings)
-      await this._verifyWithProvider('Blockscout', submittedContract, compilerAbstract, chainId, chainSettings)
+      if (currentChain.explorers && currentChain.explorers.some(explorer => explorer.name.includes('etherscan'))) {
+        if (etherscanApiKey) {
+          if (!chainSettings.verifiers.Etherscan) chainSettings.verifiers.Etherscan = {}
+          chainSettings.verifiers.Etherscan.apiKey = etherscanApiKey
+          await this._verifyWithProvider('Etherscan', submittedContract, compilerAbstract, chainId, chainSettings)
+        } else {
+          await this.call('terminal', 'log', { type: 'warn', value: 'Etherscan verification skipped: API key not found in global Settings.' })
+        }
+      }
 
+      if (currentChain.explorers && currentChain.explorers.some(explorer => explorer.name.toLowerCase().includes('routescan'))) {
+        await this._verifyWithProvider('Routescan', submittedContract, compilerAbstract, chainId, chainSettings)
+      }
+
+      if (currentChain.explorers && currentChain.explorers.some(explorer => explorer.name.includes('blockscout'))) {
+        await this._verifyWithProvider('Blockscout', submittedContract, compilerAbstract, chainId, chainSettings)
+      }
+      
     } catch (error) {
       await this.call('terminal', 'log', { type: 'error', value: `An unexpected error occurred during verification: ${error.message}` })
     }
@@ -140,7 +149,7 @@ export class ContractVerificationPluginClient extends PluginClient {
   }
 
   private getUserSettingsFromLocalStorage(): ContractVerificationSettings {
-    const fallbackSettings = { chains: {} };
+    const fallbackSettings = { chains: {} }
     try {
       const settings = window.localStorage.getItem("contract-verification:settings")
       return settings ? JSON.parse(settings) : fallbackSettings
