@@ -12,7 +12,7 @@ module.exports = {
     init(browser, done, null)
   },
 
-  'Should open submenu and close both menus on selection #group1 #pr': function (browser: NightwatchBrowser) {
+  'Should open submenu and close both menus on selection #group1': function (browser: NightwatchBrowser) {
    browser
       .clickLaunchIcon('udapp')
       .waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
@@ -24,7 +24,7 @@ module.exports = {
       .assert.containsText('[data-id="selected-provider-vm-cancun"]', 'Remix VM (Cancun)')
   },
 
-  'Should display sample accounts and balances #group1 #pr': function (browser: NightwatchBrowser) {
+  'Should display sample accounts and balances #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="runTabSelectAccount"]')
       .click('[data-id="runTabSelectAccount"]')

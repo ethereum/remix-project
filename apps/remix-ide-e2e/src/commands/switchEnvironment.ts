@@ -65,10 +65,12 @@ class switchEnvironment extends EventEmitter {
     ) => {
       const tryOne = (i: number) => {
         if (i >= labels.length) return onDone()
+        const submenuXPath = `//span[contains(@class,'dropdown-item') and normalize-space()='${labels[i]}']`
+
         browser
           .useXpath()
           .isPresent({
-            selector: `//span[contains(@class,'dropdown-item') and normalize-space()='${labels[i]}']`,
+            selector: submenuXPath,
             suppressNotFoundErrors: true,
             timeout: 0
           }, (present) => {
@@ -77,21 +79,30 @@ class switchEnvironment extends EventEmitter {
               return tryOne(i + 1)
             }
             browser
-              .moveToElement(`//span[contains(@class,'dropdown-item') and normalize-space()='${labels[i]}']`, 5, 5)
-              .pause(250)
+              .execute(function(xpath) {
+                  const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+                  if (element) {
+                    const event = new MouseEvent('mouseover', { 'view': window, 'bubbles': true, 'cancelable': true })
+                    element.dispatchEvent(event)
+                  }
+                }, 
+                [submenuXPath]
+              )
               .useCss()
-              .isPresent({
-                selector: `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`,
-                suppressNotFoundErrors: true,
-                timeout: 1000
-              }, (inPortal) => {
-                if (inPortal.value) {
+              .waitForElementVisible(
+              `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`,
+              5000,
+              undefined,
+              false,
+              (result) => {
+                if (result.status === 0) {
                   clickAndMaybeWait(browser, `body .dropdown-menu.show [data-id="dropdown-item-${providerName}"]`, providerName, shouldWait)
                   onDone()
                 } else {
                   tryOne(i + 1)
                 }
-              })
+              }
+            )
           })
       }
       tryOne(0)
