@@ -28,6 +28,8 @@ interface HandlerResponse {
 export type getPackages = () => Promise<{ [name: string]: string }>
 
 export class RemixURLResolver {
+  private packages: { [name: string]: any } = {}
+  private notResolving: Array<string> = []
   private previouslyHandled: PreviouslyHandledImports
   gistAccessToken: string
   protocol: string
@@ -47,6 +49,44 @@ export class RemixURLResolver {
   clearCache () {
     this.previouslyHandled = {}
   }
+
+  async fetchCode(fetchUrl: string): Promise<string> {
+    if (this.notResolving.includes(fetchUrl)) {
+      return null
+    }
+    const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
+    process && process.env && process.env['NX_NPM_URL'] && npm_urls.unshift(process.env['NX_NPM_URL'])
+    let content = null
+    // get response from all urls
+    for (let i = 0; i < npm_urls.length; i++) {
+      const req = npm_urls[i] + fetchUrl
+      try {        
+        const response: AxiosResponse = await axios.get(req, { transformResponse: []})
+        content = response.data
+        break
+      } catch (e) {
+        // try next url
+        this.notResolving.push(req)
+      }
+    }
+    return content
+  }
+
+  async getPackageJsonForNestedDeps (url: string, pkg: string) {
+    try {
+      const json = `${pkg}/package.json`
+      const deps = await this.fetchCode(json)
+      if (!deps) throw new Error('Unable to load ' + json)
+      const parsed = JSON.parse(deps)
+      console.log(json, deps)
+      const contentDeps = { deps: { ...parsed['dependencies'], ...parsed['devDependencies'] } }
+      this.packages[json] = contentDeps 
+      return getPkg(pkg, null, null, contentDeps, url, url)
+    } catch (e) {
+      throw e
+    }  
+  }
+
 
   /**
   * Handle an import statement based on github
@@ -138,9 +178,12 @@ export class RemixURLResolver {
   * @param url The url of the NPM import statement
   */
   async handleNpmImport(url: string): Promise<HandlerResponse> {
+    console.log('handleNpmImport', url)
     if (!url) throw new Error('url is empty')
     let fetchUrl = url
     const isVersioned = semverRegex().exec(url.replace(/@/g, '@ ').replace(/\//g, ' /'))
+
+    let foundVersion = false
     if (this.getDependencies && !isVersioned) {
       try {
         const { deps, yarnLock, packageLock } = await this.getDependencies()
@@ -152,8 +195,9 @@ export class RemixURLResolver {
             // then we fallback to the case where the package doesn't have a slash in its name.
             transformedUrl = getPkg(fetchUrl.split('/')[0], yarnLock, packageLock, deps, url, fetchUrl)
           }
-          if (transformedUrl) {
+          if (transformedUrl && transformedUrl !== fetchUrl) {
             fetchUrl = transformedUrl
+            foundVersion = true
           }
         }
       } catch (e) {
@@ -161,21 +205,48 @@ export class RemixURLResolver {
       }
     }
 
-    const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
-    process && process.env && process.env['NX_NPM_URL'] && npm_urls.unshift(process.env['NX_NPM_URL'])
-    let content = null
-    // get response from all urls
-    for (let i = 0; i < npm_urls.length; i++) {
-      try {
-        const req = npm_urls[i] + fetchUrl
-        const response: AxiosResponse = await axios.get(req, { transformResponse: []})
-        content = response.data
-        break
-      } catch (e) {
-        // try next url
+    if (Object.keys(this.packages).length > 0 && !isVersioned && !foundVersion) {
+      // check in the already fetched packages if we can find the version of the package
+      let transformedUrl = getPkg(fetchUrl.split('/')[0] + '/' + fetchUrl.split('/')[1], yarnLock, packageLock, deps, url, fetchUrl)
+      if (!transformedUrl) {
+        // then we fallback to the case where the package doesn't have a slash in its name.
+        transformedUrl = getPkg(fetchUrl.split('/')[0], yarnLock, packageLock, deps, url, fetchUrl)
       }
-
+      if (transformedUrl && transformedUrl !== fetchUrl) {
+        fetchUrl = transformedUrl
+        foundVersion = true
+      }
     }
+
+    if (!foundVersion) {
+      try {
+        const pkg = fetchUrl.split('/')[0] + '/' + fetchUrl.split('/')[1]
+        const url = await this.getPackageJsonForNestedDeps(fetchUrl, pkg)
+        console.log('found package version', pkg, url)
+        if (url) {
+          fetchUrl = url
+          foundVersion = true
+        }
+      } catch (e) {
+        console.log(e)
+      }      
+    }
+
+    if (!foundVersion) {
+      try {
+        const pkg = fetchUrl.split('/')[0]
+        const url = await this.getPackageJsonForNestedDeps(fetchUrl, pkg)
+        console.log('found package version', pkg, url)
+        if (url) {
+          fetchUrl = url
+          foundVersion = true
+        }
+      } catch (e) {
+        console.log(e)
+      }      
+    }
+
+    const content = await this.fetchCode(fetchUrl)
     if (!content) throw new Error('Unable to load ' + url)
     return { content, cleanUrl: url }
   }
