@@ -121,7 +121,7 @@ export class RemixGuidePlugin extends ViewPlugin {
             >
               { section.cells.map((cell, index) => {
                 return <RemixUIGridCell
-                  plugin={this}
+                  // plugin={this}
                   title={cell.title}
                   titleTooltip={cell.titleTooltip}
                   tagList={cell.tagList}

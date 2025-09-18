@@ -208,6 +208,9 @@
             ],
             "@remix-ui/top-bar": [
               "libs/remix-ui/top-bar/src/index.ts"
+            ],
+            "@remix-ui/template-explorer-modal": [
+              "libs/remix-ui/template-explorer-modal/src/index.ts"
             ]
         }
     }
