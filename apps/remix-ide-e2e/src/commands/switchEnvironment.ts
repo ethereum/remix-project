@@ -137,6 +137,9 @@ class switchEnvironment extends EventEmitter {
             .waitForElementVisible('body .dropdown-menu.show', 3000)
             .perform(() => {
               attemptSelect(this.api, provider, returnWhenInitialized, () => {
+                if (provider === 'injected-MetaMask') {
+                  return done()
+                }
                 waitForSelectedOrModal(this.api, provider, 10000, (ok) => {
                   if (ok) {
                     return done()
