@@ -36,13 +36,13 @@ Every participant needs:
 - **a Bee node reachable from the browser**, since every participant writes their own Swarm feeds;
 - **a usable postage stamp on that node**, which is checked when the session starts.
 
-| Setting          | Default                        | Notes                                                                                                                                   |
-| ---------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Bee node URL     | `http://localhost:1633`        | Prefilled from Remix's `settings/swarm-private-bee-address`.                                                                           |
-| Postage stamp    | —                              | Required. 64 hex characters, owned by that node. Prefilled from `settings/swarm-postage-stamp-id`.                                     |
-| Transport        | WebRTC via a signaling server  | The alternative signals over Swarm feeds: no server, but slower to connect. A room keeps the transport it was created with.            |
-| Signaling server | `ws://localhost:4444`          | A [y-webrtc](https://github.com/yjs/y-webrtc) signaling server.                                                                        |
-| STUN / TURN      | `stun:stun.l.google.com:19302` | Comma-separated. Add a TURN server for peers behind symmetric NATs.                                                                    |
+| Setting          | Default                        | Notes                                                                                                                       |
+| ---------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Bee node URL     | `http://localhost:1633`        | Prefilled from Remix's `settings/swarm-private-bee-address`.                                                                |
+| Postage stamp    | —                              | Required. 64 hex characters, owned by that node. Prefilled from `settings/swarm-postage-stamp-id`.                          |
+| Transport        | WebRTC via a signaling server  | The alternative signals over Swarm feeds: no server, but slower to connect. A room keeps the transport it was created with. |
+| Signaling server | `ws://localhost:4444`          | A [y-webrtc](https://github.com/yjs/y-webrtc) signaling server.                                                             |
+| STUN / TURN      | `stun:stun.l.google.com:19302` | Comma-separated. Add a TURN server for peers behind symmetric NATs.                                                         |
 
 The defaults are `DEFAULT_SETTINGS` in [`settings.ts`](./settings.ts). Each browser keeps its own values in
 `localStorage` under `remix.swarmCollab.settings`.
@@ -94,11 +94,11 @@ idle ──create/join/resume──▶ connecting ──DOC_READY──▶ synci
   └──────────── leave(error?) ◀──┴────────────────────────┴─────────────────────────────────┘
 ```
 
-| Phase        | What happens                                                                                                                                                  | The user sees                    |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `connecting` | The editor goes read-only, Remix switches to the room's workspace (creating it for a joiner), and the `SwarmDoc` starts.                                      | Connecting…                      |
-| `syncing`    | The library's Swarm start-up is done: the stamp is valid, the session's feed position is known and the members are read. It waits for peers that owe state. | Syncing… (waiting for N peers)   |
-| `live`       | The creator seeds if the room is empty, file events are wired, the editor is writable and the open file is bound.                                             | Live · N connected               |
+| Phase        | What happens                                                                                                                                                | The user sees                  |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `connecting` | The editor goes read-only, Remix switches to the room's workspace (creating it for a joiner), and the `SwarmDoc` starts.                                    | Connecting…                    |
+| `syncing`    | The library's Swarm start-up is done: the stamp is valid, the session's feed position is known and the members are read. It waits for peers that owe state. | Syncing… (waiting for N peers) |
+| `live`       | The creator seeds if the room is empty, file events are wired, the editor is writable and the open file is bound.                                           | Live · N connected             |
 
 Any failure leaves the session and shows the error. A peer that never delivers its state does not block a session:
 the library opens it anyway after a grace period.
@@ -180,11 +180,11 @@ so it would bundle a second copy of Monaco.
 
 ## Dependencies
 
-| Package                                  | Version    | Why                                                                                                   |
-| ---------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| Package                                  | Version    | Why                                                                                                  |
+| ---------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
 | `@solarpunkltd/swarm-collaborative-docs` | `^0.1.0`   | The session. Brings its own `@ethersphere/bee-js` 13; Remix's `bee-js` 8 for publish-to-Swarm stays. |
-| `yjs`                                    | `^13.6.30` | A peer dependency of the library, so Remix and the library share one Yjs instance.                    |
-| `y-webrtc`                               | `^10.3.0`  | The signaling-server transport. Loaded only when a session starts.                                    |
+| `yjs`                                    | `^13.6.30` | A peer dependency of the library, so Remix and the library share one Yjs instance.                   |
+| `y-webrtc`                               | `^10.3.0`  | The signaling-server transport. Loaded only when a session starts.                                   |
 
 ---
 

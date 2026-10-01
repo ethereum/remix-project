@@ -59,7 +59,7 @@ export class CollabSession {
   private doc: SwarmDoc | null = null
   private sync: WorkspaceSync | null = null
   private binding: YTextModelBinding | null = null
-  private activeFile: { path: string, model: editor.ITextModel } | null = null
+  private activeFile: { path: string; model: editor.ITextModel } | null = null
   private members = new Map<string, MemberEntry>()
   private peerStates = new Map<string, PeerConnectionState>()
   private cursors = new Map<string, AwarenessUpdate>()
@@ -199,16 +199,22 @@ export class CollabSession {
 
     const doc = new SwarmDoc({
       user: { privateKey: identity.privateKey, nickname: settings.nickname.trim(), sessionId: loadSessionId() },
-      infra: { beeUrl: settings.beeUrl.trim(), stamp, roomKey: invite.key, roomCreator: invite.creator, transport: this.transportFor(settings) }
+      infra: { beeUrl: settings.beeUrl.trim(), stamp, roomKey: invite.key, roomCreator: invite.creator, transport: this.transportFor(settings) },
     })
     this.doc = doc
-    this.sync = new WorkspaceSync(doc.doc, this.workspaceFiles(), this.origin, () => this.refreshBinding(), (message) => console.log(`[swarm-collab] ${message}`))
+    this.sync = new WorkspaceSync(
+      doc.doc,
+      this.workspaceFiles(),
+      this.origin,
+      () => this.refreshBinding(),
+      (message) => console.log(`[swarm-collab] ${message}`),
+    )
 
     const emitter = doc.getEmitter()
     let liveRequested = false
     emitter.on(DOC_EVENTS.DOC_ERROR, (err: Error) => this.setState({ ...this.state, error: err.message }))
     emitter.on(DOC_EVENTS.DOC_READY, () => this.setState({ ...this.state, phase: 'syncing' }))
-    emitter.on(DOC_EVENTS.DOC_SYNC_STATE, ({ synced, pending }: { synced: boolean, pending: number }) => {
+    emitter.on(DOC_EVENTS.DOC_SYNC_STATE, ({ synced, pending }: { synced: boolean; pending: number }) => {
       this.setState({ ...this.state, pendingPeers: pending })
       if (synced && !liveRequested) {
         liveRequested = true
@@ -317,7 +323,7 @@ export class CollabSession {
       readFile: (path: string) => this.host.call('fileManager', 'readFile', path),
       writeFile: (path: string, content: string) => this.host.call('fileManager', 'writeFile', path, content),
       exists: (path: string) => this.host.call('fileManager', 'exists', path),
-      remove: (path: string) => this.host.call('fileManager', 'remove', path)
+      remove: (path: string) => this.host.call('fileManager', 'remove', path),
     }
   }
 
@@ -331,7 +337,7 @@ export class CollabSession {
       person.connected = person.connected || this.peerStates.get(address) === PeerConnectionState.Connected
       people.set(entry.identity, person)
     })
-    this.setState({ ...this.state, people: [...people.values()] })
+    this.setState({ ...this.state, people: [...people.values()]})
   }
 
   private colorOf(identity: string): number {

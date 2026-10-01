@@ -159,7 +159,7 @@
     "@reown/appkit": "^1.7.4",
     "@reown/appkit-adapter-ethers": "^1.7.4",
     "@ricarso/react-image-magnifiers": "^1.9.0",
-    "@solarpunkltd/swarm-collaborative-docs": "../swarm-collaborative-docs/solarpunkltd-swarm-collaborative-docs-0.1.0.tgz",
+    "@solarpunkltd/swarm-collaborative-docs": "^0.1.0",
     "@types/nightwatch": "^2.3.1",
     "@uiw/codemirror-extensions-color": "^4.25.2",
     "@uiw/codemirror-extensions-langs": "^4.25.2",
