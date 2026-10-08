@@ -133,6 +133,12 @@ const THINKING_MIN_VISIBLE_MS = 2000
 const NO_STALE_KEYS = new Set<string>()
 // Characters of answer text kept to place a file change in the answer
 const CHANGE_ANCHOR_LENGTH = 40
+// Names an editor diff side after its content: the editor reuses a model with the same name without updating it
+const contentHash = (content: string) => {
+  let hash = 0
+  for (let i = 0; i < content.length; i++) hash = (Math.imul(hash, 31) + content.charCodeAt(i)) | 0
+  return `remixai-${(hash >>> 0).toString(36)}-${content.length}`
+}
 
 export const RemixUiRemixAiAssistant = React.forwardRef<
   RemixUiRemixAiAssistantHandle,
@@ -1789,8 +1795,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       await props.plugin.call('fileManager' as any, 'diff', {
         type: change.deleted ? 'deleted' : change.existed ? 'modified' : 'added',
         path: change.path.replace(/^\/+/, ''),
-        hashOriginal: 'remixai-before',
-        hashModified: `remixai-${change.timestamp}`,
+        hashOriginal: contentHash(change.oldContent),
+        hashModified: contentHash(change.newContent),
         original: change.oldContent,
         modified: change.newContent,
         readonly: true
