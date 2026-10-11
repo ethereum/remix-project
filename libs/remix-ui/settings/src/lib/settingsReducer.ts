@@ -155,7 +155,7 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'copilot/suggest/activate': {
-    value: config.get('settings/copilot/suggest/activate') || true,
+    value: config.get('settings/copilot/suggest/activate') ?? true,
     isLoading: false
   },
   'save-evm-state': {
