@@ -420,7 +420,6 @@ export const addFrontendPrefix = (
   return filename;
 };
 
-// Captured once at load: other plugins rewrite the URL hash later, which would drop the flag.
 const eezUrlParamPresent = typeof window !== 'undefined' &&
   /(^|[?#&])eez=true([&#]|$)/.test(window.location.search + window.location.hash)
 
