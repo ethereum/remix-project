@@ -10,6 +10,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { normalizeMarkdown } from 'libs/remix-ui/helper/src/lib/components/remix-md-renderer'
 import { QueryParams } from '@remix-project/remix-lib'
 import { DAppUpdateReviewCard } from './DAppUpdateReviewCard'
+import { GenerativeUIRenderer } from './GenerativeUIRenderer'
 
 /** Content with the streaming turn separators (`---`) and whitespace removed. */
 const stripTurnSeparators = (content: string): string =>
@@ -25,7 +26,6 @@ const normalizeTurnSeparators = (content: string): string =>
 export interface ChatHistoryComponentProps {
   messages: ChatMessage[]
   isStreaming: boolean
-  isThinking?: boolean
   sendPrompt: (prompt: string) => void
   recordFeedback: (msgId: string, next: 'like' | 'dislike' | 'none') => void
   historyRef: React.RefObject<HTMLDivElement>
@@ -60,7 +60,6 @@ const AiChatIntro: React.FC<AiChatIntroProps> = ({ theme }) => {
 export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   messages,
   isStreaming,
-  isThinking,
   sendPrompt,
   recordFeedback,
   historyRef,
@@ -74,8 +73,19 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   handleLoadSkills
 }) => {
   const [btnColor, setBtnColor] = useState('')
-  // The thinking box belongs to the message currently being produced.
-  const lastAssistantId = [...messages].reverse().find(m => m.role === 'assistant')?.id
+  const [expandedPromptIds, setExpandedPromptIds] = useState<Set<string>>(new Set())
+
+  const togglePromptDetails = (messageId: string) => {
+    setExpandedPromptIds(current => {
+      const next = new Set(current)
+      next.has(messageId) ? next.delete(messageId) : next.add(messageId)
+      return next
+    })
+  }
+
+  // The thinking indicator is not rendered in the transcript: it lives in a
+  // fixed banner above the auto-accept banner (remix-ui-remix-ai-assistant),
+  // so it stays in one place instead of moving with the last message.
   return (
     <div
       ref={historyRef}
@@ -85,8 +95,14 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
         <AiChatIntro theme={theme} />
       ) : (
         messages.map(msg => {
+          if (msg.uiComponent){
+            console.log('uiComponent', msg)
+          }
           const isCorrupted = msg.role === 'assistant' && (msg.content === null || msg.content === undefined)
           const displayContent = isCorrupted ? '*Unable to load response.*' : (msg.content ?? '')
+          const hasCollapsiblePrompt = msg.role === 'user' && !!msg.displayContent && msg.displayContent !== msg.content
+          const isPromptExpanded = hasCollapsiblePrompt && expandedPromptIds.has(msg.id)
+          const visibleUserContent = hasCollapsiblePrompt && !isPromptExpanded ? msg.displayContent : msg.content
           // A turn that only reasoned and called tools leaves nothing but the
           // `---` turn separators behind; that rendered as a bubble of bare
           // horizontal rules. Separators alone are not content.
@@ -99,7 +115,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
             (msg.todos && msg.todos.length > 0) ||
             msg.dappUpdateReview?.status === 'pending' ||
             // the thinking box lives in this bubble now, so it keeps it alive
-            (isThinking && msg.id === lastAssistantId)
+            msg.uiComponent
           )
 
           if (msg.role === 'assistant' && !hasContent && !hasAssistantActivity) return null
@@ -169,10 +185,22 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         RemixMarkdownViewer(theme, normalizeTurnSeparators(displayContent), btnColor, setBtnColor)
                       ) : (
                         <div className="ai-paragraph pb-0">
-                          {msg.content}
+                          {visibleUserContent}
                         </div>
                       )}
                     </div>
+
+                    {hasCollapsiblePrompt && (
+                      <button
+                        type="button"
+                        className="btn btn-link btn-sm p-0 mt-2 text-secondary text-decoration-none"
+                        aria-expanded={isPromptExpanded}
+                        onClick={() => togglePromptDetails(msg.id)}
+                      >
+                        <i className={`fas fa-chevron-${isPromptExpanded ? 'up' : 'down'} me-1`}></i>
+                        {isPromptExpanded ? 'Hide request details' : 'Show request details'}
+                      </button>
+                    )}
 
                     {/* Copy button for user messages */}
                     {msg.role === 'user' && (
@@ -182,7 +210,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                             role="button"
                             aria-label="copy message"
                             className="message-copy-btn"
-                            onClick={() => copy(msg.content)}
+                            onClick={() => copy(visibleUserContent)}
                             onMouseDown={(e) => e.preventDefault()}
                           >
                             <i className="far fa-copy"></i>
@@ -190,21 +218,6 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         </CustomTooltip>
                       </div>
                     )}
-                  </div>
-                )}
-                {/* Thinking sits above the tool indicator: the model reasons, then
-                    acts, and the UI should read in that order. */}
-                {msg.role === 'assistant' && isThinking && msg.id === lastAssistantId && (
-                  <div className="thinking-indicator small mb-2 p-2 rounded" data-id="remix-ai-thinking" style={{
-                    backgroundColor: theme?.toLowerCase() === 'dark' ? 'rgba(255, 193, 7, 0.15)' : 'rgba(255, 193, 7, 0.1)',
-                    border: '1px solid rgba(255, 193, 7, 0.3)'
-                  }}>
-                    <div className="d-flex align-items-center">
-                      <i className="fa fa-spinner fa-spin me-2 text-warning"></i>
-                      <span className="text-warning">
-                        <strong>Thinking</strong>
-                      </span>
-                    </div>
                   </div>
                 )}
                 {msg.role === 'assistant' && msg.isExecutingTools && (
@@ -285,6 +298,19 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                     onViewDiff={(filePath, newContent, oldContent) =>
                       onDappReviewViewDiff?.(filePath, newContent, oldContent)
                     }
+                  />
+                )}
+
+                {/* Generative UI component */}
+                {msg.role === 'assistant' && msg.uiComponent && (
+                  <GenerativeUIRenderer
+                    payload={msg.uiComponent}
+                    onAction={(action, data) => {
+                      const text = data && Object.keys(data).length > 0
+                        ? `[ui:${action}]\n${JSON.stringify(data, null, 2)}`
+                        : `[ui:${action}]`
+                      sendPrompt(text)
+                    }}
                   />
                 )}
 

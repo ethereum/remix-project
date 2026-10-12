@@ -87,18 +87,9 @@ export class ContractAgent {
         return "No payload, try again while considering changing the assistant provider with the command `/setAssistant <openai|anthropic|mistralai|ollama>`"
       }
 
-      if ( this.plugin.remoteInferencer instanceof OllamaInferencer){
-        // Extract JSON from markdown code blocks
-        if (typeof payload === 'string' && (payload.includes('```json') || payload.includes('```'))) {
-          // Match ```json content ``` or ``` content ```
-          const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-          if (jsonMatch && jsonMatch[1]) {
-            payload = jsonMatch[1].trim();
-          }
-        }
-        if (typeof payload === 'string') {
-          payload = JSON.parse(payload)
-        }
+      if (typeof payload === 'string') {
+        const jsonMatch = payload.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+        payload = JSON.parse(jsonMatch && jsonMatch[1] ? jsonMatch[1].trim() : payload)
       }
 
       await statusCallback?.('Processing generated files...')

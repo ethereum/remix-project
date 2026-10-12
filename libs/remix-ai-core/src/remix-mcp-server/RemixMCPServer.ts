@@ -56,7 +56,8 @@ import { createFoundryHardhatTools } from './handlers/FoundryHardhatHandler';
 import { createCoordinationTools } from './handlers/CoordinationHandler';
 import { createSkillTools } from './handlers/SkillLoaderHandler';
 import { createDAppGeneratorTools } from './handlers/DAppGeneratorHandler';
-import { createUIAutomationTools } from './handlers/UIAutomationHandler';
+import { createGenerativeUITools } from './handlers/GenerativeUIHandler';
+import { createModelSelectionTools } from './handlers/ModelSelectionHandler';
 
 // Import resource providers
 import { ProjectResourceProvider } from './providers/ProjectResourceProvider';
@@ -914,6 +915,14 @@ export class RemixMCPServer extends EventEmitter implements IRemixMCPServer {
       // Register DApp Generator tools (includes contract, graph-only, and ZK DApp generators)
       const dappGeneratorTools = createDAppGeneratorTools();
       this._tools.registerBatch(dappGeneratorTools);
+
+      // Register Generative UI tool
+      const generativeUITools = createGenerativeUITools();
+      this._tools.registerBatch(generativeUITools);
+
+      // Register model selection tools (list_models / switch_model)
+      const modelSelectionTools = createModelSelectionTools();
+      this._tools.registerBatch(modelSelectionTools);
 
       const totalTools = this._tools.list().length;
 

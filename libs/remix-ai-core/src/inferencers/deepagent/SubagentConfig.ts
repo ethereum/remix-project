@@ -79,17 +79,13 @@ export async function buildSubagentConfigs(
   const circleTools = getCircleToolsForCircleSpecialist(tools)
   const basicFileTools = getBasicFileToolsForGasOptimizer(tools)
   const fileOperationTools = getFileOperationTools(tools)
-  const securityTools = [...getSecurityToolsForSecurityAuditor(tools), ...fileOperationTools]
+  const uiTools = tools.filter(tool => tool.name === 'render_ui')
+  const securityTools = [...getSecurityToolsForSecurityAuditor(tools), ...fileOperationTools, ...uiTools]
   const debugTools = getDebugToolsForDebugSpecialist(tools)
   const solidityTools = [...getSolidityToolsForSolidityEngineer(tools), ...fileOperationTools]
   const webSearchTools = getWebSearchToolsForWebSearchSpecialist(tools)
   const conversionTools = getConversionToolsForConversionSpecialist(tools)
   const classifierTools = getToolForClassifierSpecialist(tools)
-  // Merge in fileOperationTools (file_write, file_read, directory_list, …) the same
-  // way Solidity Engineer / Comprehensive Auditor do — the QUICKDAPP_SPECIALIST
-  // prompt explicitly tells the LLM to "use file_write for implementation", so
-  // file_* tools must be exposed. Without these the specialist also cannot emit
-  // per-file tool cards ("Writing index.html…") during DApp generation.
   const quickDappTools = getQuickDappToolsForQuickDappSpecialist(tools)
   const solidityCompilerTools = getToolForSolidityCompiler(tools)
   const deployerTools = getToolsForDeployer(tools)
@@ -149,7 +145,7 @@ export async function buildSubagentConfigs(
       systemPrompt: QUICKDAPP_SPECIALIST_SUBAGENT_PROMPT,
       model,
       tools: quickDappTools,
-      description: 'Used for all QuickDapp/DApp frontend generation and update requests. Direct chat DApp updates must be delegated here so list_dapps/update_dapp are used instead of current-workspace file inspection.'
+      description: 'Used for all QuickDapp/DApp frontend generation and update requests. Direct chat DApp updates must be delegated here so list_dapps/update_dapp are used instead of current-workspace file inspection. STATELESS: this specialist has NO memory of any earlier call to it, even earlier in the same conversation. When delegating a user\'s reply to setup questions this specialist previously asked (e.g. Location/DApp Description/Design answers for a ZK or Noir circuit dapp), your description MUST re-include the full original request verbatim - including any *_CONTEXT_JSON block (ZK_CONTEXT_JSON, NOIR_CONTEXT_JSON, etc.) and circuit/contract identifiers - plus the user\'s new reply. Never pass just the user\'s latest short reply on its own; that erases the circuit/dapp identity and produces a generic, unrelated dapp.'
     })
   }
 
@@ -176,7 +172,7 @@ export async function buildSubagentConfigs(
         model,
         tools: securityTools,
         name: 'Comprehensive_Auditor',
-        description: 'Specializes in comprehensive auditing and analysis of smart contracts.',
+        description: 'Used for ALL security audit and contract review requests — any ask to audit a contract, review it against checklists, or produce an audit report MUST be delegated here, never done directly. It is the only agent with slither_scan, so an audit run without it silently skips static analysis. STATELESS: it has no memory of earlier calls, so your description must carry CONTRACT, FILE, CHECKLISTS (the audits/<Contract>/ folder) and RUN verbatim, plus the audience name when the user asks for a rewrite. An audience rewrite is also its job — never produce or decline that file yourself, and never report on it from a directory listing: delegate and let it write summary_<slug>.md.',
       }
     )
   }

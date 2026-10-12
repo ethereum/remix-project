@@ -14,7 +14,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt', 'openReadOnly', 'displayEmptyReadOnlySession', 'showCustomDiff', 'hasUnacceptedChanges', 'clearAllBreakpoints', 'acceptDiff', 'discardDiff', 'getDiffSessions', 'setActiveDiff', 'closeDiffSession', 'openSplitView', 'closeSplitView'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt', 'openReadOnly', 'displayEmptyReadOnlySession', 'showCustomDiff', 'hasUnacceptedChanges', 'clearAllBreakpoints', 'acceptDiff', 'discardDiff', 'getDiffSessions', 'setActiveDiff', 'closeDiffSession', 'openSplitView', 'closeSplitView', 'setForceReadOnly', 'isForceReadOnly'],
 }
 
 export default class Editor extends Plugin {
@@ -34,6 +34,7 @@ export default class Editor extends Plugin {
     this.event = new EventManager()
     this.sessions = {}
     this.readOnlySessions = {}
+    this.forceReadOnly = false
     this.previousInput = ''
     this.saveTimeout = null
     this.emptySession = null
@@ -485,7 +486,7 @@ export default class Editor extends Plugin {
           if (pathExists) {
             const contentDep = await readFile(pathDep)
             if (contentDep !== '') {
-              this.emit('addModel', contentDep, language, pathDep, this.readOnlySessions[path])
+              this.emit('addModel', contentDep, language, pathDep, this.forceReadOnly || this.readOnlySessions[path])
             }
           }
         } catch (e) {
@@ -504,7 +505,7 @@ export default class Editor extends Plugin {
   async _createSession (path, content, mode, readOnly) {
     if (!this.activated) return
 
-    this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])
+    this.emit('addModel', content, mode, path, this.forceReadOnly || readOnly || this.readOnlySessions[path])
     return {
       path,
       language: mode,
@@ -542,6 +543,11 @@ export default class Editor extends Plugin {
   async showCustomDiff (file, content) {
     const source = this.getText(file) || ''
     try {
+      const openedfiles = await this.call('fileManager', 'getOpenedFiles')
+      if (!openedfiles || !openedfiles[file]) {
+        await this.call('fileManager', 'openFile', file)
+        await new Promise(resolve => setTimeout(resolve, 500)) // wait for file to be opened and content to be loaded in the file manager
+      }
       await this.openDiff({
         hashOriginal: this._simpleHash(source),
         hashModified: this._simpleHash(content),
@@ -692,7 +698,23 @@ export default class Editor extends Plugin {
   }
 
   addModel(path, content) {
-    this.emit('addModel', content, this._getMode(path), path, this.readOnlySessions[path])
+    this.emit('addModel', content, this._getMode(path), path, this.forceReadOnly || this.readOnlySessions[path])
+  }
+
+  /**
+   * Force every session (existing and future) into read-only mode, regardless of their own read-only state.
+   * @param {boolean} value
+   */
+  setForceReadOnly (value) {
+    this.forceReadOnly = value
+    for (const path in this.sessions) {
+      this.emit('addModel', '', this._getMode(path), path, this.forceReadOnly || this.readOnlySessions[path])
+    }
+    this.triggerEvent('forceReadOnlyChanged', [this.forceReadOnly])
+  }
+
+  isForceReadOnly () {
+    return this.forceReadOnly
   }
 
   /**
@@ -766,12 +788,8 @@ export default class Editor extends Plugin {
     this._switchSession(path)
   }
 
+  // Called directly by fileManager.diff while its queue is busy: must not call back into fileManager.
   async openDiff(change) {
-    const openedfiles = await this.call('fileManager', 'getOpenedFiles')
-    if (!openedfiles[change.path] || !openedfiles) {
-      await this.call('fileManager', 'openFile', change.path)
-      await new Promise(resolve => setTimeout(resolve, 500)) // wait for file to be opened and content to be loaded in the file manager
-    }
     const hashedPathModified = change.readonly ? change.path + change.hashModified : change.path
     const hashedPathOriginal = change.path + change.hashOriginal
     const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)

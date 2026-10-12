@@ -8,18 +8,8 @@ export const templatesRepository = [
         displayName: 'Basic',
         description: 'The default project',
       },
-      { value: "blank",
-        displayName: 'Blank',
-        IsArtefact: true, description: 'A blank project',
-      },
-      { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code.',
-      },
-      { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'A repo about ERC-4337 and EIP-7702',
-      },
       { value: 'remixAiTemplate', tagList: ['AI'], displayName: 'RemixAI Template Generation', IsArtefact: true, description: 'AI generated workspace.',
-      },
-      { value: "introToEIP7702", displayName: 'Intro to EIP-7702', IsArtefact: true, description: 'A contract for demoing EIP-7702',
-      },
+      }
     ]
   },
   {
@@ -277,31 +267,6 @@ export const templatesRepository = [
     ]
   },
   {
-    name: "Cookbook",
-    tooltip: "Cookbook is a Smart Contract Search Tool. Click here to open Cookbook and browse Contracts.",
-    onClick: async () => {
-      // await pluginCall('manager', 'activatePlugin', 'cookbookdev')
-      // await pluginCall('sidePanel', 'focus', 'cookbookdev')
-    },
-    onClickLabel: 'Open Cookbook Plugin',
-    // description: 'Discover more templates!',
-    items: [
-      {
-        value: "cookbook",
-        displayName: "Cookbook",
-        tagList: ['Cookbook'],
-        description: 'Discover more templates!',
-      }
-    ],
-  },
-  {
-    name: "0xProject",
-    items: [
-      { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A fungible token contract by 0xProject",
-      }
-    ]
-  },
-  {
     name: "Gnosis Safe",
     items: [
       { value: "gnosisSafeMultisig", tagList: ["Solidity"],
@@ -338,34 +303,110 @@ export const templatesRepository = [
     ]
   },
   {
-    name: "Generic ZKP",
-    items: [
-      {
-        value: "sindriScripts",
-        tagList: ["ZKP"],
-        displayName: 'Add Sindri ZK scripts',
-        description: 'Use the Sindri API to compile and generate proofs',
-
-      },
-    ],
-  },
-  {
     name: "Uniswap V4",
     items: [
       { value: "uniswapV4Template",
         displayName: 'Uniswap v4 Template',
         description: 'Use a Uniswap hook',
-      },
-      {
-        value: "breakthroughLabsUniswapv4Hooks",
-        displayName: 'Breakthrough-Labs Hooks',
-        description: 'Use a Uniswap hook developed by Breakthrough Labs',
-      },
-      {
-        value: "uniswapV4HookBookMultiSigSwapHook",
-        displayName: 'HookBook MultiSigSwapHook',
-        description: 'Use a MultiSigSwapHook developed by Breakthrough Labs',
       }
+    ]
+  },
+  {
+    name: 'DeFi Protocols',
+    items: [
+      {
+        value: "erc4626Vault",
+        displayName: 'ERC-4626 Tokenized Vault',
+        tagList: ["DeFi", "ERC4626", "Solidity"],
+        description: 'Yield-bearing vault following the ERC-4626 standard (Yearn, Aave aTokens)',
+      },
+      {
+        value: "ammDex",
+        displayName: 'AMM DEX Pool',
+        tagList: ["DeFi", "AMM", "Solidity"],
+        description: 'Constant-product AMM (x*y=k) with LP tokens and 0.3% swap fee (Uniswap V2 style)',
+      },
+      {
+        value: "lendingProtocol",
+        displayName: 'Lending & Borrowing Pool',
+        tagList: ["DeFi", "Lending", "Solidity"],
+        description: 'Utilization-based lending pool with collateral and liquidation (Compound/Aave style)',
+      },
+      {
+        value: "stablecoin",
+        displayName: 'Collateralized Stablecoin CDP',
+        tagList: ["DeFi", "Stablecoin", "Solidity"],
+        description: 'Collateralized Debt Position system that mints a USD-pegged stablecoin (MakerDAO style)',
+      },
+      {
+        value: "derivativesProtocol",
+        displayName: 'Derivatives & Synthetics',
+        tagList: ["DeFi", "Derivatives", "Solidity"],
+        description: 'Perpetual futures with funding rates + European options with cash settlement (dYdX, GMX, Opyn style)',
+      },
+      {
+        value: "yieldAggregator",
+        displayName: 'Yield Aggregator Vault',
+        tagList: ["DeFi", "Yield", "Solidity"],
+        description: 'Auto-compounding ERC-4626 vault with keeper-based harvesting (Yearn style)',
+      },
+    ]
+  },
+  {
+    name: 'Governance & Identity',
+    items: [
+      {
+        value: "daoGovernance",
+        displayName: 'DAO Governance',
+        tagList: ["DAO", "Governance", "Solidity"],
+        description: 'On-chain Governor with timelock: propose, vote, queue, and execute (OpenZeppelin Governor)',
+      },
+      {
+        value: "ensSystem",
+        displayName: 'ENS Registry & Resolver',
+        tagList: ["ENS", "Identity", "Solidity"],
+        description: 'Ethereum Name Service registry and public resolver for human-readable names',
+      },
+    ]
+  },
+  {
+    name: 'Account Abstraction & Proxies',
+    items: [
+      {
+        value: "erc4337Account",
+        displayName: 'ERC-4337 Smart Wallet',
+        tagList: ["AA", "ERC4337", "Solidity"],
+        description: 'Account abstraction wallet, factory, and paymaster following ERC-4337',
+      },
+      {
+        value: "proxyPatterns",
+        displayName: 'Proxy & Upgradeability Patterns',
+        tagList: ["Proxy", "Upgradeable", "Solidity"],
+        description: 'All three proxy patterns: Transparent, UUPS, and Beacon with example implementations',
+      },
+      { value: "accountAbstraction", displayName: 'Account Abstraction', IsArtefact: true, description: 'A repo about ERC-4337 and EIP-7702',
+      },
+      { value: "simpleEip7702", displayName: 'Simple EIP 7702', IsArtefact: true, description: 'Pectra upgrade allowing externally owned accounts (EOAs) to run contract code.',
+      },
+      { value: "introToEIP7702", displayName: 'Intro to EIP-7702', IsArtefact: true, description: 'A contract for demoing EIP-7702',
+      }
+    ]
+  },
+  {
+    name: 'NFT & Bridges',
+    items: [
+      {
+        value: "nftMarketplace",
+        displayName: 'NFT Marketplace',
+        tagList: ["NFT", "Marketplace", "Solidity"],
+        description: 'Fixed-price NFT marketplace with EIP-2981 royalties and protocol fees (Seaport inspired)',
+      },
+      {
+        value: "crossChainBridge",
+        displayName: 'Cross-Chain Bridge',
+        tagList: ["Bridge", "L2", "Solidity"],
+        description: 'Lock-and-mint bridge connecting L1 and L2 (Arbitrum/Optimism canonical bridge pattern)',
+      },
     ]
   },
   {
@@ -428,6 +469,18 @@ export const templatesRepository = [
         description: 'CRE Bootcamp: Building World Cup Prediction Markets'
       }
     ]
+  },
+  {
+    name: "Generic ZKP",
+    items: [
+      {
+        value: "sindriScripts",
+        tagList: ["ZKP"],
+        displayName: 'Add Sindri ZK scripts',
+        description: 'Use the Sindri API to compile and generate proofs',
+
+      },
+    ],
   }
 ]
 

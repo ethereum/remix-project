@@ -268,30 +268,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     )
   }
 
-  const runSolidityScan = async () => {
-    trackMatomoEvent({ category: 'solidityCompiler', action: 'solidityScan', name: 'askPermissionToScan', isClick: false })
-    const modal: AppModal = {
-      id: 'SolidityScanPermissionHandler',
-      title: <FormattedMessage id="solidity.solScan.modalTitle" />,
-      message: <div className='d-flex flex-column'>
-        <span><FormattedMessage id="solidity.solScan.modalMessage" />
-          <a href={'https://solidityscan.com/?utm_campaign=remix&utm_source=remix'}
-            target="_blank"
-            onClick={() => trackMatomoEvent({ category: 'solidityCompiler', action: 'solidityScan', name: 'learnMore', isClick: true })}>
-            <FormattedMessage id="solidity.learnMore" />
-          </a>
-        </span>
-        <br/>
-        <FormattedMessage id="solidity.solScan.likeToContinue" />
-      </div>,
-      okLabel: <FormattedMessage id="solidity.solScan.modalOkLabel" />,
-      okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />,
-      cancelFn:() => { trackMatomoEvent({ category: 'solidityCompiler', action: 'solidityScan', name: 'cancelClicked', isClick: true })}
-    }
-    await (api as any).call('notification', 'modal', modal)
-  }
-
   return (
     // define swarm logo
     <>
@@ -330,29 +306,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   <img id="ssaLogo" className="remixui_storageLogo me-2" src="assets/img/staticAnalysisColorBlue.webp" />
                   <span>
                     <FormattedMessage id="solidity.runStaticAnalysis" />
-                  </span>
-                </span>
-              </button>
-            </CustomTooltip>
-            <CustomTooltip
-              placement={'auto-end'}
-              tooltipId="runSolidityScanTooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={`${intl.formatMessage({
-                id: 'solidity.solScan.iconTooltip'
-              })}`}
-            >
-              <button
-                id="runSolidityScan"
-                className="btn border"
-                onClick={() => {
-                  runSolidityScan()
-                }}
-              >
-                <span>
-                  <img id="solscanLogo" className="remixui_storageLogo me-2" src="assets/img/solidityScanLogo.webp" />
-                  <span>
-                    <FormattedMessage id="solidity.runSolidityScan" />
                   </span>
                 </span>
               </button>

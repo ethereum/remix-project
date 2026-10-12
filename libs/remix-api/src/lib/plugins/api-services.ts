@@ -93,6 +93,8 @@ import {
   SendEmailVerificationResponse,
   VerifyEmailVerificationRequest,
   VerifyEmailVerificationResponse,
+  UserLocaleRequest,
+  UserLocaleResponse,
   EthSkillDetail,
   EthSkillsListResponse
 } from './api-types'
@@ -268,6 +270,17 @@ export class SSOApiService {
     request: VerifyEmailVerificationRequest
   ): Promise<ApiResponse<VerifyEmailVerificationResponse>> {
     return this.apiClient.post<VerifyEmailVerificationResponse>('/email/verify-verification', request)
+  }
+
+  // ==================== Profile ====================
+
+  /**
+   * Store the user's detected billing region (POST /sso/me/locale).
+   * Best-effort personalization signal — the authoritative country for a
+   * purchase still comes from Paddle at checkout time.
+   */
+  async updateLocale(request: UserLocaleRequest): Promise<ApiResponse<UserLocaleResponse>> {
+    return this.apiClient.post<UserLocaleResponse>('/me/locale', request)
   }
 }
 

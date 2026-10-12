@@ -12,8 +12,6 @@ import { AppContext as RemixAppContext, useAuth } from '@remix-ui/app';
 import { DappManager } from './utils/DappManager';
 import { QuickDappV2PluginApi, DappConfig } from './types';
 import {
-  clearAllQuickDappWorkspaceLocks,
-  clearQuickDappWorkspaceLock,
   getQuickDappWorkspaceLock,
   getQuickDappWorkspaceLockMessage
 } from '@remix-ui/helper';
@@ -34,6 +32,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
   const { isAuthenticated, features } = useAuth()
   const [appState, dispatch] = useReducer(appReducer, appInitialState);
   const dappsRef = useRef(appState.dapps);
+  const viewRef = useRef(appState.view);
   const [isAppLoading, setIsAppLoading] = useState(true);
   const activeDappRef = useRef(appState.activeDapp);
 
@@ -55,6 +54,10 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
   }, [appState.dapps, appState.view]);
 
   useEffect(() => {
+    viewRef.current = appState.view;
+  }, [appState.view]);
+
+  useEffect(() => {
     activeDappRef.current = appState.activeDapp;
   }, [appState]);
 
@@ -64,10 +67,12 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
 
   useEffect(() => {
     if (!plugin) return;
+    // Invalidate async dashboard reads when a newer operation or terminal event arrives.
+    let generationVersion = 0;
 
     const handleCreateDapp = async (payload: any) => {
       if (quickdappEnabledRef.current === false) {
-        plugin.call('notification', 'toast', 'QuickDapp is not available yet.')
+        plugin.call('notification', 'toast', 'QuickDApp is not available yet.')
         return
       }
       try {
@@ -104,7 +109,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
 
     const handleCreateZkDapp = async (payload: any) => {
       if (quickdappEnabledRef.current === false) {
-        plugin.call('notification', 'toast', 'QuickDapp is not available yet.')
+        plugin.call('notification', 'toast', 'QuickDApp is not available yet.')
         return
       }
       try {
@@ -148,22 +153,25 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
     };
 
     const handleDappGenerated = async (data: any) => {
+      const version = ++generationVersion;
       console.log('[QuickDapp] handleDappGenerated', { slug: data?.slug, workspaceName: data?.workspaceName, isUpdate: data?.isUpdate });
-      if (data?.workspaceName) {
-        clearQuickDappWorkspaceLock(data.workspaceName);
-      }
       if (!data.slug) {
         console.log('[QuickDapp] handleDappGenerated: missing slug');
         return;
       }
 
       const { workspaceName, slug } = data;
+      dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug, isProcessing: false } });
+      dispatch({ type: 'SET_AI_LOADING', payload: false });
+      dispatch({ type: 'SET_GENERATION_PROGRESS', payload: null });
+      currentSlugRef = '';
 
       try {
         console.log('[QuickDapp] Refreshing dashboard for slug:', slug);
 
         // Files already saved by handler — refresh dashboard state
         const freshDapps = await dappManagerRef.current.getDapps();
+        if (version !== generationVersion) return;
         console.log('[QuickDapp] Fetched', freshDapps.length, 'dapps from disk');
         dispatch({ type: 'SET_DAPPS', payload: freshDapps });
 
@@ -176,32 +184,15 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
           console.log('[QuickDapp] No matching dapp found for slug:', slug);
         }
 
-        dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug, isProcessing: false } });
-        dispatch({ type: 'SET_AI_LOADING', payload: false });
-        dispatch({ type: 'SET_GENERATION_PROGRESS', payload: null });
-
-        // Reset status from 'creating'/'updating' → 'created'
-        console.log('[QuickDapp] Resetting config status to created for slug:', slug);
-        try {
-          await dappManagerRef.current.updateDappConfig(slug, {
-            status: 'created',
-            processingStartedAt: null
-          });
-        } catch (e) {
-          console.warn('[QuickDapp] Failed to reset config status:', e);
-        }
-
         if (!data.isUpdate) {
           plugin.call('notification', 'toast', `DApp '${thisDapp?.name || workspaceName}' created successfully!`);
-        } else {
+        } else if (viewRef.current !== 'editor' || activeDappRef.current?.slug !== slug) {
           plugin.call('notification', 'toast', 'DApp code updated successfully.');
         }
         console.log('[QuickDapp] handleDappGenerated done');
       } catch (e: any) {
+        if (version !== generationVersion) return;
         console.error('[QuickDapp] Error in handleDappGenerated:', e);
-        if (slug) {
-          dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug, isProcessing: false } });
-        }
       }
     };
 
@@ -210,18 +201,13 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
     let currentWritingFile = '';
 
     const handleDappGenerationError = (data: any) => {
+      ++generationVersion;
       console.error('[QuickDapp] Received dappGenerationError event:', data);
-      if (data?.workspaceName) {
-        clearQuickDappWorkspaceLock(data.workspaceName);
-      } else {
-        clearAllQuickDappWorkspaceLocks();
-      }
       dispatch({ type: 'SET_AI_LOADING', payload: false });
       dispatch({ type: 'SET_GENERATION_PROGRESS', payload: null });
 
-      const slug = data?.slug || currentSlugRef;
+      const slug = data?.slug || dappsRef.current.find(dapp => dapp.workspaceName === data?.workspaceName)?.slug || currentSlugRef;
       if (slug) {
-        dappManager.updateDappConfig(slug, { status: 'created', processingStartedAt: null });
         dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug, isProcessing: false } });
       }
 
@@ -233,12 +219,8 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       plugin.call('notification', 'toast', `Generation Failed: ${data?.error || 'Unknown error'}`);
     };
 
-    const handleDappUpdateStart = async (data: any) => {
+    const handleDappUpdateStart = (data: any) => {
       if (data?.workspaceName && data?.slug) {
-        await dappManager.updateDappConfig(data.slug, {
-          status: 'updating',
-          processingStartedAt: Date.now()
-        });
         dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug: data.slug, isProcessing: true } });
       }
     };
@@ -248,15 +230,19 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       if (deletingWorkspacesRef.current.has(workspaceName)) return;
       const filtered = dappsRef.current.filter((d: any) => d.workspaceName !== workspaceName);
       dispatch({ type: 'SET_DAPPS', payload: filtered });
+      if (activeDappRef.current?.workspaceName === workspaceName) {
+        dispatch({ type: 'SET_ACTIVE_DAPP', payload: null });
+        dispatch({ type: 'SET_VIEW', payload: filtered.length > 0 ? 'dashboard' : 'create' });
+      }
     };
     const handleGenerationProgress = async (data: any) => {
       // Handle cancellation: null data resets all progress state
       if (!data) {
-        clearAllQuickDappWorkspaceLocks();
+        ++generationVersion;
         dispatch({ type: 'SET_GENERATION_PROGRESS', payload: null });
         dispatch({ type: 'SET_AI_LOADING', payload: false });
-        if (currentSlugRef) {
-          dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug: currentSlugRef, isProcessing: false } });
+        for (const slug of new Set([...dappsRef.current.map(dapp => dapp.slug), currentSlugRef].filter(Boolean))) {
+          dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug, isProcessing: false } });
         }
         currentSlugRef = '';
         currentWritingFile = '';
@@ -271,6 +257,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       const enrichedData = { ...data, slug: data.slug || currentSlugRef };
 
       if (data.status === 'preparing') {
+        const version = ++generationVersion;
         generatedFilesRef.length = 0;
         currentWritingFile = '';
         dispatch({ type: 'SET_GENERATION_PROGRESS', payload: enrichedData });
@@ -305,6 +292,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
             }
           }
 
+          if (version !== generationVersion) return;
           dispatch({ type: 'SET_DAPPS', payload: freshDapps });
           dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug: enrichedData.slug, isProcessing: true } });
           dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
@@ -355,6 +343,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
 
     // Cleanup function to remove event listeners
     return () => {
+      ++generationVersion;
       plugin.event.off('createDapp', handleCreateDapp);
       plugin.event.off('createZkDapp', handleCreateZkDapp);
       plugin.event.off('openDapp', handleOpenDapp);
@@ -393,30 +382,13 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
         const dapps = (await dappManager.getDapps()) || [];
         dispatch({ type: 'SET_DAPPS', payload: dapps });
 
-        const FIVE_MINUTES = 5 * 60 * 1000;
-        const now = Date.now();
-
+        // Persisted 'creating' only records how the last attempt started. After a
+        // reload its agent is gone; only a live lock can restore a busy overlay.
+        // Do not rewrite configs or switch workspaces while recovering the UI.
+        const lock = getQuickDappWorkspaceLock();
         for (const dapp of dapps) {
-          const status = dapp.status;
-          const processingStartedAt = dapp.processingStartedAt || 0;
-          const elapsed = now - processingStartedAt;
-
-          if (status === 'creating' || status === 'updating') {
-            // Skip stale entries — MCP handler manages file writes
-            console.log('[QuickDapp] Dapp', dapp.slug, 'is in', status, 'state, elapsed:', (elapsed/1000).toFixed(0), 's')
-
-            if (elapsed < FIVE_MINUTES) {
-              dispatch({
-                type: 'SET_DAPP_PROCESSING',
-                payload: { slug: dapp.slug, isProcessing: true }
-              });
-            } else {
-              console.log('[QuickDapp] Dapp', dapp.slug, 'timed out — resetting to created')
-              await dappManager.updateDappConfig(dapp.slug, {
-                status: 'created',
-                processingStartedAt: null
-              });
-            }
+          if (lock && lock.operation !== 'publish' && lock.workspaceName === dapp.workspaceName && (!lock.slug || lock.slug === dapp.slug)) {
+            dispatch({ type: 'SET_DAPP_PROCESSING', payload: { slug: dapp.slug, isProcessing: true } });
           }
         }
 
@@ -484,6 +456,9 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       const updatedDapps = await dappManager.getDapps();
       dispatch({ type: 'SET_DAPPS', payload: updatedDapps || []});
 
+      if (activeDappRef.current?.workspaceName === dapp.workspaceName) {
+        dispatch({ type: 'SET_ACTIVE_DAPP', payload: null });
+      }
       if (!updatedDapps || updatedDapps.length === 0) {
         dispatch({ type: 'SET_VIEW', payload: 'create' });
       }
@@ -543,15 +518,14 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       } catch {}
     } catch (e) {
       console.error('[QuickDapp] deleteAll failed:', e);
-      // Recover: re-fetch actual state if deletion failed
-      try {
-        const remaining = await dappManager.getDapps();
-        dispatch({ type: 'SET_DAPPS', payload: remaining || []});
-        if (remaining && remaining.length > 0) {
-          dispatch({ type: 'SET_VIEW', payload: 'dashboard' });
-        }
-      } catch {}
     } finally {
+      try {
+        const remaining = (await dappManager.getDapps()) || [];
+        dispatch({ type: 'SET_DAPPS', payload: remaining });
+        dispatch({ type: 'SET_VIEW', payload: remaining.length > 0 ? 'dashboard' : 'create' });
+      } catch (e) {
+        console.error('[QuickDapp] Failed to refresh DApps after deleteAll:', e);
+      }
       deletingWorkspacesRef.current.clear();
     }
   };
@@ -565,7 +539,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
           <i className="fas fa-flask fa-3x mb-3 text-info"></i>
           <h4 className="mb-2">Coming Soon</h4>
           <p className="text-muted" style={{ maxWidth: '400px' }}>
-            QuickDapp V2 is under development and will be available soon. Stay tuned!
+            QuickDApp V2 is under development and will be available soon. Stay tuned!
           </p>
         </div>
       );
@@ -575,7 +549,7 @@ export function RemixUiQuickDappV2({ plugin }: RemixUiQuickDappV2Props): JSX.Ele
       return (
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '80vh' }}>
           <i className="fas fa-spinner fa-spin fa-2x mb-3 text-primary"></i>
-          <p className="text-muted">Loading QuickDapp...</p>
+          <p className="text-muted">Loading QuickDApp...</p>
         </div>
       );
     }

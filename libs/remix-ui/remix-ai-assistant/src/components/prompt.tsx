@@ -125,7 +125,7 @@ export interface PromptAreaProps {
   onSignIn?: () => void
   isNewChat?: boolean
   handleOpenSettings?: () => void
-  handleLoadAuditChecklist?: () => void
+  handleLoadAuditChecklist?: (mode?: 'audit' | 'checklist') => void
   handleGasOptimisationAudit?: () => void
   hasAuditorPermission?: boolean
   hasSkillsPermission?: boolean
@@ -146,6 +146,11 @@ export interface PromptAreaProps {
   // False when the selected model cannot read images: the attach affordances
   // are disabled rather than hidden, so the reason stays discoverable.
   supportsVision?: boolean
+  /** Low-cost filter state — narrows the model menu to the `ai:cheapModels` tier. */
+  cheapModelsOnly?: boolean
+  /** False when the catalogue has no low-cost model; the toggle renders disabled. */
+  hasCheapModels?: boolean
+  onToggleCheapModels?: () => void
 }
 
 export const PromptArea: React.FC<PromptAreaProps> = ({
@@ -185,6 +190,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   onDismissAttachmentErrors,
   onCaptureScreenshot,
   supportsVision = true
+  cheapModelsOnly = false,
+  hasCheapModels = false,
+  onToggleCheapModels
 }) => {
   const { trackMatomoEvent: baseTrackEvent } = useContext(TrackingContext)
   const trackMatomoEvent = <T extends MatomoEvent = MatomoEvent>(event: T) => {
@@ -246,12 +254,35 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     setIsDragging(true)
   }, [canAttach])
 
+  // Auto-size the textarea to its content. Skipped while it isn't rendered
+  // (e.g. mounted inside a still-hidden panel on a mode switch): a hidden
+  // textarea measures 0 and would stay collapsed at min-height until typing.
+  const resizeTextarea = useCallback(() => {
+    const el = textareaRef?.current
+    if (!el || el.offsetWidth === 0) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [textareaRef])
+
   useEffect(() => {
-    if (textareaRef?.current) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
-    }
-  }, [input])
+    resizeTextarea()
+  }, [input, resizeTextarea])
+
+  // Re-size when the width changes: hidden → visible, docked ↔ AI mode, panel
+  // resizes (text wraps differently). Height-only changes are ignored, as they
+  // come from resizeTextarea itself.
+  useEffect(() => {
+    const el = textareaRef?.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    let lastWidth = el.offsetWidth
+    const observer = new ResizeObserver(() => {
+      if (el.offsetWidth === lastWidth) return
+      lastWidth = el.offsetWidth
+      resizeTextarea()
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [textareaRef, resizeTextarea])
 
   // Handle autocomplete visibility
   useEffect(() => {
@@ -275,7 +306,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
       cmds.push({
         name: 'load-skills',
         description: 'Load skills',
-        category: 'Tools',
+        category: 'Audit',
         action: handleLoadSkills,
         disabled: false,
         requiredFeatures: [Features.SKILLS_BASIC]
@@ -286,23 +317,33 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
         name: 'audit',
         description: 'Audit a contract',
         requiredFeatures: [Features.AI_AUDITOR],
-        category: 'Tools',
+        category: 'Audit',
         action: () => {
-          handleLoadAuditChecklist()
-          setInput('Audit a contract. Ask which contract file to audit if none provided.')
+          handleLoadAuditChecklist('audit')
         },
         disabled: !hasAuditorPermission
       })
       cmds.push({
         name: 'load-audit-checklist',
         description: 'Load audit checklist',
-        category: 'Tools',
-        action: handleLoadAuditChecklist,
+        category: 'Audit',
+        // Checklist mode: write the files and stop, no audit run.
+        action: () => handleLoadAuditChecklist('checklist'),
         requiredFeatures: [Features.AI_AUDITOR],
         disabled: !hasAuditorPermission
       })
     }
-    if (handleGasOptimisationAudit) cmds.push({ name: 'gas-audit', description: 'Gas optimisation audit', category: 'Tools', action: handleGasOptimisationAudit, requiredFeatures: [Features.AI_AUDITOR]})
+    if (handleGasOptimisationAudit) cmds.push({ name: 'gas-audit', description: 'Gas optimisation audit', category: 'Audit', action: handleGasOptimisationAudit, requiredFeatures: [Features.AI_AUDITOR]})
+    if (handleLoadSkills) {
+      cmds.push({
+        name: 'load-skills',
+        description: 'Skills',
+        category: 'Skills',
+        action: handleLoadSkills,
+        disabled: false,
+        requiredFeatures: [Features.SKILLS_BASIC]
+      })
+    }
     return cmds
   }, [handleSetModel, handleOpenSettings, handleLoadSkills, handleLoadAuditChecklist, handleGasOptimisationAudit, hasAuditorPermission, hasSkillsPermission, setInput])
 
@@ -445,7 +486,26 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   // route that can never become ready until they authenticate.
   const activeCategory = activeShortcut ? (SHORTCUT_CATEGORIES.find(c => c.id === activeShortcut) ?? null) : null
 
-  const toolCommands = actionCommands.filter(cmd => cmd.category === 'Tools')
+  const actionCommandsByCategory = actionCommands.reduce<Record<string, Command[]>>((acc, cmd) => {
+    const cat = cmd.category ?? 'Other'
+    if (cat === 'Settings') return acc
+    if (!acc[cat]) acc[cat] = []
+    acc[cat].push(cmd)
+    return acc
+  }, {})
+
+  const activeActionCommands = activeShortcut
+    ? (actionCommandsByCategory[Object.keys(actionCommandsByCategory).find(k => k.toLowerCase() === activeShortcut) ?? ''] ?? [])
+    : []
+
+  const dynamicCategoryPills = Object.keys(actionCommandsByCategory).map(cat => {
+    const cmds = actionCommandsByCategory[cat]
+    return {
+      id: cat.toLowerCase(),
+      label: cat,
+      directAction: cmds.length === 1 && cmds[0].action ? cmds[0] : null,
+    }
+  })
 
   // Contextual hint for a just-inserted command (e.g. "/compile ") so the user
   const activeCommandHint = useMemo(() => {
@@ -471,15 +531,27 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
     <>
       <div ref={shortcutsRef} className="position-relative mx-2 mb-1">
         <div className="d-flex flex-row align-items-center" style={{ gap: '4px' }}>
-          {[...SHORTCUT_CATEGORIES, ...(toolCommands.length > 0 ? [{ id: 'tools', label: 'Tools' }] : [])].map(cat => (
+          {[...SHORTCUT_CATEGORIES, ...dynamicCategoryPills].map(cat => (
             <button
               key={cat.id}
-              onClick={() => setActiveShortcut(prev => {
-                const next = prev === cat.id ? null : cat.id
-                // Track only when opening a category (not when toggling it shut)
-                if (next) trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'command_category_open', value: cat.id, isClick: true })
-                return next
-              })}
+              onClick={() => {
+                const direct = (cat as any).directAction
+                if (direct) {
+                  const missingFeature = getMissingFeature(direct)
+                  if (missingFeature) {
+                    onUpgradeRequired?.(direct.name, missingFeature)
+                    return
+                  }
+                  trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'tool_selected', value: direct.name, isClick: true })
+                  direct.action?.()
+                  return
+                }
+                setActiveShortcut(prev => {
+                  const next = prev === cat.id ? null : cat.id
+                  if (next) trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'command_category_open', value: cat.id, isClick: true })
+                  return next
+                })
+              }}
               className="btn btn-sm rounded-pill"
               style={{
                 fontSize: '0.72rem',
@@ -578,7 +650,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
             })}
           </div>
         )}
-        {activeShortcut === 'tools' && (
+        {activeActionCommands.length > 0 && (
           <div
             className="position-absolute rounded-3 shadow-lg overflow-hidden"
             style={{
@@ -589,9 +661,9 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
               border: '1px solid var(--bs-border-color)',
               zIndex: 1000,
             }}
-            data-id="shortcut-popover-tools"
+            data-id="shortcut-popover-action"
           >
-            {toolCommands.map((cmd, i) => {
+            {activeActionCommands.map((cmd, i) => {
               const missingFeature = getMissingFeature(cmd)
               const isLocked = missingFeature !== null
               return (
@@ -599,7 +671,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                   key={cmd.name}
                   onClick={() => {
                     setActiveShortcut(null)
-                    // Locked tool → plan-manager hand-off (tracked by onUpgradeRequired).
                     if (isLocked) {
                       onUpgradeRequired?.(cmd.name, missingFeature as string)
                       return
@@ -612,7 +683,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     backgroundColor: 'transparent',
                     color: 'var(--bs-body-color)',
                     fontSize: '0.8rem',
-                    borderBottom: i < toolCommands.length - 1 ? '1px solid var(--bs-border-color)' : 'none',
+                    borderBottom: i < activeActionCommands.length - 1 ? '1px solid var(--bs-border-color)' : 'none',
                     cursor: 'pointer',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--custom-onsurface-layer-1)' }}
@@ -721,80 +792,66 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                 {activeCommandHint}
               </div>
             )}
-            <div className="d-flex flex-row align-items-center">
-              {/* <div className="d-flex flex-row align-items-center"> */}
-              <button
-                onClick={handleSetModel}
-                className="btn btn-text btn-sm small font-weight-light text-dark align-self-end border-0 rounded"
-                data-assist-btn="assistant-selector-btn"
-                data-id="ai-model-selector-btn"
-                ref={modelBtnRef}
-              >
-                <div className="d-flex flex-row flex-nowrap align-items-center justify-content-center">
-                  <span className="text-nowrap">
-                    {selectedModel?.displayName || 'Select Model'}
-                  </span>
-                  {usingOwnApiKey && (
-                    <CustomTooltip tooltipText="Using your own API key">
-                      <span
-                        className="badge bg-success ms-2"
-                        style={{ fontSize: '0.6rem', padding: '2px 4px', color: themeTracker && themeTracker?.name.toLowerCase() === 'light' ? '' :'#000' }}
-                        data-id="own-api-key-badge"
-                      >
-                        <i className="fas fa-key me-1" style={{ fontSize: '0.5rem' }}></i>
-                        Own Key
-                      </span>
-                    </CustomTooltip>
-                  )}
-                  <CustomTooltip
-                    tooltipText={
-                      aiRoute === 'agent'
-                        ? 'DeepAgent ready — subagents + tools available'
-                        : aiRoute === 'tools'
-                          ? 'MCP tools ready (no subagents)'
-                          : aiRoute === 'chat'
-                            ? 'Plain chat — no tools or subagents'
-                            : 'Initialising agents — please wait'
-                    }
-                  >
-                    <span
-                      className={`badge ms-2 ${
-                        aiRoute === 'agent'
-                          ? 'bg-success'
-                          : aiRoute === 'tools'
-                            ? 'bg-info'
-                            : aiRoute === 'chat'
-                              ? 'bg-secondary'
-                              : 'bg-warning'
-                      }`}
-                      style={{ fontSize: '0.6rem', padding: '2px 4px', visibility: selectedModel ? 'visible' : 'hidden', color: themeTracker && themeTracker?.name.toLowerCase() === 'light' ? '' :'#000' }}
-                      data-id="ai-route-status"
-                      data-route={aiRoute}
-                    >
-                      {aiRoute === 'agent'
-                        ? 'Agent'
-                        : aiRoute === 'tools'
-                          ? 'Tools'
-                          : aiRoute === 'chat'
-                            ? 'Chat'
-                            : 'Initialising…'}
-                    </span>
-                  </CustomTooltip>
-                  <span className={showModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
-                </div>
-              </button>
-              {selectedModel?.provider === 'ollama' && ollamaModels.length > 0 && (
+            <div className="d-flex flex-row align-items-center justify-content-between">
+              <div className="d-flex flex-row align-items-center" style={{ minWidth: 0, overflow: 'hidden' }}>
                 <button
-                  onClick={() => setShowOllamaModelSelector(prev => !prev)}
-                  className="btn btn-text btn-sm small font-weight-light text-secondary align-self-end border border-text rounded ms-2"
-                  style={{ whiteSpace: 'nowrap', minWidth: 'fit-content' }}
-                  ref={modelSelectorBtnRef}
-                  data-id="ollama-model-selector"
+                  onClick={handleSetModel}
+                  className="btn btn-text btn-sm small font-weight-light text-dark align-self-end border-0 rounded"
                   data-assist-btn="assistant-selector-btn"
+                  data-id="ai-model-selector-btn"
+                  ref={modelBtnRef}
                 >
                   <div className="d-flex flex-row flex-nowrap align-items-center justify-content-center">
-                    <span style={{ whiteSpace: 'nowrap' }}>{selectedOllamaModel || 'Select Ollama Model'}</span>
-                    <span className={showOllamaModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
+                    <span className="text-nowrap">
+                      {selectedModel?.displayName || 'Select Model'}
+                    </span>
+                    {usingOwnApiKey && (
+                      <CustomTooltip tooltipText="Using your own API key">
+                        <span
+                          className="badge bg-success ms-2"
+                          style={{ fontSize: '0.6rem', padding: '2px 4px', color: themeTracker && themeTracker?.name.toLowerCase() === 'light' ? '' :'#000' }}
+                          data-id="own-api-key-badge"
+                        >
+                          <i className="fas fa-key me-1" style={{ fontSize: '0.5rem' }}></i>
+                          Own Key
+                        </span>
+                      </CustomTooltip>
+                    )}
+                    <CustomTooltip
+                      tooltipText={
+                        aiRoute === 'agent'
+                          ? 'DeepAgent ready — subagents + tools available'
+                          : aiRoute === 'tools'
+                            ? 'MCP tools ready (no subagents)'
+                            : aiRoute === 'chat'
+                              ? 'Plain chat — no tools or subagents'
+                              : 'Initialising agents — please wait'
+                      }
+                    >
+                      <span
+                        className={`badge ms-2 ${
+                          aiRoute === 'agent'
+                            ? 'bg-success'
+                            : aiRoute === 'tools'
+                              ? 'bg-info'
+                              : aiRoute === 'chat'
+                                ? 'bg-secondary'
+                                : 'bg-warning'
+                        }`}
+                        style={{ fontSize: '0.6rem', padding: '2px 4px', visibility: selectedModel ? 'visible' : 'hidden', color: themeTracker && themeTracker?.name.toLowerCase() === 'light' ? '' :'#000' }}
+                        data-id="ai-route-status"
+                        data-route={aiRoute}
+                      >
+                        {aiRoute === 'agent'
+                          ? 'Agent'
+                          : aiRoute === 'tools'
+                            ? 'Tools'
+                            : aiRoute === 'chat'
+                              ? 'Chat'
+                              : 'Initialising…'}
+                      </span>
+                    </CustomTooltip>
+                    <span className={showModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
                   </div>
                 </button>
               )}
@@ -853,13 +910,47 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                   </span>
                 </CustomTooltip>
               )}
+                <CustomTooltip
+                  tooltipText={
+                    !hasCheapModels
+                      ? 'No low-cost model is available on your plan'
+                      : cheapModelsOnly
+                        ? 'Showing only low-cost models in the selector. Click to show every model.'
+                        : 'Show only low-cost models in the selector — the cheapest tier across all providers, to make your credits last longer.'
+                  }
+                >
+                  <button
+                    type="button"
+                    onClick={() => onToggleCheapModels?.()}
+                    disabled={!hasCheapModels}
+                    className={`btn btn-text btn-sm small font-weight-light border-0 rounded align-self-center d-flex flex-row flex-nowrap align-items-center justify-content-center ${cheapModelsOnly ? 'text-success' : 'text-secondary'}`}
+                    data-id="ai-cheap-models-toggle"
+                    data-active={cheapModelsOnly ? 'true' : 'false'}
+                    data-available={hasCheapModels ? 'true' : 'false'}
+                    aria-pressed={cheapModelsOnly}
+                    aria-label="Show only low-cost models"
+                  >
+                    <i className={`fa-solid ${cheapModelsOnly ? 'fa-toggle-on' : 'fa-toggle-off'} me-1`} style={{ fontSize: '1.15rem', lineHeight: 1, verticalAlign: 'middle' }}></i>
+                    <span style={{ fontSize: '0.75rem', lineHeight: 1, whiteSpace: 'nowrap', verticalAlign: 'middle' }}>low-cost AI</span>
+                  </button>
+                </CustomTooltip>
+                {selectedModel?.provider === 'ollama' && ollamaModels.length > 0 && (
+                  <button
+                    onClick={() => setShowOllamaModelSelector(prev => !prev)}
+                    className="btn btn-text btn-sm small font-weight-light text-secondary align-self-end border border-text rounded ms-2"
+                    style={{ whiteSpace: 'nowrap', minWidth: 'fit-content' }}
+                    ref={modelSelectorBtnRef}
+                    data-id="ollama-model-selector"
+                    data-assist-btn="assistant-selector-btn"
+                  >
+                    <div className="d-flex flex-row flex-nowrap align-items-center justify-content-center">
+                      <span style={{ whiteSpace: 'nowrap' }}>{selectedOllamaModel || 'Select Ollama Model'}</span>
+                      <span className={showOllamaModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
+                    </div>
+                  </button>
+                )}
+              </div>
               <PromptDefault
-                // Only render the cancel/stop affordance for an actual
-                // in-flight inference. When the route is merely "not
-                // ready yet" (e.g. anonymous user, agents still booting)
-                // we must show the disabled send button instead — a
-                // stop button that cancels nothing is broken UX and
-                // confused users into thinking the assistant was stuck.
                 isStreaming={isStreaming}
                 disabled={!composerReady}
                 handleSend={handleSend}

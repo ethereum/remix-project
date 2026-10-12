@@ -2,7 +2,7 @@ import React, { Dispatch, useEffect, useLayoutEffect, useMemo, useRef, useState 
 import { SiOpenai, SiAnthropic, SiOllama, SiAmazonwebservices } from 'react-icons/si'
 import GroupListMenu, { LockedPillState } from './contextOptMenu'
 import { groupListType } from '../types/componentTypes'
-import { AIModel, modelKey, byokKeyState, isAutoModelId, modelVendor, type ByokKeyState } from '@remix/remix-ai-core'
+import { AIModel, modelKey, byokKeyState, isAutoModelId, isCheapModel, modelVendor, type ByokKeyState } from '@remix/remix-ai-core'
 
 const PROVIDER_META: Record<string, { label: string; subtitle: string }> = {
   anthropic: { label: 'Anthropic', subtitle: 'Claude models' },
@@ -148,10 +148,13 @@ export interface ModelSelectorMenuProps {
   byokKeyPresence?: Partial<Record<AIModel['provider'], boolean>>
   /** Hand-off to the API key settings, from a row or header waiting for a key. */
   onAddApiKeyClick?: (item: groupListType) => void
+  cheapOnly?: boolean
 }
 
 export default function ModelSelectorMenu(props: ModelSelectorMenuProps) {
   const [query, setQuery] = useState('')
+  // The filter is driven from the composer's toggle, so the menu only reads it.
+  const cheapOnly = !!props.cheapOnly
 
   // Ungrouped rows shown above the provider accordion (sign-in placeholder).
   const signInModels = useMemo(
@@ -169,6 +172,7 @@ export default function ModelSelectorMenu(props: ModelSelectorMenuProps) {
     const byProvider = new Map<string, AIModel[]>()
     for (const model of props.availableModels) {
       if (isSignInModel(model) || isAutoModel(model)) continue
+      if (cheapOnly && !isCheapModel(model)) continue
       const vendor = modelVendor(model)
       const list = byProvider.get(vendor) ?? []
       list.push(model)
@@ -181,7 +185,7 @@ export default function ModelSelectorMenu(props: ModelSelectorMenuProps) {
         minSortOrder: models.reduce((min, m) => Math.min(min, m.sortOrder), Number.POSITIVE_INFINITY)
       }))
       .sort((a, b) => a.minSortOrder - b.minSortOrder)
-  }, [props.availableModels])
+  }, [props.availableModels, cheapOnly])
 
   const selectedModel = useMemo(() => {
     if (!props.currentChoice || props.currentChoice === 'auto') return undefined
@@ -231,7 +235,7 @@ export default function ModelSelectorMenu(props: ModelSelectorMenuProps) {
 
   // The Auto row is the `openrouter/auto` model, hoisted to the top of the
   const autoValue = autoModel ? modelKey(autoModel) : 'auto'
-  const showAutoRow = !!autoModel
+  const showAutoRow = !!autoModel && (!cheapOnly || isCheapModel(autoModel))
   const autoSelected = props.currentChoice === autoValue
   const autoTitle = autoModel?.displayName || 'Auto'
   const autoDescription = autoModel?.description || ''
@@ -311,6 +315,12 @@ export default function ModelSelectorMenu(props: ModelSelectorMenuProps) {
         {/* Sign-in placeholder */}
         {signInModels.length > 0 && !normalizedQuery && (
           <GroupListMenu {...groupListProps} groupList={signInModels.map(model => toRow(model, keyPresence))} />
+        )}
+
+        {cheapOnly && groups.length === 0 && (
+          <div className="px-3 py-3 small text-muted text-center" data-id="ai-model-cheap-empty">
+            No low-cost model is available on your plan
+          </div>
         )}
 
         {normalizedQuery && !groups.some(g => g.models.some(matchesQuery)) && (

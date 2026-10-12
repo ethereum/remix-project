@@ -56,7 +56,7 @@ interface AiChatPromptAreaForHistoryProps {
       messages: ChatMessage[]
       handleLoadSkills?: () => void
       handleOpenSettings?: () => void
-      handleLoadAuditChecklist?: () => void
+      handleLoadAuditChecklist?: (mode?: 'audit' | 'checklist') => void
       handleGasOptimisationAudit?: () => void
       usingOwnApiKey?: boolean
       aiRoute?: 'initializing' | 'agent' | 'tools' | 'chat'
@@ -75,6 +75,10 @@ interface AiChatPromptAreaForHistoryProps {
       onDismissAttachmentErrors?: () => void
       onCaptureScreenshot?: () => void
       supportsVision?: boolean
+      /** Low-cost model filter — shared by the composer toggle and the menu. */
+      cheapModelsOnly?: boolean
+      hasCheapModels?: boolean
+      onToggleCheapModels?: () => void
 }
 
 export default function AiChatPromptAreaForHistory(props: AiChatPromptAreaForHistoryProps) {
@@ -129,6 +133,7 @@ export default function AiChatPromptAreaForHistory(props: AiChatPromptAreaForHis
             onBuyCreditsClick={props.onBuyCreditsClick ? handleBuyCreditsClick : undefined}
             byokKeyPresence={props.byokKeyPresence}
             onAddApiKeyClick={props.onAddApiKeyClick ? () => props.onAddApiKeyClick?.() : undefined}
+            cheapOnly={props.cheapModelsOnly}
           />
           {false && props.mcpEnabled && (
             <div className="border-top mt-2 pt-2">
@@ -223,6 +228,9 @@ export default function AiChatPromptAreaForHistory(props: AiChatPromptAreaForHis
         onDismissAttachmentErrors={props.onDismissAttachmentErrors}
         onCaptureScreenshot={props.onCaptureScreenshot}
         supportsVision={props.supportsVision}
+        cheapModelsOnly={props.cheapModelsOnly}
+        hasCheapModels={props.hasCheapModels}
+        onToggleCheapModels={props.onToggleCheapModels}
       />
       <span className="mb-2 mx-4 small w-100 text-dark">RemixAI can make mistakes. Always check important info.</span>
     </section>

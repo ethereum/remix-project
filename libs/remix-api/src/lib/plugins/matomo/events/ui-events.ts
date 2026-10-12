@@ -35,7 +35,8 @@ export interface TopbarEvent extends MatomoEventBase {
     | 'header'
     | 'feedback'
     | 'support'
-    | 'upgrade';
+    | 'upgrade'
+    | 'aiReviewMode'
 }
 
 export interface LayoutEvent extends MatomoEventBase {
@@ -78,6 +79,16 @@ export interface StatusBarEvent extends MatomoEventBase {
   category: 'statusBar';
   action:
     | 'initNewRepo';
+}
+
+export interface BottomBarEvent extends MatomoEventBase {
+  category: 'bottomBar';
+  action:
+    | 'editWithAI'
+    | 'explain'
+    | 'createDapp'
+    | 'securityAudit'
+    | 'gasAudit';
 }
 
 

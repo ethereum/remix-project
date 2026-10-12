@@ -4,11 +4,11 @@ import { ZeroAddress } from 'ethers'
 export const aaSupportedNetworks = {
   "11155111": {
     name: "sepolia",
-    publicNodeUrl: "https://go.getblock.io/7fbe62b139884d2c9c1616ca0de8b5b2"
+    publicNodeUrl: "https://shared.eu-central-1.getblock.io/7fbe62b139884d2c9c1616ca0de8b5b2"
   },
   "100": {
     name: "gnosis",
-    publicNodeUrl: "https://rpc.gnosischain.com"
+    publicNodeUrl: "https://shared.eu-central-1.getblock.io/7b45bd8bcb3f42649eec7b2a19d56174"
   }
 }
 

@@ -345,7 +345,7 @@ export const PRO_DEMOS: PlanGuideDemo[] = [
   {
     key: 'auditor', name: 'Auditor Agent', color: '#f0a030',
     desc: 'The RemixAI auditor agent reviews your contract against curated security checklists.',
-    prompt: '<span class="plg-hl">/audit</span>  a contract — audit the open file against the security checklists in audits/.',
+    prompt: '<span class="plg-hl">/audit</span>  a contract — audit it against the security checklists saved in audits/&lt;Contract&gt;/.',
     mockReply: `<video width="500" height="300" controls autoPlay muted style="border:none;outline:none; margin-left:-33px;margin-top:5px" }}>
   <source src="https://github.com/remix-project-org/remix-dynamics/raw/refs/heads/main/gifs/audit-contract.mp4" type="video/mp4">
   Your browser does not support the video tag.
@@ -447,16 +447,6 @@ const HelpPanelUI: React.FC<{ plugin: HelpPlugin }> = ({ plugin }) => {
           <span className="help-panel-header-dot" />
           {isBeta ? 'Beta Guides' : 'Guides'}
         </div>
-        <button
-          className="help-panel-discord-btn"
-          onClick={() => {
-            trackMatomoEvent({ category: 'help', action: 'betaLinkClicked', name: 'discord', isClick: true })
-            window.open(DISCORD_URL, '_blank')
-          }}
-        >
-          <i className="fab fa-discord"></i>
-          User Feedback
-        </button>
       </div>
       <p className="help-panel-header-sub">
         Deep dives into every feature unlocked for you.

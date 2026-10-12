@@ -5,9 +5,11 @@ import { NudgeEngine, all, any } from '@remix-project/remix-lib'
 import { PRO_DEMOS } from '@remix-ui/modal-help'
 import { isMigrationHandoff, isMigrationPromptSnoozed, parseMigrationConfig, shouldPromptMigration } from '@remix-ui/domain-migration'
 import type { NudgeRule, NudgeAction, SerializedNudgeRule } from '@remix-project/remix-lib'
+import type { BillingLocale } from '@remix-ui/plan-manager'
 import { trackMatomoEvent as baseTrackMatomoEvent, NudgeEvent, MatomoEvent, Features, PendingCheckout } from '@remix-api'
 import * as packageJson from '../../../../../package.json'
 import './nudge-widget.css'
+import axios from 'axios'
 
 declare global {
   interface Window { __IS_E2E_TEST__?: boolean }
@@ -19,6 +21,15 @@ const MCP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fil
 const CLAUDE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor"><path d="M164.4 404.5L265.1 348L266.8 343.1L265.1 340.4L260.2 340.4L243.4 339.4L185.9 337.8L136 335.7L87.7 333.1L75.5 330.5L64.1 315.5L65.3 308L75.5 301.1L90.2 302.4C109.1 303.7 136.1 305.5 171.2 308L206.4 310.1L258.6 315.5L266.9 315.5L268.1 312.1L265.3 310L263.1 307.9L212.8 273.8L158.4 237.8L129.9 217.1L114.5 206.6L106.7 196.8L103.3 175.3L117.3 159.9L136.1 161.2L140.9 162.5L159.9 177.2L200.6 208.7L253.7 247.8L261.5 254.3L264.6 252.1L265 250.5L261.5 244.7L232.6 192.5L201.8 139.4L188.1 117.4L184.5 104.2C183.2 98.8 182.3 94.2 182.3 88.7L198.2 67.1L207 64.3L228.2 67.1L237.1 74.9L250.3 105.1L271.7 152.6L304.9 217.2L314.6 236.4L319.8 254.2L321.7 259.6L325.1 259.6L325.1 256.5L327.8 220.1L332.8 175.4L337.7 117.9L339.4 101.7L347.4 82.3L363.3 71.8L375.7 77.7L385.9 92.4L384.5 101.9L378.4 141.4L366.5 203.3L358.7 244.8L363.2 244.8L368.4 239.6L389.4 211.8L424.6 167.7L440.1 150.2L458.2 130.9L469.8 121.7L491.8 121.7L508 145.8L500.7 170.7L478 199.4L459.2 223.8L432.2 260.1L415.4 289.1L417 291.4L421 291L481.9 278L514.8 272.1L554.1 265.4L571.9 273.7L573.8 282.1L566.8 299.3L524.8 309.7L475.6 319.5L402.3 336.8L401.4 337.5L402.4 338.8L435.4 341.9L449.5 342.7L484.1 342.7L548.5 347.5L565.3 358.6L575.4 372.2L573.7 382.6L547.8 395.8C532.3 392.1 493.4 382.9 431.2 368.1L403.2 361.1L399.3 361.1L399.3 363.4L422.6 386.2L465.3 424.8L518.8 474.6L521.5 486.9L514.6 496.6L507.3 495.6L460.3 460.2L442.2 444.3L401.1 409.7L398.4 409.7L398.4 413.3L407.9 427.2L457.9 502.4L460.5 525.4L456.9 532.9L443.9 537.4L429.7 534.8L400.4 493.7L370.2 447.4L345.8 405.9L342.8 407.6L328.4 562.4L321.7 570.3L306.2 576.2L293.2 566.4L286.3 550.5L293.2 519L301.5 477.9L308.2 445.2L314.3 404.6L317.9 391.1L317.7 390.2L314.7 390.6L284.1 432.6L237.6 495.5L200.8 534.9L192 538.4L176.7 530.5L178.1 516.4L186.6 503.8L237.5 439L268.2 398.8L288 375.6L287.9 372.2L286.7 372.2L151.4 460L127.3 463.1L116.9 453.4L118.2 437.5L123.1 432.3L163.8 404.3L163.7 404.4L163.7 404.5z"/></svg>`
 
 /* ─── Helpers ─── */
+
+/**
+ * Countries we run regional pricing for. Paddle prices in the local currency,
+ * so the nudge can quote a real local amount instead of the USD list price.
+ */
+const REGIONAL_PRICING_COUNTRIES: Record<string, string> = {
+  NG: 'Nigeria',
+  IN: 'India'
+}
 
 /**
  * Resolve whether a feature is enabled in an `auth.getAllPermissions()`
@@ -40,14 +51,34 @@ function hasPermFeature(permissions: any, name: string): boolean {
   return false
 }
 
+/** Find a nudge target: data-id first, then data-assist-btn, then element id. */
+function findAnchor(elementId?: string): HTMLElement | null {
+  if (!elementId) return null
+  return (
+    document.querySelector(`[data-id="${elementId}"]`) ||
+    document.querySelector(`[data-assist-btn="${elementId}"]`) ||
+    document.getElementById(elementId)
+  ) as HTMLElement | null
+}
+
+const PERMANENT_DISMISS_KEY = 'remix_nudge_dismissed_permanent'
+const AI_MODE_INTRO_ID = 'ai-mode-intro'
+/** How many times each callout has actually been on screen, keyed by rule id */
+const CALLOUT_VIEWS_KEY = 'remix_nudge_callout_views'
+/** A callout ignored this many times (e.g. reloaded away) stops coming back */
+const MAX_CALLOUT_VIEWS = 3
+/** Set the first time the user enters AI mode; ends the AI button's attention animation */
+const AI_MODE_TRIED_KEY = 'remix_ai_mode_tried'
+const AI_MODE_BUTTON_ANCHOR = 'aiReviewModeBtn'
+
 /* ─── Plugin profile ─── */
 
 const profile = {
   name: 'nudgePlugin',
   displayName: 'Nudge Plugin',
   description: 'Contextual feature discovery widget — surfaces tips, CTAs, and hints based on user context',
-  methods: ['dismiss', 'dismissPermanent', 'addRule', 'addRules', 'fire', 'clearActive'],
-  events: ['nudgeTriggered', 'nudgeDismissed'],
+  methods: ['dismiss', 'dismissPermanent', 'addRule', 'addRules', 'fire', 'clearActive', 'getBanner', 'dismissBanner'],
+  events: ['nudgeTriggered', 'nudgeDismissed', 'nudgeBannerChanged'],
   icon: '',
   location: 'none',
   version: packageJson.version,
@@ -62,6 +93,8 @@ export interface NudgePluginState {
     animateOut: boolean
     /** Map of element‑id → decoration style for the hint layer */
     decorations: Map<string, NudgeDecoration>
+    /** Active anchored callout (type:'callout'), shown independently of the widget queue */
+    callout: NudgeRule | null
 }
 
 export interface NudgeDecoration {
@@ -87,6 +120,13 @@ export class NudgePlugin extends Plugin {
   // After a successful upgrade, the help guide to open once the plan-manager
   // panel closes (so it doesn't fight the still-open checkout panel).
   private _pendingPlanGuide: string | null = null
+  // Last billing locale turned into engine facts — the plan manager replays a
+  // cached locale on activation and again once a live preview lands.
+  private _billingLocaleSignature = ''
+  // A country-specific pricing offer is live, so the generic free-plan upsell
+  // stands down (same audience, weaker copy).
+  private _regionalOfferActive = false
+  private _activeBanner: NudgeRule | null = null
 
   // Type-safe tracker defaulting to NudgeEvent
   private trackMatomoEvent = <T extends MatomoEvent = NudgeEvent>(event: T) => {
@@ -101,7 +141,8 @@ export class NudgePlugin extends Plugin {
       activeNudge: null,
       queue: [],
       animateOut: false,
-      decorations: new Map()
+      decorations: new Map(),
+      callout: null
     }
   }
 
@@ -125,8 +166,13 @@ export class NudgePlugin extends Plugin {
         // Announcement-style nudges that open their own rich UI instead of
         // rendering one of the built-in cards.
         this._invokeTarget(rule.action.actionTarget)
+      } else if (rule.action.type === 'banner') {
+        this._activeBanner = rule
+        this.emit('nudgeBannerChanged', rule)
       } else if (rule.action.type === 'hint') {
         this._handleHint(rule)
+      } else if (rule.action.type === 'callout') {
+        this._showCallout(rule)
       } else if (rule.action.type === 'widget' || rule.action.type === 'toast' || rule.action.type === 'modal') {
         this._enqueue(rule)
       }
@@ -136,7 +182,15 @@ export class NudgePlugin extends Plugin {
 
     this._setupBuiltinRules()
     this._setupEventListeners()
+    this._setupDidYouKnowTips()
     this.renderComponent()
+    // Animate the switcher's AI button once the topbar has rendered it
+    const start = Date.now()
+    const waitForSwitcher = () => {
+      if (findAnchor(AI_MODE_BUTTON_ANCHOR)) return this._syncAiModeAttention()
+      if (Date.now() - start < 30_000) setTimeout(waitForSwitcher, 1000)
+    }
+    setTimeout(waitForSwitcher, 1000)
   }
 
   onDeactivation(): void {
@@ -196,6 +250,22 @@ export class NudgePlugin extends Plugin {
       if (name === 'remixaiassistant') {
         this.engine_.fire('ai:chat_opened')
       }
+    })
+
+    // User reached for the docked RemixAI chat (focus or press inside it)
+    this.on('remixaiassistant', 'chatEngaged', () => {
+      this.engine_.fire('ai:chat_engaged')
+    })
+
+    // Entering AI mode (switcher, maximize button or the callout itself) means
+    // the user has found it: close the intro callout, stop the AI button's
+    // attention animation, and never show either again.
+    this.on('remixaiassistant', 'aiModeChanged', (active: boolean) => {
+      if (!active) return
+      try { localStorage.setItem(AI_MODE_TRIED_KEY, 'true') } catch { }
+      if (this.state.callout?.id === AI_MODE_INTRO_ID) this._closeCallout()
+      this._retireRule(AI_MODE_INTRO_ID)
+      this._syncAiModeAttention()
     })
 
     // AI model changed
@@ -265,10 +335,17 @@ export class NudgePlugin extends Plugin {
       }
     })
 
+    // Visitor's billing country, resolved by Paddle's price preview (replayed
+    // from cache on activation, refreshed once a live preview lands).
+    this.on('planManager' as any, 'billingLocaleResolved', (locale: BillingLocale) => {
+      this._applyBillingLocale(locale)
+    })
+
     // Plan purchased — user is no longer on free plan, retire the upgrade nudge
     this.on('planManager' as any, 'purchaseConfirmed', (info?: { intent?: string; label?: string }) => {
       this.engine_.unfire('user:on_free_plan')
       this.engine_.disableRule('free-plan-upgrade')
+      this.engine_.disableRule('regional-pricing-offer')
 
       // Only celebrate / suppress for an actual plan upgrade (not top-ups,
       // cancellations or reactivations).
@@ -449,7 +526,6 @@ export class NudgePlugin extends Plugin {
     }
 
     this.engine_.unfire('user:logged_in')
-    this.engine_.unfire('user:logged_in_beta')
     this.engine_.fire('user:not_logged_in')
   }
 
@@ -460,7 +536,6 @@ export class NudgePlugin extends Plugin {
       const groups = permissions?.feature_groups || []
       const betaGroup = groups.find((g: any) => g.name === 'beta')
       if (betaGroup) {
-        this.engine_.fire('user:logged_in_beta')
         // Surface the farewell modal if their beta is wrapping up.
         // Fire-and-forget — failures (helpPlugin not ready, storage
         // blocked, etc.) shouldn't break the nudge flow.
@@ -486,7 +561,26 @@ export class NudgePlugin extends Plugin {
   private async _checkFreePlanNudge(): Promise<void> {
     this.log('[NudgePlugin] _checkFreePlanNudge: start')
     try {
-      // 1. Does the user already have an active paid subscription?
+      // 1. Check if user has Pro plan (not Starter, not Beta)
+      const permissions = await this.call('auth' as any, 'getAllPermissions').catch(() => null)
+
+      // Check for "pro" feature group
+      const hasProGroup = permissions?.feature_groups?.some?.((g: any) => g.name === 'pro')
+
+      if (hasProGroup) {
+        this.log('[NudgePlugin] _checkFreePlanNudge: user has Pro plan, skipping nudge')
+        return
+      }
+
+      // Check for Pro-specific features (ai:auditor is Pro-only)
+      const hasProFeature = permissions?.features?.['ai:auditor']?.is_enabled === true
+
+      if (hasProFeature) {
+        this.log('[NudgePlugin] _checkFreePlanNudge: user has Pro features, skipping nudge')
+        return
+      }
+
+      // 2. Does the user already have an active paid subscription?
       const billingApi = await this.call('auth' as any, 'getBillingApi')
       this.log('[NudgePlugin] _checkFreePlanNudge: billingApi resolved', billingApi)
       const subResp = await billingApi.getSubscription()
@@ -537,7 +631,7 @@ export class NudgePlugin extends Plugin {
               : `$${(Number(introDiscount.amount) || 0).toFixed(2)} off ${duration}`
             const discountedLabel = `$${(dc / 100).toFixed(2)}`
             const regularLabel = `$${(priceCents / 100).toFixed(2)}`
-            message = `Limited offer: ${offerLabel} — get ${planName} for just ${discountedLabel}/${unit} (regular ${regularLabel}). Premium models, MCP tools, and higher credit quotas included.`
+            message = `Limited offer: ${offerLabel} — get ${planName} for just ${discountedLabel}/${unit} (regular ${regularLabel}). Premium models, MCP tools, security and gas audit and initial credits included.`
             this.log('[NudgePlugin] _checkFreePlanNudge: discount message built', { offerLabel, discountedLabel, regularLabel })
           } else {
             const priceLabel = `$${(priceCents / 100).toFixed(2)}`
@@ -556,7 +650,7 @@ export class NudgePlugin extends Plugin {
         id: 'free-plan-upgrade',
         condition: 'user:on_free_plan',
         action: {
-          type: 'widget',
+          type: 'banner',
           position: 'right',
           hidePermanentDismiss: true,
           title,
@@ -568,7 +662,8 @@ export class NudgePlugin extends Plugin {
           widgetBg: 'rgba(139, 92, 246, 0.1)',
         },
         showOnce: 'session',
-        priority: 13
+        priority: 13,
+        enabled: !this._regionalOfferActive
       })
       this.engine_.fire('user:on_free_plan')
       this.log('[NudgePlugin] _checkFreePlanNudge: done')
@@ -579,11 +674,66 @@ export class NudgePlugin extends Plugin {
   }
 
   /**
+   * Turn the resolved billing country into engine facts: a generic
+   * `user:country_<cc>` event any rule can target, plus a regional-pricing
+   * nudge (with the real local price when Paddle gave us one) for the
+   * countries we run local rates in.
+   */
+  private _applyBillingLocale(locale: BillingLocale | null | undefined): void {
+    const countryCode = locale?.countryCode?.toUpperCase()
+    if (!locale || !countryCode) return
+
+    const signature = `${countryCode}|${locale.currencyCode}|${locale.lowestPlanPrice ?? ''}|${locale.lowestPlanIsIntroOffer}`
+    if (signature === this._billingLocaleSignature) return
+    this._billingLocaleSignature = signature
+    this.log('[NudgePlugin] billing locale', locale)
+
+    const country = REGIONAL_PRICING_COUNTRIES[countryCode]
+    if (country) {
+      const billedIn = locale.currencyCode && locale.currencyCode !== 'USD'
+        ? `, billed in ${locale.currencyCode}`
+        : ''
+      const message = locale.lowestPlanPrice
+        ? locale.lowestPlanIsIntroOffer
+          ? `Paid plans start at ${locale.lowestPlanPrice}/month with the current launch offer${billedIn}.`
+          : `Paid plans start at ${locale.lowestPlanPrice}/month in ${country}${billedIn}.`
+        : `We now have rates tailored to ${country} — see what your plan costs here.`
+      this.engine_.addRule({
+        id: 'regional-pricing-offer',
+        // Only upsell people it can help: anonymous visitors, or signed-in
+        // users confirmed to be on the free plan. Paid and beta users never
+        // get either fact, so they never see it.
+        condition: all(
+          `user:country_${countryCode.toLowerCase()}`,
+          any('user:not_logged_in', 'user:on_free_plan')
+        ),
+        action: {
+          type: 'banner',
+          position: 'right',
+          title: `Special rates for ${country}`,
+          message,
+          actionLabel: 'See Plans',
+          actionTarget: 'planManager::open::plans',
+          icon: 'fas fa-tags',
+          widgetColor: '#2fbfb1',
+          widgetBg: 'rgba(47, 191, 177, 0.1)'
+        },
+        showOnce: 'session',
+        priority: 14
+      })
+      this._regionalOfferActive = true
+      this.engine_.disableRule('free-plan-upgrade')
+    }
+
+    // Fire last so the rule above is registered before the engine evaluates.
+    this.engine_.fire(`user:country_${countryCode.toLowerCase()}`)
+  }
+
+  /**
    * Auto-open the farewell modal when a beta tester is within the
    * configured threshold of their `expires_at`. Honours per-expiry
    * localStorage dismissal ("Remind me later" timestamp / "never").
-   */
-  private async _maybeShowBetaFarewell(betaGroup: { expires_at?: string | null }): Promise<void> {
+   */ private async _maybeShowBetaFarewell(betaGroup: { expires_at?: string | null }): Promise<void> {
     const expiresAt = betaGroup?.expires_at
     if (!expiresAt) return
     const expiresMs = Date.parse(expiresAt)
@@ -680,30 +830,12 @@ export class NudgePlugin extends Plugin {
 
     /* ─── Authenticated — contextual feature discovery ─── */
 
-    // Beta welcome — first thing a beta tester sees after logging in
-    this.engine_.addRule({
-      id: 'beta-welcome',
-      condition: 'user:logged_in_beta',
-      action: {
-        type: 'widget',
-        title: 'Welcome to Remix Beta',
-        message: 'You\'ve unlocked premium AI models, MCP Integrations, cloud sync, and QuickDApp. Tap to take a quick tour.',
-        actionLabel: 'Take the Tour',
-        actionTarget: 'helpPlugin::showModal::beta-reel',
-        icon: 'fas fa-sparkles',
-        widgetColor: '#2fbfb1',
-        widgetBg: 'rgba(47, 191, 177, 0.1)'
-      },
-      showOnce: true,
-      priority: 15
-    })
-
     // Premium AI models — triggers when user opens the AI chat
     this.engine_.addRule({
       id: 'try-opus-model',
-      condition: all('user:logged_in_beta', 'ai:chat_opened'),
+      condition: all('user:logged_in', 'ai:chat_opened'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Try a Premium Model',
         message: 'You have access to Claude Opus — it excels at complex Solidity patterns and audits.',
         actionLabel: 'Learn More',
@@ -719,9 +851,9 @@ export class NudgePlugin extends Plugin {
     // Cloud Workspaces — triggers when user switches workspaces
     this.engine_.addRule({
       id: 'try-cloud-workspaces',
-      condition: all('user:logged_in_beta', 'workspace:switched'),
+      condition: all('user:logged_in', 'workspace:switched'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Try Cloud Workspaces',
         message: 'Your projects are only stored locally. Enable cloud sync to access them from any device, anytime.',
         actionLabel: 'Learn More',
@@ -734,48 +866,12 @@ export class NudgePlugin extends Plugin {
       priority: 9
     })
 
-    // MCP Tools — triggers when user opens AI chat (they'll likely want on-chain data)
-    this.engine_.addRule({
-      id: 'try-mcp-tools',
-      condition: all('user:logged_in_beta', 'ai:chat_opened'),
-      action: {
-        type: 'widget',
-        title: 'AI with Superpowers',
-        message: 'Your AI assistant connects to Alchemy, Etherscan, The Graph, and more through MCP — ask it to fetch on-chain data or verify contracts directly in chat.',
-        actionLabel: 'Learn More',
-        actionTarget: 'helpPlugin::showModal::mcp',
-        icon: MCP_SVG,
-        widgetColor: '#8b5cf6',
-        widgetBg: 'rgba(139, 92, 246, 0.08)'
-      },
-      showOnce: 'session',
-      priority: 8
-    })
-
-    // QuickDApp — triggers when user deploys a contract successfully
-    this.engine_.addRule({
-      id: 'try-quickdapp',
-      condition: all('user:logged_in_beta', 'contract:deployed'),
-      action: {
-        type: 'widget',
-        title: 'Try QuickDApp',
-        message: 'Your contract is deployed! Generate a ready-to-use frontend dashboard to interact with it — no front-end code needed.',
-        actionLabel: 'Learn More',
-        actionTarget: 'helpPlugin::showModal::quickdapp',
-        icon: 'fas fa-rocket',
-        widgetColor: '#e67e22',
-        widgetBg: 'rgba(230, 126, 34, 0.1)'
-      },
-      showOnce: 'session',
-      priority: 7
-    })
-
     // Cloud Workspaces — persistent nudge for local-only users
     this.engine_.addRule({
       id: 'try-cloud-toggle',
-      condition: all('user:logged_in_beta', 'workspace:local_only', 'lifecycle:APP_LOADED'),
+      condition: all('user:logged_in', 'workspace:local_only', 'lifecycle:APP_LOADED'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Cloud Workspaces',
         message: 'Your projects are only stored locally. Enable cloud sync to access them anywhere.',
         actionLabel: 'Learn More',
@@ -789,9 +885,9 @@ export class NudgePlugin extends Plugin {
     // Solidity-specific hint — when editing a .sol file, suggest the AI for help
     this.engine_.addRule({
       id: 'hint-ai-for-solidity',
-      condition: all('user:logged_in_beta', 'editor:solidity_active'),
+      condition: all('user:logged_in', 'editor:solidity_active'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'RemixAI Knows Solidity',
         message: 'Ask RemixAI to explain, audit, or optimize your contract. It understands your project context through MCP.',
         actionLabel: 'Learn More',
@@ -807,9 +903,9 @@ export class NudgePlugin extends Plugin {
     // Deployment nudge — after deploying a contract, suggest QuickDapp
     this.engine_.addRule({
       id: 'quickdapp-after-deploy',
-      condition: all('user:logged_in_beta', 'contract:deployed'),
+      condition: all('user:logged_in', 'contract:deployed'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Build a DApp from This',
         message: 'You just deployed a contract — now generate a dApp to get an instant front-end to interact with it.',
         actionLabel: 'Learn More',
@@ -850,7 +946,7 @@ export class NudgePlugin extends Plugin {
       id: 'signup-after-chat',
       condition: all('ai:chat_while_logged_out', 'config:invite_only'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Unlock Premium AI Models',
         message: 'You\'re using the free tier. Sign up to access Claude Opus, GPT-4, and MCP-powered tools for deeper contract analysis.',
         actionLabel: 'Sign Up Free',
@@ -868,9 +964,9 @@ export class NudgePlugin extends Plugin {
     // After AI generates a workspace, suggest cloud sync
     this.engine_.addRule({
       id: 'cloud-after-ai-workspace',
-      condition: all('user:logged_in_beta', 'ai:workspace_generated'),
+      condition: all('user:logged_in', 'ai:workspace_generated'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Save This to the Cloud',
         message: 'Your AI-generated workspace is local only. Did you know you can sync it to the cloud and access it from anywhere?',
         actionLabel: 'Learn More',
@@ -886,9 +982,9 @@ export class NudgePlugin extends Plugin {
     // After chatting a few times, hint about code explain shortcut
     this.engine_.addRule({
       id: 'hint-code-explain',
-      condition: all('user:logged_in_beta', 'ai:chat_message', 'editor:solidity_active'),
+      condition: all('user:logged_in', 'ai:chat_message', 'editor:solidity_active'),
       action: {
-        type: 'widget',
+        type: 'banner',
         title: 'Quick Tip: Explain Code',
         message: 'Right-click any code and select "Explain this" — RemixAI will break it down for you instantly.',
         actionLabel: 'Got It',
@@ -963,8 +1059,71 @@ export class NudgePlugin extends Plugin {
       priority: 20
     })
 
+    /* ─── AI / Code modes announcement ─── */
+
+    // Callout under the topbar AI/Code switcher, when the user reaches for the
+    // docked chat. At most once per session, and only retired by the user
+    // (close, "Got it", "Try AI mode", or entering AI mode by any route — see
+    // the aiModeChanged listener). A session where it couldn't show (modal,
+    // no switcher on screen) doesn't count; one where it showed but was
+    // ignored does, up to MAX_CALLOUT_VIEWS (see _showCallout).
+    // Older builds recorded it as shown for good the moment it triggered;
+    // drop that record so those users get it again.
+    if (!this._isPermanentlyDismissed(AI_MODE_INTRO_ID)) this.engine_.resetShown(AI_MODE_INTRO_ID)
+    this.engine_.addRule({
+      id: AI_MODE_INTRO_ID,
+      condition: any('ai:chat_engaged', 'ai:chat_message'),
+      action: {
+        type: 'callout',
+        anchor: 'aiModeSwitcher',
+        badge: 'New',
+        title: 'Meet AI mode',
+        message: 'Build by chatting. Plan, generate and review your project with RemixAI in one focused view, then switch to Code to take over.',
+        actionLabel: 'Try AI mode',
+        actionTarget: 'remixaiassistant::maximizePanel',
+        secondaryLabel: 'Got it'
+      },
+      showOnce: 'session',
+      enabled: !this._isPermanentlyDismissed(AI_MODE_INTRO_ID),
+      priority: 30
+    })
+
     /* ─── Hint decorations (pulsating dots / glows on UI elements) ─── */
 
+  }
+
+  /* ─── Did You Know Tips (migrated from status bar) ─── */
+
+  private async _setupDidYouKnowTips(): Promise<void> {
+    try {
+      const response = await axios.get('https://raw.githubusercontent.com/remix-project-org/remix-dynamics/main/ide/tips.json')
+      const tips = response.data
+      if (!Array.isArray(tips) || tips.length === 0) return
+
+      // Pick a random tip
+      const randomTip = tips[Math.floor(Math.random() * tips.length)]
+
+      // Add a rule to show the tip as a banner only after significant user actions
+      // Very low priority ensures all important nudges show first
+      this.engine_.addRule({
+        id: 'did-you-know-tip',
+        condition: any('contract:deployed', 'git:committed', 'ai:workspace_generated'),
+        action: {
+          type: 'banner',
+          position: 'right',
+          title: 'Did You Know?',
+          message: randomTip,
+          icon: 'fa-solid fa-lightbulb',
+          widgetColor: '#22c55e',
+          widgetBg: 'rgba(34, 197, 94, 0.1)'
+        },
+        showOnce: 'session',
+        priority: 1
+      })
+    } catch (error) {
+      this.log('[NudgePlugin] Failed to fetch did you know tips:', error)
+      // Silently fail - tips are not critical
+    }
   }
 
   /* ─── Public methods (callable by other plugins) ─── */
@@ -1006,19 +1165,25 @@ export class NudgePlugin extends Plugin {
     this.renderComponent()
     this.emit('nudgeDismissed', { id, permanent: true })
     this.trackMatomoEvent({ category: 'nudge', action: 'dismissedPermanent', name: id, isClick: true })
-    // Persist in localStorage
-    try {
-      const key = 'remix_nudge_dismissed_permanent'
-      const raw = localStorage.getItem(key)
-      const dismissed: string[] = raw ? JSON.parse(raw) : []
-      if (!dismissed.includes(id)) {
-        dismissed.push(id)
-        localStorage.setItem(key, JSON.stringify(dismissed))
-      }
-    } catch { }
+    this._persistPermanentDismiss(id)
     setTimeout(() => {
       this._dequeueNext()
     }, 300)
+  }
+
+  /** Return the currently active banner nudge (null if none). */
+  getBanner(): NudgeRule | null {
+    return this._activeBanner
+  }
+
+  /** Dismiss the banner nudge — hides it and marks it shown via the engine. */
+  dismissBanner(): void {
+    if (!this._activeBanner) return
+    const id = this._activeBanner.id
+    this._activeBanner = null
+    this.emit('nudgeBannerChanged', null)
+    this.emit('nudgeDismissed', { id, permanent: false })
+    this.trackMatomoEvent({ category: 'nudge', action: 'dismissed', name: id, isClick: true })
   }
 
   /** Clear all active nudges and queue */
@@ -1028,7 +1193,8 @@ export class NudgePlugin extends Plugin {
       activeNudge: null,
       queue: [],
       animateOut: false,
-      decorations: new Map()
+      decorations: new Map(),
+      callout: null
     }
     this.renderComponent()
   }
@@ -1057,12 +1223,7 @@ export class NudgePlugin extends Plugin {
   /* ─── Queue management ─── */
 
   private _enqueue(rule: NudgeRule): void {
-    // Check permanent dismissal
-    try {
-      const raw = localStorage.getItem('remix_nudge_dismissed_permanent')
-      const dismissed: string[] = raw ? JSON.parse(raw) : []
-      if (dismissed.includes(rule.id)) return
-    } catch { }
+    if (this._isPermanentlyDismissed(rule.id)) return
 
     if (this.state.activeNudge) {
       // Insert into queue sorted by priority (higher first)
@@ -1085,6 +1246,107 @@ export class NudgePlugin extends Plugin {
       animateOut: false
     }
     this.renderComponent()
+  }
+
+  private _isPermanentlyDismissed(id: string): boolean {
+    try {
+      const raw = localStorage.getItem(PERMANENT_DISMISS_KEY)
+      const dismissed: string[] = raw ? JSON.parse(raw) : []
+      return dismissed.includes(id)
+    } catch {
+      return false
+    }
+  }
+
+  private _persistPermanentDismiss(id: string): void {
+    try {
+      const raw = localStorage.getItem(PERMANENT_DISMISS_KEY)
+      const dismissed: string[] = raw ? JSON.parse(raw) : []
+      if (!dismissed.includes(id)) {
+        dismissed.push(id)
+        localStorage.setItem(PERMANENT_DISMISS_KEY, JSON.stringify(dismissed))
+      }
+    } catch { }
+  }
+
+  /** Stop a rule for good, whether or not it has been shown yet. */
+  private _retireRule(id: string): void {
+    this.engine_.disableRule(id)
+    this._persistPermanentDismiss(id)
+  }
+
+  /* ─── Callout management (anchored popover, type:'callout') ─── */
+
+  private async _showCallout(rule: NudgeRule): Promise<void> {
+    if (this._isPermanentlyDismissed(rule.id)) return
+    if (this._getCalloutViews(rule.id) >= MAX_CALLOUT_VIEWS) return
+    // Don't pop over a sign-in / plans / migration dialog
+    if (this._isBlockingModalOpen() && !(await this._waitForModalsToClose())) return
+    // Nothing to point at (e.g. desktop app without the topbar)
+    const anchor = findAnchor(rule.action.anchor)
+    if (!anchor || anchor.getBoundingClientRect().width === 0) return
+    if (rule.id === AI_MODE_INTRO_ID) {
+      // Already in AI mode: the announcement is moot
+      const aiModeActive = await this.call('remixaiassistant' as any, 'isAIModeActive').catch(() => false)
+      if (aiModeActive) return this._retireRule(rule.id)
+    }
+    // Only a callout that actually made it on screen counts as a view
+    this._countCalloutView(rule.id)
+    this.state = { ...this.state, callout: rule }
+    this.renderComponent()
+  }
+
+  private _getCalloutViews(id: string): number {
+    try {
+      const views = JSON.parse(localStorage.getItem(CALLOUT_VIEWS_KEY) || '{}')
+      return Number(views[id]) || 0
+    } catch {
+      return 0
+    }
+  }
+
+  private _countCalloutView(id: string): void {
+    try {
+      const views = JSON.parse(localStorage.getItem(CALLOUT_VIEWS_KEY) || '{}')
+      views[id] = (Number(views[id]) || 0) + 1
+      localStorage.setItem(CALLOUT_VIEWS_KEY, JSON.stringify(views))
+    } catch { }
+  }
+
+  private _closeCallout(): void {
+    if (!this.state.callout) return
+    this.state = { ...this.state, callout: null }
+    this.renderComponent()
+  }
+
+  async handleCalloutAction(target: string): Promise<void> {
+    const id = this.state.callout?.id || 'unknown'
+    this.trackMatomoEvent({ category: 'nudge', action: 'ctaClicked', name: id, value: target, isClick: true })
+    this._closeCallout()
+    if (target) await this._invokeTarget(target)
+  }
+
+  dismissCallout(): void {
+    const id = this.state.callout?.id
+    if (!id) return
+    this.trackMatomoEvent({ category: 'nudge', action: 'dismissed', name: id, isClick: true })
+    this._closeCallout()
+    this._retireRule(id)
+  }
+
+  /**
+   * Until the user has entered AI mode once, the switcher's AI button plays a
+   * short idle animation (CSS on [data-nudge-attention], see nudge-widget.css).
+   * Independent of the intro callout: closing that doesn't stop it. An
+   * attribute rather than a class so the topbar's re-renders leave it alone.
+   */
+  private _syncAiModeAttention(): void {
+    let tried = false
+    try { tried = localStorage.getItem(AI_MODE_TRIED_KEY) === 'true' } catch { }
+    const button = findAnchor(AI_MODE_BUTTON_ANCHOR)
+    if (!button) return
+    if (tried) button.removeAttribute('data-nudge-attention')
+    else button.setAttribute('data-nudge-attention', 'true')
   }
 
   /* ─── Hint / decoration management ─── */
@@ -1134,6 +1396,8 @@ export class NudgePlugin extends Plugin {
         onDismiss={() => this.dismiss()}
         onDismissPermanent={() => this.dismissPermanent()}
         onDecorationClick={(elementId) => this.removeDecoration(elementId)}
+        onCalloutAction={(target) => this.handleCalloutAction(target)}
+        onCalloutDismiss={() => this.dismissCallout()}
       />
     )
   }
@@ -1156,9 +1420,11 @@ interface NudgeWidgetUIProps {
     onDismiss: () => void
     onDismissPermanent: () => void
     onDecorationClick: (elementId: string) => void
+    onCalloutAction: (target: string) => void
+    onCalloutDismiss: () => void
 }
 
-function NudgeWidgetUI({ state, onAction, onDismiss, onDismissPermanent, onDecorationClick }: NudgeWidgetUIProps) {
+function NudgeWidgetUI({ state, onAction, onDismiss, onDismissPermanent, onDecorationClick, onCalloutAction, onCalloutDismiss }: NudgeWidgetUIProps) {
   const nudge = state.activeNudge
 
   return (
@@ -1238,6 +1504,11 @@ function NudgeWidgetUI({ state, onAction, onDismiss, onDismissPermanent, onDecor
         </div>
       )}
 
+      {/* Anchored callout (type:'callout') */}
+      {state.callout && (
+        <NudgeCallout rule={state.callout} onAction={onCalloutAction} onDismiss={onCalloutDismiss} />
+      )}
+
       {/* Decorations layer for hint-type nudges */}
       {state.decorations.size > 0 && (
         <NudgeDecorations
@@ -1271,12 +1542,7 @@ function NudgeDecorationOverlay({ decoration, onClick }: { decoration: NudgeDeco
   const [showTooltip, setShowTooltip] = React.useState(false)
 
   React.useEffect(() => {
-    // Try data-id first, then fall back to any data-* attribute matching the value
-    const el = (
-            document.querySelector(`[data-id="${decoration.elementId}"]`) ||
-            document.querySelector(`[data-assist-btn="${decoration.elementId}"]`) ||
-            document.querySelector(`#${decoration.elementId}`)
-        ) as HTMLElement
+    const el = findAnchor(decoration.elementId)
     if (!el) return
 
     const update = () => {
@@ -1333,6 +1599,74 @@ function NudgeDecorationOverlay({ decoration, onClick }: { decoration: NudgeDeco
           {decoration.tooltip}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ─── Anchored callout (coach mark under a UI element) ─── */
+
+const CALLOUT_GAP = 10 // px between the anchor and the callout (room for the arrow)
+const CALLOUT_WIDTH = 300
+const CALLOUT_MARGIN = 12 // min distance from the viewport edges
+
+function NudgeCallout({ rule, onAction, onDismiss }: { rule: NudgeRule; onAction: (target: string) => void; onDismiss: () => void }) {
+  const [pos, setPos] = React.useState<{ top: number; left: number; arrowLeft: number } | null>(null)
+  const { action } = rule
+
+  React.useEffect(() => {
+    const el = findAnchor(action.anchor)
+    if (!el) return
+    const update = () => {
+      const rect = el.getBoundingClientRect()
+      if (rect.width === 0) return setPos(null)
+      const center = rect.left + rect.width / 2
+      // Centered under the anchor, clamped to the viewport; the arrow keeps
+      // pointing at the anchor's center.
+      const left = Math.min(
+        Math.max(center - CALLOUT_WIDTH / 2, CALLOUT_MARGIN),
+        window.innerWidth - CALLOUT_WIDTH - CALLOUT_MARGIN
+      )
+      setPos({ top: rect.bottom + CALLOUT_GAP, left, arrowLeft: center - left })
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    window.addEventListener('resize', update)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [action.anchor])
+
+  if (!pos) return null
+
+  return (
+    <div
+      className="nudge-callout"
+      role="dialog"
+      aria-label={action.title}
+      data-id="nudge-callout"
+      style={{ top: pos.top, left: pos.left, width: CALLOUT_WIDTH, '--nc-arrow-left': `${pos.arrowLeft}px` } as React.CSSProperties}
+    >
+      <button className="nudge-callout-close" onClick={onDismiss} title="Dismiss" data-id="nudge-callout-close">
+        <i className="fas fa-times"></i>
+      </button>
+      {action.badge && <span className="nudge-callout-badge">{action.badge}</span>}
+      {action.title && <h6 className="nudge-callout-title">{action.title}</h6>}
+      <p className="nudge-callout-desc">{action.message}</p>
+      <div className="nudge-callout-actions">
+        {action.secondaryLabel && (
+          <button className="btn btn-sm btn-link text-decoration-none nudge-callout-secondary" onClick={onDismiss} data-id="nudge-callout-secondary">
+            {action.secondaryLabel}
+          </button>
+        )}
+        {action.actionLabel && (
+          <button className="btn btn-ai nudge-callout-primary" onClick={() => onAction(action.actionTarget || '')} data-id="nudge-callout-primary">
+            <img src="assets/img/remixAI_small.svg" alt="" className="nudge-callout-ai-icon" />
+            <span>{action.actionLabel}</span>
+          </button>
+        )}
+      </div>
     </div>
   )
 }

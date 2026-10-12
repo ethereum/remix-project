@@ -1,6 +1,6 @@
 import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
-import { trackMatomoEvent } from '@remix-api'
+import { trackMatomoEvent, Features } from '@remix-api'
 import { toBytes, addHexPrefix, privateToAddress, bytesToHex, isValidPrivate } from '@ethereumjs/util'
 import * as crypto from 'crypto'
 import { EventEmitter } from 'events'
@@ -1059,6 +1059,16 @@ export class Blockchain extends Plugin {
         const isEnabled = await this.call('settings', 'get', 'settings/ai-feedback')
         const creditThreshold = await this.call('settings', 'get', 'settings/ai-feedback-credit-threshold')
         if (isEnabled && !tx.to && !tx.useCall && !tx.isVM) {
+          const permissionsApi: any = await (this.call('auth' as any, 'getPermissionsApi') as Promise<any>).catch(() => null)
+          const permissionsResp = permissionsApi ? await permissionsApi.getPermissions().catch(() => null) : null
+          const permissions = permissionsResp?.ok ? permissionsResp.data : null
+          const permFeatures: any = permissions?.features
+          const emailGateEntry: any = Array.isArray(permFeatures)
+            ? permFeatures.find((f: any) => f?.feature_name === Features.AI_VERIFIED_ACCOUNTS)
+            : permFeatures?.[Features.AI_VERIFIED_ACCOUNTS]
+          const emailGateEnabled = emailGateEntry?.allowed === true || emailGateEntry?.is_enabled === true
+          if (emailGateEnabled && (permissions?.has_email === false || permissions?.email_verified === false)) return
+
           const auth = await this.call('auth', 'getCredits')
           if (auth && auth.balance > creditThreshold) {
 
@@ -1092,11 +1102,12 @@ export class Blockchain extends Plugin {
             Then mention, briefly and only once:
             - /load-skills lets RemixAI load specialized skills to analyze this contract further
             - /gas-audit runs a gas optimization pass
-            - /load-audit-checklist runs a security checklist pass
+            - /load-audit-checklist saves security checklists for a contract under audits/<Contract>/, which /audit then works through
             - Automatic feedback can be disabled under Settings → RemixAI Assistant → AI Feedback
 
             Keep the whole response tight — a wall of text defeats the purpose.`
-            this.call('remixaiassistant', 'chatPipe', prompt, true, { source: 'udapp', presetId: 'deploy-contract' })
+            trackMatomoEvent(this, { category: 'udapp', action: 'aiFeedback', name: 'deploymentFeedback', isClick: false })
+            this.call('remixaiassistant', 'chatPipe', prompt, false, { source: 'udapp', presetId: 'deploy-contract', displayText: 'RemixAI Assistant: Contract Deployment Feedback' })
           }
         }
       } catch (e) {

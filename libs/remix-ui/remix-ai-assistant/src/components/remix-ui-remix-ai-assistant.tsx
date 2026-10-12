@@ -1,14 +1,17 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useState, useEffect, useCallback, useMemo, useRef, useImperativeHandle, MutableRefObject, useContext } from 'react'
+import { createPortal } from 'react-dom'
 //@ts-ignore
 import '../css/remix-ai-assistant.css'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport, isCheapModel, type ModelTransport } from '@remix/remix-ai-core'
 import { ToolApprovalRequest, ApiKeyErrorEvent } from '@remix/remix-ai-core'
+import { isFrontierModelId } from '@remix/remix-ai-core/model-tiers'
 import { HandleOpenAICompatibleResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
 //@ts-ignore
 import '../css/color.css'
 import { ModalTypes } from '@remix-ui/app'
+import { isStarterCreditPack, STARTER_PACK_CREDITS } from '@remix-ui/plan-manager'
 import { MatomoEvent, AIEvent, Features, PublicPlan, ChatPromptMetadata } from '@remix-api'
 //@ts-ignore
 import { TrackingContext } from '@remix-ide/tracking'
@@ -25,6 +28,22 @@ import { ChatNoticeStrip, type ChatNoticeDisplay, type ChatNoticeActionDisplay }
 import { useModelAccess } from '../hooks/useModelAccess'
 import { useAttachments, captureIdeScreenshot } from '../hooks/useAttachments'
 import { ToolApprovalModal } from './ToolApprovalModal'
+
+// ─── Generative UI payload validation ────────────────────────────────────────
+// Mirrors the VALID_TYPES set in GenerativeUIHandler.ts. Kept here as a
+// runtime guard so a malformed LLM response is caught before it reaches the
+// renderer, which has no try-catch around its recursive node walk.
+const VALID_UI_NODE_TYPES = new Set([
+  'text', 'stack', 'card', 'button', 'input',
+  'select', 'radio_group', 'checkbox', 'form', 'badge', 'divider'
+])
+
+function isValidUIPayload(payload: any): payload is { tree: Record<string, any>; title?: string } {
+  if (!payload || typeof payload !== 'object') return false
+  const { tree } = payload
+  if (!tree || typeof tree !== 'object' || Array.isArray(tree)) return false
+  return typeof tree.type === 'string' && VALID_UI_NODE_TYPES.has(tree.type)
+}
 
 export interface RemixUiRemixAiAssistantProps {
   plugin: RemixAIAssistant
@@ -47,12 +66,14 @@ export interface RemixUiRemixAiAssistantProps {
   onToggleHistorySidebar?: () => void
   onSearch?: (query: string) => Promise<ConversationMetadata[]>
   onOpenSkillsModal?: () => void
-  onOpenChecklistModal?: () => void
+  onOpenChecklistModal?: (mode?: 'audit' | 'checklist') => void
 }
 export interface RemixUiRemixAiAssistantHandle {
   /** Programmatically send a prompt to the chat (returns after processing starts) */
   sendChat: (prompt: string, isEditorCodeAnalysis?: boolean, metadata?: ChatPromptMetadata) => Promise<void>
   submitCurrentInput: () => Promise<void>
+  /** Focus the prompt; `highlight` also plays the one-shot spotlight around the prompt box */
+  focusInput: (options?: { highlight?: boolean }) => void
   addAssistantMessage: (text: string) => void
   clearChat: () => void
   /** Returns current chat history array */
@@ -69,6 +90,20 @@ function getSystemThemeFallback(): string {
 /** `QuickDapp_Specialist`, however the harness spells it. */
 const isQuickDappAgentName = (name?: string): boolean =>
   !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('quickdapp')
+
+/** Coarse duration label for analytics — keeps the value cardinality bounded. */
+const bucketDuration = (ms: number): string => {
+  if (!Number.isFinite(ms) || ms < 0) return 'unknown'
+  if (ms < 5000) return '<5s'
+  if (ms < 15000) return '5-15s'
+  if (ms < 60000) return '15-60s'
+  if (ms < 300000) return '1-5m'
+  return '>5m'
+}
+
+/** `Comprehensive_Auditor`, however the harness spells it. */
+const isAuditorAgentName = (name?: string): boolean =>
+  !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('comprehensiveauditor')
 
 /** Anthropic, direct or routed through OpenRouter (`anthropic/...`). */
 const isAnthropicModelId = (id: string): boolean => {
@@ -92,6 +127,9 @@ const OLLAMA_NOT_AVAILABLE_MESSAGE = [
   '*Switching back to default model for now.*'
 ].join('\n')
 
+/** Minimum time the thinking indicator stays up once raised. */
+const THINKING_MIN_VISIBLE_MS = 2000
+
 export const RemixUiRemixAiAssistant = React.forwardRef<
   RemixUiRemixAiAssistantHandle,
   RemixUiRemixAiAssistantProps
@@ -107,6 +145,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     firstPromptStateRef.current = { count: messages.length, conversationId: props.currentConversationId }
   }, [messages, props.currentConversationId])
   const [isThinking, setIsThinking] = useState(false)
+  /**
+   * `isThinking` held on screen for a minimum dwell so it cannot flicker.
+   *
+   * The model flips the flag many times in a turn — between tool calls it can
+   * be true for a few hundred ms — which read as a strobe. Every raise restarts
+   * the dwell, so a burst of rapid toggles shows as one steady indicator.
+   */
+  const [thinkingVisible, setThinkingVisible] = useState(false)
+  const thinkingHoldUntilRef = useRef(0)
   const [runModel, setRunModel] = useState<string | null>(null)
   // Read from event handlers, which are memoized without `runModel`.
   const runModelRef = useRef<string | null>(null)
@@ -114,17 +161,18 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const quickDappHintShownRef = useRef(false)
   // QuickDapp is running this request — the model often lands after it starts.
   const quickDappRunningRef = useRef(false)
+  // Same pair for the auditor: one hint per request, and the flag that says the
+  // audit is the thing running when the resolved model finally arrives.
+  const auditHintShownRef = useRef(false)
+  const auditRunningRef = useRef(false)
   const [showModelSelector, setShowModelSelector] = useState(false)
   // OpenRouter is the router every hosted model arrives on, so it is the only
   // sensible value before a selection resolves from /permissions.
   const [assistantChoice, setAssistantChoice] = useState<ModelTransport>('openrouter')
   const [showArchivedConversations, setShowArchivedConversations] = useState(false)
-  const [showButton, setShowButton] = useState(true);
-  const [isAiChatMaximized, setIsAiChatMaximized] = useState(false)
   const [showOllamaModelSelector, setShowOllamaModelSelector] = useState(false)
   const [selectedOllamaModel, setSelectedOllamaModel] = useState<string | null>(null)
   const [selectedModelId, setSelectedModelId] = useState<string>('')
-  const [isMaximized, setIsMaximized] = useState(false)
   // MCP Enhancement is gated by the `mcp:basicExternal` feature flag.
   // Anonymous users have no permissions, so the section stays hidden.
   // Refreshed in the same `refreshFeatures` block as `ai:auto`.
@@ -203,6 +251,23 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const ollamaMenuRef = useRef<any>()
   const [ollamaModels, setOllamaModels] = useState<{ name: string; supported: boolean }[]>([])
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null)
+  // Set when a starter credit pack is confirmed; cleared once the switch to a
+  // low-cost model has actually been applied (the catalogue is refreshed
+  // asynchronously after the purchase, so the switch can't happen inline).
+  const [pendingCheapSwitch, setPendingCheapSwitch] = useState(false)
+  /**
+   * A switch_model request waiting for the current turn to end.
+   *
+   * The tool cannot apply the switch itself: ModelManager.setModel rebuilds the
+   * DeepAgent, which closes the very inferencer running the tool call. So the
+   * tool emits and we drain it here once the stream is done.
+   */
+  const [pendingModelSwitch, setPendingModelSwitch] = useState<{ modelId: string; provider?: string; displayName?: string; reason?: string } | null>(null)
+  // Composer toggle: narrows the model menu to the `ai:cheapModels` tier.
+  const [cheapModelsOnly, setCheapModelsOnly] = useState(false)
+  // The armed-switch effect re-runs on every catalogue refresh; this keeps the
+  // "purchase applied but nothing to switch to" event to one per purchase.
+  const cheapUnavailableTrackedRef = useRef(false)
   // Mirrors `selectedModel` for callbacks that must not capture a stale value
   // (the API-key change subscription lives outside the render closure).
   const selectedModelRef = useRef<AIModel | null>(null)
@@ -381,6 +446,28 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       code: 'QUICKDAPP_MODEL_HINT',
       title: 'Better on Anthropic',
       message: `Auto picked ${model}. QuickDapp works best with a Sonnet-class model.`,
+      actionable: false
+    })
+  }, [])
+
+  /**
+   * Mirrors hintQuickDappModel for audits.
+   *
+   * `runModelRef` is only populated while the user is on Auto (handleModelUsed
+   * bails otherwise), so reaching here already means Auto picked the route —
+   * we only speak up when what it picked is below frontier class.
+   */
+  const hintAuditModel = useCallback(() => {
+    const model = runModelRef.current
+    if (!auditRunningRef.current || auditHintShownRef.current) return
+    if (!model || isFrontierModelId(model)) return
+
+    auditHintShownRef.current = true
+    setChatNotice({
+      severity: 'info',
+      code: 'AUDIT_MODEL_HINT',
+      title: 'Better on a frontier model',
+      message: `Auto picked ${model}. Audits reason over a whole contract against every checklist item — a frontier model (Claude Opus/Sonnet, GPT-5, GLM 5) catches noticeably more.`,
       actionable: false
     })
   }, [])
@@ -772,7 +859,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         setMessages(prev => {
           const userMsg = prev[prev.length - 2]
           if (userMsg && userMsg.role === 'user' && finalText) {
-            Promise.resolve(ChatHistory.pushHistory(userMsg.content, finalText)).then(() => props.plugin.loadConversations())
+            Promise.resolve(ChatHistory.pushHistory(userMsg.content, finalText, userMsg.displayContent)).then(() => props.plugin.loadConversations())
           }
           // Clear streaming states but preserve subagent name for persistent styling
           return prev.map(m =>
@@ -857,9 +944,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent started:', data)
 
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_start',
+        value: data.name || 'unknown',
+        isClick: false
+      })
+
       if (isQuickDappAgentName(data.name)) {
         quickDappRunningRef.current = true
         hintQuickDappModel()
+      }
+      if (isAuditorAgentName(data.name)) {
+        auditRunningRef.current = true
+        hintAuditModel()
       }
       if (streamingAssistantIdRef.current) {
         setMessages(prev =>
@@ -877,6 +976,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     const handleSubagentComplete = (data: { id: string; name: string; status: string; duration: number; threadId?: string }) => {
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent completed:', data)
+
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_complete',
+        value: `${data.name || 'unknown'}|${bucketDuration(data.duration)}`,
+        isClick: false
+      })
       /*
       // Update subagent bubble styling when subagent completes
       const sub = streamingSubagentBubbleRef.current
@@ -918,6 +1025,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // that started first sees the model immediately.
       runModelRef.current = data?.model || null
       hintQuickDappModel()
+      hintAuditModel()
     }
 
     // Handle thinking events from Ollama (DeepAgent path)
@@ -1257,6 +1365,42 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
     props.plugin.on('remixAI', 'onDappUpdateCompleted', handleDappUpdateCompleted)
 
+    // Generative UI: attach UI tree to the active streaming message, or create one if none exists yet
+    const handleRenderUI = (payload: { tree: Record<string, any>; title?: string }) => {
+      if (!isValidUIPayload(payload)) {
+        remixAILogger.warn('[render_ui] received invalid UI payload — root node type missing or unrecognised, ignoring', payload)
+        return
+      }
+      const activeId = streamingAssistantIdRef.current
+      if (activeId) {
+        // Attach to the message that is currently streaming
+        setMessages(prev => prev.map(m => m.id === activeId ? { ...m, uiComponent: payload } : m))
+        return
+      }
+      // No active stream yet (render_ui called before any text) — create an assistant bubble
+      // and wire it up so subsequent stream chunks append to it rather than creating a new one
+      const uiMsgId = crypto.randomUUID()
+      streamingAssistantIdRef.current = uiMsgId
+      setMessages(prev => [
+        ...prev,
+        {
+          id: uiMsgId,
+          role: 'assistant' as const,
+          content: '',
+          timestamp: Date.now(),
+          sentiment: 'none' as const,
+          uiComponent: payload
+        }
+      ])
+    }
+    props.plugin.on('remixAI', 'renderUI', handleRenderUI)
+
+    const handleModelSwitchRequested = (data: { modelId: string; provider?: string; displayName?: string; reason?: string }) => {
+      if (!data?.modelId) return
+      setPendingModelSwitch(data)
+    }
+    props.plugin.on('remixAI', 'modelSwitchRequested', handleModelSwitchRequested)
+
     return () => {
       props.plugin.off('remixAI', 'onStreamResult')
       props.plugin.off('remixAI', 'onStreamComplete')
@@ -1273,6 +1417,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       props.plugin.off('remixAI', 'onApiError')
       props.plugin.off('remixAI', 'onToolApprovalRequired')
       props.plugin.off('remixAI', 'onDappUpdateCompleted')
+      props.plugin.off('remixAI', 'renderUI')
+      props.plugin.off('remixAI', 'modelSwitchRequested')
       try { props.plugin.off('assistantState' as any, 'stateChanged') } catch { /* noop */ }
     }
   }, [props.plugin])
@@ -1651,6 +1797,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           id: crypto.randomUUID(),
           role: isEditorCodeAnalysis ? 'editor_code_analysis' : 'user',
           content: text,
+          ...(metadata?.displayText ? { displayContent: metadata.displayText } : {}),
           timestamp
         }
       ])
@@ -1716,7 +1863,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       const streamedContent = (idx >= 0 ? messages[idx].content || '' : '').trim()
       const userMsg = idx > 0 ? messages[idx - 1] : null
       if (userMsg && userMsg.role === 'user' && streamedContent) {
-        Promise.resolve(ChatHistory.pushHistory(userMsg.content, streamedContent))
+        Promise.resolve(ChatHistory.pushHistory(userMsg.content, streamedContent, userMsg.displayContent))
           .then(() => props.plugin.loadConversations())
           .catch((err) => remixAILogger.warn('[RemixAI Assistant] failed to persist stopped stream:', err))
       }
@@ -1801,6 +1948,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       setRunModel(null)
       quickDappHintShownRef.current = false
       quickDappRunningRef.current = false
+      auditHintShownRef.current = false
+      auditRunningRef.current = false
       // Reset the per-turn "stream consumed" flag — it gates the
       // post-await duplicate-bubble guard further down.
       streamConsumedThisTurnRef.current = false
@@ -1827,12 +1976,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         content: trimmed,
         timestamp: Date.now(),
         ...(attachments.length > 0 ? { attachments } : {})
+        ...(metadata?.displayText ? { displayContent: metadata.displayText.trim() } : {}),
+        timestamp: Date.now()
       }
       setMessages(prev => [...prev, userMsg])
 
       const { count: priorMessageCount, conversationId: activeConversationId } = firstPromptStateRef.current
       if (priorMessageCount === 0 && activeConversationId) {
-        props.plugin.onFirstPromptSent(activeConversationId, trimmed)
+        props.plugin.onFirstPromptSent(activeConversationId, metadata?.displayText?.trim() || trimmed)
       }
 
       /** append streaming chunks helper - clears tool status when content arrives */
@@ -1975,7 +2126,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             ...prev,
             { id: assistantId, role: 'assistant', content: response, timestamp: Date.now(), sentiment: 'none' }
           ])
-          Promise.resolve(ChatHistory.pushHistory(trimmed, response)).then(() => props.plugin.loadConversations())
+          Promise.resolve(ChatHistory.pushHistory(trimmed, response, metadata?.displayText?.trim())).then(() => props.plugin.loadConversations())
           setIsStreaming(false)
           streamingAssistantIdRef.current = null
           return
@@ -2096,7 +2247,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             (finalText: string, threadId) => {
               if (abortControllerRef.current?.signal.aborted) return
               setIsThinking(false)
-              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText)).then(() => props.plugin.loadConversations())
+              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText, metadata?.displayText?.trim())).then(() => props.plugin.loadConversations())
               setIsStreaming(false)
               props.plugin.call('remixAI', 'setAssistantThrId', threadId)
             },
@@ -2120,7 +2271,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             (finalText: string) => {
               if (abortControllerRef.current?.signal.aborted) return
               setIsThinking(false)
-              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText)).then(() => props.plugin.loadConversations())
+              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText, metadata?.displayText?.trim())).then(() => props.plugin.loadConversations())
               setIsStreaming(false)
             },
             undefined,
@@ -2137,7 +2288,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             },
             (finalText: string) => {
               if (abortControllerRef.current?.signal.aborted) return
-              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText)).then(() => props.plugin.loadConversations())
+              Promise.resolve(ChatHistory.pushHistory(trimmed, finalText, metadata?.displayText?.trim())).then(() => props.plugin.loadConversations())
               setIsStreaming(false)
             }
           )
@@ -2365,6 +2516,138 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     setShowModelSelector(false)
   }, [props.plugin, modelAccess, pushSystemNotice])
 
+  const hasCheapModels = useMemo(
+    () => availableModels.some(m => isCheapModel(m)),
+    [availableModels]
+  )
+
+  // Never leave the menu stuck on a filter that can't match anything.
+  useEffect(() => {
+    if (!hasCheapModels && cheapModelsOnly) setCheapModelsOnly(false)
+  }, [hasCheapModels, cheapModelsOnly])
+
+  const handleToggleCheapModels = useCallback(() => {
+    const next = !cheapModelsOnly
+    setCheapModelsOnly(next)
+    dispatchActivity('button', 'cheapModelsOnly')
+    trackMatomoEvent({ category: 'ai', action: 'remixAI', name: next ? 'cheap_models_on' : 'cheap_models_off', value: 'manual', isClick: true })
+
+    if (next) {
+      // Switch to the first available cheap model
+      const target = availableModels
+        .filter(m => m.available && m.provider !== 'ollama' && isCheapModel(m))
+        .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+      if (target) void handleModelSelection(modelKey(target))
+    } else {
+      // Switch back to the auto model, or fall back to the backend default
+      const autoModel = availableModels.find(m => isAutoModelId(m.id) && m.available !== false)
+      if (autoModel) {
+        void handleModelSelection(modelKey(autoModel))
+      } else {
+        void (async () => {
+          try {
+            const def: AIModel | null = await props.plugin.call('assistantState' as any, 'getDefaultModel')
+            if (def && def.available !== false) void handleModelSelection(modelKey(def))
+          } catch { /* ignore */ }
+        })()
+      }
+    }
+  }, [cheapModelsOnly, availableModels, handleModelSelection, props.plugin])
+
+  // A confirmed starter credit pack arms the switch to the low-cost tier.
+  useEffect(() => {
+    const onPurchaseConfirmed = (payload: any) => {
+      const items = Array.isArray(payload?.items) ? payload.items : []
+      if (!items.some(isStarterCreditPack)) return
+      cheapUnavailableTrackedRef.current = false
+      setPendingCheapSwitch(true)
+    }
+    props.plugin.on('planManager' as any, 'purchaseConfirmed', onPurchaseConfirmed)
+    return () => {
+      props.plugin.off('planManager' as any, 'purchaseConfirmed')
+    }
+  }, [props.plugin])
+
+  /**
+   * Drain a queued switch_model request once the turn is over.
+   *
+   */
+  useEffect(() => {
+    if (!pendingModelSwitch || isStreaming) return
+    const request = pendingModelSwitch
+    setPendingModelSwitch(null)
+
+    const model = findModel(availableModels, request.modelId, request.provider)
+    if (!model) return
+
+    void handleModelSelection(modelKey(model)).then(() => {
+      setChatNotice({
+        severity: 'info',
+        code: 'MODEL_SWITCHED_BY_AGENT',
+        title: `Switched to ${model.displayName}`,
+        message: request.reason
+          ? `${request.reason} Pick any other model from the selector whenever you want.`
+          : `The assistant switched models for the next message. Pick any other model from the selector whenever you want.`,
+        actionable: false
+      })
+    })
+  }, [pendingModelSwitch, isStreaming, availableModels, handleModelSelection])
+
+  // Apply the armed switch as soon as the refreshed catalogue actually offers a
+  // low-cost model, then tell the user what changed and why.
+  useEffect(() => {
+    if (!pendingCheapSwitch) return
+
+    const explain = (model: AIModel) =>
+      `Your ${STARTER_PACK_CREDITS.toLocaleString()}-credit top-up unlocked the low-cost models, so the assistant switched to ${model.displayName} to make those credits last. Pick any other model from the selector whenever you want.`
+
+    // The modal lives in the plan manager, which fires it at the end of
+    // checkout so it lands whether or not this panel is open. Here we narrow
+    // the picker to the tier we just switched to and leave the record in the
+    // strip. Turning the filter on is part of announcing the switch, so it runs
+    // on both paths — including when the user already sat on a cheap model.
+    const announce = (model: AIModel) => {
+      setCheapModelsOnly(true)
+      setChatNotice({
+        severity: 'info',
+        code: 'CHEAP_MODELS_ENABLED',
+        title: `Switched to ${model.displayName}`,
+        message: explain(model),
+        actionable: false
+      })
+    }
+
+    if (selectedModel && isCheapModel(selectedModel) && selectedModel.available) {
+      setPendingCheapSwitch(false)
+      trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'cheap_models_auto_kept', value: modelKey(selectedModel), isClick: false })
+      announce(selectedModel)
+      return
+    }
+
+    const target = availableModels
+      .filter(m => m.available && m.provider !== 'ollama' && isCheapModel(m))
+      .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+    if (!target) {
+      // Stay armed — the catalogue may still be refreshing after the purchase.
+      if (!cheapUnavailableTrackedRef.current) {
+        cheapUnavailableTrackedRef.current = true
+        trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'cheap_models_unavailable', value: 'no_model', isClick: false })
+      }
+      return
+    }
+
+    let cancelled = false
+    void (async () => {
+      await handleModelSelection(modelKey(target))
+      if (cancelled) return
+      setPendingCheapSwitch(false)
+      trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'cheap_models_auto_switch', value: modelKey(target), isClick: false })
+      // handleModelSelection clears the strip on entry, so announce after it.
+      announce(target)
+    })()
+    return () => { cancelled = true }
+  }, [pendingCheapSwitch, availableModels, selectedModel, handleModelSelection])
+
   const handleLockedModelClick = useCallback((selectionKey: string, _modelName: string) => {
     const { id: modelId, provider } = parseModelKey(selectionKey)
     const model = findModel(availableModels, modelId, provider)
@@ -2465,13 +2748,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     props.plugin.call('settings', 'showSection' as any, 'ai', subSectionTitle)
   }, [props.plugin])
 
-  const handleOpenApiKeySettings = useCallback(
-    () => handleOpenSettings('settings.deepAgentApiKeysSection'),
-    [handleOpenSettings]
-  )
-
-  const handleLoadAuditChecklist = useCallback(() => {
-    if (props.onOpenChecklistModal) props.onOpenChecklistModal()
+  // `/audit` and `/load-audit-checklist` open the same modal; the mode is what
+  // tells it whether to finish by running the audit or just saving checklists.
+  const handleLoadAuditChecklist = useCallback((mode: 'audit' | 'checklist' = 'checklist') => {
+    if (props.onOpenChecklistModal) props.onOpenChecklistModal(mode)
   }, [props.onOpenChecklistModal])
 
   const handleGasOptimisationAudit = useCallback(async () => {
@@ -2521,6 +2801,23 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       },
       submitCurrentInput: async () => {
         await handleSend()
+      },
+      focusInput: (options?: { highlight?: boolean }) => {
+        textareaRef.current?.focus()
+        if (!options?.highlight) return
+        // One-shot "spotlight" (light circling the border, then a fading glow)
+        // so the user sees where the focus went. Restarted on every call.
+        const box = aiChatRef.current?.querySelector('[data-id="remix-ai-prompt-area"]') as HTMLElement | null
+        if (!box) return
+        box.classList.remove('ai-input-spotlight')
+        void box.offsetWidth // reflow, so re-adding the class restarts the animation
+        box.classList.add('ai-input-spotlight')
+        const done = (e: AnimationEvent) => {
+          if (e.target !== box || e.animationName !== 'ai-spot-glow') return
+          box.classList.remove('ai-input-spotlight')
+          box.removeEventListener('animationend', done)
+        }
+        box.addEventListener('animationend', done)
       },
       addAssistantMessage: (text: string) => {
         if (!text) return
@@ -2667,23 +2964,30 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [showOllamaModelSelector, recalcOllamaModelOpt])
 
-  const [aiChatIsMaximized, setAiChatIsMaximized] = useState(false);
-
+  // Minimum dwell for the thinking indicator. Each raise pushes the deadline
+  // out, so rapid true/false bursts between tool calls read as one indicator
+  // instead of a strobe; it clears only once the model has stopped AND the
+  // dwell has elapsed.
   useEffect(() => {
-    props.plugin.on('rightSidePanel', 'rightSidePanelMaximized', () => {
-      setShowButton(false);
-      setIsAiChatMaximized(true);
-    })
-    props.plugin.on('rightSidePanel', 'rightSidePanelRestored', () => {
-      setShowButton(true);
-      setIsAiChatMaximized(false);
-    })
-
-    return () => {
-      props.plugin.off('rightSidePanel', 'rightSidePanelMaximized');
-      props.plugin.off('rightSidePanel', 'rightSidePanelRestored');
+    if (isThinking) {
+      thinkingHoldUntilRef.current = Date.now() + THINKING_MIN_VISIBLE_MS
+      setThinkingVisible(true)
+      return
     }
-  }, [])
+    if (!thinkingVisible) return
+    const remaining = Math.max(0, thinkingHoldUntilRef.current - Date.now())
+    const timer = setTimeout(() => setThinkingVisible(false), remaining)
+    return () => clearTimeout(timer)
+  }, [isThinking, thinkingVisible])
+
+  // Sits directly above the auto-accept banner in every layout, so the user
+  // always finds it in the same place instead of chasing it down the transcript.
+  const thinkingBannerEl = thinkingVisible && (
+    <div className="ai-thinking-banner" data-id="remix-ai-thinking">
+      <i className="fa fa-spinner fa-spin ai-thinking-banner__icon" aria-hidden="true"></i>
+      <span className="ai-thinking-banner__text">Thinking</span>
+    </div>
+  )
 
   const autoAcceptBannerEl = hitlAutoAccept && pendingApprovals.length === 0 && (
     <div
@@ -2706,6 +3010,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     ? currentConversationTitle
     : messages.find(m => m.role === 'user')?.content
 
+  // When maximized, the chat body below is portaled into the placeholder host
+  // that RemixAIAssistant registers in the center/main panel (see
+  // apps/remix-ide/src/app/plugins/remix-ai-assistant.tsx) — same component
+  // instance, same hooks/state/refs, just physically relocated in the DOM.
+  const [maximizedHost, setMaximizedHost] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    if (props.isMaximized) {
+      setMaximizedHost(document.getElementById('ai-chat-maximized-host'))
+    }
+  }, [props.isMaximized])
+
   return (
     props.isInitializing ? (
       <div
@@ -2722,17 +3037,393 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
           <div data-id="remix-ai-assistant-loading"></div>
         </div>
       </div>
-    ) : (
-      <div
-        className="d-flex flex-column w-100 h-100"
-        ref={aiChatRef}
-        style={{ overflow: 'hidden' }}
-        data-theme={themeTracker && themeTracker?.name.toLowerCase()}
-        data-was-loading={wasInitializingRef.current ? 'true' : undefined}
-      >
-        {/* Main content area with sidebar and chat */}
-        <div className="d-flex flex-grow-1" style={{ overflow: 'hidden', minHeight: 0 }}>
-          {/* Maximized Mode: Show sidebar on left if enabled */}
+    ) : (() => {
+      // Strips (cooldown / notice / auto-selected model) and the prompt sit under
+      // the messages: inside the chat column in AI mode (so one background spans
+      // header to prompt, and the history sidebar gets the full height), below the
+      // whole panel when docked.
+      const stripsEl = (
+        <>
+          {cooldownDisplay && (
+            <CooldownBanner
+              display={cooldownDisplay}
+              onDismiss={() => {
+                dismissedCooldownKeyRef.current = `${cooldownDisplay.code}:${cooldownDisplay.expiresAt ?? ''}`
+                setCooldownDisplay(null)
+              }}
+            />
+          )}
+          {chatNotice && (
+            <div className="rai-panel-strip">
+              <ChatNoticeStrip
+                notice={chatNotice}
+                onAction={(action) => { void handleChatNoticeAction(action) }}
+                onDismiss={dismissChatNotice}
+              />
+            </div>
+          )}
+          {runModel && (
+            <div className="rai-panel-strip">
+              <div
+                className="rai-run-model"
+                data-id="remix-ai-run-model"
+                title={`Auto selected ${runModel} for this answer`}
+              >
+                <i className="fa-solid fa-wand-magic-sparkles rai-run-model__icon"></i>
+                <span className="rai-run-model__text">Using {runModelLabel}</span>
+              </div>
+            </div>
+          )}
+        </>
+      )
+      const promptEl = (
+        messages.length > 0 ? (
+          <AiChatPromptAreaForHistory
+            themeTracker={themeTracker}
+            showHistorySidebar={props.showHistorySidebar || false}
+            isMaximized={props.isMaximized}
+            modelOpt={modelOpt}
+            menuRef={menuRef}
+            assistantChoice={assistantChoice}
+            setAssistantChoice={setAssistantChoice}
+            mcpEnabled={mcpEnabled}
+            mcpEnhanced={mcpEnhanced}
+            setMcpEnhanced={setMcpEnhanced}
+            availableModels={availableModels}
+            selectedModel={selectedModel}
+            handleModelSelection={handleModelSelection}
+            onLockedModelClick={handleLockedModelClick}
+            upgradePillState={pillStates.upgrade}
+            buyCreditsPillState={pillStates.buyCredits}
+            onBuyCreditsClick={handleBuyCreditsClick}
+            input={input}
+            setInput={setInput}
+            isStreaming={isStreaming}
+            handleSend={handleSend}
+            stopRequest={stopRequest}
+            handleSetModel={handleSetModel}
+            handleGenerateWorkspace={handleGenerateWorkspace}
+            dispatchActivity={dispatchActivity as any}
+            modelBtnRef={modelBtnRef}
+            modelSelectorBtnRef={modelSelectorBtnRef}
+            textareaRef={textareaRef}
+            maximizePanel={maximizePanel}
+            setShowOllamaModelSelector={setShowOllamaModelSelector}
+            showOllamaModelSelector={showOllamaModelSelector}
+            showModelSelector={showModelSelector}
+            setShowModelSelector={setShowModelSelector}
+            selectedModelId={selectedModelId}
+            handleOllamaModelSelection={handleOllamaModelSelection}
+            selectedOllamaModel={selectedOllamaModel}
+            ollamaModels={ollamaModels}
+            ollamaModelOpt={ollamaModelOpt}
+            ollamaMenuRef={ollamaMenuRef}
+            messages={messages}
+            handleLoadSkills={handleLoadSkills}
+            handleOpenSettings={handleOpenSettings}
+            handleLoadAuditChecklist={handleLoadAuditChecklist}
+            handleGasOptimisationAudit={handleGasOptimisationAudit}
+            usingOwnApiKey={usingOwnApiKey}
+            byokKeyPresence={byokKeyPresence}
+            onAddApiKeyClick={handleOpenSettings}
+            aiRoute={aiRouteStatus.route}
+            aiRouteReady={aiRouteStatus.ready}
+            isAuthenticated={isAuthenticated}
+            onSignIn={handleSignIn}
+            hasAuditorPermission={hasAuditorPermission}
+            hasSkillsPermission={hasSkillsPermission}
+            onUpgradeRequired={handleFeatureUpgradeRequired}
+            getRequiredPlanName={getRequiredPlanName}
+            cheapModelsOnly={cheapModelsOnly}
+            hasCheapModels={hasCheapModels}
+            onToggleCheapModels={handleToggleCheapModels}
+          />
+        ) : (
+          <AiChatPromptArea
+            themeTracker={themeTracker}
+            showHistorySidebar={props.showHistorySidebar || false}
+            isMaximized={props.isMaximized}
+            modelOpt={modelOpt}
+            menuRef={menuRef}
+            assistantChoice={assistantChoice}
+            setAssistantChoice={setAssistantChoice}
+            mcpEnabled={mcpEnabled}
+            mcpEnhanced={mcpEnhanced}
+            setMcpEnhanced={setMcpEnhanced}
+            availableModels={availableModels}
+            selectedModel={selectedModel}
+            handleModelSelection={handleModelSelection}
+            onLockedModelClick={handleLockedModelClick}
+            upgradePillState={pillStates.upgrade}
+            buyCreditsPillState={pillStates.buyCredits}
+            onBuyCreditsClick={handleBuyCreditsClick}
+            input={input}
+            setInput={setInput}
+            isStreaming={isStreaming}
+            handleSend={handleSend}
+            stopRequest={stopRequest}
+            handleSetModel={handleSetModel}
+            handleGenerateWorkspace={handleGenerateWorkspace}
+            dispatchActivity={dispatchActivity as any}
+            modelBtnRef={modelBtnRef}
+            modelSelectorBtnRef={modelSelectorBtnRef}
+            textareaRef={textareaRef}
+            maximizePanel={maximizePanel}
+            setShowOllamaModelSelector={setShowOllamaModelSelector}
+            showOllamaModelSelector={showOllamaModelSelector}
+            showModelSelector={showModelSelector}
+            setShowModelSelector={setShowModelSelector}
+            selectedModelId={selectedModelId}
+            handleOllamaModelSelection={handleOllamaModelSelection}
+            selectedOllamaModel={selectedOllamaModel}
+            ollamaModels={ollamaModels}
+            ollamaModelOpt={ollamaModelOpt}
+            ollamaMenuRef={ollamaMenuRef}
+            messages={messages}
+            handleLoadSkills={handleLoadSkills}
+            handleOpenSettings={handleOpenSettings}
+            handleLoadAuditChecklist={handleLoadAuditChecklist}
+            handleGasOptimisationAudit={handleGasOptimisationAudit}
+            usingOwnApiKey={usingOwnApiKey}
+            byokKeyPresence={byokKeyPresence}
+            onAddApiKeyClick={handleOpenSettings}
+            aiRoute={aiRouteStatus.route}
+            aiRouteReady={aiRouteStatus.ready}
+            isAuthenticated={isAuthenticated}
+            onSignIn={handleSignIn}
+            hasAuditorPermission={hasAuditorPermission}
+            hasSkillsPermission={hasSkillsPermission}
+            onUpgradeRequired={handleFeatureUpgradeRequired}
+            getRequiredPlanName={getRequiredPlanName}
+            cheapModelsOnly={cheapModelsOnly}
+            hasCheapModels={hasCheapModels}
+            onToggleCheapModels={handleToggleCheapModels}
+          />
+        )
+      )
+      const dockedHistoryOpen = !props.isMaximized && !!props.showHistorySidebar && !!props.conversations
+      const chatBody = (
+        <div
+          className={`d-flex flex-row w-100 h-100 ${props.isMaximized ? 'ai-mode' : ''}`}
+          ref={aiChatRef}
+          style={{ overflow: 'hidden' }}
+          data-theme={themeTracker && themeTracker?.name.toLowerCase()}
+          data-was-loading={wasInitializingRef.current ? 'true' : undefined}
+          onFocus={(e) => {
+            if ((e.target as HTMLElement).id === 'remix-ai-prompt-input') props.plugin.notifyChatEngaged()
+          }}
+          onPointerDownCapture={() => props.plugin.notifyChatEngaged()}
+        >
+          {/* One main column in both modes: content, then strips + prompt, so the
+              empty-chat gradient is painted once, header to prompt. */}
+          <div
+            className={`ai-chat-main d-flex flex-column flex-grow-1 ${messages.length === 0 && !dockedHistoryOpen ? 'ai-assistant-bg' : ''}`}
+            style={{ overflow: 'hidden', minHeight: 0, minWidth: 0 }}
+          >
+            <div className="d-flex flex-grow-1" style={{ overflow: 'hidden', minHeight: 0 }}>
+              {props.isMaximized ? (
+                <div className={`d-flex flex-column flex-grow-1 always-show ai-mode-column ${messages.length === 0 ? '' : 'ai-chat-area-flat'}`} style={{ overflow: 'hidden', minHeight: 0, minWidth: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
+                  <ChatHistoryHeading
+                    onNewChat={props.onNewConversation || (() => {})}
+                    onToggleHistory={props.onToggleHistorySidebar || (() => {})}
+                    showHistorySidebar={props.showHistorySidebar || false}
+                    archiveChat={props.onArchiveConversation || (() => {})}
+                    currentConversationId={props.currentConversationId}
+                    showButton
+                    theme={themeTracker?.name}
+                    chatTitle={headerChatTitle}
+                    isAiChatMaximized={props.isMaximized}
+                    onExitAIMode={() => props.plugin.restorePanel()}
+                  />
+                  <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
+                    <div data-id="remix-ai-assistant-ready"></div>
+                    {/* hidden hook for E2E tests: data-streaming="true|false" */}
+                    <div
+                      data-id="remix-ai-streaming"
+                      className='d-none'
+                      data-streaming={isStreaming ? 'true' : 'false'}
+                    ></div>
+                    <ChatHistoryComponent
+                      messages={messages}
+                      isStreaming={isStreaming}
+                      sendPrompt={sendPrompt}
+                      recordFeedback={recordFeedback}
+                      historyRef={historyRef}
+                      theme={themeTracker?.name}
+                      plugin={props.plugin}
+                      handleGenerateWorkspace={handleGenerateWorkspace}
+                      handleLoadSkills={handleLoadSkills}
+                      allowedMcps={modelAccess.allowedMcps}
+                      onDappReviewAcceptAll={handleDappReviewAcceptAll}
+                      onDappReviewRevertAll={handleDappReviewRevertAll}
+                      onDappReviewViewDiff={handleDappReviewViewDiff}
+                    />
+                    {pendingApprovals.length > 1 && (
+                      <div className="hitl-pending-summary">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <span className="fw-bold">Multiple Changes Pending ({pendingApprovals.length})</span>
+                          <div className="d-flex gap-2">
+                            <button
+                              className="btn btn-success btn-sm"
+                              onClick={handleApproveAll}
+                              data-id="approve-all-changes"
+                            >
+                          Approve All
+                            </button>
+                            <button
+                              className="btn btn-danger btn-sm"
+                              onClick={handleRejectAll}
+                              data-id="reject-all-changes"
+                            >
+                          Discard All
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {pendingApprovals.map((approval) => (
+                      <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
+                        <ToolApprovalModal
+                          request={approval}
+                          onApprove={(options) => handleApproveToolAction(approval, options)}
+                          onReject={() => handleRejectToolAction(approval)}
+                          onReviewChanges={() => handleReviewChanges(approval)}
+                          isReviewing={reviewingApprovals.has(approval.requestId)}
+                        />
+                      </div>
+                    ))}
+                  </section>
+                  {thinkingBannerEl}
+                  {autoAcceptBannerEl}
+                </div>
+              ) : (
+              /* Non-Maximized Mode: Toggle between history view and chat view */
+                props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
+                  <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
+                    {/* Back button header */}
+                    <div
+                      className="p-2 border-bottom"
+                    >
+                      <button
+                        className={`btn btn-sm ${themeTracker?.name.toLowerCase() === 'dark' ? 'btn-dark' : 'btn-light text-light-emphasis'}`}
+                        onClick={props.onToggleHistorySidebar || (() => {})}
+                        data-id="chat-history-back-btn"
+                      >
+                        <i className="fas fa-chevron-left me-3"></i>
+                        <span>Back to chat</span>
+                      </button>
+                    </div>
+                    {/* Chat history content */}
+                    <div className="flex-grow-1" style={{ overflow: 'hidden', minHeight: 0 }}>
+                      <ChatHistorySidebar
+                        conversations={props.conversations}
+                        currentConversationId={props.currentConversationId || null}
+                        showArchived={showArchivedConversations}
+                        onNewConversation={props.onNewConversation || (() => {})}
+                        onLoadConversation={async (id) => {
+                          await props.onLoadConversation?.(id)
+                          // Close sidebar after loading conversation in non-maximized mode
+                          await props.onToggleHistorySidebar?.()
+                        }}
+                        onArchiveConversation={props.onArchiveConversation || (async (id: string) => {})}
+                        onDeleteConversation={props.onDeleteConversation || (async (id: string) => {})}
+                        onDeleteAllConversations={props.onDeleteAllConversations}
+                        onToggleArchived={() => setShowArchivedConversations(!showArchivedConversations)}
+                        onClose={props.onToggleHistorySidebar || (() => {})}
+                        onSearch={props.onSearch}
+                        isFloating={false}
+                        isMaximized={false}
+                        theme={themeTracker?.name}
+                      />
+                    </div>
+                    {thinkingBannerEl}
+                    {autoAcceptBannerEl}
+                  </div>
+                ) : (
+                  /* Show chat area when sidebar is closed */
+                  <div className={`d-flex flex-column flex-grow-1 sideBarIsClosed ${messages.length === 0 ? '' : 'ai-chat-area-flat'}`} style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
+                    <ChatHistoryHeading
+                      onNewChat={props.onNewConversation || (() => {})}
+                      onToggleHistory={props.onToggleHistorySidebar || (() => {})}
+                      showHistorySidebar={props.showHistorySidebar || false}
+                      archiveChat={props.onArchiveConversation || (() => {})}
+                      currentConversationId={props.currentConversationId}
+                      showButton
+                      theme={themeTracker?.name}
+                      chatTitle={headerChatTitle}
+                      isAiChatMaximized={props.isMaximized}
+                    />
+                    <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
+                      <div data-id="remix-ai-assistant-ready"></div>
+                      {/* hidden hook for E2E tests: data-streaming="true|false" */}
+                      <div
+                        data-id="remix-ai-streaming"
+                        className='d-none'
+                        data-streaming={isStreaming ? 'true' : 'false'}
+                      ></div>
+                      <ChatHistoryComponent
+                        messages={messages}
+                        isStreaming={isStreaming}
+                        sendPrompt={sendPrompt}
+                        recordFeedback={recordFeedback}
+                        historyRef={historyRef}
+                        theme={themeTracker?.name}
+                        plugin={props.plugin}
+                        handleGenerateWorkspace={handleGenerateWorkspace}
+                        handleLoadSkills={handleLoadSkills}
+                        allowedMcps={modelAccess.allowedMcps}
+                        onDappReviewAcceptAll={handleDappReviewAcceptAll}
+                        onDappReviewRevertAll={handleDappReviewRevertAll}
+                        onDappReviewViewDiff={handleDappReviewViewDiff}
+                      />
+                      {pendingApprovals.length > 1 && (
+                        <div className="hitl-pending-summary">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <span className="fw-bold">Multiple Changes Pending ({pendingApprovals.length})</span>
+                            <div className="d-flex gap-2">
+                              <button
+                                className="btn btn-success btn-sm"
+                                onClick={handleApproveAll}
+                                data-id="approve-all-changes"
+                              >
+                              Approve All
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={handleRejectAll}
+                                data-id="reject-all-changes"
+                              >
+                              Discard All
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {pendingApprovals.map((approval) => (
+                        <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
+                          <ToolApprovalModal
+                            request={approval}
+                            onApprove={(options) => handleApproveToolAction(approval, options)}
+                            onReject={() => handleRejectToolAction(approval)}
+                            onReviewChanges={() => handleReviewChanges(approval)}
+                            isReviewing={reviewingApprovals.has(approval.requestId)}
+                          />
+                        </div>
+                      ))}
+                    </section>
+                    {thinkingBannerEl}
+                    {autoAcceptBannerEl}
+                  </div>
+                )
+              )}
+            </div>
+            {/* Docked history view takes the full height: hide (not unmount) the prompt */}
+            <div className={`d-flex flex-column flex-shrink-0 ${dockedHistoryOpen ? 'd-none' : ''}`}>
+              {stripsEl}
+              {promptEl}
+            </div>
+          </div>
+          {/* Maximized Mode: history sidebar on the right of the chat, under the header's history toggle */}
           {props.isMaximized && props.showHistorySidebar && props.conversations && (
             <ChatHistorySidebar
               conversations={props.conversations}
@@ -2752,230 +3443,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             />
           )}
 
-          {/* Maximized Mode: Always show chat area */}
-          {props.isMaximized ? (
-            <div className={`d-flex flex-column flex-grow-1 always-show ${messages.length === 0 ? 'ai-assistant-bg' : 'ai-chat-area-flat'}`} style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
-              <ChatHistoryHeading
-                onNewChat={props.onNewConversation || (() => {})}
-                onToggleHistory={props.onToggleHistorySidebar || (() => {})}
-                showHistorySidebar={props.showHistorySidebar || false}
-                archiveChat={props.onArchiveConversation || (() => {})}
-                currentConversationId={props.currentConversationId}
-                showButton={showButton}
-                setShowButton={setShowButton}
-                theme={themeTracker?.name}
-                chatTitle={headerChatTitle}
-                isAiChatMaximized={isAiChatMaximized}
-                setIsAiChatMaximized={setIsAiChatMaximized}
-              />
-              <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
-                <div data-id="remix-ai-assistant-ready"></div>
-                {/* hidden hook for E2E tests: data-streaming="true|false" */}
-                <div
-                  data-id="remix-ai-streaming"
-                  className='d-none'
-                  data-streaming={isStreaming ? 'true' : 'false'}
-                ></div>
-                <ChatHistoryComponent
-                  messages={messages}
-                  isStreaming={isStreaming}
-                  isThinking={isThinking}
-                  sendPrompt={sendPrompt}
-                  recordFeedback={recordFeedback}
-                  historyRef={historyRef}
-                  theme={themeTracker?.name}
-                  plugin={props.plugin}
-                  handleGenerateWorkspace={handleGenerateWorkspace}
-                  handleLoadSkills={handleLoadSkills}
-                  allowedMcps={modelAccess.allowedMcps}
-                  onDappReviewAcceptAll={handleDappReviewAcceptAll}
-                  onDappReviewRevertAll={handleDappReviewRevertAll}
-                  onDappReviewViewDiff={handleDappReviewViewDiff}
-                />
-                {pendingApprovals.length > 1 && (
-                  <div className="hitl-pending-summary">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <span className="fw-bold">Multiple Changes Pending ({pendingApprovals.length})</span>
-                      <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-success btn-sm"
-                          onClick={handleApproveAll}
-                          data-id="approve-all-changes"
-                        >
-                          Approve All
-                        </button>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={handleRejectAll}
-                          data-id="reject-all-changes"
-                        >
-                          Discard All
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {pendingApprovals.map((approval) => (
-                  <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
-                    <ToolApprovalModal
-                      request={approval}
-                      onApprove={(options) => handleApproveToolAction(approval, options)}
-                      onReject={() => handleRejectToolAction(approval)}
-                      onReviewChanges={() => handleReviewChanges(approval)}
-                      isReviewing={reviewingApprovals.has(approval.requestId)}
-                    />
-                  </div>
-                ))}
-              </section>
-              {autoAcceptBannerEl}
-            </div>
-          ) : (
-          /* Non-Maximized Mode: Toggle between history view and chat view */
-            props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
-              <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
-                {/* Back button header */}
-                <div
-                  className="p-2 border-bottom"
-                >
-                  <button
-                    className={`btn btn-sm ${themeTracker?.name.toLowerCase() === 'dark' ? 'btn-dark' : 'btn-light text-light-emphasis'}`}
-                    onClick={props.onToggleHistorySidebar || (() => {})}
-                    data-id="chat-history-back-btn"
-                  >
-                    <i className="fas fa-chevron-left me-3"></i>
-                    <span>Back to chat</span>
-                  </button>
-                </div>
-                {/* Chat history content */}
-                <div className="flex-grow-1" style={{ overflow: 'hidden', minHeight: 0 }}>
-                  <ChatHistorySidebar
-                    conversations={props.conversations}
-                    currentConversationId={props.currentConversationId || null}
-                    showArchived={showArchivedConversations}
-                    onNewConversation={props.onNewConversation || (() => {})}
-                    onLoadConversation={async (id) => {
-                      await props.onLoadConversation?.(id)
-                      // Close sidebar after loading conversation in non-maximized mode
-                      await props.onToggleHistorySidebar?.()
-                    }}
-                    onArchiveConversation={props.onArchiveConversation || (async (id: string) => {})}
-                    onDeleteConversation={props.onDeleteConversation || (async (id: string) => {})}
-                    onDeleteAllConversations={props.onDeleteAllConversations}
-                    onToggleArchived={() => setShowArchivedConversations(!showArchivedConversations)}
-                    onClose={props.onToggleHistorySidebar || (() => {})}
-                    onSearch={props.onSearch}
-                    isFloating={false}
-                    isMaximized={false}
-                    theme={themeTracker?.name}
-                  />
-                </div>
-                {autoAcceptBannerEl}
-              </div>
-            ) : (
-            /* Show chat area when sidebar is closed */
-              <div className={`d-flex flex-column flex-grow-1 sideBarIsClosed ${messages.length === 0 ? 'ai-assistant-bg' : 'ai-chat-area-flat'}`} style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
-                <ChatHistoryHeading
-                  onNewChat={props.onNewConversation || (() => {})}
-                  onToggleHistory={props.onToggleHistorySidebar || (() => {})}
-                  showHistorySidebar={props.showHistorySidebar || false}
-                  archiveChat={props.onArchiveConversation || (() => {})}
-                  currentConversationId={props.currentConversationId}
-                  showButton={showButton}
-                  setShowButton={setShowButton}
-                  theme={themeTracker?.name}
-                  chatTitle={headerChatTitle}
-                  isAiChatMaximized={isAiChatMaximized}
-                  setIsAiChatMaximized={setIsAiChatMaximized}
-                />
-                <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
-                  <div data-id="remix-ai-assistant-ready"></div>
-                  {/* hidden hook for E2E tests: data-streaming="true|false" */}
-                  <div
-                    data-id="remix-ai-streaming"
-                    className='d-none'
-                    data-streaming={isStreaming ? 'true' : 'false'}
-                  ></div>
-                  <ChatHistoryComponent
-                    messages={messages}
-                    isStreaming={isStreaming}
-                    isThinking={isThinking}
-                    sendPrompt={sendPrompt}
-                    recordFeedback={recordFeedback}
-                    historyRef={historyRef}
-                    theme={themeTracker?.name}
-                    plugin={props.plugin}
-                    handleGenerateWorkspace={handleGenerateWorkspace}
-                    handleLoadSkills={handleLoadSkills}
-                    allowedMcps={modelAccess.allowedMcps}
-                    onDappReviewAcceptAll={handleDappReviewAcceptAll}
-                    onDappReviewRevertAll={handleDappReviewRevertAll}
-                    onDappReviewViewDiff={handleDappReviewViewDiff}
-                  />
-                  {pendingApprovals.length > 1 && (
-                    <div className="hitl-pending-summary">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">Multiple Changes Pending ({pendingApprovals.length})</span>
-                        <div className="d-flex gap-2">
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={handleApproveAll}
-                            data-id="approve-all-changes"
-                          >
-                            Approve All
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={handleRejectAll}
-                            data-id="reject-all-changes"
-                          >
-                            Discard All
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {pendingApprovals.map((approval) => (
-                    <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
-                      <ToolApprovalModal
-                        request={approval}
-                        onApprove={(options) => handleApproveToolAction(approval, options)}
-                        onReject={() => handleRejectToolAction(approval)}
-                        onReviewChanges={() => handleReviewChanges(approval)}
-                        isReviewing={reviewingApprovals.has(approval.requestId)}
-                      />
-                    </div>
-                  ))}
-                </section>
-                {autoAcceptBannerEl}
-              </div>
-            )
-          )}
-        </div>
-
-        {cooldownDisplay && (
-          <CooldownBanner
-            display={cooldownDisplay}
-            onDismiss={() => {
-              dismissedCooldownKeyRef.current = `${cooldownDisplay.code}:${cooldownDisplay.expiresAt ?? ''}`
-              setCooldownDisplay(null)
-            }}
-          />
-        )}
-        {chatNotice && (
-          <div className="rai-panel-strip">
-            <ChatNoticeStrip
-              notice={chatNotice}
-              onAction={(action) => { void handleChatNoticeAction(action) }}
-              onDismiss={dismissChatNotice}
-            />
-          </div>
-        )}
-        {runModel && (
-          <div className="rai-panel-strip">
+          {/* API Key Error Toast */}
+          {apiKeyError && (
             <div
-              className="rai-run-model"
-              data-id="remix-ai-run-model"
-              title={`Auto selected ${runModel} for this answer`}
+              className="position-fixed bottom-0 start-50 translate-middle-x mb-5 p-3 bg-danger text-white rounded shadow"
+              style={{ zIndex: 9999, maxWidth: '400px' }}
             >
               <i className="fa-solid fa-wand-magic-sparkles rai-run-model__icon"></i>
               <span className="rai-run-model__text">Using {runModelLabel}</span>
@@ -3128,34 +3600,42 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                 <strong>{apiKeyError.errorType === 'authentication_failed' ? 'API Key Authentication Failed' : 'API Key Error'}</strong>
                 <p className="mb-2 small">{apiKeyError.message}</p>
                 {apiKeyError.canFallbackToProxy && (
-                  <button
-                    className="btn btn-sm btn-light me-2"
-                    onClick={async () => {
-                      try {
-                        await props.plugin.call('remixAI', 'fallbackToProxy')
-                        setApiKeyError(null)
-                        setUsingOwnApiKey(false)
-                      } catch (error) {
-                        remixAILogger.error('Failed to fallback to proxy:', error)
-                      }
-                    }}
-                  >
-                    <i className="fas fa-server me-1"></i>
+              <div className="d-flex align-items-start">
+                <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
+                <div className="flex-grow-1">
+                  <strong>{apiKeyError.errorType === 'authentication_failed' ? 'API Key Authentication Failed' : 'API Key Error'}</strong>
+                  <p className="mb-2 small">{apiKeyError.message}</p>
+                  {apiKeyError.canFallbackToProxy && (
+                    <button
+                      className="btn btn-sm btn-light me-2"
+                      onClick={async () => {
+                        try {
+                          await props.plugin.call('remixAI', 'fallbackToProxy')
+                          setApiKeyError(null)
+                          setUsingOwnApiKey(false)
+                        } catch (error) {
+                          remixAILogger.error('Failed to fallback to proxy:', error)
+                        }
+                      }}
+                    >
+                      <i className="fas fa-server me-1"></i>
                     Switch to Proxy
-                  </button>
-                )}
-                <button
-                  className="btn btn-sm btn-outline-light"
-                  onClick={() => setApiKeyError(null)}
-                >
+                    </button>
+                  )}
+                  <button
+                    className="btn btn-sm btn-outline-light"
+                    onClick={() => setApiKeyError(null)}
+                  >
                   Dismiss
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-      </div>
-    )
+        </div>
+      )
+      return props.isMaximized && maximizedHost ? createPortal(chatBody, maximizedHost) : chatBody
+    })()
   )
 })

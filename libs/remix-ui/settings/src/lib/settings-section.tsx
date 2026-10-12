@@ -265,7 +265,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
       payload: {
         value: rejected.length
           ? `${intl.formatMessage({ id: 'settings.apiKeyInvalid' })}: ${rejected.map(key => intl.formatMessage({ id: `settings.${key}` })).join(', ')}`
-          : intl.formatMessage({ id: 'settings.credentialsUpdated' })
+          : intl.formatMessage({ id: 'settings.settingsUpdated' })
       }
     })
   }
@@ -382,7 +382,8 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
                       {option.toggleUIDescription && showSubOptions && <span className="text-secondary mt-1">{option.toggleUIDescription}</span>}
                       {option.toggleUIOptions && showSubOptions && option.toggleUIOptions.map((toggleOption, toggleOptionIndex) => {
                         const isLastOption = toggleOptionIndex === (option.toggleUIOptions as any).length - 1
-                        const inputValue = state[toggleOption.name] && typeof state[toggleOption.name].value === 'string' ? state[toggleOption.name].value as string : ''
+                        const rawValue = state[toggleOption.name]?.value
+                        const inputValue = rawValue != null && (typeof rawValue === 'string' || typeof rawValue === 'number') ? String(rawValue) : ''
 
                         return state[toggleOption.name] && (
                           <div key={toggleOptionIndex}>

@@ -88,6 +88,8 @@ const SAFE_TOOLS = new Set([
   'generate_dapp',
   'update_dapp',
   'fetch_figma_design',
+  // Read-only view of the model catalogue.
+  'list_models',
 ])
 
 /**
@@ -121,6 +123,9 @@ const TOOL_METADATA: Record<string, { category: ToolCategory; risk: ToolRisk }> 
   // UI automation drives the user's IDE directly — always confirm.
   click_element:     { category: 'other', risk: 'high' },
   type_into_element: { category: 'other', risk: 'high' },
+  // Changes a setting the user chose and can change what their usage costs, so
+  // the approval modal is the confirmation step on the agent-driven path.
+  switch_model:     { category: 'other', risk: 'medium' },
 }
 
 export function isSafeTool(toolName: string): boolean {

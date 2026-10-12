@@ -284,7 +284,7 @@ module.exports = {
         .execute(() => {
           (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
         }, [], () => { })
-        .setValue('[data-id="modalDialogCustomPromp"]', 'https://go.getblock.io/7fbe62b139884d2c9c1616ca0de8b5b2')
+        .setValue('[data-id="modalDialogCustomPromp"]', 'https://shared.eu-central-1.getblock.io/3b015fe911af48aca45cf963c56bc033')
         .modalFooterOKClick('basic-http-provider')
         .clickLaunchIcon('filePanel')
         .openFile('README.txt')
@@ -381,7 +381,7 @@ module.exports = {
         .execute(() => {
           (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
         }, [], () => { })
-        .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://go.getblock.io/7fbe62b139884d2c9c1616ca0de8b5b2')
+        .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://shared.eu-central-1.getblock.io/7fbe62b139884d2c9c1616ca0de8b5b2')
         .execute(() => {
           (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkBlockNumber"]') as any).focus()
         }, [], () => { })

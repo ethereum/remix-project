@@ -44,7 +44,7 @@ export function RemixUiTemplateExplorerModal (props: RemixUiTemplateExplorerModa
         <div ref={containerRef} className="template-explorer-modal-container border bg-body p-2" style={{ height: "min-content", maxHeight: "80%", transition: "height 0.15s ease, color 0.15s ease" }}>
           <div className="template-explorer-modal-close-container bg-dark w-100 d-flex flex-row justify-content-between align-items-center">
             {state.wizardStep === 'template' || state.wizardStep === 'reset' ? <div className="d-flex flex-row gap-2 w-100">
-              <div className="template-explorer-search-wrapper">
+              <div className="template-explorer-search-wrapper ms-2">
                 <i className="fa-solid fa-magnifying-glass template-explorer-search-icon"></i>
                 <input
                   type="text"

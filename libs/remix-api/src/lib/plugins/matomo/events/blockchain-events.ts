@@ -155,7 +155,9 @@ export interface UdappEvent extends MatomoEventBase {
     | 'transactionOpenExplorer'
     | 'transactionClear'
     | 'transactionRecordCardToggle'
-    | 'transactionRecordCopyAddress';
+    | 'transactionRecordCopyAddress'
+    | 'aiFeedback'
+    | 'autoFillWithAI';
 }
 
 export interface RunEvent extends MatomoEventBase {

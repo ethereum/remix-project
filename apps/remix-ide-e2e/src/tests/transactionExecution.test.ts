@@ -242,6 +242,8 @@ module.exports = {
       .createContract('42, 24')
       .openFile('Storage.sol')
       .clickLaunchIcon('udapp')
+      .waitForElementPresent('[data-id="udappDeployTab"]')
+      .click('[data-id="udappDeployTab"]')
       .waitForElementVisible('[data-id="constructorInput0"]', 10000)
       .createContract('102') // this creation will fail if the component hasn't been properly reset.
       .clickInstance(1)
@@ -321,7 +323,7 @@ module.exports = {
       .perform(async (done) => {
         try {
           console.log('getting the provider up..')
-          const provider = new JsonRpcProvider('https://go.getblock.us/1552e4e35bcf4efe8a78897cba5557f9')
+          const provider = new JsonRpcProvider('https://shared.eu-central-1.getblock.io/3b015fe911af48aca45cf963c56bc033')
           currentBlockNumber = (await provider.getBlockNumber()) as number
           console.log('getBlockNumber', currentBlockNumber)
           done()

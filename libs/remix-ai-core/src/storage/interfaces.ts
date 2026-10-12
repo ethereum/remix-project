@@ -18,10 +18,18 @@ export interface TodoItem {
   status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'stopped'
 }
 
+/** Payload for a generative UI component produced by the render_ui MCP tool */
+export interface GenerativeUIPayload {
+  tree: Record<string, any>
+  title?: string
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant' | 'editor_code_analysis'
   content: string
+  /** Compact text shown while a programmatic prompt is collapsed. */
+  displayContent?: string
   timestamp: number
   sentiment?: 'none' | 'like' | 'dislike'
   isExecutingTools?: boolean
@@ -44,6 +52,8 @@ export interface ChatMessage {
    * persistence — see `stripAttachmentPayloads`.
    */
   attachments?: ChatAttachment[]
+  /** Generative UI component tree rendered inline by the render_ui MCP tool */
+  uiComponent?: GenerativeUIPayload
 }
 
 /**

@@ -442,3 +442,198 @@
     max-width: 100%;
   }
 }
+
+/* ============================
+   Callout (type:'callout')
+   Coach mark anchored under a UI element, with an arrow pointing at it.
+   Position/width are set inline; --nc-arrow-left is the arrow's x offset.
+   ============================ */
+
+.nudge-callout {
+  --nc-bg: var(--custom-onsurface-layer-2, #1a1a2e);
+  --nc-border: var(--bs-border-color, rgba(255, 255, 255, 0.1));
+  position: fixed;
+  z-index: 9001;
+  padding: 0.625rem 0.75rem 0.5rem;
+  border-radius: 10px;
+  background: var(--nc-bg);
+  border: 1px solid var(--nc-border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  color: var(--bs-body-color, #e2e2e2);
+  animation: nudge-callout-in 0.2s ease-out;
+}
+
+/* Arrow: a rotated square sharing the callout's background and border */
+.nudge-callout::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: calc(var(--nc-arrow-left, 50%) - 5px);
+  width: 10px;
+  height: 10px;
+  background: var(--nc-bg);
+  border-left: 1px solid var(--nc-border);
+  border-top: 1px solid var(--nc-border);
+  transform: rotate(45deg);
+}
+
+@keyframes nudge-callout-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nudge-callout-close {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  padding: 0.125rem 0.375rem;
+  border: none;
+  background: none;
+  color: var(--bs-secondary-color, #a0a0b0);
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nudge-callout-close:hover {
+  color: var(--bs-body-color, #e2e2e2);
+}
+
+.nudge-callout-badge {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--custom-ai-color) 14%, transparent);
+  color: var(--custom-ai-color);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nudge-callout-title {
+  margin: 0 1.25rem 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nudge-callout-desc {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--bs-secondary-color, #a0a0b0);
+}
+
+.nudge-callout-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nudge-callout-secondary {
+  color: var(--bs-secondary-color, #a0a0b0);
+}
+
+.nudge-callout-secondary:hover {
+  color: var(--bs-body-color, #e2e2e2);
+}
+
+.nudge-callout-ai-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* ============================
+   AI mode "try me" animation
+   The topbar AI/Code switcher, until the user has entered AI mode once
+   (NudgePlugin._syncAiModeAttention marks the AI button). Every 3s: a light
+   in the AI color makes one turn around the switcher (same ring as the AI
+   mode prompt spotlight, remix-ai-assistant.css), then a white light sweeps
+   over the AI icon and label.
+   ============================ */
+
+@property --nudge-ai-ring-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Ring: a 1.5px band just inside the switcher's border (it clips overflow) */
+.ai-mode-toggle-group:has([data-nudge-attention])::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--nudge-ai-ring-angle),
+    transparent 0deg,
+    transparent 250deg,
+    color-mix(in srgb, var(--custom-ai-color) 60%, transparent) 320deg,
+    var(--custom-ai-color) 352deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 2;
+  animation: nudge-ai-ring 3s linear infinite;
+}
+
+/* 0-1s: one turn, then fade out and wait */
+@keyframes nudge-ai-ring {
+  0% { --nudge-ai-ring-angle: 0deg; opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1); }
+  33% { --nudge-ai-ring-angle: 360deg; opacity: 1; }
+  40% { --nudge-ai-ring-angle: 360deg; opacity: 0; }
+  99.9% { --nudge-ai-ring-angle: 360deg; opacity: 0; }
+  100% { --nudge-ai-ring-angle: 360deg; opacity: 1; }
+}
+
+/* Sweep: each of icon and label gets its own band (the button centers its
+   content, so there's no fixed offset for one shared gradient), timed so they
+   read as one pass */
+[data-nudge-attention] .ai-mode-btn-icon,
+[data-nudge-attention] .ai-mode-btn-label {
+  background-image: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.6) 42%, #fff 50%, rgba(255, 255, 255, 0.6) 58%, transparent 70%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}
+
+[data-nudge-attention] .ai-mode-btn-icon {
+  animation: nudge-ai-sweep-icon 3s ease-in-out infinite;
+}
+
+/* The label keeps its color (currentColor under the band), clipped to the text */
+[data-nudge-attention] .ai-mode-btn-label {
+  background-color: currentColor;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: nudge-ai-sweep-label 3s ease-in-out infinite;
+}
+
+/* Right after the ring. Position 100% → 0% moves the band left to right */
+@keyframes nudge-ai-sweep-icon {
+  0%, 33% { background-position: 100% 0; }
+  48%, 100% { background-position: 0% 0; }
+}
+
+@keyframes nudge-ai-sweep-label {
+  0%, 44% { background-position: 100% 0; }
+  61%, 100% { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-mode-toggle-group:has([data-nudge-attention])::before {
+    display: none;
+  }
+
+  [data-nudge-attention] .ai-mode-btn-icon,
+  [data-nudge-attention] .ai-mode-btn-label {
+    animation: none;
+  }
+}

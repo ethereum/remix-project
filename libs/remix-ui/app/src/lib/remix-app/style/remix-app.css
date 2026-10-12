@@ -55,34 +55,30 @@ pre {
   width              : 320px;
   transition         : width 0.25s;
 }
+/* Generic "maximize the right panel" fallback for any plugin other than the
+   AI assistant (which instead moves into the center panel — see
+   RightSidePanel.maximizePanel()). The panel takes the whole workspace and the
+   header spans it, but the plugin itself sits in a centered column: plugins are
+   laid out for a ~320px panel and stretching their forms full width reads badly. */
 .right-panel-maximized {
-  position           : absolute !important;
-  left               : 25% !important;
-  top                : 0;
-  bottom             : 0;
-  width              : 50% !important;
-  max-width          : 50%;
+  width              : 100% !important;
+  max-width          : 100%;
   margin             : 0 !important;
-  flex               : none;
-  z-index            : 100;
+  flex               : 1;
   border-left        : none !important;
   border-right       : none !important;
 }
-
-/* Reserve space for the fixed FloatingChatHistory panel so pinnedpanel
-   and right-panel-maximized don't tuck underneath it */
-.remixIDE.chat-history-open {
-  padding-right      : calc(22vw + 4rem);
+/* The scroller stays full width (scrollbar at the window edge); the column is inside it */
+#right-side-panel.right-panel-maximized .pluginsContainer .plugins {
+  max-width          : 900px;
+  width              : 100%;
+  margin             : 0 auto;
 }
-@media (max-width: 767px) {
-  .remixIDE.chat-history-open {
-    padding-right    : calc(86vw + 4rem);
-  }
-}
-@media (min-width: 1920px) {
-  .remixIDE.chat-history-open {
-    padding-right    : calc(18vw + 4rem);
-  }
+/* Header bar stays full width; its title and controls line up with the column
+   (!important beats the Bootstrap p-2 utility) */
+#right-side-panel.right-panel-maximized .swapitHeader {
+  padding-left       : calc(max(0px, (100% - 900px) / 2) + 0.5rem) !important;
+  padding-right      : calc(max(0px, (100% - 900px) / 2) + 0.5rem) !important;
 }
 .highlightcode       {
   position           : absolute;
