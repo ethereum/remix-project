@@ -53,7 +53,7 @@ export const transactionsReducer = (state: TransactionsWidgetState, action: Acti
     const value = txResult.tx?.value || '0'
 
     // Build the transaction record
-    const funAbi = payLoad.funAbi || { name: '', type: to ? 'function' : 'constructor', inputs: [] }
+    const funAbi = payLoad.funAbi || { name: '', type: to ? 'function' : 'constructor', inputs: []}
     const record: Partial<Transaction['record']> = {
       value,
       inputs: txHelper.serializeInputs(funAbi),

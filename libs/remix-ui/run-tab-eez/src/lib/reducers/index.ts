@@ -51,7 +51,7 @@ export const eezReducer = (state: EezWidgetState, action: Actions): EezWidgetSta
     return { ...state, isResolving: false, resolutionRows: action.payload, resolutionError: null }
 
   case 'RESOLVE_ERROR':
-    return { ...state, isResolving: false, resolutionError: action.payload, resolutionRows: [] }
+    return { ...state, isResolving: false, resolutionError: action.payload, resolutionRows: []}
 
   case 'SET_CREATOR_ORIGIN_NETWORK':
     return {

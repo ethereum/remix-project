@@ -384,21 +384,17 @@ export async function traceTransactionByHash(
   }
 
   const resolveHops = async (first: ResolvedProxyInfo, address: string): Promise<ResolvedProxyInfo[]> => {
-    const hops = [first]
     const seen = new Set([`${currentNetwork.rollupId}:${address}`.toLowerCase()])
-    let hop = first
-    while (true) {
+    const follow = async (hop: ResolvedProxyInfo): Promise<ResolvedProxyInfo[]> => {
       const key = `${hop.originalRollupId}:${hop.originalAddress}`.toLowerCase()
-      if (seen.has(key)) break
+      if (seen.has(key)) return [hop]
       seen.add(key)
       const network = networks.find((n) => String(n.rollupId) === hop.originalRollupId)
-      if (!network?.rpcUrl || !network.eezContractAddress) break
+      if (!network?.rpcUrl || !network.eezContractAddress) return [hop]
       const next = await lookupProxy(network, hop.originalAddress)
-      if (!next) break
-      hops.push(next)
-      hop = next
+      return next ? [hop, ...await follow(next)] : [hop]
     }
-    return hops
+    return follow(first)
   }
 
   try {
