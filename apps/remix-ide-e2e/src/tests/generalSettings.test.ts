@@ -43,7 +43,7 @@ module.exports = {
       .click('[data-id="settingsTabSavegithub-config"]')
       .pause(100)
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials updated')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Settings updated')
       .pause(3000)
   },
 

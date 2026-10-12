@@ -462,7 +462,7 @@ export function RemixUiSkillsExplorerModal(props: RemixUiSkillsExplorerModalProp
             {!hasAdvancedSkills ? (
               <CustomTooltip
                 placement="top"
-                tooltipText="Coming soon"
+                tooltipText="Available in the starter plan and above. Upgrade to access the upload feature."
                 tooltipClasses="text-nowrap"
                 tooltipId="skills-upload-disabled-tooltip"
               >
@@ -517,7 +517,7 @@ export function RemixUiSkillsExplorerModal(props: RemixUiSkillsExplorerModalProp
                     <>
                       <div className="category-title">Available Skills ({filteredSkills.length})</div>
                       <div className="category-description mb-4">
-                        Select one or more Ethereum development skills to add to your workspace
+                        Select one or more Ethereum development skills to add to your workspace. Once it is added, RemixAI will automatically apply it when a task matches — or mention its name in your prompt.
                       </div>
                       {!hasAdvancedSkills && (
                         <div onClick={() => plugin.call('planManager', 'open', { reason: 'feature-required', requiredFeature: Features.SKILLS_ADVANCED }) } className="alert alert-info mb-3" role="alert" style={{ cursor: 'pointer' }}>

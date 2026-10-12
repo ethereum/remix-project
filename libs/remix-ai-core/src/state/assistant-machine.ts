@@ -21,6 +21,7 @@ import { setup, createActor, type AnyActorRef } from 'xstate'
 import type { PermissionsResponse } from '@remix-api'
 import { Features } from '@remix-api'
 import { ANONYMOUS_FALLBACK_MODELS, parseAIModelsFromPermissions, curateOpenRouterBrandedModels, isOpenRouterRouted, type AIModel } from '../types/models'
+import { isInsufficientCreditsError } from './ai-error'
 
 // ─── Public types ───────────────────────────────────────────────────
 
@@ -824,7 +825,7 @@ export function selectChatNotice(snap: AssistantSnapshot): ChatNotice | null {
   if (GATE_OWNED_CODES.has(err.code) && snap.gateReason) return null
   if (err.code === 'FEATURE_DENIED' && snap.gateReason === 'feature-required') return null
 
-  switch (err.code) {
+  switch (isInsufficientCreditsError(err) ? 'INSUFFICIENT_CREDITS' : err.code) {
   case 'PROVIDER_DENIED': {
     const d = (err.details ?? {}) as Record<string, any>
     const allowed: string[] = d.allowedProviders ?? d.allowed_providers ?? []

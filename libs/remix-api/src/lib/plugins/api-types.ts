@@ -516,6 +516,27 @@ export interface VerifyEmailVerificationResponse {
   email: string
 }
 
+/**
+ * Request body for POST /sso/me/locale — the billing region detected
+ * client-side. Currently resolved from Paddle's IP geo-location during a
+ * price preview, so it matches the region the user is actually charged in.
+ */
+export interface UserLocaleRequest {
+  /** ISO-3166 alpha-2, uppercase (e.g. 'NG'). */
+  country_code: string
+  /** ISO-4217 currency Paddle would charge in (e.g. 'NGN'). */
+  currency_code?: string
+  /** How the country was detected, e.g. 'paddle_price_preview'. */
+  source?: string
+}
+
+/** Response from POST /sso/me/locale. */
+export interface UserLocaleResponse {
+  success: boolean
+  country_code?: string
+  currency_code?: string
+}
+
 export interface FeatureCheckRequest {
   feature: string
 }

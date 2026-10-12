@@ -101,8 +101,8 @@ const tests = {
       .clickWorkspaceDropdown()
       .click('*[data-id="workspacecreate"]')
       // .clickWorkspaceDropdown()
-      .waitForElementVisible('*[data-id="template-card-simpleEip7702-2"]')
-      .click('*[data-id="template-card-simpleEip7702-2"]')
+      .waitForElementPresent('*[data-id="template-card-simpleEip7702-3"]', 30000)
+      .scrollAndClick('*[data-id="template-card-simpleEip7702-3"]')
       .click('*[data-id="validate-simpleEip7702workspace-button"]')
       // .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Example7702.sol"]')
       .waitForElementVisible({

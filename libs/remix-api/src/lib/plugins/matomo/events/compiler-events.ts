@@ -37,7 +37,10 @@ export interface CompilerContainerEvent extends MatomoEventBase {
     | 'evmVersionSelection'
     | 'addCustomCompiler'
     | 'viewLicense'
-    | 'advancedConfigToggle';
+    | 'advancedConfigToggle'
+    | 'loadAISkills'
+    | 'startAIAudit'
+    | 'startGasAudit';
 }
 
 

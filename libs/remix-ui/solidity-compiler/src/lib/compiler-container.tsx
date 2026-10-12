@@ -10,9 +10,9 @@ import { listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
-import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
+import { appPlatformTypes, platformContext, onLineContext, AppContext, appActionTypes, useAuth } from '@remix-ui/app'
 import { TrackingContext } from '@remix-ide/tracking'
-import { CompilerEvent, CompilerContainerEvent } from '@remix-api'
+import { CompilerEvent, CompilerContainerEvent, Features } from '@remix-api'
 import * as packageJson from '../../../../../package.json'
 
 import './css/style.css'
@@ -73,6 +73,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [hhCompilation, sethhCompilation] = useState(false)
   const [truffleCompilation, setTruffleCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
+  const { appStateDispatch } = useContext(AppContext)
+  const { features } = useAuth()
+  const hasSkillsPermission = features[Features.AI_SKILLS]?.is_enabled === true
 
   useEffect(() => {
     sethhCompilation(false)
@@ -472,6 +475,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
+  const startAudit = async (auditType: 'security' | 'gas') => {
+    const fileName = state.compiledFileName
+    const fileRef = fileName ? ` File to analyze: ${fileName}.` : ''
+    const prompt = auditType === 'security'
+      ? `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks. At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.`
+      : `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.`
+    trackMatomoEvent({ category: 'compilerContainer', action: auditType === 'security' ? 'startAIAudit' : 'startGasAudit', name: '', isClick: true })
+    await (api as any).call('manager', 'activatePlugin', 'remixaiassistant')
+    await (api as any).call('menuicons', 'select', 'remixaiassistant')
+    await (api as any).call('remixaiassistant', 'newConversation')
+    setTimeout(async () => {
+      await (api as any).call('remixaiassistant', 'chatPipe', prompt, false, { displayText: 'audit ' + auditType + ' ' + fileRef, source: 'compiler', presetId: auditType === 'security' ? 'security-audit' : 'gas-audit' })
+    }, 500)
+  }
+
   const compileAndRun = () => {
     const currentFile = api.currentFile
 
@@ -777,6 +795,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     handleLanguageChange(settings.language)
     handleOptimizeChange(settings.optimize)
     onChangeRuns(settings.runs)
+  }
+
+  const loadAISkills = () => {
+    if (!hasSkillsPermission) {
+      ;(api as any).call('planManager', 'open', { reason: 'feature-required', requiredFeature: Features.SKILLS_BASIC })
+    } else {
+      trackMatomoEvent({ category: 'compilerContainer', action: 'loadAISkills', name: '', isClick: true })
+      appStateDispatch({ type: appActionTypes.showSkillsModal, payload: true })
+    }
   }
 
   const toggleConfigurations = () => {
@@ -1158,6 +1185,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </RenderIf>
         </div>
         <div className="px-4">
+          <CustomTooltip
+            placement="auto"
+            tooltipId="overlay-tooltip-load-ai-skills"
+            tooltipText="Use web3/solidity skills and RemixAI to help you build your project"
+          >
+            <button
+              data-id="compilerContainerLoadAISkillsBtn"
+              className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
+              onClick={loadAISkills}
+            >
+              Load AI Skills
+            </button>
+          </CustomTooltip>
           <button
             id="compileBtn"
             data-id="compilerContainerCompileBtn"
@@ -1198,6 +1238,36 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </div>
             </CustomTooltip>
           </button>
+          <div className="d-flex gap-1 mb-1 mt-3">
+            <CustomTooltip
+              placement="auto"
+              tooltipId="overlay-tooltip-ai-audit"
+              tooltipText="AI-powered security audit: scans your contract for vulnerabilities and security risks"
+            >
+              <button
+                data-id="compilerContainerStartAIAuditBtn"
+                className="btn btn-ai btn-block d-block w-100 text-break text-nowrap"
+                onClick={() => startAudit('security')}
+              >
+                <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="security-audit-icon me-1" />
+                Security Audit
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement="auto"
+              tooltipId="overlay-tooltip-gas-audit"
+              tooltipText="AI-powered gas audit: analyzes your contract for gas inefficiencies and optimization opportunities"
+            >
+              <button
+                data-id="compilerContainerStartGasAuditBtn"
+                className="btn btn-ai btn-block d-block w-100 text-break text-nowrap"
+                onClick={() => startAudit('gas')}
+              >
+                <img src="assets/img/remixAI_small.svg" alt="Remix AI" className="gas-audit-icon me-1" />
+                Gas Audit
+              </button>
+            </CustomTooltip>
+          </div>
           <div className="d-flex align-items-center">
             <button
               id="compileAndRunBtn"

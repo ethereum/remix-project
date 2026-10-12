@@ -544,6 +544,11 @@ export default class Editor extends Plugin {
   async showCustomDiff (file, content) {
     const source = this.getText(file) || ''
     try {
+      const openedfiles = await this.call('fileManager', 'getOpenedFiles')
+      if (!openedfiles || !openedfiles[file]) {
+        await this.call('fileManager', 'openFile', file)
+        await new Promise(resolve => setTimeout(resolve, 500)) // wait for file to be opened and content to be loaded in the file manager
+      }
       await this.openDiff({
         hashOriginal: this._simpleHash(source),
         hashModified: this._simpleHash(content),
@@ -784,12 +789,8 @@ export default class Editor extends Plugin {
     this._switchSession(path)
   }
 
+  // Called directly by fileManager.diff while its queue is busy: must not call back into fileManager.
   async openDiff(change) {
-    const openedfiles = await this.call('fileManager', 'getOpenedFiles')
-    if (!openedfiles[change.path] || !openedfiles) {
-      await this.call('fileManager', 'openFile', change.path)
-      await new Promise(resolve => setTimeout(resolve, 500)) // wait for file to be opened and content to be loaded in the file manager
-    }
     const hashedPathModified = change.readonly ? change.path + change.hashModified : change.path
     const hashedPathOriginal = change.path + change.hashOriginal
     const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)

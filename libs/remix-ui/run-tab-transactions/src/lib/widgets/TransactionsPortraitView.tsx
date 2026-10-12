@@ -155,7 +155,7 @@ function TransactionsPortraitView() {
       <div className="d-flex align-items-center justify-content-between px-3 py-1" data-id="transaction-recorder-header">
         <div className='d-flex align-items-center gap-2'>
           <h6 className="my-auto text-theme-contrast" style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'var(--bs-emphasis-color)' }}>
-            <FormattedMessage id="udapp.transactionRecorderTitle" defaultMessage="Transactions recorder" /> <span className="text-secondary small">{widgetState.recorderData.journal.length}</span>
+            <FormattedMessage id="udapp.transactionRecorderTitle" defaultMessage="Transaction Recorder" /> <span className="text-secondary small">{widgetState.recorderData.journal.length}</span>
           </h6>
         </div>
         <div className='d-flex align-items-center gap-2'>

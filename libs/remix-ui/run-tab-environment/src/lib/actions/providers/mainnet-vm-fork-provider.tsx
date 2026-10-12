@@ -19,7 +19,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
     )
     this.blockchain = blockchain
     this.fork = 'osaka'
-    this.nodeUrl = 'https://go.getblock.us/1552e4e35bcf4efe8a78897cba5557f9'
+    this.nodeUrl = 'https://shared.us-east-1.getblock.io/310dd70ae0fc41b780947c688b67c46d'
     this.blockNumber = 'latest'
   }
 

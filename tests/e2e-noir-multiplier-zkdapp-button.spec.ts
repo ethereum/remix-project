@@ -86,6 +86,12 @@ test.describe.serial('Noir multiplier: proof generation and zk dapp button flows
     }
   })
 
+  test.afterEach(async ({}, testInfo) => {
+    if (testInfo.status !== testInfo.expectedStatus) {
+      await page.screenshot({ path: `test-results/${testInfo.title.replace(/[^\w]/g, '_')}.png`, fullPage: true })
+    }
+  })
+
   test.afterAll(async () => {
     await page.close()
   })

@@ -153,46 +153,6 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
     }, 'Run Remix Analysis')
   }
 
-  const handleScanContinue = async () => {
-    await compileThen(async () => {
-      const firstSlashIndex = compiledFileName.indexOf('/')
-      const finalPath = firstSlashIndex > 0 ? compiledFileName.substring(firstSlashIndex + 1) : compiledFileName
-      await handleSolidityScan(plugin, finalPath)
-    }, 'Run Solidity Scan')
-  }
-
-  const runSolidityScan = async () => {
-    trackMatomoEvent?.({
-      category: 'solidityCompiler',
-      action: 'solidityScan',
-      name: 'askPermissionToScan',
-      isClick: true
-    })
-    const modal: AppModal = {
-      id: 'SolidityScanPermissionHandler',
-      title: <FormattedMessage id="solidity.solScan.modalTitle" />,
-      message: <div className='d-flex flex-column'>
-        <span><FormattedMessage id="solidity.solScan.modalMessage" />
-          <a href={'https://solidityscan.com/?utm_campaign=remix&utm_source=remix'}
-            target="_blank"
-            onClick={() => trackMatomoEvent?.({
-              category: 'solidityCompiler',
-              action: 'solidityScan',
-              name: 'learnMore',
-              isClick: true
-            })}>
-              Learn more
-          </a>
-        </span><br/>
-        <FormattedMessage id="solidity.solScan.likeToContinue" />
-      </div>,
-      okLabel: <FormattedMessage id="solidity.solScan.modalOkLabel" />,
-      okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />
-    }
-    await plugin.call('notification', 'modal', modal)
-  }
-
   const openConfiguration = async () => {
     trackMatomoEvent?.({
       category: 'solidityCompiler',
@@ -224,7 +184,6 @@ export const CompileDropdown: React.FC<CompileDropdownProps> = ({ tabPath, plugi
       dataId: 'compile-run-analysis-menu-item',
       submenu: [
         { label: 'Run Remix Analysis', icon: <SettingsLogo />, onClick: runRemixAnalysis, dataId: 'run-remix-analysis-submenu-item' },
-        { label: 'Run Solidity Scan', icon: <SolidityScanLogo />, onClick: runSolidityScan, dataId: 'run-solidity-scan-submenu-item' }
       ]
     },
     {

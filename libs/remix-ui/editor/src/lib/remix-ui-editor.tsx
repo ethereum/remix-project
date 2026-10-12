@@ -36,6 +36,11 @@ import { GenerationParams } from '@remix/remix-ai-core';
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 import { RemixTSCompletionProvider } from './providers/tsCompletionProvider'
 import { TooltipPopOver, openContextualTooltip } from './tooltipPopOver'
+import { FloatingActionButton } from './FloatingActionButton'
+import { QuickDappContractSelector, QuickDappSetupOptions, QuickDappFigmaPreparationResult } from '@remix-ui/quick-dapp-v2'
+import { DeployedContract } from '@remix-ui/run-tab-deployed-contracts'
+import { isQuickDappRemixVMIdentifier, normalizeQuickDappEnvironment } from '@remix-ui/helper'
+import isElectron from 'is-electron'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -241,6 +246,14 @@ export const EditorUI = (props: EditorUIProps) => {
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastHoverPositionRef = useRef<monacoTypes.IPosition | null>(null)
   const [tooltipData, setTooltipData] = useState<{keyword: string, position: {x: number, y: number}, contextLines?: string, isSelectedText?: boolean} | null>(null)
+  const [quickDappStartSetup, setQuickDappStartSetup] = useState<{
+    contracts: DeployedContract[]
+    primaryContract: DeployedContract
+    matchingContractAddresses: string[]
+    environmentId: string
+    fixedFrontendMode?: 'inline' | 'workspace'
+    sourceFileName: string
+  } | null>(null)
 
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
@@ -1518,6 +1531,329 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  const handleEditWithAI = async () => {
+    try {
+      const currentFile = props.currentFile
+      if (!currentFile) {
+        await props.plugin.call('notification', 'toast', 'No file selected to edit.')
+        return
+      }
+
+      // Show right side panel if it's hidden
+      const isPanelHidden = await props.plugin.call('rightSidePanel', 'isPanelHidden')
+      if (isPanelHidden) {
+        await props.plugin.call('rightSidePanel', 'togglePanel')
+      }
+
+      // Select the AI assistant
+      await props.plugin.call('menuicons', 'select', 'remixaiassistant')
+
+      // Start a new conversation
+      await (props.plugin as any).call('remixaiassistant', 'newConversation')
+
+      // Wait for the panel to be ready, then send the edit prompt
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      await (props.plugin as any).call('remixaiassistant', 'chatPipe',`Help me to edit the file: ${currentFile}`, false, { source: 'fab-button', presetId: 'edit-file' })
+
+      trackMatomoEvent<AIEvent>({ category: 'ai', action: 'remixAI', name: 'edit_with_ai', isClick: true })
+    } catch (error) {
+      console.error('Error triggering AI edit:', error)
+    }
+  }
+
+  const handleExplainContract = async () => {
+    try {
+      // Match bottom-bar.tsx implementation
+      const currentFile = props.currentFile
+      if (!currentFile) {
+        await props.plugin.call('notification', 'toast', 'No file selected to explain.')
+        return
+      }
+
+      // Show right side panel if it's hidden
+      const isPanelHidden = await props.plugin.call('rightSidePanel', 'isPanelHidden')
+      if (isPanelHidden) {
+        await props.plugin.call('rightSidePanel', 'togglePanel')
+      }
+
+      await props.plugin.call('menuicons', 'select', 'remixaiassistant')
+
+      // Start a new conversation
+      await (props.plugin as any).call('remixaiassistant', 'newConversation')
+
+      // Wait for the panel to be ready, then send the explain prompt
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      const content = await props.plugin.call('fileManager', 'readFile', currentFile)
+      await (props.plugin as any).call('remixAI', 'chatPipe', 'code_explaining', `File: ${currentFile}\n\n${content}\n\nExplain briefly the snippet above!`, undefined, `Explain the code of ${currentFile}`, { source: 'fab-button', presetId: 'explain-contract' })
+      trackMatomoEvent<AIEvent>({ category: 'ai', action: 'remixAI', name: 'explain_contract', isClick: true })
+    } catch (error) {
+      console.error('Error triggering contract explanation:', error)
+    }
+  }
+
+  const getCurrentQuickDappEnvironment = async (plugin): Promise<string> => {
+    const providerObject = await plugin.call('blockchain', 'getProviderObject')
+    const providerName = providerObject?.name || ''
+    if (isQuickDappRemixVMIdentifier(providerName)) {
+      return normalizeQuickDappEnvironment(providerName)
+    }
+    const network = await plugin.call('network', 'detectNetwork')
+    return network?.id?.toString() || 'unknown'
+  }
+
+  const handleCreateDapp = async () => {
+    try {
+      const currentFile = props.currentFile
+      const currentFileName = currentFile?.split('/').pop() || ''
+
+      // Check for dapp workspace restrictions (from tabs implementation)
+      let sourceIsDappWorkspace = false
+      try {
+        const currentWs = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+        sourceIsDappWorkspace = currentWs?.name?.startsWith('dapp-') === true
+        if (sourceIsDappWorkspace && isElectron()) {
+          props.plugin.call('notification', 'toast',
+            'Creating another DApp from a DApp workspace is not supported in Remix Desktop because generation is inline-only.'
+          )
+          return
+        }
+        if (sourceIsDappWorkspace) {
+          const providerObject = await props.plugin.call('blockchain', 'getProviderObject')
+          if (isQuickDappRemixVMIdentifier(providerObject?.name)) {
+            await props.plugin.call('notification', 'toast',
+              'Switch to a non-Remix VM network to create a new DApp workspace from an existing DApp workspace.'
+            )
+            return
+          }
+        }
+      } catch (e) { /* proceed if check fails */ }
+
+      const isDesktop = isElectron()
+      let instances: DeployedContract[] = []
+      try {
+        const deployed = await props.plugin.call('udappDeployedContracts', 'getDeployedContracts') || []
+        instances = deployed.filter((contract: DeployedContract) => contract?.address && contract?.name)
+      } catch (e) {
+        console.warn('[QuickDapp] Could not fetch deployed contracts:', e)
+        props.plugin.call('notification', 'toast', 'Could not check deployed contracts. Please try again.')
+        return
+      }
+
+      if (instances.length === 0) {
+        let environmentName = 'Current environment'
+        try {
+          const providerObject = await props.plugin.call('blockchain', 'getProviderObject')
+          const providerName = providerObject?.name || ''
+          if (providerName.startsWith('vm')) {
+            environmentName = 'Remix VM'
+          } else {
+            const network = await props.plugin.call('network', 'detectNetwork')
+            environmentName = network?.name || providerName || environmentName
+          }
+        } catch (_) { /* keep fallback */ }
+        await props.plugin.call('notification', 'toast', `No deployed contracts found in ${environmentName}. Please deploy a contract first.`)
+        return
+      }
+
+      let environmentId: string
+      try {
+        environmentId = await getCurrentQuickDappEnvironment(props.plugin)
+      } catch (_) {
+        props.plugin.call('notification', 'toast', 'Could not confirm the current network. Please try again.')
+        return
+      }
+
+      let matchingInstances: DeployedContract[] = []
+      if (currentFileName && instances.length > 0) {
+        matchingInstances = instances.filter((inst) => {
+          const instFile = inst.contractData?.contract?.file || inst.filePath || ''
+          return instFile && instFile.endsWith(currentFileName)
+        })
+        if (matchingInstances.length === 0) {
+          const baseName = currentFileName.replace('.sol', '')
+          matchingInstances = instances.filter((inst) =>
+            baseName.toLowerCase().includes(inst.name?.toLowerCase())
+          )
+        }
+      }
+
+      const primaryContract = matchingInstances[0] || instances[0]
+      setQuickDappStartSetup({
+        contracts: instances,
+        primaryContract,
+        matchingContractAddresses: matchingInstances.map((contract) => contract.address.toLowerCase()),
+        environmentId,
+        fixedFrontendMode: isDesktop ? 'inline' : sourceIsDappWorkspace ? 'workspace' : undefined,
+        sourceFileName: currentFileName
+      })
+
+      trackMatomoEvent<AIEvent>({ category: 'ai', action: 'remixAI', name: 'create_dapp', isClick: true })
+    } catch (error) {
+      console.error('Error triggering Dapp creation:', error)
+      await props.plugin.call('notification', 'toast', 'Could not start DApp creation. Please try again.')
+    }
+  }
+
+  const validateQuickDappStartEnvironment = async (): Promise<string | undefined> => {
+    if (!quickDappStartSetup) return 'QuickDapp setup is no longer available. Reopen it and try again.'
+    try {
+      const currentEnvironment = await getCurrentQuickDappEnvironment(props.plugin)
+      if (currentEnvironment !== quickDappStartSetup.environmentId) {
+        return 'The network changed while QuickDapp setup was open. Switch back or reopen the setup.'
+      }
+    } catch (_) {
+      return 'Could not confirm the current network. Please try again.'
+    }
+  }
+
+  const handleQuickDappStartConfirm = async (options: QuickDappSetupOptions) => {
+    const setup = quickDappStartSetup
+    if (!setup) return
+
+    try {
+      const currentEnvironment = await getCurrentQuickDappEnvironment(props.plugin)
+      if (currentEnvironment !== setup.environmentId) {
+        props.plugin.call('notification', 'toast', 'The network changed while QuickDapp setup was open. Switch back or reopen the setup.')
+        return
+      }
+
+      setQuickDappStartSetup(null)
+      const providerObject = await props.plugin.call('blockchain', 'getProviderObject')
+      const providerName = providerObject?.name || 'vm-unknown'
+      const chainId = setup.environmentId
+      let networkName = providerName
+      if (!providerName.startsWith('vm')) {
+        const network = await props.plugin.call('network', 'detectNetwork')
+        networkName = network?.name || providerName
+      }
+
+      const frontendMode = setup.fixedFrontendMode || options.frontendMode
+      const primary = options.primaryContract
+      const additionalContracts = options.additionalContracts
+      const design = options.design || (options.figmaContextId ? 'Match the validated Figma design' : 'Modern dark mode single-page DApp using React and Ethers.js')
+      const designSummary = options.figmaContextId ? `Figma: ${options.figmaUrl}` : options.design || 'defaults'
+      const setupOptionsSummary = [
+        `Location: ${frontendMode === 'inline' ? 'Inline' : 'Workspace'}`,
+        `Base mini-app: ${options.isBaseMiniApp ? 'Yes' : 'No'}`,
+        `Design: ${designSummary}`,
+        `Subgraph: ${options.subgraphFilePath || 'None'}`
+      ].join(', ')
+
+      const prompt = `I want to create a DApp frontend. The user confirmed all setup options in the QuickDapp UI. Do not ask the setup question again and do not change the confirmed values.
+
+Confirmed contracts:
+- Main: ${primary.name} at ${primary.address}
+- Additional: ${additionalContracts.length > 0 ? additionalContracts.map((contract) => `${contract.name} at ${contract.address}`).join(', ') : 'None'}
+
+Call generate_dapp now with:
+- description: ${JSON.stringify(design)}
+- contractName: ${JSON.stringify(primary.name)}
+- contractAddress: ${JSON.stringify(primary.address)}
+- chainId: ${JSON.stringify(chainId)}
+- additionalContracts: ${additionalContracts.length > 0 ? JSON.stringify(additionalContracts.map((contract) => ({ contractName: contract.name, contractAddress: contract.address }))) : 'omit this field'}
+- frontendMode: ${JSON.stringify(frontendMode)}
+- isBaseMiniApp: ${options.isBaseMiniApp}
+- figmaUrl: ${options.figmaUrl ? JSON.stringify(options.figmaUrl) : 'omit this field'}
+- figmaContextId: ${options.figmaContextId ? JSON.stringify(options.figmaContextId) : 'omit this field'}
+- subgraphFilePath: ${options.subgraphFilePath ? JSON.stringify(options.subgraphFilePath) : 'omit this field'}
+- setupOptionsConfirmed: true
+- setupOptionsSummary: ${JSON.stringify(setupOptionsSummary)}
+
+For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
+
+      try {
+        await props.plugin.call('manager', 'activatePlugin', 'remix-ai-assistant')
+      } catch (_) { /* may already be active */ }
+      try {
+        await props.plugin.call('rightSidePanel', 'focusPanel')
+      } catch (_) { /* best-effort */ }
+      await (props.plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, {
+        source: 'editor-fab',
+        presetId: 'quickdapp-start',
+        displayText: `Create a DApp\n${primary.name} · ${networkName} · ${frontendMode === 'inline' ? 'Inline' : 'New workspace'}`
+      })
+    } catch (error: any) {
+      console.error('[QuickDapp] Could not start DApp generation:', error)
+      props.plugin.call('notification', 'toast', 'Could not start DApp generation. Please try again.')
+    }
+  }
+
+  const handleSecurityAudit = async () => {
+    try {
+      const currentFile = props.currentFile
+      if (!currentFile) {
+        await props.plugin.call('notification', 'toast', 'No file selected for security audit.')
+        return
+      }
+
+      // Show right side panel if it's hidden
+      const isPanelHidden = await props.plugin.call('rightSidePanel', 'isPanelHidden')
+      if (isPanelHidden) {
+        await props.plugin.call('rightSidePanel', 'togglePanel')
+      }
+
+      // Select the AI assistant
+      await props.plugin.call('menuicons', 'select', 'remixaiassistant')
+
+      // Start a new conversation
+      await (props.plugin as any).call('remixaiassistant', 'newConversation')
+
+      // Wait for the panel to be ready, then send the security audit prompt
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      const fileRef = currentFile
+      const prompt = `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks. At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.`
+
+      await (props.plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, {
+        displayText: 'audit security ' + fileRef,
+        source: 'fab-button',
+        presetId: 'security-audit'
+      })
+
+      trackMatomoEvent<AIEvent>({ category: 'ai', action: 'remixAI', name: 'security_audit', isClick: true })
+    } catch (error) {
+      console.error('Error triggering security audit:', error)
+    }
+  }
+
+  const handleGasAudit = async () => {
+    try {
+      const currentFile = props.currentFile
+      if (!currentFile) {
+        await props.plugin.call('notification', 'toast', 'No file selected for gas audit.')
+        return
+      }
+
+      // Show right side panel if it's hidden
+      const isPanelHidden = await props.plugin.call('rightSidePanel', 'isPanelHidden')
+      if (isPanelHidden) {
+        await props.plugin.call('rightSidePanel', 'togglePanel')
+      }
+
+      // Select the AI assistant
+      await props.plugin.call('menuicons', 'select', 'remixaiassistant')
+
+      // Start a new conversation
+      await (props.plugin as any).call('remixaiassistant', 'newConversation')
+
+      // Wait for the panel to be ready, then send the gas audit prompt
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      const fileRef = currentFile
+      const prompt = `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.`
+
+      await (props.plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, {
+        displayText: 'audit gas ' + fileRef,
+        source: 'fab-button',
+        presetId: 'gas-audit'
+      })
+
+      trackMatomoEvent<AIEvent>({ category: 'ai', action: 'remixAI', name: 'gas_audit', isClick: true })
+    } catch (error) {
+      console.error('Error triggering gas audit:', error)
+    }
+  }
+
   function handleEditorWillMount(monaco) {
 
     monacoRef.current = monaco
@@ -1920,7 +2256,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   return (
-    <div className="w-100 h-100 d-flex flex-column-reverse">
+    <div className="w-100 h-100 d-flex flex-column-reverse position-relative">
       {props.isDiff && (
         <>
           {/* Action Buttons */}
@@ -2080,6 +2416,39 @@ export const EditorUI = (props: EditorUIProps) => {
           plugin={props.plugin}
           contextLines={tooltipData.contextLines}
           isSelectedText={tooltipData.isSelectedText}
+        />
+      )}
+
+      {/* Floating Action Button for AI Tools */}
+      {!props.isDiff && props.currentFile && (
+        <FloatingActionButton
+          onEditWithAI={handleEditWithAI}
+          onExplainContract={handleExplainContract}
+          onCreateDapp={handleCreateDapp}
+          onSecurityAudit={handleSecurityAudit}
+          onGasAudit={handleGasAudit}
+          currentFileExt={props.currentFile?.split('.').pop()?.toLowerCase()}
+          trackEvent={trackMatomoEvent}
+        />
+      )}
+
+      {/* QuickDapp Contract Selector Modal */}
+      {quickDappStartSetup && (
+        <QuickDappContractSelector
+          show
+          primaryContract={quickDappStartSetup.primaryContract}
+          deployedContracts={quickDappStartSetup.contracts}
+          primarySelectable
+          matchingContractAddresses={quickDappStartSetup.matchingContractAddresses}
+          sourceFileName={quickDappStartSetup.sourceFileName}
+          fixedFrontendMode={quickDappStartSetup.fixedFrontendMode}
+          onCancel={() => setQuickDappStartSetup(null)}
+          onPrepareFigma={async (figmaUrl: string, figmaToken: string): Promise<QuickDappFigmaPreparationResult> => {
+            const validationError = await validateQuickDappStartEnvironment()
+            if (validationError) return { success: false, message: validationError }
+            return await (props.plugin as any).call('quick-dapp-v2', 'prepareFigmaDesign', figmaUrl, figmaToken) as QuickDappFigmaPreparationResult
+          }}
+          onConfirm={handleQuickDappStartConfirm}
         />
       )}
     </div>

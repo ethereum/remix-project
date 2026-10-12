@@ -84,11 +84,11 @@ function UdappBody() {
             Deploy
           </button>
           <button data-id="udappDeployedContractsTab" role="tab" aria-selected={tab === 'contracts'} className={`udapp-tab${tab === 'contracts' ? ' active' : ''}`} onClick={() => switchTab('contracts')}>
-            Deployed contracts
+            Deployed Contracts
             {deployedCount > 0 && <span className="udapp-tab-badge">{deployedCount}</span>}
           </button>
           <button data-id="udappTransactionsHistoryTab" role="tab" aria-selected={tab === 'history'} className={`udapp-tab${tab === 'history' ? ' active' : ''}`} onClick={() => switchTab('history')}>
-            Transactions history
+            Transaction History
             {txCount > 0 && <span className="udapp-tab-badge">{txCount}</span>}
           </button>
           {isEezEnabled() && (

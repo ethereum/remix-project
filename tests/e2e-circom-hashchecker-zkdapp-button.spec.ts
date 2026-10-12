@@ -31,7 +31,7 @@ test.describe.serial('Circom hashchecker: trusted setup, zk dapp button, and zkV
       await page.locator('[data-id="login-button"]').click()
       await page.locator('[data-id="loginModalE2EPoolButton"]').click()
       await expect(page.locator('[data-id="user-menu-compact"]').first()).toBeVisible({ timeout: 30_000 })
-      await page.locator('[data-id="verticalIconsKindremixaiassistant"]').click()
+      // await page.locator('[data-id="verticalIconsKindremixaiassistant"]').click()
       await page.locator('[data-id="ai-model-selector-btn"]').click()
       await page.locator('[data-id="ai-model-search"]').fill('haiku')
       await page.locator('[data-id^="ai-model-"][data-locked="false"]').first().click()
@@ -44,7 +44,7 @@ test.describe.serial('Circom hashchecker: trusted setup, zk dapp button, and zkV
       await page.locator('[data-id="zkverify-configSwitch"]').click()
       await page.locator('[data-id="settingsTabzkverify-api-key"]').fill('zk-verify-api-key')
       await page.locator('[data-id="settingsTabSavezkverify-config"]').click()
-      await expect(page.locator('[data-shared="tooltipPopup"]')).toContainText('Credentials updated', { timeout: 10_000 })
+      await expect(page.locator('[data-shared="tooltipPopup"]')).toContainText('Settings updated', { timeout: 10_000 })
 
       poolSessionId = await page.evaluate(() => {
         try {
@@ -96,6 +96,12 @@ test.describe.serial('Circom hashchecker: trusted setup, zk dapp button, and zkV
     }
 
     await expect(circuitFrame.locator('[data-id="setup_exports_toggler"]')).toBeVisible({ timeout: 30_000 })
+  })
+
+  test.afterEach(async ({}, testInfo) => {
+    if (testInfo.status !== testInfo.expectedStatus) {
+      await page.screenshot({ path: `test-results/${testInfo.title.replace(/[^\w]/g, '_')}.png`, fullPage: true })
+    }
   })
 
   test.afterAll(async () => {

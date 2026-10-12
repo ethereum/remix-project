@@ -101,6 +101,7 @@
   "settings.noMatchFound": "No match found",
   "settings.credentialsRemoved": "Credentials removed",
   "settings.credentialsUpdated": "Credentials updated",
+  "settings.settingsUpdated": "Settings updated",
   "settings.loading": "Loading...",
   "settings.notLoggedIn": "Not logged in. Please log in with Google, GitHub, Discord, or wallet to manage accounts.",
   "settings.deepAgentApiKeysSection": "Bring Your Own API Keys",

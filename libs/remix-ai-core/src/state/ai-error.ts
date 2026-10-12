@@ -150,3 +150,14 @@ export function aiErrorFromException(e: unknown): AIError {
     status
   }
 }
+
+const CREDIT_ERROR_CODES = new Set(['INSUFFICIENT_CREDITS', 'CREDITS_EXHAUSTED', 'PAYMENT_REQUIRED'])
+// Some transports (langchain / SSE frames) drop the code and keep only the message.
+const CREDIT_ERROR_MESSAGE = /credit balance is too low|insufficient (ai )?credits|not enough (ai )?credits|out of (ai )?credits/i
+
+/** True when the request was refused because the user has no AI credits left. */
+export function isInsufficientCreditsError(err: AIError | null | undefined): boolean {
+  if (!err) return false
+  if (CREDIT_ERROR_CODES.has(err.code) || err.status === 402) return true
+  return CREDIT_ERROR_MESSAGE.test(err.message ?? '')
+}

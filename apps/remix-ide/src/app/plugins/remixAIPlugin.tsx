@@ -7,7 +7,7 @@ import { MCPInferencer, DeepAgentInferencer, onApiKeysChange, DeepAgentErrorType
 import { IMCPServer, IMCPConnectionStatus } from '@remix/remix-ai-core';
 import { RemixMCPServer, createRemixMCPServer } from '@remix/remix-ai-core';
 import { AIModel, isBedrockModel, BEDROCK_API_KEY_SETTING } from '@remix/remix-ai-core';
-import { aiErrorFromException, parseAIErrorEnvelope } from '@remix/remix-ai-core';
+import { aiErrorFromException, parseAIErrorEnvelope, isInsufficientCreditsError, type AIError } from '@remix/remix-ai-core';
 import { buildAuditMatchSchema, buildAuditMatchPrompt, filterAuditMatches, parseLooseJson, AUDIT_CATEGORY_MATCH_PROMPT } from '@remix/remix-ai-core';
 import type { AuditMatchRequest, AuditMatchResult } from '@remix/remix-ai-core';
 import axios from 'axios';
@@ -649,6 +649,8 @@ export class RemixAIPlugin extends Plugin {
         ? parseAIErrorEnvelope(responseBody, status)
         : aiErrorFromException(e)
       try { await this.call('assistantState' as any, 'reportError', aiError) } catch { /* noop */ }
+      // Inline completion fires per keystroke — never pop the panel from it.
+      if (feature !== Features.AI_COMPLETION) void this.openTopUpOnCreditError(aiError)
       // Stamp the parsed envelope on the thrown error so the UI catch
       // block (and any other consumer) doesn't need to re-parse the raw
       // response. Critical for inferencer paths that throw plain Errors
@@ -674,8 +676,21 @@ export class RemixAIPlugin extends Plugin {
     option.stream = false
     option.stream_result = false
     option.return_stream_response = false
-    // return await this.remoteInferencer.basic_prompt(prompt, option)
-    return this.deepAgentInferencer?.basic_inference(prompt) ?? this.remoteInferencer.basic_prompt(prompt, option)
+    try {
+      return await (this.deepAgentInferencer?.basic_inference(prompt) ?? this.remoteInferencer.basic_prompt(prompt, option))
+    } catch (e) {
+      void this.openTopUpOnCreditError(aiErrorFromException(e))
+      throw e
+    }
+  }
+
+  private async openTopUpOnCreditError(aiError: AIError): Promise<void> {
+    if (!isInsufficientCreditsError(aiError)) return
+    try {
+      await this.call('planManager' as any, 'open', { reason: 'quota-exhausted', initialSection: 'topup' })
+    } catch (e) {
+      remixAILogger.warn('[RemixAI Plugin] failed to open planManager for credit error', e)
+    }
   }
 
   /**
@@ -872,9 +887,7 @@ export class RemixAIPlugin extends Plugin {
     const result = await this.withAssistantGate(this.getSelectedModelRequiredFeature(), async () => {
       this.traceRouteDecision('code_explaining', { promptLen: prompt?.length ?? 0, contextLen: context?.length ?? 0 })
       // Explicit MCP toggle wins over DeepAgent — see answer() for rationale.
-      if (this.mcpEnabled && this.mcpInferencer){
-        return await this.mcpInferencer.code_explaining(prompt, context, params)
-      } else if (this.deepAgentEnabled && this.deepAgentInferencer) {
+      if (this.deepAgentEnabled && this.deepAgentInferencer) {
         await this.deepAgentManager.awaitReady()
         // See answer(): the awaited rebuild may have left no inferencer.
         if (!this.deepAgentInferencer) return await this.remoteInferencer.code_explaining(prompt, context, params)
@@ -890,8 +903,7 @@ export class RemixAIPlugin extends Plugin {
   async error_explaining(prompt: string, params: IParams=GenerationParams): Promise<any> {
     this.emit('errorExplainRequested')
     const result = await this.withAssistantGate(this.getSelectedModelRequiredFeature(), async () => {
-      // NOTE: error_explaining ALWAYS goes to remote (solcoder) by design.
-      this.traceRouteDecision('error_explaining', { hardcodedRoute: 'remote', promptLen: prompt?.length ?? 0 })
+      this.traceRouteDecision('error_explaining', { promptLen: prompt?.length ?? 0 })
       let localFilesImports = ""
 
       // Get local imports from the workspace restrict to 5 most relevant files
@@ -902,6 +914,12 @@ export class RemixAIPlugin extends Plugin {
       }
       localFilesImports = localFilesImports + "\n End of local files imports.\n\n"
       const finalPrompt = localFilesImports ? `Using the following local imports: ${localFilesImports}\n\n` + prompt : prompt
+      if (this.deepAgentEnabled && this.deepAgentInferencer) {
+        await this.deepAgentManager.awaitReady()
+        // See answer(): the awaited rebuild may have left no inferencer.
+        if (!this.deepAgentInferencer) return await this.remoteInferencer.error_explaining(finalPrompt, params)
+        return await this.deepAgentInferencer.error_explaining(finalPrompt, params)
+      }
       return await this.remoteInferencer.error_explaining(finalPrompt, params)
     })
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
@@ -911,8 +929,15 @@ export class RemixAIPlugin extends Plugin {
   async vulnerability_check(prompt: string, params: IParams=GenerationParams): Promise<any> {
     this.emit('vulnerabilityCheckRequested')
     const result = await this.withAssistantGate(this.getSelectedModelRequiredFeature(), async () => {
-      // NOTE: vulnerability_check ALWAYS goes to remote (solcoder) by design.
-      this.traceRouteDecision('vulnerability_check', { hardcodedRoute: 'remote', promptLen: prompt?.length ?? 0 })
+      // Same routing rationale as error_explaining(): the remote solcoder
+      // route rejects the chat selection's transport on accounts without that
+      // provider enabled.
+      this.traceRouteDecision('vulnerability_check', { promptLen: prompt?.length ?? 0 })
+      if (this.deepAgentEnabled && this.deepAgentInferencer) {
+        await this.deepAgentManager.awaitReady()
+        if (!this.deepAgentInferencer) return await this.remoteInferencer.vulnerability_check(prompt, params)
+        return await this.deepAgentInferencer.vulnerability_check(prompt, params)
+      }
       return await this.remoteInferencer.vulnerability_check(prompt, params)
     })
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })

@@ -52,7 +52,6 @@
   "solidity.publishOn": "Pubblica su",
   "solidity.runStaticAnalysis": "Esegui Remix Analysis",
   "solidity.runStaticAnalysis.iconTooltip": "Clicca per analizzare le vulnerabilità di questo contratto con gli analizzatori di Remix, Solhint e Slither",
-  "solidity.runSolidityScan": "Esegui SolidityScan",
   "solidity.solScan.iconTooltip": "Clicca per scansionare per le vulnerabilità di questo contratto con SolidityScan, un fornitore di terze parti [BETA]",
   "solidity.solScan.modalTitle": "Autorizzazione per la condivisione del codice",
   "solidity.solScan.modalMessage": "Per scansionare e analizzare il contratto per rischi e vulnerabilità, il suo codice sarà condiviso con SolidityScan, un fornitore di terze parti. ",
