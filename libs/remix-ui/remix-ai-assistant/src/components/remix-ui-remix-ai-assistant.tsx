@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 //@ts-ignore
 import '../css/remix-ai-assistant.css'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport, isCheapModel, type ModelTransport } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, isCheapModel, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport } from '@remix/remix-ai-core'
 import { ToolApprovalRequest, ApiKeyErrorEvent } from '@remix/remix-ai-core'
 import { isFrontierModelId } from '@remix/remix-ai-core/model-tiers'
 import { HandleOpenAICompatibleResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
@@ -1974,8 +1974,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         id: crypto.randomUUID(),
         role: isEditorCodeAnalysis ? 'editor_code_analysis' : 'user',
         content: trimmed,
-        timestamp: Date.now(),
-        ...(attachments.length > 0 ? { attachments } : {})
+        ...(attachments.length > 0 ? { attachments } : {}),
         ...(metadata?.displayText ? { displayContent: metadata.displayText.trim() } : {}),
         timestamp: Date.now()
       }
@@ -2748,6 +2747,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     props.plugin.call('settings', 'showSection' as any, 'ai', subSectionTitle)
   }, [props.plugin])
 
+  const handleOpenApiKeySettings = useCallback(
+    () => handleOpenSettings('settings.deepAgentApiKeysSection'),
+    [handleOpenSettings]
+  )
+
   // `/audit` and `/load-audit-checklist` open the same modal; the mode is what
   // tells it whether to finish by running the audit or just saving checklists.
   const handleLoadAuditChecklist = useCallback((mode: 'audit' | 'checklist' = 'checklist') => {
@@ -3125,7 +3129,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             handleGasOptimisationAudit={handleGasOptimisationAudit}
             usingOwnApiKey={usingOwnApiKey}
             byokKeyPresence={byokKeyPresence}
-            onAddApiKeyClick={handleOpenSettings}
+            onAddApiKeyClick={handleOpenApiKeySettings}
             aiRoute={aiRouteStatus.route}
             aiRouteReady={aiRouteStatus.ready}
             isAuthenticated={isAuthenticated}
@@ -3137,6 +3141,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             cheapModelsOnly={cheapModelsOnly}
             hasCheapModels={hasCheapModels}
             onToggleCheapModels={handleToggleCheapModels}
+            attachments={attachmentState.attachments}
+            attachmentErrors={attachmentState.errors}
+            onAddFiles={attachmentState.addFiles}
+            onRemoveAttachment={attachmentState.remove}
+            onDismissAttachmentErrors={attachmentState.dismissErrors}
+            onCaptureScreenshot={handleCaptureScreenshot}
+            supportsVision={modelSupportsVision(selectedModel || undefined)}
           />
         ) : (
           <AiChatPromptArea
@@ -3186,7 +3197,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             handleGasOptimisationAudit={handleGasOptimisationAudit}
             usingOwnApiKey={usingOwnApiKey}
             byokKeyPresence={byokKeyPresence}
-            onAddApiKeyClick={handleOpenSettings}
+            onAddApiKeyClick={handleOpenApiKeySettings}
             aiRoute={aiRouteStatus.route}
             aiRouteReady={aiRouteStatus.ready}
             isAuthenticated={isAuthenticated}
@@ -3198,6 +3209,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             cheapModelsOnly={cheapModelsOnly}
             hasCheapModels={hasCheapModels}
             onToggleCheapModels={handleToggleCheapModels}
+            attachments={attachmentState.attachments}
+            attachmentErrors={attachmentState.errors}
+            onAddFiles={attachmentState.addFiles}
+            onRemoveAttachment={attachmentState.remove}
+            onDismissAttachmentErrors={attachmentState.dismissErrors}
+            onCaptureScreenshot={handleCaptureScreenshot}
+            supportsVision={modelSupportsVision(selectedModel || undefined)}
           />
         )
       )
@@ -3449,157 +3467,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               className="position-fixed bottom-0 start-50 translate-middle-x mb-5 p-3 bg-danger text-white rounded shadow"
               style={{ zIndex: 9999, maxWidth: '400px' }}
             >
-              <i className="fa-solid fa-wand-magic-sparkles rai-run-model__icon"></i>
-              <span className="rai-run-model__text">Using {runModelLabel}</span>
-            </div>
-          </div>
-        )}
-        {
-          messages.length > 0 ? (
-            <AiChatPromptAreaForHistory
-              themeTracker={themeTracker}
-              showHistorySidebar={props.showHistorySidebar || false}
-              isMaximized={false}
-              modelOpt={modelOpt}
-              menuRef={menuRef}
-              assistantChoice={assistantChoice}
-              setAssistantChoice={setAssistantChoice}
-              mcpEnabled={mcpEnabled}
-              mcpEnhanced={mcpEnhanced}
-              setMcpEnhanced={setMcpEnhanced}
-              availableModels={availableModels}
-              selectedModel={selectedModel}
-              handleModelSelection={handleModelSelection}
-              onLockedModelClick={handleLockedModelClick}
-              upgradePillState={pillStates.upgrade}
-              buyCreditsPillState={pillStates.buyCredits}
-              onBuyCreditsClick={handleBuyCreditsClick}
-              input={input}
-              setInput={setInput}
-              isStreaming={isStreaming}
-              handleSend={handleSend}
-              stopRequest={stopRequest}
-              handleSetModel={handleSetModel}
-              handleGenerateWorkspace={handleGenerateWorkspace}
-              dispatchActivity={dispatchActivity as any}
-              modelBtnRef={modelBtnRef}
-              modelSelectorBtnRef={modelSelectorBtnRef}
-              textareaRef={textareaRef}
-              maximizePanel={maximizePanel}
-              setShowOllamaModelSelector={setShowOllamaModelSelector}
-              showOllamaModelSelector={showOllamaModelSelector}
-              showModelSelector={showModelSelector}
-              setShowModelSelector={setShowModelSelector}
-              selectedModelId={selectedModelId}
-              handleOllamaModelSelection={handleOllamaModelSelection}
-              selectedOllamaModel={selectedOllamaModel}
-              ollamaModels={ollamaModels}
-              ollamaModelOpt={ollamaModelOpt}
-              ollamaMenuRef={ollamaMenuRef}
-              messages={messages}
-              handleLoadSkills={handleLoadSkills}
-              handleOpenSettings={handleOpenSettings}
-              handleLoadAuditChecklist={handleLoadAuditChecklist}
-              handleGasOptimisationAudit={handleGasOptimisationAudit}
-              usingOwnApiKey={usingOwnApiKey}
-              byokKeyPresence={byokKeyPresence}
-              onAddApiKeyClick={handleOpenApiKeySettings}
-              aiRoute={aiRouteStatus.route}
-              aiRouteReady={aiRouteStatus.ready}
-              isAuthenticated={isAuthenticated}
-              onSignIn={handleSignIn}
-              hasAuditorPermission={hasAuditorPermission}
-              hasSkillsPermission={hasSkillsPermission}
-              onUpgradeRequired={handleFeatureUpgradeRequired}
-              getRequiredPlanName={getRequiredPlanName}
-              attachments={attachmentState.attachments}
-              attachmentErrors={attachmentState.errors}
-              onAddFiles={attachmentState.addFiles}
-              onRemoveAttachment={attachmentState.remove}
-              onDismissAttachmentErrors={attachmentState.dismissErrors}
-              onCaptureScreenshot={handleCaptureScreenshot}
-              supportsVision={modelSupportsVision(selectedModel || undefined)}
-            />
-          ) : (
-            <AiChatPromptArea
-              themeTracker={themeTracker}
-              showHistorySidebar={props.showHistorySidebar || false}
-              isMaximized={false}
-              modelOpt={modelOpt}
-              menuRef={menuRef}
-              assistantChoice={assistantChoice}
-              setAssistantChoice={setAssistantChoice}
-              mcpEnabled={mcpEnabled}
-              mcpEnhanced={mcpEnhanced}
-              setMcpEnhanced={setMcpEnhanced}
-              availableModels={availableModels}
-              selectedModel={selectedModel}
-              handleModelSelection={handleModelSelection}
-              onLockedModelClick={handleLockedModelClick}
-              upgradePillState={pillStates.upgrade}
-              buyCreditsPillState={pillStates.buyCredits}
-              onBuyCreditsClick={handleBuyCreditsClick}
-              input={input}
-              setInput={setInput}
-              isStreaming={isStreaming}
-              handleSend={handleSend}
-              stopRequest={stopRequest}
-              handleSetModel={handleSetModel}
-              handleGenerateWorkspace={handleGenerateWorkspace}
-              dispatchActivity={dispatchActivity as any}
-              modelBtnRef={modelBtnRef}
-              modelSelectorBtnRef={modelSelectorBtnRef}
-              textareaRef={textareaRef}
-              maximizePanel={maximizePanel}
-              setShowOllamaModelSelector={setShowOllamaModelSelector}
-              showOllamaModelSelector={showOllamaModelSelector}
-              showModelSelector={showModelSelector}
-              setShowModelSelector={setShowModelSelector}
-              selectedModelId={selectedModelId}
-              handleOllamaModelSelection={handleOllamaModelSelection}
-              selectedOllamaModel={selectedOllamaModel}
-              ollamaModels={ollamaModels}
-              ollamaModelOpt={ollamaModelOpt}
-              ollamaMenuRef={ollamaMenuRef}
-              messages={messages}
-              handleLoadSkills={handleLoadSkills}
-              handleOpenSettings={handleOpenSettings}
-              handleLoadAuditChecklist={handleLoadAuditChecklist}
-              handleGasOptimisationAudit={handleGasOptimisationAudit}
-              usingOwnApiKey={usingOwnApiKey}
-              byokKeyPresence={byokKeyPresence}
-              onAddApiKeyClick={handleOpenApiKeySettings}
-              aiRoute={aiRouteStatus.route}
-              aiRouteReady={aiRouteStatus.ready}
-              isAuthenticated={isAuthenticated}
-              onSignIn={handleSignIn}
-              hasAuditorPermission={hasAuditorPermission}
-              hasSkillsPermission={hasSkillsPermission}
-              onUpgradeRequired={handleFeatureUpgradeRequired}
-              getRequiredPlanName={getRequiredPlanName}
-              attachments={attachmentState.attachments}
-              attachmentErrors={attachmentState.errors}
-              onAddFiles={attachmentState.addFiles}
-              onRemoveAttachment={attachmentState.remove}
-              onDismissAttachmentErrors={attachmentState.dismissErrors}
-              onCaptureScreenshot={handleCaptureScreenshot}
-              supportsVision={modelSupportsVision(selectedModel || undefined)}
-            />
-          )
-        }
-
-        {/* API Key Error Toast */}
-        {apiKeyError && (
-          <div
-            className="position-fixed bottom-0 start-50 translate-middle-x mb-5 p-3 bg-danger text-white rounded shadow"
-            style={{ zIndex: 9999, maxWidth: '400px' }}
-          >
-            <div className="d-flex align-items-start">
-              <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
-              <div className="flex-grow-1">
-                <strong>{apiKeyError.errorType === 'authentication_failed' ? 'API Key Authentication Failed' : 'API Key Error'}</strong>
-                <p className="mb-2 small">{apiKeyError.message}</p>
-                {apiKeyError.canFallbackToProxy && (
               <div className="d-flex align-items-start">
                 <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
                 <div className="flex-grow-1">

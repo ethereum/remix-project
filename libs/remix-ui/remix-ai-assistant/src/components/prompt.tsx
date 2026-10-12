@@ -189,7 +189,7 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
   onRemoveAttachment,
   onDismissAttachmentErrors,
   onCaptureScreenshot,
-  supportsVision = true
+  supportsVision = true,
   cheapModelsOnly = false,
   hasCheapModels = false,
   onToggleCheapModels
@@ -854,7 +854,6 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     <span className={showModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
                   </div>
                 </button>
-              )}
               {onAddFiles && (
                 <>
                   <input

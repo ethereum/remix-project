@@ -79,8 +79,8 @@ export async function buildSubagentConfigs(
   const circleTools = getCircleToolsForCircleSpecialist(tools)
   const basicFileTools = getBasicFileToolsForGasOptimizer(tools)
   const fileOperationTools = getFileOperationTools(tools)
-  const uiTools = tools.filter(tool => tool.name === 'render_ui')
-  const securityTools = [...getSecurityToolsForSecurityAuditor(tools), ...fileOperationTools, ...uiTools]
+  const renderUiTools = tools.filter(tool => tool.name === 'render_ui')
+  const securityTools = [...getSecurityToolsForSecurityAuditor(tools), ...fileOperationTools, ...renderUiTools]
   const debugTools = getDebugToolsForDebugSpecialist(tools)
   const solidityTools = [...getSolidityToolsForSolidityEngineer(tools), ...fileOperationTools]
   const webSearchTools = getWebSearchToolsForWebSearchSpecialist(tools)

@@ -1961,6 +1961,8 @@ code {
   color: var(--custom-ai-color);
   background: color-mix(in srgb, var(--custom-ai-color) 22%, transparent);
   border-color: var(--custom-ai-color);
+}
+
 /* --------------------------------------------------------
    AI mode (chat maximized into the center panel)
    Root is a row: [.ai-chat-main] [history sidebar].

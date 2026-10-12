@@ -58,6 +58,7 @@ import { createSkillTools } from './handlers/SkillLoaderHandler';
 import { createDAppGeneratorTools } from './handlers/DAppGeneratorHandler';
 import { createGenerativeUITools } from './handlers/GenerativeUIHandler';
 import { createModelSelectionTools } from './handlers/ModelSelectionHandler';
+import { createUIAutomationTools } from './handlers/UIAutomationHandler';
 
 // Import resource providers
 import { ProjectResourceProvider } from './providers/ProjectResourceProvider';

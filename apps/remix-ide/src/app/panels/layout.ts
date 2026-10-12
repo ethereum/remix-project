@@ -76,8 +76,9 @@ export class Layout extends Plugin {
       bottomBar: describe(panels.bottomBar),
       terminal: describe(panels.terminal),
       maximized: Object.keys(this.maximized).filter((name) => this.maximized[name]?.maximized)
+    }
   }
-  
+
   // While the AI chat occupies the center panel, file/tab events (e.g. the AI
   // agent opening a file) must not reveal the editor behind the hidden tab
   // bar — remember the target instead and apply it when AI mode ends.
