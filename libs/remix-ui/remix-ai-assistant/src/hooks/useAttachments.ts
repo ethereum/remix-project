@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { ChatAttachment } from '@remix/remix-ai-core'
-import { captureElementPng, defaultCaptureTarget } from '@remix/remix-ai-core'
+import { captureElementPng, defaultCaptureTarget, downscaleDataUrl, THUMB_EDGE } from '@remix/remix-ai-core'
 
 /** Attachments beyond this add cost without adding much signal. */
 export const MAX_ATTACHMENTS = 4
@@ -13,9 +13,6 @@ export const MAX_SOURCE_BYTES = 10 * 1024 * 1024
  * so the extra pixels are pure token cost.
  */
 const MAX_EDGE = 1568
-
-/** Longest edge of the copy kept in chat history. */
-const THUMB_EDGE = 320
 
 export const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif']
 
@@ -84,42 +81,6 @@ const readAsDataUrl = (file: File | Blob): Promise<string> =>
     reader.readAsDataURL(file)
   })
 
-const loadImage = (src: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('Not a readable image'))
-    img.src = src
-  })
-
-/**
- * Redraws the image at most `maxEdge` across. Returns the original data URL
- * untouched when it is already small enough, so a screenshot we just produced
- * doesn't get re-encoded for nothing.
- */
-const downscale = async (dataUrl: string, maxEdge: number, mimeType: string): Promise<{ dataUrl: string; width: number; height: number }> => {
-  const img = await loadImage(dataUrl)
-  const longest = Math.max(img.width, img.height)
-
-  if (longest <= maxEdge) return { dataUrl, width: img.width, height: img.height }
-
-  const scale = maxEdge / longest
-  const width = Math.round(img.width * scale)
-  const height = Math.round(img.height * scale)
-
-  const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return { dataUrl, width: img.width, height: img.height }
-  ctx.drawImage(img, 0, 0, width, height)
-
-  // PNG and GIF may carry transparency that JPEG would flatten to black.
-  const keepsAlpha = mimeType === 'image/png' || mimeType === 'image/gif'
-  const out = keepsAlpha ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85)
-  return { dataUrl: out, width, height }
-}
-
 const approxBytes = (dataUrl: string): number => Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 0.75)
 
 /** Turns a File/Blob into a send-ready attachment. */
@@ -159,8 +120,8 @@ export async function buildAttachment(
   }
 
   const raw = await readAsDataUrl(file)
-  const full = await downscale(raw, MAX_EDGE, mimeType)
-  const thumb = await downscale(full.dataUrl, THUMB_EDGE, mimeType)
+  const full = await downscaleDataUrl(raw, MAX_EDGE, mimeType)
+  const thumb = await downscaleDataUrl(full.dataUrl, THUMB_EDGE, mimeType)
 
   return {
     id: crypto.randomUUID(),

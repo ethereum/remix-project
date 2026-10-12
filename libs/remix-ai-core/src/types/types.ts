@@ -70,7 +70,12 @@ export interface ChatAttachment {
   size?: number;
   /** True when `textContent` was cut short by the per-file character cap. */
   truncated?: boolean;
-  source?: 'upload' | 'screenshot';
+  /**
+   * Where the image came from. `ai-capture` marks a screenshot the assistant
+   * took of its own accord — rendered in the transcript so the user can see
+   * what was sent on their behalf.
+   */
+  source?: 'upload' | 'screenshot' | 'ai-capture';
 }
 
 export interface ISimilaritySearchConfig {

@@ -111,6 +111,64 @@ export function defaultCaptureTarget(): HTMLElement {
     document.body) as HTMLElement
 }
 
+/** Longest edge of the preview copy kept in chat history. */
+export const THUMB_EDGE = 320
+
+const loadImage = (src: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error('Could not decode the image'))
+    img.src = src
+  })
+
+/**
+ * Redraws an image at most `maxEdge` across. Returns the original data URL
+ * untouched when it is already small enough, so a screenshot we just produced
+ * doesn't get re-encoded for nothing.
+ */
+export async function downscaleDataUrl(
+  dataUrl: string,
+  maxEdge: number,
+  mimeType = 'image/png'
+): Promise<{ dataUrl: string; width: number; height: number }> {
+  const img = await loadImage(dataUrl)
+  const longest = Math.max(img.width, img.height)
+
+  if (longest <= maxEdge) return { dataUrl, width: img.width, height: img.height }
+
+  const scale = maxEdge / longest
+  const width = Math.round(img.width * scale)
+  const height = Math.round(img.height * scale)
+
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return { dataUrl, width: img.width, height: img.height }
+  ctx.drawImage(img, 0, 0, width, height)
+
+  // PNG and GIF may carry transparency that JPEG would flatten to black.
+  const keepsAlpha = mimeType === 'image/png' || mimeType === 'image/gif'
+  const out = keepsAlpha ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85)
+  return { dataUrl: out, width, height }
+}
+
+/**
+ * A small JPEG preview of a capture, for showing the user what was sent. JPEG
+ * rather than PNG because this copy is persisted with the conversation and a
+ * screenshot of an IDE compresses badly as PNG.
+ */
+export async function thumbnailDataUrl(dataUrl: string): Promise<string> {
+  try {
+    const { dataUrl: out } = await downscaleDataUrl(dataUrl, THUMB_EDGE, 'image/jpeg')
+    return out
+  } catch (e) {
+    remixAILogger.warn('[domCapture] thumbnail failed', e)
+    return ''
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Set-of-marks annotation
 // ---------------------------------------------------------------------------

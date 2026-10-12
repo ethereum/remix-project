@@ -192,6 +192,18 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
     }
   }
 
+  /**
+   * Side effects for dropdown settings. Screen sharing is tracked because it
+   * governs whether the assistant may photograph the user's work — knowing how
+   * many people turn it off, and which way they go, is the only way to tell
+   * whether the default is the right one.
+   */
+  const handleSelectChanged = (name: string, value: string) => {
+    if (name === 'ai-screen-capture-consent') {
+      plugin.call('matomo', 'trackEvent', 'ai', 'remixAI', 'screen_capture_policy', value).catch(() => {})
+    }
+  }
+
   const handleButtonClick = (buttonOptions: ButtonOptions) => {
     if (buttonOptions && buttonOptions.action === 'link') {
       window.open(buttonOptions.link, '_blank')
@@ -346,7 +358,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
                           )}
                           <div className="ms-auto">
                             {option.type === 'toggle' && <ToggleSwitch id={option.name} isOn={toggleValue} onClick={() => handleToggle(option.name)} disabled = {option.name === "matomo-analytics" ? true : false}/>}
-                            {option.type === 'select' && <div style={{ minWidth: '110px' }}><SelectDropdown value={selectValue} options={option.selectOptions} name={option.name} dispatch={dispatch as any} /></div>}
+                            {option.type === 'select' && <div style={{ minWidth: '110px' }}><SelectDropdown value={selectValue} options={option.selectOptions} name={option.name} dispatch={dispatch as any} onChanged={(value) => handleSelectChanged(option.name, value)} /></div>}
                             {option.type === 'button' && <button className="btn btn-secondary btn-sm" onClick={() => handleButtonClick(option.buttonOptions)}><FormattedMessage id={option.buttonOptions?.label} /></button>}
                           </div>
                         </div>

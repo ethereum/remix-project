@@ -1708,6 +1708,48 @@ code {
   justify-content: flex-end;
 }
 
+/* Screen-capture consent. Styled as a warning rather than a neutral tool card:
+   this is the one prompt where saying yes sends a picture of the user's work
+   somewhere else, and it should not look like routine chrome. */
+.screen-capture-card {
+  background: color-mix(in srgb, var(--bs-warning) 10%, var(--bs-body-bg));
+  border-color: color-mix(in srgb, var(--bs-warning) 35%, var(--bs-body-bg));
+}
+
+.screen-capture-card__body {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 6px 0 10px;
+}
+
+.screen-capture-card__reason {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Four buttons do not fit one line in the side panel, so let them wrap
+   rather than shrink the labels into ambiguity. The row gap keeps a wrapped
+   row from sitting flush against the one above it. */
+.screen-capture-card__actions {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+/* The two middle choices are the higher-commitment yeses, so they read as
+   secondary: "Allow once" stays the only filled button. The base
+   .tool-approval-card__btn sets white text and no background, which is only
+   legible once a modifier supplies one — hence this variant rather than a
+   bare button. */
+.tool-approval-card__btn--ghost {
+  background: transparent;
+  color: var(--bs-body-color);
+  border: 1px solid color-mix(in srgb, var(--bs-body-color) 30%, transparent);
+}
+
+.tool-approval-card__btn--ghost:hover {
+  background: color-mix(in srgb, var(--bs-body-color) 8%, transparent);
+}
+
 .tool-approval-card__btn {
   padding: 5px 14px;
   border-radius: 4px;

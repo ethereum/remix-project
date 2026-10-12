@@ -44,6 +44,7 @@ let displayErrors = config.get('settings/display-errors')
 let saveEvmState = config.get('settings/save-evm-state')
 let aiFeedback = config.get('settings/ai-feedback')
 let aiFeedbackCreditThreshold = config.get('settings/ai-feedback-credit-threshold')
+let aiScreenCaptureConsent = config.get('settings/ai-screen-capture-consent')
 
 if (!githubConfig && (githubUserName || githubEmail || gistAccessToken)) {
   config.set('settings/github-config', true)
@@ -113,6 +114,12 @@ if (typeof aiFeedback !== 'boolean') {
 if (aiFeedbackCreditThreshold == null || aiFeedbackCreditThreshold === undefined) {
   config.set('settings/ai-feedback-credit-threshold', 12000)
   aiFeedbackCreditThreshold = 12000
+}
+// Asking is the only safe default: the assistant must not be able to
+// photograph a screen nobody has agreed to share.
+if (aiScreenCaptureConsent !== 'ask' && aiScreenCaptureConsent !== 'always' && aiScreenCaptureConsent !== 'never') {
+  config.set('settings/ai-screen-capture-consent', 'ask')
+  aiScreenCaptureConsent = 'ask'
 }
 
 let enableCodeAnalysisPopoverBoolean = enableCodeAnalysisPopover
@@ -314,6 +321,10 @@ export const initialState: SettingsState = {
   },
   'ai-feedback': {
     value: aiFeedback,
+    isLoading: false
+  },
+  'ai-screen-capture-consent': {
+    value: aiScreenCaptureConsent,
     isLoading: false
   },
   'ai-feedback-credit-threshold': {

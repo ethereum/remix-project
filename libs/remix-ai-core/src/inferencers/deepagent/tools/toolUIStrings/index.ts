@@ -5,6 +5,7 @@ import { compilationToolStrings } from './compilationToolStrings'
 import { deploymentToolStrings } from './deploymentToolStrings'
 import { debuggingToolStrings } from './debuggingToolStrings'
 import { utilityToolStrings } from './utilityToolStrings'
+import { uiToolStrings } from './uiToolStrings'
 
 // Merge all tool string registries
 const toolStringRegistry: ToolUIStringRegistry = {
@@ -12,7 +13,8 @@ const toolStringRegistry: ToolUIStringRegistry = {
   ...compilationToolStrings,
   ...deploymentToolStrings,
   ...debuggingToolStrings,
-  ...utilityToolStrings
+  ...utilityToolStrings,
+  ...uiToolStrings
 }
 
 export function resolveToolUIString(toolName: string, toolInput?: Record<string, any>): string {

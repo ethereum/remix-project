@@ -31,6 +31,7 @@ import type { DeepAgent } from 'deepagents'
 import { RemixDeepAgentMiddleware } from './deepAgentMiddleWare'
 import { RemixVisionMiddleware } from './visionMiddleware'
 import { screenshotBuffer } from './visionBuffer'
+import { screenshotConsent } from './screenshotConsent'
 
 import './AsyncLocalStorageInit'
 import { createModelInstance } from './ModelFactory'
@@ -140,12 +141,14 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
     this.sessionThreadId = DeepAgentInferencer.generateThreadId()
     remixAILogger.log('[DeepAgent-Thread] resetSessionThread:', this.sessionThreadId, '(was:', oldId, ')')
     screenshotBuffer.setThread(this.sessionThreadId)
+    screenshotConsent.setThread(this.sessionThreadId)
   }
 
   setSessionThreadId(threadId: string): void {
     remixAILogger.log('[DeepAgent-Thread] setSessionThreadId:', threadId, '(was:', this.sessionThreadId, ')')
     this.sessionThreadId = threadId
     screenshotBuffer.setThread(threadId)
+    screenshotConsent.setThread(threadId)
   }
 
   /**
@@ -197,6 +200,7 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
     // buffer: it gets a fresh thread id and its graph checkpoint is gone, so
     // the markers those screenshots belonged to are gone with it.
     screenshotBuffer.setThread(this.sessionThreadId)
+    screenshotConsent.setThread(this.sessionThreadId)
 
     // The OpenRouter transport reports the model that actually served each
     // request — the only way to know what `auto` picked.
@@ -444,6 +448,9 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
 
   async answer(prompt: string, params: IParams, context?: string): Promise<string | null> {
     this.event.emit('onInference')
+    // A refusal to be photographed settles the request it was given for, not
+    // the whole conversation — a new turn may well be about what's on screen.
+    screenshotConsent.beginTurn()
 
     try {
       if (!this.agent) {
