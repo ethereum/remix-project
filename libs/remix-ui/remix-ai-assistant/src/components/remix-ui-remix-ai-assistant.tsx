@@ -90,6 +90,16 @@ function getSystemThemeFallback(): string {
 const isQuickDappAgentName = (name?: string): boolean =>
   !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('quickdapp')
 
+/** Coarse duration label for analytics — keeps the value cardinality bounded. */
+const bucketDuration = (ms: number): string => {
+  if (!Number.isFinite(ms) || ms < 0) return 'unknown'
+  if (ms < 5000) return '<5s'
+  if (ms < 15000) return '5-15s'
+  if (ms < 60000) return '15-60s'
+  if (ms < 300000) return '1-5m'
+  return '>5m'
+}
+
 /** `Comprehensive_Auditor`, however the harness spells it. */
 const isAuditorAgentName = (name?: string): boolean =>
   !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('comprehensiveauditor')
@@ -928,6 +938,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent started:', data)
 
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_start',
+        value: data.name || 'unknown',
+        isClick: false
+      })
+
       if (isQuickDappAgentName(data.name)) {
         quickDappRunningRef.current = true
         hintQuickDappModel()
@@ -952,6 +970,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     const handleSubagentComplete = (data: { id: string; name: string; status: string; duration: number; threadId?: string }) => {
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent completed:', data)
+
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_complete',
+        value: `${data.name || 'unknown'}|${bucketDuration(data.duration)}`,
+        isClick: false
+      })
       /*
       // Update subagent bubble styling when subagent completes
       const sub = streamingSubagentBubbleRef.current
