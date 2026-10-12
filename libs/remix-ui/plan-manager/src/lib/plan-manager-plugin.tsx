@@ -1405,7 +1405,7 @@ export class PlanManagerPlugin extends ViewPlugin {
         return loc.origin
       }
     } catch { /* ignore */ }
-    return 'https://remix.ethereum.org'
+    return 'https://app.remix.live'
   }
 
   /** Read the `desktop_billing` marker from the current URL (web instance). */
