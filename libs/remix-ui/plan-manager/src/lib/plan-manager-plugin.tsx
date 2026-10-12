@@ -3376,7 +3376,7 @@ const PlanManagerOverlay: React.FC<{
                             <div className="pm-inline-checkout__addons-label">Also in this order:</div>
                             {introCreditPkgs.map((cp: any) => (
                               <div key={cp.slug} className="pm-inline-checkout__addon-row pm-inline-checkout__addon-row--gift">
-                                <span><i className="fas fa-gift"></i> {cp.name || `${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`}</span>
+                                <span><i className="fas fa-gift"></i> {cp.name || `One time ${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`}</span>
                                 <span className="pm-inline-checkout__addon-free">FREE</span>
                               </div>
                             ))}
@@ -3917,7 +3917,7 @@ const UpgradePromoBanner: React.FC<{
           {freeCreditsTotal > 0 && (
             <span className="pm-promo__pill pm-promo__pill--credits">
               <i className="fas fa-gift"></i>
-              {freeCreditsTotal.toLocaleString()} free AI credits
+              One time {freeCreditsTotal.toLocaleString()} free AI credits
             </span>
           )}
           {features.slice(0, 100).map((f, i) => (
@@ -4435,7 +4435,7 @@ const PlanCard: React.FC<{
           <i className="fas fa-gift" aria-hidden></i>
           <span>
             {(plan.introCreditPackages ?? []).map((cp: any) =>
-              `${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`
+              `One time ${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`
             ).join(' + ')}
           </span>
         </div>
@@ -4883,7 +4883,7 @@ const CartUpsellStep: React.FC<{
               <span>
                 {' — '}
                 {(planObj.introCreditPackages ?? []).map((cp: any) =>
-                  `${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`
+                  `One time ${(cp.credits * (cp.quantity || 1)).toLocaleString()} free AI credits`
                 ).join(' + ')}
                 {' '}added to your account on sign-up
               </span>
