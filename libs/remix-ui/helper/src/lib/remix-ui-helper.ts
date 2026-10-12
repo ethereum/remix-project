@@ -420,8 +420,12 @@ export const addFrontendPrefix = (
   return filename;
 };
 
+// Captured once at load: other plugins rewrite the URL hash later, which would drop the flag.
+const eezUrlParamPresent = typeof window !== 'undefined' &&
+  /(^|[?#&])eez=true([&#]|$)/.test(window.location.search + window.location.hash)
+
 export const isEezEnabled = (): boolean =>
-  typeof window !== 'undefined' && (window.location.origin === 'https://app.remix.live' || ['localhost', '127.0.0.1'].includes(window.location.hostname))
+  typeof window !== 'undefined' && (window.location.origin === 'https://app.remix.live' || eezUrlParamPresent)
 
 export const EEZ_KNOWN_REVERT_ERRORS_ABI = [
   'error UnauthorizedProxy()',
