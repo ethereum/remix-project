@@ -123,6 +123,11 @@
   color: var(--bs-emphasis-color) !important;
 }
 
+/* no Bootstrap pressed border on the new file button */
+.tabs-new-file-btn:active {
+  border-color: transparent !important;
+}
+
 .loadingExplanation {
   animation: fancy-spin 2000ms;
   animation-iteration-count: infinite;

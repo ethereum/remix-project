@@ -72,6 +72,18 @@ module.exports = {
     browser.waitForElementVisible(activeTabSelector('3_Ballot.sol'), 5000)
   },
 
+  'Should create a new file from the + button after the tabs #group1': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="tabsNewFile"]')
+      .click('*[data-id="tabsNewFile"]')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'TabsNewFile.sol')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemTabsNewFile.sol"]', 7000)
+      .waitForElementVisible(activeTabSelector('TabsNewFile.sol'), 5000)
+    expectSolTabsOrder(browser, ['2_Owner.sol', '1_Storage.sol', '3_Ballot.sol', 'TabsNewFile.sol'])
+  },
+
   'Should close the active tab and activate its left neighbour after reordering #group1': function (browser: NightwatchBrowser) {
     browser
       .click(tabSelector('1_Storage.sol'))

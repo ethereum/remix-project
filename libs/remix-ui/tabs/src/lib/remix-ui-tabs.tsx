@@ -117,6 +117,13 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 }
 const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr', 'yul', 'sql', 'subgraph']
 
+// a childless component: react-tabs rewrites the children of every element inside TabList, which breaks the tooltip
+const NewFileButton = ({ onClick }: { onClick: () => void }) => (
+  <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-new-file" tooltipText={<FormattedMessage id="remixUiTabs.newFile" />}>
+    <span data-id="tabsNewFile" className="btn fas fa-plus text-dark d-flex p-2 ms-1 zoom-icon-btn tabs-new-file-btn" onClick={onClick}></span>
+  </CustomTooltip>
+)
+
 export const TabsUI = (props: TabsUIProps) => {
 
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
@@ -1159,6 +1166,12 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
                   {renderTab(tab, i)}
                 </Tab>
               ))}
+              <NewFileButton
+                onClick={async () => {
+                  await props.plugin.call('menuicons', 'select', 'filePanel')
+                  await props.plugin.call('filePanel', 'createNewFile')
+                }}
+              />
               <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
             </TabList>
             {props.tabs.map((tab) => (
