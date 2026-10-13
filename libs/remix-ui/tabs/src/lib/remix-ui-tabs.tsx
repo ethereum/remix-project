@@ -221,6 +221,30 @@ export const TabsUI = (props: TabsUIProps) => {
     event.preventDefault()
     let to = getDropSide(event) === 'after' ? index + 1 : index
     if (from < to) to -= 1
+    moveTab(from, to)
+  }
+
+  // the empty header space after the last tab moves the dragged tab to the end
+  const isOverStrip = (event: React.DragEvent) =>
+    !(event.target as HTMLElement).closest('.tab') && !!tabsElement.current && event.clientX > tabsElement.current.getBoundingClientRect().left
+
+  const handleStripDragOver = (event: React.DragEvent) => {
+    if (draggedIndexRef.current < 0 || !isOverStrip(event)) return
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+    let lastVisible = props.tabs.length - 1
+    while (lastVisible > 0 && !props.tabs[lastVisible].show) lastVisible--
+    setDropTarget((current) => current && current.index === lastVisible && current.side === 'after' ? current : { index: lastVisible, side: 'after' })
+  }
+
+  const handleStripDrop = (event: React.DragEvent) => {
+    const from = draggedIndexRef.current
+    if (from < 0 || !isOverStrip(event)) return
+    event.preventDefault()
+    moveTab(from, props.tabs.length - 1)
+  }
+
+  const moveTab = (from: number, to: number) => {
     resetTabDrag()
     if (to === from) return
 
@@ -1020,6 +1044,8 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
         className={`remix-ui-tabs justify-content-between border-bottom header nav-tabs ${appContext.appState.connectedToDesktop === desktopConnectionType.disabled ? 'd-flex' : 'd-none'
         }`}
         data-id="tabs-component"
+        onDragOver={handleStripDragOver}
+        onDrop={handleStripDrop}
       >
         <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
           <div className="d-flex flex-row justify-content-center align-items-center m-1 me-0">

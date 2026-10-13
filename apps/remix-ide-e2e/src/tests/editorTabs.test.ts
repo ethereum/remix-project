@@ -7,7 +7,7 @@ const tabSelector = (fileName: string) => `.remix-ui-tabs div.tab[data-path$="${
 const activeTabSelector = (fileName: string) => `.remix-ui-tabs [data-id="tab-active"][data-path$="${fileName}"]`
 
 // WebDriver's drag and drop doesn't fire HTML5 drag events, so dispatch them from the page
-const dragTab = (browser: NightwatchBrowser, fromFile: string, toFile: string, side: 'before' | 'after') => {
+const dragTab = (browser: NightwatchBrowser, fromFile: string, toSelector: string, side: 'before' | 'after') => {
   return browser.execute(function (fromSelector: string, toSelector: string, side: string) {
     const source = document.querySelector(fromSelector) as HTMLElement
     const target = document.querySelector(toSelector) as HTMLElement
@@ -20,7 +20,7 @@ const dragTab = (browser: NightwatchBrowser, fromFile: string, toFile: string, s
     fire(target, 'dragover')
     fire(target, 'drop')
     fire(source, 'dragend')
-  }, [tabSelector(fromFile), tabSelector(toFile), side])
+  }, [tabSelector(fromFile), toSelector, side])
 }
 
 const expectSolTabsOrder = (browser: NightwatchBrowser, expected: string[]) => {
@@ -54,25 +54,31 @@ module.exports = {
   },
 
   'Should move a tab before another one by dragging it #group1': function (browser: NightwatchBrowser) {
-    dragTab(browser, '3_Ballot.sol', '1_Storage.sol', 'before')
+    dragTab(browser, '3_Ballot.sol', tabSelector('1_Storage.sol'), 'before')
     expectSolTabsOrder(browser, ['3_Ballot.sol', '1_Storage.sol', '2_Owner.sol'])
     // the active tab is still the one being edited
     browser.waitForElementVisible(activeTabSelector('3_Ballot.sol'), 5000)
   },
 
   'Should move a tab after another one by dragging it #group1': function (browser: NightwatchBrowser) {
-    dragTab(browser, '1_Storage.sol', '2_Owner.sol', 'after')
+    dragTab(browser, '1_Storage.sol', tabSelector('2_Owner.sol'), 'after')
     expectSolTabsOrder(browser, ['3_Ballot.sol', '2_Owner.sol', '1_Storage.sol'])
+    browser.waitForElementVisible(activeTabSelector('3_Ballot.sol'), 5000)
+  },
+
+  'Should move a tab to the end by dropping it after the last tab #group1': function (browser: NightwatchBrowser) {
+    dragTab(browser, '3_Ballot.sol', '#dummyElForLastXVisibility', 'after')
+    expectSolTabsOrder(browser, ['2_Owner.sol', '1_Storage.sol', '3_Ballot.sol'])
     browser.waitForElementVisible(activeTabSelector('3_Ballot.sol'), 5000)
   },
 
   'Should close the active tab and activate its left neighbour after reordering #group1': function (browser: NightwatchBrowser) {
     browser
-      .click(tabSelector('2_Owner.sol'))
+      .click(tabSelector('1_Storage.sol'))
+      .waitForElementVisible(activeTabSelector('1_Storage.sol'), 5000)
+      .click(`${tabSelector('1_Storage.sol')} .close-tabs`)
+      .waitForElementNotPresent(tabSelector('1_Storage.sol'))
       .waitForElementVisible(activeTabSelector('2_Owner.sol'), 5000)
-      .click(`${tabSelector('2_Owner.sol')} .close-tabs`)
-      .waitForElementNotPresent(tabSelector('2_Owner.sol'))
-      .waitForElementVisible(activeTabSelector('3_Ballot.sol'), 5000)
       .end()
   }
 }
