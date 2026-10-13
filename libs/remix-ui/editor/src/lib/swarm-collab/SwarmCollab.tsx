@@ -280,7 +280,7 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
               <input className="form-control form-control-sm mb-2" value={settings.beeUrl} onChange={(e) => update({ beeUrl: e.target.value })} />
 
               <label className="form-label small mb-0">Postage stamp (batch ID)</label>
-              <input className="form-control form-control-sm mb-2" value={settings.stamp} onChange={(e) => update({ stamp: e.target.value })} placeholder="64 hex characters, owned by the node above" data-id="swarmCollabStamp" />
+              <input className="form-control form-control-sm mb-2" value={settings.stamp} onChange={(e) => update({ stamp: e.target.value })} placeholder="64 hex characters, owned by the node above; empty for a gateway" data-id="swarmCollabStamp" />
 
               <details className="mb-3">
                 <summary className="small">Connection</summary>
