@@ -129,6 +129,7 @@ export default class Editor extends Plugin {
   render () {
     return <div ref={(element)=>{
       this.ref = element
+      if (!this.ref) return
       this.ref.currentContent = () => this.currentContent() // used by e2e test
       this.ref.setCurrentContent = (value) => {
         if (this.sessions[this.currentFile]) {
