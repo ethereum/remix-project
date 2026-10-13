@@ -5,7 +5,8 @@ import { createPortal } from 'react-dom'
 import '../css/remix-ai-assistant.css'
 
 import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, isCheapModel, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport } from '@remix/remix-ai-core'
-import { ToolApprovalRequest, ApiKeyErrorEvent } from '@remix/remix-ai-core'
+import { ToolApprovalRequest, ApiKeyErrorEvent, SCREEN_CAPTURE_SETTING, type ApprovalScope } from '@remix/remix-ai-core'
+import { ScreenCaptureConsentCard } from './ScreenCaptureConsentCard'
 import { isFrontierModelId } from '@remix/remix-ai-core/model-tiers'
 import { HandleOpenAICompatibleResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
 //@ts-ignore
@@ -1323,7 +1324,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // Don't show new approval dialogs if the request has been stopped
       if (isStoppedRef.current) return
       remixAILogger.log('[Assistant UI] approval requested', request.toolName, request.requestId)
-      if (hitlAutoAcceptRef.current) {
+      // "Auto-accept all tool changes" is about file edits. Letting it answer
+      // "may we photograph your screen?" would make a privacy decision the
+      // user never knowingly made.
+      if (request.category === 'screen_capture') {
+        trackMatomoEvent({
+          category: 'ai',
+          action: 'remixAI',
+          name: 'screen_capture_prompt',
+          value: request.consent?.wholeIde === false ? 'region' : 'full_ide',
+          isClick: false
+        })
+      }
+      if (hitlAutoAcceptRef.current && request.category !== 'screen_capture') {
         try {
           ;(props.plugin as any).respondToToolApproval({
             requestId: request.requestId,
@@ -1395,6 +1408,62 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
     props.plugin.on('remixAI', 'renderUI', handleRenderUI)
 
+    /**
+     * The assistant took a picture of the IDE. Put it in the transcript so the
+     * user can see exactly what was sent on their behalf — a consent prompt
+     * they answered minutes ago is not a record of what left the machine.
+     *
+     * Only the thumbnail is kept: `stripAttachmentPayloads` drops `dataUrl`
+     * before persistence anyway, and the full-resolution PNG lives in the
+     * vision buffer where it belongs.
+     */
+    const handleScreenshotCaptured = (payload: {
+      id: string
+      thumbnailDataUrl: string
+      label?: string
+      capturedAt?: number
+      reason?: string
+    }) => {
+      if (!payload?.thumbnailDataUrl) return
+      // Fires for every capture, including the ones that needed no prompt —
+      // the gap against screen_capture_prompt is how much is happening silently.
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'screen_capture_taken',
+        isClick: false
+      })
+      const attachment: ChatAttachment = {
+        id: payload.id || crypto.randomUUID(),
+        name: payload.label ? `Screenshot of ${payload.label}` : 'Screenshot of your IDE',
+        mimeType: 'image/jpeg',
+        kind: 'image',
+        thumbnailDataUrl: payload.thumbnailDataUrl,
+        source: 'ai-capture'
+      }
+      const activeId = streamingAssistantIdRef.current
+      if (activeId) {
+        setMessages(prev => prev.map(m => m.id === activeId
+          ? { ...m, attachments: [...(m.attachments || []), attachment]}
+          : m))
+        return
+      }
+      const capMsgId = crypto.randomUUID()
+      streamingAssistantIdRef.current = capMsgId
+      setMessages(prev => [
+        ...prev,
+        {
+          id: capMsgId,
+          role: 'assistant' as const,
+          content: '',
+          timestamp: payload.capturedAt || Date.now(),
+          sentiment: 'none' as const,
+          attachments: [attachment]
+        }
+      ])
+    }
+    props.plugin.on('remixAI', 'aiScreenshotCaptured', handleScreenshotCaptured)
+
     const handleModelSwitchRequested = (data: { modelId: string; provider?: string; displayName?: string; reason?: string }) => {
       if (!data?.modelId) return
       setPendingModelSwitch(data)
@@ -1418,6 +1487,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       props.plugin.off('remixAI', 'onToolApprovalRequired')
       props.plugin.off('remixAI', 'onDappUpdateCompleted')
       props.plugin.off('remixAI', 'renderUI')
+      props.plugin.off('remixAI', 'aiScreenshotCaptured')
       props.plugin.off('remixAI', 'modelSwitchRequested')
       try { props.plugin.off('assistantState' as any, 'stateChanged') } catch { /* noop */ }
     }
@@ -1634,6 +1704,50 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     removeApproval(approval.requestId)
   }, [props.plugin, removeApproval, reviewingApprovals])
 
+  /**
+   * Answers a screen-capture consent prompt. The scope travels with the
+   * response so the gate knows how long the answer holds; "always" is the only
+   * one that outlives the session, so it is also the only one written to
+   * settings.
+   *
+   * "Don't allow" is deliberately a one-time no rather than "never ask again":
+   * a misclick should not silently blind the assistant forever. Turning it off
+   * permanently is a deliberate trip to Settings.
+   */
+  const handleScreenCaptureDecision = useCallback(async (approval: ToolApprovalRequest, scope: ApprovalScope) => {
+    if (!approval) return
+    remixAILogger.log('[Assistant UI] screen-capture decision', scope, approval.requestId)
+
+    // How often people grant, scope or refuse screen sharing is the signal
+    // that tells us whether this prompt is understood or just dismissed.
+    trackMatomoEvent({
+      category: 'ai',
+      action: 'remixAI',
+      name: 'screen_capture_decision',
+      value: `${scope}|${approval.consent?.wholeIde === false ? 'region' : 'full_ide'}`,
+      isClick: true
+    })
+
+    if (scope === 'always') {
+      try {
+        await props.plugin.call('config' as any, 'setAppParameter', `settings/${SCREEN_CAPTURE_SETTING}`, 'always')
+      } catch (err) {
+        remixAILogger.warn('[ScreenCapture] could not persist "always allow"', err)
+      }
+    }
+
+    try {
+      ;(props.plugin as any).respondToToolApproval({
+        requestId: approval.requestId,
+        approved: scope !== 'deny',
+        scope
+      })
+    } catch (err) {
+      remixAILogger.error('[ScreenCapture] respondToToolApproval threw', approval.requestId, err)
+    }
+    removeApproval(approval.requestId)
+  }, [props.plugin, removeApproval])
+
   // Handle approving all pending approvals at once
   const handleApproveAll = useCallback(async () => {
     // Close any open DiffEditor sessions first
@@ -1648,14 +1762,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
     }
 
-    const approvals = [...pendingApprovals]
+    // Bulk-approving a batch of file edits must not also hand over a picture
+    // of the user's screen — those stay on screen to be answered on their own.
+    const approvals = pendingApprovals.filter(a => a.category !== 'screen_capture')
     for (const approval of approvals) {
       ;(props.plugin as any).respondToToolApproval({
         requestId: approval.requestId,
         approved: true
       })
     }
-    setPendingApprovals([])
+    setPendingApprovals(prev => prev.filter(a => a.category === 'screen_capture'))
     setReviewingApprovals(new Set())
   }, [pendingApprovals, props.plugin, reviewingApprovals])
 
@@ -1673,14 +1789,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
     }
 
-    const approvals = [...pendingApprovals]
+    // Same reasoning as handleApproveAll: a consent prompt is answered
+    // deliberately, not swept up in a bulk action about file edits.
+    const approvals = pendingApprovals.filter(a => a.category !== 'screen_capture')
     for (const approval of approvals) {
       ;(props.plugin as any).respondToToolApproval({
         requestId: approval.requestId,
         approved: false
       })
     }
-    setPendingApprovals([])
+    setPendingApprovals(prev => prev.filter(a => a.category === 'screen_capture'))
     setReviewingApprovals(new Set())
   }, [pendingApprovals, props.plugin, reviewingApprovals])
 
@@ -3301,13 +3419,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                     )}
                     {pendingApprovals.map((approval) => (
                       <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
-                        <ToolApprovalModal
-                          request={approval}
-                          onApprove={(options) => handleApproveToolAction(approval, options)}
-                          onReject={() => handleRejectToolAction(approval)}
-                          onReviewChanges={() => handleReviewChanges(approval)}
-                          isReviewing={reviewingApprovals.has(approval.requestId)}
-                        />
+                        {approval.category === 'screen_capture' ? (
+                          <ScreenCaptureConsentCard
+                            request={approval}
+                            modelName={selectedModel?.displayName}
+                            onDecide={(scope) => handleScreenCaptureDecision(approval, scope)}
+                          />
+                        ) : (
+                          <ToolApprovalModal
+                            request={approval}
+                            onApprove={(options) => handleApproveToolAction(approval, options)}
+                            onReject={() => handleRejectToolAction(approval)}
+                            onReviewChanges={() => handleReviewChanges(approval)}
+                            isReviewing={reviewingApprovals.has(approval.requestId)}
+                          />
+                        )}
                       </div>
                     ))}
                   </section>
@@ -3419,13 +3545,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       )}
                       {pendingApprovals.map((approval) => (
                         <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
-                          <ToolApprovalModal
-                            request={approval}
-                            onApprove={(options) => handleApproveToolAction(approval, options)}
-                            onReject={() => handleRejectToolAction(approval)}
-                            onReviewChanges={() => handleReviewChanges(approval)}
-                            isReviewing={reviewingApprovals.has(approval.requestId)}
-                          />
+                          {approval.category === 'screen_capture' ? (
+                            <ScreenCaptureConsentCard
+                              request={approval}
+                              modelName={selectedModel?.displayName}
+                              onDecide={(scope) => handleScreenCaptureDecision(approval, scope)}
+                            />
+                          ) : (
+                            <ToolApprovalModal
+                              request={approval}
+                              onApprove={(options) => handleApproveToolAction(approval, options)}
+                              onReject={() => handleRejectToolAction(approval)}
+                              onReviewChanges={() => handleReviewChanges(approval)}
+                              isReviewing={reviewingApprovals.has(approval.requestId)}
+                            />
+                          )}
                         </div>
                       ))}
                     </section>

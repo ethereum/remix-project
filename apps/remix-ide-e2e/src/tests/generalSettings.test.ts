@@ -91,6 +91,31 @@ module.exports = {
       .checkElementStyle(':root', '--bs-info', remixIdeThemes.light.info)
       .checkElementStyle(':root', '--bs-warning', remixIdeThemes.light.warning)
       .checkElementStyle(':root', '--bs-danger', remixIdeThemes.light.danger)
+  },
+
+  // The assistant can photograph the IDE, so the policy controlling that must
+  // be reachable and must stick — a consent control that silently forgets is
+  // worse than none.
+  'Should default screen capture to "ask" and persist a change': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
+      .waitForElementVisible('*[data-id="settings-sidebar-ai"]')
+      .click('*[data-id="settings-sidebar-ai"]')
+      .waitForElementVisible('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]')
+      .assert.containsText('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]', 'Ask the first time in each chat')
+      .click('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]')
+      .waitForElementVisible('*[data-id="settingsTabDropdownItemnever"]')
+      .click('*[data-id="settingsTabDropdownItemnever"]')
+      .pause(500)
+      .assert.containsText('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]', 'Never allow')
+      .refresh()
+      .waitForElementVisible('*[data-id="topbar-settingsIcon"]')
+      .click('*[data-id="topbar-settingsIcon"]')
+      .waitForElementVisible('*[data-id="settings-sidebar-ai"]')
+      .click('*[data-id="settings-sidebar-ai"]')
+      .waitForElementVisible('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]')
+      .assert.containsText('*[data-id="settingsTabDropdownToggleai-screen-capture-consent"]', 'Never allow')
       .end()
   },
 

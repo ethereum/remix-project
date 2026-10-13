@@ -154,17 +154,23 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         marginLeft: '4px'
                       } : undefined}
                     >
-                      {msg.role === 'user' && msg.attachments?.length > 0 && (
+                      {msg.attachments?.length > 0 && (
                         // Rendered as real elements rather than through the
                         // markdown viewer: rehypeSanitize strips data: URLs.
-                        <div className="d-flex flex-row flex-wrap gap-2 align-items-center" data-id="ai-user-attachments">
+                        // Assistant-side entries are screenshots the AI took
+                        // of the IDE — shown so the user can see what was sent.
+                        <div
+                          className="d-flex flex-row flex-wrap gap-2 align-items-center"
+                          data-id={msg.role === 'user' ? 'ai-user-attachments' : 'ai-capture-attachments'}
+                        >
                           {msg.attachments.map(att => att.kind === 'image' ? (
                             <img
                               key={att.id}
                               src={att.thumbnailDataUrl || att.dataUrl}
                               alt={att.name}
-                              title={att.name}
+                              title={att.source === 'ai-capture' ? `${att.name} — sent to the model` : att.name}
                               className="rounded"
+                              data-id={att.source === 'ai-capture' ? 'ai-capture-thumbnail' : undefined}
                               style={{ maxWidth: 120, maxHeight: 120, objectFit: 'cover', border: '1px solid var(--bs-border-color)', cursor: 'pointer' }}
                               onClick={() => window.open(att.dataUrl || att.thumbnailDataUrl, '_blank')}
                             />
@@ -179,6 +185,12 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                               <span className="text-truncate">{att.name}</span>
                             </span>
                           ))}
+                        </div>
+                      )}
+                      {msg.role !== 'user' && msg.attachments?.some(att => att.source === 'ai-capture') && (
+                        <div className="text-muted small d-flex align-items-center gap-2" data-id="ai-capture-caption">
+                          <i className="fas fa-camera" style={{ fontSize: '0.7rem' }} />
+                          <span>Screenshot of your IDE sent to the model</span>
                         </div>
                       )}
                       {msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (

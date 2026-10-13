@@ -4,7 +4,8 @@ import { RemixToolDefinition, ToolCategory } from '../types/mcpTools'
 import { BaseToolHandler } from '../registry/RemixToolRegistry'
 import { remixAILogger } from '../../helpers/logger'
 import { screenshotBuffer, screenshotMarker } from '../../inferencers/deepagent/visionBuffer'
-import { captureElementPng, defaultCaptureTarget, annotatePngWithMarks, ElementMark } from '../../helpers/domCapture'
+import { screenshotConsent } from '../../inferencers/deepagent/screenshotConsent'
+import { captureElementPng, defaultCaptureTarget, annotatePngWithMarks, ElementMark, thumbnailDataUrl } from '../../helpers/domCapture'
 import remixUiMap from '../context/remixUiMap.json'
 
 /**
@@ -531,6 +532,17 @@ export class CaptureUIScreenshotHandler extends BaseToolHandler {
     const domError = requireDom()
     if (domError) return this.createErrorResult(domError)
 
+    // ToolApprovalGate is where consent is actually obtained. This is the
+    // backstop: the tool is registered unconditionally, so a call path that
+    // bypassed the gate must fail closed rather than quietly photograph the
+    // user's screen.
+    if (!screenshotConsent.isAllowed()) {
+      remixAILogger.warn('[capture_ui_screenshot] blocked — no consent on record')
+      return this.createErrorResult(
+        'Screen capture was not approved by the user. Use inspect_ui or get_ui_state to read the interface instead.'
+      )
+    }
+
     try {
       let target: HTMLElement
       let label: string
@@ -567,7 +579,30 @@ export class CaptureUIScreenshotHandler extends BaseToolHandler {
         }
       }
 
-      const id = screenshotBuffer.put({ dataUrl, width, height, label, capturedAt: Date.now() })
+      const capturedAt = Date.now()
+      const id = screenshotBuffer.put({ dataUrl, width, height, label, capturedAt })
+
+      // Show the user what the model is about to look at. Only a small JPEG
+      // preview crosses into the chat — the full-resolution PNG stays in the
+      // buffer, which is the one thing that must not end up in IndexedDB.
+      try {
+        const thumbnail = await thumbnailDataUrl(dataUrl)
+        if (thumbnail) {
+          plugin.emit('aiScreenshotCaptured', {
+            id,
+            thumbnailDataUrl: thumbnail,
+            width,
+            height,
+            label,
+            capturedAt,
+            reason: args?.reason
+          })
+        }
+      } catch (e) {
+        // The user losing the receipt is bad; the capture failing because of
+        // it would be worse.
+        remixAILogger.warn('[capture_ui_screenshot] could not publish the preview', e)
+      }
 
       const marksNote = drawn > 0
         ? ` ${drawn} interactive element(s) are outlined and badged with their ref number — the badge reading 12 is ref "e12", which click_element and type_into_element accept. The badges are only valid until the next inspect_ui.` +

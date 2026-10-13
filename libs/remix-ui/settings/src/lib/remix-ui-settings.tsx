@@ -185,6 +185,20 @@ const settingsSections: SettingsSection[] = [
         ]
       },
       {
+        title: 'settings.aiScreenCaptureSection',
+        options: [{
+          name: 'ai-screen-capture-consent',
+          label: 'settings.aiScreenCapture',
+          description: 'settings.aiScreenCaptureDescription',
+          type: 'select',
+          selectOptions: [
+            { label: 'Ask the first time in each chat', value: 'ask' },
+            { label: 'Always allow', value: 'always' },
+            { label: 'Never allow', value: 'never' }
+          ]
+        }]
+      },
+      {
         title: 'settings.aiFeedbackSection',
         options: [{
           name: 'ai-feedback',
