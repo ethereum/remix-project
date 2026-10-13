@@ -284,7 +284,7 @@ export const TabsUI = (props: TabsUIProps) => {
     const draggingClass = draggedIndexRef.current === index ? ' tab-dragging' : ''
 
     return (
-      <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} placement="bottom-start">
+      <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} tooltipClasses="text-nowrap" placement="bottom-start">
         <div
           ref={(el) => {
             tabsRef.current[index] = el
