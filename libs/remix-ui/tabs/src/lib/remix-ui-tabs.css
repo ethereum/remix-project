@@ -123,8 +123,8 @@
   color: var(--bs-emphasis-color) !important;
 }
 
-/* no Bootstrap pressed border on the new file button */
-.tabs-new-file-btn:active {
+/* no Bootstrap pressed border on the zoom and new file buttons */
+.zoom-icon-btn:active {
   border-color: transparent !important;
 }
 

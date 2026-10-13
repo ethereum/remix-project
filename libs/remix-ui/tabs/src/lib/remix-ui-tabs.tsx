@@ -120,7 +120,7 @@ const PlayExtList = ['js', 'ts', 'sol', 'circom', 'vy', 'nr', 'yul', 'sql', 'sub
 // a childless component: react-tabs rewrites the children of every element inside TabList, which breaks the tooltip
 const NewFileButton = ({ onClick }: { onClick: () => void }) => (
   <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-new-file" tooltipText={<FormattedMessage id="remixUiTabs.newFile" />}>
-    <span data-id="tabsNewFile" className="btn fas fa-plus text-dark d-flex p-2 ms-1 zoom-icon-btn tabs-new-file-btn" onClick={onClick}></span>
+    <span data-id="tabsNewFile" className="btn fas fa-plus text-dark d-flex p-2 ms-1 zoom-icon-btn" onClick={onClick}></span>
   </CustomTooltip>
 )
 
