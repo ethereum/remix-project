@@ -2034,6 +2034,12 @@ body.ai-panel-resizing {
   border-left: 1px solid var(--bs-border-color) !important;
 }
 
+/* Code mode: the list fills the docked chat */
+.ai-changes-panel.ai-changes-panel-docked {
+  min-width: 0;
+  border-left: 0 !important;
+}
+
 /* Secondary actions: readable in both themes (the approval card's reject colour is dark-theme only) */
 .ai-changes-panel .ai-changes-btn-secondary {
   background: color-mix(in srgb, var(--bs-body-color) 12%, transparent);

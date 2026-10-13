@@ -203,3 +203,41 @@ test('a saved answer shows its file changes in place, grouped, with rejected edi
   await expect(page.locator(sel.fileRow)).toHaveCount(3)
   await expect(page.locator(`${sel.fileRow}[data-path="README.md"]`)).toHaveCount(0)
 })
+
+test('in code mode the changes list fills the chat and opens each change in the editor', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('remix_nudge_dismissed_permanent', JSON.stringify(['ai-mode-intro'])))
+  await page.goto('http://127.0.0.1:8080/#lang=en')
+  await expect(page.locator('[data-id="apploaded"]')).toBeAttached({ timeout: 90_000 })
+  await expect(page.locator(sel.chatReady).first()).toBeAttached({ timeout: 90_000 })
+  const docked = '#right-side-panel'
+
+  const storage = await page.evaluate(() => (window as any).getRemixAIPlugin.call('fileManager', 'readFile', 'contracts/1_Storage.sol'))
+  await emitFileChanged(page, { path: '/contracts/1_Storage.sol', existed: true, oldContent: storage.replace('uint256 number;', 'uint number;'), newContent: storage })
+  await emitApprovalRequired(page, 'e2e_code_approval', '/contracts/1_Storage.sol', storage, `${storage}\n// added`)
+  // Code mode keeps the approval card in the chat and does not open the list by itself
+  await expect(page.locator(`${docked} ${sel.panel}`)).toHaveCount(0)
+  await expect(page.locator(`${docked} ${sel.toggleCount}`)).toHaveText('2')
+
+  await click(page, `${docked} ${sel.toggle}`)
+  await expect(page.locator(`${docked} ${sel.panel}`)).toBeVisible()
+  await expect(page.locator(`${docked} ${sel.fileRow}`)).toHaveCount(1)
+  await expect(page.locator(`${docked} ${sel.pendingRow}`)).toHaveCount(1)
+  await expect(page.locator(`${docked} [data-id="ai-changes-close-btn"]`)).toHaveCount(0)
+
+  // A change RemixAI made: a view-only diff in the editor
+  await click(page, `${docked} ${sel.fileRow}`)
+  await expect(page.locator('[data-id="ai-diff-open-file"]')).toBeVisible()
+  await expect(page.locator('[data-id="ai-diff-accept"]')).toHaveCount(0)
+  await expect(page.locator(sel.diff)).toHaveCount(0)
+  await click(page, '[data-id="ai-diff-open-file"]')
+  await expect(page.locator('[data-id="tab-active"][data-path$="contracts/1_Storage.sol"]')).toBeVisible()
+
+  // A change waiting for approval: Accept / Reject in the editor
+  await click(page, `${docked} ${sel.pendingRow}`)
+  await expect(page.locator('[data-id="ai-diff-accept"]')).toBeVisible()
+  await expect(page.locator('[data-id="ai-diff-reject"]')).toBeVisible()
+
+  await click(page, `${docked} [data-id="ai-changes-back-to-chat-btn"]`)
+  await expect(page.locator(`${docked} ${sel.panel}`)).toHaveCount(0)
+  await expect(page.locator(`${docked} #remix-ai-chat-history`)).toBeVisible()
+})

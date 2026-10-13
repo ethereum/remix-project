@@ -79,7 +79,7 @@ export default function ChatHistoryHeading({
             </button>
           </CustomTooltip>
         )}
-        {isAiChatMaximized && onToggleChanges && (
+        {onToggleChanges && (
           <CustomTooltip tooltipText={showChangesPanel ? 'Hide changes' : 'Show files changed by RemixAI'}>
             <button
               className={`btn btn-sm text-decoration-none d-inline-flex align-items-center ${showChangesPanel ? 'ai-heading-toggle-active' : 'btn-link'}`}

@@ -1702,7 +1702,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // Flag files that no longer hold what the agent wrote (edited since, branch switched, ...)
   useEffect(() => {
-    if (!showChangesPanel || !props.isMaximized) return
+    if (!showChangesPanel) return
     let cancelled = false
     ;(async () => {
       let workspace: string | undefined
@@ -1725,7 +1725,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     return () => {
       cancelled = true
     }
-  }, [showChangesPanel, props.isMaximized, changedFiles, props.plugin])
+  }, [showChangesPanel, changedFiles, props.plugin])
 
   const reviewableApprovals = useMemo(() => pendingApprovals.filter(isReviewableApproval), [pendingApprovals])
 
@@ -1785,12 +1785,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     handleRejectToolAction(approval)
   }, [selectNextPendingChange, handleRejectToolAction])
 
-  // A change line in the chat: its file in the changes panel in AI mode, else that edit's diff in the editor
-  const openFileChange = useCallback(async (change: AIFileChangeRecord) => {
-    if (props.isMaximized) {
-      openChangesPanel({ kind: 'file', key: changeKey(change.workspace, change.path) })
-      return
-    }
+  // An edit RemixAI already made, as a view-only diff in the editor
+  const openAppliedDiff = useCallback(async (change: { path: string, oldContent: string, newContent: string, existed: boolean, deleted?: boolean }) => {
     try {
       await props.plugin.call('fileManager' as any, 'diff', {
         type: change.deleted ? 'deleted' : change.existed ? 'modified' : 'added',
@@ -1799,12 +1795,34 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         hashModified: contentHash(change.newContent),
         original: change.oldContent,
         modified: change.newContent,
-        readonly: true
+        readonly: true,
+        source: 'ai-applied'
       })
     } catch (err) {
       remixAILogger.warn('[AIChanges] Failed to open the diff', err)
     }
-  }, [props.isMaximized, props.plugin, openChangesPanel])
+  }, [props.plugin])
+
+  // A change line in the chat: its file in the changes panel in AI mode, else that edit's diff in the editor
+  const openFileChange = useCallback((change: AIFileChangeRecord) => {
+    if (props.isMaximized) {
+      openChangesPanel({ kind: 'file', key: changeKey(change.workspace, change.path) })
+      return
+    }
+    openAppliedDiff(change)
+  }, [props.isMaximized, openChangesPanel, openAppliedDiff])
+
+  // Code mode: a row of the changes list opens in the editor, where there is more room than in the chat
+  const openChangeInEditor = useCallback((selection: AIChangesSelection) => {
+    if (!selection) return
+    if (selection.kind === 'pending') {
+      const approval = reviewableApprovals.find(approval => approval.requestId === selection.requestId)
+      if (approval) handleReviewChanges(approval)
+      return
+    }
+    const file = changedFiles.find(file => file.key === selection.key)
+    if (file) openAppliedDiff({ path: file.path, oldContent: file.baseContent, newContent: file.latestContent, existed: file.existed, deleted: file.deleted })
+  }, [reviewableApprovals, changedFiles, handleReviewChanges, openAppliedDiff])
 
   const openChangedFileInEditor = useCallback(async (path: string) => {
     try {
@@ -3437,8 +3455,39 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                   {autoAcceptBannerEl}
                 </div>
               ) : (
-              /* Non-Maximized Mode: Toggle between history view and chat view */
-                props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
+              /* Non-Maximized Mode: Toggle between the changes list, history view and chat view */
+                showChangesPanel && props.isMaximized === false ? (
+                  <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
+                    <div className="p-2 border-bottom">
+                      <button
+                        className={`btn btn-sm ${themeTracker?.name.toLowerCase() === 'dark' ? 'btn-dark' : 'btn-light text-light-emphasis'}`}
+                        onClick={closeChangesPanel}
+                        data-id="ai-changes-back-to-chat-btn"
+                      >
+                        <i className="fas fa-chevron-left me-3"></i>
+                        <span>Back to chat</span>
+                      </button>
+                    </div>
+                    <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden', minHeight: 0 }}>
+                      <AIChangesPanel
+                        docked
+                        pendingApprovals={pendingApprovals}
+                        changedFiles={changedFiles}
+                        selection={null}
+                        currentWorkspace={changesWorkspace}
+                        staleKeys={staleChangeKeys}
+                        onSelect={openChangeInEditor}
+                        onAccept={acceptChangeFromPanel}
+                        onReject={rejectChangeFromPanel}
+                        onOpenInEditor={openChangedFileInEditor}
+                        onClose={closeChangesPanel}
+                        theme={themeTracker?.name}
+                      />
+                    </div>
+                    {thinkingBannerEl}
+                    {autoAcceptBannerEl}
+                  </div>
+                ) : props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
                   <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
                     {/* Back button header */}
                     <div
@@ -3492,6 +3541,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       theme={themeTracker?.name}
                       chatTitle={headerChatTitle}
                       isAiChatMaximized={props.isMaximized}
+                      showChangesPanel={showChangesPanel}
+                      onToggleChanges={toggleChangesPanel}
+                      changesCount={reviewableApprovals.length + changedFiles.length}
                     />
                     <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
                       <div data-id="remix-ai-assistant-ready"></div>

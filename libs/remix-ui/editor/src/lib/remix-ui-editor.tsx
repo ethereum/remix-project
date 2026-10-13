@@ -145,6 +145,7 @@ export type DiffSession = {
   originalContent: string
   modifiedContent: string
   filePath: string
+  source?: string
   createdAt: number
 }
 
@@ -179,7 +180,8 @@ export interface EditorUIProps {
   currentFile: string
   currentDiffFile: string
   isDiff: boolean
-  isAiDiff?: boolean
+  /** 'ai': an edit RemixAI proposes (Accept / Reject); 'ai-applied': one it already made (view only) */
+  diffSource?: 'ai' | 'ai-applied' | null
   splitViewFile: string
   splitViewContent: string
   events: {
@@ -2269,11 +2271,27 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
   }
   const acceptActiveDiff = () => closeActiveDiff(props.editorAPI.acceptDiff)
   const discardActiveDiff = () => closeActiveDiff(props.editorAPI.discardDiff)
+  const openActiveDiffFile = () => {
+    const session = diffSessions.find((session) => session.id === activeDiffId) || diffSessions[0]
+    if (session) props.plugin.call('fileManager', 'open', session.filePath)
+  }
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse position-relative">
       {props.isDiff && (
-        props.isAiDiff ? (
+        props.diffSource === 'ai-applied' ? (
+          <div className="remix-ai-diff-actions d-flex justify-content-end align-items-center gap-2 p-2 border-top" data-id="ai-diff-actions">
+            <button
+              className="remix-ai-diff-btn remix-ai-diff-btn-secondary"
+              onClick={openActiveDiffFile}
+              title="Open the file in the editor"
+              disabled={diffSessions.length === 0}
+              data-id="ai-diff-open-file"
+            >
+              <i className="fas fa-code me-1"></i>Open file
+            </button>
+          </div>
+        ) : props.diffSource === 'ai' ? (
           <div className="remix-ai-diff-actions d-flex justify-content-end align-items-center gap-2 p-2 border-top" data-id="ai-diff-actions">
             <button
               className="remix-ai-diff-btn remix-ai-diff-btn-secondary"

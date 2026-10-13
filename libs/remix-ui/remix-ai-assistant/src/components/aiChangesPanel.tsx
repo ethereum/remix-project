@@ -35,6 +35,8 @@ interface AIChangesPanelProps {
   onReject: (approval: ToolApprovalRequest) => void
   onOpenInEditor: (path: string) => void
   onClose: () => void
+  /** Code mode: the list fills the chat and a row opens its diff in the editor (onSelect), not in the panel */
+  docked?: boolean
   theme?: string
 }
 
@@ -190,7 +192,7 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
     approval,
     ...countLineChanges(approval.existingContent || '', approval.proposedContent)
   })), [props.pendingApprovals])
-  const selection = props.selection
+  const selection = props.docked ? null : props.selection
   const selectedApproval = selection?.kind === 'pending' ? pending.find(({ approval }) => approval.requestId === selection.requestId)?.approval : undefined
   const selectedFile = selection?.kind === 'file' ? props.changedFiles.find((file) => file.key === selection.key) : undefined
 
@@ -211,21 +213,29 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
   const canOpenInEditor = !!selectedFile && !selectedFile.deleted && !isOtherWorkspace(selectedFile)
 
   return (
-    <div ref={panelRef} className="ai-changes-panel ai-resizable-panel chat-history-sidebar border-0 d-flex flex-column h-100" style={{ width }} data-id="ai-changes-panel" data-theme={theme}>
-      <div
-        className="ai-panel-resize-handle"
-        role="separator"
-        aria-orientation="vertical"
-        title="Drag to resize, double-click to reset"
-        onPointerDown={startResize}
-        onDoubleClick={resetWidth}
-        data-id="ai-changes-resize-handle"
-      />
+    <div
+      ref={props.docked ? undefined : panelRef}
+      className={`ai-changes-panel chat-history-sidebar border-0 d-flex flex-column h-100 ${props.docked ? 'ai-changes-panel-docked w-100' : 'ai-resizable-panel'}`}
+      style={props.docked ? undefined : { width }}
+      data-id="ai-changes-panel"
+      data-theme={theme}
+    >
+      {!props.docked && (
+        <div
+          className="ai-panel-resize-handle"
+          role="separator"
+          aria-orientation="vertical"
+          title="Drag to resize, double-click to reset"
+          onPointerDown={startResize}
+          onDoubleClick={resetWidth}
+          data-id="ai-changes-resize-handle"
+        />
+      )}
       <AIPanelHeader
         title="Changes"
         count={pending.length + props.changedFiles.length}
         titleDataId="ai-changes-panel-title"
-        onClose={props.onClose}
+        onClose={props.docked ? undefined : props.onClose}
         closeLabel="Close changes"
         closeDataId="ai-changes-close-btn"
         theme={theme}

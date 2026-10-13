@@ -120,7 +120,7 @@ export default class Editor extends Plugin {
       events={state.events}
       plugin={state.plugin}
       isDiff={state.isDiff}
-      isAiDiff={state.isAiDiff}
+      diffSource={state.diffSource}
       splitViewFile={state.splitViewFile}
       splitViewContent={state.splitViewContent}
       setMonaco={(monaco) => this.setMonaco(monaco)}
@@ -154,7 +154,7 @@ export default class Editor extends Plugin {
       currentFile: this.currentFile,
       currentDiffFile: this.currentDiffFile,
       isDiff: this.isDiff,
-      isAiDiff: this.isAiDiff,
+      diffSource: this.diffSource,
       splitViewFile: this.splitViewFile,
       splitViewContent: this.splitViewContent,
       events: this.events,
@@ -602,9 +602,10 @@ export default class Editor extends Plugin {
     this.renderComponent()
   }
 
-  setIsDiff (isDiff, currentDiffFile = null, hashedPathModified = null, isAiDiff = false) {
+  setIsDiff (isDiff, currentDiffFile = null, hashedPathModified = null, source = null) {
     this.isDiff = isDiff
-    this.isAiDiff = isDiff && isAiDiff // changes proposed by RemixAI: the diff view shows its Accept / Reject bar
+    // Who opened the diff: 'ai' (an edit RemixAI proposes) or 'ai-applied' (one it made); the diff view shows a bar to match
+    this.diffSource = isDiff ? source : null
     this.currentDiffFile = currentDiffFile
     this.hashedPathModified = hashedPathModified
   }
@@ -628,7 +629,7 @@ export default class Editor extends Plugin {
     if (this.diffSessions[diffId]) {
       this.activeDiffId = diffId
       const session = this.diffSessions[diffId]
-      this.setIsDiff(true, session.originalPath, session.modifiedPath, session.source === 'ai')
+      this.setIsDiff(true, session.originalPath, session.modifiedPath, session.source)
       return true
     }
     return false
