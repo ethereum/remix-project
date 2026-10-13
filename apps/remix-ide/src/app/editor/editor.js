@@ -120,6 +120,7 @@ export default class Editor extends Plugin {
       events={state.events}
       plugin={state.plugin}
       isDiff={state.isDiff}
+      isAiDiff={state.isAiDiff}
       splitViewFile={state.splitViewFile}
       splitViewContent={state.splitViewContent}
       setMonaco={(monaco) => this.setMonaco(monaco)}
@@ -153,6 +154,7 @@ export default class Editor extends Plugin {
       currentFile: this.currentFile,
       currentDiffFile: this.currentDiffFile,
       isDiff: this.isDiff,
+      isAiDiff: this.isAiDiff,
       splitViewFile: this.splitViewFile,
       splitViewContent: this.splitViewContent,
       events: this.events,
@@ -556,6 +558,7 @@ export default class Editor extends Plugin {
         modified: content,
         original: source,
         type: "modified",
+        source: 'ai'
       })
     } catch (err) {
       console.error('[editor] showCustomDiff failed:', err)
@@ -599,13 +602,14 @@ export default class Editor extends Plugin {
     this.renderComponent()
   }
 
-  setIsDiff (isDiff, currentDiffFile = null, hashedPathModified = null) {
+  setIsDiff (isDiff, currentDiffFile = null, hashedPathModified = null, isAiDiff = false) {
     this.isDiff = isDiff
+    this.isAiDiff = isDiff && isAiDiff // changes proposed by RemixAI: the diff view shows its Accept / Reject bar
     this.currentDiffFile = currentDiffFile
     this.hashedPathModified = hashedPathModified
   }
 
-  createDiffSession (originalPath, modifiedPath, originalContent, modifiedContent, filePath) {
+  createDiffSession (originalPath, modifiedPath, originalContent, modifiedContent, filePath, source) {
     const diffId = `diff_${++this.diffCounter}`
     this.diffSessions[diffId] = {
       id: diffId,
@@ -614,6 +618,7 @@ export default class Editor extends Plugin {
       originalContent,
       modifiedContent,
       filePath,
+      source,
       createdAt: Date.now()
     }
     return diffId
@@ -623,7 +628,7 @@ export default class Editor extends Plugin {
     if (this.diffSessions[diffId]) {
       this.activeDiffId = diffId
       const session = this.diffSessions[diffId]
-      this.setIsDiff(true, session.originalPath, session.modifiedPath)
+      this.setIsDiff(true, session.originalPath, session.modifiedPath, session.source === 'ai')
       return true
     }
     return false
@@ -802,7 +807,8 @@ export default class Editor extends Plugin {
       hashedPathModified, 
       change.original, 
       change.modified, 
-      change.path
+      change.path,
+      change.source
     )
     
     // Set this as the active diff
