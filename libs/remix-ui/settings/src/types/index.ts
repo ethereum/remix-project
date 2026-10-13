@@ -140,6 +140,7 @@ export interface SettingsState {
   'zkverify-config': ConfigState,
   'zkverify-api-key': ConfigState,
   'zkverify-network': ConfigState,
+  'eez-networks-config': ConfigState,
   toaster: ConfigState
 }
 export interface SettingsActionPayloadTypes {

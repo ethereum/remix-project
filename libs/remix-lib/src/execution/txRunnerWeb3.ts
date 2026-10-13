@@ -182,22 +182,13 @@ export class TxRunnerWeb3 {
     const config = Registry.getInstance().get('config').api
 
     try {
-      const gasEstimationBigInt = await ethersProvider.estimateGas(txCopy)
-      // continueTxExecution()
-      const gasEstimation = Number(gasEstimationBigInt)
-      /*
-        * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
-        * e.g if the gasestimate
-        */
-      const gasLimitNum = typeof args.gasLimit === 'string' ? parseInt(args.gasLimit, 16) : args.gasLimit
-      if (args.gasLimit !== '0x0' && gasEstimation > gasLimitNum) {
-        throw new Error(`estimated gas for this transaction (${gasEstimation}) is higher than gasLimit set in the configuration  (${args.gasLimit}). Please raise the gas limit.`)
-      }
-
-      if (args.gasLimit === '0x0') {
-        tx['gasLimit'] = gasEstimation
-      } else {
+      // Trust and use user-defined gasLimit.
+      // This allows cross-chain transactions to execute successfully.
+      if (args.gasLimit !== '0x0') {
         tx['gasLimit'] = args.gasLimit
+      } else {
+        const gasEstimationBigInt = await ethersProvider.estimateGas(txCopy)
+        tx['gasLimit'] = Number(gasEstimationBigInt)
       }
 
       if (config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
