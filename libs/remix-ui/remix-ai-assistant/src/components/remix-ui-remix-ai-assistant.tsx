@@ -1367,8 +1367,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
       const activeId = streamingAssistantIdRef.current
       if (activeId) {
-        // Attach to the message that is currently streaming
-        setMessages(prev => prev.map(m => m.id === activeId ? { ...m, uiComponent: payload } : m))
+        // Attach to the message that is currently streaming, and retire any
+        // earlier component: a superseded picker left live in the transcript is
+        // still clickable, and answering it sends the model back into an
+        // exchange it has already moved past.
+        setMessages(prev => prev.map(m => {
+          if (m.id === activeId) return { ...m, uiComponent: payload, uiComponentStale: false }
+          return m.uiComponent && !m.uiComponentStale ? { ...m, uiComponentStale: true } : m
+        }))
         return
       }
       // No active stream yet (render_ui called before any text) — create an assistant bubble
@@ -1376,7 +1382,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       const uiMsgId = crypto.randomUUID()
       streamingAssistantIdRef.current = uiMsgId
       setMessages(prev => [
-        ...prev,
+        ...prev.map(m => m.uiComponent && !m.uiComponentStale ? { ...m, uiComponentStale: true } : m),
         {
           id: uiMsgId,
           role: 'assistant' as const,
@@ -1691,6 +1697,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       remixAILogger.warn('[DAppReview] Failed to close diff sessions:', err)
     }
   }, [props.plugin])
+
+  /**
+   * Retires a rendered component once the user has answered it.
+   *
+   * The answer goes to the model as a new turn, so without this the control
+   * stays live in the transcript indefinitely and a second click would reopen
+   * an exchange the model has already completed.
+   */
+  const handleUiComponentAnswered = useCallback((msgId: string) => {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, uiComponentStale: true } : m))
+  }, [])
 
   const handleDappReviewAcceptAll = useCallback(async (msgId: string) => {
     remixAILogger.log('[DAppReview] Accept all for message:', msgId)
@@ -3201,6 +3218,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       onDappReviewAcceptAll={handleDappReviewAcceptAll}
                       onDappReviewRevertAll={handleDappReviewRevertAll}
                       onDappReviewViewDiff={handleDappReviewViewDiff}
+                      onUiComponentAnswered={handleUiComponentAnswered}
                     />
                     {pendingApprovals.length > 1 && (
                       <div className="hitl-pending-summary">
@@ -3319,6 +3337,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                         onDappReviewAcceptAll={handleDappReviewAcceptAll}
                         onDappReviewRevertAll={handleDappReviewRevertAll}
                         onDappReviewViewDiff={handleDappReviewViewDiff}
+                        onUiComponentAnswered={handleUiComponentAnswered}
                       />
                       {pendingApprovals.length > 1 && (
                         <div className="hitl-pending-summary">
