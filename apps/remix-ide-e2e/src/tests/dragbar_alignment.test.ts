@@ -179,22 +179,22 @@ module.exports = {
   },
 
   'Dragging the left dragbar a little below the minimum stops at the minimum #group1': function (browser: NightwatchBrowser) {
-    // 320px - 130px = 190px: below the 220px minimum, but not far enough to close
+    // 320px - 130px = 190px: below the 305px minimum, but not far enough to close
     dragBy(browser, leftDragbar, -130)
     browser.waitForElementVisible('#side-panel', 5000)
-    assertPanelWidth(browser, '#side-panel', 220, 'The file explorer can be narrowed to the 220px minimum')
+    assertPanelWidth(browser, '#side-panel', 305, 'The file explorer can be narrowed to the 305px minimum')
   },
 
   'Plugins that need more room open the side panel wider, then it goes back to the chosen width #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('solidity').pause(1000)
     assertPanelWidth(browser, '#side-panel', 320, 'The compiler opens the side panel at 320px')
     browser.clickLaunchIcon('filePanel').pause(1000)
-    assertPanelWidth(browser, '#side-panel', 220, 'The file explorer is back at the width chosen before')
+    assertPanelWidth(browser, '#side-panel', 305, 'The file explorer is back at the width chosen before')
     assertLeftDragbarAligned(browser, 'Left dragbar should align after switching plugins')
   },
 
   'Dragging the left dragbar far below the minimum closes the side panel #group1': function (browser: NightwatchBrowser) {
-    // 220px - 200px = 20px: more than 150px past the minimum
+    // 305px - 200px = 105px: more than 150px past the minimum
     dragBy(browser, leftDragbar, -200)
     browser.waitForElementNotVisible('#side-panel', 5000)
     browser.doubleClick(leftDragbar).pause(1000)
