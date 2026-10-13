@@ -10180,10 +10180,10 @@
     rpc-websockets "^9.0.2"
     superstruct "^2.0.2"
 
-"@solarpunkltd/swarm-collaborative-docs@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@solarpunkltd/swarm-collaborative-docs/-/swarm-collaborative-docs-0.1.0.tgz#87deb3f73b557a73d93fe1f2e1983f111fb91544"
-  integrity sha512-JEjTH6msWGwbcukCKMN8odoIwB9w7fDHVgJ6S9ercIm2nPGanMCfjYKGXFHivOCovPb5qLLrCmtLCwt/rSBpPQ==
+"@solarpunkltd/swarm-collaborative-docs@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@solarpunkltd/swarm-collaborative-docs/-/swarm-collaborative-docs-0.1.1.tgz#af573b0ccab666036128813dfc6ca5803941bbb6"
+  integrity sha512-hix9Nm8q4HdVpN0++CHqZ7iz4rL3ys5/p8geR9+Y/Eq9dgZ77HYluW0Q55CrRBlK9bXWP66ZlVf760kLM/T+5g==
 
 "@solidity-parser/parser@^0.14.5":
   version "0.14.5"

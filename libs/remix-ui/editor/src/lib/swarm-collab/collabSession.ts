@@ -186,7 +186,8 @@ export class CollabSession {
     const identity = loadIdentity()
     const isCreator = invite.creator === identity.address.toLowerCase()
     const stamp = normalizeStamp(settings.stamp)
-    if (!/^[0-9a-f]{64}$/.test(stamp)) throw new Error('A postage stamp (64 hex characters) is required: every participant writes to Swarm.')
+    // Empty is allowed: a gateway attaches its own stamp.
+    if (stamp && !/^[0-9a-f]{64}$/.test(stamp)) throw new Error('A postage stamp must be 64 hex characters, or left empty when the Bee URL is a gateway.')
     if (!settings.nickname.trim()) throw new Error('Pick a name to show to the others.')
 
     const generation = this.generation

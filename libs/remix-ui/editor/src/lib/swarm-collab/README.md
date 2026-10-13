@@ -34,12 +34,13 @@ switching to another workspace.
 Every participant needs:
 
 - **a Bee node reachable from the browser**, since every participant writes their own Swarm feeds;
-- **a usable postage stamp on that node**, which is checked when the session starts.
+- **a usable postage stamp on that node**, which is checked when the session starts. Through a gateway that attaches
+  its own stamp, leave it empty.
 
 | Setting          | Default                        | Notes                                                                                                                       |
 | ---------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
 | Bee node URL     | `http://localhost:1633`        | Prefilled from Remix's `settings/swarm-private-bee-address`.                                                                |
-| Postage stamp    | —                              | Required. 64 hex characters, owned by that node. Prefilled from `settings/swarm-postage-stamp-id`.                          |
+| Postage stamp    | —                              | 64 hex characters, owned by that node; empty for a gateway. Prefilled from `settings/swarm-postage-stamp-id`.               |
 | Transport        | WebRTC via a signaling server  | The alternative signals over Swarm feeds: no server, but slower to connect. A room keeps the transport it was created with. |
 | Signaling server | `ws://localhost:4444`          | A [y-webrtc](https://github.com/yjs/y-webrtc) signaling server.                                                             |
 | STUN / TURN      | `stun:stun.l.google.com:19302` | Comma-separated. Add a TURN server for peers behind symmetric NATs.                                                         |
