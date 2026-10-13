@@ -419,8 +419,13 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
       return
     }
     try {
+      await (plugin as any).call('skillsexplorermodal', 'loadSkill', 'coding-solidity-gas-optimization')
+    } catch {
+      // skill endpoint unavailable — proceed without it
+    }
+    try {
       await openAIAssistant()
-      const prompt = `Perform a gas optimization audit of the following smart contract.${currentFilePath} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.`
+      const prompt = 'Start gas optimization checks of the following smart contract ${currentFilePath} . Use the skill solidity-gas-optimization if available for reference and propose me to go over some specific focussed areas instead of general checks. Ask me which contract file to optimize. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.'
       await (plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, { displayText: 'audit gas ' + currentFilePath, source: 'bottom-bar', presetId: 'gas-audit' })
     } catch (err) {
       console.error('Gas audit failed:', err)

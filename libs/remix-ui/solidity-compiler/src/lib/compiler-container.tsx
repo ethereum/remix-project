@@ -476,6 +476,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const startAudit = async (auditType: 'security' | 'gas') => {
+    if (auditType === 'gas') {
+      try {
+        await (api as any).call('skillsexplorermodal', 'loadSkill', 'coding-solidity-gas-optimization')
+      } catch {
+        // skill endpoint unavailable — proceed without it
+      }
+    }
     const fileName = state.compiledFileName
     const fileRef = fileName ? ` File to analyze: ${fileName}.` : ''
     const prompt = auditType === 'security'
