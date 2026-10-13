@@ -1168,6 +1168,11 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
               ))}
               <NewFileButton
                 onClick={async () => {
+                  trackMatomoEvent?.({
+                    category: 'editor',
+                    action: 'newFileFromTabs',
+                    isClick: true
+                  })
                   await props.plugin.call('menuicons', 'select', 'filePanel')
                   await props.plugin.call('filePanel', 'createNewFile')
                 }}
