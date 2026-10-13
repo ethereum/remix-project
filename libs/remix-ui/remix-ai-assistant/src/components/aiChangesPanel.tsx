@@ -3,6 +3,7 @@ import { DiffEditor } from '@monaco-editor/react'
 import { CustomTooltip } from '@remix-ui/helper'
 import { AIFileChangeRecord, ToolApprovalRequest } from '@remix/remix-ai-core'
 import { useResizableWidth } from '../hooks/useResizableWidth'
+import { AIPanelEmpty, AIPanelHeader, AIPanelItem, AIPanelSection } from './aiPanel'
 
 /** A file the agent changed in the current conversation: the content before its first change and after its latest one */
 export interface AIChangedFile {
@@ -160,21 +161,22 @@ const fileBadge = (file: AIChangedFile) => file.deleted ? 'deleted' : file.moved
 const FileRow = (props: { path: string, badge: string, additions: number, deletions: number, dataId: string, detail?: string, stale?: boolean, onClick: () => void }) => {
   const { name, folder } = splitPath(props.path)
   return (
-    <button
-      className="ai-changes-row btn btn-sm w-100 d-flex align-items-center text-start gap-2"
+    <AIPanelItem
+      icon="far fa-file-code"
+      title={name}
+      titleTooltip={normalizePath(props.path)}
+      subtitle={props.detail || folder}
       onClick={props.onClick}
-      data-id={props.dataId}
-      data-path={props.path}
-    >
-      <i className="far fa-file-code flex-shrink-0"></i>
-      <span className="d-flex flex-column flex-grow-1 overflow-hidden">
-        <span className="text-truncate fw-semibold">{name}</span>
-        {(props.detail || folder) && <span className="text-truncate small text-muted">{props.detail || folder}</span>}
-      </span>
-      {props.stale && <span className="ai-changes-badge ai-changes-badge-warning badge flex-shrink-0" title={STALE_TOOLTIP} data-id="ai-changes-stale-badge">changed since</span>}
-      <span className="ai-changes-badge badge flex-shrink-0">{props.badge}</span>
-      <DiffStat additions={props.additions} deletions={props.deletions} />
-    </button>
+      dataId={props.dataId}
+      dataAttributes={{ 'data-path': props.path }}
+      trailing={
+        <>
+          {props.stale && <span className="ai-changes-badge ai-changes-badge-warning badge flex-shrink-0" title={STALE_TOOLTIP} data-id="ai-changes-stale-badge">changed since</span>}
+          <span className="ai-changes-badge badge flex-shrink-0">{props.badge}</span>
+          <DiffStat additions={props.additions} deletions={props.deletions} />
+        </>
+      }
+    />
   )
 }
 
@@ -219,18 +221,15 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
         onDoubleClick={resetWidth}
         data-id="ai-changes-resize-handle"
       />
-      <div className="chat-history-sidebar-header border-0 px-3 pt-3 pb-2" style={{ backgroundColor: theme === 'dark' ? '#222336' : '#eff1f5' }}>
-        <div className="d-flex justify-content-between align-items-center">
-          <h6 className="mb-0 fw-semibold sidebar-title text-truncate" data-id="ai-changes-panel-title">
-            {'Changes'} <span className="ms-1 fw-normal text-muted">{pending.length + props.changedFiles.length}</span>
-          </h6>
-          <CustomTooltip tooltipText="Close changes">
-            <button className="btn btn-sm p-0 sidebar-close-btn d-inline-flex align-items-center" onClick={props.onClose} data-id="ai-changes-close-btn">
-              <i className="fas fa-times"></i>
-            </button>
-          </CustomTooltip>
-        </div>
-      </div>
+      <AIPanelHeader
+        title="Changes"
+        count={pending.length + props.changedFiles.length}
+        titleDataId="ai-changes-panel-title"
+        onClose={props.onClose}
+        closeLabel="Close changes"
+        closeDataId="ai-changes-close-btn"
+        theme={theme}
+      />
 
       {diff ? (
         <div className="d-flex flex-column flex-grow-1" style={{ minHeight: 0 }} data-id="ai-changes-diff">
@@ -278,8 +277,7 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
       ) : (
         <div className="sidebar-body flex-grow-1 overflow-y-auto p-2" data-id="ai-changes-list">
           {pending.length > 0 && (
-            <section className="mb-3">
-              <div className="ai-changes-section-title small text-uppercase text-muted px-1 mb-1">Waiting for your approval</div>
+            <AIPanelSection title="Waiting for your approval">
               {pending.map(({ approval, additions, deletions }) => (
                 <FileRow
                   key={approval.requestId}
@@ -291,11 +289,10 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
                   onClick={() => props.onSelect({ kind: 'pending', requestId: approval.requestId })}
                 />
               ))}
-            </section>
+            </AIPanelSection>
           )}
           {props.changedFiles.length > 0 && (
-            <section>
-              <div className="ai-changes-section-title small text-uppercase text-muted px-1 mb-1">Changed files</div>
+            <AIPanelSection title="Changed files">
               {props.changedFiles.map((file) => (
                 <FileRow
                   key={file.key}
@@ -309,13 +306,10 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
                   onClick={() => props.onSelect({ kind: 'file', key: file.key })}
                 />
               ))}
-            </section>
+            </AIPanelSection>
           )}
           {pending.length === 0 && props.changedFiles.length === 0 && (
-            <div className="text-center text-muted mt-4 small" data-id="ai-changes-empty">
-              <i className="far fa-file-code fa-2x mb-2 d-block"></i>
-              Files changed by RemixAI in this chat will appear here.
-            </div>
+            <AIPanelEmpty icon="far fa-file-code" message="Files changed by RemixAI in this chat will appear here." dataId="ai-changes-empty" />
           )}
         </div>
       )}

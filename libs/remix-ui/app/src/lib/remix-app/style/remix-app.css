@@ -216,11 +216,6 @@ body.dark .chat-history-sidebar .btn-outline-secondary:hover {
   color: #e0e0e0 !important;
 }
 
-[data-theme="dark"] .chat-history-sidebar .conversation-item .text-muted,
-body.dark .chat-history-sidebar .conversation-item .text-muted {
-  color: #a0a0b0 !important;
-}
-
 [data-theme="dark"] .chat-history-sidebar .sidebar-body,
 body.dark .chat-history-sidebar .sidebar-body {
   background-color: #1e1e2e !important;

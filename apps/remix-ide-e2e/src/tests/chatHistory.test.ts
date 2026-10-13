@@ -119,8 +119,8 @@ const test = {
         console.log('Testing conversation metadata for conversation ID:', conversationId)
         browser
           .waitForElementVisible(`*[data-id="conversation-item-${conversationId}"]`, 5000)
-          .assert.textContains(`*[data-id="conversation-item-${conversationId}"] .conversation-meta`, 'message')
-          .assert.containsText(`*[data-id="conversation-item-${conversationId}"] .conversation-meta`, 'Just now')
+          .assert.textContains(`*[data-id="conversation-item-${conversationId}"] [data-id="conversation-item-meta"]`, 'message')
+          .assert.containsText(`*[data-id="conversation-item-${conversationId}"] [data-id="conversation-item-meta"]`, 'Just now')
       })
   },
 
@@ -162,8 +162,8 @@ const test = {
         browser
           .pause(500)
           .waitForElementVisible(`*[data-id="conversation-item-${conversationId}"]`)
-          .assert.textContains(`*[data-id="conversation-item-${conversationId}"] .conversation-meta`, '6 messages')
-          .assert.containsText(`*[data-id="conversation-item-${conversationId}"] .conversation-meta`, 'Just now')
+          .assert.textContains(`*[data-id="conversation-item-${conversationId}"] [data-id="conversation-item-meta"]`, '6 messages')
+          .assert.containsText(`*[data-id="conversation-item-${conversationId}"] [data-id="conversation-item-meta"]`, 'Just now')
       })
   },
 
@@ -577,7 +577,7 @@ const test = {
       .pause(500)
       .execute(function () {
         const item = document.querySelector('[data-id^="conversation-item-"]')
-        const title = item?.querySelector('.conversation-title')
+        const title = item?.querySelector('[data-id="conversation-item-title"]')
         return {
           hasItem: item !== null,
           hasEllipsis: title ? window.getComputedStyle(title).textOverflow === 'ellipsis' : false

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { ConversationMetadata } from '../lib/types'
 import { CustomTooltip } from '@remix-ui/helper'
 import { ConversationItem } from './conversationItem'
+import { AIPanelEmpty, AIPanelHeader } from './aiPanel'
 import { useResizableWidth } from '../hooks/useResizableWidth'
 
 interface ChatHistorySidebarProps {
@@ -118,61 +119,50 @@ export const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
         />
       )}
       {/* Header: title + count (+ close in AI mode), search, list actions */}
-      <div className="chat-history-sidebar-header border-0 px-3 pt-3 pb-2" style={{ backgroundColor: theme.toLowerCase() === 'dark' ? '#222336' : '#eff1f5' }}>
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <h6 className="mb-0 fw-semibold sidebar-title text-truncate" data-id="chat-history-sidebar-title">
-            {'Chat History'} <span className="ms-1 fw-normal text-muted">{filteredConversations.length}</span>
-          </h6>
-          <div className="d-flex align-items-center gap-1">
-            {onDeleteAllConversations && filteredConversations.length > 0 && (
-              <div className="position-relative" ref={listMenuRef}>
-                <CustomTooltip tooltipText="More actions">
-                  <button
-                    className="btn btn-sm p-0 conversation-menu-btn chat-history-menu-btn"
-                    onClick={() => setShowListMenu(!showListMenu)}
-                    aria-label="More actions"
-                    aria-expanded={showListMenu}
-                    data-id="chat-history-menu-btn"
-                  >
-                    <i className="fas fa-ellipsis-v"></i>
-                  </button>
-                </CustomTooltip>
-                {showListMenu && (
-                  <div className="conversation-menu position-absolute end-0 mt-1 shadow-sm" style={{ zIndex: 1100 }} data-id="chat-history-menu">
-                    <button
-                      className="conversation-menu-item conversation-menu-item-danger w-100 text-start text-nowrap"
-                      onClick={() => {
-                        setShowListMenu(false)
-                        const confirmMsg = showArchived
-                          ? `Delete all ${filteredConversations.length} archived conversations? This action cannot be undone.`
-                          : `Delete all ${filteredConversations.length} conversations? This action cannot be undone.`
-                        if (confirm(confirmMsg)) {
-                          onDeleteAllConversations()
-                        }
-                      }}
-                      data-id="delete-all-conversations-btn"
-                    >
-                      <i className="fas fa-trash me-2"></i>
-                      {showArchived ? 'Delete all archived' : 'Delete all conversations'}
-                    </button>
-                  </div>
-                )}
+      <AIPanelHeader
+        title="Chat History"
+        count={filteredConversations.length}
+        titleDataId="chat-history-sidebar-title"
+        onClose={isMaximized ? onClose : undefined}
+        closeLabel="Close chat history"
+        closeDataId="close-sidebar-btn"
+        theme={theme}
+        actions={onDeleteAllConversations && filteredConversations.length > 0 && (
+          <div className="position-relative" ref={listMenuRef}>
+            <CustomTooltip tooltipText="More actions">
+              <button
+                className="btn btn-sm p-0 conversation-menu-btn chat-history-menu-btn"
+                onClick={() => setShowListMenu(!showListMenu)}
+                aria-label="More actions"
+                aria-expanded={showListMenu}
+                data-id="chat-history-menu-btn"
+              >
+                <i className="fas fa-ellipsis-v"></i>
+              </button>
+            </CustomTooltip>
+            {showListMenu && (
+              <div className="conversation-menu position-absolute end-0 mt-1 shadow-sm" style={{ zIndex: 1100 }} data-id="chat-history-menu">
+                <button
+                  className="conversation-menu-item conversation-menu-item-danger w-100 text-start text-nowrap"
+                  onClick={() => {
+                    setShowListMenu(false)
+                    const confirmMsg = showArchived
+                      ? `Delete all ${filteredConversations.length} archived conversations? This action cannot be undone.`
+                      : `Delete all ${filteredConversations.length} conversations? This action cannot be undone.`
+                    if (confirm(confirmMsg)) {
+                      onDeleteAllConversations()
+                    }
+                  }}
+                  data-id="delete-all-conversations-btn"
+                >
+                  <i className="fas fa-trash me-2"></i>
+                  {showArchived ? 'Delete all archived' : 'Delete all conversations'}
+                </button>
               </div>
             )}
-            {isMaximized && (
-              <CustomTooltip tooltipText="Close chat history">
-                <button
-                  className="btn btn-sm p-0 sidebar-close-btn d-inline-flex align-items-center"
-                  onClick={onClose}
-                  data-id="close-sidebar-btn"
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              </CustomTooltip>
-            )}
           </div>
-        </div>
-
+        )}
+      >
         {/* Search Bar */}
         <div className="search-bar mb-2">
           <i className={`fas ${isSearching ? 'fa-spinner fa-spin' : 'fa-search'} search-icon`}></i>
@@ -197,36 +187,21 @@ export const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
             {showArchived ? 'Show Active' : `Archived (${archivedCount})`}
           </button>
         </div>
-      </div>
+      </AIPanelHeader>
 
       {/* Conversation List */}
       <div className="sidebar-body flex-grow-1 overflow-y-auto p-2">
         {filteredConversations.length === 0 ? (
-          <div className="text-center text-muted mt-4">
-            {searchQuery ? (
-              <>
-                <i className="fas fa-search fa-2x mb-2"></i>
-                <p data-id="no-conversations-msg">No conversations found</p>
-              </>
-            ) : showArchived ? (
-              <>
-                <i className="fas fa-archive fa-2x mb-2"></i>
-                <p data-id="no-conversations-msg">No archived conversations</p>
-              </>
-            ) : (
-              <>
-                <i className="fas fa-comments fa-2x mb-2"></i>
-                <p data-id="no-conversations-msg">No conversations yet</p>
-                <small>Start a new conversation to begin</small>
-              </>
-            )}
-          </div>
+          searchQuery
+            ? <AIPanelEmpty icon="fas fa-search" message="No conversations found" dataId="no-conversations-msg" />
+            : showArchived
+              ? <AIPanelEmpty icon="fas fa-archive" message="No archived conversations" dataId="no-conversations-msg" />
+              : <AIPanelEmpty icon="fas fa-comments" message="No conversations yet" hint="Start a new conversation to begin" dataId="no-conversations-msg" />
         ) : (
           filteredConversations.map(conv => (
             <ConversationItem
               key={conv.id}
               conversation={conv}
-              theme={theme}
               active={conv.id === currentConversationId}
               onClick={async () => {
                 // Automatically unarchive if the conversation is archived

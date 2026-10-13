@@ -1,6 +1,7 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { ConversationMetadata } from '../lib/types'
+import { AIPanelItem } from './aiPanel'
 
 interface ConversationItemProps {
   conversation: ConversationMetadata
@@ -16,8 +17,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   active,
   onClick,
   onArchive,
-  onDelete,
-  theme
+  onDelete
 }) => {
   const [showMenu, setShowMenu] = useState(false)
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
@@ -96,23 +96,20 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   }, [showMenu])
 
-  return (
-    <div
-      className={`conversation-item mb-1 cursor-pointer position-relative ${active ? 'conversation-item-active' : ''} ${showMenu ? 'conversation-item-menu-open' : ''}`}
-      onClick={onClick}
-      data-id={`conversation-item-${conversation.id}`}
-      data-theme={theme?.toLowerCase()}
-    >
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="flex-grow-1 overflow-hidden pe-2">
-          <div className="conversation-title text-truncate" title={conversation.title} data-id="conversation-item-title">
-            {conversation.title}
-          </div>
-          <div className="conversation-meta" data-id="conversation-item-meta">
-            {formatDate(conversation.lastAccessedAt)} · {conversation.messageCount} message{conversation.messageCount !== 1 ? 's' : ''}
-          </div>
-        </div>
+  const meta = `${formatDate(conversation.lastAccessedAt)} · ${conversation.messageCount} message${conversation.messageCount !== 1 ? 's' : ''}`
 
+  return (
+    <AIPanelItem
+      title={conversation.title}
+      titleTooltip={conversation.title}
+      subtitle={meta}
+      active={active}
+      className={showMenu ? 'ai-panel-item-menu-open' : ''}
+      onClick={onClick}
+      dataId={`conversation-item-${conversation.id}`}
+      titleDataId="conversation-item-title"
+      subtitleDataId="conversation-item-meta"
+      trailing={
         <div className="conversation-menu-trigger" ref={menuContainerRef}>
           <button
             className="btn btn-sm p-0 conversation-menu-btn"
@@ -169,7 +166,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             </div>
           )}
         </div>
-      </div>
-    </div>
+      }
+    />
   )
 }

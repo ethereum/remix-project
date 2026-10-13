@@ -960,11 +960,6 @@ body.dark .chat-history-sidebar .btn-outline-secondary:hover {
   color: #e0e0e0 !important;
 }
 
-[data-theme="dark"] .chat-history-sidebar .conversation-item .text-muted,
-body.dark .chat-history-sidebar .conversation-item .text-muted {
-  color: #a0a0b0 !important;
-}
-
 [data-theme="dark"] .chat-history-sidebar .sidebar-body,
 body.dark .chat-history-sidebar .sidebar-body {
   background-color: #222336 !important;
@@ -1157,27 +1152,35 @@ body.dark .btn-archive-toggle.active {
   color: #ffffff !important;
 }
 
-/* Conversation items: one look for both themes, from the theme's own colours */
-.conversation-item {
+/* RemixAI panel rows (chat history, changes): one look for both themes, from the theme's own colours */
+.ai-panel-item {
+  min-height: 48px;
+  margin-bottom: 0.25rem;
   padding: 0.5rem 0.625rem 0.5rem 0.75rem;
   border-radius: 8px;
   background-color: transparent;
   color: var(--bs-body-color);
+  cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.conversation-item:hover,
-.conversation-item-menu-open {
+.ai-panel-item:hover,
+.ai-panel-item-menu-open {
   background-color: color-mix(in srgb, var(--bs-body-color) 8%, transparent);
 }
 
-/* The open conversation: AI-tinted, with a bar on its left edge */
-.conversation-item-active,
-.conversation-item-active:hover {
+.ai-panel-item:focus-visible {
+  outline: 2px solid var(--custom-ai-color);
+  outline-offset: -2px;
+}
+
+/* The open item: AI-tinted, with a bar on its left edge */
+.ai-panel-item-active,
+.ai-panel-item-active:hover {
   background-color: color-mix(in srgb, var(--custom-ai-color) 14%, transparent);
 }
 
-.conversation-item-active::before {
+.ai-panel-item-active::before {
   content: '';
   position: absolute;
   left: 0;
@@ -1188,7 +1191,13 @@ body.dark .btn-archive-toggle.active {
   background-color: var(--custom-ai-color);
 }
 
-.conversation-title {
+.ai-panel-item-icon {
+  width: 1rem;
+  text-align: center;
+  color: var(--bs-secondary-color);
+}
+
+.ai-panel-item-title {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.3;
@@ -1196,14 +1205,35 @@ body.dark .btn-archive-toggle.active {
   color: color-mix(in srgb, var(--bs-emphasis-color) 85%, transparent);
 }
 
-.conversation-item-active .conversation-title {
+.ai-panel-item-active .ai-panel-item-title {
   font-weight: 600;
 }
 
-.conversation-meta {
+.ai-panel-item-meta {
   font-size: 0.75rem;
   line-height: 1.3;
   color: var(--bs-secondary-color);
+}
+
+.ai-panel-section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+}
+
+.ai-panel-empty {
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+}
+
+.ai-panel-empty-icon {
+  font-size: 1.75rem;
+  opacity: 0.7;
+}
+
+.ai-panel-empty-hint {
+  font-size: 0.75rem;
 }
 
 /* Conversation menu button: shown on hover, on keyboard focus, on the open conversation and while its menu is open */
@@ -1222,9 +1252,10 @@ body.dark .btn-archive-toggle.active {
   transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
-.conversation-item:hover .conversation-menu-btn,
-.conversation-item-active .conversation-menu-btn,
-.conversation-item-menu-open .conversation-menu-btn,
+.ai-panel-item:hover .conversation-menu-btn,
+.ai-panel-item:focus-within .conversation-menu-btn,
+.ai-panel-item-active .conversation-menu-btn,
+.ai-panel-item-menu-open .conversation-menu-btn,
 .conversation-menu-btn:focus-visible,
 .chat-history-menu-btn {
   opacity: 1;
@@ -2011,21 +2042,6 @@ body.ai-panel-resizing {
 
 .ai-changes-panel .ai-changes-btn-secondary:hover {
   opacity: 0.85;
-}
-
-.ai-changes-panel .ai-changes-section-title {
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-}
-
-.ai-changes-panel .ai-changes-row {
-  font-size: 0.8rem;
-  border-radius: 6px;
-  color: var(--bs-body-color);
-}
-
-.ai-changes-panel .ai-changes-row:hover {
-  background-color: var(--custom-onsurface-layer-1, var(--bs-secondary-bg));
 }
 
 .ai-changes-panel .ai-changes-badge {

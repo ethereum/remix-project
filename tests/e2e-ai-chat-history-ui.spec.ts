@@ -150,7 +150,7 @@ for (const theme of ['Dark', 'Light']) {
 
     // The open conversation: tinted background and a bar on its left edge
     await page.locator(item('e2e-c1')).click()
-    await expect(page.locator(item('e2e-c1'))).toHaveClass(/conversation-item-active/)
+    await expect(page.locator(item('e2e-c1'))).toHaveClass(/ai-panel-item-active/)
     await page.mouse.move(5, 5)
     await expect.poll(() => backgroundOf(page, item('e2e-c1'))).not.toBe(idle)
     const bar = await page.locator(item('e2e-c1')).evaluate((el) => getComputedStyle(el, '::before').width)
