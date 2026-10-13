@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { ConversationMetadata } from '../lib/types'
 import { CustomTooltip } from '@remix-ui/helper'
 import { ConversationItem } from './conversationItem'
+import { useResizableWidth } from '../hooks/useResizableWidth'
 
 interface ChatHistorySidebarProps {
   conversations: ConversationMetadata[]
@@ -94,14 +95,28 @@ export const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
   }, [conversations, showArchived, searchQuery, onSearch])
 
   const archivedCount = conversations.filter(c => c.archived && c.messageCount > 0).length
+  // AI mode: resizable column on the right of the chat, like the changes panel
+  const { panelRef, width, startResize, resetWidth } = useResizableWidth({ storageKey: 'remix-ai-history-panel-width', minWidth: 260, defaultWidth: 320 })
 
   return (
     <div
-      className={`chat-history-sidebar border-0 d-flex flex-column h-100 ${isFloating ? 'chat-history-sidebar-floating ' : isMaximized ? 'chat-history-sidebar-maximized' : 'w-100'}`}
-      style={isMaximized || isFloating ? undefined : { backgroundColor: theme === 'dark' ? 'var(--bs-dark)' : 'var(--bs-light)' }}
+      ref={isMaximized && !isFloating ? panelRef : undefined}
+      className={`chat-history-sidebar border-0 d-flex flex-column h-100 ${isFloating ? 'chat-history-sidebar-floating ' : isMaximized ? 'chat-history-sidebar-maximized ai-resizable-panel' : 'w-100'}`}
+      style={isFloating ? undefined : isMaximized ? { width } : { backgroundColor: theme === 'dark' ? 'var(--bs-dark)' : 'var(--bs-light)' }}
       data-id="chat-history-sidebar"
       data-theme={theme?.toLowerCase()}
     >
+      {isMaximized && !isFloating && (
+        <div
+          className="ai-panel-resize-handle"
+          role="separator"
+          aria-orientation="vertical"
+          title="Drag to resize, double-click to reset"
+          onPointerDown={startResize}
+          onDoubleClick={resetWidth}
+          data-id="chat-history-resize-handle"
+        />
+      )}
       {/* Header: title + count (+ close in AI mode), search, list actions */}
       <div className="chat-history-sidebar-header border-0 px-3 pt-3 pb-2" style={{ backgroundColor: theme.toLowerCase() === 'dark' ? '#222336' : '#eff1f5' }}>
         <div className="d-flex justify-content-between align-items-center mb-2">

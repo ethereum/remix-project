@@ -1,7 +1,8 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo } from 'react'
 import { DiffEditor } from '@monaco-editor/react'
 import { CustomTooltip } from '@remix-ui/helper'
 import { AIFileChangeRecord, ToolApprovalRequest } from '@remix/remix-ai-core'
+import { useResizableWidth } from '../hooks/useResizableWidth'
 
 /** A file the agent changed in the current conversation: the content before its first change and after its latest one */
 export interface AIChangedFile {
@@ -94,21 +95,6 @@ const PANEL_WIDTH_KEY = 'remix-ai-changes-panel-width'
 const PANEL_MIN_WIDTH = 320
 const PANEL_DEFAULT_WIDTH = 420
 
-const readStoredWidth = () => {
-  try {
-    const width = parseInt(localStorage.getItem(PANEL_WIDTH_KEY) || '', 10)
-    return width >= PANEL_MIN_WIDTH ? width : PANEL_DEFAULT_WIDTH
-  } catch {
-    return PANEL_DEFAULT_WIDTH
-  }
-}
-
-const storeWidth = (width: number) => {
-  try {
-    localStorage.setItem(PANEL_WIDTH_KEY, String(Math.round(width)))
-  } catch { /* storage unavailable: the width is just not remembered */ }
-}
-
 const splitLines = (text: string) => (text ? text.split('\n') : [])
 
 /** Number of added and removed lines between two versions of a file */
@@ -194,37 +180,7 @@ const FileRow = (props: { path: string, badge: string, additions: number, deleti
 
 export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
   const theme = (props.theme || '').toLowerCase()
-  const panelRef = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(readStoredWidth)
-
-  // Drag the left edge to resize, between the min width and 70% of the AI mode area
-  const startResize = (event: React.PointerEvent) => {
-    if (!panelRef.current) return
-    event.preventDefault()
-    const startX = event.clientX
-    const startWidth = panelRef.current.offsetWidth
-    const containerWidth = panelRef.current.parentElement?.clientWidth || window.innerWidth
-    const maxWidth = Math.max(PANEL_MIN_WIDTH, containerWidth * 0.7)
-    let latest = startWidth
-    const onMove = (moveEvent: PointerEvent) => {
-      latest = Math.min(maxWidth, Math.max(PANEL_MIN_WIDTH, startWidth + startX - moveEvent.clientX))
-      setWidth(latest)
-    }
-    const onUp = () => {
-      document.removeEventListener('pointermove', onMove)
-      document.removeEventListener('pointerup', onUp)
-      document.body.classList.remove('ai-changes-resizing')
-      storeWidth(latest)
-    }
-    document.addEventListener('pointermove', onMove)
-    document.addEventListener('pointerup', onUp)
-    document.body.classList.add('ai-changes-resizing')
-  }
-
-  const resetWidth = () => {
-    setWidth(PANEL_DEFAULT_WIDTH)
-    storeWidth(PANEL_DEFAULT_WIDTH)
-  }
+  const { panelRef, width, startResize, resetWidth } = useResizableWidth({ storageKey: PANEL_WIDTH_KEY, minWidth: PANEL_MIN_WIDTH, defaultWidth: PANEL_DEFAULT_WIDTH })
 
   const isOtherWorkspace = (file: AIChangedFile) => !!file.workspace && !!props.currentWorkspace && file.workspace !== props.currentWorkspace
 
@@ -253,9 +209,9 @@ export const AIChangesPanel = React.memo((props: AIChangesPanelProps) => {
   const canOpenInEditor = !!selectedFile && !selectedFile.deleted && !isOtherWorkspace(selectedFile)
 
   return (
-    <div ref={panelRef} className="ai-changes-panel chat-history-sidebar border-0 d-flex flex-column h-100" style={{ width }} data-id="ai-changes-panel" data-theme={theme}>
+    <div ref={panelRef} className="ai-changes-panel ai-resizable-panel chat-history-sidebar border-0 d-flex flex-column h-100" style={{ width }} data-id="ai-changes-panel" data-theme={theme}>
       <div
-        className="ai-changes-resize-handle"
+        className="ai-panel-resize-handle"
         role="separator"
         aria-orientation="vertical"
         title="Drag to resize, double-click to reset"

@@ -1953,11 +1953,9 @@ code {
   vertical-align: middle;
 }
 
-/* History sidebar: full-height column on the right of the chat */
+/* History sidebar: full-height resizable column on the right of the chat */
 .chat-history-sidebar-maximized {
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
+  min-width: 260px;
   border-left: 1px solid var(--bs-border-color) !important;
 }
 
@@ -1970,16 +1968,14 @@ code {
   border-color: transparent !important;
 }
 
-/* AI mode changes panel: files RemixAI changed or wants to change, with diffs */
-.ai-changes-panel {
+/* AI mode right-hand panels (changes, history): drag the left edge to resize */
+.ai-resizable-panel {
   position: relative;
   flex-shrink: 0;
-  min-width: 320px;
   max-width: 70%;
-  border-left: 1px solid var(--bs-border-color) !important;
 }
 
-.ai-changes-panel .ai-changes-resize-handle {
+.ai-resizable-panel .ai-panel-resize-handle {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1989,15 +1985,21 @@ code {
   z-index: 5;
 }
 
-.ai-changes-panel .ai-changes-resize-handle:hover,
-body.ai-changes-resizing .ai-changes-panel .ai-changes-resize-handle {
+.ai-resizable-panel .ai-panel-resize-handle:hover,
+body.ai-panel-resizing .ai-resizable-panel .ai-panel-resize-handle {
   background-color: var(--custom-ai-color);
   opacity: 0.6;
 }
 
-body.ai-changes-resizing {
+body.ai-panel-resizing {
   cursor: col-resize;
   user-select: none;
+}
+
+/* AI mode changes panel: files RemixAI changed or wants to change, with diffs */
+.ai-changes-panel {
+  min-width: 320px;
+  border-left: 1px solid var(--bs-border-color) !important;
 }
 
 /* Secondary actions: readable in both themes (the approval card's reject colour is dark-theme only) */

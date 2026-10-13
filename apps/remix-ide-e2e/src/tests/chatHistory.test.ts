@@ -334,6 +334,35 @@ const test = {
       .assert.containsText('#ai-chat-maximized-host *[data-id="chat-history-sidebar-title"]', 'Chat History')
   },
 
+  'Should resize the chat history panel in AI mode by dragging its left edge #group1': function (browser: NightwatchBrowser) {
+    const sidebar = '#ai-chat-maximized-host *[data-id="chat-history-sidebar"]'
+    const handle = '#ai-chat-maximized-host *[data-id="chat-history-resize-handle"]'
+    const sidebarWidth = (expected: number, message: string) => browser.execute(function (selector) {
+      return Math.round((document.querySelector(selector) as HTMLElement).getBoundingClientRect().width)
+    }, [sidebar], (result) => {
+      browser.assert.equal(result.value, expected, message)
+    })
+    browser
+      .waitForElementVisible(handle)
+      .execute(function (selector) {
+        const rect = (document.querySelector(selector) as HTMLElement).getBoundingClientRect()
+        return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) }
+      }, [handle], function (result: any) {
+        const { x, y } = result.value
+        browser.perform(function () {
+          return this.actions({ async: true })
+            .move({ origin: 'viewport', x, y })
+            .press()
+            .move({ origin: 'viewport', x: x - 50, y })
+            .move({ origin: 'viewport', x: x - 100, y })
+            .release()
+        }).pause(500)
+      })
+    sidebarWidth(420, 'Dragging the left edge 100px makes the history panel 420px wide')
+    browser.doubleClick(handle).pause(500)
+    sidebarWidth(320, 'Double-click resets the history panel to 320px')
+  },
+
   'Should seed many conversations into IndexedDB for scroll test #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('remixaiassistant')
