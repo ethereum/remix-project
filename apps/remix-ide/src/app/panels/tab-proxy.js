@@ -199,7 +199,10 @@ export default class TabProxy extends Plugin {
     this.on('fileManager', 'openDiff', (commit) => {
       const hash = commit.hashModified? commit.hashModified.substring(0,6): 'Working Tree'
       const name =  `${commit.path} (${hash})`
-      this.addTab(name, name, async () => {
+      // A change RemixAI already made: file name, RemixAI icon, full path in the tooltip. The name keeps the hash so each change gets its own tab
+      const aiApplied = commit.source === 'ai-applied'
+      const title = aiApplied ? `${commit.path.split('/').pop()} · RemixAI edit` : name
+      this.addTab(name, title, async () => {
         await this.fileManager.diff(commit)
         this.event.emit('openDiff', commit)
         this.emit('openDiff', commit)
@@ -209,7 +212,9 @@ export default class TabProxy extends Plugin {
         await this.fileManager.closeDiff(commit)
         this.event.emit('closeDiff', commit)
         this.emit('closeDiff', commit)
-      })
+      },
+      aiApplied ? 'assets/img/remixai-logoAI.svg' : undefined,
+      aiApplied ? `${commit.path} · RemixAI edit` : '')
       this.tabsApi.activateTab(name)
     })
 
