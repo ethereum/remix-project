@@ -5,7 +5,7 @@ import { BaseToolHandler } from '../registry/RemixToolRegistry'
 import { remixAILogger } from '../../helpers/logger'
 import { screenshotBuffer, screenshotMarker } from '../../inferencers/deepagent/visionBuffer'
 import { screenshotConsent } from '../../inferencers/deepagent/screenshotConsent'
-import { captureElementPng, defaultCaptureTarget, annotatePngWithMarks, ElementMark, thumbnailDataUrl } from '../../helpers/domCapture'
+import { captureElementPng, defaultCaptureTarget, annotatePngWithMarks, ElementMark, thumbnailDataUrl, previewDataUrl, downscaleDataUrl, MODEL_MAX_EDGE } from '../../helpers/domCapture'
 import remixUiMap from '../context/remixUiMap.json'
 
 /**
@@ -281,9 +281,11 @@ function requireDom(): string | null {
 }
 
 function ideRoot(): Element {
-  // The app shell rendered by remix-app.tsx — icon bar, both side panels and
-  // the main panel, without the document-level portals hanging off <body>.
-  return document.querySelector('[data-id="remixIDE"]') ||
+  // The app shell rendered by remix-app.tsx — top bar, icon bar, both side
+  // panels, the main panel and the status bar, without the document-level
+  // portals hanging off <body>.
+  return document.querySelector('[data-id="remixIdeShell"]') ||
+    document.querySelector('[data-id="remixIDE"]') ||
     document.getElementById('main-panel')?.parentElement ||
     document.body
 }
@@ -580,17 +582,31 @@ export class CaptureUIScreenshotHandler extends BaseToolHandler {
       }
 
       const capturedAt = Date.now()
-      const id = screenshotBuffer.put({ dataUrl, width, height, label, capturedAt })
+      // The capture is rasterized at the screen's pixel ratio so the copy the
+      // user opens is sharp; the model's copy is capped, since every vision
+      // model downsamples past MODEL_MAX_EDGE anyway.
+      const forModel = await downscaleDataUrl(dataUrl, MODEL_MAX_EDGE)
+      const id = screenshotBuffer.put({
+        dataUrl: forModel.dataUrl,
+        width: forModel.width,
+        height: forModel.height,
+        label,
+        capturedAt
+      })
 
-      // Show the user what the model is about to look at. Only a small JPEG
-      // preview crosses into the chat — the full-resolution PNG stays in the
-      // buffer, which is the one thing that must not end up in IndexedDB.
+      // Show the user what the model is about to look at: a thumbnail for the
+      // chat bubble, plus a full-view JPEG to open from it. Neither reaches
+      // IndexedDB at full size — `stripAttachmentPayloads` drops the latter.
       try {
-        const thumbnail = await thumbnailDataUrl(dataUrl)
+        const [thumbnail, preview] = await Promise.all([
+          thumbnailDataUrl(dataUrl),
+          previewDataUrl(dataUrl)
+        ])
         if (thumbnail) {
           plugin.emit('aiScreenshotCaptured', {
             id,
             thumbnailDataUrl: thumbnail,
+            previewDataUrl: preview,
             width,
             height,
             label,

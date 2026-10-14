@@ -22,6 +22,33 @@ const normalizeTurnSeparators = (content: string): string =>
     .replace(/(?:\n\s*[ \t]*-{3,}[ \t]*)+$/, '')
     .replace(/(?:\n\s*-{3,}[ \t]*){2,}\n/g, '\n\n---\n')
 
+/**
+ * Opens an attachment image in a new tab.
+ * Browsers block top-level navigation to `data:` URLs (the tab just stays
+ * blank), so the data URL is turned into a same-origin blob URL first.
+ */
+const openImageAttachment = (dataUrl?: string) => {
+  if (!dataUrl) return
+  if (!dataUrl.startsWith('data:')) {
+    window.open(dataUrl, '_blank', 'noopener,noreferrer')
+    return
+  }
+  try {
+    const [header, base64] = dataUrl.split(',')
+    const mime = /data:([^;,]+)/.exec(header)?.[1] || 'image/png'
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const url = URL.createObjectURL(new Blob([bytes], { type: mime }))
+    const win = window.open(url, '_blank', 'noopener,noreferrer')
+    // Revoking immediately would cancel the load in the new tab; give it time.
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+    if (!win) URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error('[RemixAI] could not open attachment', e)
+  }
+}
+
 // ChatHistory component
 export interface ChatHistoryComponentProps {
   messages: ChatMessage[]
@@ -172,7 +199,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                               className="rounded"
                               data-id={att.source === 'ai-capture' ? 'ai-capture-thumbnail' : undefined}
                               style={{ maxWidth: 120, maxHeight: 120, objectFit: 'cover', border: '1px solid var(--bs-border-color)', cursor: 'pointer' }}
-                              onClick={() => window.open(att.dataUrl || att.thumbnailDataUrl, '_blank')}
+                              onClick={() => openImageAttachment(att.dataUrl || att.thumbnailDataUrl)}
                             />
                           ) : (
                             <span

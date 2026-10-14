@@ -1413,13 +1413,15 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
      * user can see exactly what was sent on their behalf — a consent prompt
      * they answered minutes ago is not a record of what left the machine.
      *
-     * Only the thumbnail is kept: `stripAttachmentPayloads` drops `dataUrl`
-     * before persistence anyway, and the full-resolution PNG lives in the
-     * vision buffer where it belongs.
+     * Two copies cross into the chat: the thumbnail that renders in the
+     * bubble, and a full-view JPEG that opens when it is clicked. Only the
+     * thumbnail survives into storage — `stripAttachmentPayloads` drops
+     * `dataUrl` — and the copy the model reads stays in the vision buffer.
      */
     const handleScreenshotCaptured = (payload: {
       id: string
       thumbnailDataUrl: string
+      previewDataUrl?: string
       label?: string
       capturedAt?: number
       reason?: string
@@ -1439,6 +1441,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         mimeType: 'image/jpeg',
         kind: 'image',
         thumbnailDataUrl: payload.thumbnailDataUrl,
+        // Full-view copy, opened when the thumbnail is clicked. In memory
+        // only — stripAttachmentPayloads drops `dataUrl` before persistence.
+        dataUrl: payload.previewDataUrl,
         source: 'ai-capture'
       }
       const activeId = streamingAssistantIdRef.current
