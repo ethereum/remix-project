@@ -8,7 +8,7 @@ const profile = {
   name: 'udappDeployedContracts',
   displayName: 'Udapp Deployed Contracts',
   description: 'Manages the UI and state for deployed contracts',
-  methods: ['getUI', 'addInstance', 'getDeployedInstanceCount', 'getDeployedContracts', 'clearDeployedContracts'],
+  methods: ['getUI', 'addInstance', 'getDeployedInstanceCount', 'getDeployedContracts', 'clearDeployedContracts', 'openAddContractDialog'],
   events: ['deployedInstanceUpdated']
 }
 
@@ -63,6 +63,19 @@ export class DeployedContractsPlugin extends Plugin {
 
   clearDeployedContracts() {
     this.getDispatch()({ type: 'CLEAR_ALL_CONTRACTS', payload: null })
+  }
+
+  openAddContractDialog(address: string) {
+    const dispatch = this.getDispatch?.()
+    if (!dispatch) return
+
+    dispatch({ type: 'COLLAPSE_ALL' })
+    dispatch({ type: 'SET_ADDRESS_INPUT', payload: address })
+    dispatch({ type: 'SHOW_ADD_DIALOG', payload: true })
+    dispatch({ type: 'HIGHLIGHT_ADD_DIALOG', payload: true })
+    setTimeout(() => {
+      this.getDispatch?.()?.({ type: 'HIGHLIGHT_ADD_DIALOG', payload: false })
+    }, 2000)
   }
 
   getUI() {

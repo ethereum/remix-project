@@ -269,6 +269,9 @@
             "@remix-ui/run-tab-transactions": [
               "libs/remix-ui/run-tab-transactions/src/index.ts"
             ],
+            "@remix-ui/run-tab-eez": [
+              "libs/remix-ui/run-tab-eez/src/index.ts"
+            ],
             "@remix-ui/thegraph": [
               "libs/remix-ui/thegraph/src/index.ts"
             ],

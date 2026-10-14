@@ -2,11 +2,160 @@ import React from 'react'
 import { trackMatomoEvent } from '@remix-api'
 import * as remixLib from '@remix-project/remix-lib'
 import { FuncABI } from '@remix-project/core-plugin'
+import { JsonRpcProvider, Contract } from 'ethers'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { DeployedContractsPlugin } from 'apps/remix-ide/src/app/udapp/udappDeployedContracts'
 import { Actions, DeployedContract } from '../types'
 
 const txFormat = remixLib.execution.txFormat
+
+const AUTHORIZED_PROXIES_ABI = ['function authorizedProxies(address) view returns (bool isProxy, address originalAddress, uint64 originalRollupId)']
+
+interface EezNetworkEntry {
+  id: string
+  label: string
+  rpcUrl: string | null
+  eezContractAddress: string
+  rollupId: string
+  chainId: string
+}
+
+export interface CrossChainProxyInfo {
+  originalAddress: string
+  originalRollupId: string
+  originNetworkLabel: string | null
+}
+
+async function getEezContext(plugin: DeployedContractsPlugin): Promise<{ networks: EezNetworkEntry[]; currentNetwork: EezNetworkEntry } | null> {
+  const networks: EezNetworkEntry[] = await plugin.call('udappEez', 'getNetworks')
+  if (!networks?.length) return null
+
+  const status = await plugin.call('blockchain', 'getCurrentNetworkStatus')
+  const chainId = status?.network?.id
+  const currentChainId = chainId === undefined || chainId === null ? null : String(chainId)
+  if (!currentChainId) return null
+
+  const currentNetwork = networks.find((n) => String(n.chainId) === currentChainId)
+  if (!currentNetwork?.eezContractAddress || !currentNetwork?.rpcUrl) return null
+
+  return { networks, currentNetwork }
+}
+
+function providerFor(network: EezNetworkEntry) {
+  return new JsonRpcProvider(network.rpcUrl, Number(network.chainId), { staticNetwork: true })
+}
+
+function resolveProxyInfo(networks: EezNetworkEntry[], result: any): CrossChainProxyInfo | null {
+  const isProxy: boolean = result[0]
+  if (!isProxy) return null
+
+  const originalAddress: string = result[1]
+  const originalRollupId: string = result[2].toString()
+  const originNetwork = networks.find((n) => String(n.rollupId) === originalRollupId)
+
+  return { originalAddress, originalRollupId, originNetworkLabel: originNetwork?.label || null }
+}
+
+export async function checkCrossChainProxy(plugin: DeployedContractsPlugin, address: string): Promise<CrossChainProxyInfo | null> {
+  try {
+    const ctx = await getEezContext(plugin)
+    if (!ctx) return null
+    const { networks, currentNetwork } = ctx
+
+    const provider = providerFor(currentNetwork)
+    try {
+      const manager = new Contract(currentNetwork.eezContractAddress, AUTHORIZED_PROXIES_ABI, provider)
+      const result = await manager.authorizedProxies(address)
+      return resolveProxyInfo(networks, result)
+    } finally {
+      provider.destroy()
+    }
+  } catch (e) {
+    return null
+  }
+}
+
+export interface TraceProxyInfo {
+  address: string
+  hops: CrossChainProxyInfo[]
+}
+
+export interface CrossChainTraceResult {
+  proxies: TraceProxyInfo[]
+  proxyCount: number
+}
+
+function collectCallAddresses(frame: any, into: Set<string>) {
+  if (!frame) return
+  if (typeof frame.to === 'string') into.add(frame.to.toLowerCase())
+  if (Array.isArray(frame.calls)) {
+    for (const child of frame.calls) collectCallAddresses(child, into)
+  }
+}
+
+export async function traceCrossChainCall(
+  plugin: DeployedContractsPlugin,
+  to: string,
+  data: string,
+  from: string,
+  value: string
+): Promise<CrossChainTraceResult> {
+  const ctx = await getEezContext(plugin)
+  if (!ctx) throw new Error('The current network is not part of an EEZ network.')
+  const { networks, currentNetwork } = ctx
+
+  const providers = new Map<string, JsonRpcProvider>()
+  const providerOf = (network: EezNetworkEntry) => {
+    if (!providers.has(network.id)) providers.set(network.id, providerFor(network))
+    return providers.get(network.id)
+  }
+  const managerFor = (network: EezNetworkEntry) => new Contract(network.eezContractAddress, AUTHORIZED_PROXIES_ABI, providerOf(network))
+  const lookupProxy = async (network: EezNetworkEntry, address: string): Promise<CrossChainProxyInfo | null> => {
+    try {
+      return resolveProxyInfo(networks, await managerFor(network).authorizedProxies(address))
+    } catch (e) {
+      return null
+    }
+  }
+
+  const resolveHops = async (first: CrossChainProxyInfo, address: string): Promise<CrossChainProxyInfo[]> => {
+    const seen = new Set([`${currentNetwork.rollupId}:${address}`.toLowerCase()])
+    const follow = async (hop: CrossChainProxyInfo): Promise<CrossChainProxyInfo[]> => {
+      const key = `${hop.originalRollupId}:${hop.originalAddress}`.toLowerCase()
+      if (seen.has(key)) return [hop]
+      seen.add(key)
+      const network = networks.find((n) => String(n.rollupId) === hop.originalRollupId)
+      if (!network?.rpcUrl || !network.eezContractAddress) return [hop]
+      const next = await lookupProxy(network, hop.originalAddress)
+      return next ? [hop, ...await follow(next)] : [hop]
+    }
+    return follow(first)
+  }
+
+  try {
+    const traceParams = [{ from, to, data, value }, 'latest', { tracer: 'callTracer' }]
+    const trace = await providerOf(currentNetwork).send('debug_traceCall', traceParams)
+    const addressSet = new Set<string>()
+    collectCallAddresses(trace, addressSet)
+    const proxies = await Promise.all(
+      Array.from(addressSet).map(async (addr): Promise<TraceProxyInfo | null> => {
+        const proxyInfo = await lookupProxy(currentNetwork, addr)
+        return proxyInfo ? { address: addr, hops: await resolveHops(proxyInfo, addr) } : null
+      })
+    )
+
+    const touched = proxies.filter((p): p is TraceProxyInfo => p !== null)
+    const proxyKeys = new Set<string>()
+    for (const p of touched) {
+      proxyKeys.add(`${currentNetwork.rollupId}:${p.address}`.toLowerCase())
+      p.hops.slice(0, -1).forEach((hop) => proxyKeys.add(`${hop.originalRollupId}:${hop.originalAddress}`.toLowerCase()))
+    }
+
+    return { proxies: touched, proxyCount: proxyKeys.size }
+  } finally {
+    providers.forEach((provider) => provider.destroy())
+  }
+}
 
 export async function loadAddress (plugin: DeployedContractsPlugin, dispatch: React.Dispatch<Actions>, address: string, currentFile: string, loadType: 'abi' | 'sol' | 'vyper' | 'lexon' | 'contract' | 'other') {
   // Show confirmation modal for ABI files
