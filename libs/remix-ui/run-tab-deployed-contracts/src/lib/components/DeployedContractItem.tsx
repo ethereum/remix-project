@@ -12,7 +12,8 @@ import { DeployedContract } from '../types'
 import { runTransactions } from '../actions'
 import { ContractKebabMenu } from './ContractKebabMenu'
 import { EnsNaming } from './EnsNaming'
-import { QuickDappContractSelector, QuickDappFigmaPreparationResult, QuickDappSetupOptions } from '@remix-ui/quick-dapp-v2'
+import { QuickDappContractSelector, QuickDappFigmaPreparationResult, QuickDappSetupOptions, QuickDappModelChoice } from '@remix-ui/quick-dapp-v2'
+import { frontierAlternativesFor, frontierFamilyOf } from '@remix/remix-ai-core/model-tiers'
 
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import BN from 'bn.js'
@@ -65,6 +66,7 @@ export function DeployedContractItem({ contract, index, registerRef, isKebabMenu
   const [showQuickDappContractSelector, setShowQuickDappContractSelector] = useState<boolean>(false)
   const [quickDappFixedFrontendMode, setQuickDappFixedFrontendMode] = useState<'inline' | 'workspace' | undefined>()
   const [quickDappEnvironmentId, setQuickDappEnvironmentId] = useState<string>()
+  const [quickDappModelChoices, setQuickDappModelChoices] = useState<QuickDappModelChoice[]>([])
 
   useEffect(() => {
     plugin.call('udappEnv', 'getNetwork').then((net) => {
@@ -594,6 +596,29 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
     }
   }
 
+  /**
+   * Stronger models worth offering for this generation, or [] when there is
+   * nothing to ask about.
+   *
+   * Mirrors the audit gate: only speaks up on Auto, since a user who picked a
+   * concrete model has already made the choice. Fails open — a catalogue
+   * hiccup must never block DApp creation.
+   */
+  const loadQuickDappModelChoices = async (): Promise<QuickDappModelChoice[]> => {
+    try {
+      const currentId = await plugin.call('remixAI' as any, 'getSelectedModel')
+      const models = await plugin.call('assistantState' as any, 'getAvailableModels')
+      return (frontierAlternativesFor(currentId, models) || []).map((model: any) => ({
+        id: model.id,
+        provider: model.provider,
+        displayName: model.displayName,
+        family: frontierFamilyOf(model.id) || model.provider
+      }))
+    } catch (e) {
+      return []
+    }
+  }
+
   const handleCreateDapp = async (contract: DeployedContract) => {
     if (onKebabMenuToggle) onKebabMenuToggle(false)
 
@@ -609,6 +634,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
       const environmentId = await getCurrentQuickDappEnvironment()
       setQuickDappEnvironmentId(environmentId)
       setQuickDappFixedFrontendMode(isDesktop ? 'inline' : sourceIsDappWorkspace ? 'workspace' : undefined)
+      setQuickDappModelChoices(await loadQuickDappModelChoices())
       setShowQuickDappContractSelector(true)
     } catch (error) {
       console.error('[QuickDapp] Could not prepare DApp setup options:', error)
@@ -630,6 +656,18 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
       }
 
       setShowQuickDappContractSelector(false)
+
+      // Awaited before generating: setModel rebuilds the DeepAgent, and firing
+      // the generation alongside that teardown would drop the request.
+      if (options.model) {
+        try {
+          await plugin.call('remixAI' as any, 'setModel', options.model.id, options.model.provider)
+        } catch (e) {
+          // A failed switch must not swallow the generation — carry on with Auto.
+          console.error('[QuickDapp] could not switch model, continuing on Auto:', e)
+        }
+      }
+
       void startCreateDapp(contract, options, quickDappEnvironmentId)
     } catch (_) {
       await plugin.call('notification', 'toast', 'Could not confirm the current network. Please try again.')
@@ -1363,6 +1401,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
           primaryContract={contract}
           deployedContracts={widgetState.deployedContracts}
           fixedFrontendMode={quickDappFixedFrontendMode}
+          modelChoices={quickDappModelChoices}
           onPrepareFigma={async (figmaUrl, figmaToken) => {
             const validationError = await validateQuickDappSetupEnvironment()
             if (validationError) return { success: false, message: validationError }

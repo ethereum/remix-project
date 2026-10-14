@@ -86,10 +86,6 @@ function getSystemThemeFallback(): string {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-/** `QuickDapp_Specialist`, however the harness spells it. */
-const isQuickDappAgentName = (name?: string): boolean =>
-  !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('quickdapp')
-
 /** Coarse duration label for analytics — keeps the value cardinality bounded. */
 const bucketDuration = (ms: number): string => {
   if (!Number.isFinite(ms) || ms < 0) return 'unknown'
@@ -103,12 +99,6 @@ const bucketDuration = (ms: number): string => {
 /** `Comprehensive_Auditor`, however the harness spells it. */
 const isAuditorAgentName = (name?: string): boolean =>
   !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('comprehensiveauditor')
-
-/** Anthropic, direct or routed through OpenRouter (`anthropic/...`). */
-const isAnthropicModelId = (id: string): boolean => {
-  const normalized = id.toLowerCase()
-  return normalized.startsWith('anthropic/') || normalized.includes('claude')
-}
 
 // Shown in the chat when the Ollama provider is selected but unreachable.
 const OLLAMA_NOT_AVAILABLE_MESSAGE = [
@@ -156,11 +146,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [runModel, setRunModel] = useState<string | null>(null)
   // Read from event handlers, which are memoized without `runModel`.
   const runModelRef = useRef<string | null>(null)
-  // One QuickDapp model hint per request.
-  const quickDappHintShownRef = useRef(false)
-  // QuickDapp is running this request — the model often lands after it starts.
-  const quickDappRunningRef = useRef(false)
-  // Same pair for the auditor: one hint per request, and the flag that says the
+  // One hint per request for the auditor, and the flag that says the
   // audit is the thing running when the resolved model finally arrives.
   const auditHintShownRef = useRef(false)
   const auditRunningRef = useRef(false)
@@ -429,23 +415,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     ])
   }, [])
 
-  const hintQuickDappModel = useCallback(() => {
-    const model = runModelRef.current
-    if (!quickDappRunningRef.current || quickDappHintShownRef.current) return
-    if (!model || isAnthropicModelId(model)) return
-
-    quickDappHintShownRef.current = true
-    setChatNotice({
-      severity: 'info',
-      code: 'QUICKDAPP_MODEL_HINT',
-      title: 'Better on Anthropic',
-      message: `Auto picked ${model}. QuickDapp works best with a Sonnet-class model.`,
-      actionable: false
-    })
-  }, [])
-
   /**
-   * Mirrors hintQuickDappModel for audits.
+   * Tells the user when Auto picked something weak for an audit.
    *
    * `runModelRef` is only populated while the user is on Auto (handleModelUsed
    * bails otherwise), so reaching here already means Auto picked the route —
@@ -946,10 +917,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         isClick: false
       })
 
-      if (isQuickDappAgentName(data.name)) {
-        quickDappRunningRef.current = true
-        hintQuickDappModel()
-      }
       if (isAuditorAgentName(data.name)) {
         auditRunningRef.current = true
         hintAuditModel()
@@ -1018,7 +985,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // Track it on the ref from the event, not the render, so a QuickDapp run
       // that started first sees the model immediately.
       runModelRef.current = data?.model || null
-      hintQuickDappModel()
       hintAuditModel()
     }
 
@@ -1955,8 +1921,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       // The previous run's model no longer describes what is about to answer.
       setRunModel(null)
-      quickDappHintShownRef.current = false
-      quickDappRunningRef.current = false
       auditHintShownRef.current = false
       auditRunningRef.current = false
       // Reset the per-turn "stream consumed" flag — it gates the
