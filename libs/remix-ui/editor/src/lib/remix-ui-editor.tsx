@@ -546,10 +546,15 @@ export const EditorUI = (props: EditorUIProps) => {
     const file = editorModelsState[props.currentFile]
     if (!file?.model) return
 
-    props.isDiff && diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
-      original: editorModelsState[props.currentDiffFile].model,
-      modified: file.model
-    })
+    if (props.isDiff && diffEditorRef && diffEditorRef.current) {
+      const original = editorModelsState[props.currentDiffFile].model
+      const shown = diffEditorRef.current.getModel()
+      if (shown?.original !== original || shown?.modified !== file.model) {
+        // Clear the previous diff first: switching straight to new texts can apply its stale results to them (Monaco 0.44: "Illegal value for lineNumber")
+        if (shown) diffEditorRef.current.setModel(null)
+        diffEditorRef.current.setModel({ original, modified: file.model })
+      }
+    }
 
     props.isDiff && diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
 
