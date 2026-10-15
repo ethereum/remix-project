@@ -178,12 +178,7 @@
 /* Both AI and Code get the same treatment when active - the thumb (one fixed accent
    color) slides behind whichever is selected, so neither state looks like "off". */
 .ai-mode-btn.active {
-  color: #0b1f1f;
-}
-
-/* Light theme: the Code thumb is a dark blue, where the dark label is unreadable */
-.ai-mode-toggle-group[data-theme="light"][data-active="code"] .ai-mode-btn.active {
-  color: #fff;
+  color: var(--bs-body-bg);
 }
 
 .ai-mode-btn:not(.active):hover {
