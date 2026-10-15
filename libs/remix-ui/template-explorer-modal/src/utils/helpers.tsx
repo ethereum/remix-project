@@ -481,6 +481,17 @@ export const templatesRepository = [
 
       },
     ],
+  },
+  {
+    name: "Arkiv",
+    items: [
+      {
+        value: "arkivScripts",
+        tagList: ["Arkiv", "Web3"],
+        displayName: 'Add Arkiv scripts',
+        description: 'Store and retrieve wallet-owned, queryable data on the Arkiv Network',
+      },
+    ],
   }
 ]
 
