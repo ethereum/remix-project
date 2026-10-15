@@ -26,6 +26,12 @@ export const scriptTemplates = [
     }
   },
   {
+    templateName: 'arkivScripts',
+    templateArtefact: {
+      files: ['scripts/arkiv/arkiv.ts', 'scripts/arkiv/run.ts']
+    }
+  },
+  {
     templateName: 'runJsTestAction',
     templateArtefact: { files: ['.github/workflows/run-js-test.yml']}
   },

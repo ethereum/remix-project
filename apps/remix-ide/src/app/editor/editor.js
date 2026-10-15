@@ -300,6 +300,9 @@ export default class Editor extends Plugin {
       this.triggerEvent('typesLoading', ['start'])
     }
     this.typesLoadingCount++
+    setTimeout(() => {
+      this.triggerEvent('typesLoading', ['end']) // type loading will continue to work in the background.
+    }, 10000)
   }
 
   endTypesBatch() {
