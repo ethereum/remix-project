@@ -68,6 +68,14 @@ export function DeployedContractItem({ contract, index, collapseSignal, register
   const [quickDappFixedFrontendMode, setQuickDappFixedFrontendMode] = useState<'inline' | 'workspace' | undefined>()
   const [quickDappEnvironmentId, setQuickDappEnvironmentId] = useState<string>()
   const [quickDappModelChoices, setQuickDappModelChoices] = useState<QuickDappModelChoice[]>([])
+  const [crossChainProxyInfo, setCrossChainProxyInfo] = useState<CrossChainProxyInfo | null>(null)
+  const [tracePreview, setTracePreview] = useState<{
+    key: string
+    onConfirm: () => void
+    isLoading: boolean
+    result: CrossChainTraceResult | null
+    error: string | null
+  } | null>(null)
 
   useEffect(() => {
     plugin.call('udappEnv', 'getNetwork').then((net) => {
