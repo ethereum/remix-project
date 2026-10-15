@@ -75,7 +75,7 @@ export function DeployedContractItem({ contract, index, collapseSignal, register
     isLoading: boolean
     result: CrossChainTraceResult | null
     error: string | null
-  } | null>(null)
+      } | null>(null)
 
   useEffect(() => {
     plugin.call('udappEnv', 'getNetwork').then((net) => {
