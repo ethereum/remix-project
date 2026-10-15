@@ -5,8 +5,6 @@ export const arkivScripts = async (opts, plugin) => {
       'scripts/arkiv/README.md': (await import('!!raw-loader!./README.md')).default,
       // @ts-ignore
       'scripts/arkiv/arkiv.ts': (await import('!!raw-loader!./arkiv.ts')).default,
-      // @ts-ignore
-      'scripts/arkiv/run.ts': (await import('!!raw-loader!./run.ts')).default
     }
   }
 
@@ -21,11 +19,6 @@ export const arkivScripts = async (opts, plugin) => {
     (await import('!!raw-loader!./arkiv.ts')).default)
 
   await plugin.call('fileManager', 'open', 'scripts/arkiv/arkiv.ts')
-
-  await plugin.call('fileManager', 'writeFile',
-    'scripts/arkiv/run.ts',
-    // @ts-ignore
-    (await import('!!raw-loader!./run.ts')).default)
 
   await plugin.call('fileManager', 'open', 'scripts/arkiv/README.md')
 }

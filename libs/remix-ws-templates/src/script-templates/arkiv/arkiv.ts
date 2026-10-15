@@ -3,7 +3,7 @@ import { stringToPayload } from '@arkiv-network/sdk/utils';
 import { tiramisu } from '@arkiv-network/sdk/chains';
 import { http, custom } from 'viem';
 
-export const saveToArkiv = async (message: string) => {
+const saveToArkiv = async (message: string) => {
     console.log('saving to arkiv: ' + message)
     const address = await remix.call('udappEnv' as any, 'getSelectedAccount');
     console.log('using ' + address)
@@ -38,3 +38,5 @@ export const saveToArkiv = async (message: string) => {
         console.error(e)
     }
 }
+
+saveToArkiv('Hello, Arkiv!')
