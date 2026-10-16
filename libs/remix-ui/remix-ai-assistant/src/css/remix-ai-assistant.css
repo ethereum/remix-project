@@ -2077,3 +2077,13 @@ code {
     display: none;
   }
 }
+
+/* A rendered component the user has already answered, or that a newer one
+   replaced. It stays in the transcript as a record of what was asked, but
+   must not be clickable: re-answering it would restart an exchange the model
+   has finished. Dimmed rather than hidden so the history still reads. */
+.generative-ui-spent {
+  opacity: 0.55;
+  pointer-events: none;
+  filter: saturate(0.6);
+}

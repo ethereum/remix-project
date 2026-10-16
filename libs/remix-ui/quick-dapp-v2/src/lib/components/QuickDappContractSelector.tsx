@@ -21,6 +21,21 @@ interface QuickDappContractSelectorProps {
   onCancel: () => void
   onPrepareFigma: (figmaUrl: string, figmaToken: string) => Promise<QuickDappFigmaPreparationResult>
   onConfirm: (options: QuickDappSetupOptions) => void
+  /**
+   * Stronger models worth offering for this generation, or [] to hide the
+   * choice entirely. Only populated when the user is on Auto: someone who
+   * already picked a concrete model has made their decision and should not be
+   * second-guessed here.
+   */
+  modelChoices?: QuickDappModelChoice[]
+}
+
+export interface QuickDappModelChoice {
+  id: string
+  provider?: string
+  displayName?: string
+  /** Vendor family label, e.g. "Claude" — shown as the badge. */
+  family?: string
 }
 
 export interface QuickDappSetupOptions {
@@ -32,6 +47,8 @@ export interface QuickDappSetupOptions {
   figmaUrl?: string
   figmaContextId?: string
   subgraphFilePath?: string
+  /** Model to switch to before generating; absent means stay on Auto. */
+  model?: QuickDappModelChoice
 }
 
 export interface QuickDappFigmaPreparationResult {
@@ -55,7 +72,8 @@ export function QuickDappContractSelector({
   fixedFrontendMode,
   onCancel,
   onPrepareFigma,
-  onConfirm
+  onConfirm,
+  modelChoices = []
 }: QuickDappContractSelectorProps) {
   const [primaryAddress, setPrimaryAddress] = useState(primaryContract.address.toLowerCase())
   const [selectedAddresses, setSelectedAddresses] = useState<string[]>([])
@@ -68,6 +86,8 @@ export function QuickDappContractSelector({
   const [figmaError, setFigmaError] = useState('')
   const [isPreparingFigma, setIsPreparingFigma] = useState(false)
   const [subgraphFilePath, setSubgraphFilePath] = useState('')
+  /** Index into modelChoices, or -1 for "stay on Auto". */
+  const [modelIndex, setModelIndex] = useState(-1)
   const [showAdditionalContracts, setShowAdditionalContracts] = useState(false)
   const [showOptionalIntegrations, setShowOptionalIntegrations] = useState(false)
 
@@ -96,6 +116,7 @@ export function QuickDappContractSelector({
     setSelectedAddresses([])
     setFrontendMode(fixedFrontendMode || 'workspace')
     setIsBaseMiniApp(false)
+    setModelIndex(-1)
     setDesign('')
     setUseFigma(false)
     setFigmaUrl('')
@@ -162,7 +183,8 @@ export function QuickDappContractSelector({
       isBaseMiniApp,
       design: design.trim(),
       ...(useFigma ? { figmaUrl: normalizedFigmaUrl, figmaContextId } : {}),
-      ...(subgraphFilePath.trim() ? { subgraphFilePath: subgraphFilePath.trim() } : {})
+      ...(subgraphFilePath.trim() ? { subgraphFilePath: subgraphFilePath.trim() } : {}),
+      ...(modelIndex >= 0 && modelChoices[modelIndex] ? { model: modelChoices[modelIndex] } : {})
     })
   }
 
@@ -324,6 +346,49 @@ export function QuickDappContractSelector({
             <i className="fas fa-robot me-1" aria-hidden="true"></i>
             Generate with AI
           </div>
+
+          {modelChoices.length > 0 && (
+            // Only reached on Auto. Building a working frontend in one pass is
+            // a long multi-file job, and Auto frequently routes it to a small
+            // model that produces something that does not run — so the choice
+            // is offered here, before generating, rather than reported after.
+            <div className="mb-3" data-id="quickDappModelStep">
+              <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+                <span className="fw-semibold">Model</span>
+                <span className="small text-secondary">You are on Auto</span>
+              </div>
+              <p className="small text-secondary mb-2">
+                Generating a DApp writes several files in one pass. A stronger model is
+                markedly more likely to produce a frontend that runs first time. Your pick
+                becomes your model selection everywhere.
+              </p>
+              <div className="d-flex flex-wrap gap-2" aria-label="Generation model" data-id="quickDappModelChoices">
+                <button
+                  type="button"
+                  className={`btn btn-sm qd-choice-chip ${modelIndex === -1 ? 'qd-choice-chip--active' : ''}`}
+                  onClick={() => setModelIndex(-1)}
+                  aria-pressed={modelIndex === -1}
+                  data-id="quickDappModelKeepAuto"
+                >
+                  Keep Auto
+                </button>
+                {modelChoices.map((model, index) => (
+                  <button
+                    key={`${model.provider || ''}::${model.id}`}
+                    type="button"
+                    className={`btn btn-sm qd-choice-chip ${modelIndex === index ? 'qd-choice-chip--active' : ''}`}
+                    onClick={() => setModelIndex(index)}
+                    aria-pressed={modelIndex === index}
+                    title={model.id}
+                    data-id={`quickDappModelChoice-${model.id}`}
+                  >
+                    {model.displayName || model.id}
+                    {model.family && <span className="ms-1 small text-secondary">· {model.family}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="d-flex flex-wrap gap-2 mb-2" aria-label="Design presets" data-id="quickDappDesignPresets">
             {designPresets.map((preset) => {
               const label = preset || 'Default'
@@ -462,6 +527,9 @@ export function QuickDappContractSelector({
       <Modal.Footer className="justify-content-between flex-wrap gap-2">
         <div className="small text-secondary" data-id="quickDappSetupSummary">
           Primary: {selectedPrimary.name} · {selectedAddresses.length + 1} contract{selectedAddresses.length > 0 ? 's' : ''} · {effectiveFrontendMode === 'inline' ? 'Inline /frontend' : 'Dedicated workspace'}
+          {modelChoices.length > 0 && (
+            <> · {modelIndex >= 0 ? (modelChoices[modelIndex].displayName || modelChoices[modelIndex].id) : 'Auto'}</>
+          )}
         </div>
         <div className="d-flex gap-2">
           <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={isPreparingFigma} data-id="quickDappContractSelectorCancel">
