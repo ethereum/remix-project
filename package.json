@@ -423,7 +423,7 @@
     "npm-link-local": "^1.1.0",
     "npm-merge-driver": "^2.3.5",
     "npm-run-all": "^4.0.2",
-    "nx": "15.7.1",
+    "nx": "22.7.10",
     "nyc": "^13.3.0",
     "onchange": "^3.2.1",
     "onnxruntime-web": "^1.18.0",
