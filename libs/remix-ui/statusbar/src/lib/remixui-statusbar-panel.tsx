@@ -113,7 +113,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
               <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
             </div>
             {isTypeLoadingActive &&
-              <div className="remixui_statusbar d-flex w-100 justify-content-start p-0 ms-3 text-white">
+              <div className="text-body remixui_statusbar d-flex w-100 justify-content-start p-0 ms-3 text-white">
                 <span className="spinner-border spinner-border-sm me-2" role="status">
                 </span>
                 <span className="">loading typescript types</span>

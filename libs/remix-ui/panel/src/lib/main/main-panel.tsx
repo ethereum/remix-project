@@ -44,12 +44,13 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
 
   useEffect(() => {
     renderPanels()
-    layout.event.on('change', () => {
+    const onChange = () => {
       renderPanels()
-    })
+    }
+    layout.event.on('change', onChange)
 
     return () => {
-      layout.event.off('change')
+      layout.event.off('change', onChange)
     }
   }, [])
 

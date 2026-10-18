@@ -3114,8 +3114,8 @@ export class FetchFigmaDesignHandler extends BaseToolHandler {
 const QUICKDAPP_ZK_VERIFY_INTEGRATION_RULES =
   `ZKVERIFY INTEGRATION (proxy mode only - NEVER hardcode API keys):\n` +
   `- Read zkVerify config from window.__ZK_DAPP_CONFIG__.zkVerify\n` +
-  `- The config contains: { network, proxyEndpoint?, proxyToken? }\n` +
-  `- If proxyEndpoint && proxyToken do NOT exist: Show message "Configure zkVerify API key in Remix settings to enable verification"\n` +
+  `- The config contains: { network, proxyEndpoint?, proxyToken?, errorMessage? }\n` +
+  `- If proxyEndpoint or proxyToken is missing: Display errorMessage as plain text when present; otherwise show "Configure zkVerify API key in Remix settings to enable verification". Keep proof generation available.\n` +
   `- SUBMIT PROOF (POST to proxyEndpoint):\n` +
   `  Request body: { token: proxyToken, proofType: 'groth16', proofData: { proof, publicSignals, vk }, proofOptions: { library: 'snarkjs', curve: config.primeValue } }\n` +
   `  CRITICAL: Use config.primeValue ('bn128' or 'bls12381') from window.__ZK_DAPP_CONFIG__ - do NOT hardcode the curve value\n` +

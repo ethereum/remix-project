@@ -86,19 +86,19 @@ function getSystemThemeFallback(): string {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-/** `QuickDapp_Specialist`, however the harness spells it. */
-const isQuickDappAgentName = (name?: string): boolean =>
-  !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('quickdapp')
+/** Coarse duration label for analytics — keeps the value cardinality bounded. */
+const bucketDuration = (ms: number): string => {
+  if (!Number.isFinite(ms) || ms < 0) return 'unknown'
+  if (ms < 5000) return '<5s'
+  if (ms < 15000) return '5-15s'
+  if (ms < 60000) return '15-60s'
+  if (ms < 300000) return '1-5m'
+  return '>5m'
+}
 
 /** `Comprehensive_Auditor`, however the harness spells it. */
 const isAuditorAgentName = (name?: string): boolean =>
   !!name && name.toLowerCase().replace(/[_\s-]/g, '').includes('comprehensiveauditor')
-
-/** Anthropic, direct or routed through OpenRouter (`anthropic/...`). */
-const isAnthropicModelId = (id: string): boolean => {
-  const normalized = id.toLowerCase()
-  return normalized.startsWith('anthropic/') || normalized.includes('claude')
-}
 
 // Shown in the chat when the Ollama provider is selected but unreachable.
 const OLLAMA_NOT_AVAILABLE_MESSAGE = [
@@ -146,11 +146,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [runModel, setRunModel] = useState<string | null>(null)
   // Read from event handlers, which are memoized without `runModel`.
   const runModelRef = useRef<string | null>(null)
-  // One QuickDapp model hint per request.
-  const quickDappHintShownRef = useRef(false)
-  // QuickDapp is running this request — the model often lands after it starts.
-  const quickDappRunningRef = useRef(false)
-  // Same pair for the auditor: one hint per request, and the flag that says the
+  // One hint per request for the auditor, and the flag that says the
   // audit is the thing running when the resolved model finally arrives.
   const auditHintShownRef = useRef(false)
   const auditRunningRef = useRef(false)
@@ -419,23 +415,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     ])
   }, [])
 
-  const hintQuickDappModel = useCallback(() => {
-    const model = runModelRef.current
-    if (!quickDappRunningRef.current || quickDappHintShownRef.current) return
-    if (!model || isAnthropicModelId(model)) return
-
-    quickDappHintShownRef.current = true
-    setChatNotice({
-      severity: 'info',
-      code: 'QUICKDAPP_MODEL_HINT',
-      title: 'Better on Anthropic',
-      message: `Auto picked ${model}. QuickDapp works best with a Sonnet-class model.`,
-      actionable: false
-    })
-  }, [])
-
   /**
-   * Mirrors hintQuickDappModel for audits.
+   * Tells the user when Auto picked something weak for an audit.
    *
    * `runModelRef` is only populated while the user is on Auto (handleModelUsed
    * bails otherwise), so reaching here already means Auto picked the route —
@@ -928,10 +909,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent started:', data)
 
-      if (isQuickDappAgentName(data.name)) {
-        quickDappRunningRef.current = true
-        hintQuickDappModel()
-      }
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_start',
+        value: data.name || 'unknown',
+        isClick: false
+      })
+
       if (isAuditorAgentName(data.name)) {
         auditRunningRef.current = true
         hintAuditModel()
@@ -952,6 +937,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     const handleSubagentComplete = (data: { id: string; name: string; status: string; duration: number; threadId?: string }) => {
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent completed:', data)
+
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'subagent_complete',
+        value: `${data.name || 'unknown'}|${bucketDuration(data.duration)}`,
+        isClick: false
+      })
       /*
       // Update subagent bubble styling when subagent completes
       const sub = streamingSubagentBubbleRef.current
@@ -992,7 +985,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // Track it on the ref from the event, not the render, so a QuickDapp run
       // that started first sees the model immediately.
       runModelRef.current = data?.model || null
-      hintQuickDappModel()
       hintAuditModel()
     }
 
@@ -1341,8 +1333,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
       const activeId = streamingAssistantIdRef.current
       if (activeId) {
-        // Attach to the message that is currently streaming
-        setMessages(prev => prev.map(m => m.id === activeId ? { ...m, uiComponent: payload } : m))
+        // Attach to the message that is currently streaming, and retire any
+        // earlier component: a superseded picker left live in the transcript is
+        // still clickable, and answering it sends the model back into an
+        // exchange it has already moved past.
+        setMessages(prev => prev.map(m => {
+          if (m.id === activeId) return { ...m, uiComponent: payload, uiComponentStale: false }
+          return m.uiComponent && !m.uiComponentStale ? { ...m, uiComponentStale: true } : m
+        }))
         return
       }
       // No active stream yet (render_ui called before any text) — create an assistant bubble
@@ -1350,7 +1348,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       const uiMsgId = crypto.randomUUID()
       streamingAssistantIdRef.current = uiMsgId
       setMessages(prev => [
-        ...prev,
+        ...prev.map(m => m.uiComponent && !m.uiComponentStale ? { ...m, uiComponentStale: true } : m),
         {
           id: uiMsgId,
           role: 'assistant' as const,
@@ -1666,6 +1664,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [props.plugin])
 
+  /**
+   * Retires a rendered component once the user has answered it.
+   *
+   * The answer goes to the model as a new turn, so without this the control
+   * stays live in the transcript indefinitely and a second click would reopen
+   * an exchange the model has already completed.
+   */
+  const handleUiComponentAnswered = useCallback((msgId: string) => {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, uiComponentStale: true } : m))
+  }, [])
+
   const handleDappReviewAcceptAll = useCallback(async (msgId: string) => {
     remixAILogger.log('[DAppReview] Accept all for message:', msgId)
     await closeDiffSessions()
@@ -1912,8 +1921,6 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       // The previous run's model no longer describes what is about to answer.
       setRunModel(null)
-      quickDappHintShownRef.current = false
-      quickDappRunningRef.current = false
       auditHintShownRef.current = false
       auditRunningRef.current = false
       // Reset the per-turn "stream consumed" flag — it gates the
@@ -3175,6 +3182,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       onDappReviewAcceptAll={handleDappReviewAcceptAll}
                       onDappReviewRevertAll={handleDappReviewRevertAll}
                       onDappReviewViewDiff={handleDappReviewViewDiff}
+                      onUiComponentAnswered={handleUiComponentAnswered}
                     />
                     {pendingApprovals.length > 1 && (
                       <div className="hitl-pending-summary">
@@ -3293,6 +3301,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                         onDappReviewAcceptAll={handleDappReviewAcceptAll}
                         onDappReviewRevertAll={handleDappReviewRevertAll}
                         onDappReviewViewDiff={handleDappReviewViewDiff}
+                        onUiComponentAnswered={handleUiComponentAnswered}
                       />
                       {pendingApprovals.length > 1 && (
                         <div className="hitl-pending-summary">

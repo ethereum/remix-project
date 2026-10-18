@@ -47,6 +47,20 @@ const candidateLabel = (file: string, all: string[]): string => {
   return parts.length > 1 ? `${parts[parts.length - 2]}/${name}` : name
 }
 
+/**
+ * How long to wait for `compilationFinished` before auditing anyway. Generous
+ * because a first compile may still be downloading the solc binary, and giving
+ * up early would wrongly report a healthy contract as broken.
+ */
+const AUDIT_COMPILE_TIMEOUT_MS = 60000
+
+/**
+ * Grace period for the artefact store to catch up after `compilationFinished`.
+ * The event and the store are populated independently, so a bare check right
+ * after the event can miss a compile that actually succeeded.
+ */
+const ARTEFACT_SETTLE_MS = 2000
+
 export function RemixUiChecklistExplorerModal(props: RemixUiChecklistExplorerModalProps) {
   const { isOpen, onClose, plugin, mode = 'checklist' } = props
   const isAuditMode = mode === 'audit'
@@ -640,7 +654,7 @@ export function RemixUiChecklistExplorerModal(props: RemixUiChecklistExplorerMod
       // Checklist mode stops here: the files are the deliverable.
       // The audit covers the whole folder, so it is named with the full scope —
       // the checklists just written plus any that were already saved.
-      if (isAuditMode) startAudit(auditInstruction(auditScopeLabels.join(', '), newRunId()))
+      if (isAuditMode) await startAudit(auditInstruction(auditScopeLabels.join(', '), newRunId()))
       else onClose()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to save checklist'
@@ -662,6 +676,91 @@ export function RemixUiChecklistExplorerModal(props: RemixUiChecklistExplorerMod
   }
 
   /**
+   * Compile the picked contract so the audit has artifacts to work from.
+   *
+   * Slither reads compiled output, not source. Started without a successful
+   * compilation it returns nothing, and the audit quietly loses every check
+   * that depends on it while still reporting as if it had run — the worst
+   * possible failure for a security tool. The user chose this file in the
+   * dropdown seconds ago, so here is the one moment we can guarantee the
+   * artifact matches what is about to be audited.
+   *
+   * Always recompiles rather than trusting whatever is cached: the file may
+   * have been edited since, and a stale artifact would be audited as if it
+   * were the current source.
+   */
+  const compileForAudit = async (targetPath: string): Promise<{ ok: boolean; reason?: string }> => {
+    if (!plugin || !targetPath) return { ok: false, reason: 'no contract was selected' }
+
+    /**
+     * The success check deliberately asks `compilerArtefacts` for the same
+     * CompilerAbstract that `slither_scan` itself reads, rather than
+     * `solidity.getCompilationResult`. Those are two different stores, and
+     * checking the wrong one would let us report success while Slither still
+     * answers "please compile the contract first".
+     */
+    const artefactReady = async (): Promise<boolean> => {
+      try {
+        const abstract: any = await plugin.call('compilerArtefacts', 'getCompilerAbstract', targetPath)
+        return !!abstract?.source?.sources
+      } catch (e) {
+        return false
+      }
+    }
+
+    /** First blocking error from the last compilation, for a usable message. */
+    const firstCompileError = async (): Promise<string | null> => {
+      try {
+        const result = await plugin.call('solidity', 'getCompilationResult')
+        const errors = Array.isArray(result?.errors)
+          ? result.errors.filter((e: any) => (e.severity || e.type) === 'error')
+          : []
+        if (!errors.length) return null
+        const first = errors[0]?.formattedMessage || errors[0]?.message || 'compilation error'
+        return String(first).split('\n')[0]
+      } catch (e) {
+        return null
+      }
+    }
+
+    try {
+      await plugin.call('manager', 'activatePlugin', 'solidity')
+
+      // `compile` resolves as soon as the job is queued, so the artifact is
+      // only guaranteed once compilationFinished lands. The timeout covers a
+      // first run that still has to fetch the compiler binary.
+      await new Promise<void>((resolve) => {
+        let settled = false
+        let watchdog: ReturnType<typeof setTimeout> | null = null
+        const done = () => {
+          if (settled) return
+          settled = true
+          try { plugin.off('solidity', 'compilationFinished', done) } catch (e) { /* already torn down */ }
+          if (watchdog) clearTimeout(watchdog)
+          resolve()
+        }
+        watchdog = setTimeout(done, AUDIT_COMPILE_TIMEOUT_MS)
+        plugin.on('solidity', 'compilationFinished', done)
+        Promise.resolve(plugin.call('solidity', 'compile', targetPath)).catch(done)
+      })
+
+      if (await artefactReady()) return { ok: true }
+
+      // compilationFinished can land marginally before the artefact store is
+      // populated, so a miss is retried briefly before being called a failure.
+      const deadline = Date.now() + ARTEFACT_SETTLE_MS
+      while (Date.now() < deadline) {
+        await new Promise(r => setTimeout(r, 120))
+        if (await artefactReady()) return { ok: true }
+      }
+
+      return { ok: false, reason: (await firstCompileError()) || 'the compiler produced no artifact for it' }
+    } catch (e) {
+      return { ok: false, reason: e instanceof Error ? e.message : 'the compiler could not be reached' }
+    }
+  }
+
+  /**
    * Close the modal and hand the audit off to the assistant.
    *
    * The instruction has to name the contract itself. This dropdown is the only
@@ -671,18 +770,42 @@ export function RemixUiChecklistExplorerModal(props: RemixUiChecklistExplorerMod
    * That is why it goes through `chatPipe` (which reaches `sendChat`) rather
    * than `submitChatInput`, which would send whatever generic text the slash
    * command happened to leave in the composer.
+   *
+   * The compile runs here rather than in either caller so neither audit path
+   * can start without it.
    */
-  const startAudit = (instruction: string) => {
+  const startAudit = async (instruction: string) => {
     onClose()
-    Promise.resolve(
-      plugin?.call('remixaiassistant', 'chatPipe', instruction, false, {
+
+    // The modal is already gone, so the chat is the only place left to say
+    // what is happening during a compile that can take several seconds.
+    const say = async (message: string) => {
+      try {
+        await plugin?.call('remixaiassistant', 'handleExternalMessage', message)
+      } catch (e) { /* assistant panel unavailable — the audit still runs */ }
+    }
+
+    await say(`Compiling \`${matchTarget}\` so the audit tools have artifacts to analyse...`)
+    const compiled = await compileForAudit(matchTarget)
+
+    let finalInstruction = instruction
+    if (!compiled.ok) {
+      // A contract that does not compile is still worth a source-level review,
+      // so this reports rather than blocks. The model is told explicitly,
+      // because otherwise it would read an empty Slither result as "no issues".
+      await say(`\`${matchTarget}\` did not compile — ${compiled.reason}. Continuing with a source-level audit; Slither and anything else needing artifacts will not be available.`)
+      finalInstruction = `${instruction}\n\nNote: this contract failed to compile (${compiled.reason}). Slither and any other artifact-based tooling will return nothing — do NOT read an empty result as "no issues found". Review the source directly and say plainly in your report which checks could not be run.`
+    }
+
+    try {
+      await plugin?.call('remixaiassistant', 'chatPipe', finalInstruction, false, {
         source: 'checklist-explorer',
         presetId: 'audit-contract',
         displayText: `Auditing \`${contractName}\` (${matchTarget}) with ${auditScopeLabels.length} checklist${auditScopeLabels.length === 1 ? '' : 's'} (${auditScopeLabels.join(', ')})...`
       })
-    ).catch(() => {
+    } catch (e) {
       // assistant plugin unavailable — modal is already closed
-    })
+    }
   }
 
   /**
@@ -715,7 +838,7 @@ export function RemixUiChecklistExplorerModal(props: RemixUiChecklistExplorerMod
       // assistant panel unavailable — still hand off below
     }
 
-    startAudit(auditInstruction(auditScopeLabels.join(', '), newRunId()))
+    await startAudit(auditInstruction(auditScopeLabels.join(', '), newRunId()))
   }
 
   const handleBack = () => {

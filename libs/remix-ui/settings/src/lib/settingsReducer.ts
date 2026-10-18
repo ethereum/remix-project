@@ -155,7 +155,7 @@ export const initialState: SettingsState = {
     isLoading: false
   },
   'copilot/suggest/activate': {
-    value: config.get('settings/copilot/suggest/activate') || true,
+    value: config.get('settings/copilot/suggest/activate') ?? true,
     isLoading: false
   },
   'save-evm-state': {
@@ -318,6 +318,10 @@ export const initialState: SettingsState = {
   },
   'ai-feedback-credit-threshold': {
     value: aiFeedbackCreditThreshold,
+    isLoading: false
+  },
+  'eez-networks-config': {
+    value: false,
     isLoading: false
   },
   toaster: {

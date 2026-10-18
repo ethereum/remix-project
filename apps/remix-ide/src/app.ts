@@ -92,6 +92,7 @@ import { EnvironmentPlugin } from './app/udapp/udappEnv'
 import { DeployPlugin } from './app/udapp/udappDeploy'
 import { DeployedContractsPlugin } from './app/udapp/udappDeployedContracts'
 import { TransactionsPlugin } from './app/udapp/udappTransactions'
+import { EezPlugin } from './app/udapp/udappEez'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -521,6 +522,7 @@ class AppComponent {
     const udappDeployPlugin = new DeployPlugin()
     const udappDeployedContractsPlugin = new DeployedContractsPlugin()
     const udappTransactionsPlugin = new TransactionsPlugin()
+    const udappEezPlugin = new EezPlugin()
     const txRunnerPlugin = new TxRunnerPlugin()
 
     this.engine.register([
@@ -600,7 +602,8 @@ class AppComponent {
       udappEnvPlugin,
       udappDeployPlugin,
       udappDeployedContractsPlugin,
-      udappTransactionsPlugin
+      udappTransactionsPlugin,
+      udappEezPlugin
     ])
 
     //---- fs plugin
@@ -986,6 +989,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['udappDeploy'])
     await this.appManager.activatePlugin(['udappDeployedContracts'])
     await this.appManager.activatePlugin(['udappTransactions'])
+    await this.appManager.activatePlugin(['udappEez'])
   }
 }
 

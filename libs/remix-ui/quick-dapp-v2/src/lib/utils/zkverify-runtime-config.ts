@@ -118,6 +118,7 @@ export interface ZkRuntimeConfig {
     apiKey?: string;
     proxyEndpoint?: string;
     proxyToken?: string;
+    errorMessage?: string;
   };
   onChainVerifier?: {
     address: string;
@@ -208,6 +209,7 @@ export const buildZkRuntimeConfigScript = async (
     let apiKey = await getZkVerifyApiKey(plugin);
     let proxyToken: string | undefined;
     let proxyEndpoint: string | undefined;
+    let errorMessage: string | undefined;
 
     // For deployment, create a sealed proxy token instead of exposing the API key
     const zkverifyEndpoint = getZkVerifyEndpoint();
@@ -218,7 +220,10 @@ export const buildZkRuntimeConfigScript = async (
         proxyEndpoint = `${zkverifyEndpoint}/submit-proof`;
         apiKey = ''; // Clear API key for deployed version
       } catch (error: any) {
-        // Continue without proxy token - DApp will need manual API key
+        const message = error?.message || 'Unable to prepare zkVerify verification. Please try again.'
+        errorMessage = message.includes('ZKVERIFY_PROXY_SECRET')
+          ? 'zkVerify verification is unavailable because the Remix server is not configured correctly. Please contact the server operator.'
+          : message
       }
     }
 
@@ -226,7 +231,8 @@ export const buildZkRuntimeConfigScript = async (
       network,
       ...(options.includeApiKey && apiKey ? { apiKey } : {}),
       ...(proxyEndpoint ? { proxyEndpoint } : {}),
-      ...(proxyToken ? { proxyToken } : {})
+      ...(proxyToken ? { proxyToken } : {}),
+      ...(errorMessage ? { errorMessage } : {})
     };
   }
 

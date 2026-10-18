@@ -80,7 +80,11 @@ export interface SimulationResult {
 
 export class TransactionSimulator extends Plugin {
   private signatureCache: Map<string, any> = new Map()
-  private readonly ETHER_TRANSFER_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  // EIP-7644 specifies 0xeee...ee; some nodes (e.g. GetBlock) use 0xfff...fe instead
+  private readonly ETHER_TRANSFER_ADDRESSES = [
+    '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    '0xfffffffffffffffffffffffffffffffffffffffe'
+  ]
   private readonly TRANSFER_EVENT_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 
   constructor() {
@@ -156,7 +160,7 @@ export class TransactionSimulator extends Plugin {
 
       try {
         // Check if this is an Ether transfer
-        if (log.address.toLowerCase() === this.ETHER_TRANSFER_ADDRESS.toLowerCase()) {
+        if (this.ETHER_TRANSFER_ADDRESSES.includes(log.address.toLowerCase())) {
           decodedLog.isEtherTransfer = true
           decodedLog.eventName = 'EtherTransfer'
 
