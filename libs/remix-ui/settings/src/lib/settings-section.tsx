@@ -8,6 +8,7 @@ import type { ViewPlugin } from '@remixproject/engine-web'
 import { CustomTooltip } from '@remix-ui/helper'
 import { IMCPServerManager } from './mcp-server-manager'
 import { ProfileSection, CreditsBalance, ConnectedAccounts } from './account-settings'
+import { EezNetworksConfig } from './eez-networks-config'
 import { validateApiKeyFormat, testApiKey, getProviderFromSettingKey } from '@remix/remix-ai-core'
 
 type SettingsSectionUIProps = {
@@ -325,6 +326,7 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
                             {option.type === 'custom' && option.customComponent === 'profileSection' && <span></span>}
                             {option.type === 'custom' && option.customComponent === 'creditsBalance' && <span></span>}
                             {option.type === 'custom' && option.customComponent === 'connectedAccounts' && <span></span>}
+                            {option.type === 'custom' && option.customComponent === 'eezNetworksConfig' && <span></span>}
                           </div>
                         </div>
                       )}
@@ -347,6 +349,11 @@ export const SettingsSectionUI: React.FC<SettingsSectionUIProps> = ({ plugin, se
                       {option.type === 'custom' && option.customComponent === 'connectedAccounts' && (
                         <div className="mt-3">
                           <ConnectedAccounts plugin={plugin} />
+                        </div>
+                      )}
+                      {option.type === 'custom' && option.customComponent === 'eezNetworksConfig' && (
+                        <div className="mt-3">
+                          <EezNetworksConfig plugin={plugin} />
                         </div>
                       )}
                       {

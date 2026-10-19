@@ -51,6 +51,12 @@ export interface ChatMessage {
   uiComponent?: GenerativeUIPayload
   /** Files the agent changed while writing this answer (AI mode changes panel) */
   fileChanges?: AIFileChangeRecord[]
+  /**
+   * The component has been answered or superseded. Kept in the transcript
+   * for the record but rendered inert — a live control the model has moved
+   * past would restart a finished exchange if clicked again.
+   */
+  uiComponentStale?: boolean
 }
 
 /**

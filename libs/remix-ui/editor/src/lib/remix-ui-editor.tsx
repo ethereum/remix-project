@@ -205,6 +205,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
   const { features } = useAuth()
   const hasContextualEditorFeature = features[Features.AI_CONTEXTUAL_EDITOR]?.is_enabled === true
+  const hasAuditorPermission = features[Features.AI_AUDITOR]?.is_enabled === true
   const changedTypeMap = useRef<ChangeTypeMap>({})
   const pendingCustomDiff = useRef({})
   const currentBreakpointsRef = useRef<Record<string, Record<number, any>>>({})
@@ -1810,7 +1811,8 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       const fileRef = currentFile
-      const prompt = `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks. At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.`
+      const securityUpsell = hasAuditorPermission ? '' : ' At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.'
+      const prompt = `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks.${securityUpsell}`
 
       await (props.plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, {
         displayText: 'audit security ' + fileRef,
@@ -1848,7 +1850,8 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       const fileRef = currentFile
-      const prompt = `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.`
+      const gasUpsell = hasAuditorPermission ? '' : ' At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.'
+      const prompt = `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs.${gasUpsell}`
 
       await (props.plugin as any).call('remixaiassistant', 'chatPipe', prompt, false, {
         displayText: 'audit gas ' + fileRef,

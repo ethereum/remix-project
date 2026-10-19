@@ -9,6 +9,7 @@ import { ICompletions, IGeneration, IParams } from '../../types/types'
 import { Plugin } from '@remixproject/engine'
 import EventEmitter from 'events'
 import { RemixFilesystemBackend } from './RemixFilesystemBackend'
+import { generativeUiGuard } from './generativeUiGuard'
 import { createRemixTools, ToolApprovalGate } from './tools'
 import {
   REMIX_DEEPAGENT_SYSTEM_PROMPT,
@@ -431,6 +432,10 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
 
   async answer(prompt: string, params: IParams, context?: string): Promise<string | null> {
     this.event.emit('onInference')
+    // Clears the "already on screen" registry, except when this turn IS the
+    // answer to something still rendered — that is exactly the case where a
+    // re-invoked subagent would redraw the picker it was called to handle.
+    generativeUiGuard.beginTurn(prompt)
 
     try {
       if (!this.agent) {

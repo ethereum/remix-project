@@ -9,7 +9,9 @@ export const deployedContractsInitialState: DeployedContractsWidgetState = {
   loadType: 'other',
   currentFile: '',
   lastLoadedChainId: null,
-  lastLoadedWorkspace: null
+  lastLoadedWorkspace: null,
+  collapseAllSignal: 0,
+  highlightAddDialog: false
 }
 
 export const deployedContractsReducer = (state: DeployedContractsWidgetState, action: Actions): DeployedContractsWidgetState => {
@@ -125,6 +127,18 @@ export const deployedContractsReducer = (state: DeployedContractsWidgetState, ac
     return {
       ...state,
       lastLoadedWorkspace: action.payload
+    }
+
+  case 'COLLAPSE_ALL':
+    return {
+      ...state,
+      collapseAllSignal: state.collapseAllSignal + 1
+    }
+
+  case 'HIGHLIGHT_ADD_DIALOG':
+    return {
+      ...state,
+      highlightAddDialog: action.payload
     }
 
   default:

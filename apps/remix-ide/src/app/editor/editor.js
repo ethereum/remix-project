@@ -130,6 +130,7 @@ export default class Editor extends Plugin {
   render () {
     return <div ref={(element)=>{
       this.ref = element
+      if (!this.ref) return
       this.ref.currentContent = () => this.currentContent() // used by e2e test
       this.ref.setCurrentContent = (value) => {
         if (this.sessions[this.currentFile]) {
@@ -301,6 +302,9 @@ export default class Editor extends Plugin {
       this.triggerEvent('typesLoading', ['start'])
     }
     this.typesLoadingCount++
+    setTimeout(() => {
+      this.triggerEvent('typesLoading', ['end']) // type loading will continue to work in the background.
+    }, 10000)
   }
 
   endTypesBatch() {

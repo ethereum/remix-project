@@ -128,6 +128,10 @@ export type AIPromptEventName =
   | 'conversation_count'
   | 'promptSend'
 
+export type AISubagentEventName =
+  | 'subagent_start'
+  | 'subagent_complete'
+
 /**
  * Low-cost model tier event names, emitted with
  * `{ category: 'ai', action: 'remixAI', name: <one of these> }`. They measure

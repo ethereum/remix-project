@@ -53,12 +53,13 @@ export const transactionsReducer = (state: TransactionsWidgetState, action: Acti
     const value = txResult.tx?.value || '0'
 
     // Build the transaction record
+    const funAbi = payLoad.funAbi || { name: '', type: to ? 'function' : 'constructor', inputs: []}
     const record: Partial<Transaction['record']> = {
       value,
-      inputs: txHelper.serializeInputs(payLoad.funAbi),
+      inputs: txHelper.serializeInputs(funAbi),
       parameters: payLoad.funArgs,
-      name: payLoad.funAbi.name,
-      type: payLoad.funAbi.type
+      name: funAbi.name,
+      type: funAbi.type
     }
 
     let newState = { ...state }

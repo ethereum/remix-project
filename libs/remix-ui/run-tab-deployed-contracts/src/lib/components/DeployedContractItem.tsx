@@ -9,10 +9,11 @@ import { checksumAddressesInValue } from '@remix-ui/utils'
 import { FuncABI } from '@remix-project/core-plugin'
 import { DeployedContractsAppContext } from '../contexts'
 import { DeployedContract } from '../types'
-import { runTransactions } from '../actions'
+import { runTransactions, checkCrossChainProxy, traceCrossChainCall, CrossChainProxyInfo, CrossChainTraceResult } from '../actions'
 import { ContractKebabMenu } from './ContractKebabMenu'
 import { EnsNaming } from './EnsNaming'
-import { QuickDappContractSelector, QuickDappFigmaPreparationResult, QuickDappSetupOptions } from '@remix-ui/quick-dapp-v2'
+import { QuickDappContractSelector, QuickDappFigmaPreparationResult, QuickDappSetupOptions, QuickDappModelChoice } from '@remix-ui/quick-dapp-v2'
+import { frontierAlternativesFor, frontierFamilyOf } from '@remix/remix-ai-core/model-tiers'
 
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import BN from 'bn.js'
@@ -29,13 +30,14 @@ const REMIX_VM_DAPP_WORKSPACE_MESSAGE = 'Creating another DApp from a DApp works
 interface DeployedContractItemProps {
   contract: DeployedContract
   index: number
+  collapseSignal?: number
   registerRef?: (ref: HTMLDivElement | null) => void
   isKebabMenuOpen?: boolean
   onKebabMenuToggle?: (isOpen: boolean) => void
 }
 
-export function DeployedContractItem({ contract, index, registerRef, isKebabMenuOpen = false, onKebabMenuToggle }: DeployedContractItemProps) {
-  const { widgetState, dispatch, plugin, themeQuality } = useContext(DeployedContractsAppContext)
+export function DeployedContractItem({ contract, index, collapseSignal, registerRef, isKebabMenuOpen = false, onKebabMenuToggle }: DeployedContractItemProps) {
+  const { widgetState, dispatch, plugin, themeQuality, eezNetworksVersion } = useContext(DeployedContractsAppContext)
   const { trackMatomoEvent } = useContext(TrackingContext)
   const intl = useIntl()
   const { features, isAuthenticated } = useAuth()
@@ -65,6 +67,15 @@ export function DeployedContractItem({ contract, index, registerRef, isKebabMenu
   const [showQuickDappContractSelector, setShowQuickDappContractSelector] = useState<boolean>(false)
   const [quickDappFixedFrontendMode, setQuickDappFixedFrontendMode] = useState<'inline' | 'workspace' | undefined>()
   const [quickDappEnvironmentId, setQuickDappEnvironmentId] = useState<string>()
+  const [quickDappModelChoices, setQuickDappModelChoices] = useState<QuickDappModelChoice[]>([])
+  const [crossChainProxyInfo, setCrossChainProxyInfo] = useState<CrossChainProxyInfo | null>(null)
+  const [tracePreview, setTracePreview] = useState<{
+    key: string
+    onConfirm: () => void
+    isLoading: boolean
+    result: CrossChainTraceResult | null
+    error: string | null
+      } | null>(null)
 
   useEffect(() => {
     plugin.call('udappEnv', 'getNetwork').then((net) => {
@@ -85,6 +96,27 @@ export function DeployedContractItem({ contract, index, registerRef, isKebabMenu
       setContractABI(contract.abi)
     }
   }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    checkCrossChainProxy(plugin, contract.address).then((info) => {
+      if (cancelled) return
+      setCrossChainProxyInfo(info)
+      if (info) setGasLimit((current) => (current === 0 ? 5000000 : current))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [eezNetworksVersion])
+
+  const isFirstCollapseSignal = useRef(true)
+  useEffect(() => {
+    if (isFirstCollapseSignal.current) {
+      isFirstCollapseSignal.current = false
+      return
+    }
+    setIsExpanded(false)
+  }, [collapseSignal])
 
   // Intersection Observer to detect when contract becomes visible
   useEffect(() => {
@@ -299,6 +331,102 @@ export function DeployedContractItem({ contract, index, registerRef, isKebabMenu
     }
   }
 
+  const buildCalldataForPreview = (funcIndex: number): string | null => {
+    const funcABI = functionABIs[funcIndex]
+    if (!funcABI) return null
+    try {
+      if (!funcABI.inputs || funcABI.inputs.length === 0) {
+        const encodeObj = txFormat.encodeData(funcABI, [], null)
+        return encodeObj.error ? null : encodeObj.data
+      }
+      const funcParams = funcInputs[funcIndex] || {}
+      const inputValues = funcABI.inputs.map((_: any, idx: number) => funcParams[idx] || '')
+      const multiString = getMultiValsString(inputValues)
+      if (!multiString) return null
+      const multiJSON = JSON.parse('[' + multiString + ']')
+      const encodeObj = txFormat.encodeData(funcABI, multiJSON, null)
+      return encodeObj.error ? null : encodeObj.data
+    } catch (e) {
+      return null
+    }
+  }
+
+  const previewThenExecute = async (key: string, calldata: string | null, sendValue: bigint, onConfirm: () => void) => {
+    if (!crossChainProxyInfo || !calldata) {
+      onConfirm()
+      return
+    }
+    setTracePreview({ key, onConfirm, isLoading: true, result: null, error: null })
+    try {
+      const from = await plugin.call('udappEnv', 'getSelectedAccount')
+      const dataHex = is0XPrefixed(calldata) ? calldata : `0x${calldata}`
+      const result = await traceCrossChainCall(plugin, contract.address, dataHex, from, '0x' + sendValue.toString(16))
+      setTracePreview({ key, onConfirm, isLoading: false, result, error: null })
+    } catch (e: any) {
+      setTracePreview({ key, onConfirm, isLoading: false, result: null, error: e?.message || 'Failed to preview this transaction.' })
+    }
+  }
+
+  const confirmTracePreview = () => {
+    const onConfirm = tracePreview?.onConfirm
+    setTracePreview(null)
+    onConfirm?.()
+  }
+
+  const cancelTracePreview = () => setTracePreview(null)
+
+  const renderTracePreview = (key: string) => {
+    if (!tracePreview || tracePreview.key !== key) return null
+    return (
+      <div
+        className="mt-2 p-3 rounded trace-preview-slide"
+        data-id="crossChainTracePreview"
+        style={{ backgroundColor: 'var(--custom-onsurface-layer-2)', border: '1px solid #a56eff44' }}
+      >
+        {tracePreview.isLoading && (
+          <div className="d-flex align-items-center gap-2 small text-secondary">
+            <i className="fas fa-spinner fa-spin"></i> Tracing execution…
+          </div>
+        )}
+        {tracePreview.error && (
+          <>
+            <div className="text-danger small mb-2">Preview unavailable: {tracePreview.error}</div>
+            <div className="d-flex gap-2">
+              <button className="btn btn-sm btn-secondary flex-fill" data-id="cancelTracePreviewBtn" onClick={cancelTracePreview}>Cancel</button>
+              <button className="btn btn-sm btn-primary flex-fill" data-id="confirmTracePreviewBtn" onClick={confirmTracePreview}>Send anyway</button>
+            </div>
+          </>
+        )}
+        {tracePreview.result && (
+          <>
+            {tracePreview.result.proxies.length > 0 ? (
+              <div className="small mb-2 p-2 rounded" style={{ backgroundColor: '#a56eff14', color: themeQuality === 'dark' ? 'white' : 'black' }}>
+                <div style={{ fontWeight: 700 }}>
+                  This transaction is cross-chain — {tracePreview.result.proxyCount} {tracePreview.result.proxyCount === 1 ? 'proxy' : 'proxies'} touched:
+                </div>
+                {tracePreview.result.proxies.map((p) => (
+                  <div key={p.address} className="mt-1">
+                    {p.hops.map((hop, hopIndex) => (
+                      <div key={hopIndex} className="text-break" style={{ fontSize: '11px', fontFamily: 'Monaco, monospace' }}>
+                        {shortenAddress(hopIndex === 0 ? p.address : p.hops[hopIndex - 1].originalAddress)} → acts for {shortenAddress(hop.originalAddress)} on {hop.originNetworkLabel || `network ${hop.originalRollupId}`}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="small mb-2 text-secondary">No cross-chain proxies are touched by this transaction.</div>
+            )}
+            <div className="d-flex gap-2 my-2">
+              <button className="btn btn-sm btn-secondary flex-fill" data-id="cancelTracePreviewBtn" onClick={cancelTracePreview}>Cancel</button>
+              <button className="btn btn-sm btn-primary flex-fill" data-id="confirmTracePreviewBtn" onClick={confirmTracePreview}>Transact</button>
+            </div>
+          </>
+        )}
+      </div>
+    )
+  }
+
   const handleAutoFillWithAI = async (funcIndex: number) => {
     if (!isAuthenticated) {
       plugin.call('planManager' as any, 'open' as any, { reason: 'sign-in' })
@@ -430,27 +558,36 @@ export function DeployedContractItem({ contract, index, registerRef, isKebabMenu
 
     if (!funcABI) return setLlIError(intl.formatMessage({ id: 'udapp.llIError7' }))
 
-    try {
-      const sendValue = parseUnits(value.toString() || '0', valueUnit || 'wei')
-      const gasLimitValue = '0x' + new BN(gasLimit, 10).toString(16)
+    const sendValue = parseUnits(value.toString() || '0', valueUnit || 'wei')
+    const gasLimitValue = '0x' + new BN(gasLimit, 10).toString(16)
+    const calldataForSend = calldata
 
-      await runTransactions(
-        plugin,
-        dispatch,
-        index,
-        false,
-        funcABI,
-        calldata,
-        contract,
-        -1, // Use -1 for low level interactions
-        { value: sendValue, gasLimit: gasLimitValue }
-      )
-    } catch (error) {
-      const functionName =
-      funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
-      const logMsg = `transact to ${contract.name}.${functionName} errored: ${error.message}`
+    const doSend = async () => {
+      try {
+        await runTransactions(
+          plugin,
+          dispatch,
+          index,
+          false,
+          funcABI,
+          calldataForSend,
+          contract,
+          -1, // Use -1 for low level interactions
+          { value: sendValue, gasLimit: gasLimitValue }
+        )
+      } catch (error) {
+        const functionName =
+        funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
+        const logMsg = `transact to ${contract.name}.${functionName} errored: ${error.message}`
 
-      await plugin.call('terminal', 'logHtml', logBuilder(logMsg))
+        await plugin.call('terminal', 'logHtml', logBuilder(logMsg))
+      }
+    }
+
+    if (crossChainProxyInfo) {
+      previewThenExecute('lowLevel', calldataForSend || '0x', sendValue, () => { void doSend() })
+    } else {
+      await doSend()
     }
   }
 
@@ -594,6 +731,29 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
     }
   }
 
+  /**
+   * Stronger models worth offering for this generation, or [] when there is
+   * nothing to ask about.
+   *
+   * Mirrors the audit gate: only speaks up on Auto, since a user who picked a
+   * concrete model has already made the choice. Fails open — a catalogue
+   * hiccup must never block DApp creation.
+   */
+  const loadQuickDappModelChoices = async (): Promise<QuickDappModelChoice[]> => {
+    try {
+      const currentId = await plugin.call('remixAI' as any, 'getSelectedModel')
+      const models = await plugin.call('assistantState' as any, 'getAvailableModels')
+      return (frontierAlternativesFor(currentId, models) || []).map((model: any) => ({
+        id: model.id,
+        provider: model.provider,
+        displayName: model.displayName,
+        family: frontierFamilyOf(model.id) || model.provider
+      }))
+    } catch (e) {
+      return []
+    }
+  }
+
   const handleCreateDapp = async (contract: DeployedContract) => {
     if (onKebabMenuToggle) onKebabMenuToggle(false)
 
@@ -609,6 +769,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
       const environmentId = await getCurrentQuickDappEnvironment()
       setQuickDappEnvironmentId(environmentId)
       setQuickDappFixedFrontendMode(isDesktop ? 'inline' : sourceIsDappWorkspace ? 'workspace' : undefined)
+      setQuickDappModelChoices(await loadQuickDappModelChoices())
       setShowQuickDappContractSelector(true)
     } catch (error) {
       console.error('[QuickDapp] Could not prepare DApp setup options:', error)
@@ -630,6 +791,18 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
       }
 
       setShowQuickDappContractSelector(false)
+
+      // Awaited before generating: setModel rebuilds the DeepAgent, and firing
+      // the generation alongside that teardown would drop the request.
+      if (options.model) {
+        try {
+          await plugin.call('remixAI' as any, 'setModel', options.model.id, options.model.provider)
+        } catch (e) {
+          // A failed switch must not swallow the generation — carry on with Auto.
+          console.error('[QuickDapp] could not switch model, continuing on Auto:', e)
+        }
+      }
+
       void startCreateDapp(contract, options, quickDappEnvironmentId)
     } catch (_) {
       await plugin.call('notification', 'toast', 'Could not confirm the current network. Please try again.')
@@ -876,6 +1049,22 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                       <i className="fa-solid fa-copy small ms-1" style={{ cursor: 'pointer' }}></i>
                     </CopyToClipboard>
                   </div>
+                  {crossChainProxyInfo && (
+                    <CustomTooltip
+                      placement="top"
+                      tooltipClasses="text-nowrap"
+                      tooltipId={`udapp_crossChainProxyTooltip-${index}`}
+                      tooltipText={`Cross-chain proxy for ${crossChainProxyInfo.originalAddress} on ${crossChainProxyInfo.originNetworkLabel || `rollup ${crossChainProxyInfo.originalRollupId}`} — interacting with it sends a cross-chain call. Gas limit was auto-set to custom since it can't be estimated.`}
+                    >
+                      <span
+                        className="badge d-inline-flex align-items-center gap-1"
+                        style={{ backgroundColor: '#a56eff14', color: '#a56eff', fontSize: '9px', fontWeight: 700, marginTop: '2px', cursor: 'default' }}
+                      >
+                        <i className="fa-solid fa-shuffle" style={{ fontSize: '8px' }}></i>
+                        Cross-chain proxy
+                      </span>
+                    </CustomTooltip>
+                  )}
                 </div>
               </div>
               <div className='d-flex align-items-center gap-2'>
@@ -957,12 +1146,19 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                             {filteredFunctionABIs.map((funcABI: FuncABI, _filteredIdx: number) => {
                               const actualIndex = functionABIs.findIndex((f: FuncABI) => f === funcABI)
                               const isViewPure = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure'
+                              const previewKey = `fn-${actualIndex}`
                               const executeHandler = () => {
                                 if (selectedFunctionIndex !== actualIndex) {
                                   trackMatomoEvent?.({ category: 'udapp', action: 'deployedContractFunctionSelect', name: funcABI.name || `func${actualIndex}`, isClick: true })
                                 }
                                 setSelectedFunctionIndex(actualIndex)
-                                handleExecuteTransaction(actualIndex)
+                                const confirmExecute = () => handleExecuteTransaction(actualIndex)
+                                if (!isViewPure && crossChainProxyInfo) {
+                                  const sendValue = parseUnits(value.toString() || '0', valueUnit || 'wei')
+                                  previewThenExecute(previewKey, buildCalldataForPreview(actualIndex), sendValue, confirmExecute)
+                                  return
+                                }
+                                confirmExecute()
                               }
                               const inputStyle = { background: 'var(--bs-body-bg)', color: 'var(--dark/text-quaternary, #959bad)', border: 'none', fontSize: '0.7rem', minHeight: '30px' }
                               return (
@@ -999,10 +1195,15 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                                         style={{ fontSize: '11px', fontWeight: 600, padding: '3px 12px' }}
                                         onClick={executeHandler}
                                       >
-                                        {intl.formatMessage({ id: 'udapp.transactButton' })}
+                                        {crossChainProxyInfo ? 'Preview' : intl.formatMessage({ id: 'udapp.transactButton' })}
                                       </button>
                                     )}
                                   </div>
+                                  {tracePreview?.key === previewKey && (
+                                    <div className="ps-3 mb-2">
+                                      {renderTracePreview(previewKey)}
+                                    </div>
+                                  )}
                                   {/* Inputs area */}
                                   {funcABI.inputs.length > 0 && (
                                     <div className="ps-3">
@@ -1024,7 +1225,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                                             style={{ fontSize: '11px', fontWeight: 600 }}
                                             onClick={executeHandler}
                                           >
-                                            {intl.formatMessage({ id: 'udapp.transactButton' })}
+                                            {crossChainProxyInfo ? 'Preview' : intl.formatMessage({ id: 'udapp.transactButton' })}
                                           </button>
                                         </div>
                                       ) : (
@@ -1072,7 +1273,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                                             style={{ fontSize: '11px', fontWeight: 600, padding: '3px 12px' }}
                                             onClick={executeHandler}
                                           >
-                                            {intl.formatMessage({ id: 'udapp.transactButton' })}
+                                            {crossChainProxyInfo ? 'Preview' : intl.formatMessage({ id: 'udapp.transactButton' })}
                                           </button>
                                         )}
                                       </div>
@@ -1342,9 +1543,10 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
                       borderRadius: '4px'
                     }}
                   >
-                    {intl.formatMessage({ id: 'udapp.transactButton' })}
+                    {crossChainProxyInfo ? 'Preview' : intl.formatMessage({ id: 'udapp.transactButton' })}
                   </button>
                 )}
+                {showLowLevel && renderTracePreview('lowLevel')}
 
                 {/* Divider */}
                 <div className="border-top my-3"></div>
@@ -1363,6 +1565,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow. Co
           primaryContract={contract}
           deployedContracts={widgetState.deployedContracts}
           fixedFrontendMode={quickDappFixedFrontendMode}
+          modelChoices={quickDappModelChoices}
           onPrepareFigma={async (figmaUrl, figmaToken) => {
             const validationError = await validateQuickDappSetupEnvironment()
             if (validationError) return { success: false, message: validationError }
