@@ -27,6 +27,7 @@ export class StreamEventHandler {
   private event: EventEmitter
   private inactivityTimeout: InactivityTimeoutManager
   private activeSubagents: Map<string, SubagentInfo> = new Map()
+  private subagentRootRuns: Map<string, string> = new Map()
   private previousRunId: string | null = null
   private streamError: any | null = null
   private isIntermediatePhase = true
@@ -91,6 +92,7 @@ export class StreamEventHandler {
 
   reset(): void {
     this.activeSubagents.clear()
+    this.subagentRootRuns.clear()
     this.previousRunId = null
     this.streamError = null
     this.isIntermediatePhase = true
@@ -116,9 +118,15 @@ export class StreamEventHandler {
     const metadata = event.metadata || {}
     const checkpoint_ns = metadata.langgraph_checkpoint_ns || ''
     const agent_name = metadata.lc_agent_name || ''
-    // Subagent detection requires BOTH: tools namespace AND a populated agent name
-    // This prevents false positives when main agent events pass through tool-related nodes
-    const is_subagent = checkpoint_ns.includes('tools:') && agent_name.trim().length > 0
+    // deepagents stamps `ls_agent_type: 'subagent'` on the config it invokes a
+    // subagent with, and langchain-core promotes that configurable onto the
+    // metadata of every run beneath it — so it is the authoritative marker.
+    // The namespace heuristic stays as a fallback in case the marker moves: it
+    // needs BOTH a tools namespace AND a populated agent name, which keeps main
+    // agent events passing through tool-related nodes from matching.
+    const is_subagent =
+      metadata.ls_agent_type === 'subagent' ||
+      (checkpoint_ns.includes('tools:') && agent_name.trim().length > 0)
 
     if (is_subagent) {
       remixAILogger.log(`[StreamEventHandler] Stream event from subagent detected: ${eventType} (agent: ${agent_name})`, event)
@@ -130,7 +138,7 @@ export class StreamEventHandler {
 
     switch (eventType) {
     case 'on_chain_start':
-      return { content: this.handleChainStart(event, is_subagent, agent_name) }
+      return { content: this.handleChainStart(event, is_subagent, agent_name, checkpoint_ns) }
 
     case 'on_chain_end':
       return this.handleChainEnd(event, is_subagent)
@@ -177,21 +185,57 @@ export class StreamEventHandler {
     this.event.emit('onModelUsed', { model, threadId: this.getThreadId() })
   }
 
-  private handleChainStart(event: any, is_subagent: boolean, agent_name: string): string {
+  /**
+   * Identifies one subagent invocation.
+   */
+  private subagentKey(checkpointNs: string, agentName: string): string {
+    const segments = checkpointNs.split('|')
+    const toolsIndex = segments.findIndex(segment => segment.startsWith('tools:'))
+    const prefix = toolsIndex === -1 ? checkpointNs : segments.slice(0, toolsIndex + 1).join('|')
+    return `${prefix}::${agentName}`
+  }
+
+  /**
+   * The task a subagent was given. deepagents seeds a subagent with the task
+   * description as its first human message — there is no `input.task` field,
+   * which is why every subagent used to report the 'Processing...' fallback.
+   */
+  private subagentTask(event: any): string {
+    const messages = event?.data?.input?.messages
+    const first = Array.isArray(messages) ? messages[0] : undefined
+    const content = first?.content ?? first?.kwargs?.content
+
+    if (typeof content === 'string' && content.trim()) return content
+    if (Array.isArray(content)) {
+      const text = content
+        .filter((part: any) => part?.type === 'text' && typeof part.text === 'string')
+        .map((part: any) => part.text)
+        .join('')
+        .trim()
+      if (text) return text
+    }
+    return 'Processing...'
+  }
+
+  private handleChainStart(event: any, is_subagent: boolean, agent_name: string, checkpoint_ns: string): string {
     const runName = event.name || ''
     const tags = event.tags || []
 
     if (is_subagent && agent_name) {
-      remixAILogger.log(`[StreamEventHandler] Subagent execution started: ${agent_name} (run_id: ${event.run_id})`, event)
-      this.activeSubagents.set(event.run_id, { name: agent_name, startTime: Date.now() })
+      const key = this.subagentKey(checkpoint_ns, agent_name)
+      if (!this.activeSubagents.has(key)) {
+        remixAILogger.log(`[StreamEventHandler] Subagent execution started: ${agent_name} (run_id: ${event.run_id})`, event)
+        this.activeSubagents.set(key, { name: agent_name, startTime: Date.now() })
+        this.subagentRootRuns.set(event.run_id, key)
 
-      this.event.emit('onSubagentStart', {
-        id: event.run_id,
-        name: agent_name,
-        task: event.data?.input?.task || 'Processing...',
-        status: 'running',
-        threadId: this.getThreadId()
-      })
+        this.event.emit('onSubagentStart', {
+          id: event.run_id,
+          name: agent_name,
+          task: this.subagentTask(event),
+          status: 'running',
+          threadId: this.getThreadId()
+        })
+      }
     }
 
     if (runName.includes('plan') || tags.includes('planning')) {
@@ -212,8 +256,9 @@ export class StreamEventHandler {
   }
 
   private handleChainEnd(event: any, _is_subagent: boolean): { content: string; finalMessage?: string } {
-    const subagent = this.activeSubagents.get(event.run_id)
-    if (subagent) {
+    const subagentKey = this.subagentRootRuns.get(event.run_id)
+    const subagent = subagentKey ? this.activeSubagents.get(subagentKey) : undefined
+    if (subagent && subagentKey) {
       remixAILogger.log(`[StreamEventHandler] Subagent completed: ${subagent.name} (run_id: ${event.run_id})`)
       const duration = Date.now() - subagent.startTime
 
@@ -224,7 +269,8 @@ export class StreamEventHandler {
         duration,
         threadId: this.getThreadId()
       })
-      this.activeSubagents.delete(event.run_id)
+      this.activeSubagents.delete(subagentKey)
+      this.subagentRootRuns.delete(event.run_id)
     }
 
     // Check for final message
