@@ -909,11 +909,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent started:', data)
 
+      // The subagent name goes in `name`: matomo stores an event's value as a
+      // number, so a name sent there is dropped and every row collapses onto
+      // the bare 'subagent_start' label. It is still sent as `value` for
+      // dashboard continuity.
+      const startedSubagent = data.name || 'unknown'
       trackMatomoEvent({
         category: 'ai',
         action: 'remixAI',
-        name: 'subagent_start',
-        value: data.name || 'unknown',
+        name: `subagent_start|${startedSubagent}`,
+        value: startedSubagent,
         isClick: false
       })
 
@@ -938,11 +943,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       if (isStoppedRef.current) return
       remixAILogger.log('[RemixAI Assistant] Subagent completed:', data)
 
+      // Same as subagent_start: the name has to ride in `name` to survive.
+      const completedSubagent = data.name || 'unknown'
       trackMatomoEvent({
         category: 'ai',
         action: 'remixAI',
-        name: 'subagent_complete',
-        value: `${data.name || 'unknown'}|${bucketDuration(data.duration)}`,
+        name: `subagent_complete|${completedSubagent}|${bucketDuration(data.duration)}`,
+        value: `${completedSubagent}|${bucketDuration(data.duration)}`,
         isClick: false
       })
       /*
