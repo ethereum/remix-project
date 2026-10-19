@@ -77,9 +77,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   onDappReviewAcceptAll,
   onDappReviewRevertAll,
   onDappReviewViewDiff,
-  handleLoadSkills,
   fileChangesByMessage,
-  onOpenFileChange
+  onOpenFileChange,
   onUiComponentAnswered,
   handleLoadSkills
 }) => {
