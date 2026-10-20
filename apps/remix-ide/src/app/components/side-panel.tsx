@@ -187,6 +187,13 @@ export class SidePanel extends AbstractPanel {
   async unPinView (profile: any, view: any) {
     const activePlugin = this.currentFocus()
     if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already unpinned`)
+
+    // Prevent AI assistant from being moved to the left panel
+    if (profile.name === 'remixaiassistant') {
+      console.warn('RemixAI Assistant cannot be moved to the left panel')
+      return
+    }
+
     this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
     super.addView(profile, view)
     this.plugins[activePlugin].active = false

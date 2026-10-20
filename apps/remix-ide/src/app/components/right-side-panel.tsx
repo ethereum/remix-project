@@ -178,7 +178,14 @@ export class RightSidePanel extends AbstractPanel {
       this.plugins[activePlugin].active = false
       this.plugins[activePlugin].pinned = false
       this.aiModeHidPanel = false
+    } else if (activePlugin === 'remixaiassistant') {
+      // Never move the AI assistant to the left panel
+      // When another plugin is pinned, the AI assistant becomes inactive but stays in the right panel
+      // It will be hidden but can be reactivated by clicking its icon
+      this.plugins[activePlugin].active = false
+      this.plugins[activePlugin].pinned = false
     } else if (activePlugin) {
+      // For all other plugins, move them back to the left panel
       await this.call('sidePanel', 'unPinView', this.plugins[activePlugin].profile, this.plugins[activePlugin].view)
       this.remove(activePlugin)
     }
@@ -223,6 +230,12 @@ export class RightSidePanel extends AbstractPanel {
     const activePlugin = this.currentFocus()
 
     if (activePlugin !== profile.name) throw new Error(`Plugin ${profile.name} is not pinned`)
+
+    // Prevent unpinning the AI assistant - it must stay on the right side
+    if (profile.name === 'remixaiassistant') {
+      console.warn('RemixAI Assistant cannot be moved to the left panel')
+      return
+    }
 
     if (this.isMaximized) {
       await this.maximizePanel()
