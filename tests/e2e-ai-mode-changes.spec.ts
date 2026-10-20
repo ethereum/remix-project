@@ -36,7 +36,11 @@ async function click (page: Page, target: string) {
 }
 
 async function loadIdeInAiMode (page: Page) {
-  await page.addInitScript(() => localStorage.setItem('remix_nudge_dismissed_permanent', JSON.stringify(['ai-mode-intro'])))
+  await page.addInitScript(() => {
+    localStorage.setItem('remix_nudge_dismissed_permanent', JSON.stringify(['ai-mode-intro']))
+    // A fading tooltip (the AI switch's sits over the header toggles) takes clicks meant for the buttons under it
+    ;(window as any).REMIX_DISABLE_TOOLTIPS = true
+  })
   await page.goto('http://127.0.0.1:8080/#lang=en')
   await expect(page.locator('[data-id="apploaded"]')).toBeAttached({ timeout: 90_000 })
   await expect(page.locator(sel.chatReady)).toBeAttached({ timeout: 90_000 })
@@ -205,7 +209,11 @@ test('a saved answer shows its file changes in place, grouped, with rejected edi
 })
 
 test('in code mode the changes list fills the chat and opens each change in the editor', async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('remix_nudge_dismissed_permanent', JSON.stringify(['ai-mode-intro'])))
+  await page.addInitScript(() => {
+    localStorage.setItem('remix_nudge_dismissed_permanent', JSON.stringify(['ai-mode-intro']))
+    // A fading tooltip (the AI switch's sits over the header toggles) takes clicks meant for the buttons under it
+    ;(window as any).REMIX_DISABLE_TOOLTIPS = true
+  })
   await page.goto('http://127.0.0.1:8080/#lang=en')
   await expect(page.locator('[data-id="apploaded"]')).toBeAttached({ timeout: 90_000 })
   await expect(page.locator(sel.chatReady).first()).toBeAttached({ timeout: 90_000 })
