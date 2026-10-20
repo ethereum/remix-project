@@ -10,7 +10,7 @@ import { TrackingContext } from '@remix-ide/tracking'
 export default function DeployedContractsPortraitView() {
   const { widgetState, dispatch, plugin, themeQuality } = useContext(DeployedContractsAppContext)
   const { trackMatomoEvent } = useContext(TrackingContext)
-  const { deployedContracts, showAddDialog, addressInput, showClearAllDialog, loadType, currentFile } = widgetState
+  const { deployedContracts, showAddDialog, addressInput, showClearAllDialog, loadType, currentFile, collapseAllSignal, highlightAddDialog } = widgetState
   const [enableAtAddress, setEnableAtAddress] = useState(false)
   const [latestContractAddress, setLatestContractAddress] = useState<string | null>(null)
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -205,7 +205,11 @@ export default function DeployedContractsPortraitView() {
       { !showClearAllDialog && deployedContracts.length > 0 && <p className='text-muted px-3 mb-0' style={{ fontSize: '0.8rem' }}>Interact with a deployed contract</p>}
       {/* Add Contract Dialog */}
       {showAddDialog && (
-        <div className="m-3 mt-0 p-3 rounded" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
+        <div
+          className={`m-3 mt-0 p-3 rounded ${highlightAddDialog ? 'contract-highlight-animation' : ''}`}
+          data-id="addDeployedContractDialog"
+          style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}
+        >
           <div className="d-flex justify-content-between align-items-center mb-2">
             <p className="mb-0" style={{ color: themeQuality === 'dark' ? 'white' : 'black', fontSize: '0.9rem' }}>
               Add a deployed contract
@@ -334,6 +338,7 @@ export default function DeployedContractsPortraitView() {
                   key={`${contract.address}-${index}`}
                   contract={contract}
                   index={index}
+                  collapseSignal={collapseAllSignal}
                   registerRef={(ref) => {
                     if (ref) {
                       contractRefsMap.current.set(contract.address, ref)

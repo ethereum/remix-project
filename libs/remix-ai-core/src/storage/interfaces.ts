@@ -54,6 +54,12 @@ export interface ChatMessage {
   attachments?: ChatAttachment[]
   /** Generative UI component tree rendered inline by the render_ui MCP tool */
   uiComponent?: GenerativeUIPayload
+  /**
+   * The component has been answered or superseded. Kept in the transcript
+   * for the record but rendered inert — a live control the model has moved
+   * past would restart a finished exchange if clicked again.
+   */
+  uiComponentStale?: boolean
 }
 
 /**

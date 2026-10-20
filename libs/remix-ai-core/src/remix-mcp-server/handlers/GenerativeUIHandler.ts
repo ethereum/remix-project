@@ -11,6 +11,7 @@ import { IMCPToolResult } from '../../types/mcp'
 import { BaseToolHandler } from '../registry/RemixToolRegistry'
 import { ToolCategory, RemixToolDefinition } from '../types/mcpTools'
 import { Plugin } from '@remixproject/engine'
+import { generativeUiGuard, fingerprintUiTree } from '../../inferencers/deepagent/generativeUiGuard'
 
 // ─── UINode type definitions (exported for frontend use) ─────────────────────
 
@@ -332,6 +333,19 @@ export class RenderUIHandler extends BaseToolHandler {
         ...(args.title ? { title: args.title } : {})
       }
 
+      // The user's answer arrives as a separate turn, never in this tool
+      // result, so nothing here would otherwise tell the model that what it
+      // drew a moment ago is still on screen waiting. Without this a subagent
+      // re-invoked to handle a pick redraws the very picker it is answering.
+      if (!generativeUiGuard.claim(fingerprintUiTree(args.tree, args.title))) {
+        return this.createSuccessResult({
+          rendered: false,
+          reason: 'duplicate',
+          rootNodeType: args.tree.type,
+          note: 'This component is already on screen and is still waiting for the user. It was NOT rendered again. Do not call render_ui for it again — answer in plain text instead.'
+        })
+      }
+
       // Emit to the remixAI plugin event bus so the chat UI can render the component.
       // The chat frontend listens via: plugin.on('remixAI', 'renderUI', (payload) => ...)
       plugin.emit('renderUI', payload)
@@ -342,7 +356,7 @@ export class RenderUIHandler extends BaseToolHandler {
         rendered: true,
         rootNodeType: args.tree.type,
         title: args.title ?? null,
-        note: 'UI component rendered in the chat interface. Waiting for user interaction.'
+        note: 'UI component rendered in the chat interface. Waiting for user interaction. The answer will arrive as a new user message — do not render this component again while waiting, and do not render it again after the answer arrives.'
       })
     } catch (error) {
       remixAILogger.error('[render_ui] execution error:', error)

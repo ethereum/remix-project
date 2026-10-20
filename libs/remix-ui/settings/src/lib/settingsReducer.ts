@@ -331,6 +331,10 @@ export const initialState: SettingsState = {
     value: aiFeedbackCreditThreshold,
     isLoading: false
   },
+  'eez-networks-config': {
+    value: false,
+    isLoading: false
+  },
   toaster: {
     value: '',
     isLoading: false

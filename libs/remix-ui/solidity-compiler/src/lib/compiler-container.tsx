@@ -76,6 +76,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const { appStateDispatch } = useContext(AppContext)
   const { features } = useAuth()
   const hasSkillsPermission = features[Features.AI_SKILLS]?.is_enabled === true
+  const hasAuditorPermission = features[Features.AI_AUDITOR]?.is_enabled === true
 
   useEffect(() => {
     sethhCompilation(false)
@@ -476,11 +477,20 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const startAudit = async (auditType: 'security' | 'gas') => {
+    if (auditType === 'gas') {
+      try {
+        await (api as any).call('skillsexplorermodal', 'loadSkill', 'coding-solidity-gas-optimization')
+      } catch {
+        // skill endpoint unavailable — proceed without it
+      }
+    }
     const fileName = state.compiledFileName
     const fileRef = fileName ? ` File to analyze: ${fileName}.` : ''
+    const securityUpsell = hasAuditorPermission ? '' : ' At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.'
+    const gasUpsell = hasAuditorPermission ? '' : ' At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.'
     const prompt = auditType === 'security'
-      ? `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks. At the end, mention that a more thorough and complete security audit with deeper analysis and detailed reporting is available in the Remix Pro plan.`
-      : `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs. At the end, mention that a more thorough and complete gas audit with deeper analysis and detailed recommendations is available in the Remix Pro plan.`
+      ? `Perform a security audit of the following smart contract.${fileRef} Identify vulnerabilities, potential attack vectors, reentrancy issues, access control problems, and any other security risks.${securityUpsell}`
+      : `Perform a gas optimization audit of the following smart contract.${fileRef} Identify inefficient patterns, unnecessary storage operations, and suggest concrete optimizations to reduce transaction costs.${gasUpsell}`
     trackMatomoEvent({ category: 'compilerContainer', action: auditType === 'security' ? 'startAIAudit' : 'startGasAudit', name: '', isClick: true })
     await (api as any).call('manager', 'activatePlugin', 'remixaiassistant')
     await (api as any).call('menuicons', 'select', 'remixaiassistant')

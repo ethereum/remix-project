@@ -61,6 +61,8 @@ export interface ChatHistoryComponentProps {
   handleGenerateWorkspace: () => void
   handleLoadSkills: () => void
   allowedMcps: string[]
+  /** Marks a rendered component as answered so it stops accepting clicks. */
+  onUiComponentAnswered?: (msgId: string) => void
   /** DApp update review handlers */
   onDappReviewAcceptAll?: (msgId: string) => void
   onDappReviewRevertAll?: (msgId: string) => void
@@ -97,6 +99,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   onDappReviewAcceptAll,
   onDappReviewRevertAll,
   onDappReviewViewDiff,
+  onUiComponentAnswered,
   handleLoadSkills
 }) => {
   const [btnColor, setBtnColor] = useState('')
@@ -122,9 +125,6 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
         <AiChatIntro theme={theme} />
       ) : (
         messages.map(msg => {
-          if (msg.uiComponent){
-            console.log('uiComponent', msg)
-          }
           const isCorrupted = msg.role === 'assistant' && (msg.content === null || msg.content === undefined)
           const displayContent = isCorrupted ? '*Unable to load response.*' : (msg.content ?? '')
           const hasCollapsiblePrompt = msg.role === 'user' && !!msg.displayContent && msg.displayContent !== msg.content
@@ -342,15 +342,26 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
 
                 {/* Generative UI component */}
                 {msg.role === 'assistant' && msg.uiComponent && (
-                  <GenerativeUIRenderer
-                    payload={msg.uiComponent}
-                    onAction={(action, data) => {
-                      const text = data && Object.keys(data).length > 0
-                        ? `[ui:${action}]\n${JSON.stringify(data, null, 2)}`
-                        : `[ui:${action}]`
-                      sendPrompt(text)
-                    }}
-                  />
+                  // Answered or superseded components stay visible for the
+                  // record but stop accepting clicks: re-answering one would
+                  // send the model back into an exchange it has finished.
+                  <div
+                    className={msg.uiComponentStale ? 'generative-ui-spent' : undefined}
+                    aria-disabled={msg.uiComponentStale || undefined}
+                    data-id={msg.uiComponentStale ? 'ai-ui-component-spent' : 'ai-ui-component'}
+                  >
+                    <GenerativeUIRenderer
+                      payload={msg.uiComponent}
+                      onAction={(action, data) => {
+                        if (msg.uiComponentStale) return
+                        const text = data && Object.keys(data).length > 0
+                          ? `[ui:${action}]\n${JSON.stringify(data, null, 2)}`
+                          : `[ui:${action}]`
+                        onUiComponentAnswered?.(msg.id)
+                        sendPrompt(text)
+                      }}
+                    />
+                  </div>
                 )}
 
                 {/* Feedback buttons */}
