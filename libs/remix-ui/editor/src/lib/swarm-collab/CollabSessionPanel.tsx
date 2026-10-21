@@ -14,6 +14,7 @@ export const CollabSessionPanel = ({ state, onLeave, onDismissError }: CollabSes
   const [copied, setCopied] = useState(false)
 
   const sharedInvite: RoomInvite | null = state.inviteLink ? parseInviteInput(state.inviteLink) : null
+  const connectedCount = state.people.filter((p) => p.connected).length + (state.nickname ? 1 : 0)
 
   const copyInvite = async () => {
     if (!state.inviteLink) return
@@ -25,9 +26,12 @@ export const CollabSessionPanel = ({ state, onLeave, onDismissError }: CollabSes
   return (
     <div className="swarm-collab-panel card shadow-sm small" data-id="swarmCollabPanel">
       <div className="card-body p-2">
-        <div className="mb-2">
-          Room <code>{state.roomId?.slice(0, 12)}</code> · workspace <b>{state.workspace}</b>
-          {state.isCreator && <span className="badge bg-info ms-1">host</span>}
+        <div className="mb-2 d-flex justify-content-between align-items-center">
+          <div>
+            Room <code>{state.roomId?.slice(0, 12)}</code> · workspace <b>{state.workspace}</b>
+            {state.isCreator && <span className="badge bg-info ms-1">host</span>}
+          </div>
+          <span className="badge bg-secondary ms-2">{connectedCount} connected</span>
         </div>
         {state.error && (
           <div className="alert alert-danger py-1 px-2 small mb-2 d-flex justify-content-between align-items-start">
@@ -56,6 +60,12 @@ export const CollabSessionPanel = ({ state, onLeave, onDismissError }: CollabSes
           </details>
         )}
         <ul className="list-unstyled mb-2">
+          {state.nickname && (
+            <li>
+              <span className="swarm-collab-dot swarm-collab-dot-live" />
+              {state.nickname} <span className="text-muted">(you)</span>
+            </li>
+          )}
           {state.people.map((person) => (
             <li key={person.identity}>
               <span className={`swarm-collab-dot ${person.connected ? 'swarm-collab-dot-live' : ''}`} />

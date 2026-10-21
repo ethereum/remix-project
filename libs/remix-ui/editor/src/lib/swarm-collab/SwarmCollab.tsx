@@ -5,20 +5,15 @@ import { CollabSession, CollabState, RemixHost } from './collabSession'
 import { RemoteCursorDecorations } from './monacoBinding'
 import { consumeInviteFromLocation, inviteFromParts, loadActiveSession, loadSettings, parseInviteInput, saveSettings } from './settings'
 import { CollabDialogForm, CollabFormData, EMPTY_JOIN_FORM } from './CollabDialogForm'
-import { CollabSessionPanel } from './CollabSessionPanel'
 import './swarm-collab.css'
 
 export interface SwarmCollabProps {
-  /** The editor plugin. */
   plugin: any
   editorRef: React.MutableRefObject<any>
   monacoRef: React.MutableRefObject<any>
   currentFile: string
-  /** Hides the controls (e.g. behind the diff view) without ending the session. */
   hidden?: boolean
 }
-
-const PHASE_LABEL: Record<CollabState['phase'], string> = { idle: '', connecting: 'Connecting…', syncing: 'Syncing…', live: 'Live' }
 
 function hostFor(plugin: any): RemixHost {
   return {
@@ -29,11 +24,12 @@ function hostFor(plugin: any): RemixHost {
   }
 }
 
-/** Toolbar button, session panel, and remote cursor rendering; the create/join form lives in the Remix notification modal. */
-export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden }: SwarmCollabProps) => {
+const openPanel = () => window.dispatchEvent(new CustomEvent('swarmCollabOpenPanel'))
+
+/** Manages the collaboration session and editor bindings. The UI (panel + icon) lives in the vertical icons panel. */
+export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile }: SwarmCollabProps) => {
   const session = useMemo(() => new CollabSession(hostFor(plugin)), [plugin])
   const [state, setState] = useState<CollabState>(session.getState())
-  const [panelOpen, setPanelOpen] = useState(false)
   const currentFileRef = useRef(currentFile)
   currentFileRef.current = currentFile
   const codeEditor = editorRef.current
@@ -86,7 +82,7 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
         if (session.getState().phase !== 'idle') await session.leave()
         await session.join(joinInvite, settings)
       }
-      setPanelOpen(true)
+      openPanel()
     } catch (err) {
       const errorMsg = session.getState().error
       session.dismissError()
@@ -97,22 +93,18 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
     }
   }
 
-  // Keep a stable ref so the async-error effect always calls the latest openModal.
   openModalRef.current = openModal
 
-  // DOC_ERROR fires asynchronously (after session.create/join resolved), so the try/catch in openModal
-  // never sees it. Watch state.error here and re-open the modal when it appears.
-  // Async errors (DOC_ERROR fires after session.create/join resolved) — open the panel so
-  // CollabSessionPanel can display them. The user dismisses via the ✕ or leaves the session.
+  // Async DOC_ERROR — surface in panel.
   useEffect(() => {
     if (!state.error) return
-    setPanelOpen(true)
+    openPanel()
   }, [state.error])
 
-  // An invite in the URL opens the join modal, otherwise this tab's session resumes. No leave on unmount: the editor lives as long as the page.
+  // URL invite or persisted session on mount.
   useEffect(() => {
     const offer = (invite: RoomInvite) => {
-      if (isCurrentRoom(invite)) setPanelOpen(true)
+      if (isCurrentRoom(invite)) openPanel()
       else openModal('join', invite)
     }
 
@@ -121,7 +113,7 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
     if (invite) {
       offer(invite)
     } else if (active) {
-      session.resume(active, loadSettings()).catch(() => setPanelOpen(true))
+      session.resume(active, loadSettings()).catch(openPanel)
     }
 
     const onHashChange = () => {
@@ -130,6 +122,30 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
     }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
+  }, [session])
+
+  // Sync full state to the CollabIcon in the vertical panel.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('swarmCollabState', { detail: state }))
+  }, [state])
+
+  // Idle icon click → open create modal.
+  useEffect(() => {
+    const handler = () => openModalRef.current('create', null, null)
+    window.addEventListener('swarmCollabIconClick', handler)
+    return () => window.removeEventListener('swarmCollabIconClick', handler)
+  }, [])
+
+  // Panel callbacks forwarded from CollabIcon.
+  useEffect(() => {
+    const leaveHandler = () => session.leave()
+    const dismissHandler = () => session.dismissError()
+    window.addEventListener('swarmCollabLeave', leaveHandler)
+    window.addEventListener('swarmCollabDismissError', dismissHandler)
+    return () => {
+      window.removeEventListener('swarmCollabLeave', leaveHandler)
+      window.removeEventListener('swarmCollabDismissError', dismissHandler)
+    }
   }, [session])
 
   // Bind the model the editor shows for the current file.
@@ -173,29 +189,5 @@ export const SwarmCollab = ({ plugin, editorRef, monacoRef, currentFile, hidden 
     }
   }, [codeEditor, state.phase, session])
 
-  const active = state.phase !== 'idle'
-  const connectedPeople = state.people.filter((p) => p.connected).length
-
-  return (
-    <div className={`swarm-collab-root${hidden ? ' d-none' : ''}`}>
-      <div className="swarm-collab-toolbar">
-        {active ? (
-          <button className="btn btn-sm btn-secondary" onClick={() => setPanelOpen(!panelOpen)} data-id="swarmCollabStatus" title="Swarm collaboration session">
-            <span className={`swarm-collab-dot ${state.phase === 'live' ? 'swarm-collab-dot-live' : ''}`} />
-            {PHASE_LABEL[state.phase]}
-            {state.phase === 'live' && ` · ${connectedPeople} connected`}
-            {state.saving && <i className="fas fa-cloud-upload-alt ms-2" title="Saving to Swarm" />}
-          </button>
-        ) : (
-          <button className="btn btn-secondary swarm-collab-fab" onClick={() => openModal('create')} data-id="swarmCollabStart" title="Collaborate on this workspace over Swarm">
-            <i className="fas fa-users" />
-          </button>
-        )}
-      </div>
-
-      {active && panelOpen && (
-        <CollabSessionPanel state={state} onLeave={() => session.leave()} onDismissError={() => session.dismissError()} />
-      )}
-    </div>
-  )
+  return null
 }

@@ -31,9 +31,10 @@ export interface CollabState {
   pendingPeers: number
   saving: boolean
   error: string | null
+  nickname: string | null
 }
 
-const IDLE: CollabState = { phase: 'idle', roomId: null, inviteLink: null, isCreator: false, workspace: null, people: [], pendingPeers: 0, saving: false, error: null }
+const IDLE: CollabState = { phase: 'idle', roomId: null, inviteLink: null, isCreator: false, workspace: null, people: [], pendingPeers: 0, saving: false, error: null, nickname: null }
 const WORKSPACE_SWITCH_TIMEOUT_MS = 15000
 const FILE_EVENTS = ['fileAdded', 'fileRemoved', 'fileRenamed', 'fileSaved', 'fileChanged'] as const
 const DOC_TYPE = 'remix'
@@ -191,7 +192,7 @@ export class CollabSession {
     if (!settings.nickname.trim()) throw new Error('Pick a name to show to the others.')
 
     const generation = this.generation
-    this.setState({ ...IDLE, phase: 'connecting', roomId: new Room(invite.key).id, inviteLink: inviteLink(invite), isCreator, workspace })
+    this.setState({ ...IDLE, phase: 'connecting', roomId: new Room(invite.key).id, inviteLink: inviteLink(invite), isCreator, workspace, nickname: chosen.nickname.trim() })
     this.host.setForceReadOnly(true)
     await this.enterWorkspace(workspace, isJoinedWorkspace(workspace))
     // Left while the workspace was switching.
@@ -261,7 +262,7 @@ export class CollabSession {
     sync.goLive()
 
     this.host.setForceReadOnly(false)
-    this.setState({ ...this.state, phase: 'live' })
+    this.setState({ ...this.state, phase: 'live', error: null })
     this.refreshBinding()
   }
 
