@@ -1980,8 +1980,12 @@ code {
   padding-right: calc(max(0.5rem, calc((100% - 860px) / 2)) + 0.5rem) !important;
 }
 
-/* Banners that paint their own box (auto-accept, cooldown): margins rather
-   than padding, so the box itself lines up with the input box edges. */
+/* Banners that paint their own box (thinking, auto-accept, cooldown): margins
+   rather than padding, so the box itself lines up with the input box edges.
+   The thinking banner renders as an immediate sibling of the auto-accept one,
+   so leaving it out here made it span the full panel while its neighbour sat
+   in the 860px column. */
+.ai-mode .ai-thinking-banner,
 .ai-mode .hitl-auto-accept-banner,
 .ai-mode [data-id="ai-cooldown-banner"] {
   margin-left: calc(max(0.5rem, calc((100% - 860px) / 2)) + 0.5rem) !important;

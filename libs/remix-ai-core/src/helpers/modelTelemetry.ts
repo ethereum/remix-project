@@ -3,6 +3,7 @@ import type { Serialized } from '@langchain/core/load/serializable'
 import type { BaseMessage } from '@langchain/core/messages'
 import type { LLMResult } from '@langchain/core/outputs'
 import { remixAILogger } from './logger'
+import { logFinding, recordCall } from './driftMonitor'
 
 /**
  * Per-provider observability for model calls.
@@ -122,6 +123,29 @@ export class RemixModelCallbackHandler extends BaseCallbackHandler {
     const outputTokens = usage?.completionTokens ?? usage?.output_tokens ?? 0
 
     bump(this.label, { calls: 1, totalLatencyMs: latencyMs, inputTokens, outputTokens })
+
+    // `basic_inference` / `structured_inference` call the model directly and
+    // never pass through DriftMonitorMiddleware. This callback is the only
+    // hook those paths share, so the shape sample is recorded here too —
+    // without an agent there is no thread, so they share one bucket.
+    try {
+      const text = output?.generations?.[0]?.[0]?.text ?? ''
+      for (const finding of recordCall(this.label, 'direct-model-call', {
+        systemLength: 0,
+        toolCount: 0,
+        outputLength: text.length,
+        latencyMs,
+        inputTokens,
+        outputTokens,
+        cacheReadTokens: usage?.cache_read_input_tokens ?? usage?.input_token_details?.cache_read ?? 0,
+        cacheCreationTokens: usage?.cache_creation_input_tokens ?? usage?.input_token_details?.cache_creation ?? 0
+      })) {
+        logFinding(this.label, 'direct-model-call', finding)
+      }
+    } catch (error) {
+      remixAILogger.warn('[DriftMonitor] direct-call sampling failed, continuing:', error)
+    }
+
     if (isModelDebugEnabled()) {
       remixAILogger.log(`[Model ${this.label}] ← ${latencyMs}ms in=${inputTokens} out=${outputTokens}`)
     }

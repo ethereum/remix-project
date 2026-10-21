@@ -4,7 +4,12 @@ import { remixAILogger } from '../../helpers/logger'
  * Integrates LangChain DeepAgent with Remix's AI system
  */
 
-import { createDeepAgent, createPatchToolCallsMiddleware, CreateDeepAgentParams } from 'deepagents'
+import {
+  createDeepAgent,
+  createPatchToolCallsMiddleware,
+  createUnsupportedContentMiddleware,
+  CreateDeepAgentParams
+} from 'deepagents'
 import { ICompletions, IGeneration, IParams } from '../../types/types'
 import { Plugin } from '@remixproject/engine'
 import EventEmitter from 'events'
@@ -30,6 +35,7 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { IndexedDBCheckpointSaver } from '../../storage/IndexedDBCheckpointSaver'
 import type { DeepAgent } from 'deepagents'
 import { RemixDeepAgentMiddleware } from './deepAgentMiddleWare'
+import { DriftMonitorMiddleware } from './driftMonitorMiddleware'
 
 import './AsyncLocalStorageInit'
 import { createModelInstance } from './ModelFactory'
@@ -1116,7 +1122,16 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
         },
         skills: hasSkillsPermission ? ["skills/"] : [],
         checkpointer,
-        middleware: [createPatchToolCallsMiddleware(), new RemixDeepAgentMiddleware(this.plugin, this)],
+        // Order matters. The content scrubber runs first so no unsupported
+        // block reaches a provider that would 400 on it; the drift monitor
+        // runs last so it measures the request exactly as it is sent, after
+        // RemixDeepAgentMiddleware has rewritten the prompt and tools.
+        middleware: [
+          createPatchToolCallsMiddleware(),
+          createUnsupportedContentMiddleware(),
+          new RemixDeepAgentMiddleware(this.plugin, this),
+          new DriftMonitorMiddleware(this.plugin)
+        ],
       }
 
       if (this.config.enableSubagents && this.model) {
