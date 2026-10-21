@@ -10,10 +10,12 @@ type SelectDropdownProps = {
       value: string
     }[],
     name: string,
-    dispatch: React.Dispatch<{ type: string, payload: { name: string, value?: string } }>
+    dispatch: React.Dispatch<{ type: string, payload: { name: string, value?: string } }>,
+    /** Called with the newly chosen value, for side effects like analytics. */
+    onChanged?: (value: string) => void
   }
 
-const SelectDropdown = ({ value, options, name, dispatch }: SelectDropdownProps) => {
+const SelectDropdown = ({ value, options, name, dispatch, onChanged }: SelectDropdownProps) => {
   const handleChange = (name: string, value: string) => {
     dispatch({ type: 'SET_LOADING', payload: { name: name } })
     if (name === 'theme') {
@@ -29,6 +31,7 @@ const SelectDropdown = ({ value, options, name, dispatch }: SelectDropdownProps)
     } else {
       dispatch({ type: 'SET_VALUE', payload: { name: name, value: value } })
     }
+    onChanged?.(value)
   }
 
   return (
@@ -36,7 +39,9 @@ const SelectDropdown = ({ value, options, name, dispatch }: SelectDropdownProps)
       <Dropdown.Toggle as={CustomToggle} className="btn-light btn-block w-100 d-inline-block border border-secondary form-control" icon="fas fa-caret-down text-secondary" useDefaultIcon={false}>
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }} data-id={`settingsTabDropdownToggle${name}`}>
           <div className="text-truncate text-secondary">
-            {<span data-id="selectedVersion">{value}</span>}
+            {/* Show the option's label, not its stored value — a raw value
+                reads fine for a theme name but not for codes like "ask". */}
+            {<span data-id="selectedVersion">{options.find(option => option.value === value)?.label ?? value}</span>}
           </div>
         </div>
       </Dropdown.Toggle>

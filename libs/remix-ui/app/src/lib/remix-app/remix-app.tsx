@@ -373,7 +373,7 @@ const RemixApp = (props: IRemixAppUi) => {
               <DesktopRedirectOverlay />
               <MatomoDialog hide={!appReady} managePreferencesFn={() => setShowManagePreferencesDialog(true)}></MatomoDialog>
               {showManagePreferencesDialog && <ManagePreferencesDialog></ManagePreferencesDialog>}
-              <div className="d-flex flex-column col-12 vh-100">
+              <div className="d-flex flex-column col-12 vh-100" data-id="remixIdeShell">
                 <OriginWarning />
                 <NudgeBanner />
                 {!props.app.desktopClientMode && (

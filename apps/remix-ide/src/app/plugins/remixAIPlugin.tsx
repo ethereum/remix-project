@@ -48,7 +48,8 @@ const profile = {
     'onToolCall', 'onSubagentStart', 'onSubagentComplete',
     'onTaskStart', 'onTaskComplete', 'onTodoUpdate',
     'onTodoError', 'onAgentError', 'onApiError',
-    'onToolApprovalRequired', 'onAIFileChanged', 'ollamaModelDiscovered',
+    'onToolApprovalRequired', 'ollamaModelDiscovered',
+    'aiScreenshotCaptured', 'onAIFileChanged',
     'onInactivityTimeout', 'onModelUsed',
     'requestCancelled'
   ],

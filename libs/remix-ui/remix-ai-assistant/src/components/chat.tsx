@@ -24,6 +24,33 @@ const normalizeTurnSeparators = (content: string): string =>
     .replace(/(?:\n\s*[ \t]*-{3,}[ \t]*)+$/, '')
     .replace(/(?:\n\s*-{3,}[ \t]*){2,}\n/g, '\n\n---\n')
 
+/**
+ * Opens an attachment image in a new tab.
+ * Browsers block top-level navigation to `data:` URLs (the tab just stays
+ * blank), so the data URL is turned into a same-origin blob URL first.
+ */
+const openImageAttachment = (dataUrl?: string) => {
+  if (!dataUrl) return
+  if (!dataUrl.startsWith('data:')) {
+    window.open(dataUrl, '_blank', 'noopener,noreferrer')
+    return
+  }
+  try {
+    const [header, base64] = dataUrl.split(',')
+    const mime = /data:([^;,]+)/.exec(header)?.[1] || 'image/png'
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const url = URL.createObjectURL(new Blob([bytes], { type: mime }))
+    const win = window.open(url, '_blank', 'noopener,noreferrer')
+    // Revoking immediately would cancel the load in the new tab; give it time.
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+    if (!win) URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error('[RemixAI] could not open attachment', e)
+  }
+}
+
 // ChatHistory component
 export interface ChatHistoryComponentProps {
   messages: ChatMessage[]
@@ -162,6 +189,45 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         marginLeft: '4px'
                       } : undefined}
                     >
+                      {msg.attachments?.length > 0 && (
+                        // Rendered as real elements rather than through the
+                        // markdown viewer: rehypeSanitize strips data: URLs.
+                        // Assistant-side entries are screenshots the AI took
+                        // of the IDE — shown so the user can see what was sent.
+                        <div
+                          className="d-flex flex-row flex-wrap gap-2 align-items-center"
+                          data-id={msg.role === 'user' ? 'ai-user-attachments' : 'ai-capture-attachments'}
+                        >
+                          {msg.attachments.map(att => att.kind === 'image' ? (
+                            <img
+                              key={att.id}
+                              src={att.thumbnailDataUrl || att.dataUrl}
+                              alt={att.name}
+                              title={att.source === 'ai-capture' ? `${att.name} — sent to the model` : att.name}
+                              className="rounded"
+                              data-id={att.source === 'ai-capture' ? 'ai-capture-thumbnail' : undefined}
+                              style={{ maxWidth: 120, maxHeight: 120, objectFit: 'cover', border: '1px solid var(--bs-border-color)', cursor: 'pointer' }}
+                              onClick={() => openImageAttachment(att.dataUrl || att.thumbnailDataUrl)}
+                            />
+                          ) : (
+                            <span
+                              key={att.id}
+                              className="d-flex align-items-center gap-2 rounded px-2 py-1 small"
+                              style={{ border: '1px solid var(--bs-border-color)', maxWidth: 220 }}
+                              title={att.name}
+                            >
+                              <i className={`fas ${att.kind === 'document' ? 'fa-file-pdf' : 'fa-file-lines'} text-secondary`} style={{ fontSize: '0.8rem' }} />
+                              <span className="text-truncate">{att.name}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {msg.role !== 'user' && msg.attachments?.some(att => att.source === 'ai-capture') && (
+                        <div className="text-muted small d-flex align-items-center gap-2" data-id="ai-capture-caption">
+                          <i className="fas fa-camera" style={{ fontSize: '0.7rem' }} />
+                          <span>Screenshot of your IDE sent to the model</span>
+                        </div>
+                      )}
                       {fileChanges?.length ? (
                         // The answer with lines where the agent changed files
                         splitAnswerAtChanges(displayContent, fileChanges).map((segment, index) => segment.kind === 'text'
