@@ -43,6 +43,8 @@ import { isQuickDappRemixVMIdentifier, normalizeQuickDappEnvironment } from '@re
 import isElectron from 'is-electron'
 import { SwarmCollab } from './swarm-collab/SwarmCollab'
 
+const COLLAB_ENABLED = new URLSearchParams(window.location.search).has('collab')
+
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 // Key for localStorage
@@ -2449,7 +2451,7 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
         </span>
       )}
 
-      <SwarmCollab plugin={props.plugin} editorRef={editorRef} monacoRef={monacoRef} currentFile={props.currentFile} hidden={props.isDiff} />
+      {COLLAB_ENABLED && <SwarmCollab plugin={props.plugin} editorRef={editorRef} monacoRef={monacoRef} currentFile={props.currentFile} hidden={props.isDiff} />}
 
       {/* Web3 Keyword Tooltip */}
       {tooltipData && hasContextualEditorFeature && (
