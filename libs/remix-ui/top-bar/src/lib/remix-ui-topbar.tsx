@@ -1144,21 +1144,19 @@ export function RemixUiTopbar() {
           <span
             className={`ms-3 remixai-topbar-icon${aiPanelActive || aiReviewModeActive ? ' active' : ''}`}
             onClick={async () => {
-              // AI mode: the chat is already in the center panel — just focus it
               if (aiReviewModeActive) {
                 await plugin.call('remixaiassistant', 'focusChatInput')
                 return
               }
               const pState = await plugin.call('menuicons', 'getPluginState', 'remixaiassistant')
               if (pState && pState.pinned) {
-                // When the AI panel is already open, clicking the icon closes it; otherwise open it.
                 if (aiPanelActive) {
                   await plugin.call('rightSidePanel', 'togglePanel')
                 } else {
                   await plugin.call('rightSidePanel', 'highlight')
                 }
               } else {
-                await plugin.call('menuicons', 'toggle', 'remixaiassistant')
+                await plugin.call('menuicons', 'activateAndSelect', 'remixaiassistant')
               }
               refreshAiPanelState()
             }}
