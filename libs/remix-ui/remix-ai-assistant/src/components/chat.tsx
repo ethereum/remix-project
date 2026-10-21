@@ -228,7 +228,6 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                           <span>Screenshot of your IDE sent to the model</span>
                         </div>
                       )}
-                      {msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
                       {fileChanges?.length ? (
                         // The answer with lines where the agent changed files
                         splitAnswerAtChanges(displayContent, fileChanges).map((segment, index) => segment.kind === 'text'
