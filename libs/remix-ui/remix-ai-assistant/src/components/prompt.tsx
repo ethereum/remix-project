@@ -889,61 +889,61 @@ export const PromptArea: React.FC<PromptAreaProps> = ({
                     <span className={showModelSelector ? "fa fa-caret-up ms-1" : "fa fa-caret-down ms-1"}></span>
                   </div>
                 </button>
-              {onAddFiles && (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept={ACCEPTED_FILE_ACCEPT_ATTR}
-                    multiple
-                    className="d-none"
-                    data-id="remix-ai-attach-input"
-                    onChange={e => {
-                      onAddFiles(e.target.files)
-                      // Reset so picking the same file twice still fires onChange.
-                      e.target.value = ''
-                    }}
-                  />
-                  <CustomTooltip tooltipText={attachHint}>
+                {onAddFiles && (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept={ACCEPTED_FILE_ACCEPT_ATTR}
+                      multiple
+                      className="d-none"
+                      data-id="remix-ai-attach-input"
+                      onChange={e => {
+                        onAddFiles(e.target.files)
+                        // Reset so picking the same file twice still fires onChange.
+                        e.target.value = ''
+                      }}
+                    />
+                    <CustomTooltip tooltipText={attachHint}>
+                      <span className="d-inline-block align-self-end">
+                        <button
+                          type="button"
+                          className="btn btn-text btn-sm border-0 rounded text-secondary"
+                          data-id="remix-ai-attach-btn"
+                          disabled={!canAttach}
+                          onClick={() => {
+                            trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'attachFile', isClick: true })
+                            fileInputRef.current?.click()
+                          }}
+                          aria-label="Attach a file"
+                        >
+                          <i className="fas fa-paperclip"></i>
+                        </button>
+                      </span>
+                    </CustomTooltip>
+                  </>
+                )}
+                {onCaptureScreenshot && (
+                  <CustomTooltip tooltipText={supportsVision
+                    ? 'Attach a screenshot of the IDE'
+                    : `${selectedModel?.displayName || 'This model'} cannot read images. Pick a vision-capable model.`}>
                     <span className="d-inline-block align-self-end">
                       <button
                         type="button"
                         className="btn btn-text btn-sm border-0 rounded text-secondary"
-                        data-id="remix-ai-attach-btn"
-                        disabled={!canAttach}
+                        data-id="remix-ai-screenshot-btn"
+                        disabled={!canAttach || !supportsVision}
                         onClick={() => {
-                          trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'attachFile', isClick: true })
-                          fileInputRef.current?.click()
+                          trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'captureScreenshot', isClick: true })
+                          onCaptureScreenshot()
                         }}
-                        aria-label="Attach a file"
+                        aria-label="Attach a screenshot of the IDE"
                       >
-                        <i className="fas fa-paperclip"></i>
+                        <i className="fas fa-camera"></i>
                       </button>
                     </span>
                   </CustomTooltip>
-                </>
-              )}
-              {onCaptureScreenshot && (
-                <CustomTooltip tooltipText={supportsVision
-                  ? 'Attach a screenshot of the IDE'
-                  : `${selectedModel?.displayName || 'This model'} cannot read images. Pick a vision-capable model.`}>
-                  <span className="d-inline-block align-self-end">
-                    <button
-                      type="button"
-                      className="btn btn-text btn-sm border-0 rounded text-secondary"
-                      data-id="remix-ai-screenshot-btn"
-                      disabled={!canAttach || !supportsVision}
-                      onClick={() => {
-                        trackMatomoEvent({ category: 'ai', action: 'remixAI', name: 'captureScreenshot', isClick: true })
-                        onCaptureScreenshot()
-                      }}
-                      aria-label="Attach a screenshot of the IDE"
-                    >
-                      <i className="fas fa-camera"></i>
-                    </button>
-                  </span>
-                </CustomTooltip>
-              )}
+                )}
                 <CustomTooltip
                   tooltipText={
                     !hasCheapModels
