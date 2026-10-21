@@ -249,34 +249,6 @@ export class VerticalIcons extends Plugin {
 
   async activateAndSelect(name: string) {
     if (this.interceptAIModeClick(name)) return
-
-    // AI assistant always stays on the right panel
-    if (name === 'remixaiassistant') {
-      const isActive = await this.call('manager', 'isActive', name)
-      if (!isActive) {
-        await this.call('manager', 'activatePlugin', name)
-        await new Promise(resolve => setTimeout(resolve, 200))
-      }
-
-      try {
-        const currentFocus = await this.call('rightSidePanel', 'currentFocus')
-        if (currentFocus === name) {
-          await this.call('rightSidePanel', 'highlight')
-          return
-        }
-      } catch (e) {
-        console.error('Error checking right panel:', e)
-      }
-
-      try {
-        await this.call('rightSidePanel', 'pinView', this.icons[name].profile, null)
-        await this.call('rightSidePanel', 'highlight')
-      } catch (e) {
-        console.error('Error pinning AI assistant:', e)
-      }
-      return
-    }
-
     // Check if the plugin is pinned on the right side panel
     // Use localStorage as source of truth since iconRecord.pinned might be out of sync
     let isPinnedOnRightPanel = this.icons[name] && this.icons[name].pinned
