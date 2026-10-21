@@ -77,12 +77,11 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
-    // On first load, move to right side panel
     if (!localStorage.getItem('remixaiassistant_firstload_flag')) {
-      await this.call('sidePanel', 'pinView', this.profile)
+      this.call('sidePanel', 'pinView', this.profile)
       await this.call('layout', 'maximiseSidePanel')
-      localStorage.setItem('remixaiassistant_firstload_flag', '1')
     }
+    localStorage.setItem('remixaiassistant_firstload_flag', '1')
 
     // Permanent placeholder host in the center/main panel that the chat's
     // maximized view portals into (see maximizePanel()). Registered once,
@@ -432,11 +431,20 @@ export class RemixAIAssistant extends ViewPlugin {
     this.isMaximized = true
     this.renderComponent()
     await this.call('layout', 'showAIChatMaximized', maximizedHostProfile.name)
-    // AI mode takes the whole workspace: hide the terminal
+    // If the chat is docked (and shown) in the left panel, don't leave an empty
+    // container there once its content moves to the center.
+    try {
+      if (await this.call('sidePanel', 'currentFocus') === this.profile.name) {
+        await this.call('menuicons', 'select', 'filePanel')
+      }
+    } catch (e) { /* left panel not available */ }
+    // AI mode takes the whole workspace: hide the left panel and the terminal
     // (the right panel hides itself on `aiModeChanged`), remembering which were
     // open so exiting brings back exactly those.
+    const leftHidden = await this.call('sidePanel', 'isPanelHidden').catch(() => true)
     const terminalHidden = await this.call('terminal', 'isPanelHidden').catch(() => true)
-    this.aiModePanelState = { leftHidden: false, terminalHidden }
+    this.aiModePanelState = { leftHidden, terminalHidden }
+    if (!leftHidden) await this.call('sidePanel', 'togglePanel')
     if (!terminalHidden) await this.call('terminal', 'togglePanel')
     this.emit('aiModeChanged', true)
     trackMatomoEvent(this, { category: 'ai', action: 'remixAI', name: 'maximized', isClick: true })
@@ -458,6 +466,7 @@ export class RemixAIAssistant extends ViewPlugin {
     this.aiModePanelState = null
     if (prev) {
       try {
+        if (!prev.leftHidden && await this.call('sidePanel', 'isPanelHidden')) await this.call('sidePanel', 'togglePanel')
         if (!prev.terminalHidden && await this.call('terminal', 'isPanelHidden')) await this.call('terminal', 'togglePanel')
       } catch (e) { /* panel not available */ }
     }
