@@ -77,12 +77,12 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
+    // On first load, move to right side panel
     if (!localStorage.getItem('remixaiassistant_firstload_flag')) {
-      // Move to right side panel on first load
       await this.call('sidePanel', 'pinView', this.profile)
       await this.call('layout', 'maximiseSidePanel')
+      localStorage.setItem('remixaiassistant_firstload_flag', '1')
     }
-    localStorage.setItem('remixaiassistant_firstload_flag', '1')
 
     // Permanent placeholder host in the center/main panel that the chat's
     // maximized view portals into (see maximizePanel()). Registered once,

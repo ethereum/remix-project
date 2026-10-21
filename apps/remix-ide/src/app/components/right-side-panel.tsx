@@ -189,10 +189,18 @@ export class RightSidePanel extends AbstractPanel {
       await this.call('sidePanel', 'unPinView', this.plugins[activePlugin].profile, this.plugins[activePlugin].view)
       this.remove(activePlugin)
     }
-    this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
-    this.addView(profile, view)
-    this.plugins[profile.name].pinned = true
-    this.plugins[profile.name].active = true
+
+    // Special case: if we're pinning the AI assistant and it's already in this.plugins (inactive),
+    // just reactivate it instead of adding it again
+    if (profile.name === 'remixaiassistant' && this.plugins[profile.name]) {
+      this.plugins[profile.name].pinned = true
+      this.plugins[profile.name].active = true
+    } else {
+      this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
+      this.addView(profile, view)
+      this.plugins[profile.name].pinned = true
+      this.plugins[profile.name].active = true
+    }
 
     // Determine if we should show the panel when pinning
     const pinnedPanel = document.querySelector('#right-side-panel')
