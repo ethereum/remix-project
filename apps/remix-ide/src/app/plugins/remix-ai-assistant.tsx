@@ -77,7 +77,8 @@ export class RemixAIAssistant extends ViewPlugin {
   }
 
   async onActivation() {
-    // On first load, move to right side panel
+    // On first load, move from left to right side panel and maximize it
+    // sidePanel.pinView() moves the plugin from left panel to right panel
     if (!localStorage.getItem('remixaiassistant_firstload_flag')) {
       await this.call('sidePanel', 'pinView', this.profile)
       await this.call('layout', 'maximiseSidePanel')
@@ -432,12 +433,15 @@ export class RemixAIAssistant extends ViewPlugin {
     this.isMaximized = true
     this.renderComponent()
     await this.call('layout', 'showAIChatMaximized', maximizedHostProfile.name)
-    // AI mode takes the whole workspace: hide the terminal
+    // AI mode takes the whole workspace: hide the terminal and left side panel
     // (the right panel hides itself on `aiModeChanged`), remembering which were
     // open so exiting brings back exactly those.
+    // Note: AI assistant is in the right panel, so we can safely hide the left panel
     const terminalHidden = await this.call('terminal', 'isPanelHidden').catch(() => true)
-    this.aiModePanelState = { leftHidden: false, terminalHidden }
+    const leftHidden = await this.call('sidePanel', 'isPanelHidden').catch(() => false)
+    this.aiModePanelState = { leftHidden, terminalHidden }
     if (!terminalHidden) await this.call('terminal', 'togglePanel')
+    if (!leftHidden) await this.call('sidePanel', 'togglePanel')
     this.emit('aiModeChanged', true)
     trackMatomoEvent(this, { category: 'ai', action: 'remixAI', name: 'maximized', isClick: true })
   }
@@ -459,6 +463,7 @@ export class RemixAIAssistant extends ViewPlugin {
     if (prev) {
       try {
         if (!prev.terminalHidden && await this.call('terminal', 'isPanelHidden')) await this.call('terminal', 'togglePanel')
+        if (!prev.leftHidden && await this.call('sidePanel', 'isPanelHidden')) await this.call('sidePanel', 'togglePanel')
       } catch (e) { /* panel not available */ }
     }
     this.emit('aiModeChanged', false)
