@@ -197,7 +197,7 @@ test('history opens inline on the right of the chat and RemixAI icons keep AI mo
   const hostBox = await page.locator(sel.host).boundingBox()
   expect(Math.abs((sidebarBox.y + sidebarBox.height) - (hostBox.y + hostBox.height))).toBeLessThanOrEqual(1)
   // Only the history toggle is highlighted, not the archive button next to it
-  await expect(historyBtn).toHaveClass(/btn-primary/)
+  await expect(historyBtn).toHaveClass(/ai-heading-toggle-active/)
   await expect(page.locator(`${sel.host} [data-id="archive-chat-btn"]`)).not.toHaveClass(/btn-primary/)
   await click(page, historyBtn)
   await expect(sidebar).toHaveCount(0)
