@@ -11,6 +11,8 @@ import { normalizeMarkdown } from 'libs/remix-ui/helper/src/lib/components/remix
 import { QueryParams } from '@remix-project/remix-lib'
 import { DAppUpdateReviewCard } from './DAppUpdateReviewCard'
 import { GenerativeUIRenderer } from './GenerativeUIRenderer'
+import { FileChangeGroup, splitAnswerAtChanges } from './fileChangeLines'
+import { AIFileChangeRecord } from '@remix/remix-ai-core'
 
 /** Content with the streaming turn separators (`---`) and whitespace removed. */
 const stripTurnSeparators = (content: string): string =>
@@ -67,6 +69,9 @@ export interface ChatHistoryComponentProps {
   onDappReviewAcceptAll?: (msgId: string) => void
   onDappReviewRevertAll?: (msgId: string) => void
   onDappReviewViewDiff?: (filePath: string, newContent: string, oldContent: string) => void
+  /** File changes the agent made, per assistant message, in order */
+  fileChangesByMessage?: Record<string, AIFileChangeRecord[]>
+  onOpenFileChange?: (change: AIFileChangeRecord) => void
 }
 
 interface AiChatIntroProps {
@@ -99,6 +104,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   onDappReviewAcceptAll,
   onDappReviewRevertAll,
   onDappReviewViewDiff,
+  fileChangesByMessage,
+  onOpenFileChange,
   onUiComponentAnswered,
   handleLoadSkills
 }) => {
@@ -133,7 +140,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
           // A turn that only reasoned and called tools leaves nothing but the
           // `---` turn separators behind; that rendered as a bubble of bare
           // horizontal rules. Separators alone are not content.
-          const hasContent = typeof displayContent === 'string' && stripTurnSeparators(displayContent).length > 0
+          const fileChanges = msg.role === 'assistant' ? fileChangesByMessage?.[msg.id] : undefined
+          const hasContent = (typeof displayContent === 'string' && stripTurnSeparators(displayContent).length > 0) || !!fileChanges?.length
           const hasAssistantActivity = !!(
             msg.isExecutingTools ||
             msg.activeSubagent ||
@@ -221,6 +229,13 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         </div>
                       )}
                       {msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
+                      {fileChanges?.length ? (
+                        // The answer with lines where the agent changed files
+                        splitAnswerAtChanges(displayContent, fileChanges).map((segment, index) => segment.kind === 'text'
+                          ? <React.Fragment key={index}>{RemixMarkdownViewer(theme, normalizeTurnSeparators(segment.text), btnColor, setBtnColor)}</React.Fragment>
+                          : <FileChangeGroup key={index} changes={segment.changes} onOpen={(change) => onOpenFileChange?.(change)} />
+                        )
+                      ) : msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
                         RemixMarkdownViewer(theme, normalizeTurnSeparators(displayContent), btnColor, setBtnColor)
                       ) : (
                         <div className="ai-paragraph pb-0">
