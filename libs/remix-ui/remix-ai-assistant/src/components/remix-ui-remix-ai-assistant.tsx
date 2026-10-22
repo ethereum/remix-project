@@ -3637,17 +3637,10 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                             request={approval}
                             onApprove={(options) => handleApproveToolAction(approval, options)}
                             onReject={() => handleRejectToolAction(approval)}
-                            onReviewChanges={() => handleReviewChanges(approval)}
+                            onReviewChanges={() => openChangesPanel({ kind: 'pending', requestId: approval.requestId })}
                             isReviewing={reviewingApprovals.has(approval.requestId)}
                           />
                         )}
-                        <ToolApprovalModal
-                          request={approval}
-                          onApprove={(options) => handleApproveToolAction(approval, options)}
-                          onReject={() => handleRejectToolAction(approval)}
-                          onReviewChanges={() => openChangesPanel({ kind: 'pending', requestId: approval.requestId })}
-                          isReviewing={reviewingApprovals.has(approval.requestId)}
-                        />
                       </div>
                     ))}
                   </section>
