@@ -49,6 +49,7 @@ const profile = {
     'onTaskStart', 'onTaskComplete', 'onTodoUpdate',
     'onTodoError', 'onAgentError', 'onApiError',
     'onToolApprovalRequired', 'ollamaModelDiscovered',
+    'aiScreenshotCaptured', 'onAIFileChanged',
     'onInactivityTimeout', 'onModelUsed',
     'requestCancelled'
   ],

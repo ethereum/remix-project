@@ -2,20 +2,30 @@ import { remixAILogger } from '../../../helpers/logger'
 import { Plugin } from '@remixproject/engine'
 import EventEmitter from 'events'
 import {
+  AIFileChange,
   ToolApprovalRequest,
   ToolApprovalResponse,
   ToolApprovalPolicy,
+  ApprovalScope,
+  ScreenCaptureConsentInfo,
+  ScreenCapturePolicy,
+  SCREEN_CAPTURE_SETTING,
   shouldRequireApproval,
   getToolMetadata,
   isSafeTool,
+  isConsentTool,
   DIRECT_WRITE_TOOLS
 } from '../../../types/humanInTheLoop'
+import { screenshotConsent } from '../screenshotConsent'
+
+// MCP tools whose effect on files is reported as 'onAIFileChanged' (for the AI mode changes panel)
+const FILE_CHANGE_TOOLS = new Set(['file_create', 'file_write', 'file_replace', 'file_delete', 'file_move', 'file_copy'])
 
 export class ToolApprovalGate {
   private eventEmitter: EventEmitter
   private policy: ToolApprovalPolicy
   private plugin: Plugin
-  private pendingApprovals = new Map<string, { resolve: (approved: boolean, modified?: Record<string, any>) => void }>()
+  private pendingApprovals = new Map<string, { resolve: (approved: boolean, modified?: Record<string, any>, scope?: ApprovalScope) => void }>()
 
   constructor(plugin: Plugin, eventEmitter: EventEmitter, policy: ToolApprovalPolicy = 'ask_risky') {
     this.plugin = plugin
@@ -27,7 +37,7 @@ export class ToolApprovalGate {
       const pending = this.pendingApprovals.get(response.requestId)
       remixAILogger.log('[ToolApprovalGate] onToolApprovalResponse', response.requestId, 'approved=', response.approved, 'pendingFound=', !!pending, 'pendingKeys=', Array.from(this.pendingApprovals.keys()))
       if (pending) {
-        pending.resolve(response.approved, response.modifiedArgs)
+        pending.resolve(response.approved, response.modifiedArgs, response.scope)
         this.pendingApprovals.delete(response.requestId)
       }
     })
@@ -54,12 +64,72 @@ export class ToolApprovalGate {
    * @returns Wrapped function with approval gate
    */
   wrap(toolName: string, originalFunc: (args: Record<string, any>) => Promise<string>): (args: Record<string, any>) => Promise<string> {
+    const gated = this.gate(toolName, originalFunc)
+    if (!FILE_CHANGE_TOOLS.has(toolName)) return gated
+
+    // Compare the files before and after the tool ran, whether it needed approval or not
+    return async (args: Record<string, any>): Promise<string> => {
+      const paths = this.fileChangePaths(toolName, args)
+      const before = await Promise.all(paths.map((path) => this.readFileSnapshot(path)))
+      const result = await gated(args)
+      await this.reportFileChange(toolName, paths, before)
+      return result
+    }
+  }
+
+  private fileChangePaths(toolName: string, args: Record<string, any>): string[] {
+    if (toolName === 'file_move' || toolName === 'file_copy') return [args.from, args.to]
+    return [args.path || args.filePath]
+  }
+
+  /** File content, or null when there is no such file (directories included) */
+  private async readFileSnapshot(path: string): Promise<string | null> {
+    if (!path) return null
+    try {
+      if (!await this.plugin.call('fileManager', 'exists', path)) return null
+      if (await this.plugin.call('fileManager', 'isDirectory', path)) return null
+      return await this.plugin.call('fileManager', 'readFile', path)
+    } catch {
+      return null
+    }
+  }
+
+  private async reportFileChange(toolName: string, paths: string[], before: (string | null)[]): Promise<void> {
+    try {
+      const after = await Promise.all(paths.map((path) => this.readFileSnapshot(path)))
+      const timestamp = Date.now()
+      let change: AIFileChange | null = null
+      if (toolName === 'file_move') {
+        const [fromBefore] = before
+        const [fromAfter, toAfter] = after
+        if (fromBefore !== null && fromAfter === null && toAfter !== null) {
+          change = { path: paths[1], movedFrom: paths[0], existed: true, oldContent: fromBefore, newContent: toAfter, timestamp }
+        }
+      } else {
+        const index = toolName === 'file_copy' ? 1 : 0
+        const [path, oldContent, newContent] = [paths[index], before[index], after[index]]
+        if (oldContent === newContent) return // rejected, failed or no-op
+        change = newContent === null
+          ? { path, existed: true, deleted: true, oldContent, newContent: '', timestamp }
+          : { path, existed: oldContent !== null, oldContent: oldContent || '', newContent, timestamp }
+      }
+      if (change) this.eventEmitter.emit('onAIFileChanged', change)
+    } catch (e) {
+      remixAILogger.warn('[ToolApprovalGate] could not report file change', toolName, e)
+    }
+  }
+
+  private gate(toolName: string, originalFunc: (args: Record<string, any>) => Promise<string>): (args: Record<string, any>) => Promise<string> {
     if (isSafeTool(toolName)) {
 
       return originalFunc
     }
 
     return async (args: Record<string, any>): Promise<string> => {
+      if (isConsentTool(toolName)) {
+        return this.runConsentTool(toolName, args, originalFunc)
+      }
+
       if (!shouldRequireApproval(toolName, this.policy)) {
 
         return originalFunc(args)
@@ -128,6 +198,19 @@ export class ToolApprovalGate {
       remixAILogger.log('[ToolApprovalGate] approval resolved', toolName, requestId, 'approved=', approved)
 
       if (!approved) {
+        if (FILE_CHANGE_TOOLS.has(toolName)) {
+          const rejected: AIFileChange = {
+            path: filePath || args.to,
+            existed: existingContent !== undefined || toolName === 'file_delete' || toolName === 'file_move',
+            oldContent: existingContent || '',
+            newContent: proposedContent || '',
+            timestamp: Date.now(),
+            status: 'rejected',
+            ...(toolName === 'file_delete' ? { deleted: true } : {}),
+            ...(toolName === 'file_move' ? { movedFrom: args.from } : {})
+          }
+          if (rejected.path) this.eventEmitter.emit('onAIFileChanged', rejected)
+        }
         return JSON.stringify({ cancelled: true, reason: `REJECTED: The user explicitly rejected this ${toolName} operation. Do NOT retry this operation or use alternative tools/methods. Inform the user and move on.` })
       }
 
@@ -178,6 +261,115 @@ export class ToolApprovalGate {
       // === FALLBACK: For non-file tools, call the original handler as before ===
       return originalFunc(finalArgs)
     }
+  }
+
+  /**
+   * Runs a tool whose gate is consent rather than risk — today, the screen
+   * capture. The flow is deliberately separate from the risk path above: the
+   * question is not "is this dangerous?" but "may we send a picture of your
+   * screen to a third party?", and the answer is remembered at a scope the
+   * user picks.
+   */
+  private async runConsentTool(
+    toolName: string,
+    args: Record<string, any>,
+    originalFunc: (args: Record<string, any>) => Promise<string>
+  ): Promise<string> {
+    // Nothing can answer a prompt in a headless context, so don't open one.
+    // The handler's own DOM guard produces the real error message.
+    if (typeof document === 'undefined') {
+      screenshotConsent.setAllowed(true)
+      return originalFunc(args)
+    }
+
+    const persisted = await this.readScreenCapturePolicy()
+    const decision = screenshotConsent.decide(persisted)
+
+    if (decision === 'deny') {
+      screenshotConsent.setAllowed(false)
+      return this.screenCaptureRefusal(persisted === 'never')
+    }
+
+    if (decision === 'allow') {
+      screenshotConsent.setAllowed(true)
+      return originalFunc(args)
+    }
+
+    const requestId = `approval_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const request: ToolApprovalRequest = {
+      requestId,
+      toolName,
+      toolArgs: args,
+      category: 'screen_capture',
+      risk: getToolMetadata(toolName).risk,
+      timestamp: Date.now(),
+      consent: this.describeCapture(args)
+    }
+
+    const { approved, scope } = await new Promise<{ approved: boolean; scope?: ApprovalScope }>((resolve) => {
+      this.pendingApprovals.set(requestId, {
+        resolve: (ok, _modified, chosenScope) => resolve({ approved: ok, scope: chosenScope })
+      })
+      remixAILogger.log('[ToolApprovalGate] awaiting screen-capture consent', requestId)
+      this.eventEmitter.emit('onToolApprovalRequired', request)
+    })
+
+    // A cancelled run resolves with no scope. Recording that would turn
+    // "the user pressed stop" into "the user said no", so only a real
+    // decision is remembered.
+    if (scope) screenshotConsent.record(scope)
+
+    if (!approved) {
+      screenshotConsent.setAllowed(false)
+      return this.screenCaptureRefusal(false)
+    }
+
+    screenshotConsent.setAllowed(true)
+    try {
+      return await originalFunc(args)
+    } finally {
+      // "Allow once" covers exactly the capture it was granted for.
+      screenshotConsent.consume()
+    }
+  }
+
+  /** Reads the persisted screen-capture policy, defaulting to asking. */
+  private async readScreenCapturePolicy(): Promise<ScreenCapturePolicy> {
+    try {
+      const value = await this.plugin.call('settings' as any, 'get' as any, `settings/${SCREEN_CAPTURE_SETTING}`)
+      if (value === 'always' || value === 'never') return value
+    } catch (e) {
+      remixAILogger.warn('[ToolApprovalGate] could not read screen-capture policy, defaulting to ask', e)
+    }
+    return 'ask'
+  }
+
+  /**
+   * Describes the capture in the user's terms. The model's `reason` argument
+   * has always been documented as "shown to the user" — this is where that
+   * finally becomes true.
+   */
+  private describeCapture(args: Record<string, any>): ScreenCaptureConsentInfo {
+    const scoped = args?.ref || args?.selector
+    return {
+      reason: typeof args?.reason === 'string' ? args.reason : undefined,
+      targetLabel: scoped ? String(scoped) : 'the whole Remix IDE window',
+      wholeIde: !scoped
+    }
+  }
+
+  /**
+   * Tells the model it may not look, and points it at the cheap alternative
+   * so it reports back instead of stalling or retrying.
+   */
+  private screenCaptureRefusal(disabledInSettings: boolean): string {
+    const reason = disabledInSettings
+      ? 'REJECTED: Screen capture is turned off in the user\'s settings.'
+      : 'REJECTED: The user declined to share a picture of their screen.'
+    return JSON.stringify({
+      cancelled: true,
+      reason: `${reason} Do NOT call capture_ui_screenshot again in this conversation. Use inspect_ui or get_ui_state to read the interface structure and labels instead, and tell the user what you can and cannot see.`
+    })
   }
 
   /**

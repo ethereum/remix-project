@@ -1,7 +1,11 @@
+import { ChatAttachment } from '../types/types'
+
 /**
  * Storage abstraction layer for RemixAI chat history persistence.
  * Supports pluggable backends (IndexedDB, S3, etc.)
  */
+
+import type { AIFileChangeRecord } from '../types/humanInTheLoop'
 
 /**
  * Chat message structure
@@ -45,14 +49,35 @@ export interface ChatMessage {
   streamingSubagentName?: string
   /** Post-update review data for DApp updates */
   dappUpdateReview?: DAppUpdateReview
+  /**
+   * Images the user attached to this turn. Only the thumbnail survives
+   * persistence — see `stripAttachmentPayloads`.
+   */
+  attachments?: ChatAttachment[]
   /** Generative UI component tree rendered inline by the render_ui MCP tool */
   uiComponent?: GenerativeUIPayload
+  /** Files the agent changed while writing this answer (AI mode changes panel) */
+  fileChanges?: AIFileChangeRecord[]
   /**
    * The component has been answered or superseded. Kept in the transcript
    * for the record but rendered inert — a live control the model has moved
    * past would restart a finished exchange if clicked again.
    */
   uiComponentStale?: boolean
+}
+
+/**
+ * Drops attachment payloads before a message is written to storage, keeping
+ * only what the history view needs: the name, the kind, and an image
+ * thumbnail. A few screenshots at full resolution, or a couple of large source
+ * files, would otherwise add megabytes to IndexedDB per conversation.
+ */
+export function stripAttachmentPayloads<T extends ChatMessage>(message: T): T {
+  if (!message.attachments || message.attachments.length === 0) return message
+  return {
+    ...message,
+    attachments: message.attachments.map(({ dataUrl, textContent, ...rest }) => rest)
+  }
 }
 
 /**

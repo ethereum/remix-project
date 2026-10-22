@@ -4,8 +4,9 @@ import { createPortal } from 'react-dom'
 //@ts-ignore
 import '../css/remix-ai-assistant.css'
 
-import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, isCheapModel, type ModelTransport } from '@remix/remix-ai-core'
-import { ToolApprovalRequest, ApiKeyErrorEvent } from '@remix/remix-ai-core'
+import { ChatCommandParser, GenerationParams, ChatHistory, HandleStreamResponse, AIModel, ANONYMOUS_FALLBACK_MODELS, remixAILogger, modelKey, parseModelKey, findModel, applyByokKeyPolicy, BYOK_API_KEY_SETTINGS, modelTransportProvider, onApiKeysChange, isAutoModelId, isCheapModel, modelSupportsVision, describeCaptureError, type ChatAttachment, type ModelTransport } from '@remix/remix-ai-core'
+import { ToolApprovalRequest, ApiKeyErrorEvent, SCREEN_CAPTURE_SETTING, type ApprovalScope, AIFileChange, AIFileChangeRecord } from '@remix/remix-ai-core'
+import { ScreenCaptureConsentCard } from './ScreenCaptureConsentCard'
 import { isFrontierModelId } from '@remix/remix-ai-core/model-tiers'
 import { HandleOpenAICompatibleResponse, HandleOllamaResponse } from '@remix/remix-ai-core'
 //@ts-ignore
@@ -26,7 +27,9 @@ import AiChatPromptArea from './aiChatPromptArea'
 import { CooldownBanner } from './cooldownBanner'
 import { ChatNoticeStrip, type ChatNoticeDisplay, type ChatNoticeActionDisplay } from './chatNoticeStrip'
 import { useModelAccess } from '../hooks/useModelAccess'
+import { useAttachments, captureIdeScreenshot } from '../hooks/useAttachments'
 import { ToolApprovalModal } from './ToolApprovalModal'
+import { AIChangesPanel, AIChangesSelection, changeKey, foldFileChanges, isReviewableApproval } from './aiChangesPanel'
 
 // ─── Generative UI payload validation ────────────────────────────────────────
 // Mirrors the VALID_TYPES set in GenerativeUIHandler.ts. Kept here as a
@@ -118,12 +121,25 @@ const OLLAMA_NOT_AVAILABLE_MESSAGE = [
 
 /** Minimum time the thinking indicator stays up once raised. */
 const THINKING_MIN_VISIBLE_MS = 2000
+// Stable empty set so the memoized changes panel does not re-render for nothing
+const NO_STALE_KEYS = new Set<string>()
+// Characters of answer text kept to place a file change in the answer
+const CHANGE_ANCHOR_LENGTH = 40
+// Names an editor diff side after its content: the editor reuses a model with the same name without updating it
+const contentHash = (content: string) => {
+  let hash = 0
+  for (let i = 0; i < content.length; i++) hash = (Math.imul(hash, 31) + content.charCodeAt(i)) | 0
+  return `remixai-${(hash >>> 0).toString(36)}-${content.length}`
+}
 
 export const RemixUiRemixAiAssistant = React.forwardRef<
   RemixUiRemixAiAssistantHandle,
   RemixUiRemixAiAssistantProps
 >(function RemixUiRemixAiAssistant(props, ref) {
   const [messages, setMessages] = useState<ChatMessage[]>(props.initialMessages || [])
+  // Latest messages for event handlers registered once
+  const messagesRef = useRef(messages)
+  messagesRef.current = messages
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   // sendPrompt is memoized without `messages` / `currentConversationId` in its
@@ -171,6 +187,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     route: 'initializing' | 'agent' | 'tools' | 'chat'
     ready: boolean
   }>({ route: 'initializing', ready: false })
+  // Mirrored for sendPrompt, which is memoized without the route in its deps.
+  const aiRouteRef = useRef<'initializing' | 'agent' | 'tools' | 'chat'>('initializing')
+  useEffect(() => { aiRouteRef.current = aiRouteStatus.route }, [aiRouteStatus.route])
 
   // Authentication signal — mirrored from the assistantState snapshot.
   // Drives the composer's sign-in CTA so an anonymous user gets a clear
@@ -202,6 +221,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   // Tracks which approval requests are currently being reviewed in the editor via showCustomDiff
   const [reviewingApprovals, setReviewingApprovals] = useState<Set<string>>(new Set())
   const pendingDiffApprovalRef = useRef<{ requestId: string; filePath: string } | null>(null)
+
+  // File changes of the answer being written, in order (for the chat and the
+  // AI mode changes panel); moved onto the answer's message when it completes.
+  const [liveFileChanges, setLiveFileChanges] = useState<AIFileChangeRecord[]>([])
+  const liveFileChangesRef = useRef<AIFileChangeRecord[]>([])
+  const updateLiveFileChanges = (records: AIFileChangeRecord[]) => {
+    liveFileChangesRef.current = records
+    setLiveFileChanges(records)
+  }
+  const [showChangesPanel, setShowChangesPanel] = useState(false)
+  const [changesSelection, setChangesSelection] = useState<AIChangesSelection>(null)
+  const [changesWorkspace, setChangesWorkspace] = useState<string>()
+  const [staleChangeKeys, setStaleChangeKeys] = useState<Set<string>>(NO_STALE_KEYS)
 
   // HITL auto-accept state
   const HITL_AUTO_ACCEPT_KEY = 'remix_hitl_auto_accept'
@@ -298,6 +330,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   // ISN'T a plan-manager hand-off (PROVIDER_DENIED, server errors,
   // validation, unknown codes). Non-blocking: input stays editable.
   const [chatNotice, setChatNotice] = useState<ChatNoticeDisplay | null>(null)
+  // Images staged on the composer for the next prompt.
+  const attachmentState = useAttachments()
 
   const dismissChatNotice = useCallback(() => {
     setChatNotice(null)
@@ -821,16 +855,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // Save to chat history when streaming completes
       if (streamingAssistantIdRef.current) {
         const assistantId = streamingAssistantIdRef.current
+        const fileChanges = liveFileChangesRef.current.length ? liveFileChangesRef.current : undefined
+        updateLiveFileChanges([])
         setMessages(prev => {
           const userMsg = prev[prev.length - 2]
           if (userMsg && userMsg.role === 'user' && finalText) {
-            Promise.resolve(ChatHistory.pushHistory(userMsg.content, finalText, userMsg.displayContent)).then(() => props.plugin.loadConversations())
+            Promise.resolve(ChatHistory.pushHistory(userMsg.content, finalText, userMsg.displayContent, { fileChanges })).then(() => props.plugin.loadConversations())
           }
           // Clear streaming states but preserve subagent name for persistent styling
           return prev.map(m =>
             m.id === assistantId
               ? {
                 ...m,
+                fileChanges: fileChanges || m.fileChanges,
                 isSubagentStreaming: false,
                 // Keep streamingSubagentName to preserve subagent styling after completion
                 activeSubagent: undefined,
@@ -1290,7 +1327,19 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       // Don't show new approval dialogs if the request has been stopped
       if (isStoppedRef.current) return
       remixAILogger.log('[Assistant UI] approval requested', request.toolName, request.requestId)
-      if (hitlAutoAcceptRef.current) {
+      // "Auto-accept all tool changes" is about file edits. Letting it answer
+      // "may we photograph your screen?" would make a privacy decision the
+      // user never knowingly made.
+      if (request.category === 'screen_capture') {
+        trackMatomoEvent({
+          category: 'ai',
+          action: 'remixAI',
+          name: 'screen_capture_prompt',
+          value: request.consent?.wholeIde === false ? 'region' : 'full_ide',
+          isClick: false
+        })
+      }
+      if (hitlAutoAcceptRef.current && request.category !== 'screen_capture') {
         try {
           ;(props.plugin as any).respondToToolApproval({
             requestId: request.requestId,
@@ -1368,6 +1417,67 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
     props.plugin.on('remixAI', 'renderUI', handleRenderUI)
 
+    /**
+     * The assistant took a picture of the IDE. Put it in the transcript so the
+     * user can see exactly what was sent on their behalf — a consent prompt
+     * they answered minutes ago is not a record of what left the machine.
+     *
+     * Two copies cross into the chat: the thumbnail that renders in the
+     * bubble, and a full-view JPEG that opens when it is clicked. Only the
+     * thumbnail survives into storage — `stripAttachmentPayloads` drops
+     * `dataUrl` — and the copy the model reads stays in the vision buffer.
+     */
+    const handleScreenshotCaptured = (payload: {
+      id: string
+      thumbnailDataUrl: string
+      previewDataUrl?: string
+      label?: string
+      capturedAt?: number
+      reason?: string
+    }) => {
+      if (!payload?.thumbnailDataUrl) return
+      // Fires for every capture, including the ones that needed no prompt —
+      // the gap against screen_capture_prompt is how much is happening silently.
+      trackMatomoEvent({
+        category: 'ai',
+        action: 'remixAI',
+        name: 'screen_capture_taken',
+        isClick: false
+      })
+      const attachment: ChatAttachment = {
+        id: payload.id || crypto.randomUUID(),
+        name: payload.label ? `Screenshot of ${payload.label}` : 'Screenshot of your IDE',
+        mimeType: 'image/jpeg',
+        kind: 'image',
+        thumbnailDataUrl: payload.thumbnailDataUrl,
+        // Full-view copy, opened when the thumbnail is clicked. In memory
+        // only — stripAttachmentPayloads drops `dataUrl` before persistence.
+        dataUrl: payload.previewDataUrl,
+        source: 'ai-capture'
+      }
+      const activeId = streamingAssistantIdRef.current
+      if (activeId) {
+        setMessages(prev => prev.map(m => m.id === activeId
+          ? { ...m, attachments: [...(m.attachments || []), attachment]}
+          : m))
+        return
+      }
+      const capMsgId = crypto.randomUUID()
+      streamingAssistantIdRef.current = capMsgId
+      setMessages(prev => [
+        ...prev,
+        {
+          id: capMsgId,
+          role: 'assistant' as const,
+          content: '',
+          timestamp: payload.capturedAt || Date.now(),
+          sentiment: 'none' as const,
+          attachments: [attachment]
+        }
+      ])
+    }
+    props.plugin.on('remixAI', 'aiScreenshotCaptured', handleScreenshotCaptured)
+
     const handleModelSwitchRequested = (data: { modelId: string; provider?: string; displayName?: string; reason?: string }) => {
       if (!data?.modelId) return
       setPendingModelSwitch(data)
@@ -1391,6 +1501,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       props.plugin.off('remixAI', 'onToolApprovalRequired')
       props.plugin.off('remixAI', 'onDappUpdateCompleted')
       props.plugin.off('remixAI', 'renderUI')
+      props.plugin.off('remixAI', 'aiScreenshotCaptured')
       props.plugin.off('remixAI', 'modelSwitchRequested')
       try { props.plugin.off('assistantState' as any, 'stateChanged') } catch { /* noop */ }
     }
@@ -1607,6 +1718,224 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     removeApproval(approval.requestId)
   }, [props.plugin, removeApproval, reviewingApprovals])
 
+  /**
+   * Answers a screen-capture consent prompt. The scope travels with the
+   * response so the gate knows how long the answer holds; "always" is the only
+   * one that outlives the session, so it is also the only one written to
+   * settings.
+   *
+   * "Don't allow" is deliberately a one-time no rather than "never ask again":
+   * a misclick should not silently blind the assistant forever. Turning it off
+   * permanently is a deliberate trip to Settings.
+   */
+  const handleScreenCaptureDecision = useCallback(async (approval: ToolApprovalRequest, scope: ApprovalScope) => {
+    if (!approval) return
+    remixAILogger.log('[Assistant UI] screen-capture decision', scope, approval.requestId)
+
+    // How often people grant, scope or refuse screen sharing is the signal
+    // that tells us whether this prompt is understood or just dismissed.
+    trackMatomoEvent({
+      category: 'ai',
+      action: 'remixAI',
+      name: 'screen_capture_decision',
+      value: `${scope}|${approval.consent?.wholeIde === false ? 'region' : 'full_ide'}`,
+      isClick: true
+    })
+
+    if (scope === 'always') {
+      try {
+        await props.plugin.call('config' as any, 'setAppParameter', `settings/${SCREEN_CAPTURE_SETTING}`, 'always')
+      } catch (err) {
+        remixAILogger.warn('[ScreenCapture] could not persist "always allow"', err)
+      }
+    }
+
+    try {
+      ;(props.plugin as any).respondToToolApproval({
+        requestId: approval.requestId,
+        approved: scope !== 'deny',
+        scope
+      })
+    } catch (err) {
+      remixAILogger.error('[ScreenCapture] respondToToolApproval threw', approval.requestId, err)
+    }
+    removeApproval(approval.requestId)
+  }, [props.plugin, removeApproval])
+  // AI mode changes panel
+  useEffect(() => {
+    const handleFileChanged = async (change: AIFileChange) => {
+      // Where the change happened in the answer: the streaming bubble and the end of its text
+      const messageId = streamingAssistantIdRef.current || undefined
+      const bubbleText = messageId ? messagesRef.current.find(m => m.id === messageId)?.content || '' : ''
+      const record: AIFileChangeRecord = { ...change, messageId, anchor: bubbleText.slice(-CHANGE_ANCHOR_LENGTH) }
+      try {
+        record.workspace = (await props.plugin.call('filePanel' as any, 'getCurrentWorkspace'))?.name
+      } catch { /* no workspace information */ }
+      try {
+        record.gitHead = await props.plugin.call('dgitApi' as any, 'resolveref', { ref: 'HEAD' })
+      } catch { /* not a git repository */ }
+      updateLiveFileChanges([...liveFileChangesRef.current, record])
+    }
+    props.plugin.on('remixAI', 'onAIFileChanged', handleFileChanged)
+    return () => {
+      props.plugin.off('remixAI', 'onAIFileChanged')
+    }
+  }, [props.plugin])
+
+  // The conversation's file changes: those saved on its messages, then the answer being written.
+  // Rebuilt when messages come and go or their changes change, not on every streamed token.
+  const fileChangesSignature = messages.map(m => m.fileChanges ? `${m.id}:${m.fileChanges.length}` : m.id).join('|')
+  const { changedFiles, fileChangesByMessage } = useMemo(() => {
+    // Each change shows in the bubble that was streaming when it happened while that bubble
+    // is still in the list; after a reload, in the saved answer that carries it.
+    const byMessage: Record<string, AIFileChangeRecord[]> = {}
+    const messageIds = new Set(messages.map(m => m.id))
+    const place = (record: AIFileChangeRecord, ownerId: string | undefined) => {
+      const target = record.messageId && messageIds.has(record.messageId) ? record.messageId : ownerId
+      if (target) (byMessage[target] = byMessage[target] || []).push(record)
+    }
+    messages.forEach(m => m.fileChanges?.forEach(record => place(record, m.id)))
+    const lastAssistantId = [...messages].reverse().find(m => m.role === 'assistant')?.id
+    liveFileChanges.forEach(record => place(record, lastAssistantId))
+    return {
+      changedFiles: foldFileChanges([...messages.filter(m => m.fileChanges?.length).map(m => m.fileChanges), liveFileChanges]),
+      fileChangesByMessage: byMessage
+    }
+  }, [fileChangesSignature, liveFileChanges])
+
+  // Flag files that no longer hold what the agent wrote (edited since, branch switched, ...)
+  useEffect(() => {
+    if (!showChangesPanel) return
+    let cancelled = false
+    ;(async () => {
+      let workspace: string | undefined
+      try {
+        workspace = (await props.plugin.call('filePanel' as any, 'getCurrentWorkspace'))?.name
+      } catch { /* no workspace information */ }
+      const stale = new Set<string>()
+      for (const file of changedFiles) {
+        if (file.deleted || (file.workspace && workspace && file.workspace !== workspace)) continue
+        try {
+          const exists = await props.plugin.call('fileManager', 'exists', file.path)
+          const content = exists ? await props.plugin.call('fileManager', 'readFile', file.path) : null
+          if (content !== file.latestContent) stale.add(file.key)
+        } catch { /* unreadable: leave it unflagged */ }
+      }
+      if (cancelled) return
+      setChangesWorkspace(workspace)
+      setStaleChangeKeys(stale.size ? stale : NO_STALE_KEYS)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [showChangesPanel, changedFiles, props.plugin])
+
+  const reviewableApprovals = useMemo(() => pendingApprovals.filter(isReviewableApproval), [pendingApprovals])
+
+  const openChangesPanel = useCallback((selection: AIChangesSelection = null) => {
+    setChangesSelection(selection)
+    setShowChangesPanel(true)
+    if (props.showHistorySidebar) props.onToggleHistorySidebar?.()
+  }, [props.showHistorySidebar, props.onToggleHistorySidebar])
+
+  const closeChangesPanel = useCallback(() => {
+    setShowChangesPanel(false)
+    setChangesSelection(null)
+  }, [])
+
+  const toggleChangesPanel = useCallback(() => {
+    if (showChangesPanel) closeChangesPanel()
+    else openChangesPanel()
+  }, [showChangesPanel, openChangesPanel, closeChangesPanel])
+
+  // History and changes share the right column in AI mode
+  useEffect(() => {
+    if (props.showHistorySidebar) setShowChangesPanel(false)
+  }, [props.showHistorySidebar])
+
+  useEffect(() => {
+    setChangesSelection(null)
+    updateLiveFileChanges([])
+  }, [props.currentConversationId])
+
+  // Open the panel on the diff when the agent waits for approval of a file change
+  const seenApprovalIdsRef = useRef<Set<string>>(new Set())
+  useEffect(() => {
+    const fresh = reviewableApprovals.filter(approval => !seenApprovalIdsRef.current.has(approval.requestId))
+    fresh.forEach(approval => seenApprovalIdsRef.current.add(approval.requestId))
+    if (fresh.length === 0 || !props.isMaximized) return
+    setShowChangesPanel(true)
+    setChangesSelection(current => {
+      const stillValid = current && (current.kind === 'file' || reviewableApprovals.some(approval => approval.requestId === current.requestId))
+      return stillValid ? current : { kind: 'pending', requestId: fresh[0].requestId }
+    })
+    if (props.showHistorySidebar) props.onToggleHistorySidebar?.()
+  }, [reviewableApprovals, props.isMaximized])
+
+  // After a decision in the panel, move on to the next file waiting for approval
+  const selectNextPendingChange = useCallback((decided: ToolApprovalRequest) => {
+    const next = reviewableApprovals.find(approval => approval.requestId !== decided.requestId)
+    setChangesSelection(next ? { kind: 'pending', requestId: next.requestId } : null)
+  }, [reviewableApprovals])
+
+  const acceptChangeFromPanel = useCallback((approval: ToolApprovalRequest) => {
+    selectNextPendingChange(approval)
+    handleApproveToolAction(approval)
+  }, [selectNextPendingChange, handleApproveToolAction])
+
+  const rejectChangeFromPanel = useCallback((approval: ToolApprovalRequest) => {
+    selectNextPendingChange(approval)
+    handleRejectToolAction(approval)
+  }, [selectNextPendingChange, handleRejectToolAction])
+
+  // An edit RemixAI already made, as a view-only diff in the editor
+  const openAppliedDiff = useCallback(async (change: { path: string, oldContent: string, newContent: string, existed: boolean, deleted?: boolean }) => {
+    try {
+      await props.plugin.call('fileManager' as any, 'diff', {
+        type: change.deleted ? 'deleted' : change.existed ? 'modified' : 'added',
+        path: change.path.replace(/^\/+/, ''),
+        hashOriginal: contentHash(change.oldContent),
+        hashModified: contentHash(change.newContent),
+        original: change.oldContent,
+        modified: change.newContent,
+        readonly: true,
+        source: 'ai-applied'
+      })
+    } catch (err) {
+      remixAILogger.warn('[AIChanges] Failed to open the diff', err)
+    }
+  }, [props.plugin])
+
+  // A change line in the chat: its file in the changes panel in AI mode, else that edit's diff in the editor
+  const openFileChange = useCallback((change: AIFileChangeRecord) => {
+    if (props.isMaximized) {
+      openChangesPanel({ kind: 'file', key: changeKey(change.workspace, change.path) })
+      return
+    }
+    openAppliedDiff(change)
+  }, [props.isMaximized, openChangesPanel, openAppliedDiff])
+
+  // Code mode: a row of the changes list opens in the editor, where there is more room than in the chat
+  const openChangeInEditor = useCallback((selection: AIChangesSelection) => {
+    if (!selection) return
+    if (selection.kind === 'pending') {
+      const approval = reviewableApprovals.find(approval => approval.requestId === selection.requestId)
+      if (approval) handleReviewChanges(approval)
+      return
+    }
+    const file = changedFiles.find(file => file.key === selection.key)
+    if (file) openAppliedDiff({ path: file.path, oldContent: file.baseContent, newContent: file.latestContent, existed: file.existed, deleted: file.deleted })
+  }, [reviewableApprovals, changedFiles, handleReviewChanges, openAppliedDiff])
+
+  const openChangedFileInEditor = useCallback(async (path: string) => {
+    try {
+      await props.plugin.call('fileManager', 'open', path.replace(/^\/+/, ''))
+      await props.plugin.restorePanel()
+    } catch (err) {
+      remixAILogger.warn('[AIChanges] Failed to open file in editor', err)
+    }
+  }, [props.plugin])
+
   // Handle approving all pending approvals at once
   const handleApproveAll = useCallback(async () => {
     // Close any open DiffEditor sessions first
@@ -1621,14 +1950,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
     }
 
-    const approvals = [...pendingApprovals]
+    // Bulk-approving a batch of file edits must not also hand over a picture
+    // of the user's screen — those stay on screen to be answered on their own.
+    const approvals = pendingApprovals.filter(a => a.category !== 'screen_capture')
     for (const approval of approvals) {
       ;(props.plugin as any).respondToToolApproval({
         requestId: approval.requestId,
         approved: true
       })
     }
-    setPendingApprovals([])
+    setPendingApprovals(prev => prev.filter(a => a.category === 'screen_capture'))
     setReviewingApprovals(new Set())
   }, [pendingApprovals, props.plugin, reviewingApprovals])
 
@@ -1646,14 +1977,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
       }
     }
 
-    const approvals = [...pendingApprovals]
+    // Same reasoning as handleApproveAll: a consent prompt is answered
+    // deliberately, not swept up in a bulk action about file edits.
+    const approvals = pendingApprovals.filter(a => a.category !== 'screen_capture')
     for (const approval of approvals) {
       ;(props.plugin as any).respondToToolApproval({
         requestId: approval.requestId,
         approved: false
       })
     }
-    setPendingApprovals([])
+    setPendingApprovals(prev => prev.filter(a => a.category === 'screen_capture'))
     setReviewingApprovals(new Set())
   }, [pendingApprovals, props.plugin, reviewingApprovals])
 
@@ -1841,13 +2174,16 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
 
     uiToolCallbackRef.current = null
+    const stoppedAssistantId = streamingAssistantIdRef.current
+    const stoppedFileChanges = liveFileChangesRef.current.length ? liveFileChangesRef.current : undefined
+    updateLiveFileChanges([])
     if (streamingAssistantIdRef.current) {
       const streamedId = streamingAssistantIdRef.current
       const idx = messages.findIndex(m => m.id === streamedId)
       const streamedContent = (idx >= 0 ? messages[idx].content || '' : '').trim()
       const userMsg = idx > 0 ? messages[idx - 1] : null
       if (userMsg && userMsg.role === 'user' && streamedContent) {
-        Promise.resolve(ChatHistory.pushHistory(userMsg.content, streamedContent, userMsg.displayContent))
+        Promise.resolve(ChatHistory.pushHistory(userMsg.content, streamedContent, userMsg.displayContent, { fileChanges: stoppedFileChanges }))
           .then(() => props.plugin.loadConversations())
           .catch((err) => remixAILogger.warn('[RemixAI Assistant] failed to persist stopped stream:', err))
       }
@@ -1859,6 +2195,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     //@ts-ignore
     setMessages(prev => {
       const cleanedMessages = prev
+        .map(m => m.id === stoppedAssistantId && stoppedFileChanges ? { ...m, fileChanges: stoppedFileChanges } : m)
         .filter(m => {
           if (m.role !== 'assistant') return true
           const content = m.content.trim()
@@ -1905,9 +2242,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
   // reusable sender (used by both UI button and imperative ref)
   const sendPrompt = useCallback(
-    async (prompt: string, isEditorCodeAnalysis: boolean = false, metadata?: ChatPromptMetadata) => {
+    async (prompt: string, isEditorCodeAnalysis: boolean = false, metadata?: ChatPromptMetadata, attachments: ChatAttachment[] = []) => {
       const trimmed = prompt.trim()
-      if (!trimmed || isStreaming) return
+      // An image on its own is a valid prompt ("what is this?"), so only an
+      // entirely empty turn is rejected.
+      if ((!trimmed && attachments.length === 0) || isStreaming) return
 
       // Gate via assistantState — if the user is anonymous, unverified or
       // feature-blocked this opens planManager with the right reason and
@@ -1954,6 +2293,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         id: crypto.randomUUID(),
         role: isEditorCodeAnalysis ? 'editor_code_analysis' : 'user',
         content: trimmed,
+        ...(attachments.length > 0 ? { attachments } : {}),
         ...(metadata?.displayText ? { displayContent: metadata.displayText.trim() } : {}),
         timestamp: Date.now()
       }
@@ -2029,6 +2369,33 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         GenerationParams.stream = true
         GenerationParams.return_stream_response = true
         GenerationParams.threadId = await props.plugin.call('remixAI', 'getAssistantThrId') || ""
+
+        // Attachments only travel on the DeepAgent route. Within it, text and
+        // source files work on any model (they are sent as text), while images
+        // and PDFs need a vision-capable one. Rather than drop the whole turn,
+        // send what can be sent and name what was left out.
+        const modelReadsImages = modelSupportsVision(selectedModelRef.current || undefined)
+        const routeCarriesAttachments = aiRouteRef.current === 'agent'
+        const sendable = !routeCarriesAttachments
+          ? []
+          : modelReadsImages
+            ? attachments
+            : attachments.filter(a => a.kind === 'text')
+        const dropped = attachments.length - sendable.length
+
+        if (dropped > 0) {
+          const modelName = selectedModelRef.current?.displayName || 'The selected model'
+          setChatNotice({
+            severity: 'warning',
+            code: routeCarriesAttachments ? 'MODEL_NO_VISION' : 'ROUTE_NO_ATTACHMENTS',
+            title: dropped === attachments.length ? 'Attachments not sent' : 'Some attachments not sent',
+            message: !routeCarriesAttachments
+              ? 'Attachments are only supported by the agent route. Your message was sent without them.'
+              : `${modelName} cannot read images or PDFs, so ${dropped} attachment(s) were left out. Pick a vision-capable model to include them.`,
+            actionable: true
+          })
+        }
+        GenerationParams.attachments = sendable.length > 0 ? sendable : undefined
 
         const pending = await props.plugin.call('remixAI', 'isChatRequestPending')
         const response = pending
@@ -2300,7 +2667,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     // only. If the user wants to retry while rate-limited, that's their
     // call; the backend will reject it and we surface the error normally.
     const trimmed = input.trim()
-    if (!trimmed || isStreaming) return
+    const staged = attachmentState.attachments
+    if ((!trimmed && staged.length === 0) || isStreaming) return
 
     // Pre-flight the assistant gate so we only clear the textarea when
     // the prompt will actually be processed. If the user is anonymous,
@@ -2313,8 +2681,26 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     } catch { /* assistantState not active — fall through, sendPrompt will retry the check */ }
 
     setInput('')
-    await sendPrompt(trimmed, false, { source: 'user' })
-  }, [input, isStreaming, props.plugin, sendPrompt])
+    attachmentState.clear()
+    await sendPrompt(trimmed, false, { source: 'user' }, staged)
+  }, [input, isStreaming, props.plugin, sendPrompt, attachmentState])
+
+  /** Rasterizes the IDE and stages it as an attachment. */
+  const handleCaptureScreenshot = useCallback(async () => {
+    try {
+      const dataUrl = await captureIdeScreenshot()
+      await attachmentState.addDataUrl(dataUrl, 'remix-ide-screenshot.png', 'screenshot')
+    } catch (e: any) {
+      remixAILogger.error('[RemixAI] screenshot capture failed', e)
+      setChatNotice({
+        severity: 'warning',
+        code: 'SCREENSHOT_FAILED',
+        title: 'Could not capture the IDE',
+        message: `Rendering the interface to an image failed: ${describeCaptureError(e)}. Try attaching a screenshot taken with your OS instead.`,
+        actionable: false
+      })
+    }
+  }, [attachmentState])
 
   /*
   useEffect(() => {
@@ -2673,12 +3059,17 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
     }
   }, [props.onOpenSkillsModal])
 
-  const handleOpenSettings = useCallback(async () => {
+  const handleOpenSettings = useCallback(async (subSectionTitle?: string) => {
     const isActive = await props.plugin.call('manager', 'isActive', 'settings')
     if (!isActive) await props.plugin.call('manager', 'activatePlugin', 'settings')
     await props.plugin.call('tabs', 'focus', 'settings')
-    props.plugin.call('settings', 'showSection', 'ai')
+    props.plugin.call('settings', 'showSection' as any, 'ai', subSectionTitle)
   }, [props.plugin])
+
+  const handleOpenApiKeySettings = useCallback(
+    () => handleOpenSettings('settings.deepAgentApiKeysSection'),
+    [handleOpenSettings]
+  )
 
   // `/audit` and `/load-audit-checklist` open the same modal; the mode is what
   // tells it whether to finish by running the audit or just saving checklists.
@@ -3057,7 +3448,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             handleGasOptimisationAudit={handleGasOptimisationAudit}
             usingOwnApiKey={usingOwnApiKey}
             byokKeyPresence={byokKeyPresence}
-            onAddApiKeyClick={handleOpenSettings}
+            onAddApiKeyClick={handleOpenApiKeySettings}
             aiRoute={aiRouteStatus.route}
             aiRouteReady={aiRouteStatus.ready}
             isAuthenticated={isAuthenticated}
@@ -3069,6 +3460,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             cheapModelsOnly={cheapModelsOnly}
             hasCheapModels={hasCheapModels}
             onToggleCheapModels={handleToggleCheapModels}
+            attachments={attachmentState.attachments}
+            attachmentErrors={attachmentState.errors}
+            onAddFiles={attachmentState.addFiles}
+            onRemoveAttachment={attachmentState.remove}
+            onDismissAttachmentErrors={attachmentState.dismissErrors}
+            onCaptureScreenshot={handleCaptureScreenshot}
+            supportsVision={modelSupportsVision(selectedModel || undefined)}
           />
         ) : (
           <AiChatPromptArea
@@ -3118,7 +3516,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             handleGasOptimisationAudit={handleGasOptimisationAudit}
             usingOwnApiKey={usingOwnApiKey}
             byokKeyPresence={byokKeyPresence}
-            onAddApiKeyClick={handleOpenSettings}
+            onAddApiKeyClick={handleOpenApiKeySettings}
             aiRoute={aiRouteStatus.route}
             aiRouteReady={aiRouteStatus.ready}
             isAuthenticated={isAuthenticated}
@@ -3130,6 +3528,13 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
             cheapModelsOnly={cheapModelsOnly}
             hasCheapModels={hasCheapModels}
             onToggleCheapModels={handleToggleCheapModels}
+            attachments={attachmentState.attachments}
+            attachmentErrors={attachmentState.errors}
+            onAddFiles={attachmentState.addFiles}
+            onRemoveAttachment={attachmentState.remove}
+            onDismissAttachmentErrors={attachmentState.dismissErrors}
+            onCaptureScreenshot={handleCaptureScreenshot}
+            supportsVision={modelSupportsVision(selectedModel || undefined)}
           />
         )
       )
@@ -3166,6 +3571,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                     chatTitle={headerChatTitle}
                     isAiChatMaximized={props.isMaximized}
                     onExitAIMode={() => props.plugin.restorePanel()}
+                    showChangesPanel={showChangesPanel}
+                    onToggleChanges={toggleChangesPanel}
+                    changesCount={reviewableApprovals.length + changedFiles.length}
                   />
                   <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
                     <div data-id="remix-ai-assistant-ready"></div>
@@ -3189,6 +3597,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       onDappReviewAcceptAll={handleDappReviewAcceptAll}
                       onDappReviewRevertAll={handleDappReviewRevertAll}
                       onDappReviewViewDiff={handleDappReviewViewDiff}
+                      fileChangesByMessage={fileChangesByMessage}
+                      onOpenFileChange={openFileChange}
                       onUiComponentAnswered={handleUiComponentAnswered}
                     />
                     {pendingApprovals.length > 1 && (
@@ -3201,14 +3611,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                               onClick={handleApproveAll}
                               data-id="approve-all-changes"
                             >
-                          Approve All
+                          Accept All
                             </button>
                             <button
                               className="btn btn-danger btn-sm"
                               onClick={handleRejectAll}
                               data-id="reject-all-changes"
                             >
-                          Discard All
+                          Reject All
                             </button>
                           </div>
                         </div>
@@ -3216,11 +3626,26 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                     )}
                     {pendingApprovals.map((approval) => (
                       <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
+                        {approval.category === 'screen_capture' ? (
+                          <ScreenCaptureConsentCard
+                            request={approval}
+                            modelName={selectedModel?.displayName}
+                            onDecide={(scope) => handleScreenCaptureDecision(approval, scope)}
+                          />
+                        ) : (
+                          <ToolApprovalModal
+                            request={approval}
+                            onApprove={(options) => handleApproveToolAction(approval, options)}
+                            onReject={() => handleRejectToolAction(approval)}
+                            onReviewChanges={() => handleReviewChanges(approval)}
+                            isReviewing={reviewingApprovals.has(approval.requestId)}
+                          />
+                        )}
                         <ToolApprovalModal
                           request={approval}
                           onApprove={(options) => handleApproveToolAction(approval, options)}
                           onReject={() => handleRejectToolAction(approval)}
-                          onReviewChanges={() => handleReviewChanges(approval)}
+                          onReviewChanges={() => openChangesPanel({ kind: 'pending', requestId: approval.requestId })}
                           isReviewing={reviewingApprovals.has(approval.requestId)}
                         />
                       </div>
@@ -3230,8 +3655,39 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                   {autoAcceptBannerEl}
                 </div>
               ) : (
-              /* Non-Maximized Mode: Toggle between history view and chat view */
-                props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
+              /* Non-Maximized Mode: Toggle between the changes list, history view and chat view */
+                showChangesPanel && props.isMaximized === false ? (
+                  <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
+                    <div className="p-2 border-bottom">
+                      <button
+                        className={`btn btn-sm ${themeTracker?.name.toLowerCase() === 'dark' ? 'btn-dark' : 'btn-light text-light-emphasis'}`}
+                        onClick={closeChangesPanel}
+                        data-id="ai-changes-back-to-chat-btn"
+                      >
+                        <i className="fas fa-chevron-left me-3"></i>
+                        <span>Back to chat</span>
+                      </button>
+                    </div>
+                    <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden', minHeight: 0 }}>
+                      <AIChangesPanel
+                        docked
+                        pendingApprovals={pendingApprovals}
+                        changedFiles={changedFiles}
+                        selection={null}
+                        currentWorkspace={changesWorkspace}
+                        staleKeys={staleChangeKeys}
+                        onSelect={openChangeInEditor}
+                        onAccept={acceptChangeFromPanel}
+                        onReject={rejectChangeFromPanel}
+                        onOpenInEditor={openChangedFileInEditor}
+                        onClose={closeChangesPanel}
+                        theme={themeTracker?.name}
+                      />
+                    </div>
+                    {thinkingBannerEl}
+                    {autoAcceptBannerEl}
+                  </div>
+                ) : props.showHistorySidebar && props.isMaximized === false && props.conversations ? (
                   <div className="d-flex flex-column flex-grow-1 ai-history-view-bg nonMaximizedMode" style={{ overflow: 'hidden', minHeight: 0 }} data-theme={themeTracker && themeTracker?.name.toLowerCase()}>
                     {/* Back button header */}
                     <div
@@ -3285,6 +3741,9 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       theme={themeTracker?.name}
                       chatTitle={headerChatTitle}
                       isAiChatMaximized={props.isMaximized}
+                      showChangesPanel={showChangesPanel}
+                      onToggleChanges={toggleChangesPanel}
+                      changesCount={reviewableApprovals.length + changedFiles.length}
                     />
                     <section id="remix-ai-chat-history" className="d-flex flex-column p-2" style={{ flex: 1, overflow: 'auto', minHeight: 0 }} ref={chatHistoryRef}>
                       <div data-id="remix-ai-assistant-ready"></div>
@@ -3308,6 +3767,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                         onDappReviewAcceptAll={handleDappReviewAcceptAll}
                         onDappReviewRevertAll={handleDappReviewRevertAll}
                         onDappReviewViewDiff={handleDappReviewViewDiff}
+                        fileChangesByMessage={fileChangesByMessage}
+                        onOpenFileChange={openFileChange}
                         onUiComponentAnswered={handleUiComponentAnswered}
                       />
                       {pendingApprovals.length > 1 && (
@@ -3320,14 +3781,14 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                                 onClick={handleApproveAll}
                                 data-id="approve-all-changes"
                               >
-                              Approve All
+                              Accept All
                               </button>
                               <button
                                 className="btn btn-danger btn-sm"
                                 onClick={handleRejectAll}
                                 data-id="reject-all-changes"
                               >
-                              Discard All
+                              Reject All
                               </button>
                             </div>
                           </div>
@@ -3335,13 +3796,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
                       )}
                       {pendingApprovals.map((approval) => (
                         <div key={approval.requestId} style={{ padding: '0 12px', marginBottom: '8px' }}>
-                          <ToolApprovalModal
-                            request={approval}
-                            onApprove={(options) => handleApproveToolAction(approval, options)}
-                            onReject={() => handleRejectToolAction(approval)}
-                            onReviewChanges={() => handleReviewChanges(approval)}
-                            isReviewing={reviewingApprovals.has(approval.requestId)}
-                          />
+                          {approval.category === 'screen_capture' ? (
+                            <ScreenCaptureConsentCard
+                              request={approval}
+                              modelName={selectedModel?.displayName}
+                              onDecide={(scope) => handleScreenCaptureDecision(approval, scope)}
+                            />
+                          ) : (
+                            <ToolApprovalModal
+                              request={approval}
+                              onApprove={(options) => handleApproveToolAction(approval, options)}
+                              onReject={() => handleRejectToolAction(approval)}
+                              onReviewChanges={() => handleReviewChanges(approval)}
+                              isReviewing={reviewingApprovals.has(approval.requestId)}
+                            />
+                          )}
                         </div>
                       ))}
                     </section>
@@ -3373,6 +3842,21 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
               onSearch={props.onSearch}
               isFloating={false}
               isMaximized={true}
+              theme={themeTracker?.name}
+            />
+          )}
+          {props.isMaximized && showChangesPanel && (
+            <AIChangesPanel
+              pendingApprovals={pendingApprovals}
+              changedFiles={changedFiles}
+              selection={changesSelection}
+              currentWorkspace={changesWorkspace}
+              staleKeys={staleChangeKeys}
+              onSelect={setChangesSelection}
+              onAccept={acceptChangeFromPanel}
+              onReject={rejectChangeFromPanel}
+              onOpenInEditor={openChangedFileInEditor}
+              onClose={closeChangesPanel}
               theme={themeTracker?.name}
             />
           )}

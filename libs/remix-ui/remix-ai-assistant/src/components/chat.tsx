@@ -11,6 +11,8 @@ import { normalizeMarkdown } from 'libs/remix-ui/helper/src/lib/components/remix
 import { QueryParams } from '@remix-project/remix-lib'
 import { DAppUpdateReviewCard } from './DAppUpdateReviewCard'
 import { GenerativeUIRenderer } from './GenerativeUIRenderer'
+import { FileChangeGroup, splitAnswerAtChanges } from './fileChangeLines'
+import { AIFileChangeRecord } from '@remix/remix-ai-core'
 
 /** Content with the streaming turn separators (`---`) and whitespace removed. */
 const stripTurnSeparators = (content: string): string =>
@@ -21,6 +23,33 @@ const normalizeTurnSeparators = (content: string): string =>
     .replace(/(?:^[ \t]*-{3,}[ \t]*\n\s*)+/, '')
     .replace(/(?:\n\s*[ \t]*-{3,}[ \t]*)+$/, '')
     .replace(/(?:\n\s*-{3,}[ \t]*){2,}\n/g, '\n\n---\n')
+
+/**
+ * Opens an attachment image in a new tab.
+ * Browsers block top-level navigation to `data:` URLs (the tab just stays
+ * blank), so the data URL is turned into a same-origin blob URL first.
+ */
+const openImageAttachment = (dataUrl?: string) => {
+  if (!dataUrl) return
+  if (!dataUrl.startsWith('data:')) {
+    window.open(dataUrl, '_blank', 'noopener,noreferrer')
+    return
+  }
+  try {
+    const [header, base64] = dataUrl.split(',')
+    const mime = /data:([^;,]+)/.exec(header)?.[1] || 'image/png'
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const url = URL.createObjectURL(new Blob([bytes], { type: mime }))
+    const win = window.open(url, '_blank', 'noopener,noreferrer')
+    // Revoking immediately would cancel the load in the new tab; give it time.
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+    if (!win) URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error('[RemixAI] could not open attachment', e)
+  }
+}
 
 // ChatHistory component
 export interface ChatHistoryComponentProps {
@@ -40,6 +69,9 @@ export interface ChatHistoryComponentProps {
   onDappReviewAcceptAll?: (msgId: string) => void
   onDappReviewRevertAll?: (msgId: string) => void
   onDappReviewViewDiff?: (filePath: string, newContent: string, oldContent: string) => void
+  /** File changes the agent made, per assistant message, in order */
+  fileChangesByMessage?: Record<string, AIFileChangeRecord[]>
+  onOpenFileChange?: (change: AIFileChangeRecord) => void
 }
 
 interface AiChatIntroProps {
@@ -72,6 +104,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
   onDappReviewAcceptAll,
   onDappReviewRevertAll,
   onDappReviewViewDiff,
+  fileChangesByMessage,
+  onOpenFileChange,
   onUiComponentAnswered,
   handleLoadSkills
 }) => {
@@ -106,7 +140,8 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
           // A turn that only reasoned and called tools leaves nothing but the
           // `---` turn separators behind; that rendered as a bubble of bare
           // horizontal rules. Separators alone are not content.
-          const hasContent = typeof displayContent === 'string' && stripTurnSeparators(displayContent).length > 0
+          const fileChanges = msg.role === 'assistant' ? fileChangesByMessage?.[msg.id] : undefined
+          const hasContent = (typeof displayContent === 'string' && stripTurnSeparators(displayContent).length > 0) || !!fileChanges?.length
           const hasAssistantActivity = !!(
             msg.isExecutingTools ||
             msg.activeSubagent ||
@@ -154,7 +189,52 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                         marginLeft: '4px'
                       } : undefined}
                     >
-                      {msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
+                      {msg.attachments?.length > 0 && (
+                        // Rendered as real elements rather than through the
+                        // markdown viewer: rehypeSanitize strips data: URLs.
+                        // Assistant-side entries are screenshots the AI took
+                        // of the IDE — shown so the user can see what was sent.
+                        <div
+                          className="d-flex flex-row flex-wrap gap-2 align-items-center"
+                          data-id={msg.role === 'user' ? 'ai-user-attachments' : 'ai-capture-attachments'}
+                        >
+                          {msg.attachments.map(att => att.kind === 'image' ? (
+                            <img
+                              key={att.id}
+                              src={att.thumbnailDataUrl || att.dataUrl}
+                              alt={att.name}
+                              title={att.source === 'ai-capture' ? `${att.name} — sent to the model` : att.name}
+                              className="rounded"
+                              data-id={att.source === 'ai-capture' ? 'ai-capture-thumbnail' : undefined}
+                              style={{ maxWidth: 120, maxHeight: 120, objectFit: 'cover', border: '1px solid var(--bs-border-color)', cursor: 'pointer' }}
+                              onClick={() => openImageAttachment(att.dataUrl || att.thumbnailDataUrl)}
+                            />
+                          ) : (
+                            <span
+                              key={att.id}
+                              className="d-flex align-items-center gap-2 rounded px-2 py-1 small"
+                              style={{ border: '1px solid var(--bs-border-color)', maxWidth: 220 }}
+                              title={att.name}
+                            >
+                              <i className={`fas ${att.kind === 'document' ? 'fa-file-pdf' : 'fa-file-lines'} text-secondary`} style={{ fontSize: '0.8rem' }} />
+                              <span className="text-truncate">{att.name}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {msg.role !== 'user' && msg.attachments?.some(att => att.source === 'ai-capture') && (
+                        <div className="text-muted small d-flex align-items-center gap-2" data-id="ai-capture-caption">
+                          <i className="fas fa-camera" style={{ fontSize: '0.7rem' }} />
+                          <span>Screenshot of your IDE sent to the model</span>
+                        </div>
+                      )}
+                      {fileChanges?.length ? (
+                        // The answer with lines where the agent changed files
+                        splitAnswerAtChanges(displayContent, fileChanges).map((segment, index) => segment.kind === 'text'
+                          ? <React.Fragment key={index}>{RemixMarkdownViewer(theme, normalizeTurnSeparators(segment.text), btnColor, setBtnColor)}</React.Fragment>
+                          : <FileChangeGroup key={index} changes={segment.changes} onOpen={(change) => onOpenFileChange?.(change)} />
+                        )
+                      ) : msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
                         RemixMarkdownViewer(theme, normalizeTurnSeparators(displayContent), btnColor, setBtnColor)
                       ) : (
                         <div className="ai-paragraph pb-0">
