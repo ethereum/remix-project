@@ -6,6 +6,8 @@ import { remixAILogger } from '../../helpers/logger'
 
 import { createDeepAgent, createPatchToolCallsMiddleware, CreateDeepAgentParams } from 'deepagents'
 import { ICompletions, IGeneration, IParams } from '../../types/types'
+import { AIModel, modelSupportsVision } from '../../types/models'
+import { lookupCatalogEntry } from './modelParams'
 import { Plugin } from '@remixproject/engine'
 import EventEmitter from 'events'
 import { RemixFilesystemBackend } from './RemixFilesystemBackend'
@@ -689,7 +691,19 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
     return await generateStructured(this.model, schema, messages, { maxRepairs: 1, ...opts })
   }
 
+  private selectedModelSupportsVision(): boolean {
+    const { modelId, provider, routeProvider } = this.modelSelection
+    const entry = lookupCatalogEntry(this.modelSelection)
+    return modelSupportsVision({
+      id: modelId,
+      provider: routeProvider === 'ollama' ? 'ollama' : (entry?.provider ?? provider),
+      capabilities: entry?.capabilities
+    } as Pick<AIModel, 'capabilities' | 'id' | 'provider'>)
+  }
+
   private async runAgent(messages: any[]): Promise<string> {
+    // A "Don't allow" settles the request it answered, not every later one.
+    screenshotConsent.beginTurn()
     const thisRunControllers = new Set<AbortController>()
     const localAbortController = new AbortController()
     thisRunControllers.add(localAbortController)
@@ -1114,7 +1128,12 @@ export class DeepAgentInferencer implements ICompletions, IGeneration {
       const checkpointer = this.checkpointer
       const hasSkillsPermission = this.hasSkillsPermission
       const harnessProfile = resolveHarnessProfile(this.modelSelection)
-      const shapedTools = applyHarnessToolRules(this.tools, harnessProfile)
+      let shapedTools = applyHarnessToolRules(this.tools, harnessProfile)
+
+      if (!this.selectedModelSupportsVision()) {
+        remixAILogger.log(`[DeepAgentInferencer] ${this.modelSelection.modelId} cannot read images — hiding capture_ui_screenshot`)
+        shapedTools = shapedTools.filter(t => t.name !== 'capture_ui_screenshot')
+      }
 
       // The main agent holds no Remix tools of its own: every capability is
       // reached by delegating to a subagent, and the roster appended to the

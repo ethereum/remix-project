@@ -48,9 +48,26 @@ function registerRef(el: Element): string {
   return ref
 }
 
+const USER_ONLY_SELECTOR = [
+  '[data-ai-user-only]',
+  '.tool-approval-card',
+  '.tool-approval-card__btn',
+  '.hitl-pending-summary',
+  '[data-id="ai-diff-actions"]',
+  '[data-id="hitl-auto-accept-banner"]'
+].join(',')
+
+function isUserOnly(el: Element): boolean {
+  try {
+    return !!el.closest(USER_ONLY_SELECTOR)
+  } catch {
+    return true
+  }
+}
+
 function resolveRef(ref: string): Element | null {
   const el = elementRefs.get(ref)
-  if (!el || !el.isConnected) {
+  if (!el || !el.isConnected || isUserOnly(el)) {
     elementRefs.delete(ref)
     return null
   }
@@ -178,6 +195,14 @@ interface SnapshotLine {
   text: string
 }
 
+const SENSITIVE_FIELD_RE = /key|token|secret|passw|private|mnemonic|seed|credential/i
+
+function isSensitiveField(el: HTMLInputElement | HTMLTextAreaElement): boolean {
+  if (el instanceof HTMLInputElement && el.type === 'password') return true
+  const hints = [el.name, el.id, el.getAttribute('data-id'), el.getAttribute('aria-label'), el.getAttribute('placeholder'), el.getAttribute('autocomplete')]
+  return hints.some((hint) => !!hint && SENSITIVE_FIELD_RE.test(hint))
+}
+
 function describe(el: Element, interactive: boolean): string {
   const parts: string[] = [roleOf(el)]
 
@@ -190,7 +215,7 @@ function describe(el: Element, interactive: boolean): string {
   name = name.slice(0, MAX_TEXT_LEN)
   if (name) parts.push(JSON.stringify(name))
 
-  if (interactive) parts.push(`[ref=${registerRef(el)}]`)
+  if (interactive) parts.push(isUserOnly(el) ? '(user-only control — cannot be clicked or typed into)' : `[ref=${registerRef(el)}]`)
 
   const dataId = el.getAttribute('data-id')
   if (dataId) parts.push(`data-id=${dataId}`)
@@ -201,7 +226,7 @@ function describe(el: Element, interactive: boolean): string {
   if (dataPath) parts.push(`path=${JSON.stringify(dataPath)}`)
 
   if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
-    if (el.value) parts.push(`value=${JSON.stringify(el.value.slice(0, MAX_TEXT_LEN))}`)
+    if (el.value) parts.push(isSensitiveField(el) ? 'value=<redacted>' : `value=${JSON.stringify(el.value.slice(0, MAX_TEXT_LEN))}`)
     if (el.disabled) parts.push('disabled')
   }
   if (el instanceof HTMLInputElement && (el.type === 'checkbox' || el.type === 'radio')) {
