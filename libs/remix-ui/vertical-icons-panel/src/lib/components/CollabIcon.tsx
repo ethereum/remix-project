@@ -37,8 +37,9 @@ export const CollabIcon = () => {
   }, [collab.phase])
 
   const isActive = collab.phase !== 'idle'
-  const isLive = isActive && !collab.error && collab.phase === 'live'
-  const iconColor = isActive ? (isLive ? 'text-success' : 'text-danger') : ''
+  const isConnecting = collab.phase === 'connecting' || collab.phase === 'syncing'
+  const isLive = collab.phase === 'live' && !collab.error
+  const iconColor = isActive ? (collab.error ? 'text-danger' : isLive ? 'text-success' : 'text-warning') : ''
 
   const handleClick = () => {
     if (!isActive) {
@@ -64,7 +65,7 @@ export const CollabIcon = () => {
             onClick={handleClick}
             data-id="verticalIconsKindswarmCollab"
           >
-            <i className={`fas fa-users ${iconColor}`} />
+            <i className={`fas fa-users ${iconColor}${isConnecting ? ' swarm-collab-icon-connecting' : ''}`} />
             <div className="remixui_icon_label">Collab</div>
           </div>
         </CustomTooltip>

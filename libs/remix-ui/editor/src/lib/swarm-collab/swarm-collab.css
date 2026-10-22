@@ -27,10 +27,27 @@
   overflow-x: hidden;
 }
 
+.swarm-collab-invite-input {
+  min-width: 0;
+}
+
+.swarm-collab-close-sm {
+  font-size: 0.65em;
+}
+
 .swarm-collab-panel details {
   max-width: 100%;
 }
 
+
+@keyframes swarm-collab-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+
+.swarm-collab-icon-connecting {
+  animation: swarm-collab-blink 1s ease-in-out infinite;
+}
 
 .swarm-collab-caret {
   position: relative;

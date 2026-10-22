@@ -36,15 +36,15 @@ export const CollabSessionPanel = ({ state, onLeave, onDismissError }: CollabSes
         {state.error && (
           <div className="alert alert-danger py-1 px-2 small mb-2 d-flex justify-content-between align-items-start">
             <span>{state.error}</span>
-            <button type="button" className="btn-close ms-2 flex-shrink-0" style={{ fontSize: '0.65rem' }} onClick={onDismissError} />
+            <button type="button" className="btn-close swarm-collab-close-sm ms-2 flex-shrink-0" onClick={onDismissError} />
           </div>
         )}
         {state.phase === 'syncing' && state.pendingPeers > 0 && (
           <div className="text-muted mb-2">Waiting for {state.pendingPeers} peer(s) to send the document…</div>
         )}
         <div className="input-group input-group-sm mb-2">
-          <input className="form-control" style={{ minWidth: 0 }} readOnly value={state.inviteLink ?? ''} data-id="swarmCollabInvite" />
-          <button className="btn btn-primary" onClick={copyInvite}>{copied ? 'Copied' : 'Copy invite'}</button>
+          <input className="form-control swarm-collab-invite-input" readOnly value={state.inviteLink ?? ''} data-id="swarmCollabInvite" />
+          <button className="btn btn-sm btn-primary" onClick={copyInvite}>{copied ? 'Copied' : 'Copy invite'}</button>
         </div>
         <div className="text-muted mb-1">Anyone with this link can read and edit the workspace.</div>
         {sharedInvite && (
