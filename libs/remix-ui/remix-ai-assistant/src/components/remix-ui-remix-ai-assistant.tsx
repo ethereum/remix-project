@@ -332,6 +332,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [chatNotice, setChatNotice] = useState<ChatNoticeDisplay | null>(null)
   // Images staged on the composer for the next prompt.
   const attachmentState = useAttachments()
+  // Files staged before signing out could never be sent
+  const clearAttachments = attachmentState.clear
+  useEffect(() => {
+    if (!isAuthenticated) clearAttachments()
+  }, [isAuthenticated, clearAttachments])
 
   const dismissChatNotice = useCallback(() => {
     setChatNotice(null)
