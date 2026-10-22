@@ -31,7 +31,7 @@ export const DEFAULT_SETTINGS: CollabSettings = {
   beeUrl: 'http://localhost:1633',
   stamp: '',
   transport: 'signaling-server',
-  signalingUrl: 'ws://localhost:4444',
+  signalingUrl: 'ws://2.29.108.102:4444', // remix webrtc signaling server
   iceUrls: 'stun:stun.l.google.com:19302'
 }
 
