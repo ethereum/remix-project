@@ -41,6 +41,9 @@ import { QuickDappContractSelector, QuickDappSetupOptions, QuickDappFigmaPrepara
 import { DeployedContract } from '@remix-ui/run-tab-deployed-contracts'
 import { isQuickDappRemixVMIdentifier, normalizeQuickDappEnvironment } from '@remix-ui/helper'
 import isElectron from 'is-electron'
+import { SwarmCollab } from './swarm-collab/SwarmCollab'
+
+const COLLAB_ENABLED = new URLSearchParams(window.location.search).has('collab')
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -2447,6 +2450,8 @@ For Inline mode, preserve the existing /frontend overwrite confirmation flow.`
           </span>
         </span>
       )}
+
+      {COLLAB_ENABLED && <SwarmCollab plugin={props.plugin} editorRef={editorRef} monacoRef={monacoRef} currentFile={props.currentFile} hidden={props.isDiff} />}
 
       {/* Web3 Keyword Tooltip */}
       {tooltipData && hasContextualEditorFeature && (
