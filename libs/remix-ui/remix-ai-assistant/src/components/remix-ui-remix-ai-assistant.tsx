@@ -47,6 +47,17 @@ function isValidUIPayload(payload: any): payload is { tree: Record<string, any>;
   return typeof tree.type === 'string' && VALID_UI_NODE_TYPES.has(tree.type)
 }
 
+/** A chat-title seed for a message that carries only attachments, e.g. "Screenshot of the Remix IDE". */
+function describeAttachmentsForTitle(attachments: ChatAttachment[]): string {
+  if (attachments.length === 0) return ''
+  const first = attachments[0]
+  const more = attachments.length > 1 ? ` and ${attachments.length - 1} more` : ''
+  if (first.source === 'screenshot' || first.source === 'ai-capture') return `Screenshot of the Remix IDE${more}`
+  const name = (first.name || '').replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
+  const kind = first.kind === 'image' ? 'Image' : first.kind === 'document' ? 'PDF' : 'File'
+  return name ? `${kind} ${name}${more}` : `${kind} attachment${more}`
+}
+
 export interface RemixUiRemixAiAssistantProps {
   plugin: RemixAIAssistant
   isInitializing?: boolean
@@ -2307,7 +2318,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       const { count: priorMessageCount, conversationId: activeConversationId } = firstPromptStateRef.current
       if (priorMessageCount === 0 && activeConversationId) {
-        props.plugin.onFirstPromptSent(activeConversationId, metadata?.displayText?.trim() || trimmed)
+        // An attachment-only first message has no text to title the chat from
+        props.plugin.onFirstPromptSent(activeConversationId, metadata?.displayText?.trim() || trimmed || describeAttachmentsForTitle(attachments))
       }
 
       /** append streaming chunks helper - clears tool status when content arrives */
