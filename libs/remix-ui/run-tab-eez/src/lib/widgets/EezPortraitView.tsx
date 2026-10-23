@@ -1,10 +1,18 @@
 import React, { useContext } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { EezAppContext } from '../contexts'
-import { resolveProxyAddresses, previewProxyCreation, createProxy, traceTransactionByHash } from '../actions'
+import { resolveProxyAddresses, previewProxyCreation, createProxy, traceTransactionByHash, switchWalletToComposerRpc } from '../actions'
+import { EEZ_COMPOSER_RPC_URLS } from '../constants'
 import { FormattedMessage } from 'react-intl'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomMenu, CustomToggle, getTimeAgo } from '@remix-ui/helper'
+import { TraceLegRole } from '../types'
+
+const TRACE_LEG_LABELS: Record<TraceLegRole, string> = {
+  origin: 'Transaction',
+  settlement: 'L1 settlement',
+  execution: 'L2 execution'
+}
 
 function shorten(address: string) {
   if (!address) return ''
@@ -15,8 +23,10 @@ function EezPortraitView() {
   const { plugin, widgetState, dispatch, themeQuality } = useContext(EezAppContext)
   const {
     networks, isDiscovering, addressInput, isResolving, resolutionRows, resolutionError, showCreateDialog, createdProxies, creator,
-    traceTxHash, isTracing, traceResult, traceError
+    traceTxHash, isTracing, traceResult, traceError, walletRpc, isSwitchingWalletRpc
   } = widgetState
+  const isWalletOffComposer = walletRpc.isComposer === false
+  const currentNetworkLabel = networks.find((n) => n.chainId === walletRpc.chainId)?.label || 'this network'
 
   const handleResolve = () => {
     resolveProxyAddresses(plugin, dispatch, networks, addressInput.trim())
@@ -40,6 +50,10 @@ function EezPortraitView() {
 
   const handleCreate = () => {
     createProxy(plugin, dispatch, networks, creator.originNetworkId, creator.originAddress.trim())
+  }
+
+  const handleSwitchWalletRpc = () => {
+    switchWalletToComposerRpc(plugin, dispatch, walletRpc.chainId)
   }
 
   const handleLoadResolvedProxy = async (proxyAddress: string) => {
@@ -103,6 +117,52 @@ function EezPortraitView() {
           </button>
         </div>
       </div>
+      {isWalletOffComposer && (
+        <div
+          className="alert alert-warning mx-3 mt-0 mb-0 d-flex gap-2 small"
+          role="alert"
+          data-id="eezWalletRpcWarning"
+          style={{ borderLeft: '4px solid var(--bs-warning)' }}
+        >
+          <div className="flex-grow-1" style={{ minWidth: 0 }}>
+            <p className="mb-1 fw-bold d-flex align-items-center gap-2" style={{ fontSize: '0.85rem' }}>
+              <i className="fas fa-exclamation-triangle"></i>
+              Wrong Composer RPC for {currentNetworkLabel}
+            </p>
+            <p className="mb-2">
+              Your wallet is connected to {currentNetworkLabel} through an RPC that isn't the EEZ composer, so cross-chain transactions sent from your wallet will fail. Proxy lookups still work.
+            </p>
+            {walletRpc.canSwitch ? (
+              <button
+                className="btn btn-sm btn-warning w-100 fw-bold d-flex align-items-center justify-content-center"
+                data-id="eezSwitchWalletRpcButton"
+                disabled={isSwitchingWalletRpc}
+                onClick={handleSwitchWalletRpc}
+              >
+                {isSwitchingWalletRpc ? (
+                  <><i className="fas fa-spinner fa-spin me-2"></i>Confirm in your wallet...</>
+                ) : (
+                  <>Use EEZ RPC</>
+                )}
+              </button>
+            ) : (
+              <>
+                <p className="mb-1">Set this as the RPC for {currentNetworkLabel} in your wallet:</p>
+                <div className="d-flex align-items-center gap-2 p-1 px-2 rounded" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
+                  <code className="text-break flex-grow-1" data-id="eezComposerRpcUrl">
+                    {EEZ_COMPOSER_RPC_URLS[walletRpc.chainId]?.rpcUrl || 'the EEZ composer RPC'}
+                  </code>
+                  {EEZ_COMPOSER_RPC_URLS[walletRpc.chainId] && (
+                    <CopyToClipboard tip="Copy RPC URL" icon="fa-copy" direction="top" getContent={() => EEZ_COMPOSER_RPC_URLS[walletRpc.chainId].rpcUrl}>
+                      <i className="fa-solid fa-copy" style={{ cursor: 'pointer' }}></i>
+                    </CopyToClipboard>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
       {showCreateDialog && (
         <div className="m-3 mt-0 p-3 rounded" data-id="eezCreateDialog" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
           <div className="d-flex justify-content-between align-items-center mb-2">
@@ -222,7 +282,7 @@ function EezPortraitView() {
             </div>
           )}
           {creator.previewAddress && !creator.previewIsDeployed && (
-            <button className="btn btn-sm btn-primary w-100" data-id="eezCreateButton" disabled={creator.isCreating} onClick={handleCreate}>
+            <button className="btn btn-sm btn-primary w-100" data-id="eezCreateButton" disabled={creator.isCreating || isWalletOffComposer} onClick={handleCreate}>
               {creator.isCreating ? 'Creating...' : 'Create proxy'}
             </button>
           )}
@@ -312,7 +372,7 @@ function EezPortraitView() {
           Trace Cross-Chain Transaction
         </p>
         <p style={{ color: 'var(--bs-tertiary)', fontSize: '0.7rem' }} className="mb-2 fw-light">
-          Enter the hash of a mined transaction on the currently connected network to see the cross-chain proxies its execution touched.
+          Enter the hash of a transaction on the currently connected network to follow it, through its settlement, across the EEZ chains it touched.
         </p>
         <div className="d-flex align-items-center mb-2">
           <label className="mb-0 me-2" style={{ color: 'var(--bs-tertiary)' }}>
@@ -356,10 +416,10 @@ function EezPortraitView() {
                   This transaction is cross-chain — {traceResult.proxyCount} {traceResult.proxyCount === 1 ? 'proxy' : 'proxies'} touched:
                 </div>
                 {traceResult.proxies.map((p) => (
-                  <div key={p.address} className="mt-1">
+                  <div key={`${p.networkLabel}:${p.address}`} className="mt-1">
                     {p.hops.map((hop, hopIndex) => (
                       <div key={hopIndex} className="text-break" style={{ fontSize: '11px', fontFamily: 'Monaco, monospace' }}>
-                        {shorten(hopIndex === 0 ? p.address : p.hops[hopIndex - 1].originalAddress)} → acts for {shorten(hop.originalAddress)} on {hop.originNetworkLabel || `network ${hop.originalRollupId}`}
+                        {shorten(hopIndex === 0 ? p.address : p.hops[hopIndex - 1].originalAddress)}{hopIndex === 0 ? ` (${p.networkLabel})` : ''} → acts for {shorten(hop.originalAddress)} on {hop.originNetworkLabel || `network ${hop.originalRollupId}`}
                       </div>
                     ))}
                   </div>
@@ -368,6 +428,35 @@ function EezPortraitView() {
             ) : (
               <div className="small mb-2 text-secondary">No cross-chain proxies were touched by this transaction.</div>
             )}
+            <div className="small mb-2 p-2 rounded" data-id="eezTraceLegs" style={{ backgroundColor: 'var(--custom-onsurface-layer-4)', color: themeQuality === 'dark' ? 'white' : 'black' }}>
+              <div style={{ fontWeight: 700 }}>Related transactions across chains</div>
+              {traceResult.legs.map((leg) => (
+                <div key={`${leg.networkLabel}:${leg.txHash}`} className="mt-1 d-flex align-items-center" style={{ fontSize: '11px' }}>
+                  <span className="me-1">{leg.success === null ? '?' : leg.success ? '✓' : '✗'}</span>
+                  <span className="me-1" style={{ fontWeight: 600 }}>{TRACE_LEG_LABELS[leg.role]}</span>
+                  <span className="me-1">on {leg.networkLabel}{leg.blockNumber !== null ? ` #${leg.blockNumber}` : ''}</span>
+                  <span className="me-1" style={{ fontFamily: 'Monaco, monospace' }}>{shorten(leg.txHash)}</span>
+                  <CopyToClipboard tip="Copy transaction hash" icon="fa-copy" direction="top" getContent={() => leg.txHash}>
+                    <i className="fa-solid fa-copy" style={{ fontSize: '10px', cursor: 'pointer', color: 'var(--text-tertiary, #a2a3bd)' }}></i>
+                  </CopyToClipboard>
+                  {(leg.decodedError || leg.error) && <span className="ms-1 text-danger text-break">{leg.decodedError || leg.error}</span>}
+                </div>
+              ))}
+              {traceResult.omittedLegs > 0 && (
+                <div className="mt-1 text-secondary" style={{ fontSize: '11px' }}>
+                  {traceResult.omittedLegs} more L2 {traceResult.omittedLegs === 1 ? 'execution was' : 'executions were'} settled in the same L1 block and not listed.
+                </div>
+              )}
+              {traceResult.correlationError ? (
+                <div className="mt-1 text-danger" style={{ fontSize: '11px' }}>Settlement lookup failed: {traceResult.correlationError}</div>
+              ) : traceResult.isL2Origin && (
+                <div className="mt-1 text-secondary" style={{ fontSize: '11px' }}>
+                  {traceResult.settlement
+                    ? `Settled on L1 in block #${traceResult.settlement.l1BlockNumber}${traceResult.settlement.l2Finalized ? ' (finalized)' : ''}.`
+                    : 'This L2 block is not settled on L1 yet. Trace again later to include the L1 side.'}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

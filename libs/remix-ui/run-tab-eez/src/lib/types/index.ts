@@ -50,7 +50,26 @@ export interface ResolvedProxyInfo {
 
 export interface TraceProxyInfo {
   address: string
+  networkLabel: string
   hops: ResolvedProxyInfo[]
+}
+
+export type TraceLegRole = 'origin' | 'settlement' | 'execution'
+
+export interface TraceLeg {
+  role: TraceLegRole
+  networkLabel: string
+  txHash: string
+  blockNumber: number | null
+  success: boolean | null
+  error: string | null
+  decodedError: string | null
+}
+
+export interface TraceSettlement {
+  l1TransactionHash: string
+  l1BlockNumber: number
+  l2Finalized: boolean
 }
 
 export interface TransactionTraceResult {
@@ -60,6 +79,17 @@ export interface TransactionTraceResult {
   decodedError: string | null
   proxies: TraceProxyInfo[]
   proxyCount: number
+  legs: TraceLeg[]
+  settlement: TraceSettlement | null
+  isL2Origin: boolean
+  omittedLegs: number
+  correlationError: string | null
+}
+
+export interface EezWalletRpc {
+  chainId: string | null
+  isComposer: boolean | null
+  canSwitch: boolean
 }
 
 export interface EezWidgetState {
@@ -87,6 +117,8 @@ export interface EezWidgetState {
   isTracing: boolean
   traceResult: TransactionTraceResult | null
   traceError: string | null
+  walletRpc: EezWalletRpc
+  isSwitchingWalletRpc: boolean
 }
 
 export interface EezAppContextType {
@@ -119,3 +151,6 @@ export type Actions =
   | { type: 'START_TRACE' }
   | { type: 'TRACE_SUCCESS'; payload: TransactionTraceResult }
   | { type: 'TRACE_ERROR'; payload: string }
+  | { type: 'SET_WALLET_RPC'; payload: EezWalletRpc }
+  | { type: 'START_WALLET_RPC_SWITCH' }
+  | { type: 'WALLET_RPC_SWITCH_DONE' }
