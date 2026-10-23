@@ -47,6 +47,17 @@ function isValidUIPayload(payload: any): payload is { tree: Record<string, any>;
   return typeof tree.type === 'string' && VALID_UI_NODE_TYPES.has(tree.type)
 }
 
+/** A chat-title seed for a message that carries only attachments, e.g. "Screenshot of the Remix IDE". */
+function describeAttachmentsForTitle(attachments: ChatAttachment[]): string {
+  if (attachments.length === 0) return ''
+  const first = attachments[0]
+  const more = attachments.length > 1 ? ` and ${attachments.length - 1} more` : ''
+  if (first.source === 'screenshot' || first.source === 'ai-capture') return `Screenshot of the Remix IDE${more}`
+  const name = (first.name || '').replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
+  const kind = first.kind === 'image' ? 'Image' : first.kind === 'document' ? 'PDF' : 'File'
+  return name ? `${kind} ${name}${more}` : `${kind} attachment${more}`
+}
+
 export interface RemixUiRemixAiAssistantProps {
   plugin: RemixAIAssistant
   isInitializing?: boolean
@@ -332,6 +343,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
   const [chatNotice, setChatNotice] = useState<ChatNoticeDisplay | null>(null)
   // Images staged on the composer for the next prompt.
   const attachmentState = useAttachments()
+  // Files staged before signing out could never be sent
+  const clearAttachments = attachmentState.clear
+  useEffect(() => {
+    if (!isAuthenticated) clearAttachments()
+  }, [isAuthenticated, clearAttachments])
 
   const dismissChatNotice = useCallback(() => {
     setChatNotice(null)
@@ -2256,10 +2272,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         if (!ready) return
       } catch { /* assistantState not active — fall through to legacy behaviour */ }
 
-      // Navigate back to chat view if the history sidebar is open
+      // Navigate back to chat view if the history sidebar or the changes list replaced it
       if (props.showHistorySidebar && !props.isMaximized) {
         props.onToggleHistorySidebar?.()
       }
+      if (!props.isMaximized) closeChangesPanel()
 
       // firstPromptStateRef holds the live message count — sendPrompt is
       // intentionally memoized without `messages`, so its closure value is stale.
@@ -2301,7 +2318,8 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
 
       const { count: priorMessageCount, conversationId: activeConversationId } = firstPromptStateRef.current
       if (priorMessageCount === 0 && activeConversationId) {
-        props.plugin.onFirstPromptSent(activeConversationId, metadata?.displayText?.trim() || trimmed)
+        // An attachment-only first message has no text to title the chat from
+        props.plugin.onFirstPromptSent(activeConversationId, metadata?.displayText?.trim() || trimmed || describeAttachmentsForTitle(attachments))
       }
 
       /** append streaming chunks helper - clears tool status when content arrives */
@@ -2659,7 +2677,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         } catch { /* cosmetic — never let a title failure surface to the user */ }
       }
     },
-    [isStreaming, props.plugin, selectedModel, assistantChoice, dismissChatNotice, props.showHistorySidebar, props.isMaximized, props.onToggleHistorySidebar]
+    [isStreaming, props.plugin, selectedModel, assistantChoice, dismissChatNotice, props.showHistorySidebar, props.isMaximized, props.onToggleHistorySidebar, closeChangesPanel]
   )
 
   const handleSend = useCallback(async () => {
