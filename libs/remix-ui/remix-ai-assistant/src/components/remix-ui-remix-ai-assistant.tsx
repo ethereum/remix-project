@@ -2261,10 +2261,11 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         if (!ready) return
       } catch { /* assistantState not active — fall through to legacy behaviour */ }
 
-      // Navigate back to chat view if the history sidebar is open
+      // Navigate back to chat view if the history sidebar or the changes list replaced it
       if (props.showHistorySidebar && !props.isMaximized) {
         props.onToggleHistorySidebar?.()
       }
+      if (!props.isMaximized) closeChangesPanel()
 
       // firstPromptStateRef holds the live message count — sendPrompt is
       // intentionally memoized without `messages`, so its closure value is stale.
@@ -2664,7 +2665,7 @@ export const RemixUiRemixAiAssistant = React.forwardRef<
         } catch { /* cosmetic — never let a title failure surface to the user */ }
       }
     },
-    [isStreaming, props.plugin, selectedModel, assistantChoice, dismissChatNotice, props.showHistorySidebar, props.isMaximized, props.onToggleHistorySidebar]
+    [isStreaming, props.plugin, selectedModel, assistantChoice, dismissChatNotice, props.showHistorySidebar, props.isMaximized, props.onToggleHistorySidebar, closeChangesPanel]
   )
 
   const handleSend = useCallback(async () => {
