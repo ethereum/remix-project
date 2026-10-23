@@ -5,7 +5,7 @@ import { BaseToolHandler } from '../registry/RemixToolRegistry'
 import { remixAILogger } from '../../helpers/logger'
 import { screenshotBuffer, screenshotMarker } from '../../inferencers/deepagent/visionBuffer'
 import { screenshotConsent } from '../../inferencers/deepagent/screenshotConsent'
-import { captureElementPng, defaultCaptureTarget, annotatePngWithMarks, ElementMark, thumbnailDataUrl, previewDataUrl, downscaleDataUrl, MODEL_MAX_EDGE } from '../../helpers/domCapture'
+import { captureElementPng, defaultCaptureTarget, findOpenOverlay, annotatePngWithMarks, ElementMark, thumbnailDataUrl, previewDataUrl, downscaleDataUrl, MODEL_MAX_EDGE } from '../../helpers/domCapture'
 import remixUiMap from '../context/remixUiMap.json'
 
 /**
@@ -305,7 +305,19 @@ function requireDom(): string | null {
   return null
 }
 
+/** ` "Title"` of an open dialog, for labels; empty when it has none. */
+function overlayTitle(overlay: Element): string {
+  const titleEl = overlay.querySelector('.modal-title, [id$="-title"], h1, h2, h3, h4, h5, h6')
+  const title = (titleEl?.textContent || overlay.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim()
+  return title ? ` "${title.slice(0, MAX_TEXT_LEN)}"` : ''
+}
+
 function ideRoot(): Element {
+  // Modals are portalled onto <body>, outside the shell, and block the IDE
+  // behind them — while one is open it is the only thing that can be used.
+  const overlay = findOpenOverlay()
+  if (overlay) return overlay
+
   // The app shell rendered by remix-app.tsx — top bar, icon bar, both side
   // panels, the main panel and the status bar, without the document-level
   // portals hanging off <body>.
@@ -374,7 +386,11 @@ export class InspectUIHandler extends BaseToolHandler {
       }
 
       const body = lines.map((l) => `${'  '.repeat(l.depth)}- ${l.text}`).join('\n')
-      const header = `UI snapshot (${lines.length} nodes, ${elementRefs.size} interactive refs)${truncated ? ' — TRUNCATED, narrow the scope with `selector`' : ''}. ` +
+      const overlay = !args?.selector && findOpenOverlay()
+      const overlayNote = overlay
+        ? `An open dialog${overlayTitle(overlay)} covers the IDE, so this snapshot shows only the dialog. Fill it in, confirm or close it to reach the rest of the interface. `
+        : ''
+      const header = `${overlayNote}UI snapshot (${lines.length} nodes, ${elementRefs.size} interactive refs)${truncated ? ' — TRUNCATED, narrow the scope with `selector`' : ''}. ` +
         'A capture_ui_screenshot taken now will badge these refs onto the image:'
       return this.createSuccessResult(`${header}\n${body}`)
     } catch (e: any) {
@@ -583,7 +599,8 @@ export class CaptureUIScreenshotHandler extends BaseToolHandler {
         const { root, error } = args?.selector ? resolveScope(args.selector) : { root: defaultCaptureTarget(), error: undefined }
         if (error) return this.createErrorResult(error)
         target = root as HTMLElement
-        label = args?.selector || 'the Remix IDE'
+        const overlay = !args?.selector && findOpenOverlay()
+        label = args?.selector || (overlay ? `the open dialog${overlayTitle(overlay)}` : 'the Remix IDE')
       }
 
       const origin = target.getBoundingClientRect()
