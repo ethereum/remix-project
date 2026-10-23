@@ -238,7 +238,7 @@ export const ChatHistoryComponent: React.FC<ChatHistoryComponentProps> = ({
                       ) : msg.role === 'assistant' || msg.role === 'editor_code_analysis' ? (
                         RemixMarkdownViewer(theme, normalizeTurnSeparators(displayContent), btnColor, setBtnColor)
                       ) : (
-                        <div className="ai-paragraph pb-0" style={hasCollapsiblePrompt && !isPromptExpanded ? { whiteSpace: 'pre-line' } : undefined}>
+                        <div className="ai-paragraph pb-0" style={hasCollapsiblePrompt ? { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } : undefined}>
                           {visibleUserContent}
                         </div>
                       )}
